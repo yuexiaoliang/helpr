@@ -1,0 +1,864 @@
+{
+  "metadata": {
+    "startedAt": "2026-10-10T09:37:46.372Z",
+    "node": "v24.18.0",
+    "playwright": "1.64.0",
+    "electron": "44.7.0",
+    "os": {
+      "platform": "darwin",
+      "release": "23.6.0",
+      "arch": "arm64"
+    },
+    "base": "http://127.0.0.1:60409",
+    "scope": "controlled real browser pages; delayed provider response is a local stub; no actual AI or business backend",
+    "electron-cdp": {
+      "node": "24.21.0",
+      "acorn": "8.18.0",
+      "ada": "4.0.0",
+      "amaro": "1.1.11",
+      "ares": "1.34.8",
+      "brotli": "1.2.0",
+      "cldr": "48.0",
+      "icu": "78.2",
+      "llhttp": "9.4.3",
+      "merve": "1.2.2",
+      "modules": "149",
+      "napi": "10",
+      "nbytes": "0.1.4",
+      "ncrypto": "0.0.1",
+      "nghttp2": "1.70.0",
+      "nghttp3": "",
+      "ngtcp2": "",
+      "openssl": "0.0.0",
+      "simdjson": "4.6.7",
+      "simdutf": "7.7.0",
+      "sqlite": "3.53.4",
+      "tz": "2026d",
+      "undici": "7.29.1",
+      "unicode": "17.0",
+      "uv": "1.52.1",
+      "uvwasi": "0.0.23",
+      "v8": "15.2.124.28-electron.0",
+      "zlib": "1.3.2.1-motley",
+      "zstd": "1.6.0",
+      "electron": "44.7.0",
+      "chrome": "152.0.7977.130"
+    },
+    "chromium-cdp": {
+      "chromium": "156.0.8078.4"
+    },
+    "endedAt": "2026-10-10T09:38:02.105Z"
+  },
+  "results": [
+    {
+      "host": "electron-cdp",
+      "name": "positive-control",
+      "expected": "without stopping both pages perform real requests",
+      "status": "passed",
+      "evidence": {
+        "expectedText": "abcdef",
+        "realRequest": 1,
+        "snapshots": [
+          {
+            "scope": "electron-cdp:positive-control",
+            "task": "A",
+            "counts": {
+              "late": 1
+            },
+            "entry": "abcdef",
+            "uploadName": ""
+          },
+          {
+            "scope": "electron-cdp:positive-control",
+            "task": "B",
+            "counts": {
+              "count": 3
+            },
+            "entry": "",
+            "uploadName": ""
+          }
+        ],
+        "postStopDispatches": []
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "promise-race-negative",
+      "expected": "ending local waiting without abort leaves the original click alive",
+      "status": "passed",
+      "evidence": {
+        "localResult": "local waiting ended",
+        "unwantedLateClick": 1,
+        "snapshots": [
+          {
+            "scope": "electron-cdp:promise-race-negative",
+            "task": "A",
+            "counts": {
+              "late": 1
+            },
+            "entry": "",
+            "uploadName": ""
+          },
+          {
+            "scope": "electron-cdp:promise-race-negative",
+            "task": "B",
+            "counts": {
+              "count": 4
+            },
+            "entry": "",
+            "uploadName": ""
+          }
+        ],
+        "postStopDispatches": []
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "queued-before-dispatch",
+      "expected": "a queued callback cannot dispatch after its execution stops",
+      "status": "passed",
+      "evidence": {
+        "outcome": {
+          "status": "rejected",
+          "name": "Stopped",
+          "error": "Stopped: Execution stopped or superseded"
+        },
+        "count": 0,
+        "snapshots": [
+          {
+            "scope": "electron-cdp:queued-before-dispatch",
+            "task": "A",
+            "counts": {},
+            "entry": "",
+            "uploadName": ""
+          },
+          {
+            "scope": "electron-cdp:queued-before-dispatch",
+            "task": "B",
+            "counts": {
+              "count": 3
+            },
+            "entry": "",
+            "uploadName": ""
+          }
+        ],
+        "postStopDispatches": []
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "abort-waiting-click",
+      "expected": "AbortSignal cancels locator waiting and no click occurs when the target later enables",
+      "status": "passed",
+      "evidence": {
+        "outcome": {
+          "status": "rejected",
+          "name": "AbortError",
+          "error": "AbortError: locator.click: Execution stopped or superseded\nCall log:\n\u001b[2m  - waiting for locator('#late')\u001b[22m\n\u001b[2m    - locator resolved to <button disabled id=\"late\">等待开放的按钮</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m  - operation was aborted: Execution stopped or superseded\u001b[22m\n"
+        },
+        "settledMs": 1.2725000000000364,
+        "lateCount": 0,
+        "snapshots": [
+          {
+            "scope": "electron-cdp:abort-waiting-click",
+            "task": "A",
+            "counts": {},
+            "entry": "",
+            "uploadName": ""
+          },
+          {
+            "scope": "electron-cdp:abort-waiting-click",
+            "task": "B",
+            "counts": {
+              "count": 4
+            },
+            "entry": "",
+            "uploadName": ""
+          }
+        ],
+        "postStopDispatches": []
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "abort-in-flight-typing",
+      "expected": "already typed text remains but sequential input ceases after cancellation settles",
+      "status": "passed",
+      "evidence": {
+        "outcome": {
+          "status": "rejected",
+          "name": "AbortError",
+          "error": "AbortError: locator.pressSequentially: Execution stopped or superseded\nCall log:\n\u001b[2m  - waiting for locator('#typing')\u001b[22m\n\u001b[2m    - locator resolved to <textarea id=\"typing\" placeholder=\"连续输入中断测试\"></textarea>\u001b[22m\n\u001b[2m  - elementHandle.type(\"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz\")\u001b[22m\n\u001b[2m  - operation was aborted: Execution stopped or superseded\u001b[22m\n"
+        },
+        "settledMs": 0.7004580000002534,
+        "atSettlement": "ABC",
+        "afterB": "ABC",
+        "fullText": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+        "snapshots": [
+          {
+            "scope": "electron-cdp:abort-in-flight-typing",
+            "task": "A",
+            "counts": {},
+            "entry": "ABC",
+            "uploadName": ""
+          },
+          {
+            "scope": "electron-cdp:abort-in-flight-typing",
+            "task": "B",
+            "counts": {
+              "count": 5
+            },
+            "entry": "",
+            "uploadName": ""
+          }
+        ],
+        "postStopDispatches": []
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "queued-retry",
+      "expected": "a retry scheduled after a timeout remains fenced when its timer releases",
+      "status": "passed",
+      "evidence": {
+        "outcome": {
+          "status": "rejected",
+          "name": "Stopped",
+          "error": "Stopped: Execution stopped or superseded"
+        },
+        "dispatchedAttempts": 1,
+        "snapshots": [
+          {
+            "scope": "electron-cdp:queued-retry",
+            "task": "A",
+            "counts": {},
+            "entry": "",
+            "uploadName": ""
+          },
+          {
+            "scope": "electron-cdp:queued-retry",
+            "task": "B",
+            "counts": {
+              "count": 3
+            },
+            "entry": "",
+            "uploadName": ""
+          }
+        ],
+        "postStopDispatches": []
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "late-provider-response",
+      "expected": "uncancelled provider response is consumed without creating a browser action",
+      "status": "passed",
+      "evidence": {
+        "outcome": {
+          "status": "rejected",
+          "name": "Stopped",
+          "error": "Stopped: Execution stopped or superseded"
+        },
+        "providerCancelled": false,
+        "model": "local HTTP stub",
+        "snapshots": [
+          {
+            "scope": "electron-cdp:late-provider-response",
+            "task": "A",
+            "counts": {},
+            "entry": "",
+            "uploadName": ""
+          },
+          {
+            "scope": "electron-cdp:late-provider-response",
+            "task": "B",
+            "counts": {
+              "count": 4
+            },
+            "entry": "",
+            "uploadName": ""
+          }
+        ],
+        "postStopDispatches": []
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "stale-response-after-new-execution",
+      "expected": "old work cannot use a fresh execution even after active becomes true again",
+      "status": "passed",
+      "evidence": {
+        "stale": {
+          "status": "rejected",
+          "name": "Stopped",
+          "error": "Stopped: Execution stopped or superseded"
+        },
+        "oldGeneration": 1,
+        "newGeneration": 2,
+        "count": 1,
+        "snapshots": [
+          {
+            "scope": "electron-cdp:stale-response-after-new-execution",
+            "task": "A",
+            "counts": {
+              "count": 1
+            },
+            "entry": "",
+            "uploadName": ""
+          },
+          {
+            "scope": "electron-cdp:stale-response-after-new-execution",
+            "task": "B",
+            "counts": {
+              "count": 3
+            },
+            "entry": "",
+            "uploadName": ""
+          }
+        ],
+        "postStopDispatches": []
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "submit-already-accepted",
+      "expected": "aborting response waiting does not undo work already accepted by the website",
+      "status": "passed",
+      "evidence": {
+        "outcome": {
+          "status": "rejected",
+          "name": "AbortError",
+          "error": "AbortError: page.waitForResponse: The operation was aborted"
+        },
+        "receipt": {
+          "sequence": 284,
+          "at": 1791625074674,
+          "kind": "server-accepted",
+          "route": "/commit",
+          "scope": "electron-cdp:submit-already-accepted",
+          "task": "A",
+          "operation": "submit",
+          "bytes": 0
+        },
+        "websiteResult": 1,
+        "followingAction": {
+          "status": "rejected",
+          "name": "Stopped",
+          "error": "Stopped: Execution stopped or superseded"
+        },
+        "snapshots": [
+          {
+            "scope": "electron-cdp:submit-already-accepted",
+            "task": "A",
+            "counts": {
+              "submit": 1
+            },
+            "entry": "",
+            "uploadName": ""
+          },
+          {
+            "scope": "electron-cdp:submit-already-accepted",
+            "task": "B",
+            "counts": {
+              "count": 4
+            },
+            "entry": "",
+            "uploadName": ""
+          }
+        ],
+        "postStopDispatches": []
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "upload-already-accepted",
+      "expected": "aborting response waiting does not undo work already accepted by the website",
+      "status": "passed",
+      "evidence": {
+        "outcome": {
+          "status": "rejected",
+          "name": "AbortError",
+          "error": "AbortError: page.waitForResponse: The operation was aborted"
+        },
+        "receipt": {
+          "sequence": 324,
+          "at": 1791625075127,
+          "kind": "server-accepted",
+          "route": "/commit",
+          "scope": "electron-cdp:upload-already-accepted",
+          "task": "A",
+          "operation": "upload",
+          "bytes": 65536
+        },
+        "websiteResult": 1,
+        "followingAction": {
+          "status": "rejected",
+          "name": "Stopped",
+          "error": "Stopped: Execution stopped or superseded"
+        },
+        "snapshots": [
+          {
+            "scope": "electron-cdp:upload-already-accepted",
+            "task": "A",
+            "counts": {
+              "upload": 1
+            },
+            "entry": "",
+            "uploadName": "controlled-sample.bin"
+          },
+          {
+            "scope": "electron-cdp:upload-already-accepted",
+            "task": "B",
+            "counts": {
+              "count": 4
+            },
+            "entry": "",
+            "uploadName": ""
+          }
+        ],
+        "postStopDispatches": []
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "opaque-command-negative",
+      "expected": "uncooperative work dispatched inside the browser can act after outer cancellation",
+      "status": "passed",
+      "evidence": {
+        "outcome": {
+          "status": "rejected",
+          "name": "Stopped",
+          "error": "Stopped: Execution stopped or superseded"
+        },
+        "unwantedBrowserAction": 1,
+        "limitation": "dispatch fence rejects result but cannot preempt an opaque command already running inside the browser",
+        "snapshots": [
+          {
+            "scope": "electron-cdp:opaque-command-negative",
+            "task": "A",
+            "counts": {
+              "count": 1
+            },
+            "entry": "",
+            "uploadName": ""
+          },
+          {
+            "scope": "electron-cdp:opaque-command-negative",
+            "task": "B",
+            "counts": {
+              "count": 4
+            },
+            "entry": "",
+            "uploadName": ""
+          }
+        ],
+        "postStopDispatches": []
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "positive-control",
+      "expected": "without stopping both pages perform real requests",
+      "status": "passed",
+      "evidence": {
+        "expectedText": "abcdef",
+        "realRequest": 1,
+        "snapshots": [
+          {
+            "scope": "chromium-cdp:positive-control",
+            "task": "A",
+            "counts": {
+              "late": 1
+            },
+            "entry": "abcdef",
+            "uploadName": ""
+          },
+          {
+            "scope": "chromium-cdp:positive-control",
+            "task": "B",
+            "counts": {
+              "count": 3
+            },
+            "entry": "",
+            "uploadName": ""
+          }
+        ],
+        "postStopDispatches": []
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "promise-race-negative",
+      "expected": "ending local waiting without abort leaves the original click alive",
+      "status": "passed",
+      "evidence": {
+        "localResult": "local waiting ended",
+        "unwantedLateClick": 1,
+        "snapshots": [
+          {
+            "scope": "chromium-cdp:promise-race-negative",
+            "task": "A",
+            "counts": {
+              "late": 1
+            },
+            "entry": "",
+            "uploadName": ""
+          },
+          {
+            "scope": "chromium-cdp:promise-race-negative",
+            "task": "B",
+            "counts": {
+              "count": 4
+            },
+            "entry": "",
+            "uploadName": ""
+          }
+        ],
+        "postStopDispatches": []
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "queued-before-dispatch",
+      "expected": "a queued callback cannot dispatch after its execution stops",
+      "status": "passed",
+      "evidence": {
+        "outcome": {
+          "status": "rejected",
+          "name": "Stopped",
+          "error": "Stopped: Execution stopped or superseded"
+        },
+        "count": 0,
+        "snapshots": [
+          {
+            "scope": "chromium-cdp:queued-before-dispatch",
+            "task": "A",
+            "counts": {},
+            "entry": "",
+            "uploadName": ""
+          },
+          {
+            "scope": "chromium-cdp:queued-before-dispatch",
+            "task": "B",
+            "counts": {
+              "count": 3
+            },
+            "entry": "",
+            "uploadName": ""
+          }
+        ],
+        "postStopDispatches": []
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "abort-waiting-click",
+      "expected": "AbortSignal cancels locator waiting and no click occurs when the target later enables",
+      "status": "passed",
+      "evidence": {
+        "outcome": {
+          "status": "rejected",
+          "name": "AbortError",
+          "error": "AbortError: locator.click: Execution stopped or superseded\nCall log:\n\u001b[2m  - waiting for locator('#late')\u001b[22m\n\u001b[2m    - locator resolved to <button disabled id=\"late\">等待开放的按钮</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m  - operation was aborted: Execution stopped or superseded\u001b[22m\n"
+        },
+        "settledMs": 1.0041249999994761,
+        "lateCount": 0,
+        "snapshots": [
+          {
+            "scope": "chromium-cdp:abort-waiting-click",
+            "task": "A",
+            "counts": {},
+            "entry": "",
+            "uploadName": ""
+          },
+          {
+            "scope": "chromium-cdp:abort-waiting-click",
+            "task": "B",
+            "counts": {
+              "count": 4
+            },
+            "entry": "",
+            "uploadName": ""
+          }
+        ],
+        "postStopDispatches": []
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "abort-in-flight-typing",
+      "expected": "already typed text remains but sequential input ceases after cancellation settles",
+      "status": "passed",
+      "evidence": {
+        "outcome": {
+          "status": "rejected",
+          "name": "AbortError",
+          "error": "AbortError: locator.pressSequentially: Execution stopped or superseded\nCall log:\n\u001b[2m  - waiting for locator('#typing')\u001b[22m\n\u001b[2m    - locator resolved to <textarea id=\"typing\" placeholder=\"连续输入中断测试\"></textarea>\u001b[22m\n\u001b[2m  - elementHandle.type(\"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz\")\u001b[22m\n\u001b[2m  - operation was aborted: Execution stopped or superseded\u001b[22m\n"
+        },
+        "settledMs": 0.5623329999998532,
+        "atSettlement": "ABC",
+        "afterB": "ABC",
+        "fullText": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+        "snapshots": [
+          {
+            "scope": "chromium-cdp:abort-in-flight-typing",
+            "task": "A",
+            "counts": {},
+            "entry": "ABC",
+            "uploadName": ""
+          },
+          {
+            "scope": "chromium-cdp:abort-in-flight-typing",
+            "task": "B",
+            "counts": {
+              "count": 5
+            },
+            "entry": "",
+            "uploadName": ""
+          }
+        ],
+        "postStopDispatches": []
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "queued-retry",
+      "expected": "a retry scheduled after a timeout remains fenced when its timer releases",
+      "status": "passed",
+      "evidence": {
+        "outcome": {
+          "status": "rejected",
+          "name": "Stopped",
+          "error": "Stopped: Execution stopped or superseded"
+        },
+        "dispatchedAttempts": 1,
+        "snapshots": [
+          {
+            "scope": "chromium-cdp:queued-retry",
+            "task": "A",
+            "counts": {},
+            "entry": "",
+            "uploadName": ""
+          },
+          {
+            "scope": "chromium-cdp:queued-retry",
+            "task": "B",
+            "counts": {
+              "count": 3
+            },
+            "entry": "",
+            "uploadName": ""
+          }
+        ],
+        "postStopDispatches": []
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "late-provider-response",
+      "expected": "uncancelled provider response is consumed without creating a browser action",
+      "status": "passed",
+      "evidence": {
+        "outcome": {
+          "status": "rejected",
+          "name": "Stopped",
+          "error": "Stopped: Execution stopped or superseded"
+        },
+        "providerCancelled": false,
+        "model": "local HTTP stub",
+        "snapshots": [
+          {
+            "scope": "chromium-cdp:late-provider-response",
+            "task": "A",
+            "counts": {},
+            "entry": "",
+            "uploadName": ""
+          },
+          {
+            "scope": "chromium-cdp:late-provider-response",
+            "task": "B",
+            "counts": {
+              "count": 4
+            },
+            "entry": "",
+            "uploadName": ""
+          }
+        ],
+        "postStopDispatches": []
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "stale-response-after-new-execution",
+      "expected": "old work cannot use a fresh execution even after active becomes true again",
+      "status": "passed",
+      "evidence": {
+        "stale": {
+          "status": "rejected",
+          "name": "Stopped",
+          "error": "Stopped: Execution stopped or superseded"
+        },
+        "oldGeneration": 1,
+        "newGeneration": 2,
+        "count": 1,
+        "snapshots": [
+          {
+            "scope": "chromium-cdp:stale-response-after-new-execution",
+            "task": "A",
+            "counts": {
+              "count": 1
+            },
+            "entry": "",
+            "uploadName": ""
+          },
+          {
+            "scope": "chromium-cdp:stale-response-after-new-execution",
+            "task": "B",
+            "counts": {
+              "count": 3
+            },
+            "entry": "",
+            "uploadName": ""
+          }
+        ],
+        "postStopDispatches": []
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "submit-already-accepted",
+      "expected": "aborting response waiting does not undo work already accepted by the website",
+      "status": "passed",
+      "evidence": {
+        "outcome": {
+          "status": "rejected",
+          "name": "AbortError",
+          "error": "AbortError: page.waitForResponse: The operation was aborted"
+        },
+        "receipt": {
+          "sequence": 680,
+          "at": 1791625080725,
+          "kind": "server-accepted",
+          "route": "/commit",
+          "scope": "chromium-cdp:submit-already-accepted",
+          "task": "A",
+          "operation": "submit",
+          "bytes": 0
+        },
+        "websiteResult": 1,
+        "followingAction": {
+          "status": "rejected",
+          "name": "Stopped",
+          "error": "Stopped: Execution stopped or superseded"
+        },
+        "snapshots": [
+          {
+            "scope": "chromium-cdp:submit-already-accepted",
+            "task": "A",
+            "counts": {
+              "submit": 1
+            },
+            "entry": "",
+            "uploadName": ""
+          },
+          {
+            "scope": "chromium-cdp:submit-already-accepted",
+            "task": "B",
+            "counts": {
+              "count": 4
+            },
+            "entry": "",
+            "uploadName": ""
+          }
+        ],
+        "postStopDispatches": []
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "upload-already-accepted",
+      "expected": "aborting response waiting does not undo work already accepted by the website",
+      "status": "passed",
+      "evidence": {
+        "outcome": {
+          "status": "rejected",
+          "name": "AbortError",
+          "error": "AbortError: page.waitForResponse: The operation was aborted"
+        },
+        "receipt": {
+          "sequence": 720,
+          "at": 1791625081175,
+          "kind": "server-accepted",
+          "route": "/commit",
+          "scope": "chromium-cdp:upload-already-accepted",
+          "task": "A",
+          "operation": "upload",
+          "bytes": 65536
+        },
+        "websiteResult": 1,
+        "followingAction": {
+          "status": "rejected",
+          "name": "Stopped",
+          "error": "Stopped: Execution stopped or superseded"
+        },
+        "snapshots": [
+          {
+            "scope": "chromium-cdp:upload-already-accepted",
+            "task": "A",
+            "counts": {
+              "upload": 1
+            },
+            "entry": "",
+            "uploadName": "controlled-sample.bin"
+          },
+          {
+            "scope": "chromium-cdp:upload-already-accepted",
+            "task": "B",
+            "counts": {
+              "count": 4
+            },
+            "entry": "",
+            "uploadName": ""
+          }
+        ],
+        "postStopDispatches": []
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "opaque-command-negative",
+      "expected": "uncooperative work dispatched inside the browser can act after outer cancellation",
+      "status": "passed",
+      "evidence": {
+        "outcome": {
+          "status": "rejected",
+          "name": "Stopped",
+          "error": "Stopped: Execution stopped or superseded"
+        },
+        "unwantedBrowserAction": 1,
+        "limitation": "dispatch fence rejects result but cannot preempt an opaque command already running inside the browser",
+        "snapshots": [
+          {
+            "scope": "chromium-cdp:opaque-command-negative",
+            "task": "A",
+            "counts": {
+              "count": 1
+            },
+            "entry": "",
+            "uploadName": ""
+          },
+          {
+            "scope": "chromium-cdp:opaque-command-negative",
+            "task": "B",
+            "counts": {
+              "count": 4
+            },
+            "entry": "",
+            "uploadName": ""
+          }
+        ],
+        "postStopDispatches": []
+      }
+    }
+  ]
+}

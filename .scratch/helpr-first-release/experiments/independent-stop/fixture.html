@@ -1,0 +1,44 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8">
+<title>独立停止实验</title>
+<style>body{padding:22px;font:16px/1.6 system-ui;background:#f4f6fa;color:#172338}button,input,textarea{font:inherit;margin:8px 0;padding:8px}textarea{display:block;width:90%}pre{white-space:pre-wrap}</style>
+<h1 id="title"></h1><p>自动实验进行中，无需人工操作。按钮只修改独立测试数据。</p>
+<button id="increment">计数加一</button> <button id="late" disabled>等待开放的按钮</button>
+<textarea id="typing" placeholder="连续输入中断测试"></textarea>
+<button id="submit">提交实验记录</button><input id="upload" type="file">
+<pre id="counts">{}</pre>
+<script>
+(() => {
+  const params = new URLSearchParams(location.search);
+  const scope = params.get('scope'), task = params.get('task');
+  const counts = {}, events = [];
+  let writes = Promise.resolve();
+  const url = (route, kind) => route + '?' + new URLSearchParams({ scope, task, kind });
+  const record = (type, extra = {}) => {
+    const row = { kind: 'page-event', scope, task, type, eventAt: Date.now(), ...extra };
+    events.push(row);
+    writes = writes.then(() => fetch('/event', { method: 'POST', body: JSON.stringify(row) })).catch(() => {});
+  };
+  const commit = async (kind, body = '') => {
+    record('request-started', { operation: kind });
+    const result = await (await fetch(url('/commit', kind), { method: 'POST', body })).json();
+    counts[kind] = result.count;
+    document.querySelector('#counts').textContent = JSON.stringify(counts, null, 2);
+    record('result-rendered', { operation: kind, count: result.count });
+    return result;
+  };
+  document.querySelector('#title').textContent = `任务 ${task} · ${scope}`;
+  document.querySelector('#increment').onclick = () => commit('count');
+  document.querySelector('#late').onclick = () => commit('late');
+  document.querySelector('#submit').onclick = () => commit('submit');
+  document.querySelector('#upload').onchange = event => commit('upload', event.target.files[0]);
+  document.querySelector('#typing').oninput = event => record('input', { value: event.target.value, inputType: event.inputType });
+  window.lab = {
+    snapshot: () => ({ scope, task, counts: { ...counts }, entry: document.querySelector('#typing').value, uploadName: document.querySelector('#upload').files[0]?.name || '' }),
+    releaseLate: () => { document.querySelector('#late').disabled = false; record('fixture-enabled-late'); },
+    opaque: async () => { await fetch(url('/permit', 'opaque')); document.querySelector('#increment').click(); return 'inner click dispatched'; },
+    flush: () => writes,
+    events
+  };
+  record('ready');
+})();
+</script></html>

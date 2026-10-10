@@ -151,12 +151,12 @@ helpr 或电脑意外退出后，重新启动时恢复任务记录。对中断�
 - [浏览器执行基础能力调查](../research/browser-execution-primitives.md)区分 Playwright、Stagehand 已提供的原语与 helpr 仍需实现的能力，包含尚待运行的小型实验。这份调查不是技术选型决定。
 - [旧版界面参考边界](../research/previous-product-reference.md)记录已核查的网页与浮窗组件，区分真实实现、模拟演示和视觉参考。
 - [可见网页工作区调查](../research/visible-browser-workspace.md)比较两种候选承载方式的连接、登录和人工输入识别边界，列出待验证实验；未选择最终架构。
-- [首版并行可行性调查](../research/parallel-execution-feasibility.md)记录多页面操作、登录与服务端状态隔离的依据。现已取得 [受控页面的归属、双页重叠与 Electron 真人输入证据](../../.scratch/helpr-first-release/issues/01-visible-page-control.md)；可靠的人工接管机制、独立停止、实际 AI 并行和恢复等仍待验证，产品的首版两项并行尚未实现。
+- [首版并行可行性调查](../research/parallel-execution-feasibility.md)记录多页面操作、登录与服务端状态隔离的依据。现已取得 [受控页面的归属、双页重叠与 Electron 真人输入证据](../../.scratch/helpr-first-release/issues/01-visible-page-control.md)，以及 [独立停止与迟到结果隔离的原语证据](../../.scratch/helpr-first-release/issues/02-independent-stop.md)。可靠的人工接管机制、实际 AI 执行器的停止与并行、恢复等仍待验证，产品的首版两项并行尚未实现。
 
 ## 共识状态与后续工程问题
 
 用户已确认首版两项并行及其余产品共识，本轮访谈完成。[整体产品共识](product-agreement.md)和 [首版验收范围](acceptance-outline.md)作为后续技术验证与实现规格的依据。
 
-流程表示、参数化、保存与版本处理、实际结果核对、素材处理状态和调度安排属于后续工程设计责任。浏览器承载、人工输入识别、跨进程重放和停止竞态需要按调研记录做实验；目前没有确定最终技术组合，也没有宣称这些能力已实现。
+流程表示、参数化、保存与版本处理、实际结果核对、素材处理状态和调度安排属于后续工程设计责任。已有页面与停止原语的受控实验不代替实际执行器组合验证；人工输入识别、跨进程重放与恢复等继续按地图取得证据。目前没有确定最终技术组合，也没有宣称这些能力已实现。
 
 共同阻碍解除后的具体积压安排，由 AI 结合任务与用户已有约定判断；需要新的取舍时再与用户确定，不要求本轮为未来所有任务预先选定同一处理方式。
