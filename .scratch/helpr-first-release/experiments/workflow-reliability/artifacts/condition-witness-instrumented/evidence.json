@@ -1,0 +1,122 @@
+{
+  "params": {
+    "origin": "http://home.ts-ali.internal:38080",
+    "entryUrl": "http://home.ts-ali.internal:38080/wp-admin/",
+    "title": "File",
+    "body": "这是候选条件的虚构正文。不能把固定搜索词 File 当作标题引用。",
+    "category": "Excel 验证",
+    "filePath": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/workflow-reliability/artifacts/condition-witness-instrumented/condition-witness-condition-witness-instrumented.xlsx",
+    "fileName": "condition-witness-condition-witness-instrumented.xlsx",
+    "fileStem": "condition-witness-condition-witness-instrumented"
+  },
+  "snapshots": [],
+  "source": "previously-learned-runtime-steps",
+  "publishes": 0,
+  "events": [
+    {
+      "type": "action-start",
+      "at": "2026-10-10T12:18:11.738Z",
+      "action": {
+        "op": "hover",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "Posts"
+        }
+      }
+    },
+    {
+      "type": "action-end",
+      "at": "2026-10-10T12:18:11.824Z"
+    },
+    {
+      "type": "action-start",
+      "at": "2026-10-10T12:18:11.824Z",
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "Add Post"
+        }
+      }
+    },
+    {
+      "type": "action-end",
+      "at": "2026-10-10T12:18:12.460Z"
+    },
+    {
+      "type": "action-start",
+      "at": "2026-10-10T12:18:12.460Z",
+      "action": {
+        "op": "fill",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "Add title"
+        },
+        "value": "{{title}}"
+      }
+    }
+  ],
+  "error": {
+    "name": "TimeoutError",
+    "message": "locator.waitFor: Timeout 18000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('iframe[name=\"editor-canvas\"]').contentFrame().getByRole('textbox', { name: 'Add title', exact: true }) to be visible\u001b[22m\n"
+  },
+  "failure": {
+    "url": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+    "frames": [
+      {
+        "frame": "main",
+        "aria": "- navigation \"Toolbar\":\n  - menu:\n    - group:\n      - menuitem \"About WordPress\"\n    - group:\n      - menuitem \"helpr 验证后台（仅测试）\"\n    - group:\n      - menuitem \"⌘K Open command palette\"\n    - group:\n      - menuitem \"0 Comments in moderation\"\n    - group:\n      - menuitem \"New\"\n  - menu:\n    - group:\n      - menuitem \"Howdy, helpr 测试用户\"\n- main:\n  - heading \"Add Post\" [level=1]",
+        "controls": [
+          {
+            "tag": "a",
+            "role": "menuitem",
+            "inViewport": true,
+            "text": "About WordPress",
+            "classes": "ab-item"
+          },
+          {
+            "tag": "a",
+            "role": "menuitem",
+            "inViewport": true,
+            "text": "helpr 验证后台（仅测试）",
+            "classes": "ab-item"
+          },
+          {
+            "tag": "a",
+            "role": "menuitem",
+            "inViewport": true,
+            "text": "⌘K\nOpen command palette",
+            "classes": "ab-item"
+          },
+          {
+            "tag": "a",
+            "role": "menuitem",
+            "inViewport": true,
+            "text": "0\n0 Comments in moderation",
+            "classes": "ab-item"
+          },
+          {
+            "tag": "a",
+            "role": "menuitem",
+            "inViewport": true,
+            "text": "New",
+            "classes": "ab-item"
+          },
+          {
+            "tag": "a",
+            "role": "menuitem",
+            "inViewport": true,
+            "text": "Howdy, helpr 测试用户",
+            "classes": "ab-item"
+          }
+        ]
+      }
+    ]
+  }
+}

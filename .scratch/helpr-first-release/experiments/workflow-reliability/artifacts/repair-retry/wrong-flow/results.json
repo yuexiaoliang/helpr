@@ -1,0 +1,279 @@
+{
+  "mode": "wrong-flow",
+  "startedAt": "2026-10-10T12:40:09.901Z",
+  "runtime": {
+    "node": "v24.18.0",
+    "browser": "156.0.8078.4",
+    "pid": 59139
+  },
+  "candidateHash": "5339be77e6581962799a6d17144cb2352532cc76a69ec920990a1019be417b15",
+  "sourceHashes": {
+    "contract.mjs": "0293644766d4c920f5a416c20fc8e236b25dc1208225ed52f888e857be6d6f6d",
+    "executor.mjs": "c0b177ab34b3ffe9ad5db3aa83004d5e314f61b3d8da8f0fe0197adeda08ee56",
+    "run.mjs": "58a4e5be119133b84968b82ec768d0d7fd45477c296351cc224e04e4fde8a673"
+  },
+  "task": {
+    "id": "repair-retry/wrong-flow",
+    "kind": "create-record-with-attachment",
+    "origin": "http://home.ts-ali.internal:38080",
+    "entryUrl": "http://home.ts-ali.internal:38080/wp-admin/",
+    "inputs": {
+      "title": {
+        "type": "string",
+        "value": "可靠性实验 wrong-flow repair-retry"
+      },
+      "body": {
+        "type": "string",
+        "value": "虚构数据，用于流程条件实验。样本 wrong-flow，批次 repair-retry。"
+      },
+      "category": {
+        "type": "string",
+        "value": "Excel 验证"
+      },
+      "file": {
+        "type": "file",
+        "path": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/workflow-reliability/artifacts/repair-retry/wrong-flow/wrong-flow-repair-retry.xlsx",
+        "name": "wrong-flow-repair-retry.xlsx",
+        "stem": "wrong-flow-repair-retry",
+        "sha256": "6fab0b14af214cc9ddf015e91e848d792f4f5bb39568c54b83da200dbd5b513a"
+      }
+    },
+    "requiredOutputs": [
+      "title",
+      "body",
+      "category",
+      "file"
+    ],
+    "authorization": {
+      "origin": "http://home.ts-ali.internal:38080",
+      "kind": "create-record-with-attachment",
+      "inputsDigest": "dcccd4ab6c86255bd03be548206ecc229500f6d9e725e8632f26f3b5f08c8796",
+      "source": "explicitly-authorized-test-fixture-not-human-preview"
+    }
+  },
+  "network": [],
+  "outcome": {
+    "status": "blocked",
+    "error": {
+      "code": "not-applicable",
+      "detail": {}
+    },
+    "sourceHash": "6c753d3e99b137010111da3ced0dd612d3c1a246bea5a60de31c55a586cebda8",
+    "commitDispatched": false,
+    "repairs": [],
+    "events": []
+  },
+  "failureObservation": {
+    "url": "http://home.ts-ali.internal:38080/?p=13",
+    "frames": [
+      {
+        "frame": "main",
+        "aria": "- navigation \"Toolbar\":\n  - menu:\n    - group:\n      - menuitem \"About WordPress\"\n    - group:\n      - menuitem \"helpr 验证后台（仅测试）\"\n    - group:\n      - menuitem \"0 Comments in moderation\"\n    - group:\n      - menuitem \"New\"\n    - group:\n      - menuitem \"Edit Post\"\n  - menu:\n    - group:\n      - menuitem \"Howdy, helpr 测试用户\"\n    - group:\n      - menuitem \"Search\":\n        - textbox \"Search\"\n        - text: Search\n- link \"Skip to content\":\n  - /url: \"#wp--skip-link--target\"\n- banner:\n  - paragraph:\n    - link \"helpr 验证后台（仅测试）\":\n      - /url: http://home.ts-ali.internal:38080\n  - navigation:\n    - list:\n      - list:\n        - listitem:\n          - link \"Sample Page\":\n            - /url: http://home.ts-ali.internal:38080/?page_id=2\n- main:\n  - heading \"流程复用实验 learn 2026-10-10T10-25-45-629Z\" [level=1]\n  - paragraph: Written by\n  - link \"helpr 测试用户\":\n    - /url: http://home.ts-ali.internal:38080/?author=2\n  - paragraph: in\n  - link \"Excel 验证\":\n    - /url: http://home.ts-ali.internal:38080/?cat=2\n  - paragraph: 此文及附件均为虚构测试数据。批次 learn，实验 2026-10-10T10-25-45-629Z。\n  - link \"learn-2026-10-10T10-25-45-629Z\":\n    - /url: http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/learn-2026-10-10T10-25-45-629Z.xlsx\n  - link \"Download\":\n    - /url: http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/learn-2026-10-10T10-25-45-629Z.xlsx\n  - navigation \"Post navigation\":\n    - link \"流程复用实验 learn 2026-10-10T10-19-27-238Z\":\n      - /url: http://home.ts-ali.internal:38080/?p=10\n    - link \"流程复用实验 replay 2026-10-10T10-25-45-629Z\":\n      - /url: http://home.ts-ali.internal:38080/?p=16\n  - heading \"More posts\" [level=2]\n  - list:\n    - listitem:\n      - heading \"可靠性实验 updated repair-retry\" [level=3]:\n        - link \"可靠性实验 updated repair-retry\":\n          - /url: http://home.ts-ali.internal:38080/?p=67\n      - link \"October 10, 2026\":\n        - /url: http://home.ts-ali.internal:38080/?p=67\n        - time: October 10, 2026\n    - listitem:\n      - heading \"可靠性实验 repair-safe repair-retry\" [level=3]:\n        - link \"可靠性实验 repair-safe repair-retry\":\n          - /url: http://home.ts-ali.internal:38080/?p=64\n      - link \"October 10, 2026\":\n        - /url: http://home.ts-ali.internal:38080/?p=64\n        - time: October 10, 2026\n    - listitem:\n      - heading \"可靠性实验 delayed-upload final-path\" [level=3]:\n        - link \"可靠性实验 delayed-upload final-path\":\n          - /url: http://home.ts-ali.internal:38080/?p=53\n      - link \"October 10, 2026\":\n        - /url: http://home.ts-ali.internal:38080/?p=53\n        - time: October 10, 2026\n    - listitem:\n      - heading \"File\" [level=3]:\n        - link \"File\":\n          - /url: http://home.ts-ali.internal:38080/?p=50\n      - link \"October 10, 2026\":\n        - /url: http://home.ts-ali.internal:38080/?p=50\n        - time: October 10, 2026\n- contentinfo:\n  - heading \"helpr 验证后台（仅测试）\" [level=2]:\n    - link \"helpr 验证后台（仅测试）\":\n      - /url: http://home.ts-ali.internal:38080\n  - paragraph: 仅用于 Excel 附件发布与网页自动化验证，全部内容均为虚构测试数据。\n  - navigation \"2\":\n    - list:\n      - listitem:\n        - link \"Blog\":\n          - /url: \"#\"\n      - listitem:\n        - link \"About\":\n          - /url: \"#\"\n      - listitem:\n        - link \"FAQs\":\n          - /url: \"#\"\n      - listitem:\n        - link \"Authors\":\n          - /url: \"#\"\n  - navigation \"3\":\n    - list:\n      - listitem:\n        - link \"Events\":\n          - /url: \"#\"\n      - listitem:\n        - link \"Shop\":\n          - /url: \"#\"\n      - listitem:\n        - link \"Patterns\":\n          - /url: \"#\"\n      - listitem:\n        - link \"Themes\":\n          - /url: \"#\"\n  - paragraph: Twenty Twenty-Five\n  - paragraph:\n    - text: Designed with\n    - link \"WordPress\":\n      - /url: https://wordpress.org",
+        "controls": [
+          {
+            "tag": "a",
+            "role": "menuitem",
+            "inViewport": true,
+            "text": "About WordPress",
+            "classes": "ab-item"
+          },
+          {
+            "tag": "a",
+            "role": "menuitem",
+            "inViewport": true,
+            "text": "helpr 验证后台（仅测试）",
+            "classes": "ab-item"
+          },
+          {
+            "tag": "a",
+            "role": "menuitem",
+            "inViewport": true,
+            "text": "0\n0 Comments in moderation",
+            "classes": "ab-item"
+          },
+          {
+            "tag": "a",
+            "role": "menuitem",
+            "inViewport": true,
+            "text": "New",
+            "classes": "ab-item"
+          },
+          {
+            "tag": "a",
+            "role": "menuitem",
+            "inViewport": true,
+            "text": "Edit Post",
+            "classes": "ab-item"
+          },
+          {
+            "tag": "a",
+            "role": "menuitem",
+            "inViewport": true,
+            "text": "Howdy, helpr 测试用户",
+            "classes": "ab-item"
+          },
+          {
+            "tag": "input",
+            "id": "adminbar-search",
+            "type": "text",
+            "inViewport": true,
+            "text": "",
+            "classes": "adminbar-input"
+          },
+          {
+            "tag": "a",
+            "id": "wp-skip-link",
+            "inViewport": false,
+            "text": "Skip to content",
+            "classes": "skip-link screen-reader-text"
+          },
+          {
+            "tag": "a",
+            "inViewport": true,
+            "text": "helpr 验证后台（仅测试）"
+          },
+          {
+            "tag": "a",
+            "inViewport": true,
+            "text": "Sample Page",
+            "classes": "wp-block-pages-list__item__link wp-block-navigation-item__content"
+          },
+          {
+            "tag": "a",
+            "inViewport": true,
+            "text": "helpr 测试用户",
+            "classes": "wp-block-post-author-name__link"
+          },
+          {
+            "tag": "a",
+            "inViewport": true,
+            "text": "Excel 验证"
+          },
+          {
+            "tag": "a",
+            "id": "wp-block-file--media-b8c73d74-88de-4cc8-afe8-8e0b828ebde8",
+            "inViewport": true,
+            "text": "learn-2026-10-10T10-25-45-629Z"
+          },
+          {
+            "tag": "a",
+            "inViewport": true,
+            "text": "Download",
+            "classes": "wp-block-file__button wp-element-button"
+          },
+          {
+            "tag": "a",
+            "inViewport": true,
+            "text": "流程复用实验 learn 2026-10-10T10-19-27-238Z"
+          },
+          {
+            "tag": "a",
+            "inViewport": true,
+            "text": "流程复用实验 replay 2026-10-10T10-25-45-629Z"
+          },
+          {
+            "tag": "a",
+            "inViewport": false,
+            "text": "可靠性实验 updated repair-retry"
+          },
+          {
+            "tag": "a",
+            "inViewport": false,
+            "text": "October 10, 2026"
+          },
+          {
+            "tag": "a",
+            "inViewport": false,
+            "text": "可靠性实验 repair-safe repair-retry"
+          },
+          {
+            "tag": "a",
+            "inViewport": false,
+            "text": "October 10, 2026"
+          },
+          {
+            "tag": "a",
+            "inViewport": false,
+            "text": "可靠性实验 delayed-upload final-path"
+          },
+          {
+            "tag": "a",
+            "inViewport": false,
+            "text": "October 10, 2026"
+          },
+          {
+            "tag": "a",
+            "inViewport": false,
+            "text": "File"
+          },
+          {
+            "tag": "a",
+            "inViewport": false,
+            "text": "October 10, 2026"
+          },
+          {
+            "tag": "a",
+            "inViewport": false,
+            "text": "helpr 验证后台（仅测试）"
+          },
+          {
+            "tag": "a",
+            "inViewport": false,
+            "text": "Blog",
+            "classes": "wp-block-navigation-item__content"
+          },
+          {
+            "tag": "a",
+            "inViewport": false,
+            "text": "About",
+            "classes": "wp-block-navigation-item__content"
+          },
+          {
+            "tag": "a",
+            "inViewport": false,
+            "text": "FAQs",
+            "classes": "wp-block-navigation-item__content"
+          },
+          {
+            "tag": "a",
+            "inViewport": false,
+            "text": "Authors",
+            "classes": "wp-block-navigation-item__content"
+          },
+          {
+            "tag": "a",
+            "inViewport": false,
+            "text": "Events",
+            "classes": "wp-block-navigation-item__content"
+          },
+          {
+            "tag": "a",
+            "inViewport": false,
+            "text": "Shop",
+            "classes": "wp-block-navigation-item__content"
+          },
+          {
+            "tag": "a",
+            "inViewport": false,
+            "text": "Patterns",
+            "classes": "wp-block-navigation-item__content"
+          },
+          {
+            "tag": "a",
+            "inViewport": false,
+            "text": "Themes",
+            "classes": "wp-block-navigation-item__content"
+          },
+          {
+            "tag": "a",
+            "inViewport": false,
+            "text": "WordPress"
+          }
+        ]
+      }
+    ]
+  },
+  "expectedError": "not-applicable",
+  "passed": true,
+  "endedAt": "2026-10-10T12:40:17.171Z"
+}

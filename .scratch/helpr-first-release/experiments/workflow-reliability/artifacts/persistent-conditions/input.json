@@ -1,0 +1,2834 @@
+{
+  "candidate": {
+    "schema": 1,
+    "version": 1,
+    "compatibility": {
+      "origin": "http://home.ts-ali.internal:38080",
+      "kind": "create-record-with-attachment"
+    },
+    "inputs": {
+      "title": "string",
+      "body": "string",
+      "category": "string",
+      "file": "file"
+    },
+    "reasoning": "入口身份来自仪表盘观察：main 内 heading \"Dashboard\" 与 link \"Posts\"（Posts 菜单可见，Add Post 子项 inViewport=false，需先 hover）。标题/正文/分类/文件四项目标分别对应公开页观察：h1.wp-block-post-title、.entry-content 内 p.wp-block-paragraph、.taxonomy-category a、.wp-block-file a.wp-block-file__button。上传完成条件利用 contrastEvidence：上传中 main 出现文本 \"Uploading —\" 且 editor-canvas 的 Write file name… 为空；上传完成后 main 出现 \"Upload complete\" 且 Write file name… 文本等于文件 stem。commitChecks 再核对标题、正文、分类勾选与上传完成。resultChecks 在公开文章页核对标题、正文、分类与文件哈希。所有字符串为常量，动态值用引用对象。",
+    "entryChecks": [
+      {
+        "kind": "visible",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "heading",
+          "name": "Dashboard"
+        }
+      },
+      {
+        "kind": "visible",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "Posts"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "id": "s1",
+        "effect": "read",
+        "action": {
+          "op": "hover",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": "Posts"
+          }
+        },
+        "before": [],
+        "after": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "link",
+              "name": "Add Post"
+            }
+          }
+        ]
+      },
+      {
+        "id": "s2",
+        "effect": "read",
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": "Add Post"
+          }
+        },
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "link",
+              "name": "Add Post"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            }
+          }
+        ]
+      },
+      {
+        "id": "s3",
+        "effect": "edit",
+        "action": {
+          "op": "fill",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Add title"
+          },
+          "value": {
+            "input": "title"
+          }
+        },
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "title"
+            }
+          }
+        ]
+      },
+      {
+        "id": "s4",
+        "effect": "edit",
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "button",
+            "name": "Add default block"
+          }
+        },
+        "before": [
+          {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "title"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "document",
+              "name": "Empty block; start writing or type forward slash to choose a block"
+            }
+          }
+        ]
+      },
+      {
+        "id": "s5",
+        "effect": "edit",
+        "action": {
+          "op": "fill",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "document",
+            "name": "Empty block; start writing or type forward slash to choose a block"
+          },
+          "value": {
+            "input": "body"
+          }
+        },
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "document",
+              "name": "Empty block; start writing or type forward slash to choose a block"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "document",
+              "name": "Block: Paragraph"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "body"
+            }
+          }
+        ]
+      },
+      {
+        "id": "s6",
+        "effect": "read",
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "tab",
+            "name": "Post"
+          }
+        },
+        "before": [
+          {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "document",
+              "name": "Block: Paragraph"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "body"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "checkbox",
+              "name": {
+                "input": "category"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "s7",
+        "effect": "edit",
+        "action": {
+          "op": "check",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "checkbox",
+            "name": {
+              "input": "category"
+            }
+          },
+          "value": true
+        },
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "checkbox",
+              "name": {
+                "input": "category"
+              }
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "checked",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "checkbox",
+              "name": {
+                "input": "category"
+              }
+            },
+            "expected": true
+          }
+        ]
+      },
+      {
+        "id": "s8",
+        "effect": "read",
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Block Inserter"
+          }
+        },
+        "before": [
+          {
+            "kind": "checked",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "checkbox",
+              "name": {
+                "input": "category"
+              }
+            },
+            "expected": true
+          }
+        ],
+        "after": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "searchbox",
+              "name": "Search"
+            }
+          }
+        ]
+      },
+      {
+        "id": "s9",
+        "effect": "edit",
+        "action": {
+          "op": "fill",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "searchbox",
+            "name": "Search"
+          },
+          "value": "File"
+        },
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "searchbox",
+              "name": "Search"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "value",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "searchbox",
+              "name": "Search"
+            },
+            "compare": "equals",
+            "expected": "File"
+          }
+        ]
+      },
+      {
+        "id": "s10",
+        "effect": "edit",
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "option",
+            "name": "File"
+          }
+        },
+        "before": [
+          {
+            "kind": "value",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "searchbox",
+              "name": "Search"
+            },
+            "compare": "equals",
+            "expected": "File"
+          }
+        ],
+        "after": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "button",
+              "name": "Upload"
+            }
+          }
+        ]
+      },
+      {
+        "id": "s11",
+        "effect": "upload",
+        "action": {
+          "op": "upload",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "css",
+            "selector": "input[type=file]"
+          },
+          "value": {
+            "input": "file",
+            "field": "path"
+          }
+        },
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "button",
+              "name": "Upload"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Dismiss this notice"
+            }
+          }
+        ]
+      },
+      {
+        "id": "s12",
+        "effect": "read",
+        "action": {
+          "op": "wait",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Dismiss this notice"
+          }
+        },
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Dismiss this notice"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "text",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Dismiss this notice"
+            },
+            "compare": "contains",
+            "expected": "Upload complete"
+          },
+          {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Write file name…"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "file",
+              "field": "stem"
+            }
+          }
+        ]
+      },
+      {
+        "id": "s13",
+        "effect": "commit",
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Publish"
+          }
+        },
+        "before": [
+          {
+            "kind": "text",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Dismiss this notice"
+            },
+            "compare": "contains",
+            "expected": "Upload complete"
+          },
+          {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Write file name…"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "file",
+              "field": "stem"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "region",
+              "name": "Editor publish"
+            }
+          }
+        ]
+      },
+      {
+        "id": "s14",
+        "effect": "commit",
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Publish",
+            "within": {
+              "frame": "main",
+              "by": "role",
+              "role": "region",
+              "name": "Editor publish"
+            }
+          }
+        },
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "region",
+              "name": "Editor publish"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "link",
+              "name": "View Post (opens in a new tab)"
+            }
+          }
+        ]
+      },
+      {
+        "id": "s15",
+        "effect": "read",
+        "action": {
+          "op": "finish",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": "View Post (opens in a new tab)"
+          }
+        },
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "link",
+              "name": "View Post (opens in a new tab)"
+            }
+          }
+        ],
+        "after": []
+      }
+    ],
+    "commitChecks": [
+      {
+        "kind": "value",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "Add title"
+        },
+        "compare": "equals",
+        "expected": {
+          "input": "title"
+        }
+      },
+      {
+        "kind": "value",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "document",
+          "name": "Block: Paragraph"
+        },
+        "compare": "equals",
+        "expected": {
+          "input": "body"
+        }
+      },
+      {
+        "kind": "checked",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "checkbox",
+          "name": {
+            "input": "category"
+          }
+        },
+        "expected": true
+      },
+      {
+        "kind": "text",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Dismiss this notice"
+        },
+        "compare": "contains",
+        "expected": "Upload complete"
+      },
+      {
+        "kind": "value",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "Write file name…"
+        },
+        "compare": "equals",
+        "expected": {
+          "input": "file",
+          "field": "stem"
+        }
+      }
+    ],
+    "resultChecks": [
+      {
+        "kind": "text",
+        "target": {
+          "frame": "main",
+          "by": "css",
+          "selector": "h1.wp-block-post-title"
+        },
+        "compare": "equals",
+        "expected": {
+          "input": "title"
+        }
+      },
+      {
+        "kind": "text",
+        "target": {
+          "frame": "main",
+          "by": "css",
+          "selector": ".entry-content p.wp-block-paragraph"
+        },
+        "compare": "equals",
+        "expected": {
+          "input": "body"
+        }
+      },
+      {
+        "kind": "text",
+        "target": {
+          "frame": "main",
+          "by": "css",
+          "selector": ".taxonomy-category a"
+        },
+        "compare": "equals",
+        "expected": {
+          "input": "category"
+        }
+      },
+      {
+        "kind": "download",
+        "target": {
+          "frame": "main",
+          "by": "css",
+          "selector": ".wp-block-file a.wp-block-file__button"
+        },
+        "expected": {
+          "input": "file",
+          "field": "sha256"
+        }
+      }
+    ]
+  },
+  "failure": {
+    "error": {
+      "code": "condition-unsatisfied",
+      "detail": {
+        "evidence": [
+          {
+            "condition": {
+              "kind": "visible",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "region",
+                "name": "Editor publish"
+              }
+            },
+            "ok": false
+          }
+        ]
+      }
+    },
+    "page": {
+      "url": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+      "frames": [
+        {
+          "frame": "main",
+          "aria": "- navigation \"Toolbar\":\n  - menu:\n    - group:\n      - menuitem \"About WordPress\"\n    - group:\n      - menuitem \"helpr 验证后台（仅测试）\"\n    - group:\n      - menuitem \"⌘K Open command palette\"\n    - group:\n      - menuitem \"0 Comments in moderation\"\n    - group:\n      - menuitem \"New\"\n  - menu:\n    - group:\n      - menuitem \"Howdy, helpr 测试用户\"\n- main:\n  - heading \"Add Post\" [level=1]\n  - region \"Editor top bar\":\n    - link \"View Posts\":\n      - /url: edit.php?post_type=post\n    - toolbar \"Document tools\":\n      - button \"Block Inserter\" [expanded] [pressed]\n      - button \"Undo\"\n      - button \"Redo\" [disabled]\n      - button \"Document Overview\"\n    - button \"可靠性实验 baseline revised-baseline · Post\":\n      - heading \"可靠性实验 baseline revised-baseline · Post\" [level=1]\n    - button \"View\"\n    - button \"Settings\" [expanded] [pressed]\n    - button \"Publish\" [expanded]\n    - button \"Options\"\n  - region \"Block Library\":\n    - button \"Close Block Inserter\"\n    - tablist:\n      - tab \"Blocks\" [selected]\n      - tab \"Patterns\"\n      - tab \"Media\"\n    - tabpanel \"Blocks\":\n      - text: Search\n      - searchbox \"Search\": File\n      - button \"Reset search\"\n      - heading \"Blocks\" [level=2]\n      - listbox \"Blocks\":\n        - option \"File\"\n        - option \"Social Icons\"\n        - option \"Pinterest Embed\"\n      - heading \"Patterns\" [level=2]\n      - listbox \"Patterns\":\n        - option \"Instagram grid\": Instagram grid A grid section with photos and a link to an Instagram profile.\n        - option \"Link in bio with profile, links and wide margins\": Link in bio with profile, links and wide margins A link in bio landing page with social links, a profile photo and a brief description.\n  - region \"Editor content\":\n    - toolbar \"Block tools\":\n      - button \"File\"\n      - text: Change block type or style\n      - button \"Drag\"\n      - button \"Move up\"\n      - text: Move File block from position 2 up to position 1\n      - button \"Move down\" [disabled]\n      - text: Block File is at the end of the content and can’t be moved down\n      - button \"Align\"\n      - text: Change alignment\n      - button \"Replace\"\n      - button \"Copy URL\"\n      - button \"Options\"\n    - iframe\n  - region \"Editor settings\":\n    - tablist:\n      - tab \"Post\" [selected]\n      - tab \"Block\"\n    - button \"Close Settings\"\n    - tabpanel \"Post\":\n      - heading \"可靠性实验 baseline revised-baseline\" [level=2]\n      - button \"Actions\"\n      - button \"Set featured image\"\n      - button \"Add an excerpt…\"\n      - text: 5 words, 1 minute read time. Last edited a second ago. Status\n      - 'button \"Change status: Draft\"': Draft\n      - text: Publish\n      - 'button \"Change date: Immediately\"': Immediately\n      - text: Slug\n      - 'button \"Change link: 可靠性实验-baseline-revised-baseline\"': 可靠性实验-baseline-revised-baseline\n      - text: Template\n      - button \"Template options\": Single Posts\n      - text: Discussion\n      - button \"Change discussion options\": Closed\n      - text: Format\n      - 'button \"Change format: Standard\"': Standard\n      - heading \"Categories\" [level=2]:\n        - button \"Categories\" [expanded]\n      - group \"Categories\":\n        - checkbox \"Excel 验证\" [checked]\n        - text: Excel 验证\n        - checkbox \"Uncategorized\"\n        - text: Uncategorized\n      - heading \"Tags\" [level=2]:\n        - button \"Tags\"\n  - region \"Editor publish\":\n    - button \"Cancel\"\n    - button \"Publish\"\n    - strong: Are you ready to publish?\n    - paragraph: Double-check your settings before publishing.\n    - text: helpr 验证后台（仅测试） home.ts-ali.internal:38080\n    - 'heading \"Visibility: Public\" [level=2]':\n      - 'button \"Visibility: Public\"'\n    - 'heading \"Publish: Immediately\" [level=2]':\n      - 'button \"Publish: Immediately\"'\n    - checkbox \"Always show pre-publish checks.\" [checked]\n    - text: Always show pre-publish checks.\n  - region \"Editor footer\":\n    - list \"Block breadcrumb\":\n      - listitem:\n        - button \"Post\"\n      - listitem: File\n- paragraph: Notifications\n- text: 5 results found.",
+          "controls": [
+            {
+              "tag": "a",
+              "role": "menuitem",
+              "inViewport": true,
+              "text": "About WordPress",
+              "classes": "ab-item"
+            },
+            {
+              "tag": "a",
+              "role": "menuitem",
+              "inViewport": true,
+              "text": "helpr 验证后台（仅测试）",
+              "classes": "ab-item"
+            },
+            {
+              "tag": "a",
+              "role": "menuitem",
+              "inViewport": true,
+              "text": "⌘K\nOpen command palette",
+              "classes": "ab-item"
+            },
+            {
+              "tag": "a",
+              "role": "menuitem",
+              "inViewport": true,
+              "text": "0\n0 Comments in moderation",
+              "classes": "ab-item"
+            },
+            {
+              "tag": "a",
+              "role": "menuitem",
+              "inViewport": true,
+              "text": "New",
+              "classes": "ab-item"
+            },
+            {
+              "tag": "a",
+              "role": "menuitem",
+              "inViewport": true,
+              "text": "Howdy, helpr 测试用户",
+              "classes": "ab-item"
+            },
+            {
+              "tag": "a",
+              "label": "View Posts",
+              "inViewport": true,
+              "text": "",
+              "classes": "components-button is-compact has-icon"
+            },
+            {
+              "tag": "button",
+              "id": ":r1:",
+              "type": "button",
+              "label": "Block Inserter",
+              "inViewport": true,
+              "text": "",
+              "classes": "components-button components-toolbar-button editor-document-tools__inserter-toggle is-primary is-compact is-pressed has-icon"
+            },
+            {
+              "tag": "button",
+              "id": ":r3:",
+              "type": "button",
+              "label": "Undo",
+              "inViewport": true,
+              "text": "",
+              "classes": "components-button editor-history__undo is-next-40px-default-size is-compact has-icon"
+            },
+            {
+              "tag": "button",
+              "id": ":r5:",
+              "type": "button",
+              "label": "Redo",
+              "inViewport": true,
+              "text": "",
+              "classes": "components-button editor-history__redo is-next-40px-default-size is-compact has-icon"
+            },
+            {
+              "tag": "button",
+              "id": ":r7:",
+              "type": "button",
+              "label": "Document Overview",
+              "inViewport": true,
+              "text": "",
+              "classes": "components-button components-toolbar-button editor-document-tools__document-overview-toggle is-compact has-icon"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "inViewport": true,
+              "text": "可靠性实验 baseline revised-baseline\n· Post",
+              "classes": "components-button editor-document-bar__command is-compact"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "label": "View",
+              "inViewport": true,
+              "text": "",
+              "classes": "components-button editor-preview-dropdown__toggle components-dropdown-menu__toggle is-compact has-icon has-icon-right"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "label": "Settings",
+              "inViewport": true,
+              "text": "",
+              "classes": "components-button is-compact is-pressed has-icon"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "inViewport": true,
+              "text": "Publish",
+              "classes": "components-button editor-post-publish-panel__toggle editor-post-publish-button__button is-primary is-compact"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "label": "Options",
+              "inViewport": true,
+              "text": "",
+              "classes": "components-button components-dropdown-menu__toggle is-compact has-icon"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "label": "Close Block Inserter",
+              "inViewport": true,
+              "text": "",
+              "classes": "components-button block-editor-tabbed-sidebar__close-button is-compact has-icon"
+            },
+            {
+              "tag": "button",
+              "id": "tabs-1-blocks",
+              "role": "tab",
+              "type": "button",
+              "inViewport": true,
+              "text": "Blocks",
+              "classes": "block-editor-tabbed-sidebar__tab css-jznp7x enfox0g3"
+            },
+            {
+              "tag": "button",
+              "id": "tabs-1-patterns",
+              "role": "tab",
+              "type": "button",
+              "inViewport": true,
+              "text": "Patterns",
+              "classes": "block-editor-tabbed-sidebar__tab css-jznp7x enfox0g3"
+            },
+            {
+              "tag": "button",
+              "id": "tabs-1-media",
+              "role": "tab",
+              "type": "button",
+              "inViewport": true,
+              "text": "Media",
+              "classes": "block-editor-tabbed-sidebar__tab css-jznp7x enfox0g3"
+            },
+            {
+              "tag": "input",
+              "id": "components-search-control-0",
+              "type": "search",
+              "placeholder": "Search",
+              "inViewport": true,
+              "text": "",
+              "classes": "components-input-control__input css-1gduwhc em5sgkm3"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "label": "Reset search",
+              "inViewport": true,
+              "text": "",
+              "classes": "components-button is-small has-icon"
+            },
+            {
+              "tag": "button",
+              "id": ":r9r:",
+              "role": "option",
+              "type": "button",
+              "inViewport": true,
+              "text": "File",
+              "classes": "components-button block-editor-block-types-list__item editor-block-list-item-file/default is-next-40px-default-size"
+            },
+            {
+              "tag": "button",
+              "id": ":r9t:",
+              "role": "option",
+              "type": "button",
+              "inViewport": true,
+              "text": "Social Icons",
+              "classes": "components-button block-editor-block-types-list__item editor-block-list-item-social-links is-next-40px-default-size"
+            },
+            {
+              "tag": "button",
+              "id": ":r9v:",
+              "role": "option",
+              "type": "button",
+              "inViewport": true,
+              "text": "Pinterest Embed",
+              "classes": "components-button block-editor-block-types-list__item editor-block-list-item-embed/pinterest is-next-40px-default-size"
+            },
+            {
+              "tag": "button",
+              "id": ":r9d:",
+              "type": "button",
+              "label": "File",
+              "inViewport": true,
+              "text": "",
+              "classes": "components-button components-dropdown-menu__toggle has-icon"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "label": "Drag",
+              "inViewport": true,
+              "text": "",
+              "classes": "components-button block-editor-block-mover__drag-handle is-next-40px-default-size has-icon"
+            },
+            {
+              "tag": "button",
+              "id": ":r9f:",
+              "type": "button",
+              "label": "Move up",
+              "inViewport": true,
+              "text": "",
+              "classes": "components-button block-editor-block-mover-button is-up-button is-next-40px-default-size has-icon"
+            },
+            {
+              "tag": "button",
+              "id": ":r9h:",
+              "type": "button",
+              "label": "Move down",
+              "inViewport": true,
+              "text": "",
+              "classes": "components-button block-editor-block-mover-button is-down-button is-next-40px-default-size has-icon"
+            },
+            {
+              "tag": "button",
+              "id": ":r9o:",
+              "type": "button",
+              "label": "Align",
+              "inViewport": true,
+              "text": "",
+              "classes": "components-button components-dropdown-menu__toggle has-icon"
+            },
+            {
+              "tag": "button",
+              "id": ":ra3:",
+              "type": "button",
+              "inViewport": true,
+              "text": "Replace",
+              "classes": "components-button components-toolbar-button is-compact"
+            },
+            {
+              "tag": "button",
+              "id": ":ra5:",
+              "type": "button",
+              "inViewport": true,
+              "text": "Copy URL",
+              "classes": "components-button components-toolbar-button components-clipboard-toolbar-button is-compact"
+            },
+            {
+              "tag": "button",
+              "id": ":r9j:",
+              "type": "button",
+              "label": "Options",
+              "inViewport": true,
+              "text": "",
+              "classes": "components-button components-dropdown-menu__toggle has-icon"
+            },
+            {
+              "tag": "button",
+              "id": "tabs-0-edit-post/document",
+              "role": "tab",
+              "type": "button",
+              "inViewport": true,
+              "text": "Post",
+              "classes": "css-jznp7x enfox0g3"
+            },
+            {
+              "tag": "button",
+              "id": "tabs-0-edit-post/block",
+              "role": "tab",
+              "type": "button",
+              "inViewport": true,
+              "text": "Block",
+              "classes": "css-jznp7x enfox0g3"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "label": "Close Settings",
+              "inViewport": true,
+              "text": "",
+              "classes": "components-button is-compact has-icon"
+            },
+            {
+              "tag": "button",
+              "id": ":r1q:",
+              "type": "button",
+              "label": "Actions",
+              "inViewport": true,
+              "text": "",
+              "classes": "components-button editor-all-actions-button is-small has-icon"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "inViewport": true,
+              "text": "Set featured image",
+              "classes": "components-button editor-post-featured-image__toggle is-next-40px-default-size"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "inViewport": true,
+              "text": "Add an excerpt…",
+              "classes": "components-button is-next-40px-default-size is-link"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "label": "Change status: Draft",
+              "inViewport": true,
+              "text": "Draft",
+              "classes": "components-button editor-post-status__toggle is-compact is-tertiary has-text has-icon"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "label": "Change date: Immediately",
+              "inViewport": true,
+              "text": "Immediately",
+              "classes": "components-button editor-post-schedule__dialog-toggle is-compact is-tertiary"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "label": "Change link: 可靠性实验-baseline-revised-baseline",
+              "inViewport": true,
+              "text": "可靠性实验-baseline-revised-baseline",
+              "classes": "components-button editor-post-url__panel-toggle is-compact is-tertiary"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "label": "Template options",
+              "inViewport": true,
+              "text": "Single Posts",
+              "classes": "components-button components-dropdown-menu__toggle is-compact is-tertiary"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "label": "Change discussion options",
+              "inViewport": true,
+              "text": "Closed",
+              "classes": "components-button editor-post-discussion__panel-toggle is-compact is-tertiary"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "label": "Change format: Standard",
+              "inViewport": true,
+              "text": "Standard",
+              "classes": "components-button is-compact is-tertiary"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "inViewport": true,
+              "text": "Categories",
+              "classes": "components-button components-panel__body-toggle is-next-40px-default-size"
+            },
+            {
+              "tag": "input",
+              "id": "inspector-checkbox-control-2",
+              "type": "checkbox",
+              "inViewport": true,
+              "text": "",
+              "classes": "components-checkbox-control__input"
+            },
+            {
+              "tag": "input",
+              "id": "inspector-checkbox-control-3",
+              "type": "checkbox",
+              "inViewport": true,
+              "text": "",
+              "classes": "components-checkbox-control__input"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "inViewport": true,
+              "text": "Tags",
+              "classes": "components-button components-panel__body-toggle is-next-40px-default-size"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "inViewport": true,
+              "text": "Cancel",
+              "classes": "components-button is-secondary is-compact"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "inViewport": true,
+              "text": "Publish",
+              "classes": "components-button editor-post-publish-button editor-post-publish-button__button is-primary is-compact"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "inViewport": true,
+              "text": "Visibility:\nPublic",
+              "classes": "components-button components-panel__body-toggle is-next-40px-default-size"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "inViewport": true,
+              "text": "Publish:\nImmediately",
+              "classes": "components-button components-panel__body-toggle is-next-40px-default-size"
+            },
+            {
+              "tag": "input",
+              "id": "inspector-checkbox-control-4",
+              "type": "checkbox",
+              "inViewport": true,
+              "text": "",
+              "classes": "components-checkbox-control__input"
+            },
+            {
+              "tag": "button",
+              "type": "button",
+              "inViewport": true,
+              "text": "Post",
+              "classes": "components-button block-editor-block-breadcrumb__button is-small"
+            }
+          ]
+        },
+        {
+          "frame": "editor-canvas",
+          "aria": "- textbox \"Add title\"\n- 'document \"Block: Paragraph\"': 虚构数据，用于流程条件实验。样本 baseline，批次 revised-baseline。\n- 'document \"Block: File\"':\n  - textbox \"Write file name…\"\n  - textbox \"Download button text\"",
+          "controls": [
+            {
+              "tag": "h1",
+              "role": "textbox",
+              "label": "Add title",
+              "inViewport": true,
+              "editable": "true",
+              "text": "可靠性实验 baseline revised-baseline",
+              "classes": "wp-block wp-block-post-title block-editor-block-list__block editor-post-title editor-post-title__input rich-text"
+            },
+            {
+              "tag": "p",
+              "id": "block-b57c0efb-41c6-4c14-8ddf-2f00a3290119",
+              "role": "document",
+              "label": "Block: Paragraph",
+              "inViewport": true,
+              "editable": "true",
+              "text": "虚构数据，用于流程条件实验。样本 baseline，批次 revised-baseline。",
+              "classes": "block-editor-rich-text__editable block-editor-block-list__block wp-block wp-block-paragraph rich-text"
+            },
+            {
+              "tag": "a",
+              "role": "textbox",
+              "label": "Write file name…",
+              "inViewport": true,
+              "editable": "true",
+              "text": "baseline-revised-baseline",
+              "classes": "block-editor-rich-text__editable rich-text"
+            },
+            {
+              "tag": "div",
+              "role": "textbox",
+              "label": "Download button text",
+              "inViewport": true,
+              "editable": "true",
+              "text": "Download",
+              "classes": "block-editor-rich-text__editable wp-block-file__button wp-element-button rich-text"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "contrast": [
+    {
+      "phase": "title-filled",
+      "snapshot": {
+        "url": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+        "frames": [
+          {
+            "frame": "main",
+            "aria": "- navigation \"Toolbar\":\n  - menu:\n    - group:\n      - menuitem \"About WordPress\"\n    - group:\n      - menuitem \"helpr 验证后台（仅测试）\"\n    - group:\n      - menuitem \"⌘K Open command palette\"\n    - group:\n      - menuitem \"0 Comments in moderation\"\n    - group:\n      - menuitem \"New\"\n  - menu:\n    - group:\n      - menuitem \"Howdy, helpr 测试用户\"\n- main:\n  - heading \"Add Post\" [level=1]\n  - region \"Editor top bar\":\n    - link \"View Posts\":\n      - /url: edit.php?post_type=post\n    - toolbar \"Document tools\":\n      - button \"Block Inserter\"\n      - button \"Undo\"\n      - button \"Redo\" [disabled]\n      - button \"Document Overview\"\n    - button \"File · Post\":\n      - heading \"File · Post\" [level=1]\n    - button \"Save draft\"\n    - button \"View\"\n    - button \"Settings\" [expanded] [pressed]\n    - button \"Publish\"\n    - button \"Options\"\n  - region \"Editor content\":\n    - iframe\n  - region \"Editor settings\":\n    - tablist:\n      - tab \"Post\" [selected]\n      - tab \"Block\"\n    - button \"Close Settings\"\n    - tabpanel \"Post\":\n      - heading \"File\" [level=2]\n      - button \"Actions\"\n      - button \"Set featured image\"\n      - button \"Add an excerpt…\"\n      - text: Last edited a second ago. Status\n      - 'button \"Change status: Draft\"': Draft\n      - text: Publish\n      - 'button \"Change date: Immediately\"': Immediately\n      - text: Slug\n      - 'button \"Change link: file\"': file\n      - text: Template\n      - button \"Template options\": Single Posts\n      - text: Discussion\n      - button \"Change discussion options\": Closed\n      - text: Format\n      - 'button \"Change format: Standard\"': Standard\n      - heading \"Categories\" [level=2]:\n        - button \"Categories\" [expanded]\n      - group \"Categories\":\n        - checkbox \"Excel 验证\"\n        - text: Excel 验证\n        - checkbox \"Uncategorized\"\n        - text: Uncategorized\n      - heading \"Tags\" [level=2]:\n        - button \"Tags\"\n  - region \"Editor publish\":\n    - button \"Open publish panel\"\n  - region \"Editor footer\":\n    - list \"Block breadcrumb\":\n      - listitem: Post",
+            "controls": [
+              {
+                "tag": "a",
+                "role": "menuitem",
+                "inViewport": true,
+                "text": "About WordPress",
+                "classes": "ab-item"
+              },
+              {
+                "tag": "a",
+                "role": "menuitem",
+                "inViewport": true,
+                "text": "helpr 验证后台（仅测试）",
+                "classes": "ab-item"
+              },
+              {
+                "tag": "a",
+                "role": "menuitem",
+                "inViewport": true,
+                "text": "⌘K\nOpen command palette",
+                "classes": "ab-item"
+              },
+              {
+                "tag": "a",
+                "role": "menuitem",
+                "inViewport": true,
+                "text": "0\n0 Comments in moderation",
+                "classes": "ab-item"
+              },
+              {
+                "tag": "a",
+                "role": "menuitem",
+                "inViewport": true,
+                "text": "New",
+                "classes": "ab-item"
+              },
+              {
+                "tag": "a",
+                "role": "menuitem",
+                "inViewport": true,
+                "text": "Howdy, helpr 测试用户",
+                "classes": "ab-item"
+              },
+              {
+                "tag": "a",
+                "label": "View Posts",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button is-compact has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":r1:",
+                "type": "button",
+                "label": "Block Inserter",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button components-toolbar-button editor-document-tools__inserter-toggle is-primary is-compact has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":r3:",
+                "type": "button",
+                "label": "Undo",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button editor-history__undo is-next-40px-default-size is-compact has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":r5:",
+                "type": "button",
+                "label": "Redo",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button editor-history__redo is-next-40px-default-size is-compact has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":r7:",
+                "type": "button",
+                "label": "Document Overview",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button components-toolbar-button editor-document-tools__document-overview-toggle is-compact has-icon"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": true,
+                "text": "File\n· Post",
+                "classes": "components-button editor-document-bar__command is-compact"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Save draft",
+                "inViewport": true,
+                "text": "Save draft",
+                "classes": "components-button editor-post-save-draft is-compact is-tertiary"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "View",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button editor-preview-dropdown__toggle components-dropdown-menu__toggle is-compact has-icon has-icon-right"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Settings",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button is-compact is-pressed has-icon"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": true,
+                "text": "Publish",
+                "classes": "components-button editor-post-publish-panel__toggle editor-post-publish-button__button is-primary is-compact"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Options",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button components-dropdown-menu__toggle is-compact has-icon"
+              },
+              {
+                "tag": "button",
+                "id": "tabs-0-edit-post/document",
+                "role": "tab",
+                "type": "button",
+                "inViewport": true,
+                "text": "Post",
+                "classes": "css-jznp7x enfox0g3"
+              },
+              {
+                "tag": "button",
+                "id": "tabs-0-edit-post/block",
+                "role": "tab",
+                "type": "button",
+                "inViewport": true,
+                "text": "Block",
+                "classes": "css-jznp7x enfox0g3"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Close Settings",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button is-compact has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":rl:",
+                "type": "button",
+                "label": "Actions",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button editor-all-actions-button is-small has-icon"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": true,
+                "text": "Set featured image",
+                "classes": "components-button editor-post-featured-image__toggle is-next-40px-default-size"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": true,
+                "text": "Add an excerpt…",
+                "classes": "components-button is-next-40px-default-size is-link"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Change status: Draft",
+                "inViewport": true,
+                "text": "Draft",
+                "classes": "components-button editor-post-status__toggle is-compact is-tertiary has-text has-icon"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Change date: Immediately",
+                "inViewport": true,
+                "text": "Immediately",
+                "classes": "components-button editor-post-schedule__dialog-toggle is-compact is-tertiary"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Change link: file",
+                "inViewport": true,
+                "text": "file",
+                "classes": "components-button editor-post-url__panel-toggle is-compact is-tertiary"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Template options",
+                "inViewport": true,
+                "text": "Single Posts",
+                "classes": "components-button components-dropdown-menu__toggle is-compact is-tertiary"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Change discussion options",
+                "inViewport": true,
+                "text": "Closed",
+                "classes": "components-button editor-post-discussion__panel-toggle is-compact is-tertiary"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Change format: Standard",
+                "inViewport": true,
+                "text": "Standard",
+                "classes": "components-button is-compact is-tertiary"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": true,
+                "text": "Categories",
+                "classes": "components-button components-panel__body-toggle is-next-40px-default-size"
+              },
+              {
+                "tag": "input",
+                "id": "inspector-checkbox-control-0",
+                "type": "checkbox",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-checkbox-control__input"
+              },
+              {
+                "tag": "input",
+                "id": "inspector-checkbox-control-1",
+                "type": "checkbox",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-checkbox-control__input"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": true,
+                "text": "Tags",
+                "classes": "components-button components-panel__body-toggle is-next-40px-default-size"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": false,
+                "text": "Open publish panel",
+                "classes": "components-button is-next-40px-default-size is-secondary"
+              }
+            ]
+          },
+          {
+            "frame": "editor-canvas",
+            "aria": "- textbox \"Add title\"\n- button \"Add default block\": Type / to choose a block\n- button \"Add block\"",
+            "controls": [
+              {
+                "tag": "h1",
+                "role": "textbox",
+                "label": "Add title",
+                "inViewport": true,
+                "editable": "true",
+                "text": "File",
+                "classes": "wp-block wp-block-post-title block-editor-block-list__block editor-post-title editor-post-title__input rich-text is-selected"
+              },
+              {
+                "tag": "p",
+                "role": "button",
+                "label": "Add default block",
+                "inViewport": true,
+                "text": "Type / to choose a block",
+                "classes": "block-editor-default-block-appender__content"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Add block",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button block-editor-inserter__toggle is-next-40px-default-size has-icon"
+              }
+            ]
+          }
+        ],
+        "dom": [
+          {
+            "frame": "main",
+            "fields": [
+              {
+                "tag": "h1",
+                "role": null,
+                "label": null,
+                "classes": "screen-reader-text hide-if-no-js",
+                "type": null,
+                "dataType": null,
+                "value": "Add Post",
+                "html": "<h1 class=\"screen-reader-text hide-if-no-js\">Add Post</h1>"
+              },
+              {
+                "tag": "h1",
+                "role": null,
+                "label": null,
+                "classes": "components-truncate css-1y883gm components-text",
+                "type": null,
+                "dataType": null,
+                "value": "File· Post",
+                "html": "<h1 data-wp-c16t=\"true\" data-wp-component=\"Text\" class=\"components-truncate css-1y883gm components-text\"><span class=\"editor-document-bar__post-title\">File</span><span class=\"editor-document-bar__post-type-label\">· Post</span></h1>"
+              },
+              {
+                "tag": "input",
+                "role": null,
+                "label": null,
+                "classes": "components-checkbox-control__input",
+                "type": "checkbox",
+                "dataType": null,
+                "value": "1",
+                "html": "<input id=\"inspector-checkbox-control-0\" class=\"components-checkbox-control__input\" type=\"checkbox\" value=\"1\">"
+              },
+              {
+                "tag": "input",
+                "role": null,
+                "label": null,
+                "classes": "components-checkbox-control__input",
+                "type": "checkbox",
+                "dataType": null,
+                "value": "1",
+                "html": "<input id=\"inspector-checkbox-control-1\" class=\"components-checkbox-control__input\" type=\"checkbox\" value=\"1\">"
+              }
+            ]
+          },
+          {
+            "frame": "editor-canvas",
+            "fields": [
+              {
+                "tag": "h1",
+                "role": "textbox",
+                "label": "Add title",
+                "classes": "wp-block wp-block-post-title block-editor-block-list__block editor-post-title editor-post-title__input rich-text is-selected",
+                "type": null,
+                "dataType": null,
+                "value": "File",
+                "html": "<h1 contenteditable=\"true\" class=\"wp-block wp-block-post-title block-editor-block-list__block editor-post-title editor-post-title__input rich-text is-selected\" aria-label=\"Add title\" role=\"textbox\" aria-multiline=\"true\" style=\"white-space: pre-wrap;\">File</h1>"
+              },
+              {
+                "tag": "p",
+                "role": "button",
+                "label": "Add default block",
+                "classes": "block-editor-default-block-appender__content",
+                "type": null,
+                "dataType": null,
+                "value": "Type / to choose a block",
+                "html": "<p tabindex=\"0\" role=\"button\" aria-label=\"Add default block\" class=\"block-editor-default-block-appender__content\">Type / to choose a block</p>"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "phase": "upload-pending",
+      "snapshot": {
+        "url": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+        "frames": [
+          {
+            "frame": "main",
+            "aria": "- navigation \"Toolbar\":\n  - menu:\n    - group:\n      - menuitem \"About WordPress\"\n    - group:\n      - menuitem \"helpr 验证后台（仅测试）\"\n    - group:\n      - menuitem \"⌘K Open command palette\"\n    - group:\n      - menuitem \"0 Comments in moderation\"\n    - group:\n      - menuitem \"New\"\n  - menu:\n    - group:\n      - menuitem \"Howdy, helpr 测试用户\"\n- main:\n  - heading \"Add Post\" [level=1]\n  - region \"Editor top bar\":\n    - link \"View Posts\":\n      - /url: edit.php?post_type=post\n    - toolbar \"Document tools\":\n      - button \"Block Inserter\" [expanded] [pressed]\n      - button \"Undo\"\n      - button \"Redo\" [disabled]\n      - button \"Document Overview\"\n    - button \"File · Post\":\n      - heading \"File · Post\" [level=1]\n    - button \"Save draft\" [disabled]\n    - button \"View\"\n    - button \"Settings\" [expanded] [pressed]\n    - button \"Publish\" [disabled]\n    - button \"Options\"\n  - region \"Block Library\":\n    - button \"Close Block Inserter\"\n    - tablist:\n      - tab \"Blocks\" [selected]\n      - tab \"Patterns\"\n      - tab \"Media\"\n    - tabpanel \"Blocks\":\n      - text: Search\n      - searchbox \"Search\": File\n      - button \"Reset search\"\n      - heading \"Blocks\" [level=2]\n      - listbox \"Blocks\":\n        - option \"File\"\n        - option \"Social Icons\"\n        - option \"Pinterest Embed\"\n  - region \"Editor content\":\n    - toolbar \"Block tools\":\n      - button \"File\"\n      - text: Change block type or style\n      - button \"Drag\"\n      - button \"Move up\"\n      - text: Move File block from position 2 up to position 1\n      - button \"Move down\" [disabled]\n      - text: Block File is at the end of the content and can’t be moved down\n      - button \"Align\"\n      - text: Change alignment\n      - button \"Replace\"\n      - button \"Copy URL\"\n      - button \"Options\"\n    - iframe\n  - region \"Editor settings\":\n    - tablist:\n      - tab \"Post\" [selected]\n      - tab \"Block\"\n    - button \"Close Settings\"\n    - tabpanel \"Post\":\n      - heading \"File\" [level=2]\n      - button \"Actions\"\n      - button \"Set featured image\"\n      - button \"Add an excerpt…\"\n      - text: 3 words, 1 minute read time. Last edited a second ago. Status\n      - 'button \"Change status: Draft\"': Draft\n      - text: Publish\n      - 'button \"Change date: Immediately\"': Immediately\n      - text: Slug\n      - 'button \"Change link: file\"': file\n      - text: Template\n      - button \"Template options\": Single Posts\n      - text: Discussion\n      - button \"Change discussion options\": Closed\n      - text: Format\n      - 'button \"Change format: Standard\"': Standard\n      - heading \"Categories\" [level=2]:\n        - button \"Categories\" [expanded]\n      - group \"Categories\":\n        - checkbox \"Excel 验证\" [checked]\n        - text: Excel 验证\n        - checkbox \"Uncategorized\"\n        - text: Uncategorized\n      - heading \"Tags\" [level=2]:\n        - button \"Tags\"\n  - region \"Editor publish\":\n    - button \"Open publish panel\"\n  - region \"Editor footer\":\n    - list \"Block breadcrumb\":\n      - listitem:\n        - button \"Post\"\n      - listitem: File\n  - text: Uploading — condition-witness-co…-witness-ready.xlsx\n  - button \"Dismiss this notice\": ✕\n- paragraph: Notifications\n- text: Media upload started",
+            "controls": [
+              {
+                "tag": "a",
+                "role": "menuitem",
+                "inViewport": true,
+                "text": "About WordPress",
+                "classes": "ab-item"
+              },
+              {
+                "tag": "a",
+                "role": "menuitem",
+                "inViewport": true,
+                "text": "helpr 验证后台（仅测试）",
+                "classes": "ab-item"
+              },
+              {
+                "tag": "a",
+                "role": "menuitem",
+                "inViewport": true,
+                "text": "⌘K\nOpen command palette",
+                "classes": "ab-item"
+              },
+              {
+                "tag": "a",
+                "role": "menuitem",
+                "inViewport": true,
+                "text": "0\n0 Comments in moderation",
+                "classes": "ab-item"
+              },
+              {
+                "tag": "a",
+                "role": "menuitem",
+                "inViewport": true,
+                "text": "New",
+                "classes": "ab-item"
+              },
+              {
+                "tag": "a",
+                "role": "menuitem",
+                "inViewport": true,
+                "text": "Howdy, helpr 测试用户",
+                "classes": "ab-item"
+              },
+              {
+                "tag": "a",
+                "label": "View Posts",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button is-compact has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":r1:",
+                "type": "button",
+                "label": "Block Inserter",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button components-toolbar-button editor-document-tools__inserter-toggle is-primary is-compact is-pressed has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":r3:",
+                "type": "button",
+                "label": "Undo",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button editor-history__undo is-next-40px-default-size is-compact has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":r5:",
+                "type": "button",
+                "label": "Redo",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button editor-history__redo is-next-40px-default-size is-compact has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":r7:",
+                "type": "button",
+                "label": "Document Overview",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button components-toolbar-button editor-document-tools__document-overview-toggle is-compact has-icon"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": true,
+                "text": "File\n· Post",
+                "classes": "components-button editor-document-bar__command is-compact"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Save draft",
+                "inViewport": true,
+                "text": "Save draft",
+                "classes": "components-button editor-post-save-draft is-compact is-tertiary"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "View",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button editor-preview-dropdown__toggle components-dropdown-menu__toggle is-compact has-icon has-icon-right"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Settings",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button is-compact is-pressed has-icon"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": true,
+                "text": "Publish",
+                "classes": "components-button editor-post-publish-panel__toggle editor-post-publish-button__button is-primary is-compact"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Options",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button components-dropdown-menu__toggle is-compact has-icon"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Close Block Inserter",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button block-editor-tabbed-sidebar__close-button is-compact has-icon"
+              },
+              {
+                "tag": "button",
+                "id": "tabs-1-blocks",
+                "role": "tab",
+                "type": "button",
+                "inViewport": true,
+                "text": "Blocks",
+                "classes": "block-editor-tabbed-sidebar__tab css-jznp7x enfox0g3"
+              },
+              {
+                "tag": "button",
+                "id": "tabs-1-patterns",
+                "role": "tab",
+                "type": "button",
+                "inViewport": true,
+                "text": "Patterns",
+                "classes": "block-editor-tabbed-sidebar__tab css-jznp7x enfox0g3"
+              },
+              {
+                "tag": "button",
+                "id": "tabs-1-media",
+                "role": "tab",
+                "type": "button",
+                "inViewport": true,
+                "text": "Media",
+                "classes": "block-editor-tabbed-sidebar__tab css-jznp7x enfox0g3"
+              },
+              {
+                "tag": "input",
+                "id": "components-search-control-0",
+                "type": "search",
+                "placeholder": "Search",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-input-control__input css-1gduwhc em5sgkm3"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Reset search",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button is-small has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":ra1:",
+                "role": "option",
+                "type": "button",
+                "inViewport": true,
+                "text": "File",
+                "classes": "components-button block-editor-block-types-list__item editor-block-list-item-file/default is-next-40px-default-size"
+              },
+              {
+                "tag": "button",
+                "id": ":ra3:",
+                "role": "option",
+                "type": "button",
+                "inViewport": true,
+                "text": "Social Icons",
+                "classes": "components-button block-editor-block-types-list__item editor-block-list-item-social-links is-next-40px-default-size"
+              },
+              {
+                "tag": "button",
+                "id": ":ra5:",
+                "role": "option",
+                "type": "button",
+                "inViewport": true,
+                "text": "Pinterest Embed",
+                "classes": "components-button block-editor-block-types-list__item editor-block-list-item-embed/pinterest is-next-40px-default-size"
+              },
+              {
+                "tag": "button",
+                "id": ":r9d:",
+                "type": "button",
+                "label": "File",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button components-dropdown-menu__toggle has-icon"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Drag",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button block-editor-block-mover__drag-handle is-next-40px-default-size has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":r9f:",
+                "type": "button",
+                "label": "Move up",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button block-editor-block-mover-button is-up-button is-next-40px-default-size has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":r9h:",
+                "type": "button",
+                "label": "Move down",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button block-editor-block-mover-button is-down-button is-next-40px-default-size has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":r9o:",
+                "type": "button",
+                "label": "Align",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button components-dropdown-menu__toggle has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":r9s:",
+                "type": "button",
+                "inViewport": true,
+                "text": "Replace",
+                "classes": "components-button components-toolbar-button is-compact"
+              },
+              {
+                "tag": "button",
+                "id": ":r9u:",
+                "type": "button",
+                "inViewport": true,
+                "text": "Copy URL",
+                "classes": "components-button components-toolbar-button components-clipboard-toolbar-button is-compact"
+              },
+              {
+                "tag": "button",
+                "id": ":r9j:",
+                "type": "button",
+                "label": "Options",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button components-dropdown-menu__toggle has-icon"
+              },
+              {
+                "tag": "button",
+                "id": "tabs-0-edit-post/document",
+                "role": "tab",
+                "type": "button",
+                "inViewport": true,
+                "text": "Post",
+                "classes": "css-jznp7x enfox0g3"
+              },
+              {
+                "tag": "button",
+                "id": "tabs-0-edit-post/block",
+                "role": "tab",
+                "type": "button",
+                "inViewport": true,
+                "text": "Block",
+                "classes": "css-jznp7x enfox0g3"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Close Settings",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button is-compact has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":r1q:",
+                "type": "button",
+                "label": "Actions",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button editor-all-actions-button is-small has-icon"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": true,
+                "text": "Set featured image",
+                "classes": "components-button editor-post-featured-image__toggle is-next-40px-default-size"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": true,
+                "text": "Add an excerpt…",
+                "classes": "components-button is-next-40px-default-size is-link"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Change status: Draft",
+                "inViewport": true,
+                "text": "Draft",
+                "classes": "components-button editor-post-status__toggle is-compact is-tertiary has-text has-icon"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Change date: Immediately",
+                "inViewport": true,
+                "text": "Immediately",
+                "classes": "components-button editor-post-schedule__dialog-toggle is-compact is-tertiary"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Change link: file",
+                "inViewport": true,
+                "text": "file",
+                "classes": "components-button editor-post-url__panel-toggle is-compact is-tertiary"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Template options",
+                "inViewport": true,
+                "text": "Single Posts",
+                "classes": "components-button components-dropdown-menu__toggle is-compact is-tertiary"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Change discussion options",
+                "inViewport": true,
+                "text": "Closed",
+                "classes": "components-button editor-post-discussion__panel-toggle is-compact is-tertiary"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Change format: Standard",
+                "inViewport": true,
+                "text": "Standard",
+                "classes": "components-button is-compact is-tertiary"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": true,
+                "text": "Categories",
+                "classes": "components-button components-panel__body-toggle is-next-40px-default-size"
+              },
+              {
+                "tag": "input",
+                "id": "inspector-checkbox-control-2",
+                "type": "checkbox",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-checkbox-control__input"
+              },
+              {
+                "tag": "input",
+                "id": "inspector-checkbox-control-3",
+                "type": "checkbox",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-checkbox-control__input"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": true,
+                "text": "Tags",
+                "classes": "components-button components-panel__body-toggle is-next-40px-default-size"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": false,
+                "text": "Open publish panel",
+                "classes": "components-button is-next-40px-default-size is-secondary"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": true,
+                "text": "Post",
+                "classes": "components-button block-editor-block-breadcrumb__button is-small"
+              },
+              {
+                "tag": "span",
+                "role": "button",
+                "label": "Dismiss this notice",
+                "inViewport": true,
+                "text": "✕",
+                "classes": "components-snackbar__dismiss-button"
+              }
+            ]
+          },
+          {
+            "frame": "editor-canvas",
+            "aria": "- textbox \"Add title\"\n- 'document \"Block: Paragraph\"': 这是候选条件的虚构正文。不能把固定搜索词 File 当作标题引用。\n- 'document \"Block: File\"':\n  - textbox \"Write file name…\"\n  - textbox \"Download button text\"",
+            "controls": [
+              {
+                "tag": "h1",
+                "role": "textbox",
+                "label": "Add title",
+                "inViewport": true,
+                "editable": "true",
+                "text": "File",
+                "classes": "wp-block wp-block-post-title block-editor-block-list__block editor-post-title editor-post-title__input rich-text"
+              },
+              {
+                "tag": "p",
+                "id": "block-cc5e4866-fc3f-4d70-8cce-675ed157e5bf",
+                "role": "document",
+                "label": "Block: Paragraph",
+                "inViewport": true,
+                "editable": "true",
+                "text": "这是候选条件的虚构正文。不能把固定搜索词 File 当作标题引用。",
+                "classes": "block-editor-rich-text__editable block-editor-block-list__block wp-block wp-block-paragraph rich-text"
+              },
+              {
+                "tag": "a",
+                "role": "textbox",
+                "label": "Write file name…",
+                "inViewport": true,
+                "editable": "true",
+                "text": "",
+                "classes": "block-editor-rich-text__editable rich-text"
+              },
+              {
+                "tag": "div",
+                "role": "textbox",
+                "label": "Download button text",
+                "inViewport": true,
+                "editable": "true",
+                "text": "Download",
+                "classes": "block-editor-rich-text__editable wp-block-file__button wp-element-button rich-text"
+              }
+            ]
+          }
+        ],
+        "dom": [
+          {
+            "frame": "main",
+            "fields": [
+              {
+                "tag": "h1",
+                "role": null,
+                "label": null,
+                "classes": "screen-reader-text hide-if-no-js",
+                "type": null,
+                "dataType": null,
+                "value": "Add Post",
+                "html": "<h1 class=\"screen-reader-text hide-if-no-js\">Add Post</h1>"
+              },
+              {
+                "tag": "h1",
+                "role": null,
+                "label": null,
+                "classes": "components-truncate css-1y883gm components-text",
+                "type": null,
+                "dataType": null,
+                "value": "File· Post",
+                "html": "<h1 data-wp-c16t=\"true\" data-wp-component=\"Text\" class=\"components-truncate css-1y883gm components-text\"><span class=\"editor-document-bar__post-title\">File</span><span class=\"editor-document-bar__post-type-label\">· Post</span></h1>"
+              },
+              {
+                "tag": "input",
+                "role": null,
+                "label": null,
+                "classes": "components-input-control__input css-1gduwhc em5sgkm3",
+                "type": "search",
+                "dataType": null,
+                "value": "File",
+                "html": "<input autocomplete=\"off\" placeholder=\"Search\" class=\"components-input-control__input css-1gduwhc em5sgkm3\" id=\"components-search-control-0\" type=\"search\" value=\"File\">"
+              },
+              {
+                "tag": "input",
+                "role": null,
+                "label": null,
+                "classes": "components-checkbox-control__input",
+                "type": "checkbox",
+                "dataType": null,
+                "value": "1",
+                "html": "<input id=\"inspector-checkbox-control-2\" class=\"components-checkbox-control__input\" type=\"checkbox\" value=\"1\">"
+              },
+              {
+                "tag": "input",
+                "role": null,
+                "label": null,
+                "classes": "components-checkbox-control__input",
+                "type": "checkbox",
+                "dataType": null,
+                "value": "1",
+                "html": "<input id=\"inspector-checkbox-control-3\" class=\"components-checkbox-control__input\" type=\"checkbox\" value=\"1\">"
+              },
+              {
+                "tag": "p",
+                "role": null,
+                "label": null,
+                "classes": "a11y-speak-intro-text",
+                "type": null,
+                "dataType": null,
+                "value": "Notifications",
+                "html": "<p id=\"a11y-speak-intro-text\" class=\"a11y-speak-intro-text\" style=\"position:absolute;margin:-1px;padding:0;height:1px;width:1px;overflow:hidden;clip-path:inset(50%);border:0;word-wrap:normal !important;word-break:normal !important;\">Notifications</p>"
+              }
+            ]
+          },
+          {
+            "frame": "editor-canvas",
+            "fields": [
+              {
+                "tag": "h1",
+                "role": "textbox",
+                "label": "Add title",
+                "classes": "wp-block wp-block-post-title block-editor-block-list__block editor-post-title editor-post-title__input rich-text",
+                "type": null,
+                "dataType": null,
+                "value": "File",
+                "html": "<h1 contenteditable=\"true\" class=\"wp-block wp-block-post-title block-editor-block-list__block editor-post-title editor-post-title__input rich-text\" aria-label=\"Add title\" role=\"textbox\" aria-multiline=\"true\" style=\"white-space: pre-wrap;\">File</h1>"
+              },
+              {
+                "tag": "p",
+                "role": "document",
+                "label": "Block: Paragraph",
+                "classes": "block-editor-rich-text__editable block-editor-block-list__block wp-block wp-block-paragraph rich-text",
+                "type": null,
+                "dataType": "core/paragraph",
+                "value": "这是候选条件的虚构正文。不能把固定搜索词 File 当作标题引用。",
+                "html": "<p role=\"document\" aria-multiline=\"true\" aria-readonly=\"false\" class=\"block-editor-rich-text__editable block-editor-block-list__block wp-block wp-block-paragraph rich-text\" id=\"block-cc5e4866-fc3f-4d70-8cce-675ed157e5bf\" aria-label=\"Block: Paragraph\" data-block=\"cc5e4866-fc3f-4d70-8cce-675ed157e5bf\" data-type=\"core/paragraph\" data-title=\"Paragraph\" data-empty=\"false\" contenteditable=\"true\" data-wp-block-attribute-key=\"content\" style=\"white-space: pre-wrap;\">这是候选条件的虚构正文。不能把固定搜索词 File 当作标题引用。</p>"
+              },
+              {
+                "tag": "a",
+                "role": "textbox",
+                "label": "Write file name…",
+                "classes": "block-editor-rich-text__editable rich-text",
+                "type": null,
+                "dataType": null,
+                "value": "﻿",
+                "html": "<a role=\"textbox\" aria-multiline=\"true\" aria-readonly=\"false\" aria-label=\"Write file name…\" contenteditable=\"true\" class=\"block-editor-rich-text__editable rich-text\" data-wp-block-attribute-key=\"fileName\" style=\"white-space: pre-wrap;\">﻿<span data-rich-text-placeholder=\"Write file name…\" style=\"pointer-events:none;user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;\"></span></a>"
+              },
+              {
+                "tag": "div",
+                "role": "textbox",
+                "label": "Download button text",
+                "classes": "block-editor-rich-text__editable wp-block-file__button wp-element-button rich-text",
+                "type": null,
+                "dataType": null,
+                "value": "Download",
+                "html": "<div role=\"textbox\" aria-multiline=\"true\" aria-readonly=\"false\" aria-label=\"Download button text\" class=\"block-editor-rich-text__editable wp-block-file__button wp-element-button rich-text\" contenteditable=\"true\" data-wp-block-attribute-key=\"downloadButtonText\" style=\"white-space: pre-wrap;\">Download</div>"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "phase": "upload-complete",
+      "snapshot": {
+        "url": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+        "frames": [
+          {
+            "frame": "main",
+            "aria": "- navigation \"Toolbar\":\n  - menu:\n    - group:\n      - menuitem \"About WordPress\"\n    - group:\n      - menuitem \"helpr 验证后台（仅测试）\"\n    - group:\n      - menuitem \"⌘K Open command palette\"\n    - group:\n      - menuitem \"0 Comments in moderation\"\n    - group:\n      - menuitem \"New\"\n  - menu:\n    - group:\n      - menuitem \"Howdy, helpr 测试用户\"\n- main:\n  - heading \"Add Post\" [level=1]\n  - region \"Editor top bar\":\n    - link \"View Posts\":\n      - /url: edit.php?post_type=post\n    - toolbar \"Document tools\":\n      - button \"Block Inserter\" [expanded] [pressed]\n      - button \"Undo\"\n      - button \"Redo\" [disabled]\n      - button \"Document Overview\"\n    - button \"File · Post\":\n      - heading \"File · Post\" [level=1]\n    - button \"Save draft\"\n    - button \"View\"\n    - button \"Settings\" [expanded] [pressed]\n    - button \"Publish\"\n    - button \"Options\"\n  - region \"Block Library\":\n    - button \"Close Block Inserter\"\n    - tablist:\n      - tab \"Blocks\" [selected]\n      - tab \"Patterns\"\n      - tab \"Media\"\n    - tabpanel \"Blocks\":\n      - text: Search\n      - searchbox \"Search\": File\n      - button \"Reset search\"\n      - heading \"Blocks\" [level=2]\n      - listbox \"Blocks\":\n        - option \"File\"\n        - option \"Social Icons\"\n        - option \"Pinterest Embed\"\n  - region \"Editor content\":\n    - toolbar \"Block tools\":\n      - button \"File\"\n      - text: Change block type or style\n      - button \"Drag\"\n      - button \"Move up\"\n      - text: Move File block from position 2 up to position 1\n      - button \"Move down\" [disabled]\n      - text: Block File is at the end of the content and can’t be moved down\n      - button \"Align\"\n      - text: Change alignment\n      - button \"Replace\"\n      - button \"Copy URL\"\n      - button \"Options\"\n    - iframe\n  - region \"Editor settings\":\n    - tablist:\n      - tab \"Post\" [selected]\n      - tab \"Block\"\n    - button \"Close Settings\"\n    - tabpanel \"Post\":\n      - heading \"File\" [level=2]\n      - button \"Actions\"\n      - button \"Set featured image\"\n      - button \"Add an excerpt…\"\n      - text: 5 words, 1 minute read time. Last edited a second ago. Status\n      - 'button \"Change status: Draft\"': Draft\n      - text: Publish\n      - 'button \"Change date: Immediately\"': Immediately\n      - text: Slug\n      - 'button \"Change link: file\"': file\n      - text: Template\n      - button \"Template options\": Single Posts\n      - text: Discussion\n      - button \"Change discussion options\": Closed\n      - text: Format\n      - 'button \"Change format: Standard\"': Standard\n      - heading \"Categories\" [level=2]:\n        - button \"Categories\" [expanded]\n      - group \"Categories\":\n        - checkbox \"Excel 验证\" [checked]\n        - text: Excel 验证\n        - checkbox \"Uncategorized\"\n        - text: Uncategorized\n      - heading \"Tags\" [level=2]:\n        - button \"Tags\"\n  - region \"Editor publish\":\n    - button \"Open publish panel\"\n  - region \"Editor footer\":\n    - list \"Block breadcrumb\":\n      - listitem:\n        - button \"Post\"\n      - listitem: File\n  - button \"Dismiss this notice\": Upload complete\n- paragraph: Notifications\n- text: Media upload complete",
+            "controls": [
+              {
+                "tag": "a",
+                "role": "menuitem",
+                "inViewport": true,
+                "text": "About WordPress",
+                "classes": "ab-item"
+              },
+              {
+                "tag": "a",
+                "role": "menuitem",
+                "inViewport": true,
+                "text": "helpr 验证后台（仅测试）",
+                "classes": "ab-item"
+              },
+              {
+                "tag": "a",
+                "role": "menuitem",
+                "inViewport": true,
+                "text": "⌘K\nOpen command palette",
+                "classes": "ab-item"
+              },
+              {
+                "tag": "a",
+                "role": "menuitem",
+                "inViewport": true,
+                "text": "0\n0 Comments in moderation",
+                "classes": "ab-item"
+              },
+              {
+                "tag": "a",
+                "role": "menuitem",
+                "inViewport": true,
+                "text": "New",
+                "classes": "ab-item"
+              },
+              {
+                "tag": "a",
+                "role": "menuitem",
+                "inViewport": true,
+                "text": "Howdy, helpr 测试用户",
+                "classes": "ab-item"
+              },
+              {
+                "tag": "a",
+                "label": "View Posts",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button is-compact has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":r1:",
+                "type": "button",
+                "label": "Block Inserter",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button components-toolbar-button editor-document-tools__inserter-toggle is-primary is-compact is-pressed has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":r3:",
+                "type": "button",
+                "label": "Undo",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button editor-history__undo is-next-40px-default-size is-compact has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":r5:",
+                "type": "button",
+                "label": "Redo",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button editor-history__redo is-next-40px-default-size is-compact has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":r7:",
+                "type": "button",
+                "label": "Document Overview",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button components-toolbar-button editor-document-tools__document-overview-toggle is-compact has-icon"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": true,
+                "text": "File\n· Post",
+                "classes": "components-button editor-document-bar__command is-compact"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Save draft",
+                "inViewport": true,
+                "text": "Save draft",
+                "classes": "components-button editor-post-save-draft is-compact is-tertiary"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "View",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button editor-preview-dropdown__toggle components-dropdown-menu__toggle is-compact has-icon has-icon-right"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Settings",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button is-compact is-pressed has-icon"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": true,
+                "text": "Publish",
+                "classes": "components-button editor-post-publish-panel__toggle editor-post-publish-button__button is-primary is-compact"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Options",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button components-dropdown-menu__toggle is-compact has-icon"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Close Block Inserter",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button block-editor-tabbed-sidebar__close-button is-compact has-icon"
+              },
+              {
+                "tag": "button",
+                "id": "tabs-1-blocks",
+                "role": "tab",
+                "type": "button",
+                "inViewport": true,
+                "text": "Blocks",
+                "classes": "block-editor-tabbed-sidebar__tab css-jznp7x enfox0g3"
+              },
+              {
+                "tag": "button",
+                "id": "tabs-1-patterns",
+                "role": "tab",
+                "type": "button",
+                "inViewport": true,
+                "text": "Patterns",
+                "classes": "block-editor-tabbed-sidebar__tab css-jznp7x enfox0g3"
+              },
+              {
+                "tag": "button",
+                "id": "tabs-1-media",
+                "role": "tab",
+                "type": "button",
+                "inViewport": true,
+                "text": "Media",
+                "classes": "block-editor-tabbed-sidebar__tab css-jznp7x enfox0g3"
+              },
+              {
+                "tag": "input",
+                "id": "components-search-control-0",
+                "type": "search",
+                "placeholder": "Search",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-input-control__input css-1gduwhc em5sgkm3"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Reset search",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button is-small has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":ra1:",
+                "role": "option",
+                "type": "button",
+                "inViewport": true,
+                "text": "File",
+                "classes": "components-button block-editor-block-types-list__item editor-block-list-item-file/default is-next-40px-default-size"
+              },
+              {
+                "tag": "button",
+                "id": ":ra3:",
+                "role": "option",
+                "type": "button",
+                "inViewport": true,
+                "text": "Social Icons",
+                "classes": "components-button block-editor-block-types-list__item editor-block-list-item-social-links is-next-40px-default-size"
+              },
+              {
+                "tag": "button",
+                "id": ":ra5:",
+                "role": "option",
+                "type": "button",
+                "inViewport": true,
+                "text": "Pinterest Embed",
+                "classes": "components-button block-editor-block-types-list__item editor-block-list-item-embed/pinterest is-next-40px-default-size"
+              },
+              {
+                "tag": "button",
+                "id": ":r9d:",
+                "type": "button",
+                "label": "File",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button components-dropdown-menu__toggle has-icon"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Drag",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button block-editor-block-mover__drag-handle is-next-40px-default-size has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":r9f:",
+                "type": "button",
+                "label": "Move up",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button block-editor-block-mover-button is-up-button is-next-40px-default-size has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":r9h:",
+                "type": "button",
+                "label": "Move down",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button block-editor-block-mover-button is-down-button is-next-40px-default-size has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":r9o:",
+                "type": "button",
+                "label": "Align",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button components-dropdown-menu__toggle has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":r9s:",
+                "type": "button",
+                "inViewport": true,
+                "text": "Replace",
+                "classes": "components-button components-toolbar-button is-compact"
+              },
+              {
+                "tag": "button",
+                "id": ":r9u:",
+                "type": "button",
+                "inViewport": true,
+                "text": "Copy URL",
+                "classes": "components-button components-toolbar-button components-clipboard-toolbar-button is-compact"
+              },
+              {
+                "tag": "button",
+                "id": ":r9j:",
+                "type": "button",
+                "label": "Options",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button components-dropdown-menu__toggle has-icon"
+              },
+              {
+                "tag": "button",
+                "id": "tabs-0-edit-post/document",
+                "role": "tab",
+                "type": "button",
+                "inViewport": true,
+                "text": "Post",
+                "classes": "css-jznp7x enfox0g3"
+              },
+              {
+                "tag": "button",
+                "id": "tabs-0-edit-post/block",
+                "role": "tab",
+                "type": "button",
+                "inViewport": true,
+                "text": "Block",
+                "classes": "css-jznp7x enfox0g3"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Close Settings",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button is-compact has-icon"
+              },
+              {
+                "tag": "button",
+                "id": ":r1q:",
+                "type": "button",
+                "label": "Actions",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-button editor-all-actions-button is-small has-icon"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": true,
+                "text": "Set featured image",
+                "classes": "components-button editor-post-featured-image__toggle is-next-40px-default-size"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": true,
+                "text": "Add an excerpt…",
+                "classes": "components-button is-next-40px-default-size is-link"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Change status: Draft",
+                "inViewport": true,
+                "text": "Draft",
+                "classes": "components-button editor-post-status__toggle is-compact is-tertiary has-text has-icon"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Change date: Immediately",
+                "inViewport": true,
+                "text": "Immediately",
+                "classes": "components-button editor-post-schedule__dialog-toggle is-compact is-tertiary"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Change link: file",
+                "inViewport": true,
+                "text": "file",
+                "classes": "components-button editor-post-url__panel-toggle is-compact is-tertiary"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Template options",
+                "inViewport": true,
+                "text": "Single Posts",
+                "classes": "components-button components-dropdown-menu__toggle is-compact is-tertiary"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Change discussion options",
+                "inViewport": true,
+                "text": "Closed",
+                "classes": "components-button editor-post-discussion__panel-toggle is-compact is-tertiary"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "label": "Change format: Standard",
+                "inViewport": true,
+                "text": "Standard",
+                "classes": "components-button is-compact is-tertiary"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": true,
+                "text": "Categories",
+                "classes": "components-button components-panel__body-toggle is-next-40px-default-size"
+              },
+              {
+                "tag": "input",
+                "id": "inspector-checkbox-control-2",
+                "type": "checkbox",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-checkbox-control__input"
+              },
+              {
+                "tag": "input",
+                "id": "inspector-checkbox-control-3",
+                "type": "checkbox",
+                "inViewport": true,
+                "text": "",
+                "classes": "components-checkbox-control__input"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": true,
+                "text": "Tags",
+                "classes": "components-button components-panel__body-toggle is-next-40px-default-size"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": false,
+                "text": "Open publish panel",
+                "classes": "components-button is-next-40px-default-size is-secondary"
+              },
+              {
+                "tag": "button",
+                "type": "button",
+                "inViewport": true,
+                "text": "Post",
+                "classes": "components-button block-editor-block-breadcrumb__button is-small"
+              },
+              {
+                "tag": "div",
+                "role": "button",
+                "label": "Dismiss this notice",
+                "inViewport": true,
+                "text": "Upload complete",
+                "classes": "components-snackbar"
+              }
+            ]
+          },
+          {
+            "frame": "editor-canvas",
+            "aria": "- textbox \"Add title\"\n- 'document \"Block: Paragraph\"': 这是候选条件的虚构正文。不能把固定搜索词 File 当作标题引用。\n- 'document \"Block: File\"':\n  - textbox \"Write file name…\"\n  - textbox \"Download button text\"",
+            "controls": [
+              {
+                "tag": "h1",
+                "role": "textbox",
+                "label": "Add title",
+                "inViewport": true,
+                "editable": "true",
+                "text": "File",
+                "classes": "wp-block wp-block-post-title block-editor-block-list__block editor-post-title editor-post-title__input rich-text"
+              },
+              {
+                "tag": "p",
+                "id": "block-cc5e4866-fc3f-4d70-8cce-675ed157e5bf",
+                "role": "document",
+                "label": "Block: Paragraph",
+                "inViewport": true,
+                "editable": "true",
+                "text": "这是候选条件的虚构正文。不能把固定搜索词 File 当作标题引用。",
+                "classes": "block-editor-rich-text__editable block-editor-block-list__block wp-block wp-block-paragraph rich-text"
+              },
+              {
+                "tag": "a",
+                "role": "textbox",
+                "label": "Write file name…",
+                "inViewport": true,
+                "editable": "true",
+                "text": "condition-witness-condition-witness-ready",
+                "classes": "block-editor-rich-text__editable rich-text"
+              },
+              {
+                "tag": "div",
+                "role": "textbox",
+                "label": "Download button text",
+                "inViewport": true,
+                "editable": "true",
+                "text": "Download",
+                "classes": "block-editor-rich-text__editable wp-block-file__button wp-element-button rich-text"
+              }
+            ]
+          }
+        ],
+        "dom": [
+          {
+            "frame": "main",
+            "fields": [
+              {
+                "tag": "h1",
+                "role": null,
+                "label": null,
+                "classes": "screen-reader-text hide-if-no-js",
+                "type": null,
+                "dataType": null,
+                "value": "Add Post",
+                "html": "<h1 class=\"screen-reader-text hide-if-no-js\">Add Post</h1>"
+              },
+              {
+                "tag": "h1",
+                "role": null,
+                "label": null,
+                "classes": "components-truncate css-1y883gm components-text",
+                "type": null,
+                "dataType": null,
+                "value": "File· Post",
+                "html": "<h1 data-wp-c16t=\"true\" data-wp-component=\"Text\" class=\"components-truncate css-1y883gm components-text\"><span class=\"editor-document-bar__post-title\">File</span><span class=\"editor-document-bar__post-type-label\">· Post</span></h1>"
+              },
+              {
+                "tag": "input",
+                "role": null,
+                "label": null,
+                "classes": "components-input-control__input css-1gduwhc em5sgkm3",
+                "type": "search",
+                "dataType": null,
+                "value": "File",
+                "html": "<input autocomplete=\"off\" placeholder=\"Search\" class=\"components-input-control__input css-1gduwhc em5sgkm3\" id=\"components-search-control-0\" type=\"search\" value=\"File\">"
+              },
+              {
+                "tag": "input",
+                "role": null,
+                "label": null,
+                "classes": "components-checkbox-control__input",
+                "type": "checkbox",
+                "dataType": null,
+                "value": "1",
+                "html": "<input id=\"inspector-checkbox-control-2\" class=\"components-checkbox-control__input\" type=\"checkbox\" value=\"1\">"
+              },
+              {
+                "tag": "input",
+                "role": null,
+                "label": null,
+                "classes": "components-checkbox-control__input",
+                "type": "checkbox",
+                "dataType": null,
+                "value": "1",
+                "html": "<input id=\"inspector-checkbox-control-3\" class=\"components-checkbox-control__input\" type=\"checkbox\" value=\"1\">"
+              },
+              {
+                "tag": "p",
+                "role": null,
+                "label": null,
+                "classes": "a11y-speak-intro-text",
+                "type": null,
+                "dataType": null,
+                "value": "Notifications",
+                "html": "<p id=\"a11y-speak-intro-text\" class=\"a11y-speak-intro-text\" style=\"position:absolute;margin:-1px;padding:0;height:1px;width:1px;overflow:hidden;clip-path:inset(50%);border:0;word-wrap:normal !important;word-break:normal !important;\">Notifications</p>"
+              }
+            ]
+          },
+          {
+            "frame": "editor-canvas",
+            "fields": [
+              {
+                "tag": "h1",
+                "role": "textbox",
+                "label": "Add title",
+                "classes": "wp-block wp-block-post-title block-editor-block-list__block editor-post-title editor-post-title__input rich-text",
+                "type": null,
+                "dataType": null,
+                "value": "File",
+                "html": "<h1 contenteditable=\"true\" class=\"wp-block wp-block-post-title block-editor-block-list__block editor-post-title editor-post-title__input rich-text\" aria-label=\"Add title\" role=\"textbox\" aria-multiline=\"true\" style=\"white-space: pre-wrap;\">File</h1>"
+              },
+              {
+                "tag": "p",
+                "role": "document",
+                "label": "Block: Paragraph",
+                "classes": "block-editor-rich-text__editable block-editor-block-list__block wp-block wp-block-paragraph rich-text",
+                "type": null,
+                "dataType": "core/paragraph",
+                "value": "这是候选条件的虚构正文。不能把固定搜索词 File 当作标题引用。",
+                "html": "<p role=\"document\" aria-multiline=\"true\" aria-readonly=\"false\" class=\"block-editor-rich-text__editable block-editor-block-list__block wp-block wp-block-paragraph rich-text\" id=\"block-cc5e4866-fc3f-4d70-8cce-675ed157e5bf\" aria-label=\"Block: Paragraph\" data-block=\"cc5e4866-fc3f-4d70-8cce-675ed157e5bf\" data-type=\"core/paragraph\" data-title=\"Paragraph\" data-empty=\"false\" contenteditable=\"true\" data-wp-block-attribute-key=\"content\" style=\"white-space: pre-wrap;\">这是候选条件的虚构正文。不能把固定搜索词 File 当作标题引用。</p>"
+              },
+              {
+                "tag": "a",
+                "role": "textbox",
+                "label": "Write file name…",
+                "classes": "block-editor-rich-text__editable rich-text",
+                "type": null,
+                "dataType": null,
+                "value": "condition-witness-condition-witness-ready",
+                "html": "<a role=\"textbox\" aria-multiline=\"true\" aria-readonly=\"false\" aria-label=\"Write file name…\" contenteditable=\"true\" class=\"block-editor-rich-text__editable rich-text\" data-wp-block-attribute-key=\"fileName\" style=\"white-space: pre-wrap;\" href=\"http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/condition-witness-condition-witness-ready.xlsx\">condition-witness-condition-witness-ready</a>"
+              },
+              {
+                "tag": "div",
+                "role": "textbox",
+                "label": "Download button text",
+                "classes": "block-editor-rich-text__editable wp-block-file__button wp-element-button rich-text",
+                "type": null,
+                "dataType": null,
+                "value": "Download",
+                "html": "<div role=\"textbox\" aria-multiline=\"true\" aria-readonly=\"false\" aria-label=\"Download button text\" class=\"block-editor-rich-text__editable wp-block-file__button wp-element-button rich-text\" contenteditable=\"true\" data-wp-block-attribute-key=\"downloadButtonText\" style=\"white-space: pre-wrap;\">Download</div>"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

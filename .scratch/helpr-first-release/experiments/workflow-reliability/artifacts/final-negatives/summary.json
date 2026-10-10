@@ -1,0 +1,322 @@
+{
+  "source": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/workflow-reliability/artifacts/focused-bound-candidate/candidate.json",
+  "cases": [
+    {
+      "mode": "wrong-flow",
+      "passed": false,
+      "error": {
+        "name": "TimeoutError",
+        "message": "page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://home.ts-ali.internal:38080/wp-admin/\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      }
+    },
+    {
+      "mode": "unauthorized-target",
+      "passed": true,
+      "status": "blocked",
+      "error": {
+        "code": "authorization-mismatch",
+        "detail": {}
+      }
+    },
+    {
+      "mode": "material-changed",
+      "passed": true,
+      "status": "blocked",
+      "error": {
+        "code": "material-changed",
+        "detail": {
+          "key": "file"
+        }
+      }
+    },
+    {
+      "mode": "duplicate-control",
+      "passed": true,
+      "status": "blocked",
+      "error": {
+        "code": "target-unavailable",
+        "detail": {
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Add title"
+          },
+          "reason": "locator.waitFor: Error: strict mode violation: getByRole('textbox', { name: 'Add title', exact: true }) resolved to 2 elements:\n    1) <h1 role=\"textbox\" aria-multiline=\"true\" contenteditable=\"true\" aria-label=\"Add title\" class=\"wp-block wp-block-post-title block-editor-block-list__block editor-post"
+        }
+      }
+    },
+    {
+      "mode": "changed-content",
+      "passed": true,
+      "status": "blocked",
+      "error": {
+        "code": "condition-unsatisfied",
+        "detail": {
+          "evidence": [
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "css",
+                  "selector": "h1.editor-post-title__input"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "title"
+                }
+              },
+              "ok": true,
+              "actual": "可靠性实验 changed-content final-negatives",
+              "expected": "可靠性实验 changed-content final-negatives"
+            },
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "document",
+                  "name": "Block: Paragraph"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "body"
+                }
+              },
+              "ok": false,
+              "actual": "未获得确认的另一份内容",
+              "expected": "虚构数据，用于流程条件实验。样本 changed-content，批次 final-negatives。"
+            },
+            {
+              "condition": {
+                "kind": "checked",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "checkbox",
+                  "name": {
+                    "input": "category"
+                  }
+                },
+                "expected": true
+              },
+              "ok": true,
+              "actual": true
+            },
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Write file name…"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "file",
+                  "field": "stem"
+                }
+              },
+              "ok": true,
+              "actual": "changed-content-final-negatives",
+              "expected": "changed-content-final-negatives"
+            },
+            {
+              "condition": {
+                "kind": "attribute",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Write file name…"
+                },
+                "compare": "originEquals",
+                "expected": "http://home.ts-ali.internal:38080",
+                "attribute": "href"
+              },
+              "ok": true,
+              "actual": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/changed-content-final-negatives.xlsx",
+              "expected": "http://home.ts-ali.internal:38080"
+            },
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Write file name…"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "file",
+                  "field": "stem"
+                }
+              },
+              "ok": true,
+              "actual": "changed-content-final-negatives",
+              "expected": "changed-content-final-negatives"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "mode": "changed-target-state",
+      "passed": true,
+      "status": "blocked",
+      "error": {
+        "code": "condition-unsatisfied",
+        "detail": {
+          "evidence": [
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "css",
+                  "selector": "h1.editor-post-title__input"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "title"
+                }
+              },
+              "ok": true,
+              "actual": "可靠性实验 changed-target-state final-negatives",
+              "expected": "可靠性实验 changed-target-state final-negatives"
+            },
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "document",
+                  "name": "Block: Paragraph"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "body"
+                }
+              },
+              "ok": true,
+              "actual": "虚构数据，用于流程条件实验。样本 changed-target-state，批次 final-negatives。",
+              "expected": "虚构数据，用于流程条件实验。样本 changed-target-state，批次 final-negatives。"
+            },
+            {
+              "condition": {
+                "kind": "checked",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "checkbox",
+                  "name": {
+                    "input": "category"
+                  }
+                },
+                "expected": true
+              },
+              "ok": false,
+              "actual": false
+            },
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Write file name…"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "file",
+                  "field": "stem"
+                }
+              },
+              "ok": true,
+              "actual": "changed-target-state-final-negatives",
+              "expected": "changed-target-state-final-negatives"
+            },
+            {
+              "condition": {
+                "kind": "attribute",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Write file name…"
+                },
+                "compare": "originEquals",
+                "expected": "http://home.ts-ali.internal:38080",
+                "attribute": "href"
+              },
+              "ok": true,
+              "actual": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/changed-target-state-final-negatives.xlsx",
+              "expected": "http://home.ts-ali.internal:38080"
+            },
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Write file name…"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "file",
+                  "field": "stem"
+                }
+              },
+              "ok": true,
+              "actual": "changed-target-state-final-negatives",
+              "expected": "changed-target-state-final-negatives"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "mode": "repair-unsafe",
+      "passed": true,
+      "status": "blocked",
+      "error": {
+        "code": "repair-outside-allowed-fields",
+        "detail": {}
+      }
+    },
+    {
+      "mode": "stopped",
+      "passed": false,
+      "error": {
+        "name": "TimeoutError",
+        "message": "page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://home.ts-ali.internal:38080/wp-admin/\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      }
+    }
+  ],
+  "modelCalls": [
+    {
+      "label": "repair-unsafe",
+      "startedAt": "2026-10-10T12:38:32.972Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 2575,
+        "completion_tokens": 60,
+        "total_tokens": 2635,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 2575
+      },
+      "endedAt": "2026-10-10T12:38:33.608Z",
+      "durationMs": 635.8859999999986
+    }
+  ]
+}

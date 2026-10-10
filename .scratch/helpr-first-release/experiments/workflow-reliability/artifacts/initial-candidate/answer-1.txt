@@ -1,0 +1,753 @@
+{
+  "schema": 1,
+  "version": 1,
+  "compatibility": {
+    "origin": "http://home.ts-ali.internal:38080",
+    "kind": "create-record-with-attachment"
+  },
+  "inputs": {
+    "title": "string",
+    "body": "string",
+    "category": "string",
+    "file": "file"
+  },
+  "reasoning": "来源观察：仪表盘入口为 wp-admin 的 Posts 菜单（悬停展开后出现 Add Post 链接）；新建页标题输入框位于 editor-canvas iframe 的 textbox 'Add title'；正文为 editor-canvas 中 document 'Empty block; start writing or type forward slash to choose a block'；分类复选框在 main 的 group 'Categories' 内，名称为分类名；文件通过 Block Inserter 搜索常量 'File' 插入 File 块，再对 editor-canvas 内 input[type=file] 执行 upload；上传完成证据为通知 'Upload complete' 且文件块出现 'Write file name…' 与 'Download button text'；发布需两次点击 Publish（第一次展开预发布面板，第二次在 region 'Editor publish' 内确认），两次均标记 commit；公开页 main 中 h1 为标题、entry-content 内段落为正文、taxonomy-category 链接为分类、wp-block-file 的 Download 链接为附件。局限：所有定位与等待条件均来自单次成功记录，未在独立上下文实测；上传完成通知可能短暂，故同时检查文件块内文件名与下载按钮文本；公开页 Download 链接的 sha256 需实测确认。",
+  "steps": [
+    {
+      "id": "s1",
+      "effect": "read",
+      "action": {
+        "op": "hover",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "Posts"
+        }
+      },
+      "before": [],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": "Add Post"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s2",
+      "effect": "read",
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "Add Post"
+        }
+      },
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": "Add Post"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Add title"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s3",
+      "effect": "edit",
+      "action": {
+        "op": "fill",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "Add title"
+        },
+        "value": "{input:\"title\"}"
+      },
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Add title"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "value",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Add title"
+          },
+          "compare": "equals",
+          "expected": "{input:\"title\"}"
+        }
+      ]
+    },
+    {
+      "id": "s4",
+      "effect": "edit",
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "button",
+          "name": "Add default block"
+        }
+      },
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "button",
+            "name": "Add default block"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "document",
+            "name": "Empty block; start writing or type forward slash to choose a block"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s5",
+      "effect": "edit",
+      "action": {
+        "op": "fill",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "document",
+          "name": "Empty block; start writing or type forward slash to choose a block"
+        },
+        "value": "{input:\"body\"}"
+      },
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "document",
+            "name": "Empty block; start writing or type forward slash to choose a block"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "text",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "document",
+            "name": "Block: Paragraph"
+          },
+          "compare": "contains",
+          "expected": "{input:\"body\"}"
+        }
+      ]
+    },
+    {
+      "id": "s6",
+      "effect": "edit",
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "tab",
+          "name": "Post"
+        }
+      },
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "tab",
+            "name": "Post"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "checkbox",
+            "name": "{input:\"category\"}"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s7",
+      "effect": "edit",
+      "action": {
+        "op": "check",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "checkbox",
+          "name": "{input:\"category\"}"
+        },
+        "value": true
+      },
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "checkbox",
+            "name": "{input:\"category\"}"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "checked",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "checkbox",
+            "name": "{input:\"category\"}"
+          },
+          "expected": true
+        }
+      ]
+    },
+    {
+      "id": "s8",
+      "effect": "edit",
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Block Inserter"
+        }
+      },
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Block Inserter"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "searchbox",
+            "name": "Search"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s9",
+      "effect": "edit",
+      "action": {
+        "op": "fill",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "searchbox",
+          "name": "Search"
+        },
+        "value": "File"
+      },
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "searchbox",
+            "name": "Search"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "option",
+            "name": "File"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s10",
+      "effect": "edit",
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "option",
+          "name": "File"
+        }
+      },
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "option",
+            "name": "File"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "button",
+            "name": "Upload"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s11",
+      "effect": "upload",
+      "action": {
+        "op": "upload",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "css",
+          "selector": "input[type=file]"
+        },
+        "value": "{input:\"file\",field:\"path\"}"
+      },
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "button",
+            "name": "Upload"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Write file name…"
+          }
+        },
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Download button text"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s12",
+      "effect": "read",
+      "action": {
+        "op": "wait",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Dismiss this notice"
+        }
+      },
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Write file name…"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Dismiss this notice"
+          },
+          "compare": "contains",
+          "expected": "Upload complete"
+        },
+        {
+          "kind": "value",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Write file name…"
+          },
+          "compare": "equals",
+          "expected": "{input:\"file\",field:\"stem\"}"
+        }
+      ]
+    },
+    {
+      "id": "s13",
+      "effect": "commit",
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Publish"
+        }
+      },
+      "before": [
+        {
+          "kind": "checked",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "checkbox",
+            "name": "{input:\"category\"}"
+          },
+          "expected": true
+        },
+        {
+          "kind": "value",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Add title"
+          },
+          "compare": "equals",
+          "expected": "{input:\"title\"}"
+        },
+        {
+          "kind": "text",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "document",
+            "name": "Block: Paragraph"
+          },
+          "compare": "contains",
+          "expected": "{input:\"body\"}"
+        },
+        {
+          "kind": "value",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Write file name…"
+          },
+          "compare": "equals",
+          "expected": "{input:\"file\",field:\"stem\"}"
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "region",
+            "name": "Editor publish"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s14",
+      "effect": "commit",
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Publish",
+          "within": {
+            "frame": "main",
+            "by": "role",
+            "role": "region",
+            "name": "Editor publish"
+          }
+        }
+      },
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "region",
+            "name": "Editor publish"
+          }
+        },
+        {
+          "kind": "checked",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "checkbox",
+            "name": "{input:\"category\"}"
+          },
+          "expected": true
+        },
+        {
+          "kind": "value",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Add title"
+          },
+          "compare": "equals",
+          "expected": "{input:\"title\"}"
+        },
+        {
+          "kind": "text",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "document",
+            "name": "Block: Paragraph"
+          },
+          "compare": "contains",
+          "expected": "{input:\"body\"}"
+        },
+        {
+          "kind": "value",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Write file name…"
+          },
+          "compare": "equals",
+          "expected": "{input:\"file\",field:\"stem\"}"
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": "View Post (opens in a new tab)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s15",
+      "effect": "read",
+      "action": {
+        "op": "finish",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "View Post (opens in a new tab)"
+        }
+      },
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": "View Post (opens in a new tab)"
+          }
+        }
+      ],
+      "after": []
+    }
+  ],
+  "entryChecks": [
+    {
+      "kind": "visible",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "link",
+        "name": "Posts"
+      }
+    },
+    {
+      "kind": "visible",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "menuitem",
+        "name": "Howdy, helpr 测试用户"
+      }
+    }
+  ],
+  "commitChecks": [
+    {
+      "kind": "value",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "textbox",
+        "name": "Add title"
+      },
+      "compare": "equals",
+      "expected": "{input:\"title\"}"
+    },
+    {
+      "kind": "text",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "document",
+        "name": "Block: Paragraph"
+      },
+      "compare": "contains",
+      "expected": "{input:\"body\"}"
+    },
+    {
+      "kind": "checked",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "checkbox",
+        "name": "{input:\"category\"}"
+      },
+      "expected": true
+    },
+    {
+      "kind": "value",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "textbox",
+        "name": "Write file name…"
+      },
+      "compare": "equals",
+      "expected": "{input:\"file\",field:\"stem\"}"
+    },
+    {
+      "kind": "visible",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "textbox",
+        "name": "Download button text"
+      }
+    }
+  ],
+  "resultChecks": [
+    {
+      "kind": "text",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "heading",
+        "name": "{input:\"title\"}",
+        "level": 1
+      },
+      "compare": "equals",
+      "expected": "{input:\"title\"}"
+    },
+    {
+      "kind": "text",
+      "target": {
+        "frame": "main",
+        "by": "css",
+        "selector": ".entry-content .wp-block-paragraph"
+      },
+      "compare": "contains",
+      "expected": "{input:\"body\"}"
+    },
+    {
+      "kind": "text",
+      "target": {
+        "frame": "main",
+        "by": "css",
+        "selector": ".taxonomy-category a"
+      },
+      "compare": "equals",
+      "expected": "{input:\"category\"}"
+    },
+    {
+      "kind": "download",
+      "target": {
+        "frame": "main",
+        "by": "css",
+        "selector": ".wp-block-file__button"
+      },
+      "expected": "{input:\"file\",field:\"sha256\"}"
+    }
+  ]
+}

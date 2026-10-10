@@ -1,0 +1,56 @@
+{
+  "mode": "stopped",
+  "startedAt": "2026-10-10T12:38:33.801Z",
+  "runtime": {
+    "node": "v24.18.0",
+    "browser": "156.0.8078.4",
+    "pid": 58347
+  },
+  "candidateHash": "396fd4b9d98e312053a63afcadef7cbad2a1e62c64e645dd5060c6ebb7b88199",
+  "task": {
+    "id": "final-negatives/stopped",
+    "kind": "create-record-with-attachment",
+    "origin": "http://home.ts-ali.internal:38080",
+    "entryUrl": "http://home.ts-ali.internal:38080/wp-admin/",
+    "inputs": {
+      "title": {
+        "type": "string",
+        "value": "可靠性实验 stopped final-negatives"
+      },
+      "body": {
+        "type": "string",
+        "value": "虚构数据，用于流程条件实验。样本 stopped，批次 final-negatives。"
+      },
+      "category": {
+        "type": "string",
+        "value": "Excel 验证"
+      },
+      "file": {
+        "type": "file",
+        "path": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/workflow-reliability/artifacts/final-negatives/stopped/stopped-final-negatives.xlsx",
+        "name": "stopped-final-negatives.xlsx",
+        "stem": "stopped-final-negatives",
+        "sha256": "2920f2e32ead356702ec76f643c4718bca55ab1a4f823aa139354651e754ef9a"
+      }
+    },
+    "requiredOutputs": [
+      "title",
+      "body",
+      "category",
+      "file"
+    ],
+    "authorization": {
+      "origin": "http://home.ts-ali.internal:38080",
+      "kind": "create-record-with-attachment",
+      "inputsDigest": "c082bb9d0fb076015a43cbd86657831846ed85156c280142d675487e0e551d09",
+      "source": "explicitly-authorized-test-fixture-not-human-preview"
+    }
+  },
+  "network": [],
+  "passed": false,
+  "error": {
+    "name": "TimeoutError",
+    "message": "page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://home.ts-ali.internal:38080/wp-admin/\", waiting until \"domcontentloaded\"\u001b[22m\n"
+  },
+  "endedAt": "2026-10-10T12:39:03.842Z"
+}

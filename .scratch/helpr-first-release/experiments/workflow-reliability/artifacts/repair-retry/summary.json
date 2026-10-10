@@ -1,0 +1,45 @@
+{
+  "source": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/workflow-reliability/artifacts/focused-bound-candidate/candidate.json",
+  "cases": [
+    {
+      "mode": "repair-safe",
+      "passed": true,
+      "status": "completed",
+      "resultUrl": "http://home.ts-ali.internal:38080/?p=64"
+    },
+    {
+      "mode": "updated",
+      "passed": true,
+      "status": "completed",
+      "resultUrl": "http://home.ts-ali.internal:38080/?p=67"
+    },
+    {
+      "mode": "wrong-flow",
+      "passed": true,
+      "status": "blocked",
+      "error": {
+        "code": "not-applicable",
+        "detail": {}
+      }
+    }
+  ],
+  "modelCalls": [
+    {
+      "label": "repair-safe",
+      "startedAt": "2026-10-10T12:39:14.335Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 2576,
+        "completion_tokens": 100,
+        "total_tokens": 2676,
+        "prompt_cache_hit_tokens": 640,
+        "prompt_cache_miss_tokens": 1936
+      },
+      "endedAt": "2026-10-10T12:39:15.191Z",
+      "durationMs": 855.7990830000053
+    }
+  ]
+}

@@ -1,0 +1,1253 @@
+{
+  "mode": "repair-safe",
+  "startedAt": "2026-10-10T12:35:49.302Z",
+  "runtime": {
+    "node": "v24.18.0",
+    "browser": "156.0.8078.4",
+    "pid": 58226
+  },
+  "candidateHash": "396fd4b9d98e312053a63afcadef7cbad2a1e62c64e645dd5060c6ebb7b88199",
+  "task": {
+    "id": "final-path/repair-safe",
+    "kind": "create-record-with-attachment",
+    "origin": "http://home.ts-ali.internal:38080",
+    "entryUrl": "http://home.ts-ali.internal:38080/wp-admin/",
+    "inputs": {
+      "title": {
+        "type": "string",
+        "value": "可靠性实验 repair-safe final-path"
+      },
+      "body": {
+        "type": "string",
+        "value": "虚构数据，用于流程条件实验。样本 repair-safe，批次 final-path。"
+      },
+      "category": {
+        "type": "string",
+        "value": "Excel 验证"
+      },
+      "file": {
+        "type": "file",
+        "path": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/workflow-reliability/artifacts/final-path/repair-safe/repair-safe-final-path.xlsx",
+        "name": "repair-safe-final-path.xlsx",
+        "stem": "repair-safe-final-path",
+        "sha256": "739de3c5f3094e821ba5cfe720b738aafa9e79f894c859835a659402fc3dd693"
+      }
+    },
+    "requiredOutputs": [
+      "title",
+      "body",
+      "category",
+      "file"
+    ],
+    "authorization": {
+      "origin": "http://home.ts-ali.internal:38080",
+      "kind": "create-record-with-attachment",
+      "inputsDigest": "bd02a7cf6e0c56e0b78c59bf6663b4480ad4da5676cca6f3682bc4db01bc2769",
+      "source": "explicitly-authorized-test-fixture-not-human-preview"
+    }
+  },
+  "network": [],
+  "mutation": {
+    "type": "repair-safe",
+    "target": {
+      "frame": "editor-canvas",
+      "by": "role",
+      "role": "textbox",
+      "name": "Add title"
+    },
+    "scope": "当前页面 DOM；未改服务器代码"
+  },
+  "outcome": {
+    "status": "blocked",
+    "error": {
+      "code": "condition-unsatisfied",
+      "detail": {
+        "evidence": [
+          {
+            "condition": {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Write file name…"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "file",
+                "field": "stem"
+              }
+            },
+            "ok": false,
+            "actual": "﻿",
+            "expected": "repair-safe-final-path"
+          },
+          {
+            "condition": {
+              "kind": "attribute",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Write file name…"
+              },
+              "compare": "originEquals",
+              "expected": "http://home.ts-ali.internal:38080",
+              "attribute": "href"
+            },
+            "ok": false,
+            "actual": null,
+            "expected": "http://home.ts-ali.internal:38080"
+          }
+        ]
+      }
+    },
+    "step": "s11",
+    "sourceHash": "396fd4b9d98e312053a63afcadef7cbad2a1e62c64e645dd5060c6ebb7b88199",
+    "commitDispatched": false,
+    "repairs": [
+      {
+        "patch": {
+          "stepId": "s3",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "css",
+            "selector": "h1.editor-post-title__input"
+          },
+          "reason": "编辑器画布中的标题输入框实际为 h1.editor-post-title__input，其可访问名称为“文章标题（新版）”，而非“Add title”，因此按 role/name 定位超时；改用页面中已存在的 CSS 选择器可唯一定位该标题输入框。"
+        },
+        "parentHash": "396fd4b9d98e312053a63afcadef7cbad2a1e62c64e645dd5060c6ebb7b88199"
+      }
+    ],
+    "events": [
+      {
+        "at": "2026-10-10T12:36:15.022Z",
+        "type": "eligible",
+        "sourceHash": "396fd4b9d98e312053a63afcadef7cbad2a1e62c64e645dd5060c6ebb7b88199",
+        "evidence": [
+          {
+            "condition": {
+              "kind": "visible",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "heading",
+                "name": "Dashboard"
+              }
+            },
+            "ok": true,
+            "count": 1
+          },
+          {
+            "condition": {
+              "kind": "visible",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "link",
+                "name": "Posts"
+              }
+            },
+            "ok": true,
+            "count": 1
+          }
+        ]
+      },
+      {
+        "at": "2026-10-10T12:36:15.022Z",
+        "type": "step-start",
+        "step": "s1"
+      },
+      {
+        "at": "2026-10-10T12:36:15.040Z",
+        "type": "dispatch",
+        "step": "s1",
+        "action": {
+          "op": "hover",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": "Posts"
+          }
+        },
+        "effect": "read"
+      },
+      {
+        "at": "2026-10-10T12:36:15.120Z",
+        "type": "step-completed",
+        "step": "s1",
+        "outcome": {
+          "before": [],
+          "after": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "link",
+                  "name": "Add Post"
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:36:15.120Z",
+        "type": "step-start",
+        "step": "s2"
+      },
+      {
+        "at": "2026-10-10T12:36:15.131Z",
+        "type": "dispatch",
+        "step": "s2",
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": "Add Post"
+          }
+        },
+        "effect": "read"
+      },
+      {
+        "at": "2026-10-10T12:36:57.249Z",
+        "type": "step-completed",
+        "step": "s2",
+        "outcome": {
+          "before": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "link",
+                  "name": "Add Post"
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ],
+          "after": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "css",
+                  "selector": "h1.editor-post-title__input"
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:36:57.250Z",
+        "type": "step-start",
+        "step": "s3"
+      },
+      {
+        "at": "2026-10-10T12:37:02.186Z",
+        "type": "dispatch",
+        "step": "s3",
+        "action": {
+          "op": "fill",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "css",
+            "selector": "h1.editor-post-title__input"
+          },
+          "value": "可靠性实验 repair-safe final-path"
+        },
+        "effect": "edit"
+      },
+      {
+        "at": "2026-10-10T12:37:02.213Z",
+        "type": "step-completed",
+        "step": "s3",
+        "outcome": {
+          "before": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "css",
+                  "selector": "h1.editor-post-title__input"
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ],
+          "after": [
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "css",
+                  "selector": "h1.editor-post-title__input"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "title"
+                }
+              },
+              "ok": true,
+              "actual": "可靠性实验 repair-safe final-path",
+              "expected": "可靠性实验 repair-safe final-path"
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:37:02.213Z",
+        "type": "step-start",
+        "step": "s4"
+      },
+      {
+        "at": "2026-10-10T12:37:02.226Z",
+        "type": "dispatch",
+        "step": "s4",
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "button",
+            "name": "Add default block"
+          }
+        },
+        "effect": "edit"
+      },
+      {
+        "at": "2026-10-10T12:37:02.342Z",
+        "type": "step-completed",
+        "step": "s4",
+        "outcome": {
+          "before": [
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "css",
+                  "selector": "h1.editor-post-title__input"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "title"
+                }
+              },
+              "ok": true,
+              "actual": "可靠性实验 repair-safe final-path",
+              "expected": "可靠性实验 repair-safe final-path"
+            }
+          ],
+          "after": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "document",
+                  "name": "Empty block; start writing or type forward slash to choose a block"
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:37:02.342Z",
+        "type": "step-start",
+        "step": "s5"
+      },
+      {
+        "at": "2026-10-10T12:37:02.356Z",
+        "type": "dispatch",
+        "step": "s5",
+        "action": {
+          "op": "fill",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "document",
+            "name": "Empty block; start writing or type forward slash to choose a block"
+          },
+          "value": "虚构数据，用于流程条件实验。样本 repair-safe，批次 final-path。"
+        },
+        "effect": "edit"
+      },
+      {
+        "at": "2026-10-10T12:37:02.401Z",
+        "type": "step-completed",
+        "step": "s5",
+        "outcome": {
+          "before": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "document",
+                  "name": "Empty block; start writing or type forward slash to choose a block"
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ],
+          "after": [
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "document",
+                  "name": "Block: Paragraph"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "body"
+                }
+              },
+              "ok": true,
+              "actual": "虚构数据，用于流程条件实验。样本 repair-safe，批次 final-path。",
+              "expected": "虚构数据，用于流程条件实验。样本 repair-safe，批次 final-path。"
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:37:02.401Z",
+        "type": "step-start",
+        "step": "s6"
+      },
+      {
+        "at": "2026-10-10T12:37:02.417Z",
+        "type": "dispatch",
+        "step": "s6",
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "tab",
+            "name": "Post"
+          }
+        },
+        "effect": "read"
+      },
+      {
+        "at": "2026-10-10T12:37:02.484Z",
+        "type": "step-completed",
+        "step": "s6",
+        "outcome": {
+          "before": [
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "document",
+                  "name": "Block: Paragraph"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "body"
+                }
+              },
+              "ok": true,
+              "actual": "虚构数据，用于流程条件实验。样本 repair-safe，批次 final-path。",
+              "expected": "虚构数据，用于流程条件实验。样本 repair-safe，批次 final-path。"
+            }
+          ],
+          "after": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "checkbox",
+                  "name": {
+                    "input": "category"
+                  }
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:37:02.484Z",
+        "type": "step-start",
+        "step": "s7"
+      },
+      {
+        "at": "2026-10-10T12:37:02.492Z",
+        "type": "dispatch",
+        "step": "s7",
+        "action": {
+          "op": "check",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "checkbox",
+            "name": "Excel 验证"
+          },
+          "value": true
+        },
+        "effect": "edit"
+      },
+      {
+        "at": "2026-10-10T12:37:02.541Z",
+        "type": "step-completed",
+        "step": "s7",
+        "outcome": {
+          "before": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "checkbox",
+                  "name": {
+                    "input": "category"
+                  }
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ],
+          "after": [
+            {
+              "condition": {
+                "kind": "checked",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "checkbox",
+                  "name": {
+                    "input": "category"
+                  }
+                },
+                "expected": true
+              },
+              "ok": true,
+              "actual": true
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:37:02.541Z",
+        "type": "step-start",
+        "step": "s8"
+      },
+      {
+        "at": "2026-10-10T12:37:02.553Z",
+        "type": "dispatch",
+        "step": "s8",
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Block Inserter"
+          }
+        },
+        "effect": "read"
+      },
+      {
+        "at": "2026-10-10T12:37:02.657Z",
+        "type": "step-completed",
+        "step": "s8",
+        "outcome": {
+          "before": [
+            {
+              "condition": {
+                "kind": "checked",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "checkbox",
+                  "name": {
+                    "input": "category"
+                  }
+                },
+                "expected": true
+              },
+              "ok": true,
+              "actual": true
+            }
+          ],
+          "after": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "searchbox",
+                  "name": "Search"
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:37:02.657Z",
+        "type": "step-start",
+        "step": "s9"
+      },
+      {
+        "at": "2026-10-10T12:37:02.784Z",
+        "type": "dispatch",
+        "step": "s9",
+        "action": {
+          "op": "fill",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "searchbox",
+            "name": "Search"
+          },
+          "value": "File"
+        },
+        "effect": "edit"
+      },
+      {
+        "at": "2026-10-10T12:37:02.873Z",
+        "type": "step-completed",
+        "step": "s9",
+        "outcome": {
+          "before": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "searchbox",
+                  "name": "Search"
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ],
+          "after": [
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "searchbox",
+                  "name": "Search"
+                },
+                "compare": "equals",
+                "expected": "File"
+              },
+              "ok": true,
+              "actual": "File",
+              "expected": "File"
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:37:02.873Z",
+        "type": "step-start",
+        "step": "s10"
+      },
+      {
+        "at": "2026-10-10T12:37:02.917Z",
+        "type": "dispatch",
+        "step": "s10",
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "option",
+            "name": "File"
+          }
+        },
+        "effect": "edit"
+      },
+      {
+        "at": "2026-10-10T12:37:03.034Z",
+        "type": "step-completed",
+        "step": "s10",
+        "outcome": {
+          "before": [
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "searchbox",
+                  "name": "Search"
+                },
+                "compare": "equals",
+                "expected": "File"
+              },
+              "ok": true,
+              "actual": "File",
+              "expected": "File"
+            }
+          ],
+          "after": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "button",
+                  "name": "Upload"
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:37:03.034Z",
+        "type": "step-start",
+        "step": "s11"
+      },
+      {
+        "at": "2026-10-10T12:37:03.049Z",
+        "type": "dispatch",
+        "step": "s11",
+        "action": {
+          "op": "upload",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "css",
+            "selector": "input[type=file]"
+          },
+          "value": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/workflow-reliability/artifacts/final-path/repair-safe/repair-safe-final-path.xlsx"
+        },
+        "effect": "upload"
+      }
+    ]
+  },
+  "failureObservation": {
+    "url": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+    "frames": [
+      {
+        "frame": "main",
+        "aria": "- navigation \"Toolbar\":\n  - menu:\n    - group:\n      - menuitem \"About WordPress\"\n    - group:\n      - menuitem \"helpr 验证后台（仅测试）\"\n    - group:\n      - menuitem \"⌘K Open command palette\"\n    - group:\n      - menuitem \"0 Comments in moderation\"\n    - group:\n      - menuitem \"New\"\n  - menu:\n    - group:\n      - menuitem \"Howdy, helpr 测试用户\"\n- main:\n  - heading \"Add Post\" [level=1]\n  - region \"Editor top bar\":\n    - link \"View Posts\":\n      - /url: edit.php?post_type=post\n    - toolbar \"Document tools\":\n      - button \"Block Inserter\" [expanded] [pressed]\n      - button \"Undo\"\n      - button \"Redo\" [disabled]\n      - button \"Document Overview\"\n    - button \"可靠性实验 repair-safe final-path · Post\":\n      - heading \"可靠性实验 repair-safe final-path · Post\" [level=1]\n    - button \"Save draft\" [disabled]\n    - button \"View\"\n    - button \"Settings\" [expanded] [pressed]\n    - button \"Publish\" [disabled]\n    - button \"Options\"\n  - region \"Block Library\":\n    - button \"Close Block Inserter\"\n    - tablist:\n      - tab \"Blocks\" [selected]\n      - tab \"Patterns\"\n      - tab \"Media\"\n    - tabpanel \"Blocks\":\n      - text: Search\n      - searchbox \"Search\": File\n      - button \"Reset search\"\n      - heading \"Blocks\" [level=2]\n      - listbox \"Blocks\":\n        - option \"File\"\n        - option \"Social Icons\"\n        - option \"Pinterest Embed\"\n  - region \"Editor content\":\n    - toolbar \"Block tools\":\n      - button \"File\"\n      - text: Change block type or style\n      - button \"Drag\"\n      - button \"Move up\"\n      - text: Move File block from position 2 up to position 1\n      - button \"Move down\" [disabled]\n      - text: Block File is at the end of the content and can’t be moved down\n      - button \"Align\"\n      - text: Change alignment\n      - button \"Replace\"\n      - button \"Copy URL\"\n      - button \"Options\"\n    - iframe\n  - region \"Editor settings\":\n    - tablist:\n      - tab \"Post\" [selected]\n      - tab \"Block\"\n    - button \"Close Settings\"\n    - tabpanel \"Post\":\n      - heading \"可靠性实验 repair-safe final-path\" [level=2]\n      - button \"Actions\"\n      - button \"Set featured image\"\n      - button \"Add an excerpt…\"\n      - text: 3 words, 1 minute read time. Last edited a minute ago. Status\n      - 'button \"Change status: Draft\"': Draft\n      - text: Publish\n      - 'button \"Change date: Immediately\"': Immediately\n      - text: Slug\n      - 'button \"Change link: 可靠性实验-repair-safe-final-path\"': 可靠性实验-repair-safe-final-path\n      - text: Template\n      - button \"Template options\": Single Posts\n      - text: Discussion\n      - button \"Change discussion options\": Closed\n      - text: Format\n      - 'button \"Change format: Standard\"': Standard\n      - heading \"Categories\" [level=2]:\n        - button \"Categories\" [expanded]\n      - group \"Categories\":\n        - checkbox \"Excel 验证\" [checked]\n        - text: Excel 验证\n        - checkbox \"Uncategorized\"\n        - text: Uncategorized\n      - heading \"Tags\" [level=2]:\n        - button \"Tags\"\n  - region \"Editor publish\":\n    - button \"Open publish panel\"\n  - region \"Editor footer\":\n    - list \"Block breadcrumb\":\n      - listitem:\n        - button \"Post\"\n      - listitem: File\n  - text: Uploading — repair-safe-final-path.xlsx\n  - button \"Dismiss this notice\": ✕\n- paragraph: Notifications\n- text: 3 results found.",
+        "controls": [
+          {
+            "tag": "a",
+            "role": "menuitem",
+            "inViewport": true,
+            "text": "About WordPress",
+            "classes": "ab-item"
+          },
+          {
+            "tag": "a",
+            "role": "menuitem",
+            "inViewport": true,
+            "text": "helpr 验证后台（仅测试）",
+            "classes": "ab-item"
+          },
+          {
+            "tag": "a",
+            "role": "menuitem",
+            "inViewport": true,
+            "text": "⌘K\nOpen command palette",
+            "classes": "ab-item"
+          },
+          {
+            "tag": "a",
+            "role": "menuitem",
+            "inViewport": true,
+            "text": "0\n0 Comments in moderation",
+            "classes": "ab-item"
+          },
+          {
+            "tag": "a",
+            "role": "menuitem",
+            "inViewport": true,
+            "text": "New",
+            "classes": "ab-item"
+          },
+          {
+            "tag": "a",
+            "role": "menuitem",
+            "inViewport": true,
+            "text": "Howdy, helpr 测试用户",
+            "classes": "ab-item"
+          },
+          {
+            "tag": "a",
+            "label": "View Posts",
+            "inViewport": true,
+            "text": "",
+            "classes": "components-button is-compact has-icon"
+          },
+          {
+            "tag": "button",
+            "id": ":r1:",
+            "type": "button",
+            "label": "Block Inserter",
+            "inViewport": true,
+            "text": "",
+            "classes": "components-button components-toolbar-button editor-document-tools__inserter-toggle is-primary is-compact is-pressed has-icon"
+          },
+          {
+            "tag": "button",
+            "id": ":r3:",
+            "type": "button",
+            "label": "Undo",
+            "inViewport": true,
+            "text": "",
+            "classes": "components-button editor-history__undo is-next-40px-default-size is-compact has-icon"
+          },
+          {
+            "tag": "button",
+            "id": ":r5:",
+            "type": "button",
+            "label": "Redo",
+            "inViewport": true,
+            "text": "",
+            "classes": "components-button editor-history__redo is-next-40px-default-size is-compact has-icon"
+          },
+          {
+            "tag": "button",
+            "id": ":r7:",
+            "type": "button",
+            "label": "Document Overview",
+            "inViewport": true,
+            "text": "",
+            "classes": "components-button components-toolbar-button editor-document-tools__document-overview-toggle is-compact has-icon"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "inViewport": true,
+            "text": "可靠性实验 repair-safe final-path\n· Post",
+            "classes": "components-button editor-document-bar__command is-compact"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "label": "Save draft",
+            "inViewport": true,
+            "text": "Save draft",
+            "classes": "components-button editor-post-save-draft is-compact is-tertiary"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "label": "View",
+            "inViewport": true,
+            "text": "",
+            "classes": "components-button editor-preview-dropdown__toggle components-dropdown-menu__toggle is-compact has-icon has-icon-right"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "label": "Settings",
+            "inViewport": true,
+            "text": "",
+            "classes": "components-button is-compact is-pressed has-icon"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "inViewport": true,
+            "text": "Publish",
+            "classes": "components-button editor-post-publish-panel__toggle editor-post-publish-button__button is-primary is-compact"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "label": "Options",
+            "inViewport": true,
+            "text": "",
+            "classes": "components-button components-dropdown-menu__toggle is-compact has-icon"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "label": "Close Block Inserter",
+            "inViewport": true,
+            "text": "",
+            "classes": "components-button block-editor-tabbed-sidebar__close-button is-compact has-icon"
+          },
+          {
+            "tag": "button",
+            "id": "tabs-1-blocks",
+            "role": "tab",
+            "type": "button",
+            "inViewport": true,
+            "text": "Blocks",
+            "classes": "block-editor-tabbed-sidebar__tab css-jznp7x enfox0g3"
+          },
+          {
+            "tag": "button",
+            "id": "tabs-1-patterns",
+            "role": "tab",
+            "type": "button",
+            "inViewport": true,
+            "text": "Patterns",
+            "classes": "block-editor-tabbed-sidebar__tab css-jznp7x enfox0g3"
+          },
+          {
+            "tag": "button",
+            "id": "tabs-1-media",
+            "role": "tab",
+            "type": "button",
+            "inViewport": true,
+            "text": "Media",
+            "classes": "block-editor-tabbed-sidebar__tab css-jznp7x enfox0g3"
+          },
+          {
+            "tag": "input",
+            "id": "components-search-control-0",
+            "type": "search",
+            "placeholder": "Search",
+            "inViewport": true,
+            "text": "",
+            "classes": "components-input-control__input css-1gduwhc em5sgkm3"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "label": "Reset search",
+            "inViewport": true,
+            "text": "",
+            "classes": "components-button is-small has-icon"
+          },
+          {
+            "tag": "button",
+            "id": ":ra1:",
+            "role": "option",
+            "type": "button",
+            "inViewport": true,
+            "text": "File",
+            "classes": "components-button block-editor-block-types-list__item editor-block-list-item-file/default is-next-40px-default-size"
+          },
+          {
+            "tag": "button",
+            "id": ":ra3:",
+            "role": "option",
+            "type": "button",
+            "inViewport": true,
+            "text": "Social Icons",
+            "classes": "components-button block-editor-block-types-list__item editor-block-list-item-social-links is-next-40px-default-size"
+          },
+          {
+            "tag": "button",
+            "id": ":ra5:",
+            "role": "option",
+            "type": "button",
+            "inViewport": true,
+            "text": "Pinterest Embed",
+            "classes": "components-button block-editor-block-types-list__item editor-block-list-item-embed/pinterest is-next-40px-default-size"
+          },
+          {
+            "tag": "button",
+            "id": ":r9d:",
+            "type": "button",
+            "label": "File",
+            "inViewport": true,
+            "text": "",
+            "classes": "components-button components-dropdown-menu__toggle has-icon"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "label": "Drag",
+            "inViewport": true,
+            "text": "",
+            "classes": "components-button block-editor-block-mover__drag-handle is-next-40px-default-size has-icon"
+          },
+          {
+            "tag": "button",
+            "id": ":r9f:",
+            "type": "button",
+            "label": "Move up",
+            "inViewport": true,
+            "text": "",
+            "classes": "components-button block-editor-block-mover-button is-up-button is-next-40px-default-size has-icon"
+          },
+          {
+            "tag": "button",
+            "id": ":r9h:",
+            "type": "button",
+            "label": "Move down",
+            "inViewport": true,
+            "text": "",
+            "classes": "components-button block-editor-block-mover-button is-down-button is-next-40px-default-size has-icon"
+          },
+          {
+            "tag": "button",
+            "id": ":r9o:",
+            "type": "button",
+            "label": "Align",
+            "inViewport": true,
+            "text": "",
+            "classes": "components-button components-dropdown-menu__toggle has-icon"
+          },
+          {
+            "tag": "button",
+            "id": ":r9s:",
+            "type": "button",
+            "inViewport": true,
+            "text": "Replace",
+            "classes": "components-button components-toolbar-button is-compact"
+          },
+          {
+            "tag": "button",
+            "id": ":r9u:",
+            "type": "button",
+            "inViewport": true,
+            "text": "Copy URL",
+            "classes": "components-button components-toolbar-button components-clipboard-toolbar-button is-compact"
+          },
+          {
+            "tag": "button",
+            "id": ":r9j:",
+            "type": "button",
+            "label": "Options",
+            "inViewport": true,
+            "text": "",
+            "classes": "components-button components-dropdown-menu__toggle has-icon"
+          },
+          {
+            "tag": "button",
+            "id": "tabs-0-edit-post/document",
+            "role": "tab",
+            "type": "button",
+            "inViewport": true,
+            "text": "Post",
+            "classes": "css-jznp7x enfox0g3"
+          },
+          {
+            "tag": "button",
+            "id": "tabs-0-edit-post/block",
+            "role": "tab",
+            "type": "button",
+            "inViewport": true,
+            "text": "Block",
+            "classes": "css-jznp7x enfox0g3"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "label": "Close Settings",
+            "inViewport": true,
+            "text": "",
+            "classes": "components-button is-compact has-icon"
+          },
+          {
+            "tag": "button",
+            "id": ":r1q:",
+            "type": "button",
+            "label": "Actions",
+            "inViewport": true,
+            "text": "",
+            "classes": "components-button editor-all-actions-button is-small has-icon"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "inViewport": true,
+            "text": "Set featured image",
+            "classes": "components-button editor-post-featured-image__toggle is-next-40px-default-size"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "inViewport": true,
+            "text": "Add an excerpt…",
+            "classes": "components-button is-next-40px-default-size is-link"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "label": "Change status: Draft",
+            "inViewport": true,
+            "text": "Draft",
+            "classes": "components-button editor-post-status__toggle is-compact is-tertiary has-text has-icon"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "label": "Change date: Immediately",
+            "inViewport": true,
+            "text": "Immediately",
+            "classes": "components-button editor-post-schedule__dialog-toggle is-compact is-tertiary"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "label": "Change link: 可靠性实验-repair-safe-final-path",
+            "inViewport": true,
+            "text": "可靠性实验-repair-safe-final-path",
+            "classes": "components-button editor-post-url__panel-toggle is-compact is-tertiary"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "label": "Template options",
+            "inViewport": true,
+            "text": "Single Posts",
+            "classes": "components-button components-dropdown-menu__toggle is-compact is-tertiary"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "label": "Change discussion options",
+            "inViewport": true,
+            "text": "Closed",
+            "classes": "components-button editor-post-discussion__panel-toggle is-compact is-tertiary"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "label": "Change format: Standard",
+            "inViewport": true,
+            "text": "Standard",
+            "classes": "components-button is-compact is-tertiary"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "inViewport": true,
+            "text": "Categories",
+            "classes": "components-button components-panel__body-toggle is-next-40px-default-size"
+          },
+          {
+            "tag": "input",
+            "id": "inspector-checkbox-control-2",
+            "type": "checkbox",
+            "inViewport": true,
+            "text": "",
+            "classes": "components-checkbox-control__input"
+          },
+          {
+            "tag": "input",
+            "id": "inspector-checkbox-control-3",
+            "type": "checkbox",
+            "inViewport": true,
+            "text": "",
+            "classes": "components-checkbox-control__input"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "inViewport": true,
+            "text": "Tags",
+            "classes": "components-button components-panel__body-toggle is-next-40px-default-size"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "inViewport": false,
+            "text": "Open publish panel",
+            "classes": "components-button is-next-40px-default-size is-secondary"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "inViewport": true,
+            "text": "Post",
+            "classes": "components-button block-editor-block-breadcrumb__button is-small"
+          },
+          {
+            "tag": "span",
+            "role": "button",
+            "label": "Dismiss this notice",
+            "inViewport": true,
+            "text": "✕",
+            "classes": "components-snackbar__dismiss-button"
+          }
+        ]
+      },
+      {
+        "frame": "editor-canvas",
+        "aria": "- textbox \"文章标题（新版）\"\n- 'document \"Block: Paragraph\"': 虚构数据，用于流程条件实验。样本 repair-safe，批次 final-path。\n- 'document \"Block: File\"':\n  - textbox \"Write file name…\"\n  - textbox \"Download button text\"",
+        "controls": [
+          {
+            "tag": "h1",
+            "role": "textbox",
+            "label": "文章标题（新版）",
+            "inViewport": true,
+            "editable": "true",
+            "text": "可靠性实验 repair-safe final-path",
+            "classes": "wp-block wp-block-post-title block-editor-block-list__block editor-post-title editor-post-title__input rich-text"
+          },
+          {
+            "tag": "p",
+            "id": "block-50243cc8-6628-46a5-9b03-64f42b8126bd",
+            "role": "document",
+            "label": "Block: Paragraph",
+            "inViewport": true,
+            "editable": "true",
+            "text": "虚构数据，用于流程条件实验。样本 repair-safe，批次 final-path。",
+            "classes": "block-editor-rich-text__editable block-editor-block-list__block wp-block wp-block-paragraph rich-text"
+          },
+          {
+            "tag": "a",
+            "role": "textbox",
+            "label": "Write file name…",
+            "inViewport": true,
+            "editable": "true",
+            "text": "",
+            "classes": "block-editor-rich-text__editable rich-text"
+          },
+          {
+            "tag": "div",
+            "role": "textbox",
+            "label": "Download button text",
+            "inViewport": true,
+            "editable": "true",
+            "text": "Download",
+            "classes": "block-editor-rich-text__editable wp-block-file__button wp-element-button rich-text"
+          }
+        ]
+      }
+    ]
+  },
+  "passed": false,
+  "endedAt": "2026-10-10T12:37:06.722Z"
+}

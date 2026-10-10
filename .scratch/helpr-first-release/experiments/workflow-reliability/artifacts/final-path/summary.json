@@ -1,0 +1,104 @@
+{
+  "source": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/workflow-reliability/artifacts/focused-bound-candidate/candidate.json",
+  "cases": [
+    {
+      "mode": "baseline",
+      "passed": true,
+      "status": "completed",
+      "resultUrl": "http://home.ts-ali.internal:38080/?p=42"
+    },
+    {
+      "mode": "repeat",
+      "passed": true,
+      "status": "completed",
+      "resultUrl": "http://home.ts-ali.internal:38080/?p=47"
+    },
+    {
+      "mode": "literal-collision",
+      "passed": true,
+      "status": "completed",
+      "resultUrl": "http://home.ts-ali.internal:38080/?p=50"
+    },
+    {
+      "mode": "delayed-upload",
+      "passed": true,
+      "status": "completed",
+      "resultUrl": "http://home.ts-ali.internal:38080/?p=53"
+    },
+    {
+      "mode": "repair-safe",
+      "passed": false,
+      "status": "blocked",
+      "error": {
+        "code": "condition-unsatisfied",
+        "detail": {
+          "evidence": [
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Write file name…"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "file",
+                  "field": "stem"
+                }
+              },
+              "ok": false,
+              "actual": "﻿",
+              "expected": "repair-safe-final-path"
+            },
+            {
+              "condition": {
+                "kind": "attribute",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Write file name…"
+                },
+                "compare": "originEquals",
+                "expected": "http://home.ts-ali.internal:38080",
+                "attribute": "href"
+              },
+              "ok": false,
+              "actual": null,
+              "expected": "http://home.ts-ali.internal:38080"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "mode": "updated",
+      "passed": false,
+      "error": {
+        "name": "TimeoutError",
+        "message": "page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://home.ts-ali.internal:38080/wp-admin/\", waiting until \"domcontentloaded\"\u001b[22m\n"
+      }
+    }
+  ],
+  "modelCalls": [
+    {
+      "label": "repair-safe",
+      "startedAt": "2026-10-10T12:37:00.812Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 2576,
+        "completion_tokens": 97,
+        "total_tokens": 2673,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 2576
+      },
+      "endedAt": "2026-10-10T12:37:02.158Z",
+      "durationMs": 1345.5412500000093
+    }
+  ]
+}

@@ -1,0 +1,442 @@
+{
+  "schema": 1,
+  "version": 1,
+  "compatibility": {
+    "origin": "http://home.ts-ali.internal:38080",
+    "kind": "create-record-with-attachment"
+  },
+  "inputs": {
+    "title": "string",
+    "body": "string",
+    "category": "string",
+    "file": "file"
+  },
+  "reasoning": "入口身份来自仪表盘 Posts 菜单与 Add Post 链接（观察中 Posts 菜单可见、Add Post 在悬停后出现）。标题/正文均在 editor-canvas iframe 内：标题为 role=textbox name=Add title，正文为 role=document 的段落块。分类来自 Editor settings 的 Post 面板中 role=checkbox name={input:category}，观察中该复选框唯一且勾选后 checked。文件通过 Block Inserter 搜索常量 File 插入 File 块，再对 editor-canvas 内 input[type=file] 执行 upload；上传完成证据为通知区 Upload complete 且文件块出现 Write file name… 与 Download button text 两个 textbox（Upload complete 可能短暂，故同时检查文件块控件）。发布两次点击均标记 commit：第一次打开预发布面板，第二次在 region Editor publish 内确认。resultChecks 在公开文章执行：标题用 main 内唯一 h1；正文与栏目限定 entry-content 与 taxonomy-category；文件用 Download 链接的 download 检查比较 sha256。局限：所有定位来自单次观察，File 块与上传控件结构可能随版本变化，需实测。",
+  "steps": [
+    {
+      "id": "s1",
+      "effect": "read",
+      "action": {
+        "op": "hover",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "Posts"
+        }
+      },
+      "before": [],
+      "after": []
+    },
+    {
+      "id": "s2",
+      "effect": "read",
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "Add Post"
+        }
+      },
+      "before": [],
+      "after": []
+    },
+    {
+      "id": "s3",
+      "effect": "edit",
+      "action": {
+        "op": "fill",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "Add title"
+        },
+        "value": {
+          "input": "title"
+        }
+      },
+      "before": [],
+      "after": []
+    },
+    {
+      "id": "s4",
+      "effect": "edit",
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "button",
+          "name": "Add default block"
+        }
+      },
+      "before": [],
+      "after": []
+    },
+    {
+      "id": "s5",
+      "effect": "edit",
+      "action": {
+        "op": "fill",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "document",
+          "name": "Empty block; start writing or type forward slash to choose a block"
+        },
+        "value": {
+          "input": "body"
+        }
+      },
+      "before": [],
+      "after": []
+    },
+    {
+      "id": "s6",
+      "effect": "read",
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "tab",
+          "name": "Post"
+        }
+      },
+      "before": [],
+      "after": []
+    },
+    {
+      "id": "s7",
+      "effect": "edit",
+      "action": {
+        "op": "check",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "checkbox",
+          "name": {
+            "input": "category"
+          }
+        },
+        "value": true
+      },
+      "before": [],
+      "after": []
+    },
+    {
+      "id": "s8",
+      "effect": "read",
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Block Inserter"
+        }
+      },
+      "before": [],
+      "after": []
+    },
+    {
+      "id": "s9",
+      "effect": "edit",
+      "action": {
+        "op": "fill",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "searchbox",
+          "name": "Search"
+        },
+        "value": "File"
+      },
+      "before": [],
+      "after": []
+    },
+    {
+      "id": "s10",
+      "effect": "edit",
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "option",
+          "name": "File"
+        }
+      },
+      "before": [],
+      "after": []
+    },
+    {
+      "id": "s11",
+      "effect": "upload",
+      "action": {
+        "op": "upload",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "css",
+          "selector": "input[type=file]"
+        },
+        "value": {
+          "input": "file",
+          "field": "path"
+        }
+      },
+      "before": [],
+      "after": []
+    },
+    {
+      "id": "s12",
+      "effect": "read",
+      "action": {
+        "op": "wait",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "Write file name…"
+        }
+      },
+      "before": [],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Write file name…"
+          }
+        },
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Download button text"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s13",
+      "effect": "commit",
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Publish"
+        }
+      },
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Write file name…"
+          }
+        },
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Download button text"
+          }
+        }
+      ],
+      "after": []
+    },
+    {
+      "id": "s14",
+      "effect": "commit",
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Publish",
+          "within": {
+            "frame": "main",
+            "by": "role",
+            "role": "region",
+            "name": "Editor publish"
+          }
+        }
+      },
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "region",
+            "name": "Editor publish"
+          }
+        }
+      ],
+      "after": []
+    },
+    {
+      "id": "s15",
+      "effect": "read",
+      "action": {
+        "op": "finish",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "View Post (opens in a new tab)"
+        }
+      },
+      "before": [],
+      "after": []
+    }
+  ],
+  "entryChecks": [
+    {
+      "kind": "visible",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "link",
+        "name": "Posts"
+      }
+    },
+    {
+      "kind": "visible",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "link",
+        "name": "Add Post"
+      }
+    }
+  ],
+  "commitChecks": [
+    {
+      "kind": "value",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "textbox",
+        "name": "Add title"
+      },
+      "compare": "equals",
+      "expected": {
+        "input": "title"
+      }
+    },
+    {
+      "kind": "text",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "document",
+        "name": "Block: Paragraph"
+      },
+      "compare": "contains",
+      "expected": {
+        "input": "body"
+      }
+    },
+    {
+      "kind": "checked",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "checkbox",
+        "name": {
+          "input": "category"
+        }
+      },
+      "expected": true
+    },
+    {
+      "kind": "visible",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "textbox",
+        "name": "Write file name…"
+      }
+    },
+    {
+      "kind": "visible",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "textbox",
+        "name": "Download button text"
+      }
+    }
+  ],
+  "resultChecks": [
+    {
+      "kind": "text",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "heading",
+        "name": {
+          "input": "title"
+        },
+        "level": 1
+      },
+      "compare": "equals",
+      "expected": {
+        "input": "title"
+      }
+    },
+    {
+      "kind": "text",
+      "target": {
+        "frame": "main",
+        "by": "css",
+        "selector": ".entry-content .wp-block-paragraph"
+      },
+      "compare": "contains",
+      "expected": {
+        "input": "body"
+      }
+    },
+    {
+      "kind": "text",
+      "target": {
+        "frame": "main",
+        "by": "css",
+        "selector": ".taxonomy-category a"
+      },
+      "compare": "equals",
+      "expected": {
+        "input": "category"
+      }
+    },
+    {
+      "kind": "download",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "link",
+        "name": "Download"
+      },
+      "expected": {
+        "input": "file",
+        "field": "sha256"
+      }
+    }
+  ]
+}

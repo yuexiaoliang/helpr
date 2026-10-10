@@ -1,0 +1,2240 @@
+{
+  "mode": "repeat",
+  "startedAt": "2026-10-10T12:32:12.196Z",
+  "runtime": {
+    "node": "v24.18.0",
+    "browser": "156.0.8078.4",
+    "pid": 58226
+  },
+  "candidateHash": "396fd4b9d98e312053a63afcadef7cbad2a1e62c64e645dd5060c6ebb7b88199",
+  "task": {
+    "id": "final-path/repeat",
+    "kind": "create-record-with-attachment",
+    "origin": "http://home.ts-ali.internal:38080",
+    "entryUrl": "http://home.ts-ali.internal:38080/wp-admin/",
+    "inputs": {
+      "title": {
+        "type": "string",
+        "value": "可靠性实验 repeat final-path"
+      },
+      "body": {
+        "type": "string",
+        "value": "虚构数据，用于流程条件实验。样本 repeat，批次 final-path。"
+      },
+      "category": {
+        "type": "string",
+        "value": "Excel 验证"
+      },
+      "file": {
+        "type": "file",
+        "path": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/workflow-reliability/artifacts/final-path/repeat/repeat-final-path.xlsx",
+        "name": "repeat-final-path.xlsx",
+        "stem": "repeat-final-path",
+        "sha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+      }
+    },
+    "requiredOutputs": [
+      "title",
+      "body",
+      "category",
+      "file"
+    ],
+    "authorization": {
+      "origin": "http://home.ts-ali.internal:38080",
+      "kind": "create-record-with-attachment",
+      "inputsDigest": "1858cb5628da37e06e1414ffd828c068d97cb820d92d4b4696b91f3e3549edb6",
+      "source": "explicitly-authorized-test-fixture-not-human-preview"
+    }
+  },
+  "network": [
+    {
+      "type": "publish-request",
+      "at": 1791635573810,
+      "pathname": "/index.php"
+    }
+  ],
+  "outcome": {
+    "status": "completed",
+    "resultUrl": "http://home.ts-ali.internal:38080/?p=47",
+    "sourceHash": "396fd4b9d98e312053a63afcadef7cbad2a1e62c64e645dd5060c6ebb7b88199",
+    "events": [
+      {
+        "at": "2026-10-10T12:32:33.623Z",
+        "type": "eligible",
+        "sourceHash": "396fd4b9d98e312053a63afcadef7cbad2a1e62c64e645dd5060c6ebb7b88199",
+        "evidence": [
+          {
+            "condition": {
+              "kind": "visible",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "heading",
+                "name": "Dashboard"
+              }
+            },
+            "ok": true,
+            "count": 1
+          },
+          {
+            "condition": {
+              "kind": "visible",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "link",
+                "name": "Posts"
+              }
+            },
+            "ok": true,
+            "count": 1
+          }
+        ]
+      },
+      {
+        "at": "2026-10-10T12:32:33.624Z",
+        "type": "step-start",
+        "step": "s1"
+      },
+      {
+        "at": "2026-10-10T12:32:33.643Z",
+        "type": "dispatch",
+        "step": "s1",
+        "action": {
+          "op": "hover",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": "Posts"
+          }
+        },
+        "effect": "read"
+      },
+      {
+        "at": "2026-10-10T12:32:33.732Z",
+        "type": "step-completed",
+        "step": "s1",
+        "outcome": {
+          "before": [],
+          "after": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "link",
+                  "name": "Add Post"
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:32:33.732Z",
+        "type": "step-start",
+        "step": "s2"
+      },
+      {
+        "at": "2026-10-10T12:32:33.743Z",
+        "type": "dispatch",
+        "step": "s2",
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": "Add Post"
+          }
+        },
+        "effect": "read"
+      },
+      {
+        "at": "2026-10-10T12:32:51.323Z",
+        "type": "step-completed",
+        "step": "s2",
+        "outcome": {
+          "before": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "link",
+                  "name": "Add Post"
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ],
+          "after": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "css",
+                  "selector": "h1.editor-post-title__input"
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:32:51.323Z",
+        "type": "step-start",
+        "step": "s3"
+      },
+      {
+        "at": "2026-10-10T12:32:51.346Z",
+        "type": "dispatch",
+        "step": "s3",
+        "action": {
+          "op": "fill",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Add title"
+          },
+          "value": "可靠性实验 repeat final-path"
+        },
+        "effect": "edit"
+      },
+      {
+        "at": "2026-10-10T12:32:51.369Z",
+        "type": "step-completed",
+        "step": "s3",
+        "outcome": {
+          "before": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "css",
+                  "selector": "h1.editor-post-title__input"
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ],
+          "after": [
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "css",
+                  "selector": "h1.editor-post-title__input"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "title"
+                }
+              },
+              "ok": true,
+              "actual": "可靠性实验 repeat final-path",
+              "expected": "可靠性实验 repeat final-path"
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:32:51.369Z",
+        "type": "step-start",
+        "step": "s4"
+      },
+      {
+        "at": "2026-10-10T12:32:51.384Z",
+        "type": "dispatch",
+        "step": "s4",
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "button",
+            "name": "Add default block"
+          }
+        },
+        "effect": "edit"
+      },
+      {
+        "at": "2026-10-10T12:32:51.484Z",
+        "type": "step-completed",
+        "step": "s4",
+        "outcome": {
+          "before": [
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "css",
+                  "selector": "h1.editor-post-title__input"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "title"
+                }
+              },
+              "ok": true,
+              "actual": "可靠性实验 repeat final-path",
+              "expected": "可靠性实验 repeat final-path"
+            }
+          ],
+          "after": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "document",
+                  "name": "Empty block; start writing or type forward slash to choose a block"
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:32:51.484Z",
+        "type": "step-start",
+        "step": "s5"
+      },
+      {
+        "at": "2026-10-10T12:32:51.497Z",
+        "type": "dispatch",
+        "step": "s5",
+        "action": {
+          "op": "fill",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "document",
+            "name": "Empty block; start writing or type forward slash to choose a block"
+          },
+          "value": "虚构数据，用于流程条件实验。样本 repeat，批次 final-path。"
+        },
+        "effect": "edit"
+      },
+      {
+        "at": "2026-10-10T12:32:51.546Z",
+        "type": "step-completed",
+        "step": "s5",
+        "outcome": {
+          "before": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "document",
+                  "name": "Empty block; start writing or type forward slash to choose a block"
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ],
+          "after": [
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "document",
+                  "name": "Block: Paragraph"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "body"
+                }
+              },
+              "ok": true,
+              "actual": "虚构数据，用于流程条件实验。样本 repeat，批次 final-path。",
+              "expected": "虚构数据，用于流程条件实验。样本 repeat，批次 final-path。"
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:32:51.546Z",
+        "type": "step-start",
+        "step": "s6"
+      },
+      {
+        "at": "2026-10-10T12:32:51.559Z",
+        "type": "dispatch",
+        "step": "s6",
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "tab",
+            "name": "Post"
+          }
+        },
+        "effect": "read"
+      },
+      {
+        "at": "2026-10-10T12:32:51.619Z",
+        "type": "step-completed",
+        "step": "s6",
+        "outcome": {
+          "before": [
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "document",
+                  "name": "Block: Paragraph"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "body"
+                }
+              },
+              "ok": true,
+              "actual": "虚构数据，用于流程条件实验。样本 repeat，批次 final-path。",
+              "expected": "虚构数据，用于流程条件实验。样本 repeat，批次 final-path。"
+            }
+          ],
+          "after": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "checkbox",
+                  "name": {
+                    "input": "category"
+                  }
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:32:51.619Z",
+        "type": "step-start",
+        "step": "s7"
+      },
+      {
+        "at": "2026-10-10T12:32:51.628Z",
+        "type": "dispatch",
+        "step": "s7",
+        "action": {
+          "op": "check",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "checkbox",
+            "name": "Excel 验证"
+          },
+          "value": true
+        },
+        "effect": "edit"
+      },
+      {
+        "at": "2026-10-10T12:32:51.670Z",
+        "type": "step-completed",
+        "step": "s7",
+        "outcome": {
+          "before": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "checkbox",
+                  "name": {
+                    "input": "category"
+                  }
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ],
+          "after": [
+            {
+              "condition": {
+                "kind": "checked",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "checkbox",
+                  "name": {
+                    "input": "category"
+                  }
+                },
+                "expected": true
+              },
+              "ok": true,
+              "actual": true
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:32:51.670Z",
+        "type": "step-start",
+        "step": "s8"
+      },
+      {
+        "at": "2026-10-10T12:32:51.682Z",
+        "type": "dispatch",
+        "step": "s8",
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Block Inserter"
+          }
+        },
+        "effect": "read"
+      },
+      {
+        "at": "2026-10-10T12:32:51.774Z",
+        "type": "step-completed",
+        "step": "s8",
+        "outcome": {
+          "before": [
+            {
+              "condition": {
+                "kind": "checked",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "checkbox",
+                  "name": {
+                    "input": "category"
+                  }
+                },
+                "expected": true
+              },
+              "ok": true,
+              "actual": true
+            }
+          ],
+          "after": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "searchbox",
+                  "name": "Search"
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:32:51.774Z",
+        "type": "step-start",
+        "step": "s9"
+      },
+      {
+        "at": "2026-10-10T12:32:51.889Z",
+        "type": "dispatch",
+        "step": "s9",
+        "action": {
+          "op": "fill",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "searchbox",
+            "name": "Search"
+          },
+          "value": "File"
+        },
+        "effect": "edit"
+      },
+      {
+        "at": "2026-10-10T12:32:51.935Z",
+        "type": "step-completed",
+        "step": "s9",
+        "outcome": {
+          "before": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "searchbox",
+                  "name": "Search"
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ],
+          "after": [
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "searchbox",
+                  "name": "Search"
+                },
+                "compare": "equals",
+                "expected": "File"
+              },
+              "ok": true,
+              "actual": "File",
+              "expected": "File"
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:32:51.936Z",
+        "type": "step-start",
+        "step": "s10"
+      },
+      {
+        "at": "2026-10-10T12:32:52.022Z",
+        "type": "dispatch",
+        "step": "s10",
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "option",
+            "name": "File"
+          }
+        },
+        "effect": "edit"
+      },
+      {
+        "at": "2026-10-10T12:32:52.137Z",
+        "type": "step-completed",
+        "step": "s10",
+        "outcome": {
+          "before": [
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "searchbox",
+                  "name": "Search"
+                },
+                "compare": "equals",
+                "expected": "File"
+              },
+              "ok": true,
+              "actual": "File",
+              "expected": "File"
+            }
+          ],
+          "after": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "button",
+                  "name": "Upload"
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:32:52.138Z",
+        "type": "step-start",
+        "step": "s11"
+      },
+      {
+        "at": "2026-10-10T12:32:52.154Z",
+        "type": "dispatch",
+        "step": "s11",
+        "action": {
+          "op": "upload",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "css",
+            "selector": "input[type=file]"
+          },
+          "value": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/workflow-reliability/artifacts/final-path/repeat/repeat-final-path.xlsx"
+        },
+        "effect": "upload"
+      },
+      {
+        "at": "2026-10-10T12:32:53.523Z",
+        "type": "step-completed",
+        "step": "s11",
+        "outcome": {
+          "before": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "button",
+                  "name": "Upload"
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ],
+          "after": [
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Write file name…"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "file",
+                  "field": "stem"
+                }
+              },
+              "ok": true,
+              "actual": "repeat-final-path",
+              "expected": "repeat-final-path"
+            },
+            {
+              "condition": {
+                "kind": "attribute",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Write file name…"
+                },
+                "compare": "originEquals",
+                "expected": "http://home.ts-ali.internal:38080",
+                "attribute": "href"
+              },
+              "ok": true,
+              "actual": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/repeat-final-path.xlsx",
+              "expected": "http://home.ts-ali.internal:38080"
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:32:53.523Z",
+        "type": "step-start",
+        "step": "s12"
+      },
+      {
+        "at": "2026-10-10T12:32:53.542Z",
+        "type": "dispatch",
+        "step": "s12",
+        "action": {
+          "op": "wait",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Write file name…"
+          }
+        },
+        "effect": "read"
+      },
+      {
+        "at": "2026-10-10T12:32:53.553Z",
+        "type": "step-completed",
+        "step": "s12",
+        "outcome": {
+          "before": [
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Write file name…"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "file",
+                  "field": "stem"
+                }
+              },
+              "ok": true,
+              "actual": "repeat-final-path",
+              "expected": "repeat-final-path"
+            },
+            {
+              "condition": {
+                "kind": "attribute",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Write file name…"
+                },
+                "compare": "originEquals",
+                "expected": "http://home.ts-ali.internal:38080",
+                "attribute": "href"
+              },
+              "ok": true,
+              "actual": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/repeat-final-path.xlsx",
+              "expected": "http://home.ts-ali.internal:38080"
+            }
+          ],
+          "after": [
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Write file name…"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "file",
+                  "field": "stem"
+                }
+              },
+              "ok": true,
+              "actual": "repeat-final-path",
+              "expected": "repeat-final-path"
+            },
+            {
+              "condition": {
+                "kind": "attribute",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Write file name…"
+                },
+                "compare": "originEquals",
+                "expected": "http://home.ts-ali.internal:38080",
+                "attribute": "href"
+              },
+              "ok": true,
+              "actual": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/repeat-final-path.xlsx",
+              "expected": "http://home.ts-ali.internal:38080"
+            },
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Write file name…"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "file",
+                  "field": "stem"
+                }
+              },
+              "ok": true,
+              "actual": "repeat-final-path",
+              "expected": "repeat-final-path"
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:32:53.553Z",
+        "type": "step-start",
+        "step": "s13"
+      },
+      {
+        "at": "2026-10-10T12:32:53.592Z",
+        "type": "commit-checked",
+        "step": "s13",
+        "evidence": [
+          {
+            "condition": {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "css",
+                "selector": "h1.editor-post-title__input"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "title"
+              }
+            },
+            "ok": true,
+            "actual": "可靠性实验 repeat final-path",
+            "expected": "可靠性实验 repeat final-path"
+          },
+          {
+            "condition": {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "document",
+                "name": "Block: Paragraph"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "body"
+              }
+            },
+            "ok": true,
+            "actual": "虚构数据，用于流程条件实验。样本 repeat，批次 final-path。",
+            "expected": "虚构数据，用于流程条件实验。样本 repeat，批次 final-path。"
+          },
+          {
+            "condition": {
+              "kind": "checked",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "checkbox",
+                "name": {
+                  "input": "category"
+                }
+              },
+              "expected": true
+            },
+            "ok": true,
+            "actual": true
+          },
+          {
+            "condition": {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Write file name…"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "file",
+                "field": "stem"
+              }
+            },
+            "ok": true,
+            "actual": "repeat-final-path",
+            "expected": "repeat-final-path"
+          },
+          {
+            "condition": {
+              "kind": "attribute",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Write file name…"
+              },
+              "compare": "originEquals",
+              "expected": "http://home.ts-ali.internal:38080",
+              "attribute": "href"
+            },
+            "ok": true,
+            "actual": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/repeat-final-path.xlsx",
+            "expected": "http://home.ts-ali.internal:38080"
+          },
+          {
+            "condition": {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Write file name…"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "file",
+                "field": "stem"
+              }
+            },
+            "ok": true,
+            "actual": "repeat-final-path",
+            "expected": "repeat-final-path"
+          }
+        ]
+      },
+      {
+        "at": "2026-10-10T12:32:53.595Z",
+        "type": "dispatch",
+        "step": "s13",
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Publish"
+          }
+        },
+        "effect": "commit"
+      },
+      {
+        "at": "2026-10-10T12:32:53.646Z",
+        "type": "step-completed",
+        "step": "s13",
+        "outcome": {
+          "before": [
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Write file name…"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "file",
+                  "field": "stem"
+                }
+              },
+              "ok": true,
+              "actual": "repeat-final-path",
+              "expected": "repeat-final-path"
+            },
+            {
+              "condition": {
+                "kind": "attribute",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Write file name…"
+                },
+                "compare": "originEquals",
+                "expected": "http://home.ts-ali.internal:38080",
+                "attribute": "href"
+              },
+              "ok": true,
+              "actual": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/repeat-final-path.xlsx",
+              "expected": "http://home.ts-ali.internal:38080"
+            },
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Write file name…"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "file",
+                  "field": "stem"
+                }
+              },
+              "ok": true,
+              "actual": "repeat-final-path",
+              "expected": "repeat-final-path"
+            }
+          ],
+          "after": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "role": "button",
+                  "name": "Publish",
+                  "within": {
+                    "role": "region",
+                    "name": "Editor publish",
+                    "by": "role",
+                    "frame": "main"
+                  },
+                  "by": "role",
+                  "frame": "main"
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:32:53.647Z",
+        "type": "step-start",
+        "step": "s14"
+      },
+      {
+        "at": "2026-10-10T12:32:53.675Z",
+        "type": "commit-checked",
+        "step": "s14",
+        "evidence": [
+          {
+            "condition": {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "css",
+                "selector": "h1.editor-post-title__input"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "title"
+              }
+            },
+            "ok": true,
+            "actual": "可靠性实验 repeat final-path",
+            "expected": "可靠性实验 repeat final-path"
+          },
+          {
+            "condition": {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "document",
+                "name": "Block: Paragraph"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "body"
+              }
+            },
+            "ok": true,
+            "actual": "虚构数据，用于流程条件实验。样本 repeat，批次 final-path。",
+            "expected": "虚构数据，用于流程条件实验。样本 repeat，批次 final-path。"
+          },
+          {
+            "condition": {
+              "kind": "checked",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "checkbox",
+                "name": {
+                  "input": "category"
+                }
+              },
+              "expected": true
+            },
+            "ok": true,
+            "actual": true
+          },
+          {
+            "condition": {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Write file name…"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "file",
+                "field": "stem"
+              }
+            },
+            "ok": true,
+            "actual": "repeat-final-path",
+            "expected": "repeat-final-path"
+          },
+          {
+            "condition": {
+              "kind": "attribute",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Write file name…"
+              },
+              "compare": "originEquals",
+              "expected": "http://home.ts-ali.internal:38080",
+              "attribute": "href"
+            },
+            "ok": true,
+            "actual": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/repeat-final-path.xlsx",
+            "expected": "http://home.ts-ali.internal:38080"
+          },
+          {
+            "condition": {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Write file name…"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "file",
+                "field": "stem"
+              }
+            },
+            "ok": true,
+            "actual": "repeat-final-path",
+            "expected": "repeat-final-path"
+          }
+        ]
+      },
+      {
+        "at": "2026-10-10T12:32:53.678Z",
+        "type": "dispatch",
+        "step": "s14",
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Publish",
+            "within": {
+              "frame": "main",
+              "by": "role",
+              "role": "region",
+              "name": "Editor publish"
+            }
+          }
+        },
+        "effect": "commit"
+      },
+      {
+        "at": "2026-10-10T12:32:58.296Z",
+        "type": "step-completed",
+        "step": "s14",
+        "outcome": {
+          "before": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "role": "button",
+                  "name": "Publish",
+                  "within": {
+                    "role": "region",
+                    "name": "Editor publish",
+                    "by": "role",
+                    "frame": "main"
+                  },
+                  "by": "role",
+                  "frame": "main"
+                }
+              },
+              "ok": true,
+              "count": 1
+            }
+          ],
+          "after": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "link",
+                  "name": "View Post (opens in a new tab)"
+                }
+              },
+              "ok": true,
+              "count": 2
+            }
+          ]
+        }
+      },
+      {
+        "at": "2026-10-10T12:32:58.300Z",
+        "type": "step-start",
+        "step": "s15"
+      },
+      {
+        "at": "2026-10-10T12:32:58.331Z",
+        "type": "step-completed",
+        "step": "s15",
+        "outcome": {
+          "resultUrl": "http://home.ts-ali.internal:38080/?p=47",
+          "before": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "link",
+                  "name": "View Post (opens in a new tab)"
+                }
+              },
+              "ok": true,
+              "count": 2
+            }
+          ],
+          "after": []
+        }
+      },
+      {
+        "at": "2026-10-10T12:33:01.938Z",
+        "type": "result-verified",
+        "resultUrl": "http://home.ts-ali.internal:38080/?p=47",
+        "evidence": [
+          {
+            "condition": {
+              "kind": "text",
+              "target": {
+                "frame": "main",
+                "by": "css",
+                "selector": "h1.wp-block-post-title"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "title"
+              }
+            },
+            "ok": true,
+            "actual": "可靠性实验 repeat final-path",
+            "expected": "可靠性实验 repeat final-path"
+          },
+          {
+            "condition": {
+              "kind": "text",
+              "target": {
+                "frame": "main",
+                "by": "css",
+                "selector": ".entry-content p.wp-block-paragraph"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "body"
+              }
+            },
+            "ok": true,
+            "actual": "虚构数据，用于流程条件实验。样本 repeat，批次 final-path。",
+            "expected": "虚构数据，用于流程条件实验。样本 repeat，批次 final-path。"
+          },
+          {
+            "condition": {
+              "kind": "text",
+              "target": {
+                "frame": "main",
+                "by": "css",
+                "selector": ".taxonomy-category a"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "category"
+              }
+            },
+            "ok": true,
+            "actual": "Excel 验证",
+            "expected": "Excel 验证"
+          },
+          {
+            "condition": {
+              "kind": "download",
+              "target": {
+                "frame": "main",
+                "by": "css",
+                "selector": ".wp-block-file a.wp-block-file__button"
+              },
+              "expected": {
+                "input": "file",
+                "field": "sha256"
+              }
+            },
+            "ok": true,
+            "actual": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+            "downloadedName": "repeat-final-path.xlsx"
+          }
+        ]
+      }
+    ],
+    "repairs": [],
+    "qualified": {
+      "schema": 1,
+      "version": 1,
+      "compatibility": {
+        "origin": "http://home.ts-ali.internal:38080",
+        "kind": "create-record-with-attachment"
+      },
+      "inputs": {
+        "title": "string",
+        "body": "string",
+        "category": "string",
+        "file": "file"
+      },
+      "reasoning": "基于真实正反样本的分项提议；实验驱动组合限定本条路径，仍须通过完整执行与反例验证。",
+      "entryChecks": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "heading",
+            "name": "Dashboard"
+          }
+        },
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": "Posts"
+          }
+        }
+      ],
+      "steps": [
+        {
+          "id": "s1",
+          "effect": "read",
+          "action": {
+            "op": "hover",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "link",
+              "name": "Posts"
+            }
+          },
+          "before": [],
+          "after": [
+            {
+              "kind": "visible",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "link",
+                "name": "Add Post"
+              }
+            }
+          ]
+        },
+        {
+          "id": "s2",
+          "effect": "read",
+          "action": {
+            "op": "click",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "link",
+              "name": "Add Post"
+            }
+          },
+          "before": [
+            {
+              "kind": "visible",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "link",
+                "name": "Add Post"
+              }
+            }
+          ],
+          "after": [
+            {
+              "kind": "visible",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "css",
+                "selector": "h1.editor-post-title__input"
+              }
+            }
+          ]
+        },
+        {
+          "id": "s3",
+          "effect": "edit",
+          "action": {
+            "op": "fill",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            },
+            "value": {
+              "input": "title"
+            }
+          },
+          "before": [
+            {
+              "kind": "visible",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "css",
+                "selector": "h1.editor-post-title__input"
+              }
+            }
+          ],
+          "after": [
+            {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "css",
+                "selector": "h1.editor-post-title__input"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "title"
+              }
+            }
+          ]
+        },
+        {
+          "id": "s4",
+          "effect": "edit",
+          "action": {
+            "op": "click",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "button",
+              "name": "Add default block"
+            }
+          },
+          "before": [
+            {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "css",
+                "selector": "h1.editor-post-title__input"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "title"
+              }
+            }
+          ],
+          "after": [
+            {
+              "kind": "visible",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "document",
+                "name": "Empty block; start writing or type forward slash to choose a block"
+              }
+            }
+          ]
+        },
+        {
+          "id": "s5",
+          "effect": "edit",
+          "action": {
+            "op": "fill",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "document",
+              "name": "Empty block; start writing or type forward slash to choose a block"
+            },
+            "value": {
+              "input": "body"
+            }
+          },
+          "before": [
+            {
+              "kind": "visible",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "document",
+                "name": "Empty block; start writing or type forward slash to choose a block"
+              }
+            }
+          ],
+          "after": [
+            {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "document",
+                "name": "Block: Paragraph"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "body"
+              }
+            }
+          ]
+        },
+        {
+          "id": "s6",
+          "effect": "read",
+          "action": {
+            "op": "click",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "tab",
+              "name": "Post"
+            }
+          },
+          "before": [
+            {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "document",
+                "name": "Block: Paragraph"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "body"
+              }
+            }
+          ],
+          "after": [
+            {
+              "kind": "visible",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "checkbox",
+                "name": {
+                  "input": "category"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "s7",
+          "effect": "edit",
+          "action": {
+            "op": "check",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "checkbox",
+              "name": {
+                "input": "category"
+              }
+            },
+            "value": true
+          },
+          "before": [
+            {
+              "kind": "visible",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "checkbox",
+                "name": {
+                  "input": "category"
+                }
+              }
+            }
+          ],
+          "after": [
+            {
+              "kind": "checked",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "checkbox",
+                "name": {
+                  "input": "category"
+                }
+              },
+              "expected": true
+            }
+          ]
+        },
+        {
+          "id": "s8",
+          "effect": "read",
+          "action": {
+            "op": "click",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Block Inserter"
+            }
+          },
+          "before": [
+            {
+              "kind": "checked",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "checkbox",
+                "name": {
+                  "input": "category"
+                }
+              },
+              "expected": true
+            }
+          ],
+          "after": [
+            {
+              "kind": "visible",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "searchbox",
+                "name": "Search"
+              }
+            }
+          ]
+        },
+        {
+          "id": "s9",
+          "effect": "edit",
+          "action": {
+            "op": "fill",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "searchbox",
+              "name": "Search"
+            },
+            "value": "File"
+          },
+          "before": [
+            {
+              "kind": "visible",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "searchbox",
+                "name": "Search"
+              }
+            }
+          ],
+          "after": [
+            {
+              "kind": "value",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "searchbox",
+                "name": "Search"
+              },
+              "compare": "equals",
+              "expected": "File"
+            }
+          ]
+        },
+        {
+          "id": "s10",
+          "effect": "edit",
+          "action": {
+            "op": "click",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "option",
+              "name": "File"
+            }
+          },
+          "before": [
+            {
+              "kind": "value",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "searchbox",
+                "name": "Search"
+              },
+              "compare": "equals",
+              "expected": "File"
+            }
+          ],
+          "after": [
+            {
+              "kind": "visible",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "button",
+                "name": "Upload"
+              }
+            }
+          ]
+        },
+        {
+          "id": "s11",
+          "effect": "upload",
+          "action": {
+            "op": "upload",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "css",
+              "selector": "input[type=file]"
+            },
+            "value": {
+              "input": "file",
+              "field": "path"
+            }
+          },
+          "before": [
+            {
+              "kind": "visible",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "button",
+                "name": "Upload"
+              }
+            }
+          ],
+          "after": [
+            {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Write file name…"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "file",
+                "field": "stem"
+              }
+            },
+            {
+              "kind": "attribute",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Write file name…"
+              },
+              "compare": "originEquals",
+              "expected": "http://home.ts-ali.internal:38080",
+              "attribute": "href"
+            }
+          ]
+        },
+        {
+          "id": "s12",
+          "effect": "read",
+          "action": {
+            "op": "wait",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Write file name…"
+            }
+          },
+          "before": [
+            {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Write file name…"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "file",
+                "field": "stem"
+              }
+            },
+            {
+              "kind": "attribute",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Write file name…"
+              },
+              "compare": "originEquals",
+              "expected": "http://home.ts-ali.internal:38080",
+              "attribute": "href"
+            }
+          ],
+          "after": [
+            {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Write file name…"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "file",
+                "field": "stem"
+              }
+            },
+            {
+              "kind": "attribute",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Write file name…"
+              },
+              "compare": "originEquals",
+              "expected": "http://home.ts-ali.internal:38080",
+              "attribute": "href"
+            },
+            {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Write file name…"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "file",
+                "field": "stem"
+              }
+            }
+          ]
+        },
+        {
+          "id": "s13",
+          "effect": "commit",
+          "action": {
+            "op": "click",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Publish"
+            }
+          },
+          "before": [
+            {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Write file name…"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "file",
+                "field": "stem"
+              }
+            },
+            {
+              "kind": "attribute",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Write file name…"
+              },
+              "compare": "originEquals",
+              "expected": "http://home.ts-ali.internal:38080",
+              "attribute": "href"
+            },
+            {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Write file name…"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "file",
+                "field": "stem"
+              }
+            }
+          ],
+          "after": [
+            {
+              "kind": "visible",
+              "target": {
+                "role": "button",
+                "name": "Publish",
+                "within": {
+                  "role": "region",
+                  "name": "Editor publish",
+                  "by": "role",
+                  "frame": "main"
+                },
+                "by": "role",
+                "frame": "main"
+              }
+            }
+          ]
+        },
+        {
+          "id": "s14",
+          "effect": "commit",
+          "action": {
+            "op": "click",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Publish",
+              "within": {
+                "frame": "main",
+                "by": "role",
+                "role": "region",
+                "name": "Editor publish"
+              }
+            }
+          },
+          "before": [
+            {
+              "kind": "visible",
+              "target": {
+                "role": "button",
+                "name": "Publish",
+                "within": {
+                  "role": "region",
+                  "name": "Editor publish",
+                  "by": "role",
+                  "frame": "main"
+                },
+                "by": "role",
+                "frame": "main"
+              }
+            }
+          ],
+          "after": [
+            {
+              "kind": "visible",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "link",
+                "name": "View Post (opens in a new tab)"
+              }
+            }
+          ]
+        },
+        {
+          "id": "s15",
+          "effect": "read",
+          "action": {
+            "op": "finish",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "link",
+              "name": "View Post (opens in a new tab)"
+            }
+          },
+          "before": [
+            {
+              "kind": "visible",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "link",
+                "name": "View Post (opens in a new tab)"
+              }
+            }
+          ],
+          "after": []
+        }
+      ],
+      "commitChecks": [
+        {
+          "kind": "value",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "css",
+            "selector": "h1.editor-post-title__input"
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "title"
+          }
+        },
+        {
+          "kind": "value",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "document",
+            "name": "Block: Paragraph"
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "body"
+          }
+        },
+        {
+          "kind": "checked",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "checkbox",
+            "name": {
+              "input": "category"
+            }
+          },
+          "expected": true
+        },
+        {
+          "kind": "value",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Write file name…"
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "file",
+            "field": "stem"
+          }
+        },
+        {
+          "kind": "attribute",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Write file name…"
+          },
+          "compare": "originEquals",
+          "expected": "http://home.ts-ali.internal:38080",
+          "attribute": "href"
+        },
+        {
+          "kind": "value",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Write file name…"
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "file",
+            "field": "stem"
+          }
+        }
+      ],
+      "resultChecks": [
+        {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "css",
+            "selector": "h1.wp-block-post-title"
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "title"
+          }
+        },
+        {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "css",
+            "selector": ".entry-content p.wp-block-paragraph"
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "body"
+          }
+        },
+        {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "css",
+            "selector": ".taxonomy-category a"
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "category"
+          }
+        },
+        {
+          "kind": "download",
+          "target": {
+            "frame": "main",
+            "by": "css",
+            "selector": ".wp-block-file a.wp-block-file__button"
+          },
+          "expected": {
+            "input": "file",
+            "field": "sha256"
+          }
+        }
+      ],
+      "evidence": {
+        "taskId": "final-path/repeat",
+        "taskDigest": "a528876b97a76e8317d239e8cb8b5eea2849c76801f95284858cb4f17baa97a8",
+        "resultUrl": "http://home.ts-ali.internal:38080/?p=47"
+      }
+    }
+  },
+  "independentOracle": {
+    "verified": true,
+    "unauthenticatedContext": true,
+    "url": "http://home.ts-ali.internal:38080/?p=47",
+    "title": "可靠性实验 repeat final-path",
+    "body": "虚构数据，用于流程条件实验。样本 repeat，批次 final-path。",
+    "category": "Excel 验证",
+    "attachmentUrl": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/repeat-final-path.xlsx",
+    "downloadedName": "repeat-final-path.xlsx",
+    "sourceBytes": 3755,
+    "downloadedBytes": 3755,
+    "sha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+    "exactBytesMatch": true
+  },
+  "passed": true,
+  "endedAt": "2026-10-10T12:33:02.968Z"
+}

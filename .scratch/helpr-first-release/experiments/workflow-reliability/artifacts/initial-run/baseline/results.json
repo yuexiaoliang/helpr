@@ -1,0 +1,156 @@
+{
+  "mode": "baseline",
+  "startedAt": "2026-10-10T12:10:34.364Z",
+  "runtime": {
+    "node": "v24.18.0",
+    "browser": "156.0.8078.4",
+    "pid": 56379
+  },
+  "candidateHash": "f98d1a71766f01dcdbac16336a82e939a971a65cacecaf537d50cbd874e556e8",
+  "task": {
+    "id": "initial-run/baseline",
+    "kind": "create-record-with-attachment",
+    "origin": "http://home.ts-ali.internal:38080",
+    "entryUrl": "http://home.ts-ali.internal:38080/wp-admin/",
+    "inputs": {
+      "title": {
+        "type": "string",
+        "value": "可靠性实验 baseline initial-run"
+      },
+      "body": {
+        "type": "string",
+        "value": "虚构数据，用于流程条件实验。样本 baseline，批次 initial-run。"
+      },
+      "category": {
+        "type": "string",
+        "value": "Excel 验证"
+      },
+      "file": {
+        "type": "file",
+        "path": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/workflow-reliability/artifacts/initial-run/baseline/baseline-initial-run.xlsx",
+        "name": "baseline-initial-run.xlsx",
+        "stem": "baseline-initial-run",
+        "sha256": "739de3c5f3094e821ba5cfe720b738aafa9e79f894c859835a659402fc3dd693"
+      }
+    },
+    "requiredOutputs": [
+      "title",
+      "body",
+      "category",
+      "file"
+    ],
+    "authorization": {
+      "origin": "http://home.ts-ali.internal:38080",
+      "kind": "create-record-with-attachment",
+      "inputsDigest": "a35684548b22c58ee8aaf995f9248321fa498af37dddcfae2a366ec9874134a4",
+      "source": "explicitly-authorized-test-fixture-not-human-preview"
+    }
+  },
+  "network": [],
+  "outcome": {
+    "status": "blocked",
+    "error": {
+      "code": "TimeoutError",
+      "detail": {
+        "message": "locator.click: Timeout 3000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('link', { name: 'Add Post', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <a href=\"post-new.php\">Add Post</a>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is not stable\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n"
+      }
+    },
+    "step": "s2",
+    "sourceHash": "f98d1a71766f01dcdbac16336a82e939a971a65cacecaf537d50cbd874e556e8",
+    "commitDispatched": false,
+    "repairs": [],
+    "events": [
+      {
+        "at": "2026-10-10T12:10:46.343Z",
+        "type": "eligible",
+        "sourceHash": "f98d1a71766f01dcdbac16336a82e939a971a65cacecaf537d50cbd874e556e8",
+        "evidence": [
+          {
+            "condition": {
+              "kind": "visible",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "link",
+                "name": "Posts"
+              }
+            },
+            "ok": true
+          },
+          {
+            "condition": {
+              "kind": "visible",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "link",
+                "name": "Add Post"
+              }
+            },
+            "ok": true
+          }
+        ]
+      },
+      {
+        "at": "2026-10-10T12:10:46.343Z",
+        "type": "step-start",
+        "step": "s1"
+      },
+      {
+        "at": "2026-10-10T12:10:46.369Z",
+        "type": "dispatch",
+        "step": "s1",
+        "action": {
+          "op": "hover",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": "Posts"
+          }
+        },
+        "effect": "read"
+      },
+      {
+        "at": "2026-10-10T12:10:46.449Z",
+        "type": "step-completed",
+        "step": "s1",
+        "outcome": {
+          "before": [],
+          "after": []
+        }
+      },
+      {
+        "at": "2026-10-10T12:10:46.449Z",
+        "type": "step-start",
+        "step": "s2"
+      },
+      {
+        "at": "2026-10-10T12:10:46.471Z",
+        "type": "dispatch",
+        "step": "s2",
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": "Add Post"
+          }
+        },
+        "effect": "read"
+      }
+    ]
+  },
+  "failureObservation": {
+    "url": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+    "frames": [
+      {
+        "frame": "",
+        "observationError": "TimeoutError"
+      }
+    ]
+  },
+  "passed": false,
+  "endedAt": "2026-10-10T12:10:55.409Z"
+}

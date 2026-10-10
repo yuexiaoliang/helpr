@@ -1,0 +1,56 @@
+{
+  "mode": "wrong-flow",
+  "startedAt": "2026-10-10T12:33:10.573Z",
+  "runtime": {
+    "node": "v24.18.0",
+    "browser": "156.0.8078.4",
+    "pid": 58347
+  },
+  "candidateHash": "396fd4b9d98e312053a63afcadef7cbad2a1e62c64e645dd5060c6ebb7b88199",
+  "task": {
+    "id": "final-negatives/wrong-flow",
+    "kind": "create-record-with-attachment",
+    "origin": "http://home.ts-ali.internal:38080",
+    "entryUrl": "http://home.ts-ali.internal:38080/wp-admin/",
+    "inputs": {
+      "title": {
+        "type": "string",
+        "value": "可靠性实验 wrong-flow final-negatives"
+      },
+      "body": {
+        "type": "string",
+        "value": "虚构数据，用于流程条件实验。样本 wrong-flow，批次 final-negatives。"
+      },
+      "category": {
+        "type": "string",
+        "value": "Excel 验证"
+      },
+      "file": {
+        "type": "file",
+        "path": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/workflow-reliability/artifacts/final-negatives/wrong-flow/wrong-flow-final-negatives.xlsx",
+        "name": "wrong-flow-final-negatives.xlsx",
+        "stem": "wrong-flow-final-negatives",
+        "sha256": "739de3c5f3094e821ba5cfe720b738aafa9e79f894c859835a659402fc3dd693"
+      }
+    },
+    "requiredOutputs": [
+      "title",
+      "body",
+      "category",
+      "file"
+    ],
+    "authorization": {
+      "origin": "http://home.ts-ali.internal:38080",
+      "kind": "create-record-with-attachment",
+      "inputsDigest": "8cd6ede72b0847d5253cf4e36bfecd11405cea8e8f3062e2a1c95cc5c0020abd",
+      "source": "explicitly-authorized-test-fixture-not-human-preview"
+    }
+  },
+  "network": [],
+  "passed": false,
+  "error": {
+    "name": "TimeoutError",
+    "message": "page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://home.ts-ali.internal:38080/wp-admin/\", waiting until \"domcontentloaded\"\u001b[22m\n"
+  },
+  "endedAt": "2026-10-10T12:33:40.618Z"
+}
