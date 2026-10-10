@@ -1,0 +1,263 @@
+{
+  "startedAt": "2026-10-10T10:02:25.691Z",
+  "configuration": {
+    "name": "DeepSeek 测试配置",
+    "protocol": "openai-chat-completions",
+    "baseUrl": "https://api.deepseek.com",
+    "model": "deepseek-flash",
+    "credentialVariable": "DEEPSEEK_API_KEY"
+  },
+  "requestOptions": {
+    "max_tokens": 512,
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "node": "v24.18.0",
+  "scope": "synthetic API probes, not browser-agent compatibility or a reliability benchmark",
+  "requests": [
+    {
+      "label": "text",
+      "startedAt": "2026-10-10T10:02:25.691Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 19,
+        "completion_tokens": 6,
+        "total_tokens": 25,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 19
+      },
+      "endedAt": "2026-10-10T10:02:26.337Z",
+      "durationMs": 646.1664169999999
+    },
+    {
+      "label": "json-output",
+      "startedAt": "2026-10-10T10:02:26.340Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 53,
+        "completion_tokens": 12,
+        "total_tokens": 65,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 53
+      },
+      "endedAt": "2026-10-10T10:02:26.902Z",
+      "durationMs": 561.886125
+    },
+    {
+      "label": "tool-call",
+      "startedAt": "2026-10-10T10:02:26.903Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 306,
+        "completion_tokens": 36,
+        "total_tokens": 342,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 306
+      },
+      "endedAt": "2026-10-10T10:02:27.372Z",
+      "durationMs": 468.61483299999986
+    },
+    {
+      "label": "tool-result",
+      "startedAt": "2026-10-10T10:02:27.372Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 89,
+        "completion_tokens": 7,
+        "total_tokens": 96,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 89
+      },
+      "endedAt": "2026-10-10T10:02:28.103Z",
+      "durationMs": 731.1344169999998
+    },
+    {
+      "label": "page-text-understanding",
+      "startedAt": "2026-10-10T10:02:28.105Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 88,
+        "completion_tokens": 18,
+        "total_tokens": 106,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 88
+      },
+      "endedAt": "2026-10-10T10:02:28.601Z",
+      "durationMs": 496.3349169999997
+    },
+    {
+      "label": "vision",
+      "startedAt": "2026-10-10T10:02:31.230Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 521,
+        "completion_tokens": 17,
+        "total_tokens": 538,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 521
+      },
+      "endedAt": "2026-10-10T10:02:32.001Z",
+      "durationMs": 770.5487919999996
+    },
+    {
+      "label": "parallel-0",
+      "startedAt": "2026-10-10T10:02:32.002Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 13,
+        "completion_tokens": 6,
+        "total_tokens": 19,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 13
+      },
+      "endedAt": "2026-10-10T10:02:32.550Z",
+      "durationMs": 547.5536659999998
+    },
+    {
+      "label": "parallel-1",
+      "startedAt": "2026-10-10T10:02:32.003Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 13,
+        "completion_tokens": 6,
+        "total_tokens": 19,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 13
+      },
+      "endedAt": "2026-10-10T10:02:32.579Z",
+      "durationMs": 575.7333329999992
+    },
+    {
+      "label": "streaming",
+      "startedAt": "2026-10-10T10:02:32.581Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "firstContentMs": 637.793208,
+      "usage": {
+        "prompt_tokens": 14,
+        "completion_tokens": 8,
+        "total_tokens": 22,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 14
+      },
+      "finishReason": "stop",
+      "endedAt": "2026-10-10T10:02:33.320Z",
+      "durationMs": 738.9899579999992
+    },
+    {
+      "label": "client-cancellation",
+      "startedAt": "2026-10-10T10:02:33.325Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "firstContentMs": 443.4892919999993,
+      "error": "client-aborted",
+      "endedAt": "2026-10-10T10:02:33.770Z",
+      "durationMs": 445.1354589999992
+    }
+  ],
+  "checks": [
+    {
+      "name": "text",
+      "evidence": {
+        "expectedMatched": true
+      },
+      "status": "passed"
+    },
+    {
+      "name": "json-output",
+      "evidence": {
+        "value": {
+          "status": "ok",
+          "value": 7
+        },
+        "mode": "json_object with local field validation; not server-enforced JSON Schema"
+      },
+      "status": "passed"
+    },
+    {
+      "name": "tool-roundtrip",
+      "evidence": {
+        "function": "inspect_fixture",
+        "arguments": {
+          "task": "task-A"
+        },
+        "returnedCodeMatched": true
+      },
+      "status": "passed"
+    },
+    {
+      "name": "page-text-understanding",
+      "evidence": {
+        "enabledButton": "保存草稿",
+        "disabledButton": "提交发布"
+      },
+      "status": "passed"
+    },
+    {
+      "name": "vision",
+      "evidence": {
+        "expectedCode": "IMG-243BF5",
+        "observed": {
+          "code": "IMG-243BF5",
+          "enabledButton": "保存草稿"
+        },
+        "image": "vision.png"
+      },
+      "status": "passed"
+    },
+    {
+      "name": "two-concurrent-requests",
+      "evidence": {
+        "independentRepliesMatched": true,
+        "clientRequestOverlapMs": 547,
+        "serverScheduling": "not observable; not a quota benchmark"
+      },
+      "status": "passed"
+    },
+    {
+      "name": "streaming",
+      "evidence": {
+        "textMatched": true,
+        "receivedDoneMarker": true
+      },
+      "status": "passed"
+    },
+    {
+      "name": "client-cancellation",
+      "evidence": {
+        "chunksBeforeCancellation": 1,
+        "settledAfterAbortMs": 1.5699580000000424,
+        "providerWorkCancelled": "unknown"
+      },
+      "status": "passed"
+    }
+  ],
+  "endedAt": "2026-10-10T10:02:33.773Z"
+}

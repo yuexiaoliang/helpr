@@ -26,6 +26,7 @@ Status: open
 - [筛选第二套开源验证后台](issues/04-second-backend-research.md)：Drupal 为首选，Ghost 为备选；资料支持测试候选，真实网页与跨后台流程仍待验证。
 - [验证真实网页的页面归属、并行与输入来源](issues/01-visible-page-control.md)：两种候选均取得页面绑定与双页重叠证据，Electron 真人输入核对通过；单一事件标记不足以判断人工来源。
 - [验证独立停止与迟到结果的处理](issues/02-independent-stop.md)：两种候选取得执行身份校验与原语取消的运行证据；已接收提交和无法取消的浏览器内部工作仍可能完成。
+- [确认现有模型 API 的接入条件](issues/03-model-api-access.md)：测试模型 `deepseek-flash` 的 8 项真实接口检查通过；用户可自行配置服务，实际网页执行器组合继续验证。
 
 ## Not yet specified
 
