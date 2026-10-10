@@ -1,0 +1,36 @@
+{
+  "passed": false,
+  "distinctWorkerPids": true,
+  "results": [
+    {
+      "mode": "learn",
+      "pid": 45904,
+      "passed": true,
+      "modelPurposeCounts": {
+        "understanding": 0,
+        "content": 0,
+        "exploration": 20,
+        "replay": 0,
+        "repair": 0
+      },
+      "resultUrl": "http://home.ts-ali.internal:38080/?p=13",
+      "fileHash": "739de3c5f3094e821ba5cfe720b738aafa9e79f894c859835a659402fc3dd693"
+    },
+    {
+      "mode": "replay",
+      "pid": 45998,
+      "passed": false,
+      "modelPurposeCounts": {
+        "understanding": 0,
+        "content": 0,
+        "exploration": 0,
+        "replay": 0,
+        "repair": 0
+      },
+      "error": {
+        "name": "Error",
+        "message": "locator.waitFor: Error: strict mode violation: getByRole('link', { name: 'View Post (opens in a new tab)', exact: true }) resolved to 2 elements:\n    1) <a target=\"_blank\" href=\"http://home.ts-ali.internal:38080/?p=16\" class=\"components-button is-next-40px-default-size is-primary has-text has-icon has-icon-right\">…</a> aka getByText('View Post(opens in a new tab)')\n    2) <a target=\"_blank\" href=\"http://home.ts-ali.internal:38080/?p=16\" class=\"components-external-link components-snackbar__action\">…</a> aka getByTestId('snackbar').getByRole('link', { name: 'View Post (opens in a new tab)' })\n\nCall log:\n\u001b[2m  - waiting for getByRole('link', { name: 'View Post (opens in a new tab)', exact: true }) to be visible\u001b[22m\n"
+      }
+    }
+  ]
+}

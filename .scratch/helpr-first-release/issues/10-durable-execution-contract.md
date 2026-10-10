@@ -4,12 +4,14 @@ Type: grilling
 Label: wayfinder:grilling
 Mode: HITL
 Status: open
-Blocked by: 07, 08, 09
+Blocked by: 07, 08, 09, 13
 Map: [helpr 首版技术决策地图](../map.md)
 
 ## Question
 
 前提：[浏览器承载与流程执行组合](07-browser-runtime-decision.md)、[提交中断后的实际结果判定](08-result-recovery-evidence.md)、[并行执行与用户参与的状态模型](09-participation-state-model.md)。
+
+素材经模型处理后，还需要[素材、内容预览与发布版本的关联证据](13-material-preview-binding.md)，以明确被确认内容如何与实际提交对应。
 
 在已选择的执行组合、实际结果判定和已核对的用户参与状态之上，需要持久保存哪些事实、在哪里划分原子变化，才能同时支撑流程更新、两项并行、定时取材、错过执行处理及中断恢复？
 

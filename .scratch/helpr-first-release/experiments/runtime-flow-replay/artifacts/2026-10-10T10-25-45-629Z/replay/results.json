@@ -1,0 +1,335 @@
+{
+  "mode": "replay",
+  "runId": "2026-10-10T10-25-45-629Z",
+  "pid": 45998,
+  "startedAt": "2026-10-10T10:27:00.327Z",
+  "params": {
+    "origin": "http://home.ts-ali.internal:38080",
+    "entryUrl": "http://home.ts-ali.internal:38080/wp-admin/",
+    "title": "流程复用实验 replay 2026-10-10T10-25-45-629Z",
+    "body": "此文及附件均为虚构测试数据。批次 replay，实验 2026-10-10T10-25-45-629Z。",
+    "category": "Excel 验证",
+    "filePath": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/runtime-flow-replay/artifacts/2026-10-10T10-25-45-629Z/replay/replay-2026-10-10T10-25-45-629Z.xlsx",
+    "fileName": "replay-2026-10-10T10-25-45-629Z.xlsx",
+    "fileStem": "replay-2026-10-10T10-25-45-629Z"
+  },
+  "modelPurposeCounts": {
+    "understanding": 0,
+    "content": 0,
+    "exploration": 0,
+    "replay": 0,
+    "repair": 0
+  },
+  "modelCalls": [],
+  "actions": [
+    {
+      "index": 0,
+      "action": {
+        "op": "hover",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "Posts"
+        }
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/"
+    },
+    {
+      "index": 1,
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "Add Post"
+        }
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 2,
+      "action": {
+        "op": "fill",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "Add title"
+        },
+        "value": "{{title}}"
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 3,
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "button",
+          "name": "Add default block"
+        }
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 4,
+      "action": {
+        "op": "fill",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "document",
+          "name": "Empty block; start writing or type forward slash to choose a block"
+        },
+        "value": "{{body}}"
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 5,
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "tab",
+          "name": "Post"
+        }
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 6,
+      "action": {
+        "op": "check",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "checkbox",
+          "name": "{{category}}"
+        },
+        "value": true
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 7,
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Block Inserter"
+        }
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 8,
+      "action": {
+        "op": "fill",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "searchbox",
+          "name": "Search"
+        },
+        "value": "File"
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 9,
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "option",
+          "name": "File"
+        }
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 10,
+      "action": {
+        "op": "upload",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "css",
+          "selector": "input[type=file]"
+        },
+        "value": "{{filePath}}"
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 11,
+      "action": {
+        "op": "wait",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "Download button text"
+        }
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 12,
+      "action": {
+        "op": "wait",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "Write file name…"
+        }
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 13,
+      "action": {
+        "op": "wait",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "Write file name…"
+        }
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 14,
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Publish"
+        }
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 15,
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Publish",
+          "within": {
+            "frame": "main",
+            "by": "role",
+            "role": "region",
+            "name": "Editor publish"
+          }
+        }
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    }
+  ],
+  "failures": [
+    {
+      "step": 16,
+      "action": {
+        "op": "finish",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "View Post (opens in a new tab)"
+        }
+      },
+      "message": "locator.waitFor: Error: strict mode violation: getByRole('link', { name: 'View Post (opens in a new tab)', exact: true }) resolved to 2 elements:\n    1) <a target=\"_blank\" href=\"http://home.ts-ali.internal:38080/?p=16\" class=\"components-button is-next-40px-default-size is-primary has-text has-icon has-icon-right\">…</a> aka getByText('View Post(opens in a new tab)')\n    2) <a target=\"_blank\" href=\"http://home.ts-ali.internal:38080/?p=16\" class=\"components-external-link components-snackbar__action\">…</a> aka getByTestId('snackbar').getByRole('link', { name: 'View Post (opens in a new tab)' })\n\nCall log:\n\u001b[2m  - waiting for getByRole('link', { name: 'View Post (opens in a new tab)', exact: true }) to be visible\u001b[22m\n",
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post.php?post=16&action=edit"
+    }
+  ],
+  "runtime": {
+    "node": "v24.18.0",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "sourceHashes": {
+    "worker.mjs": "94965ba8ce0962e0be90e2f277f3c24e2422de1065d333577fb0c8e897ae4359",
+    "engine.mjs": "eec39500eef0195076bf5847e7b38a711b033b246c435daedf3575a7f4503a23",
+    "verify.mjs": "f829865e91912fbc78831467ba4b859dac35bdec8be12b8ef8603250561ebbcb",
+    "../model-api/client.mjs": "70d88c5b1149792f5549a6cf3c15748d0ea1ca34809c6741e63f0bd9581996ae"
+  },
+  "pageIdentity": {
+    "context": "new-context-per-process",
+    "initialPageCount": 1,
+    "browserVersion": "156.0.8078.4"
+  },
+  "loadedWorkflow": {
+    "path": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/runtime-flow-replay/artifacts/2026-10-10T10-25-45-629Z/workflow-v1.json",
+    "version": 1,
+    "sha256": "5c5d9e16a3327ed37fb5a84d9bb18fea1cd929fcb145bec0752a872866d40313"
+  },
+  "passed": false,
+  "error": {
+    "name": "Error",
+    "message": "locator.waitFor: Error: strict mode violation: getByRole('link', { name: 'View Post (opens in a new tab)', exact: true }) resolved to 2 elements:\n    1) <a target=\"_blank\" href=\"http://home.ts-ali.internal:38080/?p=16\" class=\"components-button is-next-40px-default-size is-primary has-text has-icon has-icon-right\">…</a> aka getByText('View Post(opens in a new tab)')\n    2) <a target=\"_blank\" href=\"http://home.ts-ali.internal:38080/?p=16\" class=\"components-external-link components-snackbar__action\">…</a> aka getByTestId('snackbar').getByRole('link', { name: 'View Post (opens in a new tab)' })\n\nCall log:\n\u001b[2m  - waiting for getByRole('link', { name: 'View Post (opens in a new tab)', exact: true }) to be visible\u001b[22m\n"
+  },
+  "endedAt": "2026-10-10T10:27:37.605Z"
+}

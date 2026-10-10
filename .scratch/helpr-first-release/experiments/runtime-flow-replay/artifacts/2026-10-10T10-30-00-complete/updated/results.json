@@ -1,0 +1,362 @@
+{
+  "mode": "updated",
+  "runId": "2026-10-10T10-30-00-complete",
+  "pid": 46488,
+  "startedAt": "2026-10-10T10:30:16.371Z",
+  "params": {
+    "origin": "http://home.ts-ali.internal:38080",
+    "entryUrl": "http://home.ts-ali.internal:38080/wp-admin/",
+    "title": "流程复用实验 updated 2026-10-10T10-30-00-complete",
+    "body": "此文及附件均为虚构测试数据。批次 updated，实验 2026-10-10T10-30-00-complete。",
+    "category": "Excel 验证",
+    "filePath": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/runtime-flow-replay/artifacts/2026-10-10T10-30-00-complete/updated/updated-2026-10-10T10-30-00-complete.xlsx",
+    "fileName": "updated-2026-10-10T10-30-00-complete.xlsx",
+    "fileStem": "updated-2026-10-10T10-30-00-complete"
+  },
+  "modelPurposeCounts": {
+    "understanding": 0,
+    "content": 0,
+    "exploration": 0,
+    "replay": 0,
+    "repair": 0
+  },
+  "modelCalls": [],
+  "actions": [
+    {
+      "index": 0,
+      "action": {
+        "op": "hover",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "Posts"
+        }
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/"
+    },
+    {
+      "index": 1,
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "Add Post"
+        }
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 2,
+      "action": {
+        "op": "fill",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "文章标题（新版）"
+        },
+        "value": "{{title}}"
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 3,
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "button",
+          "name": "Add default block"
+        }
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 4,
+      "action": {
+        "op": "fill",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "document",
+          "name": "Empty block; start writing or type forward slash to choose a block"
+        },
+        "value": "{{body}}"
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 5,
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "tab",
+          "name": "Post"
+        }
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 6,
+      "action": {
+        "op": "check",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "checkbox",
+          "name": "{{category}}"
+        },
+        "value": true
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 7,
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Block Inserter"
+        }
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 8,
+      "action": {
+        "op": "fill",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "searchbox",
+          "name": "Search"
+        },
+        "value": "File"
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 9,
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "option",
+          "name": "File"
+        }
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 10,
+      "action": {
+        "op": "upload",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "css",
+          "selector": "input[type=file]"
+        },
+        "value": "{{filePath}}"
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 11,
+      "action": {
+        "op": "wait",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "Download button text"
+        }
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 12,
+      "action": {
+        "op": "wait",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "Write file name…"
+        }
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 13,
+      "action": {
+        "op": "wait",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "Write file name…"
+        }
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 14,
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Publish"
+        }
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 15,
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Publish",
+          "within": {
+            "frame": "main",
+            "by": "role",
+            "role": "region",
+            "name": "Editor publish"
+          }
+        }
+      },
+      "outcome": {
+        "completed": true
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php"
+    },
+    {
+      "index": 16,
+      "action": {
+        "op": "finish",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "View Post (opens in a new tab)"
+        }
+      },
+      "outcome": {
+        "resultUrl": "http://home.ts-ali.internal:38080/?p=25",
+        "matchingResultLinks": 2
+      },
+      "pageUrl": "http://home.ts-ali.internal:38080/wp-admin/post.php?post=25&action=edit"
+    }
+  ],
+  "failures": [],
+  "runtime": {
+    "node": "v24.18.0",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "sourceHashes": {
+    "worker.mjs": "94965ba8ce0962e0be90e2f277f3c24e2422de1065d333577fb0c8e897ae4359",
+    "engine.mjs": "576f9c43ecca5e9e7c069bcece4862e62eda6eaa442edcebdb52f11179742bbc",
+    "verify.mjs": "f829865e91912fbc78831467ba4b859dac35bdec8be12b8ef8603250561ebbcb",
+    "../model-api/client.mjs": "70d88c5b1149792f5549a6cf3c15748d0ea1ca34809c6741e63f0bd9581996ae"
+  },
+  "pageIdentity": {
+    "context": "new-context-per-process",
+    "initialPageCount": 1,
+    "browserVersion": "156.0.8078.4"
+  },
+  "loadedWorkflow": {
+    "path": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/runtime-flow-replay/artifacts/2026-10-10T10-30-00-complete/workflow-v2.json",
+    "version": 2,
+    "sha256": "6aaf61601489e42fd852d7d4c7f277e4a28af75a2e367ecb158d9f0cdda9ba00"
+  },
+  "fixtureChange": {
+    "target": {
+      "frame": "editor-canvas",
+      "by": "role",
+      "role": "textbox",
+      "name": "Add title"
+    },
+    "before": {
+      "label": "Add title",
+      "placeholder": null,
+      "role": "textbox"
+    },
+    "afterLabel": "文章标题（新版）",
+    "scope": "当前测试页面的标题控件属性；未修改服务器或站点代码"
+  },
+  "publication": {
+    "verified": true,
+    "unauthenticatedContext": true,
+    "url": "http://home.ts-ali.internal:38080/?p=25",
+    "title": "流程复用实验 updated 2026-10-10T10-30-00-complete",
+    "body": "此文及附件均为虚构测试数据。批次 updated，实验 2026-10-10T10-30-00-complete。",
+    "category": "Excel 验证",
+    "attachmentUrl": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/updated-2026-10-10T10-30-00-complete.xlsx",
+    "downloadedName": "updated-2026-10-10T10-30-00-complete.xlsx",
+    "sourceBytes": 3756,
+    "downloadedBytes": 3756,
+    "sha256": "2920f2e32ead356702ec76f643c4718bca55ab1a4f823aa139354651e754ef9a",
+    "exactBytesMatch": true
+  },
+  "passed": true,
+  "endedAt": "2026-10-10T10:30:56.862Z"
+}
