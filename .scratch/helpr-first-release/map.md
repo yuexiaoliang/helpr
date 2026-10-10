@@ -13,6 +13,7 @@ Status: open
 - 始终使用中文。每次工作先读仓库 [协作约定](../../AGENTS.md)、[术语表](../../GLOSSARY.md)及相关 ADR；首版 [本机执行](../../docs/adr/0001-local-execution.md)，[具体任务逻辑来自运行时流程](../../docs/adr/0002-runtime-workflows.md)。
 - 每次调用遵循 [wayfinder](../../.agents/skills/wayfinder/SKILL.md)。对话决策使用 [grilling](../../.agents/skills/grilling/SKILL.md)和 [domain-modeling](../../.agents/skills/domain-modeling/SKILL.md)；资料调查使用 [research](../../.agents/skills/research/SKILL.md)；状态或界面讨论使用 [prototype](../../.agents/skills/prototype/SKILL.md)；设计 Module 与 Interface 时使用 [codebase-design](../../.agents/skills/codebase-design/SKILL.md)。按事项需要读取对应技能，不把阅读材料当作完成实验。
 - 本地图使用 [本地事项管理约定](../../docs/agents/issue-tracker.md)。子事项位于 `issues/`，先创建事项再设置依赖；从 `Status: open`、全部依赖已解决的事项中按编号选取，先改为 `claimed` 再工作。事项按名称引用，答案只记录在对应事项的 `Answer` 中，地图仅索引结论。
+- 2026-10-10，用户强调探路与复用是核心，要求更严谨可靠的设计。当前优先推进 [验证流程适用性、步骤条件与修复边界](issues/14-workflow-reliability-contract.md)，完成后恢复按编号选取。候选设计须经反例与真实结果验证，再作为执行组合选型的依据。
 - `Mode: HITL` 需要真人参与相关核对或决策；`Mode: AFK` 可由 agent 独立工作。真实鼠标、中文输入与粘贴的对照，不能用自动化事件冒充真人证据。用户无需为此学习调度或锁等内部机制。
 - 技术实验归为 `task`：它们取得下一项决定必需的运行事实。`prototype` 用于让用户核对状态或界面行为，其模拟结果不能替代真实浏览器证据。实验只做到足以回答问题，产物标明实验用途，不发展成预设架构的产品实现。
 - 已有 [WordPress 网页验证证据](../../docs/testing/validation-backend.md)只证明独立后台的附件发布路径可用。已有 [浏览器原语调查](../../docs/research/browser-execution-primitives.md)、[可见工作区调查](../../docs/research/visible-browser-workspace.md)和 [并行调查](../../docs/research/parallel-execution-feasibility.md)可复用，所列未执行实验仍需取得证据。
@@ -27,7 +28,7 @@ Status: open
 - [验证真实网页的页面归属、并行与输入来源](issues/01-visible-page-control.md)：两种候选均取得页面绑定与双页重叠证据，Electron 真人输入核对通过；单一事件标记不足以判断人工来源。
 - [验证独立停止与迟到结果的处理](issues/02-independent-stop.md)：两种候选取得执行身份校验与原语取消的运行证据；已接收提交和无法取消的浏览器内部工作仍可能完成。
 - [确认现有模型 API 的接入条件](issues/03-model-api-access.md)：测试模型 `deepseek-flash` 的 8 项真实接口检查通过；用户可自行配置服务，实际网页执行器组合继续验证。
-- [验证参数化流程的冷启动重放与修复更新](issues/05-runtime-flow-replay.md)：真实 AI 学得流程可换素材跨进程重放，受控控件变化经一次修复后保存新版；两次稳定重放均无模型调用。
+- [验证参数化流程的冷启动重放与修复更新](issues/05-runtime-flow-replay.md)：在预定义参数和独立测试断言下，AI 学得的动作序列可换素材跨进程重放，受控控件变化经修复后保存新版；两次稳定重放均无模型调用，尚未证明完整流程的适用性与学习机制。
 
 ## Not yet specified
 
