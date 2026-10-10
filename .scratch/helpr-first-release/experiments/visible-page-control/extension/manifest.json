@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "helpr 页面归属实验",
+  "version": "0.0.1",
+  "permissions": ["tabs", "debugger"],
+  "host_permissions": ["http://127.0.0.1/*", "http://localhost/*"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [{
+    "matches": ["http://127.0.0.1/*", "http://localhost/*"],
+    "js": ["content.js"],
+    "run_at": "document_idle"
+  }]
+}

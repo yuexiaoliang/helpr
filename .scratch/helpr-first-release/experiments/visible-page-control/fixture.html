@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>helpr 页面控制实验</title>
+<style>
+  *{box-sizing:border-box}body{margin:0;padding:28px;font:16px/1.6 system-ui;background:#f4f6f8;color:#172238}
+  main{max-width:760px;margin:auto}h1{font-size:24px;margin:0 0 8px}.tag{color:#465b76;font-size:13px;overflow-wrap:anywhere}
+  section{background:white;border:1px solid #dce2e9;border-radius:12px;padding:20px;margin:18px 0}
+  button,a{font:inherit}button{padding:9px 16px;border:1px solid #bbc9dc;border-radius:8px;background:#eaf1ff;color:#173865;cursor:pointer}
+  button:disabled{opacity:.6}label{display:block;margin-top:14px;font-weight:600}input,textarea{width:100%;padding:11px;border:1px solid #aab8ca;border-radius:7px;font:inherit;margin-top:5px}
+  textarea{height:74px}.number{font-size:32px;margin-right:14px;color:#246842}details{margin-top:16px}pre{white-space:pre-wrap;font-size:12px;max-height:180px;overflow:auto}
+  .spacer{height:500px;display:flex;align-items:end;color:#61738a}.hint{font-size:14px;color:#566780}
+  #manual-controls{position:sticky;top:8px;z-index:10;display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid #b7cbe7;border-radius:10px;background:#edf4ff}
+  #manual-done{background:#245eb2;color:white;border-color:#245eb2}
+</style>
+<main>
+  <h1>网页 <span id="task">尚未关联</span></h1>
+  <div class="tag" id="identity"></div>
+  <p class="hint">这是独立测试页面，按钮仅修改实验计数；不连接真实业务。</p>
+  <div id="manual-controls"><button id="manual-done">本页操作完成</button><span id="done-state" role="status">输入完成后可记录；也可直接在对话中反馈。</span></div>
+  <section>
+    <strong>网页操作</strong><p><span class="number" id="count">0</span><button id="increment">计数加一</button></p>
+    <label for="entry">中文输入测试</label><input id="entry" autocomplete="off" placeholder="使用中文输入法键入：手动接管测试">
+    <label for="paste">粘贴测试</label><textarea id="paste" placeholder="复制下方样本文字，在这里粘贴"></textarea>
+    <p id="sample">用于复制的样本：网页输入验证 2026</p>
+    <p><button id="popup">打开测试弹窗</button> <a id="navigate" href="/next">进入下一页</a></p>
+  </section>
+  <section id="manual-instructions">
+    <strong>真人输入对照</strong>
+    <ol><li>点击“计数加一”。</li><li>在“中文输入测试”用输入法键入“手动接管测试”。</li><li>选中并复制上方样本，再粘贴到“粘贴测试”。</li><li>滚动页面，再切换到另一实验标签页查看。</li></ol>
+    <p class="hint">只记录本实验页面的事件；请使用给出的样本文字。</p>
+  </section>
+  <details><summary>页面事件记录</summary><pre id="event-preview"></pre></details>
+  <div class="spacer">下方按钮用于自动滚动定位对照</div><button id="bottom">页面底部按钮</button>
+</main>
+<script>
+(() => {
+  const docId = crypto.randomUUID();
+  const events = [];
+  let task = window.name || 'unbound';
+  let count = 0;
+  let stage = 'unlabelled';
+  let pending = Promise.resolve();
+  const post = row => {
+    pending = pending.then(() => fetch('/api/event', {method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(row)})).catch(() => {});
+  };
+  const record = data => {
+    const row = {kind:'dom-event',at:Date.now(),task,docId,stage,url:location.href,visibility:document.visibilityState,focused:document.hasFocus(),...data};
+    events.push(row); post(row);
+    document.querySelector('#event-preview').textContent = events.slice(-8).map(x=>JSON.stringify(x)).join('\n');
+  };
+  const showIdentity = () => {
+    document.querySelector('#task').textContent = task;
+    document.querySelector('#identity').textContent = `页面实例 ${docId.slice(0,8)} · ${location.pathname} · ${task}`;
+    document.documentElement.dataset.labTask = task;
+    document.documentElement.dataset.labDoc = docId;
+    document.title = `${task} · helpr 页面控制实验`;
+  };
+  window.lab = {
+    events,
+    bind(value) { task=value; window.name=value; showIdentity(); record({type:'bound'}); },
+    stage(value) { stage=value; document.documentElement.dataset.labStage=value; record({type:'stage',value}); },
+    manual(value=true) { document.querySelector('#manual-instructions').hidden=!value; stage=value?'human':'unlabelled'; document.documentElement.dataset.labStage=stage; try {sessionStorage.setItem('helpr-lab-manual',String(value));} catch {} },
+    snapshot() { return {task,docId,url:location.href,count,entry:document.querySelector('#entry').value,paste:document.querySelector('#paste').value,visibility:document.visibilityState,focused:document.hasFocus(),stage}; },
+    flush() { return pending; }
+  };
+  for (const type of ['pointerdown','pointerup','click','keydown','keyup','beforeinput','input','compositionstart','compositionupdate','compositionend','paste','wheel','focusin','focusout']) {
+    document.addEventListener(type, e => {
+      const target=e.target;
+      record({type,isTrusted:e.isTrusted,target:target.id||target.tagName,key:e.key,code:e.code,inputType:e.inputType,data:e.data,button:e.button,pointerType:e.pointerType,isComposing:e.isComposing,modifiers:{meta:e.metaKey,ctrl:e.ctrlKey,alt:e.altKey,shift:e.shiftKey},inOverlay:!!target.closest?.('[data-lab-overlay]')});
+    }, true);
+  }
+  let lastMove=0;
+  document.addEventListener('pointermove',e=>{if(Date.now()-lastMove>500){lastMove=Date.now();record({type:e.type,isTrusted:e.isTrusted,button:e.button,target:e.target.id||e.target.tagName});}},true);
+  document.addEventListener('visibilitychange',()=>record({type:'visibilitychange'}));
+  addEventListener('focus',()=>record({type:'window-focus'}));
+  addEventListener('blur',()=>record({type:'window-blur'}));
+  document.querySelector('#increment').onclick = async e => {
+    const button=e.currentTarget; button.disabled=true;
+    try {const response=await fetch('/api/pulse',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({task,docId,stage,next:count+1})});await response.json();count++;document.querySelector('#count').textContent=count;}
+    finally {button.disabled=false;}
+  };
+  document.querySelector('#popup').onclick=()=>window.open('/popup','_blank','width=680,height=650');
+  document.querySelector('#bottom').onclick=()=>record({type:'bottom-activated'});
+  document.querySelector('#manual-done').onclick=()=>{record({type:'human-done',snapshot:window.lab.snapshot()});document.querySelector('#done-state').textContent=' 已记录';};
+  try {if(sessionStorage.getItem('helpr-lab-manual')==='true')window.lab.manual();} catch {}
+  showIdentity(); record({type:'document-ready'});
+})();
+</script></html>

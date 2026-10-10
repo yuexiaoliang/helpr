@@ -1,0 +1,2401 @@
+{
+  "metadata": {
+    "runId": "2026-10-10T08-40-36-897Z",
+    "os": {
+      "platform": "darwin",
+      "release": "23.6.0",
+      "arch": "arm64"
+    },
+    "node": "v24.18.0",
+    "playwright": "1.64.0",
+    "electron": "44.7.0",
+    "base": "http://127.0.0.1:55300",
+    "electronPort": 55302,
+    "chromiumPort": 55303,
+    "startedAt": "2026-10-10T08:40:36.907Z",
+    "scope": "fixture-only; no real business or model calls",
+    "electronDiscoveredPages": [
+      {
+        "url": "file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/visible-page-control/overlay.html"
+      },
+      {
+        "url": "file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/visible-page-control/shell.html"
+      }
+    ],
+    "electronRawTargets": [
+      {
+        "description": "",
+        "devtoolsFrontendUrl": "/devtools/inspector.html?ws=127.0.0.1:55302/devtools/page/90DFAB88CA04070B39C0CDFF09FC144A",
+        "id": "90DFAB88CA04070B39C0CDFF09FC144A",
+        "title": "实验说明浮窗",
+        "type": "page",
+        "url": "file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/visible-page-control/overlay.html",
+        "webSocketDebuggerUrl": "ws://127.0.0.1:55302/devtools/page/90DFAB88CA04070B39C0CDFF09FC144A"
+      },
+      {
+        "description": "",
+        "devtoolsFrontendUrl": "/devtools/inspector.html?ws=127.0.0.1:55302/devtools/page/2C2FDBC3EE78852AD26DEB25D1E6E688",
+        "id": "2C2FDBC3EE78852AD26DEB25D1E6E688",
+        "title": "electron-B · helpr 页面控制实验",
+        "type": "page",
+        "url": "http://127.0.0.1:55300/fixture",
+        "webSocketDebuggerUrl": "ws://127.0.0.1:55302/devtools/page/2C2FDBC3EE78852AD26DEB25D1E6E688"
+      },
+      {
+        "description": "",
+        "devtoolsFrontendUrl": "/devtools/inspector.html?ws=127.0.0.1:55302/devtools/page/6C7CD4FB5BF0756B782B8FB94A679808",
+        "id": "6C7CD4FB5BF0756B782B8FB94A679808",
+        "title": "electron-A · helpr 页面控制实验",
+        "type": "page",
+        "url": "http://127.0.0.1:55300/fixture",
+        "webSocketDebuggerUrl": "ws://127.0.0.1:55302/devtools/page/6C7CD4FB5BF0756B782B8FB94A679808"
+      },
+      {
+        "description": "",
+        "devtoolsFrontendUrl": "/devtools/inspector.html?ws=127.0.0.1:55302/devtools/page/F5B26F10DBCADA89225CB770DE4EC298",
+        "id": "F5B26F10DBCADA89225CB770DE4EC298",
+        "title": "helpr 承载实验控制台",
+        "type": "page",
+        "url": "file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/visible-page-control/shell.html",
+        "webSocketDebuggerUrl": "ws://127.0.0.1:55302/devtools/page/F5B26F10DBCADA89225CB770DE4EC298"
+      }
+    ],
+    "electronAllContents": [
+      {
+        "id": 4,
+        "type": "window",
+        "url": "file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/visible-page-control/overlay.html"
+      },
+      {
+        "id": 3,
+        "type": "window",
+        "url": "http://127.0.0.1:55300/fixture"
+      },
+      {
+        "id": 2,
+        "type": "window",
+        "url": "http://127.0.0.1:55300/fixture"
+      },
+      {
+        "id": 1,
+        "type": "window",
+        "url": "file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/visible-page-control/shell.html"
+      }
+    ],
+    "electronSession": "default session in isolated userData directory",
+    "electronPageControl": "external CDP, noDefaults=true; _electron API retained for host controls",
+    "electronLaunchDiscoveryAfterCDP": [
+      {
+        "url": "file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/visible-page-control/overlay.html"
+      },
+      {
+        "url": "file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/visible-page-control/shell.html"
+      }
+    ],
+    "fatal": "Error: browserType.launchPersistentContext: Executable doesn't exist at /Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
+  },
+  "results": [
+    {
+      "name": "electron-launch-page-discovery",
+      "status": "failed",
+      "error": "Error: _electron.windows() missed fixture views; external CDP enumerated them",
+      "stack": "Error: _electron.windows() missed fixture views; external CDP enumerated them\n    at assert (file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/visible-page-control/run.mjs:29:56)\n    at file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/visible-page-control/run.mjs:88:5\n    at async check (file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/visible-page-control/run.mjs:25:23)\n    at async file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/visible-page-control/run.mjs:85:3"
+    },
+    {
+      "name": "electron-page-identity",
+      "status": "passed",
+      "evidence": {
+        "bindings": [
+          {
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "url": "http://127.0.0.1:55300/fixture",
+            "count": 0,
+            "entry": "",
+            "paste": "",
+            "visibility": "visible",
+            "focused": true,
+            "stage": "unlabelled",
+            "targetId": "6C7CD4FB5BF0756B782B8FB94A679808",
+            "wcId": 2
+          },
+          {
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "url": "http://127.0.0.1:55300/fixture",
+            "count": 0,
+            "entry": "",
+            "paste": "",
+            "visibility": "visible",
+            "focused": true,
+            "stage": "unlabelled",
+            "targetId": "2C2FDBC3EE78852AD26DEB25D1E6E688",
+            "wcId": 3
+          }
+        ],
+        "host": {
+          "mode": "split",
+          "overlayVisible": false,
+          "minimized": false,
+          "windowFocused": true,
+          "focusedWc": 3,
+          "cursor": {
+            "x": 721,
+            "y": 43
+          },
+          "pages": [
+            {
+              "label": "A",
+              "wcId": 2,
+              "url": "http://127.0.0.1:55300/fixture",
+              "focused": false
+            },
+            {
+              "label": "B",
+              "wcId": 3,
+              "url": "http://127.0.0.1:55300/fixture",
+              "focused": true
+            },
+            {
+              "label": "overlay",
+              "wcId": 4,
+              "url": "file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/visible-page-control/overlay.html",
+              "focused": false
+            }
+          ]
+        },
+        "discoveredWindows": 2
+      }
+    },
+    {
+      "name": "electron-parallel-visible",
+      "status": "passed",
+      "evidence": {
+        "before": [
+          {
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "url": "http://127.0.0.1:55300/fixture",
+            "count": 0,
+            "entry": "",
+            "paste": "",
+            "visibility": "visible",
+            "focused": true,
+            "stage": "electron-visible"
+          },
+          {
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "url": "http://127.0.0.1:55300/fixture",
+            "count": 0,
+            "entry": "",
+            "paste": "",
+            "visibility": "visible",
+            "focused": true,
+            "stage": "electron-visible"
+          }
+        ],
+        "after": [
+          {
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "url": "http://127.0.0.1:55300/fixture",
+            "count": 3,
+            "entry": "",
+            "paste": "",
+            "visibility": "visible",
+            "focused": true,
+            "stage": "electron-visible"
+          },
+          {
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "url": "http://127.0.0.1:55300/fixture",
+            "count": 3,
+            "entry": "",
+            "paste": "",
+            "visibility": "visible",
+            "focused": true,
+            "stage": "electron-visible"
+          }
+        ],
+        "overlaps": [
+          {
+            "recordedAt": "2026-10-10T08:40:37.546Z",
+            "phase": "electron-parallel-visible",
+            "kind": "server-operation-start",
+            "id": "2d2144d1-e627-4498-9305-4921e3fae157",
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "stage": "electron-visible",
+            "next": 1,
+            "start": 1791621637546,
+            "concurrent": [
+              "electron-A"
+            ]
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:37.944Z",
+            "phase": "electron-parallel-visible",
+            "kind": "server-operation-start",
+            "id": "3fc99fe9-ca76-4e5d-8f5b-8d3fd05507d2",
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "stage": "electron-visible",
+            "next": 2,
+            "start": 1791621637944,
+            "concurrent": [
+              "electron-B"
+            ]
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:38.347Z",
+            "phase": "electron-parallel-visible",
+            "kind": "server-operation-start",
+            "id": "a7737aa6-6083-4f88-a1ec-7ad31602c4a6",
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "stage": "electron-visible",
+            "next": 3,
+            "start": 1791621638347,
+            "concurrent": [
+              "electron-B"
+            ]
+          }
+        ],
+        "operations": [
+          {
+            "recordedAt": "2026-10-10T08:40:37.546Z",
+            "phase": "electron-parallel-visible",
+            "kind": "server-operation-start",
+            "id": "4c2ead7b-8e33-4402-9785-19508370c8ea",
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "stage": "electron-visible",
+            "next": 1,
+            "start": 1791621637546,
+            "concurrent": []
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:37.546Z",
+            "phase": "electron-parallel-visible",
+            "kind": "server-operation-start",
+            "id": "2d2144d1-e627-4498-9305-4921e3fae157",
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "stage": "electron-visible",
+            "next": 1,
+            "start": 1791621637546,
+            "concurrent": [
+              "electron-A"
+            ]
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:37.944Z",
+            "phase": "electron-parallel-visible",
+            "kind": "server-operation-start",
+            "id": "a505b675-c04b-4c2b-a09d-a1b4db610aa7",
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "stage": "electron-visible",
+            "next": 2,
+            "start": 1791621637944,
+            "concurrent": []
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:37.944Z",
+            "phase": "electron-parallel-visible",
+            "kind": "server-operation-start",
+            "id": "3fc99fe9-ca76-4e5d-8f5b-8d3fd05507d2",
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "stage": "electron-visible",
+            "next": 2,
+            "start": 1791621637944,
+            "concurrent": [
+              "electron-B"
+            ]
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:38.347Z",
+            "phase": "electron-parallel-visible",
+            "kind": "server-operation-start",
+            "id": "b93a3c2b-5ba2-43e4-bedd-0469a5edf30a",
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "stage": "electron-visible",
+            "next": 3,
+            "start": 1791621638347,
+            "concurrent": []
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:38.347Z",
+            "phase": "electron-parallel-visible",
+            "kind": "server-operation-start",
+            "id": "a7737aa6-6083-4f88-a1ec-7ad31602c4a6",
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "stage": "electron-visible",
+            "next": 3,
+            "start": 1791621638347,
+            "concurrent": [
+              "electron-B"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "electron-parallel-background",
+      "status": "passed",
+      "evidence": {
+        "host": {
+          "mode": "A",
+          "overlayVisible": false,
+          "minimized": false,
+          "windowFocused": true,
+          "cursor": {
+            "x": 721,
+            "y": 43
+          },
+          "pages": [
+            {
+              "label": "A",
+              "wcId": 2,
+              "url": "http://127.0.0.1:55300/fixture",
+              "focused": false
+            },
+            {
+              "label": "B",
+              "wcId": 3,
+              "url": "http://127.0.0.1:55300/fixture",
+              "focused": false
+            },
+            {
+              "label": "overlay",
+              "wcId": 4,
+              "url": "file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/visible-page-control/overlay.html",
+              "focused": false
+            }
+          ]
+        },
+        "before": [
+          {
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "url": "http://127.0.0.1:55300/fixture",
+            "count": 3,
+            "entry": "",
+            "paste": "",
+            "visibility": "visible",
+            "focused": true,
+            "stage": "electron-background"
+          },
+          {
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "url": "http://127.0.0.1:55300/fixture",
+            "count": 3,
+            "entry": "",
+            "paste": "",
+            "visibility": "visible",
+            "focused": true,
+            "stage": "electron-background"
+          }
+        ],
+        "after": [
+          {
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "url": "http://127.0.0.1:55300/fixture",
+            "count": 6,
+            "entry": "",
+            "paste": "",
+            "visibility": "visible",
+            "focused": true,
+            "stage": "electron-background"
+          },
+          {
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "url": "http://127.0.0.1:55300/fixture",
+            "count": 6,
+            "entry": "",
+            "paste": "",
+            "visibility": "visible",
+            "focused": true,
+            "stage": "electron-background"
+          }
+        ],
+        "overlaps": [
+          {
+            "recordedAt": "2026-10-10T08:40:38.766Z",
+            "phase": "electron-parallel-background",
+            "kind": "server-operation-start",
+            "id": "5d3ac97b-c6dd-4848-ac25-f7fc3ae30d54",
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "stage": "electron-background",
+            "next": 4,
+            "start": 1791621638766,
+            "concurrent": [
+              "electron-B"
+            ]
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:39.165Z",
+            "phase": "electron-parallel-background",
+            "kind": "server-operation-start",
+            "id": "9ba8cf4b-ee92-4b99-9e60-0ba9fc9a0738",
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "stage": "electron-background",
+            "next": 5,
+            "start": 1791621639165,
+            "concurrent": [
+              "electron-B"
+            ]
+          }
+        ],
+        "operations": [
+          {
+            "recordedAt": "2026-10-10T08:40:38.742Z",
+            "phase": "electron-parallel-background",
+            "kind": "server-operation-start",
+            "id": "02923cb0-1fa7-4f4b-a112-dca41d507716",
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "stage": "electron-background",
+            "next": 4,
+            "start": 1791621638742,
+            "concurrent": []
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:38.766Z",
+            "phase": "electron-parallel-background",
+            "kind": "server-operation-start",
+            "id": "5d3ac97b-c6dd-4848-ac25-f7fc3ae30d54",
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "stage": "electron-background",
+            "next": 4,
+            "start": 1791621638766,
+            "concurrent": [
+              "electron-B"
+            ]
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:39.143Z",
+            "phase": "electron-parallel-background",
+            "kind": "server-operation-start",
+            "id": "9fa2894f-3e66-4d5d-a862-b7383a0cfefd",
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "stage": "electron-background",
+            "next": 5,
+            "start": 1791621639143,
+            "concurrent": []
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:39.165Z",
+            "phase": "electron-parallel-background",
+            "kind": "server-operation-start",
+            "id": "9ba8cf4b-ee92-4b99-9e60-0ba9fc9a0738",
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "stage": "electron-background",
+            "next": 5,
+            "start": 1791621639165,
+            "concurrent": [
+              "electron-B"
+            ]
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:39.563Z",
+            "phase": "electron-parallel-background",
+            "kind": "server-operation-start",
+            "id": "58f41f81-40f6-4d7c-b347-dc64bf3eaf14",
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "stage": "electron-background",
+            "next": 6,
+            "start": 1791621639563,
+            "concurrent": []
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:40.547Z",
+            "phase": "electron-parallel-background",
+            "kind": "server-operation-start",
+            "id": "f7a9d658-6f3f-4ea9-b2f9-5b7dd270c79d",
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "stage": "electron-background",
+            "next": 6,
+            "start": 1791621640547,
+            "concurrent": []
+          }
+        ]
+      }
+    },
+    {
+      "name": "electron-parallel-covered",
+      "status": "passed",
+      "evidence": {
+        "before": [
+          {
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "url": "http://127.0.0.1:55300/fixture",
+            "count": 6,
+            "entry": "",
+            "paste": "",
+            "visibility": "visible",
+            "focused": true,
+            "stage": "electron-covered"
+          },
+          {
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "url": "http://127.0.0.1:55300/fixture",
+            "count": 6,
+            "entry": "",
+            "paste": "",
+            "visibility": "visible",
+            "focused": true,
+            "stage": "electron-covered"
+          }
+        ],
+        "after": [
+          {
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "url": "http://127.0.0.1:55300/fixture",
+            "count": 9,
+            "entry": "",
+            "paste": "",
+            "visibility": "visible",
+            "focused": true,
+            "stage": "electron-covered"
+          },
+          {
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "url": "http://127.0.0.1:55300/fixture",
+            "count": 9,
+            "entry": "",
+            "paste": "",
+            "visibility": "visible",
+            "focused": true,
+            "stage": "electron-covered"
+          }
+        ],
+        "overlaps": [
+          {
+            "recordedAt": "2026-10-10T08:40:42.710Z",
+            "phase": "electron-parallel-covered",
+            "kind": "server-operation-start",
+            "id": "fe6884f6-8a82-442c-9972-3707c1bd130b",
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "stage": "electron-covered",
+            "next": 7,
+            "start": 1791621642710,
+            "concurrent": [
+              "electron-A"
+            ]
+          }
+        ],
+        "operations": [
+          {
+            "recordedAt": "2026-10-10T08:40:41.674Z",
+            "phase": "electron-parallel-covered",
+            "kind": "server-operation-start",
+            "id": "1e0add3b-78db-4ae4-a11d-bf8a6c96cfc9",
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "stage": "electron-covered",
+            "next": 7,
+            "start": 1791621641674,
+            "concurrent": []
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:42.079Z",
+            "phase": "electron-parallel-covered",
+            "kind": "server-operation-start",
+            "id": "b6fc938a-4eb3-42d9-90b5-99b80740f6d3",
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "stage": "electron-covered",
+            "next": 8,
+            "start": 1791621642079,
+            "concurrent": []
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:42.479Z",
+            "phase": "electron-parallel-covered",
+            "kind": "server-operation-start",
+            "id": "94a5cb42-a14a-4c5a-915a-e21c4297dd27",
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "stage": "electron-covered",
+            "next": 9,
+            "start": 1791621642479,
+            "concurrent": []
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:42.710Z",
+            "phase": "electron-parallel-covered",
+            "kind": "server-operation-start",
+            "id": "fe6884f6-8a82-442c-9972-3707c1bd130b",
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "stage": "electron-covered",
+            "next": 7,
+            "start": 1791621642710,
+            "concurrent": [
+              "electron-A"
+            ]
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:45.731Z",
+            "phase": "electron-parallel-covered",
+            "kind": "server-operation-start",
+            "id": "ecab32ae-b5e2-4b46-b2ed-2165f5567b86",
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "stage": "electron-covered",
+            "next": 8,
+            "start": 1791621645731,
+            "concurrent": []
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:48.730Z",
+            "phase": "electron-parallel-covered",
+            "kind": "server-operation-start",
+            "id": "fa342382-49e2-4b07-8ed8-1aa900deb1fd",
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "stage": "electron-covered",
+            "next": 9,
+            "start": 1791621648730,
+            "concurrent": []
+          }
+        ]
+      }
+    },
+    {
+      "name": "electron-parallel-minimized",
+      "status": "passed",
+      "evidence": {
+        "host": {
+          "mode": "A",
+          "overlayVisible": false,
+          "minimized": false,
+          "windowFocused": true,
+          "focusedWc": 1,
+          "cursor": {
+            "x": 721,
+            "y": 43
+          },
+          "pages": [
+            {
+              "label": "A",
+              "wcId": 2,
+              "url": "http://127.0.0.1:55300/fixture",
+              "focused": false
+            },
+            {
+              "label": "B",
+              "wcId": 3,
+              "url": "http://127.0.0.1:55300/fixture",
+              "focused": false
+            },
+            {
+              "label": "overlay",
+              "wcId": 4,
+              "url": "file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/visible-page-control/overlay.html",
+              "focused": false
+            }
+          ]
+        },
+        "before": [
+          {
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "url": "http://127.0.0.1:55300/fixture",
+            "count": 9,
+            "entry": "",
+            "paste": "",
+            "visibility": "visible",
+            "focused": true,
+            "stage": "electron-minimized"
+          },
+          {
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "url": "http://127.0.0.1:55300/fixture",
+            "count": 9,
+            "entry": "",
+            "paste": "",
+            "visibility": "visible",
+            "focused": true,
+            "stage": "electron-minimized"
+          }
+        ],
+        "after": [
+          {
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "url": "http://127.0.0.1:55300/fixture",
+            "count": 12,
+            "entry": "",
+            "paste": "",
+            "visibility": "visible",
+            "focused": true,
+            "stage": "electron-minimized"
+          },
+          {
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "url": "http://127.0.0.1:55300/fixture",
+            "count": 12,
+            "entry": "",
+            "paste": "",
+            "visibility": "visible",
+            "focused": true,
+            "stage": "electron-minimized"
+          }
+        ],
+        "overlaps": [
+          {
+            "recordedAt": "2026-10-10T08:40:51.565Z",
+            "phase": "electron-parallel-minimized",
+            "kind": "server-operation-start",
+            "id": "47526b83-e42e-4776-a7f1-461b65d3a638",
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "stage": "electron-minimized",
+            "next": 10,
+            "start": 1791621651565,
+            "concurrent": [
+              "electron-A"
+            ]
+          }
+        ],
+        "operations": [
+          {
+            "recordedAt": "2026-10-10T08:40:50.510Z",
+            "phase": "electron-parallel-minimized",
+            "kind": "server-operation-start",
+            "id": "cc7d7ce5-c42f-42ab-a3b9-394572f2e91c",
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "stage": "electron-minimized",
+            "next": 10,
+            "start": 1791621650510,
+            "concurrent": []
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:50.909Z",
+            "phase": "electron-parallel-minimized",
+            "kind": "server-operation-start",
+            "id": "643db549-a9b4-4a6c-a64f-dc32af16c9cb",
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "stage": "electron-minimized",
+            "next": 11,
+            "start": 1791621650909,
+            "concurrent": []
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:51.311Z",
+            "phase": "electron-parallel-minimized",
+            "kind": "server-operation-start",
+            "id": "2e91a796-0707-44c7-8301-45ca63c72b01",
+            "task": "electron-A",
+            "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+            "stage": "electron-minimized",
+            "next": 12,
+            "start": 1791621651311,
+            "concurrent": []
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:51.565Z",
+            "phase": "electron-parallel-minimized",
+            "kind": "server-operation-start",
+            "id": "47526b83-e42e-4776-a7f1-461b65d3a638",
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "stage": "electron-minimized",
+            "next": 10,
+            "start": 1791621651565,
+            "concurrent": [
+              "electron-A"
+            ]
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:54.566Z",
+            "phase": "electron-parallel-minimized",
+            "kind": "server-operation-start",
+            "id": "fd27568b-4d58-4f2a-b4cd-99ec8fc100fd",
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "stage": "electron-minimized",
+            "next": 11,
+            "start": 1791621654566,
+            "concurrent": []
+          },
+          {
+            "recordedAt": "2026-10-10T08:40:57.576Z",
+            "phase": "electron-parallel-minimized",
+            "kind": "server-operation-start",
+            "id": "f1af450f-0179-4a84-afca-48295d1bb702",
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "stage": "electron-minimized",
+            "next": 12,
+            "start": 1791621657576,
+            "concurrent": []
+          }
+        ]
+      }
+    },
+    {
+      "name": "electron-native-and-dom-input",
+      "status": "passed",
+      "evidence": [
+        {
+          "kind": "dom-event",
+          "at": 1791621659129,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-click",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "stage",
+          "value": "electron-input-playwright-click"
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659159,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-click",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "pointermove",
+          "isTrusted": true,
+          "button": -1,
+          "target": "entry"
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659160,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-click",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "pointerdown",
+          "isTrusted": true,
+          "target": "entry",
+          "button": 0,
+          "pointerType": "mouse",
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659160,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-click",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "focusin",
+          "isTrusted": true,
+          "target": "entry",
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659160,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-click",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "pointerup",
+          "isTrusted": true,
+          "target": "entry",
+          "button": 0,
+          "pointerType": "mouse",
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659160,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-click",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "click",
+          "isTrusted": true,
+          "target": "entry",
+          "button": 0,
+          "pointerType": "mouse",
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659163,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "stage",
+          "value": "electron-input-playwright-keyboard"
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659168,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "keydown",
+          "isTrusted": true,
+          "target": "entry",
+          "key": "a",
+          "code": "KeyA",
+          "isComposing": false,
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659168,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "beforeinput",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "a",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659169,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "input",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "a",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659169,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "keyup",
+          "isTrusted": true,
+          "target": "entry",
+          "key": "a",
+          "code": "KeyA",
+          "isComposing": false,
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659170,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "keydown",
+          "isTrusted": true,
+          "target": "entry",
+          "key": "u",
+          "code": "KeyU",
+          "isComposing": false,
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659170,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "beforeinput",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "u",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659170,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "input",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "u",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659171,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "keyup",
+          "isTrusted": true,
+          "target": "entry",
+          "key": "u",
+          "code": "KeyU",
+          "isComposing": false,
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659172,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "keydown",
+          "isTrusted": true,
+          "target": "entry",
+          "key": "t",
+          "code": "KeyT",
+          "isComposing": false,
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659172,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "beforeinput",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "t",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659172,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "input",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "t",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659173,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "keyup",
+          "isTrusted": true,
+          "target": "entry",
+          "key": "t",
+          "code": "KeyT",
+          "isComposing": false,
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659174,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "keydown",
+          "isTrusted": true,
+          "target": "entry",
+          "key": "o",
+          "code": "KeyO",
+          "isComposing": false,
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659174,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "beforeinput",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "o",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659175,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "input",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "o",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659176,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "keyup",
+          "isTrusted": true,
+          "target": "entry",
+          "key": "o",
+          "code": "KeyO",
+          "isComposing": false,
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659176,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "keydown",
+          "isTrusted": true,
+          "target": "entry",
+          "key": "A",
+          "code": "KeyA",
+          "isComposing": false,
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659176,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "beforeinput",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "A",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659177,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "input",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "A",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659177,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "keyup",
+          "isTrusted": true,
+          "target": "entry",
+          "key": "A",
+          "code": "KeyA",
+          "isComposing": false,
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659178,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "keydown",
+          "isTrusted": true,
+          "target": "entry",
+          "key": "S",
+          "code": "KeyS",
+          "isComposing": false,
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659178,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "beforeinput",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "S",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659178,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "input",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "S",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659178,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "keyup",
+          "isTrusted": true,
+          "target": "entry",
+          "key": "S",
+          "code": "KeyS",
+          "isComposing": false,
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659179,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "keydown",
+          "isTrusted": true,
+          "target": "entry",
+          "key": "C",
+          "code": "KeyC",
+          "isComposing": false,
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659179,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "beforeinput",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "C",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659179,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "input",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "C",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659179,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "keyup",
+          "isTrusted": true,
+          "target": "entry",
+          "key": "C",
+          "code": "KeyC",
+          "isComposing": false,
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659180,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "keydown",
+          "isTrusted": true,
+          "target": "entry",
+          "key": "I",
+          "code": "KeyI",
+          "isComposing": false,
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659180,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "beforeinput",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "I",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659180,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "input",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "I",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659180,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "keyup",
+          "isTrusted": true,
+          "target": "entry",
+          "key": "I",
+          "code": "KeyI",
+          "isComposing": false,
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659181,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "keydown",
+          "isTrusted": true,
+          "target": "entry",
+          "key": "I",
+          "code": "KeyI",
+          "isComposing": false,
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659181,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "beforeinput",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "I",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659181,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "input",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "I",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659181,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-keyboard",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "keyup",
+          "isTrusted": true,
+          "target": "entry",
+          "key": "I",
+          "code": "KeyI",
+          "isComposing": false,
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659182,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-cdp-insert-chinese",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "stage",
+          "value": "electron-input-cdp-insert-chinese"
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659185,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-cdp-insert-chinese",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "beforeinput",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "自动输入",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659185,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-cdp-insert-chinese",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "input",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "自动输入",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659186,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-fill",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "stage",
+          "value": "electron-input-playwright-fill"
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659228,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-fill",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "beforeinput",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "自动填充",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659228,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-fill",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "input",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "自动填充",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659230,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-script-click",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "stage",
+          "value": "electron-input-script-click"
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659235,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-script-click",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "click",
+          "isTrusted": false,
+          "target": "entry",
+          "button": 0,
+          "pointerType": "",
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659237,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-script-dispatch",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "stage",
+          "value": "electron-input-script-dispatch"
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659241,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-script-dispatch",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "click",
+          "isTrusted": false,
+          "target": "entry",
+          "button": 0,
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659243,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-playwright-wheel",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "stage",
+          "value": "electron-input-playwright-wheel"
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659255,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-automatic-scroll",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "stage",
+          "value": "electron-input-automatic-scroll"
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659271,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-automatic-scroll",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "wheel",
+          "isTrusted": true,
+          "target": "paste",
+          "button": 0,
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659317,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-automatic-scroll",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "pointerdown",
+          "isTrusted": true,
+          "target": "bottom",
+          "button": 0,
+          "pointerType": "mouse",
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659317,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-automatic-scroll",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "focusout",
+          "isTrusted": true,
+          "target": "entry",
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659317,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-automatic-scroll",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "focusin",
+          "isTrusted": true,
+          "target": "bottom",
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659317,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-automatic-scroll",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "pointerup",
+          "isTrusted": true,
+          "target": "bottom",
+          "button": 0,
+          "pointerType": "mouse",
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659317,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-automatic-scroll",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "click",
+          "isTrusted": true,
+          "target": "bottom",
+          "button": 0,
+          "pointerType": "mouse",
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659317,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-input-automatic-scroll",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "bottom-activated"
+        }
+      ]
+    },
+    {
+      "name": "electron-sendInputEvent",
+      "status": "passed",
+      "evidence": [
+        {
+          "kind": "dom-event",
+          "at": 1791621659416,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-sendInputEvent",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "stage",
+          "value": "electron-sendInputEvent"
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659419,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-sendInputEvent",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "pointerdown",
+          "isTrusted": true,
+          "target": "entry",
+          "button": 0,
+          "pointerType": "mouse",
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659420,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-sendInputEvent",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "focusout",
+          "isTrusted": true,
+          "target": "bottom",
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659420,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-sendInputEvent",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "focusin",
+          "isTrusted": true,
+          "target": "entry",
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659421,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-sendInputEvent",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "pointerup",
+          "isTrusted": true,
+          "target": "entry",
+          "button": 0,
+          "pointerType": "mouse",
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659421,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-sendInputEvent",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "click",
+          "isTrusted": true,
+          "target": "entry",
+          "button": 0,
+          "pointerType": "mouse",
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659422,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-sendInputEvent",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "keydown",
+          "isTrusted": true,
+          "target": "entry",
+          "key": "x",
+          "code": "KeyX",
+          "isComposing": false,
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659424,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-sendInputEvent",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "beforeinput",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "x",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659424,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-sendInputEvent",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "input",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "x",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659424,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-sendInputEvent",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "keyup",
+          "isTrusted": true,
+          "target": "entry",
+          "key": "x",
+          "code": "KeyX",
+          "isComposing": false,
+          "modifiers": {
+            "meta": false,
+            "ctrl": false,
+            "alt": false,
+            "shift": false
+          },
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659425,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-sendInputEvent",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "beforeinput",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "程序插入",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        },
+        {
+          "kind": "dom-event",
+          "at": 1791621659425,
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "stage": "electron-sendInputEvent",
+          "url": "http://127.0.0.1:55300/fixture",
+          "visibility": "visible",
+          "focused": true,
+          "type": "input",
+          "isTrusted": true,
+          "target": "entry",
+          "inputType": "insertText",
+          "data": "程序插入",
+          "isComposing": false,
+          "modifiers": {},
+          "inOverlay": false
+        }
+      ]
+    },
+    {
+      "name": "electron-popup-navigation",
+      "status": "passed",
+      "evidence": {
+        "before": {
+          "task": "electron-A",
+          "docId": "0743c64d-ad6a-42a2-b06a-e82567a97e78",
+          "url": "http://127.0.0.1:55300/fixture",
+          "count": 12,
+          "entry": "自x程序插入动填充",
+          "paste": "",
+          "visibility": "visible",
+          "focused": true,
+          "stage": "electron-sendInputEvent",
+          "targetId": "6C7CD4FB5BF0756B782B8FB94A679808"
+        },
+        "child": {
+          "task": "electron-A-popup",
+          "docId": "bc972bd1-0d6f-4aa8-8609-afeaa944bed3",
+          "url": "http://127.0.0.1:55300/popup",
+          "count": 0,
+          "entry": "",
+          "paste": "",
+          "visibility": "visible",
+          "focused": true,
+          "stage": "unlabelled",
+          "targetId": "920AB7736D39C536BB49790FC37F6984",
+          "openerId": "6C7CD4FB5BF0756B782B8FB94A679808"
+        },
+        "after": {
+          "task": "electron-A",
+          "docId": "4c22b077-76fa-4fde-99f1-c91e6e2aa139",
+          "url": "http://127.0.0.1:55300/next",
+          "count": 0,
+          "entry": "",
+          "paste": "",
+          "visibility": "visible",
+          "focused": true,
+          "stage": "unlabelled",
+          "targetId": "6C7CD4FB5BF0756B782B8FB94A679808"
+        },
+        "crossOrigin": {
+          "task": "electron-A",
+          "docId": "0e28ee4d-ce4b-4e8b-b79d-c4a53cd0b1ec",
+          "url": "http://localhost:55300/fixture",
+          "count": 0,
+          "entry": "",
+          "paste": "",
+          "visibility": "visible",
+          "focused": true,
+          "stage": "unlabelled",
+          "targetId": "6C7CD4FB5BF0756B782B8FB94A679808"
+        }
+      }
+    },
+    {
+      "name": "electron-external-cdp",
+      "status": "passed",
+      "evidence": {
+        "identities": [
+          {
+            "task": "electron-B",
+            "docId": "d57dcca5-5bc8-4bdf-90c4-62669d83349d",
+            "url": "http://127.0.0.1:55300/fixture",
+            "count": 12,
+            "entry": "",
+            "paste": "",
+            "visibility": "visible",
+            "focused": true,
+            "stage": "electron-minimized",
+            "targetId": "2C2FDBC3EE78852AD26DEB25D1E6E688"
+          },
+          {
+            "task": "electron-A",
+            "docId": "0e28ee4d-ce4b-4e8b-b79d-c4a53cd0b1ec",
+            "url": "http://localhost:55300/fixture",
+            "count": 0,
+            "entry": "",
+            "paste": "",
+            "visibility": "visible",
+            "focused": true,
+            "stage": "unlabelled",
+            "targetId": "6C7CD4FB5BF0756B782B8FB94A679808"
+          }
+        ],
+        "sharedValue": "外部 CDP 读取同页"
+      }
+    },
+    {
+      "name": "electron-overlay-target-separation",
+      "status": "passed",
+      "evidence": {
+        "overlayValue": "浮窗输入样本",
+        "businessValue": "",
+        "host": {
+          "mode": "A",
+          "overlayVisible": true,
+          "minimized": false,
+          "windowFocused": true,
+          "focusedWc": 2,
+          "cursor": {
+            "x": 721,
+            "y": 43
+          },
+          "pages": [
+            {
+              "label": "A",
+              "wcId": 2,
+              "url": "http://localhost:55300/fixture",
+              "focused": true
+            },
+            {
+              "label": "B",
+              "wcId": 3,
+              "url": "http://127.0.0.1:55300/fixture",
+              "focused": false
+            },
+            {
+              "label": "overlay",
+              "wcId": 4,
+              "url": "file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/visible-page-control/overlay.html",
+              "focused": false
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
