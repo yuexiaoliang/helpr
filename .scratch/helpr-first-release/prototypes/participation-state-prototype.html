@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>helpr · 并行与用户参与状态演练</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f6f3;color:#25342f;font:15px/1.65 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}main{max-width:1380px;margin:auto;padding:30px 28px 60px}h1{font-size:28px;letter-spacing:-.7px;margin:4px 0 10px}h2{font-size:19px;margin:0 0 14px}h3{font-size:16px;margin:0 0 10px}p{margin:6px 0 12px}button,select{font:inherit}button{border:1px solid #cdd7d1;border-radius:7px;background:white;color:#263c33;padding:7px 12px;cursor:pointer}button:hover{background:#edf4ef;border-color:#84ad9a}button:focus-visible,a:focus-visible{outline:3px solid #0a8065;outline-offset:3px}button:disabled{opacity:.5;cursor:default}.primary,.scenario[aria-selected=true]{background:#08765c;color:white;border-color:#08765c}.primary:hover{background:#05614b;color:white}.danger{color:#a13e33}.muted{color:#62706a;font-size:13px}.eyebrow{color:#08765c;letter-spacing:2px;font-size:12px;font-weight:700}.intro{max-width:1030px}.notice{padding:12px 16px;border:1px solid #d8e2dc;background:#edf4ee;border-radius:8px;margin:16px 0}.notice.pending{background:#fff9e9;border-color:#e5d5a4}.bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:space-between}.section{margin-top:24px;padding:22px;background:white;border:1px solid #dce2dc;border-radius:12px}.pills,.buttons,.tabs{display:flex;gap:8px;flex-wrap:wrap}.pill{background:#edf1ed;border-radius:20px;padding:2px 10px;font-size:12px;white-space:nowrap}.active{color:#066348;background:#def2e6}.wait{color:#795319;background:#fff2d4}.stopped{color:#635e5b;background:#edeae7}.task-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.task-tab{display:flex;gap:8px;align-items:center;border:1px solid #d4ded7;border-radius:8px;padding:4px;background:#fff}.task-tab.current{border:2px solid #08765c;padding:3px}.task-tab button{border:0;padding:5px 8px}.close{font-size:19px;line-height:1}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}.card{border:1px solid #dde4de;border-radius:9px;padding:16px;background:#fbfcfa;min-width:0}.card.selected{border-color:#8eaf9b}.card dt{color:#6d7972;font-size:12px}.card dd{margin:0 0 7px;overflow-wrap:anywhere}.card dl{margin:12px 0 0;display:grid;grid-template-columns:74px 1fr;gap:4px 8px;font-size:13px}.card dl dd{margin:0}.progress{height:5px;background:#e4eae4;border-radius:10px;overflow:hidden;margin:11px 0}.progress i{display:block;height:100%;background:#0c8063}.empty{padding:12px 0;color:#6c786f}.reminders{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;margin-top:16px}.reminder{padding:14px;border:1px solid #ddcea8;background:#fffaf0;border-radius:8px}.reminder p{font-size:13px}.control-row{display:grid;grid-template-columns:105px 1fr;gap:10px;align-items:start;margin:12px 0}.control-row>span{font-size:13px;color:#68756d;padding-top:7px}.scenario{padding:8px 12px}.walk{margin-top:16px;padding:18px;background:#f7faf6;border:1px solid #dde6db;border-radius:8px}.steps{display:grid;gap:8px;margin-top:16px}.step{display:flex;text-align:left;gap:12px;align-items:baseline;padding:11px 14px}.step b{font-size:12px;white-space:nowrap}.step.done{background:#eaf3ec;color:#466851}.step.next{border:2px solid #08765c}.step span{flex:1}.step small{font-size:12px;color:#67746a}.log{padding-left:24px;margin-bottom:0;max-height:260px;overflow:auto;font-size:13px}.log li{padding:5px 2px;border-bottom:1px solid #eef0eb}.choice{margin:8px 0 16px;padding:16px;border:2px solid #668a71;background:#fffef5;border-radius:8px}.choice p{font-size:14px}.review{border-left:3px solid #b59145;padding:8px 14px;background:#fffaf0;font-size:13px}a{color:#08765c}.history{font-size:13px;margin-top:14px}.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}@media(max-width:700px){main{padding:20px 14px}.section{padding:16px}.control-row{grid-template-columns:1fr}.card dl{grid-template-columns:70px 1fr}.step{display:block}.step small{display:block}h1{font-size:24px}}
+</style>
+<main>
+  <div class="eyebrow">HELPR / 状态演练</div>
+  <h1>每项任务，保留自己的进度与决定</h1>
+  <p class="intro">要核对的问题：两项任务同时推进时，确认、接管、继续、停止、修正目标、收起和重启，是否始终作用于正确的那一次执行？你可以自由点击，也可以按下方情境逐步体验。</p>
+  <div class="notice"><strong>一次性逻辑原型。</strong> 所有网页、回复和重启均为内存模拟，没有真实发布、模型调用或磁盘恢复；刷新页面即可重置。这不是正式工作区的视觉设计。 <a href="#walkthrough">从引导演练开始 ↓</a></div>
+  <div class="review">待真人核对的候选行为：本次执行停止后，“继续”先保持停止；需明确重新执行才能开启新一轮。停止前已产生的结果仍保留。这个选择尚未写入产品共识。</div>
+  <section class="section" aria-labelledby="state-heading">
+    <div class="bar"><h2 id="state-heading">当前状态</h2><div id="summary" class="pills"></div></div>
+    <p id="assumption" class="muted"></p>
+    <div id="change" class="notice" role="status" aria-live="polite"></div>
+    <div id="task-tabs" class="task-tabs" aria-label="已打开的任务"></div>
+    <div id="close-choice"></div>
+    <div id="activity" class="buttons" aria-label="收起的活动任务"></div>
+    <div id="cards" class="cards"></div>
+    <div style="margin-top:20px"><h3>全局提醒</h3><p class="muted">提醒中的操作带着原任务归属，当前查看哪个标签页不会改变它。</p><div id="reminders" class="reminders"></div></div>
+    <details class="history"><summary>已处理或过期的提醒</summary><div id="request-history"></div></details>
+  </section>
+  <section class="section" aria-labelledby="free-heading">
+    <div class="bar"><h2 id="free-heading">自由试用</h2><label>操作对象 <select id="target" aria-label="自由试用的操作对象"></select></label></div>
+    <p class="muted">按钮一直可点；当前不适用的操作会说明原因。所有“模拟”按钮属于演练工具，不是拟定的产品控件。</p>
+    <div id="free-controls"></div>
+  </section>
+  <section class="section" id="walkthrough" aria-labelledby="walk-heading">
+    <div class="bar"><h2 id="walk-heading">跟着情境走</h2><button id="reset" data-action="reset">重新开始本情境</button></div>
+    <div id="scenario-tabs" class="tabs" role="tablist" aria-label="演练情境"></div>
+    <div id="walk" class="walk" role="tabpanel"></div>
+  </section>
+  <section class="section"><h2>发生了什么</h2><ol id="log" class="log"></ol></section>
+  <p class="muted" style="margin-top:24px">核对时留意：哪个任务还能自动操作、谁的内容已获确认、旧回复是否失效、关闭是否只是改变显示。网页能力和持久化保证需另做真实验证。</p>
+</main>
+
+<script id="state-module">
+// 一次性逻辑模型：纯数据变换；不访问 DOM、网络或存储。
+const Model = (() => {
+  const name = t => `${t.name} · 第 ${t.run} 次`;
+  const done = t => t.phase === 'done';
+  const ended = t => done(t) || t.intent === 'stopped';
+  const request = (s,t) => s.requests.find(q => q.execution === t.id && q.state === 'open');
+  function blockers(s,t) {
+    const b=[];
+    if(!s.online)b.push('程序尚未重启');
+    if(t.intent==='stopped')b.push('本次已停止');
+    if(t.intent==='human')b.push('正在由你操作');
+    if(!s.sessions[t.session])b.push('需要重新登录');
+    const q=request(s,t);if(q)b.push(q.kind==='uncertain'?'结果仍需核对':'内容等待确认');
+    if(done(t))b.push('本次已有结果');
+    return b;
+  }
+  function schedule(s) {
+    const eligible=t=>!blockers(s,t).length;
+    s.running=s.running.filter(id=>s.tasks.some(t=>t.id===id&&eligible(t)));
+    for(const t of s.tasks)if(s.running.length<2&&eligible(t)&&!s.running.includes(t.id))s.running.push(t.id);
+    return s;
+  }
+  function status(s,t) {
+    if(t.intent==='stopped')return '已停止';
+    if(t.intent==='human')return '你正在操作';
+    if(done(t))return '已完成';
+    if(request(s,t)?.kind==='uncertain')return '需要核对结果';
+    if(request(s,t))return '等你确认内容';
+    if(!s.online)return '等待程序重启';
+    if(!s.sessions[t.session])return '等你登录';
+    if(s.running.includes(t.id))return t.check?'正在核对现场':'自动进行中';
+    return t.check?'排队核对现场':'排队中';
+  }
+  function expire(s,t,reason) {
+    for(const q of s.requests)if(q.execution===t.id&&q.state==='open'){q.state='expired';q.reason=reason;s.oldRequest=q.id;}
+  }
+  function ask(s,t,kind='content') {
+    expire(s,t,'已被更新的内容替代');
+    const q={id:'q'+s.nextRequest++,execution:t.id,content:t.content,goal:t.goal,kind,state:'open',target:t.target};
+    s.requests.push(q);s.latestRequest=q.id;return q;
+  }
+  function task(key,run=1) {
+    return {id:key+run,key,run,name:{A:'日报 · 企业后台',B:'日报 · 团队网站',C:'周报 · 资料库',D:'素材整理'}[key],
+      group:key==='A'||key==='B'?'日报发布':'其它工作',session:{A:'企业账号',B:'团队账号',C:'资料库账号',D:'资料库账号'}[key],
+      target:'日报栏目',content:1,goal:1,approved:1,intent:'auto',phase:'working',effect:'尚无已核实结果',
+      progress:20,check:false,view:'open',epoch:1,sent:false,plan:key==='A',agreement:key==='A'};
+  }
+  function initial(mode='parallel') {
+    const s={tasks:['A','B','C'].map(k=>task(k)),selected:'B1',running:[],sessions:{企业账号:true,团队账号:true,资料库账号:true},
+      online:true,requests:[],nextRequest:1,latestRequest:null,oldRequest:null,lastAnswer:null,captured:null,close:null,log:[],
+      assumption:'示例预设：三项任务已核实互不干扰，本次内容已获批准；A、B 同组但分别处理。A 另有明确的每日自动发布约定。上述关系与许可只是演练预设，不是新的产品默认。'};
+    if(mode==='login'){
+      s.tasks[1].session='企业账号';s.tasks[1].approved=null;ask(s,s.tasks[1]);
+      s.assumption='示例预设：A、B 共用企业登录，但操作不同记录；C 使用独立账号。A 已有“每日符合约定的新素材自动发布”的约定，仅本情境采用这项约定。';
+    }
+    if(mode==='restart'){
+      s.tasks.push(task('D'));s.tasks[0].sent=true;s.tasks[0].phase='sent';s.tasks[0].effect='请求已发出，结果尚不确定';s.captured={id:'A1',epoch:1,used:false};
+      s.tasks[1].approved=null;ask(s,s.tasks[1]);s.tasks[2].intent='stopped';s.tasks[3].intent='human';
+      s.assumption='模拟退出前：A 的请求已经发出，B 等待内容确认，C 已停止，D 由你操作。模拟重启只保留这份内存记录，不证明真实落盘或恢复能力。';
+    }
+    s.log.push('情境已重置；点击任一按钮查看状态变化。');return schedule(s);
+  }
+  function reduce(previous,action) {
+    const s=structuredClone(previous),t=s.tasks.find(t=>t.id===action.id),a=action.type;
+    const log=text=>s.log.push(text),finish=()=>schedule(s);
+    const closeView=(t,view)=>{t.view=view;if(s.selected===t.id)s.selected=s.tasks.find(x=>x.view==='open')?.id||null;};
+    if(a==='crash'){s.online=false;for(const x of s.tasks)x.epoch++;s.close=null;log('模拟程序退出；记录中的内容确认、人工接管和停止意图保留。');return finish();}
+    if(a==='restart'){s.online=true;for(const x of s.tasks)if(x.intent==='auto'&&!done(x))x.check=true;log('模拟重启：原自动任务先核对现场，其它意图保持；不会重新批准任何内容。');return finish();}
+    if(a==='cancel-close'){s.close=null;log('已收起关闭提示，任务和标签页保持原状。');return finish();}
+    if(a==='reply'||a==='old-reply'){
+      const q=s.requests.find(q=>q.id===(a==='old-reply'?(s.oldRequest||s.lastAnswer||s.latestRequest):action.request));
+      const owner=q&&s.tasks.find(x=>x.id===q.execution);
+      if(!q||!owner){log('没有可送达的旧回复。');return finish();}
+      if(q.state!=='open'||q.content!==owner.content||q.goal!==owner.goal||ended(owner)){log(`这条回复属于${name(owner)}的旧问题，已忽略；当前任务不受影响。`);return finish();}
+      if(q.kind==='uncertain'){log('无法用“同意”证明网站未发布；需要重新核对实际结果。');return finish();}
+      q.state='answered';s.lastAnswer=q.id;owner.approved=owner.content;owner.check=true;
+      log(`已确认${name(owner)}的第 ${owner.content} 版内容；当前查看的标签页不变，继续前先核对现场。`);return finish();
+    }
+    if(a==='deliver'){
+      const c=s.captured,x=c&&s.tasks.find(t=>t.id===c.id);
+      if(!c||c.used){log('没有尚未送达的处理结果；重复送达不会产生动作。');return finish();}
+      c.used=true;
+      if(!x||x.epoch!==c.epoch||blockers(s,x).length){log(`此前为${x?name(x):'旧执行'}准备的结果已过时，没有继续操作任何网页。`);return finish();}
+      x.progress=Math.min(80,x.progress+10);log(`处理结果只交给${name(x)}，不会交给当前查看的另一项。`);return finish();
+    }
+    if(!t){log('请先选一项任务。');return finish();}
+    if(a==='view'||a==='reopen'){t.view='open';s.selected=t.id;log(`正在查看${name(t)}；查看不接管，也不重新执行。`);return finish();}
+    if(a==='mouse'){log(`仅移动鼠标查看${name(t)}；没有改变谁在操作网页。`);return finish();}
+    if(a==='close'){if(ended(t)){closeView(t,'history');log('本次执行已经结束，已关闭标签页并保留历史。');}else{s.close={id:t.id};log(`显示${name(t)}的关闭提示；尚未改变执行状态。`);}return finish();}
+    if(a==='hide'||a==='close-stop'){
+      if(!s.close||s.close.id!==t.id){log('没有这项任务的关闭提示；请先点标签页 ×。');return finish();}
+      s.close=null;
+      if(ended(t)){closeView(t,'history');log('显示提示后本次执行已经结束，按最新结果关闭，没有再发出停止或重跑。');return finish();}
+      closeView(t,a==='hide'?'hidden':'history');
+      if(a==='hide'){log(`已收起${name(t)}；进度、网页和待办保持。`);return finish();}
+    }
+    if(a==='next-run'){
+      if(!t.plan){log('这个示例任务没有定时计划。');return finish();}
+      const n=Math.max(...s.tasks.filter(x=>x.key===t.key).map(x=>x.run))+1,next=task(t.key,n);
+      next.session=t.session;next.target=t.target;next.goal=t.goal;next.progress=0;next.check=true;s.tasks.push(next);
+      if(!next.agreement){next.approved=null;ask(s,next);}
+      log(`定时计划产生${name(next)}；前一轮的问题与结果保留，当前标签页不切换。`);return finish();
+    }
+    if(a==='login-expired'||a==='login-restored'){
+      s.sessions[t.session]=a==='login-restored';
+      for(const x of s.tasks)if(x.session===t.session){x.epoch++;if(a==='login-restored'&&x.intent==='auto'&&!done(x))x.check=true;}
+      log(a==='login-expired'?`${t.session}失效，只影响使用这份登录的执行；共用一个登录入口。`:`${t.session}已恢复；每次执行仍保留自己的确认、停止与接管状态。`);return finish();
+    }
+    if(a==='observe-done'||(a==='complete'&&t.sent)){
+      if(!t.sent&&!done(t)){log('尚无已派发的提交可核对；先使用“模拟请求已发出”。');return finish();}
+      t.effect='已核实网站产出';t.phase='done';t.progress=100;t.check=false;expire(s,t,'实际结果已核实');
+      log(`${name(t)}的网站产出已核实；${t.intent==='stopped'?'仍保留已停止意图':t.intent==='human'?'仍保留人工接管意图':'没有再次提交'}。`);return finish();
+    }
+    if(a==='stop'||a==='close-stop'){
+      if(ended(t)){log('本次已经结束，不重复停止，也不重跑。');return finish();}
+      t.intent='stopped';t.epoch++;expire(s,t,'本次执行已停止');t.check=false;
+      log(`${name(t)}已停止，不再派发动作；已有结果和定时计划保留。`);return finish();
+    }
+    if(ended(t)){log('本次执行已结束。候选行为：不以“继续”重启旧执行；如需再做，明确发起新一轮。');return finish();}
+    if(a==='capture'){s.captured={id:t.id,epoch:t.epoch,used:false};log(`暂时留住${name(t)}的一条处理结果，稍后可模拟送达。`);return finish();}
+    if(a==='ask'){t.approved=null;ask(s,t);log(`${name(t)}在等待本次内容确认；不受影响的其它任务可以继续。`);return finish();}
+    if(a==='web-input'){
+      t.intent='human';t.epoch++;t.content++;t.approved=null;expire(s,t,'你已改动网页内容');
+      log(`你在${name(t)}的网页输入文字，系统立即让出操作；本次内容已有变化。`);return finish();
+    }
+    if(a==='continue'){
+      t.intent='auto';t.check=true;
+      if(t.approved!==t.content&&!request(s,t))ask(s,t);
+      log(`收到${name(t)}的“继续”；仍须满足内容确认、登录和现场核对，不把它当成批准新内容。`);return finish();
+    }
+    if(a==='change-goal'){
+      if(t.sent){log('原提交已经发出：先核对原结果，再根据你的新目标确定后续；不会悄悄重发。');return finish();}
+      t.target='活动栏目';t.goal++;t.content++;t.approved=null;t.epoch++;ask(s,t);
+      log(`${name(t)}改到活动栏目，重新提供对应内容确认；旧内容的批准不适用于新目标。`);return finish();
+    }
+    if(a==='check-unchanged'){
+      if(t.sent){t.effect='请求已发出，结果尚不确定';ask(s,t,'uncertain');log('只有派发记录，查无产出也不能证明未发布；保持待核对，不重试。');return finish();}
+      if(!t.check){log('当前没有待核对的恢复位置。');return finish();}
+      t.check=false;log(`${name(t)}的草稿与本次素材一致；仍按自己的确认和登录条件安排。`);return finish();
+    }
+    if(a==='observe-unknown'){if(!t.sent){log('本情境尚未派发提交，没有提交结果歧义。');return finish();}ask(s,t,'uncertain');t.effect='请求已发出，结果尚不确定';log('暂时无法确认网站是否已完成。保留待核对，不自动重试。');return finish();}
+    if(!s.running.includes(t.id)||t.check){log(`${name(t)}当前不能推进：${blockers(s,t).join('、')||(t.check?'需先核对现场':'正在等待执行机会')}。`);return finish();}
+    if(a==='tick'){t.progress=Math.min(80,t.progress+20);log(`${name(t)}推进一步，其它任务的内容与回答不变。`);}
+    if(a==='sent'||a==='complete'){
+      if(t.sent){log('这次提交已经派发；等待核对结果，不重复发送。');return finish();}
+      if(t.approved!==t.content){log('这版内容尚未获批，不能提交。');return finish();}
+      t.sent=true;t.phase='sent';t.effect='请求已发出，结果尚不确定';t.progress=90;
+      if(a==='complete'){t.effect='已核实网站产出';t.phase='done';t.progress=100;}
+      log(a==='sent'?`${name(t)}的提交已发出，回执尚未到达。`:`${name(t)}完成一次发布；其它执行按各自条件继续。`);
+    }
+    return finish();
+  }
+  return {initial,reduce,name,status,blockers,request,ended};
+})();
+</script>
+
+<script>
+// 展示与演练脚本；只调用上方纯模型。
+const scenarios=[
+ {id:'parallel',title:'全局确认',description:'A 等待确认时，B 与 C 可继续。你正在看 B，从全局提醒回答 A；同一条回复不能生效两次。',steps:[
+ ['ask','A1','让 A 等待确认','A 保留内容，C 获得空余机会'],['view','B1','查看 B','查看不会接管'],['reply-current','A1','在全局提醒确认 A','回答归 A；视线仍在 B'],['old-reply','A1','再次送达同一条回复','不会重复批准或发布'],['complete','B1','让 B 完成','A 获得核对机会'],['check-unchanged','A1','核对 A 草稿未变','A 只在已确认条件下继续']]},
+ {id:'takeover',title:'查看与接管',description:'切换任务与移动鼠标只是在查看。输入网页才接管；说“继续”后，改过的内容仍需确认。',steps:[
+ ['view','A1','查看 A','A 仍可自动推进'],['mouse','A1','只移动鼠标','操作归属不变'],['web-input','A1','在 A 网页中改一段文字','A 让出操作，B 继续'],['tick','B1','让 B 推进一步','B 的进度独立'],['continue','A1','对 A 说“继续”','变更后的内容需要确认'],['reply-current','A1','确认 A 的新内容','先排队核对现场'],['complete','B1','让 B 完成','释放一次执行机会'],['check-unchanged','A1','确认 A 现场与素材匹配','才继续自动操作']]},
+ {id:'stop',title:'停止与迟到',description:'停止立即生效。旧处理结果不能继续操作网页；已发出的请求仍可能在网站生效。',steps:[
+ ['capture','A1','暂时留住 A 的处理结果','记录它属于停止前的 A'],['sent','A1','模拟 A 请求已发出','网站结果尚未确定'],['stop','A1','停止 A','没有二次确认'],['deliver','B1','看 B 时收到 A 的旧结果','不能操作 A，也不能转交 B'],['observe-done','A1','核对发现 A 已经发布','保留“已停止”和实际产出'],['continue','A1','停止后再说“继续”','待你核对的候选：不重启旧执行']]},
+ {id:'goal',title:'修正与旧确认',description:'先出现旧内容确认，再把目标改为活动栏目。旧确认不能批准修改后的目标。',steps:[
+ ['ask','A1','先让 A 请求内容确认','保存旧问题'],['change-goal','A1','改为发布到活动栏目','显示新的目标和内容'],['old-reply','A1','送达旧问题的“同意”','新目标仍未获批准'],['continue','A1','先对 A 说“继续”','仍不能替代内容确认'],['reply-current','A1','确认新目标的内容','仅批准这次新内容']]},
+ {id:'hide',title:'收起与提醒',description:'收起不停止，重新打开不重跑。即使标签页已收起，也能从提醒处理同一任务。',steps:[
+ ['close','A1','点击 A 标签页的 ×','只显示提示'],['cancel-close','A1','按 Esc 返回','状态和标签页不变'],['close','A1','再点一次 ×','仍由你选择'],['hide','A1','收起 A','保留活动入口和现场'],['ask','A1','模拟 A 需要内容确认','收起后仍显示全局提醒'],['reply-current','A1','直接在提醒确认 A','不会自动打开或重跑 A'],['reopen','A1','重新打开 A','只恢复查看']]},
+ {id:'login',title:'共同登录',mode:'login',description:'A、B 依赖同一登录，B 还在等内容确认。登录失效只影响相关执行，恢复登录不会批准 B，也不会恢复已停止的 A。',steps:[
+ ['login-expired','A1','模拟企业登录失效','A、B 受影响，C 不受影响'],['next-run','A1','模拟下一次定时到点','新一轮等待同一登录，不覆盖旧待办'],['stop','A1','停止 A 的旧一轮','定时计划仍然保留'],['login-restored','A2','完成重新登录','B 仍待确认，A 旧一轮仍停止'],['check-unchanged','A2','核对 A 新一轮的现场','按本情境已有自动发布约定继续']]},
+ {id:'restart',title:'中断恢复',mode:'restart',description:'原自动执行先核对结果；等待确认、接管和停止的执行保持原意图。找不到结果时不能自动重试。',steps:[
+ ['crash','A1','模拟程序退出','保留四项执行的不同意图'],['restart','A1','模拟重新打开程序','只安排原自动执行的核对'],['observe-unknown','A1','模拟 A 结果暂时不可读','保持待核对，不重新发送'],['observe-done','A1','稍后核实 A 已发布','确认产出，未重复发布'],['deliver','B1','尝试送达旧处理结果','不能改变其它任务的等待与停止']]},
+ {id:'schedule',title:'定时与容量',description:'旧一轮等待单篇内容确认，不替换新一轮素材；本例已有明确自动发布约定。最多两项自动推进，新标签页不抢焦点。',steps:[
+ ['ask','A1','让旧一轮 A 等内容确认','B、C 可以推进'],['view','B1','正在查看 B','记录当前查看的位置'],['next-run','A1','模拟下一次定时到点','A 新一轮排队，旧问题保留'],['complete','B1','让 B 完成','新一轮按已有约定核对'],['check-unchanged','A2','核对新一轮现场','不把旧一轮问题当成已经回答']]},
+ {id:'stale-close',title:'过时关闭提示',description:'关闭提示出现后，任务恰好完成。再点击提示时按最新结果处理，不能把完成结果改成停止。',steps:[
+ ['close','A1','先打开 A 的关闭提示','暂不选择'],['complete','A1','模拟 A 此刻完成','提示变旧，结果仍保存'],['close-stop','A1','点击原提示里的停止','按最新状态关闭已完成任务'],['reopen','A1','从历史重新查看','保留结果，不重新执行']]}
+];
+const controls=[
+ ['查看与参与',[['view','查看任务'],['mouse','移动鼠标'],['web-input','在网页输入文字'],['continue','说“继续”'],['ask','请求内容确认'],['reply-current','确认当前内容'],['old-reply','送达旧确认回复']]],
+ ['进度与异常',[['tick','推进一步'],['capture','暂时留住处理结果'],['deliver','送达先前处理结果'],['sent','模拟请求已发出'],['complete','模拟发布完成'],['stop','停止本次执行'],['change-goal','改到活动栏目']]],
+ ['显示与计划',[['close','点标签页 ×'],['hide','选择收起'],['reopen','重新打开'],['next-run','模拟定时到点']]],
+ ['登录与恢复',[['login-expired','模拟登录失效'],['login-restored','完成重新登录'],['crash','模拟程序退出'],['restart','模拟程序重启'],['check-unchanged','核对草稿未变'],['observe-unknown','结果仍无法确认'],['observe-done','核实已发布结果']]]
+];
+let scenario=0,step=0,state=Model.initial(),target='A1';
+const $=id=>document.getElementById(id),esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const button=(type,id,label,extra='')=>`<button data-action="${type}" data-id="${id}" ${extra}>${esc(label)}</button>`;
+function act(type,id=target,request){
+  if(type==='reply-current'){const t=state.tasks.find(t=>t.id===id),q=t&&Model.request(state,t);type='reply';request=q?.id;}
+  state=Model.reduce(state,{type,id,request});render();
+}
+function start(index){scenario=index;step=0;state=Model.initial(scenarios[index].mode||'parallel');target='A1';render();}
+function render(){
+  if(!state.tasks.some(t=>t.id===target))target=state.tasks[0].id;
+  const selected=state.tasks.find(t=>t.id===state.selected&&t.view==='open');
+  $('summary').innerHTML=`<span class="pill ${state.online?'active':'stopped'}">${state.online?'演练运行中':'模拟已退出'}</span><span class="pill">自动推进 ${state.running.length} / 2</span><span class="pill">正在查看：${selected?esc(Model.name(selected)):'没有打开的任务'}</span>`;
+  $('assumption').textContent=state.assumption;$('change').textContent=state.log.at(-1);
+  $('task-tabs').innerHTML=state.tasks.filter(t=>t.view==='open').map(t=>`<div class="task-tab ${state.selected===t.id?'current':''}">${button('view',t.id,Model.name(t))}${button('close',t.id,'×',`class="close" aria-label="关闭${esc(Model.name(t))}"`)}</div>`).join('')||'<span class="muted">当前没有打开的标签页</span>';
+  const closing=state.close&&state.tasks.find(t=>t.id===state.close.id);
+  $('close-choice').innerHTML=closing?`<div class="choice"><strong>“${esc(Model.name(closing))}”${Model.ended(closing)?'已经结束':'尚未结束'}</strong><p>${closing.intent==='human'?'收起后保留当前网页，等你说“继续”后再核对。':Model.request(state,closing)?'收起后保留待办，可以从提醒中处理。':'收起后仍按原状态推进；停止只结束本次执行，已有计划保留。'}</p><div class="buttons">${button('hide',closing.id,'收起任务')}${button('close-stop',closing.id,'停止任务','class="danger"')}${button('cancel-close',closing.id,'返回 / Esc')}</div></div>`:'';
+  const hidden=state.tasks.filter(t=>t.view==='hidden'),history=state.tasks.filter(t=>t.view==='history');
+  $('activity').innerHTML=(hidden.length?`<span class="muted">活动任务：</span>${hidden.map(t=>button('reopen',t.id,`${Model.name(t)} · ${Model.status(state,t)}`)).join('')}`:'')+(history.length?`<span class="muted">历史：</span>${history.map(t=>button('reopen',t.id,Model.name(t))).join('')}`:'');
+  $('cards').innerHTML=state.tasks.map(t=>{
+    const q=Model.request(state,t),blocked=Model.blockers(state,t),status=Model.status(state,t);
+    return `<article class="card ${state.selected===t.id?'selected':''}"><div class="bar"><strong>${esc(Model.name(t))}</strong><span class="pill ${state.running.includes(t.id)?'active':q?'wait':'stopped'}">${status}</span></div><div class="progress"><i style="width:${t.progress}%"></i></div><dl><dt>任务组</dt><dd>${esc(t.group)}（分别处理）</dd><dt>自动操作</dt><dd>${state.running.includes(t.id)?(t.check?'先核对现场':'可以推进'):'不派发操作'}</dd><dt>你的意图</dt><dd>${{auto:'允许按约定继续',human:'人工接管，等“继续”',stopped:'本次已停止'}[t.intent]}</dd><dt>本次内容</dt><dd>第 ${t.content} 版 · ${t.approved===t.content?'已确认 / 在本次约定内':'尚未确认'}</dd><dt>目标</dt><dd>${esc(t.target)} · 第 ${t.goal} 次目标</dd><dt>网页结果</dt><dd>${esc(t.effect)}</dd><dt>登录</dt><dd>${esc(t.session)} · ${state.sessions[t.session]?'有效':'已失效'}</dd><dt>当前阻碍</dt><dd>${esc(blocked.join('；')||(!state.running.includes(t.id)?'等待空余机会':t.check?'核对当前页面和素材':'无'))}</dd><dt>显示 / 计划</dt><dd>${{open:'标签页已打开',hidden:'已收起，现场保留',history:'已关闭，历史保留'}[t.view]} · ${t.plan?'定时计划有效':'没有定时计划'}</dd></dl></article>`;
+  }).join('');
+  const notices=state.requests.filter(q=>q.state==='open').map(q=>{const t=state.tasks.find(t=>t.id===q.execution);return `<article class="reminder"><strong>${esc(Model.name(t))}</strong><p>${q.kind==='uncertain'?'网站结果尚不确定，需要核对；不会直接重试。':`请确认发到${esc(q.target)}的第 ${q.content} 版内容。`}</p><div class="buttons">${q.kind==='uncertain'?button('observe-unknown',t.id,'重新核对（仍无结果）'):`<button data-action="reply" data-request="${q.id}" class="primary">确认这版内容</button>`}${button('view',t.id,'查看任务')}</div></article>`;});
+  for(const [session,valid] of Object.entries(state.sessions))if(!valid){const affected=state.tasks.filter(t=>t.session===session&&!Model.ended(t));if(affected.length)notices.push(`<article class="reminder"><strong>重新登录 · ${esc(session)}</strong><p>影响 ${affected.map(t=>esc(Model.name(t))).join('、')}。同一个入口处理，原有内容确认仍各自保留。</p>${button('login-restored',affected[0].id,'模拟完成登录')}</article>`);}
+  $('reminders').innerHTML=notices.join('')||'<div class="empty">当前没有需要你处理的提醒。</div>';
+  $('request-history').innerHTML=state.requests.filter(q=>q.state!=='open').map(q=>{const t=state.tasks.find(t=>t.id===q.execution);return `<p>${esc(Model.name(t))} · 第 ${q.content} 版：${q.state==='answered'?'已经确认':`已失效（${esc(q.reason)}）`}</p>`;}).join('')||'<p class="muted">尚无已处理的提醒。</p>';
+  $('target').innerHTML=state.tasks.map(t=>`<option value="${t.id}" ${t.id===target?'selected':''}>${esc(Model.name(t))}</option>`).join('');
+  $('free-controls').innerHTML=controls.map(([label,actions])=>`<div class="control-row"><span>${label}</span><div class="buttons">${actions.map(([a,label])=>button(a,target,label,a==='stop'?'class="danger"':'')).join('')}</div></div>`).join('');
+  $('scenario-tabs').innerHTML=scenarios.map((x,i)=>`<button class="scenario" role="tab" aria-selected="${i===scenario}" data-scenario="${i}">${i+1}. ${x.title}</button>`).join('');
+  const chosen=scenarios[scenario];$('walk').innerHTML=`<h3>${chosen.title}</h3><p>${chosen.description}</p><p class="muted">切换情境会重置内存状态。下方每一步都实际改变模型。<a href="#state-heading">查看完整状态 ↑</a></p><div class="notice">${esc(state.log.at(-1))}</div><div class="pills">${state.tasks.map(t=>`<span class="pill ${state.running.includes(t.id)?'active':''}">${esc(Model.name(t))}：${Model.status(state,t)}</span>`).join('')}</div><div class="steps">${chosen.steps.map(([a,id,label,expect],i)=>`<button class="step ${i<step?'done':i===step?'next':''}" data-step="${i}" ${i!==step?'disabled':''}><b>${i<step?'✓':i+1}</b><span>${label}</span><small>${expect}</small></button>`).join('')}</div>${step===chosen.steps.length?'<div class="notice">这一情境已走完。请核对各任务的状态是否符合你的预期；也可以继续自由操作。</div>':''}`;
+  $('log').innerHTML=state.log.map(x=>`<li>${esc(x)}</li>`).join('');
+}
+document.addEventListener('click',event=>{
+  const b=event.target.closest('button');if(!b)return;
+  if(b.dataset.scenario!==undefined){start(Number(b.dataset.scenario));return;}
+  if(b.dataset.step!==undefined){const [a,id]=scenarios[scenario].steps[step++];act(a,id);document.querySelector('.step.next')?.focus({preventScroll:true});return;}
+  if(b.dataset.action==='reset'){start(scenario);return;}
+  if(b.dataset.action)act(b.dataset.action,b.dataset.id||target,b.dataset.request);
+});
+$('target').addEventListener('change',e=>{target=e.target.value;render();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&state.close)act('cancel-close');});
+render();
+</script>
+</html>
