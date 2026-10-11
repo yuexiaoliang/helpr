@@ -1,0 +1,1336 @@
+{
+  "verifiedAt": "2026-10-11T03:53:55.374Z",
+  "uniqueCases": 18,
+  "passed": 18,
+  "primitiveCount": 258,
+  "observations": 166,
+  "modelInputs": 113,
+  "screenshotCount": 56,
+  "budgets": [
+    {
+      "study": "artifacts/2026-10-11T03-38-56-107Z",
+      "startedAt": "2026-10-11T03:38:56.132Z",
+      "lastRequestEndedAt": "2026-10-11T03:40:58.738Z",
+      "limits": {
+        "calls": 96,
+        "tokens": 150000,
+        "revisions": 6
+      },
+      "calls": 96,
+      "knownTokens": 89323,
+      "missingUsage": [
+        "29:electron-cdp:cancel-model-request/A",
+        "86:electron-cdp:cancel-model-request/A"
+      ],
+      "errors": [
+        {
+          "label": "29:electron-cdp:cancel-model-request/A",
+          "error": "client-aborted"
+        },
+        {
+          "label": "86:electron-cdp:cancel-model-request/A",
+          "error": "client-aborted"
+        }
+      ]
+    },
+    {
+      "study": "artifacts/chromium-missing-cases",
+      "startedAt": "2026-10-11T03:44:38.598955+00:00",
+      "lastRequestEndedAt": "2026-10-11T03:44:53.334Z",
+      "limits": {
+        "calls": 18,
+        "tokens": 30000,
+        "revisions": 0
+      },
+      "calls": 17,
+      "knownTokens": 14166,
+      "missingUsage": [
+        "10:chromium-cdp:cancel-model-request/A"
+      ],
+      "errors": [
+        {
+          "label": "10:chromium-cdp:cancel-model-request/A",
+          "error": "client-aborted"
+        }
+      ]
+    }
+  ],
+  "totalCalls": 113,
+  "knownTokens": 103489,
+  "missingUsageCalls": 3,
+  "failures": [
+    {
+      "dir": "artifacts/2026-10-11T03-38-56-107Z/attempts/01",
+      "host": "electron-cdp",
+      "name": "parallel-exploration",
+      "error": "page.screenshot: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n"
+    },
+    {
+      "dir": "artifacts/2026-10-11T03-38-56-107Z/attempts/02",
+      "host": "chromium-cdp",
+      "name": "parallel-exploration",
+      "error": "[{\"status\":\"rejected\",\"reason\":{}},{\"status\":\"rejected\",\"reason\":{}}]"
+    },
+    {
+      "dir": "artifacts/2026-10-11T03-38-56-107Z/attempts/02",
+      "host": "chromium-cdp",
+      "name": "stop-waiting-click",
+      "error": "call-budget"
+    },
+    {
+      "dir": "artifacts/2026-10-11T03-38-56-107Z/attempts/02",
+      "host": "chromium-cdp",
+      "name": "stop-typing",
+      "error": "call-budget"
+    },
+    {
+      "dir": "artifacts/2026-10-11T03-38-56-107Z/attempts/02",
+      "host": "chromium-cdp",
+      "name": "queued-dispatch",
+      "error": "call-budget"
+    },
+    {
+      "dir": "artifacts/2026-10-11T03-38-56-107Z/attempts/02",
+      "host": "chromium-cdp",
+      "name": "queued-retry",
+      "error": "call-budget"
+    },
+    {
+      "dir": "artifacts/2026-10-11T03-38-56-107Z/attempts/02",
+      "host": "chromium-cdp",
+      "name": "late-old-generation",
+      "error": "call-budget"
+    }
+  ],
+  "resources": {
+    "samples": 91,
+    "peakRssMiB": 1508.46875,
+    "peakAt": 1791690058180,
+    "peakAttempt": "artifacts/2026-10-11T03-38-56-107Z/attempts/02",
+    "interpretation": "1.5-second samples of runner process tree RSS; sums shared pages and includes driver/host/worker/renderers, not a product or steady-state memory estimate"
+  },
+  "checks": {
+    "pageOwnership": true,
+    "stoppedGenerationFenced": true,
+    "modelPageIsolation": true,
+    "realModelOverlapBothHosts": true,
+    "realServerOverlapBothHosts": true,
+    "independentBResults": true,
+    "sameExecutionProtocolAcrossStudies": true,
+    "resumePlanReadOnly": true
+  },
+  "selected": [
+    {
+      "host": "electron-cdp",
+      "name": "parallel-exploration",
+      "status": "passed",
+      "source": "artifacts/2026-10-11T03-38-56-107Z/attempts/02/results.json",
+      "events": "artifacts/2026-10-11T03-38-56-107Z/attempts/02/events.jsonl",
+      "facts": {
+        "sameUrl": true,
+        "viewSwitches": 8,
+        "records": [
+          {
+            "seq": 85,
+            "id": "1-427885cf-5578-4a30-88f8-754ac45644a1",
+            "route": "/record",
+            "task": "A",
+            "title": "标题-A-427885cf",
+            "detail": "说明-A-c45644a1"
+          },
+          {
+            "seq": 86,
+            "id": "2-91f84eae-c652-4edd-b404-5f09fddd3936",
+            "route": "/record",
+            "task": "B",
+            "title": "标题-B-91f84eae",
+            "detail": "说明-B-fddd3936"
+          }
+        ],
+        "modelOverlap": [
+          {
+            "a": "58:electron-cdp:parallel-exploration/A",
+            "b": "59:electron-cdp:parallel-exploration/B",
+            "ms": 790
+          },
+          {
+            "a": "58:electron-cdp:parallel-exploration/A",
+            "b": "60:electron-cdp:parallel-exploration/B",
+            "ms": 81
+          },
+          {
+            "a": "61:electron-cdp:parallel-exploration/A",
+            "b": "60:electron-cdp:parallel-exploration/B",
+            "ms": 773
+          },
+          {
+            "a": "61:electron-cdp:parallel-exploration/A",
+            "b": "62:electron-cdp:parallel-exploration/B",
+            "ms": 64
+          },
+          {
+            "a": "63:electron-cdp:parallel-exploration/A",
+            "b": "62:electron-cdp:parallel-exploration/B",
+            "ms": 693
+          },
+          {
+            "a": "63:electron-cdp:parallel-exploration/A",
+            "b": "64:electron-cdp:parallel-exploration/B",
+            "ms": 114
+          },
+          {
+            "a": "65:electron-cdp:parallel-exploration/A",
+            "b": "64:electron-cdp:parallel-exploration/B",
+            "ms": 665
+          },
+          {
+            "a": "66:electron-cdp:parallel-exploration/A",
+            "b": "67:electron-cdp:parallel-exploration/B",
+            "ms": 981
+          }
+        ],
+        "serverOverlap": [
+          {
+            "seq": 83,
+            "active": [
+              "electron-cdp:parallel-exploration|A|/record",
+              "electron-cdp:parallel-exploration|B|/record"
+            ]
+          }
+        ],
+        "popups": [
+          {
+            "seq": 35,
+            "at": 1791690031244,
+            "pid": 24005,
+            "eventAt": 1791690031244,
+            "kind": "popup-bound",
+            "task": "electron-cdp:parallel-exploration/B",
+            "execution": "d379ebe4-5fdd-43c7-aff1-d528f6b05c21",
+            "generation": 1,
+            "pageId": "00CCCFB352407C25E6CD84313B1A35F5",
+            "openerId": "5348ABEDF9EC68B71C3FBC682610C36A"
+          },
+          {
+            "seq": 47,
+            "at": 1791690031382,
+            "pid": 24005,
+            "eventAt": 1791690031382,
+            "kind": "popup-bound",
+            "task": "electron-cdp:parallel-exploration/A",
+            "execution": "953fea38-eb40-446d-84d3-a6f3fb6c3e4c",
+            "generation": 1,
+            "pageId": "BCD1DCA413CC4E99451BE63DF92C5010",
+            "openerId": "E84163186E4CD5C9B558697CD821FECE"
+          }
+        ],
+        "replies": [
+          "记录已保存成功：标题 标题-A-427885cf，补充说明 说明-A-c45644a1。",
+          "记录已保存成功：标题 标题-B-91f84eae，补充说明 说明-B-fddd3936。"
+        ],
+        "events": [
+          {
+            "seq": 117,
+            "kind": "stop",
+            "task": "electron-cdp:parallel-exploration/A",
+            "generation": 1
+          },
+          {
+            "seq": 119,
+            "kind": "stop-ack",
+            "task": "electron-cdp:parallel-exploration/A",
+            "generation": 1
+          },
+          {
+            "seq": 121,
+            "kind": "stop",
+            "task": "electron-cdp:parallel-exploration/B",
+            "generation": 1
+          },
+          {
+            "seq": 123,
+            "kind": "stop-ack",
+            "task": "electron-cdp:parallel-exploration/B",
+            "generation": 1
+          }
+        ]
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "stop-waiting-click",
+      "status": "passed",
+      "source": "artifacts/2026-10-11T03-38-56-107Z/attempts/02/results.json",
+      "events": "artifacts/2026-10-11T03-38-56-107Z/attempts/02/events.jsonl",
+      "facts": {
+        "sameUrl": true,
+        "viewSwitches": 4,
+        "records": [
+          {
+            "seq": 149,
+            "id": "3-27020d86-f946-4d9b-b6bd-3d1918e319e6",
+            "route": "/count",
+            "task": "B"
+          }
+        ],
+        "stopAcknowledgedMs": 3.0953330000002097,
+        "events": [
+          {
+            "seq": 145,
+            "kind": "stop",
+            "task": "electron-cdp:stop-waiting-click/A",
+            "generation": 1
+          },
+          {
+            "seq": 148,
+            "kind": "stop-ack",
+            "task": "electron-cdp:stop-waiting-click/A",
+            "generation": 1
+          },
+          {
+            "seq": 159,
+            "kind": "rejected-stale-work",
+            "task": "electron-cdp:stop-waiting-click/A",
+            "generation": 1,
+            "operation": "observe"
+          },
+          {
+            "seq": 165,
+            "kind": "stop",
+            "task": "electron-cdp:stop-waiting-click/B",
+            "generation": 1
+          },
+          {
+            "seq": 167,
+            "kind": "stop-ack",
+            "task": "electron-cdp:stop-waiting-click/B",
+            "generation": 1
+          }
+        ]
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "stop-typing",
+      "status": "passed",
+      "source": "artifacts/2026-10-11T03-38-56-107Z/attempts/02/results.json",
+      "events": "artifacts/2026-10-11T03-38-56-107Z/attempts/02/events.jsonl",
+      "facts": {
+        "sameUrl": true,
+        "viewSwitches": 4,
+        "records": [
+          {
+            "seq": 196,
+            "id": "4-93e6b5fc-f13d-48cf-8ae5-8570fa3a888a",
+            "route": "/count",
+            "task": "B"
+          }
+        ],
+        "stopAcknowledgedMs": 2.0432500000006257,
+        "remainingText": "ABC",
+        "events": [
+          {
+            "seq": 191,
+            "kind": "stop",
+            "task": "electron-cdp:stop-typing/A",
+            "generation": 1
+          },
+          {
+            "seq": 194,
+            "kind": "stop-ack",
+            "task": "electron-cdp:stop-typing/A",
+            "generation": 1
+          },
+          {
+            "seq": 206,
+            "kind": "rejected-stale-work",
+            "task": "electron-cdp:stop-typing/A",
+            "generation": 1,
+            "operation": "observe"
+          },
+          {
+            "seq": 212,
+            "kind": "stop",
+            "task": "electron-cdp:stop-typing/B",
+            "generation": 1
+          },
+          {
+            "seq": 214,
+            "kind": "stop-ack",
+            "task": "electron-cdp:stop-typing/B",
+            "generation": 1
+          }
+        ]
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "queued-dispatch",
+      "status": "passed",
+      "source": "artifacts/2026-10-11T03-38-56-107Z/attempts/02/results.json",
+      "events": "artifacts/2026-10-11T03-38-56-107Z/attempts/02/events.jsonl",
+      "facts": {
+        "sameUrl": true,
+        "viewSwitches": 3,
+        "records": [
+          {
+            "seq": 240,
+            "id": "5-010f1ab3-8a81-4caa-bdbb-f5b32bd267aa",
+            "route": "/count",
+            "task": "B"
+          }
+        ],
+        "stopAcknowledgedMs": 0.280957999999373,
+        "events": [
+          {
+            "seq": 233,
+            "kind": "dispatch-queued",
+            "task": "electron-cdp:queued-dispatch/A",
+            "generation": 1
+          },
+          {
+            "seq": 235,
+            "kind": "stop",
+            "task": "electron-cdp:queued-dispatch/A",
+            "generation": 1
+          },
+          {
+            "seq": 237,
+            "kind": "stop-ack",
+            "task": "electron-cdp:queued-dispatch/A",
+            "generation": 1
+          },
+          {
+            "seq": 238,
+            "kind": "rejected-stale-work",
+            "task": "electron-cdp:queued-dispatch/A",
+            "generation": 1,
+            "operation": "action"
+          },
+          {
+            "seq": 249,
+            "kind": "rejected-stale-work",
+            "task": "electron-cdp:queued-dispatch/A",
+            "generation": 1,
+            "operation": "observe"
+          },
+          {
+            "seq": 255,
+            "kind": "stop",
+            "task": "electron-cdp:queued-dispatch/B",
+            "generation": 1
+          },
+          {
+            "seq": 257,
+            "kind": "stop-ack",
+            "task": "electron-cdp:queued-dispatch/B",
+            "generation": 1
+          }
+        ]
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "queued-retry",
+      "status": "passed",
+      "source": "artifacts/2026-10-11T03-38-56-107Z/attempts/02/results.json",
+      "events": "artifacts/2026-10-11T03-38-56-107Z/attempts/02/events.jsonl",
+      "facts": {
+        "sameUrl": true,
+        "viewSwitches": 3,
+        "records": [
+          {
+            "seq": 285,
+            "id": "6-79398ac0-39ec-42a7-bf92-b2b3f9138658",
+            "route": "/count",
+            "task": "B"
+          }
+        ],
+        "stopAcknowledgedMs": 0.2742079999989073,
+        "events": [
+          {
+            "seq": 278,
+            "kind": "retry-queued",
+            "task": "electron-cdp:queued-retry/A",
+            "generation": 1
+          },
+          {
+            "seq": 280,
+            "kind": "stop",
+            "task": "electron-cdp:queued-retry/A",
+            "generation": 1
+          },
+          {
+            "seq": 282,
+            "kind": "stop-ack",
+            "task": "electron-cdp:queued-retry/A",
+            "generation": 1
+          },
+          {
+            "seq": 283,
+            "kind": "rejected-stale-work",
+            "task": "electron-cdp:queued-retry/A",
+            "generation": 1,
+            "operation": "click"
+          },
+          {
+            "seq": 294,
+            "kind": "rejected-stale-work",
+            "task": "electron-cdp:queued-retry/A",
+            "generation": 1,
+            "operation": "observe"
+          },
+          {
+            "seq": 300,
+            "kind": "stop",
+            "task": "electron-cdp:queued-retry/B",
+            "generation": 1
+          },
+          {
+            "seq": 302,
+            "kind": "stop-ack",
+            "task": "electron-cdp:queued-retry/B",
+            "generation": 1
+          }
+        ]
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "late-old-generation",
+      "status": "passed",
+      "source": "artifacts/2026-10-11T03-38-56-107Z/attempts/02/results.json",
+      "events": "artifacts/2026-10-11T03-38-56-107Z/attempts/02/events.jsonl",
+      "facts": {
+        "sameUrl": true,
+        "viewSwitches": 6,
+        "records": [
+          {
+            "seq": 327,
+            "id": "7-7e068d97-3eab-4050-9ec5-bf0cf461876c",
+            "route": "/count",
+            "task": "B"
+          },
+          {
+            "seq": 346,
+            "id": "8-9806a825-99b6-4b95-b4a2-e2f129451c92",
+            "route": "/count",
+            "task": "A"
+          }
+        ],
+        "stopAcknowledgedMs": 0.2906669999974838,
+        "parentLate": {
+          "ok": false,
+          "name": "Error",
+          "error": "parent-rejected-late-reply"
+        },
+        "workerLate": {
+          "ok": false,
+          "name": "Error",
+          "error": "stale-execution"
+        },
+        "events": [
+          {
+            "seq": 322,
+            "kind": "stop",
+            "task": "electron-cdp:late-old-generation/A",
+            "generation": 1
+          },
+          {
+            "seq": 324,
+            "kind": "stop-ack",
+            "task": "electron-cdp:late-old-generation/A",
+            "generation": 1
+          },
+          {
+            "seq": 357,
+            "kind": "rejected-identity",
+            "task": "electron-cdp:late-old-generation/A",
+            "generation": 1,
+            "operation": "receive-action"
+          },
+          {
+            "seq": 366,
+            "kind": "stop",
+            "task": "electron-cdp:late-old-generation/A",
+            "generation": 2
+          },
+          {
+            "seq": 368,
+            "kind": "stop-ack",
+            "task": "electron-cdp:late-old-generation/A",
+            "generation": 2
+          },
+          {
+            "seq": 370,
+            "kind": "stop",
+            "task": "electron-cdp:late-old-generation/B",
+            "generation": 1
+          },
+          {
+            "seq": 372,
+            "kind": "stop-ack",
+            "task": "electron-cdp:late-old-generation/B",
+            "generation": 1
+          }
+        ]
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "cancel-model-request",
+      "status": "passed",
+      "source": "artifacts/2026-10-11T03-38-56-107Z/attempts/02/results.json",
+      "events": "artifacts/2026-10-11T03-38-56-107Z/attempts/02/events.jsonl",
+      "facts": {
+        "sameUrl": true,
+        "viewSwitches": 3,
+        "records": [
+          {
+            "seq": 395,
+            "id": "9-08eee62d-78f2-4f1d-8429-9f99d2a8dbc5",
+            "route": "/count",
+            "task": "B"
+          }
+        ],
+        "stopAcknowledgedMs": 0.5812499999992724,
+        "events": [
+          {
+            "seq": 386,
+            "kind": "stop",
+            "task": "electron-cdp:cancel-model-request/A",
+            "generation": 1
+          },
+          {
+            "seq": 388,
+            "kind": "stop-ack",
+            "task": "electron-cdp:cancel-model-request/A",
+            "generation": 1
+          },
+          {
+            "seq": 404,
+            "kind": "rejected-stale-work",
+            "task": "electron-cdp:cancel-model-request/A",
+            "generation": 1,
+            "operation": "observe"
+          },
+          {
+            "seq": 410,
+            "kind": "stop",
+            "task": "electron-cdp:cancel-model-request/B",
+            "generation": 1
+          },
+          {
+            "seq": 412,
+            "kind": "stop-ack",
+            "task": "electron-cdp:cancel-model-request/B",
+            "generation": 1
+          }
+        ]
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "page-error",
+      "status": "passed",
+      "source": "artifacts/2026-10-11T03-38-56-107Z/attempts/02/results.json",
+      "events": "artifacts/2026-10-11T03-38-56-107Z/attempts/02/events.jsonl",
+      "facts": {
+        "sameUrl": true,
+        "viewSwitches": 5,
+        "records": [
+          {
+            "seq": 435,
+            "id": "10-af665c29-b040-4840-b22d-e08efc25842f",
+            "route": "/count",
+            "task": "B"
+          }
+        ],
+        "events": [
+          {
+            "seq": 452,
+            "kind": "stop",
+            "task": "electron-cdp:page-error/A",
+            "generation": 1
+          },
+          {
+            "seq": 454,
+            "kind": "stop-ack",
+            "task": "electron-cdp:page-error/A",
+            "generation": 1
+          },
+          {
+            "seq": 456,
+            "kind": "stop",
+            "task": "electron-cdp:page-error/B",
+            "generation": 1
+          },
+          {
+            "seq": 458,
+            "kind": "stop-ack",
+            "task": "electron-cdp:page-error/B",
+            "generation": 1
+          }
+        ]
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "foreign-page",
+      "status": "passed",
+      "source": "artifacts/2026-10-11T03-38-56-107Z/attempts/02/results.json",
+      "events": "artifacts/2026-10-11T03-38-56-107Z/attempts/02/events.jsonl",
+      "facts": {
+        "sameUrl": true,
+        "viewSwitches": 4,
+        "records": [
+          {
+            "seq": 479,
+            "id": "11-740e7729-8e66-4357-a97f-1123336e89e8",
+            "route": "/count",
+            "task": "B"
+          }
+        ],
+        "events": [
+          {
+            "seq": 476,
+            "kind": "rejected-page-owner",
+            "task": "electron-cdp:foreign-page/A",
+            "generation": 1,
+            "operation": "action"
+          },
+          {
+            "seq": 496,
+            "kind": "stop",
+            "task": "electron-cdp:foreign-page/A",
+            "generation": 1
+          },
+          {
+            "seq": 498,
+            "kind": "stop-ack",
+            "task": "electron-cdp:foreign-page/A",
+            "generation": 1
+          },
+          {
+            "seq": 500,
+            "kind": "stop",
+            "task": "electron-cdp:foreign-page/B",
+            "generation": 1
+          },
+          {
+            "seq": 502,
+            "kind": "stop-ack",
+            "task": "electron-cdp:foreign-page/B",
+            "generation": 1
+          }
+        ]
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "parallel-exploration",
+      "status": "passed",
+      "source": "artifacts/2026-10-11T03-38-56-107Z/attempts/01/results.json",
+      "events": "artifacts/2026-10-11T03-38-56-107Z/attempts/01/events.jsonl",
+      "facts": {
+        "sameUrl": true,
+        "viewSwitches": 8,
+        "records": [
+          {
+            "seq": 608,
+            "id": "12-6e572e78-b4e4-47c9-a749-375169fb2cd6",
+            "route": "/record",
+            "task": "A",
+            "title": "标题-A-6e572e78",
+            "detail": "说明-A-69fb2cd6"
+          },
+          {
+            "seq": 609,
+            "id": "13-7fec08b7-6707-4cf2-941d-f63f53c1d6e3",
+            "route": "/record",
+            "task": "B",
+            "title": "标题-B-7fec08b7",
+            "detail": "说明-B-53c1d6e3"
+          }
+        ],
+        "modelOverlap": [
+          {
+            "a": "38:chromium-cdp:parallel-exploration/A",
+            "b": "37:chromium-cdp:parallel-exploration/B",
+            "ms": 760
+          },
+          {
+            "a": "39:chromium-cdp:parallel-exploration/A",
+            "b": "37:chromium-cdp:parallel-exploration/B",
+            "ms": 86
+          },
+          {
+            "a": "39:chromium-cdp:parallel-exploration/A",
+            "b": "40:chromium-cdp:parallel-exploration/B",
+            "ms": 596
+          },
+          {
+            "a": "39:chromium-cdp:parallel-exploration/A",
+            "b": "41:chromium-cdp:parallel-exploration/B",
+            "ms": 122
+          },
+          {
+            "a": "42:chromium-cdp:parallel-exploration/A",
+            "b": "41:chromium-cdp:parallel-exploration/B",
+            "ms": 677
+          },
+          {
+            "a": "42:chromium-cdp:parallel-exploration/A",
+            "b": "43:chromium-cdp:parallel-exploration/B",
+            "ms": 37
+          },
+          {
+            "a": "44:chromium-cdp:parallel-exploration/A",
+            "b": "43:chromium-cdp:parallel-exploration/B",
+            "ms": 575
+          },
+          {
+            "a": "45:chromium-cdp:parallel-exploration/A",
+            "b": "46:chromium-cdp:parallel-exploration/B",
+            "ms": 1063
+          }
+        ],
+        "serverOverlap": [
+          {
+            "seq": 607,
+            "active": [
+              "chromium-cdp:parallel-exploration|A|/record",
+              "chromium-cdp:parallel-exploration|B|/record"
+            ]
+          }
+        ],
+        "popups": [
+          {
+            "seq": 559,
+            "at": 1791690014962,
+            "pid": 23851,
+            "eventAt": 1791690014962,
+            "kind": "popup-bound",
+            "task": "chromium-cdp:parallel-exploration/B",
+            "execution": "8179eecf-8786-40d8-b80c-8422b977f614",
+            "generation": 1,
+            "pageId": "BA0DF59B1AE7477E163535F15B6D2459",
+            "openerId": "C870F68C181513FC4C6113D3624A124C"
+          },
+          {
+            "seq": 571,
+            "at": 1791690015218,
+            "pid": 23851,
+            "eventAt": 1791690015218,
+            "kind": "popup-bound",
+            "task": "chromium-cdp:parallel-exploration/A",
+            "execution": "3430cdb1-0234-4526-9106-58646984acb7",
+            "generation": 1,
+            "pageId": "1684643B02B46AFBE85D851711C74115",
+            "openerId": "199238C350B1A75922D78DAF35F70B9C"
+          }
+        ],
+        "replies": [
+          "记录已保存成功：标题 标题-A-6e572e78，补充说明 说明-A-69fb2cd6。",
+          "记录已保存成功：标题-B-7fec08b7，说明-B-53c1d6e3。"
+        ],
+        "events": [
+          {
+            "seq": 641,
+            "kind": "stop",
+            "task": "chromium-cdp:parallel-exploration/A",
+            "generation": 1
+          },
+          {
+            "seq": 643,
+            "kind": "stop-ack",
+            "task": "chromium-cdp:parallel-exploration/A",
+            "generation": 1
+          },
+          {
+            "seq": 645,
+            "kind": "stop",
+            "task": "chromium-cdp:parallel-exploration/B",
+            "generation": 1
+          },
+          {
+            "seq": 647,
+            "kind": "stop-ack",
+            "task": "chromium-cdp:parallel-exploration/B",
+            "generation": 1
+          }
+        ]
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "stop-waiting-click",
+      "status": "passed",
+      "source": "artifacts/2026-10-11T03-38-56-107Z/attempts/01/results.json",
+      "events": "artifacts/2026-10-11T03-38-56-107Z/attempts/01/events.jsonl",
+      "facts": {
+        "sameUrl": true,
+        "viewSwitches": 4,
+        "records": [
+          {
+            "seq": 673,
+            "id": "14-07d86fdb-f2a6-4dba-ac33-0eba53c3a3f8",
+            "route": "/count",
+            "task": "B"
+          }
+        ],
+        "stopAcknowledgedMs": 2.4670829999959096,
+        "events": [
+          {
+            "seq": 665,
+            "kind": "stop",
+            "task": "chromium-cdp:stop-waiting-click/A",
+            "generation": 1
+          },
+          {
+            "seq": 668,
+            "kind": "stop-ack",
+            "task": "chromium-cdp:stop-waiting-click/A",
+            "generation": 1
+          },
+          {
+            "seq": 683,
+            "kind": "rejected-stale-work",
+            "task": "chromium-cdp:stop-waiting-click/A",
+            "generation": 1,
+            "operation": "observe"
+          },
+          {
+            "seq": 689,
+            "kind": "stop",
+            "task": "chromium-cdp:stop-waiting-click/B",
+            "generation": 1
+          },
+          {
+            "seq": 691,
+            "kind": "stop-ack",
+            "task": "chromium-cdp:stop-waiting-click/B",
+            "generation": 1
+          }
+        ]
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "stop-typing",
+      "status": "passed",
+      "source": "artifacts/2026-10-11T03-38-56-107Z/attempts/01/results.json",
+      "events": "artifacts/2026-10-11T03-38-56-107Z/attempts/01/events.jsonl",
+      "facts": {
+        "sameUrl": true,
+        "viewSwitches": 4,
+        "records": [
+          {
+            "seq": 721,
+            "id": "15-3d4646a7-af00-4df6-842d-908e6cc21864",
+            "route": "/count",
+            "task": "B"
+          }
+        ],
+        "stopAcknowledgedMs": 1.8196670000033919,
+        "remainingText": "ABC",
+        "events": [
+          {
+            "seq": 712,
+            "kind": "stop",
+            "task": "chromium-cdp:stop-typing/A",
+            "generation": 1
+          },
+          {
+            "seq": 715,
+            "kind": "stop-ack",
+            "task": "chromium-cdp:stop-typing/A",
+            "generation": 1
+          },
+          {
+            "seq": 730,
+            "kind": "rejected-stale-work",
+            "task": "chromium-cdp:stop-typing/A",
+            "generation": 1,
+            "operation": "observe"
+          },
+          {
+            "seq": 736,
+            "kind": "stop",
+            "task": "chromium-cdp:stop-typing/B",
+            "generation": 1
+          },
+          {
+            "seq": 738,
+            "kind": "stop-ack",
+            "task": "chromium-cdp:stop-typing/B",
+            "generation": 1
+          }
+        ]
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "queued-dispatch",
+      "status": "passed",
+      "source": "artifacts/2026-10-11T03-38-56-107Z/attempts/01/results.json",
+      "events": "artifacts/2026-10-11T03-38-56-107Z/attempts/01/events.jsonl",
+      "facts": {
+        "sameUrl": true,
+        "viewSwitches": 3,
+        "records": [
+          {
+            "seq": 764,
+            "id": "16-20304a20-a071-4072-b728-841eb3c5f1e9",
+            "route": "/count",
+            "task": "B"
+          }
+        ],
+        "stopAcknowledgedMs": 0.2953750000015134,
+        "events": [
+          {
+            "seq": 753,
+            "kind": "dispatch-queued",
+            "task": "chromium-cdp:queued-dispatch/A",
+            "generation": 1
+          },
+          {
+            "seq": 755,
+            "kind": "stop",
+            "task": "chromium-cdp:queued-dispatch/A",
+            "generation": 1
+          },
+          {
+            "seq": 757,
+            "kind": "stop-ack",
+            "task": "chromium-cdp:queued-dispatch/A",
+            "generation": 1
+          },
+          {
+            "seq": 758,
+            "kind": "rejected-stale-work",
+            "task": "chromium-cdp:queued-dispatch/A",
+            "generation": 1,
+            "operation": "action"
+          },
+          {
+            "seq": 773,
+            "kind": "rejected-stale-work",
+            "task": "chromium-cdp:queued-dispatch/A",
+            "generation": 1,
+            "operation": "observe"
+          },
+          {
+            "seq": 779,
+            "kind": "stop",
+            "task": "chromium-cdp:queued-dispatch/B",
+            "generation": 1
+          },
+          {
+            "seq": 781,
+            "kind": "stop-ack",
+            "task": "chromium-cdp:queued-dispatch/B",
+            "generation": 1
+          }
+        ]
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "queued-retry",
+      "status": "passed",
+      "source": "artifacts/chromium-missing-cases/attempts/01/results.json",
+      "events": "artifacts/chromium-missing-cases/attempts/01/events.jsonl",
+      "facts": {
+        "sameUrl": true,
+        "viewSwitches": 4,
+        "records": [
+          {
+            "seq": 29,
+            "id": "1-b03a68ef-0198-4a32-929d-94d72055bd43",
+            "route": "/count",
+            "task": "B"
+          }
+        ],
+        "stopAcknowledgedMs": 0.2738750000003165,
+        "events": [
+          {
+            "seq": 21,
+            "kind": "retry-queued",
+            "task": "chromium-cdp:queued-retry/A",
+            "generation": 1
+          },
+          {
+            "seq": 23,
+            "kind": "stop",
+            "task": "chromium-cdp:queued-retry/A",
+            "generation": 1
+          },
+          {
+            "seq": 25,
+            "kind": "stop-ack",
+            "task": "chromium-cdp:queued-retry/A",
+            "generation": 1
+          },
+          {
+            "seq": 26,
+            "kind": "rejected-stale-work",
+            "task": "chromium-cdp:queued-retry/A",
+            "generation": 1,
+            "operation": "click"
+          },
+          {
+            "seq": 38,
+            "kind": "rejected-stale-work",
+            "task": "chromium-cdp:queued-retry/A",
+            "generation": 1,
+            "operation": "observe"
+          },
+          {
+            "seq": 44,
+            "kind": "stop",
+            "task": "chromium-cdp:queued-retry/B",
+            "generation": 1
+          },
+          {
+            "seq": 46,
+            "kind": "stop-ack",
+            "task": "chromium-cdp:queued-retry/B",
+            "generation": 1
+          }
+        ]
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "late-old-generation",
+      "status": "passed",
+      "source": "artifacts/chromium-missing-cases/attempts/01/results.json",
+      "events": "artifacts/chromium-missing-cases/attempts/01/events.jsonl",
+      "facts": {
+        "sameUrl": true,
+        "viewSwitches": 5,
+        "records": [
+          {
+            "seq": 76,
+            "id": "2-431d6cd1-c793-4dc6-a2b8-19b415749535",
+            "route": "/count",
+            "task": "B"
+          },
+          {
+            "seq": 87,
+            "id": "3-17974a88-acd2-4978-a158-e8211a25c04a",
+            "route": "/count",
+            "task": "A"
+          }
+        ],
+        "stopAcknowledgedMs": 0.21591699999953562,
+        "parentLate": {
+          "ok": false,
+          "name": "Error",
+          "error": "parent-rejected-late-reply"
+        },
+        "workerLate": {
+          "ok": false,
+          "name": "Error",
+          "error": "stale-execution"
+        },
+        "events": [
+          {
+            "seq": 62,
+            "kind": "stop",
+            "task": "chromium-cdp:late-old-generation/A",
+            "generation": 1
+          },
+          {
+            "seq": 64,
+            "kind": "stop-ack",
+            "task": "chromium-cdp:late-old-generation/A",
+            "generation": 1
+          },
+          {
+            "seq": 100,
+            "kind": "rejected-identity",
+            "task": "chromium-cdp:late-old-generation/A",
+            "generation": 1,
+            "operation": "receive-action"
+          },
+          {
+            "seq": 109,
+            "kind": "stop",
+            "task": "chromium-cdp:late-old-generation/A",
+            "generation": 2
+          },
+          {
+            "seq": 111,
+            "kind": "stop-ack",
+            "task": "chromium-cdp:late-old-generation/A",
+            "generation": 2
+          },
+          {
+            "seq": 113,
+            "kind": "stop",
+            "task": "chromium-cdp:late-old-generation/B",
+            "generation": 1
+          },
+          {
+            "seq": 115,
+            "kind": "stop-ack",
+            "task": "chromium-cdp:late-old-generation/B",
+            "generation": 1
+          }
+        ]
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "cancel-model-request",
+      "status": "passed",
+      "source": "artifacts/chromium-missing-cases/attempts/01/results.json",
+      "events": "artifacts/chromium-missing-cases/attempts/01/events.jsonl",
+      "facts": {
+        "sameUrl": true,
+        "viewSwitches": 4,
+        "records": [
+          {
+            "seq": 138,
+            "id": "4-0a4257b8-4ab3-4833-9922-90dcfacaea4c",
+            "route": "/count",
+            "task": "B"
+          }
+        ],
+        "stopAcknowledgedMs": 0.636000000000422,
+        "events": [
+          {
+            "seq": 129,
+            "kind": "stop",
+            "task": "chromium-cdp:cancel-model-request/A",
+            "generation": 1
+          },
+          {
+            "seq": 131,
+            "kind": "stop-ack",
+            "task": "chromium-cdp:cancel-model-request/A",
+            "generation": 1
+          },
+          {
+            "seq": 148,
+            "kind": "rejected-stale-work",
+            "task": "chromium-cdp:cancel-model-request/A",
+            "generation": 1,
+            "operation": "observe"
+          },
+          {
+            "seq": 154,
+            "kind": "stop",
+            "task": "chromium-cdp:cancel-model-request/B",
+            "generation": 1
+          },
+          {
+            "seq": 156,
+            "kind": "stop-ack",
+            "task": "chromium-cdp:cancel-model-request/B",
+            "generation": 1
+          }
+        ]
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "page-error",
+      "status": "passed",
+      "source": "artifacts/chromium-missing-cases/attempts/01/results.json",
+      "events": "artifacts/chromium-missing-cases/attempts/01/events.jsonl",
+      "facts": {
+        "sameUrl": true,
+        "viewSwitches": 4,
+        "records": [
+          {
+            "seq": 179,
+            "id": "5-becac47e-fd21-4af3-9b6d-d1dfacadd681",
+            "route": "/count",
+            "task": "B"
+          }
+        ],
+        "events": [
+          {
+            "seq": 195,
+            "kind": "stop",
+            "task": "chromium-cdp:page-error/A",
+            "generation": 1
+          },
+          {
+            "seq": 197,
+            "kind": "stop-ack",
+            "task": "chromium-cdp:page-error/A",
+            "generation": 1
+          },
+          {
+            "seq": 199,
+            "kind": "stop",
+            "task": "chromium-cdp:page-error/B",
+            "generation": 1
+          },
+          {
+            "seq": 201,
+            "kind": "stop-ack",
+            "task": "chromium-cdp:page-error/B",
+            "generation": 1
+          }
+        ]
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "foreign-page",
+      "status": "passed",
+      "source": "artifacts/chromium-missing-cases/attempts/01/results.json",
+      "events": "artifacts/chromium-missing-cases/attempts/01/events.jsonl",
+      "facts": {
+        "sameUrl": true,
+        "viewSwitches": 3,
+        "records": [
+          {
+            "seq": 222,
+            "id": "6-9b281230-be9b-4c8c-8b5a-f1e73a73eaeb",
+            "route": "/count",
+            "task": "B"
+          }
+        ],
+        "events": [
+          {
+            "seq": 216,
+            "kind": "rejected-page-owner",
+            "task": "chromium-cdp:foreign-page/A",
+            "generation": 1,
+            "operation": "action"
+          },
+          {
+            "seq": 238,
+            "kind": "stop",
+            "task": "chromium-cdp:foreign-page/A",
+            "generation": 1
+          },
+          {
+            "seq": 240,
+            "kind": "stop-ack",
+            "task": "chromium-cdp:foreign-page/A",
+            "generation": 1
+          },
+          {
+            "seq": 242,
+            "kind": "stop",
+            "task": "chromium-cdp:foreign-page/B",
+            "generation": 1
+          },
+          {
+            "seq": 244,
+            "kind": "stop-ack",
+            "task": "chromium-cdp:foreign-page/B",
+            "generation": 1
+          }
+        ]
+      }
+    }
+  ]
+}

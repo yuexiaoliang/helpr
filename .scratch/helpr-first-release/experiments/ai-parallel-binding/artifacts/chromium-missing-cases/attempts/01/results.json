@@ -1,0 +1,1305 @@
+{
+  "metadata": {
+    "startedAt": "2026-10-11T03:44:38.807Z",
+    "attempt": 1,
+    "pid": 24820,
+    "sourceHashes": {
+      "run.mjs": "32b3a5d1d627660135b5eaafd58b984d90e8b8f690807d76d702ae189165eb1f",
+      "worker.mjs": "8cd966213ba05077f8439466b70487a1fa6bb7d3976b43d2370d3986c5b0dc04",
+      "host.mjs": "517db449724dcb45d5e679605784b5fa9bd278e8237d02ed79aa835ea94a7896",
+      "model.mjs": "331b96149ee0bd6bbe8dae81800163270e9d091c5d9a2b8fba3460322e9c11d8",
+      "lab.mjs": "c11ad62ebb7d2556c1ae22d325793675ecb210251df0a1916fcbc2b6fc08d79e",
+      "electron.cjs": "73c9ac59fa2aec11cb400bf27ebce735c344b9b6bb891b4af301d9fd95091dae"
+    },
+    "node": "v24.18.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "release": "23.6.0",
+    "playwright": "1.64.0",
+    "electron": "44.7.0",
+    "base": "http://127.0.0.1:55652",
+    "scope": "real model + visible browser + local synthetic website; automatic fault injection, no human input",
+    "chromium-cdp": {
+      "versions": {
+        "chromium": "156.0.8078.4"
+      },
+      "mappings": [
+        {
+          "targetId": "5F5E89439046F29206F72F67FB30B656",
+          "tabId": 1782051191
+        },
+        {
+          "targetId": "A617DB33AA004B79D11AAB1DCA98B399",
+          "tabId": 1782051192
+        }
+      ],
+      "worker": {
+        "pid": 24841,
+        "version": "156.0.8078.4"
+      }
+    },
+    "endedAt": "2026-10-11T03:44:53.798Z"
+  },
+  "results": [
+    {
+      "host": "chromium-cdp",
+      "name": "queued-retry",
+      "status": "passed",
+      "started": 1791690279940,
+      "ended": 1791690282692,
+      "evidence": {
+        "initialTargets": [
+          {
+            "targetId": "5F5E89439046F29206F72F67FB30B656",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:55652/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "6CFF9BEBE5F721B0E78CC752E004936F"
+          },
+          {
+            "targetId": "A617DB33AA004B79D11AAB1DCA98B399",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:55652/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "6CFF9BEBE5F721B0E78CC752E004936F"
+          }
+        ],
+        "proposal": {
+          "op": "click",
+          "pageId": "5F5E89439046F29206F72F67FB30B656",
+          "role": "button",
+          "name": "执行一次",
+          "valueInput": "",
+          "reply": "按钮当前为禁用状态，先尝试点击以触发执行。",
+          "value": ""
+        },
+        "a": {
+          "ok": false,
+          "name": "Stopped",
+          "error": "Execution stopped or superseded"
+        },
+        "bReply": "已点击“执行一次”且仅一次，页面状态显示“操作已完成”。本页任务字母为 B。",
+        "stopAcknowledgedMs": 0.2738750000003165,
+        "observations": [
+          {
+            "ok": false,
+            "name": "Stopped",
+            "error": "Execution stopped or superseded"
+          },
+          {
+            "ok": true,
+            "value": [
+              {
+                "pageId": "A617DB33AA004B79D11AAB1DCA98B399",
+                "url": "http://127.0.0.1:55652/result?id=1-b03a68ef-0198-4a32-929d-94d72055bd43",
+                "snapshot": "- heading \"实验页 B\" [level=1]\n- status: 操作已完成\n- text: \"{ \\\"id\\\": \\\"1-b03a68ef-0198-4a32-929d-94d72055bd43\\\", \\\"route\\\": \\\"/count\\\", \\\"scope\\\": \\\"chromium-cdp:queued-retry\\\", \\\"task\\\": \\\"B\\\", \\\"token\\\": \\\"b03a68ef-0198-4a32-929d-94d72055bd43\\\" }\""
+              }
+            ]
+          }
+        ],
+        "serverResults": [
+          {
+            "id": "1-b03a68ef-0198-4a32-929d-94d72055bd43",
+            "route": "/count",
+            "scope": "chromium-cdp:queued-retry",
+            "task": "B",
+            "token": "b03a68ef-0198-4a32-929d-94d72055bd43"
+          }
+        ],
+        "viewSwitches": 4,
+        "screenshots": [
+          {
+            "file": "A.png",
+            "ok": true
+          },
+          {
+            "file": "B.png",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "late-old-generation",
+      "status": "passed",
+      "started": 1791690282693,
+      "ended": 1791690286090,
+      "evidence": {
+        "initialTargets": [
+          {
+            "targetId": "5F5E89439046F29206F72F67FB30B656",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:55652/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "6CFF9BEBE5F721B0E78CC752E004936F"
+          },
+          {
+            "targetId": "A617DB33AA004B79D11AAB1DCA98B399",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:55652/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "6CFF9BEBE5F721B0E78CC752E004936F"
+          }
+        ],
+        "newReply": "已点击“执行一次”一次，页面显示“操作已完成”。本页任务字母为 A。",
+        "parentLate": {
+          "ok": false,
+          "name": "Error",
+          "error": "parent-rejected-late-reply"
+        },
+        "workerLate": {
+          "ok": false,
+          "name": "Error",
+          "error": "stale-execution"
+        },
+        "oldLease": {
+          "task": "chromium-cdp:late-old-generation/A",
+          "execution": "59357ba7-3163-419d-8c8b-1492982094e5",
+          "generation": 1
+        },
+        "newLease": {
+          "task": "chromium-cdp:late-old-generation/A",
+          "execution": "c593aa35-2d7a-45b2-90c0-cd173863a388",
+          "generation": 2
+        },
+        "bReply": "已点击“执行一次”，页面状态显示“操作已完成”。本页任务字母为 B。",
+        "stopAcknowledgedMs": 0.21591699999953562,
+        "observations": [
+          {
+            "ok": true,
+            "value": [
+              {
+                "pageId": "5F5E89439046F29206F72F67FB30B656",
+                "url": "http://127.0.0.1:55652/result?id=3-17974a88-acd2-4978-a158-e8211a25c04a",
+                "snapshot": "- heading \"实验页 A\" [level=1]\n- status: 操作已完成\n- text: \"{ \\\"id\\\": \\\"3-17974a88-acd2-4978-a158-e8211a25c04a\\\", \\\"route\\\": \\\"/count\\\", \\\"scope\\\": \\\"chromium-cdp:late-old-generation\\\", \\\"task\\\": \\\"A\\\", \\\"token\\\": \\\"17974a88-acd2-4978-a158-e8211a25c04a\\\" }\""
+              }
+            ]
+          },
+          {
+            "ok": true,
+            "value": [
+              {
+                "pageId": "A617DB33AA004B79D11AAB1DCA98B399",
+                "url": "http://127.0.0.1:55652/result?id=2-431d6cd1-c793-4dc6-a2b8-19b415749535",
+                "snapshot": "- heading \"实验页 B\" [level=1]\n- status: 操作已完成\n- text: \"{ \\\"id\\\": \\\"2-431d6cd1-c793-4dc6-a2b8-19b415749535\\\", \\\"route\\\": \\\"/count\\\", \\\"scope\\\": \\\"chromium-cdp:late-old-generation\\\", \\\"task\\\": \\\"B\\\", \\\"token\\\": \\\"431d6cd1-c793-4dc6-a2b8-19b415749535\\\" }\""
+              }
+            ]
+          }
+        ],
+        "serverResults": [
+          {
+            "id": "2-431d6cd1-c793-4dc6-a2b8-19b415749535",
+            "route": "/count",
+            "scope": "chromium-cdp:late-old-generation",
+            "task": "B",
+            "token": "431d6cd1-c793-4dc6-a2b8-19b415749535"
+          },
+          {
+            "id": "3-17974a88-acd2-4978-a158-e8211a25c04a",
+            "route": "/count",
+            "scope": "chromium-cdp:late-old-generation",
+            "task": "A",
+            "token": "17974a88-acd2-4978-a158-e8211a25c04a"
+          }
+        ],
+        "viewSwitches": 5,
+        "screenshots": [
+          {
+            "file": "A.png",
+            "ok": true
+          },
+          {
+            "file": "B.png",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "cancel-model-request",
+      "status": "passed",
+      "started": 1791690286093,
+      "ended": 1791690288872,
+      "evidence": {
+        "initialTargets": [
+          {
+            "targetId": "5F5E89439046F29206F72F67FB30B656",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:55652/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "6CFF9BEBE5F721B0E78CC752E004936F"
+          },
+          {
+            "targetId": "A617DB33AA004B79D11AAB1DCA98B399",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:55652/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "6CFF9BEBE5F721B0E78CC752E004936F"
+          }
+        ],
+        "a": {
+          "ok": false,
+          "name": "ProbeError",
+          "error": "client-aborted"
+        },
+        "bReply": "已点击“执行一次”一次，页面状态显示“操作已完成”。本页任务字母为 B。",
+        "stopAcknowledgedMs": 0.636000000000422,
+        "observations": [
+          {
+            "ok": false,
+            "name": "Stopped",
+            "error": "Execution stopped or superseded"
+          },
+          {
+            "ok": true,
+            "value": [
+              {
+                "pageId": "A617DB33AA004B79D11AAB1DCA98B399",
+                "url": "http://127.0.0.1:55652/result?id=4-0a4257b8-4ab3-4833-9922-90dcfacaea4c",
+                "snapshot": "- heading \"实验页 B\" [level=1]\n- status: 操作已完成\n- text: \"{ \\\"id\\\": \\\"4-0a4257b8-4ab3-4833-9922-90dcfacaea4c\\\", \\\"route\\\": \\\"/count\\\", \\\"scope\\\": \\\"chromium-cdp:cancel-model-request\\\", \\\"task\\\": \\\"B\\\", \\\"token\\\": \\\"0a4257b8-4ab3-4833-9922-90dcfacaea4c\\\" }\""
+              }
+            ]
+          }
+        ],
+        "serverResults": [
+          {
+            "id": "4-0a4257b8-4ab3-4833-9922-90dcfacaea4c",
+            "route": "/count",
+            "scope": "chromium-cdp:cancel-model-request",
+            "task": "B",
+            "token": "0a4257b8-4ab3-4833-9922-90dcfacaea4c"
+          }
+        ],
+        "viewSwitches": 4,
+        "screenshots": [
+          {
+            "file": "A.png",
+            "ok": true
+          },
+          {
+            "file": "B.png",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "page-error",
+      "status": "passed",
+      "started": 1791690288874,
+      "ended": 1791690291588,
+      "evidence": {
+        "initialTargets": [
+          {
+            "targetId": "5F5E89439046F29206F72F67FB30B656",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:55652/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "6CFF9BEBE5F721B0E78CC752E004936F"
+          },
+          {
+            "targetId": "A617DB33AA004B79D11AAB1DCA98B399",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:55652/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "6CFF9BEBE5F721B0E78CC752E004936F"
+          }
+        ],
+        "proposal": {
+          "op": "click",
+          "pageId": "5F5E89439046F29206F72F67FB30B656",
+          "role": "button",
+          "name": "执行一次",
+          "valueInput": "",
+          "reply": "点击“执行一次”按钮以触发一次操作。",
+          "value": ""
+        },
+        "a": {
+          "ok": false,
+          "name": "TimeoutError",
+          "error": "locator.click: Timeout 500ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: '执行一次', exact: true })\u001b[22m\n"
+        },
+        "bReply": "已点击“执行一次”一次，页面状态显示“操作已完成”。本页任务字母为 B。",
+        "observations": [
+          {
+            "ok": true,
+            "value": [
+              {
+                "pageId": "5F5E89439046F29206F72F67FB30B656",
+                "url": "http://127.0.0.1:55652/simple",
+                "snapshot": "- heading \"实验页 A\" [level=1]\n- text: 逐字输入\n- textbox \"逐字输入\"\n- status: 尚未执行"
+              }
+            ]
+          },
+          {
+            "ok": true,
+            "value": [
+              {
+                "pageId": "A617DB33AA004B79D11AAB1DCA98B399",
+                "url": "http://127.0.0.1:55652/result?id=5-becac47e-fd21-4af3-9b6d-d1dfacadd681",
+                "snapshot": "- heading \"实验页 B\" [level=1]\n- status: 操作已完成\n- text: \"{ \\\"id\\\": \\\"5-becac47e-fd21-4af3-9b6d-d1dfacadd681\\\", \\\"route\\\": \\\"/count\\\", \\\"scope\\\": \\\"chromium-cdp:page-error\\\", \\\"task\\\": \\\"B\\\", \\\"token\\\": \\\"becac47e-fd21-4af3-9b6d-d1dfacadd681\\\" }\""
+              }
+            ]
+          }
+        ],
+        "serverResults": [
+          {
+            "id": "5-becac47e-fd21-4af3-9b6d-d1dfacadd681",
+            "route": "/count",
+            "scope": "chromium-cdp:page-error",
+            "task": "B",
+            "token": "becac47e-fd21-4af3-9b6d-d1dfacadd681"
+          }
+        ],
+        "viewSwitches": 4,
+        "screenshots": [
+          {
+            "file": "A.png",
+            "ok": true
+          },
+          {
+            "file": "B.png",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "foreign-page",
+      "status": "passed",
+      "started": 1791690291591,
+      "ended": 1791690293705,
+      "evidence": {
+        "initialTargets": [
+          {
+            "targetId": "5F5E89439046F29206F72F67FB30B656",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:55652/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "6CFF9BEBE5F721B0E78CC752E004936F"
+          },
+          {
+            "targetId": "A617DB33AA004B79D11AAB1DCA98B399",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:55652/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "6CFF9BEBE5F721B0E78CC752E004936F"
+          }
+        ],
+        "proposal": {
+          "op": "click",
+          "pageId": "5F5E89439046F29206F72F67FB30B656",
+          "role": "button",
+          "name": "执行一次",
+          "valueInput": "",
+          "reply": "点击“执行一次”按钮以触发操作。",
+          "value": ""
+        },
+        "a": {
+          "ok": false,
+          "name": "Error",
+          "error": "foreign-page"
+        },
+        "bReply": "已点击“执行一次”一次，页面状态显示“操作已完成”。本页任务字母为 B。",
+        "observations": [
+          {
+            "ok": true,
+            "value": [
+              {
+                "pageId": "5F5E89439046F29206F72F67FB30B656",
+                "url": "http://127.0.0.1:55652/simple",
+                "snapshot": "- heading \"实验页 A\" [level=1]\n- button \"执行一次\"\n- text: 逐字输入\n- textbox \"逐字输入\"\n- status: 尚未执行"
+              }
+            ]
+          },
+          {
+            "ok": true,
+            "value": [
+              {
+                "pageId": "A617DB33AA004B79D11AAB1DCA98B399",
+                "url": "http://127.0.0.1:55652/result?id=6-9b281230-be9b-4c8c-8b5a-f1e73a73eaeb",
+                "snapshot": "- heading \"实验页 B\" [level=1]\n- status: 操作已完成\n- text: \"{ \\\"id\\\": \\\"6-9b281230-be9b-4c8c-8b5a-f1e73a73eaeb\\\", \\\"route\\\": \\\"/count\\\", \\\"scope\\\": \\\"chromium-cdp:foreign-page\\\", \\\"task\\\": \\\"B\\\", \\\"token\\\": \\\"9b281230-be9b-4c8c-8b5a-f1e73a73eaeb\\\" }\""
+              }
+            ]
+          }
+        ],
+        "serverResults": [
+          {
+            "id": "6-9b281230-be9b-4c8c-8b5a-f1e73a73eaeb",
+            "route": "/count",
+            "scope": "chromium-cdp:foreign-page",
+            "task": "B",
+            "token": "9b281230-be9b-4c8c-8b5a-f1e73a73eaeb"
+          }
+        ],
+        "viewSwitches": 3,
+        "screenshots": [
+          {
+            "file": "A.png",
+            "ok": true
+          },
+          {
+            "file": "B.png",
+            "ok": true
+          }
+        ]
+      }
+    }
+  ],
+  "resources": [
+    {
+      "at": 1791690280333,
+      "rssKiB": 1415600,
+      "processes": [
+        {
+          "pid": 24820,
+          "ppid": 80962,
+          "rssKiB": 162080,
+          "cpu": 23.9,
+          "command": "node"
+        },
+        {
+          "pid": 24823,
+          "ppid": 24820,
+          "rssKiB": 214288,
+          "cpu": 44.4,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+        },
+        {
+          "pid": 24831,
+          "ppid": 24823,
+          "rssKiB": 121536,
+          "cpu": 11.6,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (GPU).app/Contents/MacOS/Google Chrome for Testing Helper (GPU)"
+        },
+        {
+          "pid": 24832,
+          "ppid": 24823,
+          "rssKiB": 76864,
+          "cpu": 3.3,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24833,
+          "ppid": 24823,
+          "rssKiB": 53408,
+          "cpu": 0.1,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24835,
+          "ppid": 24823,
+          "rssKiB": 168368,
+          "cpu": 3.1,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24836,
+          "ppid": 24823,
+          "rssKiB": 134448,
+          "cpu": 6.3,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24837,
+          "ppid": 24823,
+          "rssKiB": 132528,
+          "cpu": 7.3,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24838,
+          "ppid": 24823,
+          "rssKiB": 90880,
+          "cpu": 1.3,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24839,
+          "ppid": 24823,
+          "rssKiB": 109648,
+          "cpu": 1.9,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24841,
+          "ppid": 24820,
+          "rssKiB": 150016,
+          "cpu": 27.5,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24860,
+          "ppid": 24820,
+          "rssKiB": 1536,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690281834,
+      "rssKiB": 1355216,
+      "processes": [
+        {
+          "pid": 24820,
+          "ppid": 80962,
+          "rssKiB": 164528,
+          "cpu": 1.1,
+          "command": "node"
+        },
+        {
+          "pid": 24823,
+          "ppid": 24820,
+          "rssKiB": 215312,
+          "cpu": 29.5,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+        },
+        {
+          "pid": 24831,
+          "ppid": 24823,
+          "rssKiB": 116560,
+          "cpu": 2.5,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (GPU).app/Contents/MacOS/Google Chrome for Testing Helper (GPU)"
+        },
+        {
+          "pid": 24832,
+          "ppid": 24823,
+          "rssKiB": 77536,
+          "cpu": 0.1,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24833,
+          "ppid": 24823,
+          "rssKiB": 53584,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24835,
+          "ppid": 24823,
+          "rssKiB": 137616,
+          "cpu": 0.2,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24836,
+          "ppid": 24823,
+          "rssKiB": 138528,
+          "cpu": 1.3,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24837,
+          "ppid": 24823,
+          "rssKiB": 132272,
+          "cpu": 0.2,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24838,
+          "ppid": 24823,
+          "rssKiB": 78640,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24839,
+          "ppid": 24823,
+          "rssKiB": 96784,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24841,
+          "ppid": 24820,
+          "rssKiB": 142320,
+          "cpu": 1,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24872,
+          "ppid": 24820,
+          "rssKiB": 1536,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690283336,
+      "rssKiB": 1369392,
+      "processes": [
+        {
+          "pid": 24820,
+          "ppid": 80962,
+          "rssKiB": 162752,
+          "cpu": 6.3,
+          "command": "node"
+        },
+        {
+          "pid": 24823,
+          "ppid": 24820,
+          "rssKiB": 216320,
+          "cpu": 31.9,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+        },
+        {
+          "pid": 24831,
+          "ppid": 24823,
+          "rssKiB": 128928,
+          "cpu": 3,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (GPU).app/Contents/MacOS/Google Chrome for Testing Helper (GPU)"
+        },
+        {
+          "pid": 24832,
+          "ppid": 24823,
+          "rssKiB": 76432,
+          "cpu": 0.6,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24833,
+          "ppid": 24823,
+          "rssKiB": 53600,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24835,
+          "ppid": 24823,
+          "rssKiB": 137456,
+          "cpu": 0.1,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24836,
+          "ppid": 24823,
+          "rssKiB": 143664,
+          "cpu": 2.2,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24837,
+          "ppid": 24823,
+          "rssKiB": 138176,
+          "cpu": 2.3,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24838,
+          "ppid": 24823,
+          "rssKiB": 71856,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24839,
+          "ppid": 24823,
+          "rssKiB": 91552,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24841,
+          "ppid": 24820,
+          "rssKiB": 147296,
+          "cpu": 2.9,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24890,
+          "ppid": 24820,
+          "rssKiB": 1360,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690284837,
+      "rssKiB": 1378944,
+      "processes": [
+        {
+          "pid": 24820,
+          "ppid": 80962,
+          "rssKiB": 164048,
+          "cpu": 3.4,
+          "command": "node"
+        },
+        {
+          "pid": 24823,
+          "ppid": 24820,
+          "rssKiB": 216896,
+          "cpu": 31.8,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+        },
+        {
+          "pid": 24831,
+          "ppid": 24823,
+          "rssKiB": 128784,
+          "cpu": 2.8,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (GPU).app/Contents/MacOS/Google Chrome for Testing Helper (GPU)"
+        },
+        {
+          "pid": 24832,
+          "ppid": 24823,
+          "rssKiB": 76656,
+          "cpu": 0.5,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24833,
+          "ppid": 24823,
+          "rssKiB": 53680,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24835,
+          "ppid": 24823,
+          "rssKiB": 137616,
+          "cpu": 0.1,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24836,
+          "ppid": 24823,
+          "rssKiB": 146336,
+          "cpu": 0.4,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24837,
+          "ppid": 24823,
+          "rssKiB": 144288,
+          "cpu": 4.2,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24838,
+          "ppid": 24823,
+          "rssKiB": 71856,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24839,
+          "ppid": 24823,
+          "rssKiB": 92016,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24841,
+          "ppid": 24820,
+          "rssKiB": 145136,
+          "cpu": 2.3,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24902,
+          "ppid": 24820,
+          "rssKiB": 1632,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690286341,
+      "rssKiB": 1393760,
+      "processes": [
+        {
+          "pid": 24820,
+          "ppid": 80962,
+          "rssKiB": 166672,
+          "cpu": 15.3,
+          "command": "node"
+        },
+        {
+          "pid": 24823,
+          "ppid": 24820,
+          "rssKiB": 217376,
+          "cpu": 59.2,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+        },
+        {
+          "pid": 24831,
+          "ppid": 24823,
+          "rssKiB": 125712,
+          "cpu": 8.6,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (GPU).app/Contents/MacOS/Google Chrome for Testing Helper (GPU)"
+        },
+        {
+          "pid": 24832,
+          "ppid": 24823,
+          "rssKiB": 76720,
+          "cpu": 3.6,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24833,
+          "ppid": 24823,
+          "rssKiB": 53904,
+          "cpu": 0.1,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24835,
+          "ppid": 24823,
+          "rssKiB": 137904,
+          "cpu": 0.4,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24836,
+          "ppid": 24823,
+          "rssKiB": 150928,
+          "cpu": 8.6,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24837,
+          "ppid": 24823,
+          "rssKiB": 149536,
+          "cpu": 10.8,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24838,
+          "ppid": 24823,
+          "rssKiB": 72112,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24839,
+          "ppid": 24823,
+          "rssKiB": 92176,
+          "cpu": 0.1,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24841,
+          "ppid": 24820,
+          "rssKiB": 149120,
+          "cpu": 10.2,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24914,
+          "ppid": 24820,
+          "rssKiB": 1600,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690287840,
+      "rssKiB": 1400880,
+      "processes": [
+        {
+          "pid": 24820,
+          "ppid": 80962,
+          "rssKiB": 168640,
+          "cpu": 0.9,
+          "command": "node"
+        },
+        {
+          "pid": 24823,
+          "ppid": 24820,
+          "rssKiB": 217552,
+          "cpu": 24.1,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+        },
+        {
+          "pid": 24831,
+          "ppid": 24823,
+          "rssKiB": 125520,
+          "cpu": 1,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (GPU).app/Contents/MacOS/Google Chrome for Testing Helper (GPU)"
+        },
+        {
+          "pid": 24832,
+          "ppid": 24823,
+          "rssKiB": 76752,
+          "cpu": 0.1,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24833,
+          "ppid": 24823,
+          "rssKiB": 53904,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24835,
+          "ppid": 24823,
+          "rssKiB": 138080,
+          "cpu": 0.1,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24836,
+          "ppid": 24823,
+          "rssKiB": 153648,
+          "cpu": 1,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24837,
+          "ppid": 24823,
+          "rssKiB": 149584,
+          "cpu": 0.2,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24838,
+          "ppid": 24823,
+          "rssKiB": 72112,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24839,
+          "ppid": 24823,
+          "rssKiB": 92240,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24841,
+          "ppid": 24820,
+          "rssKiB": 151280,
+          "cpu": 0.4,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24926,
+          "ppid": 24820,
+          "rssKiB": 1568,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690289342,
+      "rssKiB": 1423200,
+      "processes": [
+        {
+          "pid": 24820,
+          "ppid": 80962,
+          "rssKiB": 177088,
+          "cpu": 4.7,
+          "command": "node"
+        },
+        {
+          "pid": 24823,
+          "ppid": 24820,
+          "rssKiB": 217792,
+          "cpu": 38.6,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+        },
+        {
+          "pid": 24831,
+          "ppid": 24823,
+          "rssKiB": 125568,
+          "cpu": 3.8,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (GPU).app/Contents/MacOS/Google Chrome for Testing Helper (GPU)"
+        },
+        {
+          "pid": 24832,
+          "ppid": 24823,
+          "rssKiB": 76864,
+          "cpu": 1.2,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24833,
+          "ppid": 24823,
+          "rssKiB": 53968,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24835,
+          "ppid": 24823,
+          "rssKiB": 138304,
+          "cpu": 0.2,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24836,
+          "ppid": 24823,
+          "rssKiB": 157920,
+          "cpu": 4,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24837,
+          "ppid": 24823,
+          "rssKiB": 153712,
+          "cpu": 3.7,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24838,
+          "ppid": 24823,
+          "rssKiB": 72112,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24839,
+          "ppid": 24823,
+          "rssKiB": 92288,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24841,
+          "ppid": 24820,
+          "rssKiB": 156224,
+          "cpu": 3.3,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24943,
+          "ppid": 24820,
+          "rssKiB": 1360,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690290842,
+      "rssKiB": 1441440,
+      "processes": [
+        {
+          "pid": 24820,
+          "ppid": 80962,
+          "rssKiB": 182704,
+          "cpu": 1.2,
+          "command": "node"
+        },
+        {
+          "pid": 24823,
+          "ppid": 24820,
+          "rssKiB": 218048,
+          "cpu": 31.8,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+        },
+        {
+          "pid": 24831,
+          "ppid": 24823,
+          "rssKiB": 125504,
+          "cpu": 2.5,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (GPU).app/Contents/MacOS/Google Chrome for Testing Helper (GPU)"
+        },
+        {
+          "pid": 24832,
+          "ppid": 24823,
+          "rssKiB": 76880,
+          "cpu": 0.3,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24833,
+          "ppid": 24823,
+          "rssKiB": 53968,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24835,
+          "ppid": 24823,
+          "rssKiB": 139680,
+          "cpu": 0.2,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24836,
+          "ppid": 24823,
+          "rssKiB": 160048,
+          "cpu": 1.8,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24837,
+          "ppid": 24823,
+          "rssKiB": 155824,
+          "cpu": 0.3,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24838,
+          "ppid": 24823,
+          "rssKiB": 73216,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24839,
+          "ppid": 24823,
+          "rssKiB": 94464,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24841,
+          "ppid": 24820,
+          "rssKiB": 159568,
+          "cpu": 0.8,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24955,
+          "ppid": 24820,
+          "rssKiB": 1536,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690292351,
+      "rssKiB": 1414736,
+      "processes": [
+        {
+          "pid": 24820,
+          "ppid": 80962,
+          "rssKiB": 149872,
+          "cpu": 2.8,
+          "command": "node"
+        },
+        {
+          "pid": 24823,
+          "ppid": 24820,
+          "rssKiB": 218576,
+          "cpu": 33.5,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+        },
+        {
+          "pid": 24831,
+          "ppid": 24823,
+          "rssKiB": 125584,
+          "cpu": 2.3,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (GPU).app/Contents/MacOS/Google Chrome for Testing Helper (GPU)"
+        },
+        {
+          "pid": 24832,
+          "ppid": 24823,
+          "rssKiB": 76960,
+          "cpu": 0.6,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24833,
+          "ppid": 24823,
+          "rssKiB": 53968,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24835,
+          "ppid": 24823,
+          "rssKiB": 139936,
+          "cpu": 0.2,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24836,
+          "ppid": 24823,
+          "rssKiB": 164448,
+          "cpu": 1.2,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24837,
+          "ppid": 24823,
+          "rssKiB": 158768,
+          "cpu": 1.6,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24838,
+          "ppid": 24823,
+          "rssKiB": 73216,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24839,
+          "ppid": 24823,
+          "rssKiB": 94976,
+          "cpu": 0.1,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24841,
+          "ppid": 24820,
+          "rssKiB": 156864,
+          "cpu": 1,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24968,
+          "ppid": 24820,
+          "rssKiB": 1568,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690293829,
+      "rssKiB": 152416,
+      "processes": [
+        {
+          "pid": 24820,
+          "ppid": 80962,
+          "rssKiB": 150896,
+          "cpu": 4.4,
+          "command": "node"
+        },
+        {
+          "pid": 24983,
+          "ppid": 24820,
+          "rssKiB": 1520,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    }
+  ]
+}

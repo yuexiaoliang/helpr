@@ -1,0 +1,19 @@
+{
+  "at": 1791690027.579,
+  "reason": "Electron hidden WebContentsView screenshot remained pending after completed model loops; no screenshot timeout was configured. Runner and its isolated descendants terminated before rerun.",
+  "runnerPid": 23227,
+  "processIds": [
+    23227,
+    23817,
+    23827,
+    23828,
+    23838,
+    23843,
+    23846,
+    23847,
+    23848,
+    23849,
+    23851
+  ],
+  "correction": "Subsequent inspection found the hidden-view screenshot had timed out at 30 seconds; the driver continued and persisted 13 case results before interruption during Chromium queued-retry. Initial diagnosis of a still-pending screenshot was incorrect."
+}

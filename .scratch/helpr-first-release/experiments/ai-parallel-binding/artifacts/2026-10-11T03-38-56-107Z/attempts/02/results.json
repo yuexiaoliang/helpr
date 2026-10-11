@@ -1,0 +1,2641 @@
+{
+  "metadata": {
+    "startedAt": "2026-10-11T03:40:28.096Z",
+    "attempt": 2,
+    "pid": 23992,
+    "sourceHashes": {
+      "run.mjs": "32b3a5d1d627660135b5eaafd58b984d90e8b8f690807d76d702ae189165eb1f",
+      "worker.mjs": "8cd966213ba05077f8439466b70487a1fa6bb7d3976b43d2370d3986c5b0dc04",
+      "host.mjs": "517db449724dcb45d5e679605784b5fa9bd278e8237d02ed79aa835ea94a7896",
+      "model.mjs": "331b96149ee0bd6bbe8dae81800163270e9d091c5d9a2b8fba3460322e9c11d8",
+      "lab.mjs": "c11ad62ebb7d2556c1ae22d325793675ecb210251df0a1916fcbc2b6fc08d79e",
+      "electron.cjs": "73c9ac59fa2aec11cb400bf27ebce735c344b9b6bb891b4af301d9fd95091dae"
+    },
+    "node": "v24.18.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "release": "23.6.0",
+    "playwright": "1.64.0",
+    "electron": "44.7.0",
+    "base": "http://127.0.0.1:52943",
+    "scope": "real model + visible browser + local synthetic website; automatic fault injection, no human input",
+    "electron-cdp": {
+      "versions": {
+        "node": "24.21.0",
+        "acorn": "8.18.0",
+        "ada": "4.0.0",
+        "amaro": "1.1.11",
+        "ares": "1.34.8",
+        "brotli": "1.2.0",
+        "cldr": "48.0",
+        "icu": "78.2",
+        "llhttp": "9.4.3",
+        "merve": "1.2.2",
+        "modules": "149",
+        "napi": "10",
+        "nbytes": "0.1.4",
+        "ncrypto": "0.0.1",
+        "nghttp2": "1.70.0",
+        "nghttp3": "",
+        "ngtcp2": "",
+        "openssl": "0.0.0",
+        "simdjson": "4.6.7",
+        "simdutf": "7.7.0",
+        "sqlite": "3.53.4",
+        "tz": "2026d",
+        "undici": "7.29.1",
+        "unicode": "17.0",
+        "uv": "1.52.1",
+        "uvwasi": "0.0.23",
+        "v8": "15.2.124.28-electron.0",
+        "zlib": "1.3.2.1-motley",
+        "zstd": "1.6.0",
+        "electron": "44.7.0",
+        "chrome": "152.0.7977.130"
+      },
+      "mappings": [
+        {
+          "targetId": "E84163186E4CD5C9B558697CD821FECE",
+          "webContentsId": 2
+        },
+        {
+          "targetId": "5348ABEDF9EC68B71C3FBC682610C36A",
+          "webContentsId": 3
+        }
+      ],
+      "worker": {
+        "pid": 24005,
+        "version": "152.0.7977.130"
+      }
+    },
+    "chromium-cdp": {
+      "versions": {
+        "chromium": "156.0.8078.4"
+      },
+      "mappings": [
+        {
+          "targetId": "186518BAD0601EF63C39A1E6852071DD",
+          "tabId": 1147111479
+        },
+        {
+          "targetId": "7436CFCB21368DA8E4EC41DC4AAC136B",
+          "tabId": 1147111480
+        }
+      ],
+      "worker": {
+        "pid": 24268,
+        "version": "156.0.8078.4"
+      }
+    }
+  },
+  "results": [
+    {
+      "host": "electron-cdp",
+      "name": "parallel-exploration",
+      "status": "passed",
+      "started": 1791690029368,
+      "ended": 1791690034632,
+      "evidence": {
+        "initialTargets": [
+          {
+            "targetId": "E84163186E4CD5C9B558697CD821FECE",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/start",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F518BF70931FB621BDDF3D087F690B6E"
+          },
+          {
+            "targetId": "5348ABEDF9EC68B71C3FBC682610C36A",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/start",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F518BF70931FB621BDDF3D087F690B6E"
+          }
+        ],
+        "replies": [
+          "记录已保存成功：标题 标题-A-427885cf，补充说明 说明-A-c45644a1。",
+          "记录已保存成功：标题 标题-B-91f84eae，补充说明 说明-B-fddd3936。"
+        ],
+        "overlap": [
+          {
+            "seq": 83,
+            "at": 1791690033042,
+            "kind": "server-accepted",
+            "route": "/record",
+            "detail": "说明-B-fddd3936",
+            "scope": "electron-cdp:parallel-exploration",
+            "task": "B",
+            "token": "91f84eae-c652-4edd-b404-5f09fddd3936",
+            "title": "标题-B-91f84eae",
+            "active": [
+              "electron-cdp:parallel-exploration|A|/record",
+              "electron-cdp:parallel-exploration|B|/record"
+            ]
+          }
+        ],
+        "popups": [
+          {
+            "seq": 35,
+            "at": 1791690031244,
+            "pid": 24005,
+            "eventAt": 1791690031244,
+            "kind": "popup-bound",
+            "task": "electron-cdp:parallel-exploration/B",
+            "execution": "d379ebe4-5fdd-43c7-aff1-d528f6b05c21",
+            "generation": 1,
+            "pageId": "00CCCFB352407C25E6CD84313B1A35F5",
+            "openerId": "5348ABEDF9EC68B71C3FBC682610C36A"
+          },
+          {
+            "seq": 47,
+            "at": 1791690031382,
+            "pid": 24005,
+            "eventAt": 1791690031382,
+            "kind": "popup-bound",
+            "task": "electron-cdp:parallel-exploration/A",
+            "execution": "953fea38-eb40-446d-84d3-a6f3fb6c3e4c",
+            "generation": 1,
+            "pageId": "BCD1DCA413CC4E99451BE63DF92C5010",
+            "openerId": "E84163186E4CD5C9B558697CD821FECE"
+          }
+        ],
+        "finalTargets": [
+          {
+            "targetId": "00CCCFB352407C25E6CD84313B1A35F5",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/result?id=2-91f84eae-c652-4edd-b404-5f09fddd3936",
+            "attached": true,
+            "openerId": "5348ABEDF9EC68B71C3FBC682610C36A",
+            "canAccessOpener": true,
+            "openerFrameId": "5348ABEDF9EC68B71C3FBC682610C36A",
+            "browserContextId": "F518BF70931FB621BDDF3D087F690B6E"
+          },
+          {
+            "targetId": "BCD1DCA413CC4E99451BE63DF92C5010",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/result?id=1-427885cf-5578-4a30-88f8-754ac45644a1",
+            "attached": true,
+            "openerId": "E84163186E4CD5C9B558697CD821FECE",
+            "canAccessOpener": true,
+            "openerFrameId": "E84163186E4CD5C9B558697CD821FECE",
+            "browserContextId": "F518BF70931FB621BDDF3D087F690B6E"
+          }
+        ],
+        "popupMappings": [
+          {
+            "targetId": "00CCCFB352407C25E6CD84313B1A35F5",
+            "webContentsId": 4
+          },
+          {
+            "targetId": "BCD1DCA413CC4E99451BE63DF92C5010",
+            "webContentsId": 5
+          }
+        ],
+        "observations": [
+          {
+            "ok": true,
+            "value": [
+              {
+                "pageId": "E84163186E4CD5C9B558697CD821FECE",
+                "url": "http://127.0.0.1:52943/start",
+                "snapshot": "- heading \"实验页 A\" [level=1]\n- paragraph: 填写记录标题，然后打开详情，在新窗口补充说明并保存。\n- text: 记录标题\n- textbox \"记录标题\": 标题-A-427885cf\n- button \"打开详情\"\n- status: 详情已打开，请在详情窗口继续"
+              },
+              {
+                "pageId": "BCD1DCA413CC4E99451BE63DF92C5010",
+                "url": "http://127.0.0.1:52943/result?id=1-427885cf-5578-4a30-88f8-754ac45644a1",
+                "snapshot": "- heading \"实验页 A\" [level=1]\n- status: 操作已完成\n- text: \"{ \\\"id\\\": \\\"1-427885cf-5578-4a30-88f8-754ac45644a1\\\", \\\"route\\\": \\\"/record\\\", \\\"detail\\\": \\\"说明-A-c45644a1\\\", \\\"scope\\\": \\\"electron-cdp:parallel-exploration\\\", \\\"task\\\": \\\"A\\\", \\\"token\\\": \\\"427885cf-5578-4a30-88f8-754ac45644a1\\\", \\\"title\\\": \\\"标题-A-427885cf\\\" }\""
+              }
+            ]
+          },
+          {
+            "ok": true,
+            "value": [
+              {
+                "pageId": "5348ABEDF9EC68B71C3FBC682610C36A",
+                "url": "http://127.0.0.1:52943/start",
+                "snapshot": "- heading \"实验页 B\" [level=1]\n- paragraph: 填写记录标题，然后打开详情，在新窗口补充说明并保存。\n- text: 记录标题\n- textbox \"记录标题\": 标题-B-91f84eae\n- button \"打开详情\"\n- status: 详情已打开，请在详情窗口继续"
+              },
+              {
+                "pageId": "00CCCFB352407C25E6CD84313B1A35F5",
+                "url": "http://127.0.0.1:52943/result?id=2-91f84eae-c652-4edd-b404-5f09fddd3936",
+                "snapshot": "- heading \"实验页 B\" [level=1]\n- status: 操作已完成\n- text: \"{ \\\"id\\\": \\\"2-91f84eae-c652-4edd-b404-5f09fddd3936\\\", \\\"route\\\": \\\"/record\\\", \\\"detail\\\": \\\"说明-B-fddd3936\\\", \\\"scope\\\": \\\"electron-cdp:parallel-exploration\\\", \\\"task\\\": \\\"B\\\", \\\"token\\\": \\\"91f84eae-c652-4edd-b404-5f09fddd3936\\\", \\\"title\\\": \\\"标题-B-91f84eae\\\" }\""
+              }
+            ]
+          }
+        ],
+        "serverResults": [
+          {
+            "id": "1-427885cf-5578-4a30-88f8-754ac45644a1",
+            "route": "/record",
+            "detail": "说明-A-c45644a1",
+            "scope": "electron-cdp:parallel-exploration",
+            "task": "A",
+            "token": "427885cf-5578-4a30-88f8-754ac45644a1",
+            "title": "标题-A-427885cf"
+          },
+          {
+            "id": "2-91f84eae-c652-4edd-b404-5f09fddd3936",
+            "route": "/record",
+            "detail": "说明-B-fddd3936",
+            "scope": "electron-cdp:parallel-exploration",
+            "task": "B",
+            "token": "91f84eae-c652-4edd-b404-5f09fddd3936",
+            "title": "标题-B-91f84eae"
+          }
+        ],
+        "viewSwitches": 8,
+        "screenshots": [
+          {
+            "file": "A.png",
+            "ok": true
+          },
+          {
+            "file": "B.png",
+            "ok": true
+          },
+          {
+            "file": "result-0.png",
+            "ok": true
+          },
+          {
+            "file": "result-1.png",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "stop-waiting-click",
+      "status": "passed",
+      "started": 1791690034634,
+      "ended": 1791690037263,
+      "evidence": {
+        "initialTargets": [
+          {
+            "targetId": "E84163186E4CD5C9B558697CD821FECE",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F518BF70931FB621BDDF3D087F690B6E"
+          },
+          {
+            "targetId": "5348ABEDF9EC68B71C3FBC682610C36A",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F518BF70931FB621BDDF3D087F690B6E"
+          }
+        ],
+        "proposal": {
+          "op": "click",
+          "pageId": "E84163186E4CD5C9B558697CD821FECE",
+          "role": "button",
+          "name": "执行一次",
+          "valueInput": "",
+          "reply": "按钮当前为禁用状态，先尝试点击以触发执行。",
+          "value": ""
+        },
+        "a": {
+          "ok": false,
+          "name": "AbortError",
+          "error": "locator.click: Execution stopped or superseded\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: '执行一次', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled id=\"late\">执行一次</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is not enabled\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m  - operation was aborted: Execution stopped or superseded\u001b[22m\n"
+        },
+        "bReply": "已点击“执行一次”一次，页面显示“操作已完成”。本页任务字母为 B。",
+        "stopAcknowledgedMs": 3.0953330000002097,
+        "observations": [
+          {
+            "ok": false,
+            "name": "Stopped",
+            "error": "Execution stopped or superseded"
+          },
+          {
+            "ok": true,
+            "value": [
+              {
+                "pageId": "5348ABEDF9EC68B71C3FBC682610C36A",
+                "url": "http://127.0.0.1:52943/result?id=3-27020d86-f946-4d9b-b6bd-3d1918e319e6",
+                "snapshot": "- heading \"实验页 B\" [level=1]\n- status: 操作已完成\n- text: \"{ \\\"id\\\": \\\"3-27020d86-f946-4d9b-b6bd-3d1918e319e6\\\", \\\"route\\\": \\\"/count\\\", \\\"scope\\\": \\\"electron-cdp:stop-waiting-click\\\", \\\"task\\\": \\\"B\\\", \\\"token\\\": \\\"27020d86-f946-4d9b-b6bd-3d1918e319e6\\\" }\""
+              }
+            ]
+          }
+        ],
+        "serverResults": [
+          {
+            "id": "3-27020d86-f946-4d9b-b6bd-3d1918e319e6",
+            "route": "/count",
+            "scope": "electron-cdp:stop-waiting-click",
+            "task": "B",
+            "token": "27020d86-f946-4d9b-b6bd-3d1918e319e6"
+          }
+        ],
+        "viewSwitches": 4,
+        "screenshots": [
+          {
+            "file": "A.png",
+            "ok": true
+          },
+          {
+            "file": "B.png",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "stop-typing",
+      "status": "passed",
+      "started": 1791690037264,
+      "ended": 1791690039899,
+      "evidence": {
+        "initialTargets": [
+          {
+            "targetId": "E84163186E4CD5C9B558697CD821FECE",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F518BF70931FB621BDDF3D087F690B6E"
+          },
+          {
+            "targetId": "5348ABEDF9EC68B71C3FBC682610C36A",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F518BF70931FB621BDDF3D087F690B6E"
+          }
+        ],
+        "a": {
+          "ok": false,
+          "name": "AbortError",
+          "error": "locator.pressSequentially: Execution stopped or superseded\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: '逐字输入', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <input id=\"typing\"/>\u001b[22m\n\u001b[2m  - elementHandle.type(\"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz\")\u001b[22m\n\u001b[2m  - operation was aborted: Execution stopped or superseded\u001b[22m\n"
+        },
+        "atSettlement": "ABC",
+        "bReply": "已点击“执行一次”，页面状态显示“操作已完成”。本页任务字母为 B。",
+        "afterB": "ABC",
+        "stopAcknowledgedMs": 2.0432500000006257,
+        "observations": [
+          {
+            "ok": false,
+            "name": "Stopped",
+            "error": "Execution stopped or superseded"
+          },
+          {
+            "ok": true,
+            "value": [
+              {
+                "pageId": "5348ABEDF9EC68B71C3FBC682610C36A",
+                "url": "http://127.0.0.1:52943/result?id=4-93e6b5fc-f13d-48cf-8ae5-8570fa3a888a",
+                "snapshot": "- heading \"实验页 B\" [level=1]\n- status: 操作已完成\n- text: \"{ \\\"id\\\": \\\"4-93e6b5fc-f13d-48cf-8ae5-8570fa3a888a\\\", \\\"route\\\": \\\"/count\\\", \\\"scope\\\": \\\"electron-cdp:stop-typing\\\", \\\"task\\\": \\\"B\\\", \\\"token\\\": \\\"93e6b5fc-f13d-48cf-8ae5-8570fa3a888a\\\" }\""
+              }
+            ]
+          }
+        ],
+        "serverResults": [
+          {
+            "id": "4-93e6b5fc-f13d-48cf-8ae5-8570fa3a888a",
+            "route": "/count",
+            "scope": "electron-cdp:stop-typing",
+            "task": "B",
+            "token": "93e6b5fc-f13d-48cf-8ae5-8570fa3a888a"
+          }
+        ],
+        "viewSwitches": 4,
+        "screenshots": [
+          {
+            "file": "A.png",
+            "ok": true
+          },
+          {
+            "file": "B.png",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "queued-dispatch",
+      "status": "passed",
+      "started": 1791690039901,
+      "ended": 1791690041929,
+      "evidence": {
+        "initialTargets": [
+          {
+            "targetId": "E84163186E4CD5C9B558697CD821FECE",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F518BF70931FB621BDDF3D087F690B6E"
+          },
+          {
+            "targetId": "5348ABEDF9EC68B71C3FBC682610C36A",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F518BF70931FB621BDDF3D087F690B6E"
+          }
+        ],
+        "proposal": {
+          "op": "click",
+          "pageId": "E84163186E4CD5C9B558697CD821FECE",
+          "role": "button",
+          "name": "执行一次",
+          "valueInput": "",
+          "reply": "点击“执行一次”按钮以触发操作。",
+          "value": ""
+        },
+        "a": {
+          "ok": false,
+          "name": "Stopped",
+          "error": "Execution stopped or superseded"
+        },
+        "bReply": "已点击“执行一次”，页面状态显示“操作已完成”。本页任务字母为 B。",
+        "stopAcknowledgedMs": 0.280957999999373,
+        "observations": [
+          {
+            "ok": false,
+            "name": "Stopped",
+            "error": "Execution stopped or superseded"
+          },
+          {
+            "ok": true,
+            "value": [
+              {
+                "pageId": "5348ABEDF9EC68B71C3FBC682610C36A",
+                "url": "http://127.0.0.1:52943/result?id=5-010f1ab3-8a81-4caa-bdbb-f5b32bd267aa",
+                "snapshot": "- heading \"实验页 B\" [level=1]\n- status: 操作已完成\n- text: \"{ \\\"id\\\": \\\"5-010f1ab3-8a81-4caa-bdbb-f5b32bd267aa\\\", \\\"route\\\": \\\"/count\\\", \\\"scope\\\": \\\"electron-cdp:queued-dispatch\\\", \\\"task\\\": \\\"B\\\", \\\"token\\\": \\\"010f1ab3-8a81-4caa-bdbb-f5b32bd267aa\\\" }\""
+              }
+            ]
+          }
+        ],
+        "serverResults": [
+          {
+            "id": "5-010f1ab3-8a81-4caa-bdbb-f5b32bd267aa",
+            "route": "/count",
+            "scope": "electron-cdp:queued-dispatch",
+            "task": "B",
+            "token": "010f1ab3-8a81-4caa-bdbb-f5b32bd267aa"
+          }
+        ],
+        "viewSwitches": 3,
+        "screenshots": [
+          {
+            "file": "A.png",
+            "ok": true
+          },
+          {
+            "file": "B.png",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "queued-retry",
+      "status": "passed",
+      "started": 1791690041931,
+      "ended": 1791690043944,
+      "evidence": {
+        "initialTargets": [
+          {
+            "targetId": "E84163186E4CD5C9B558697CD821FECE",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F518BF70931FB621BDDF3D087F690B6E"
+          },
+          {
+            "targetId": "5348ABEDF9EC68B71C3FBC682610C36A",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F518BF70931FB621BDDF3D087F690B6E"
+          }
+        ],
+        "proposal": {
+          "op": "click",
+          "pageId": "E84163186E4CD5C9B558697CD821FECE",
+          "role": "button",
+          "name": "执行一次",
+          "valueInput": "",
+          "reply": "按钮当前为禁用状态，先尝试点击以触发执行。",
+          "value": ""
+        },
+        "a": {
+          "ok": false,
+          "name": "Stopped",
+          "error": "Execution stopped or superseded"
+        },
+        "bReply": "已点击“执行一次”一次，页面状态显示“操作已完成”。本页任务字母为 B。",
+        "stopAcknowledgedMs": 0.2742079999989073,
+        "observations": [
+          {
+            "ok": false,
+            "name": "Stopped",
+            "error": "Execution stopped or superseded"
+          },
+          {
+            "ok": true,
+            "value": [
+              {
+                "pageId": "5348ABEDF9EC68B71C3FBC682610C36A",
+                "url": "http://127.0.0.1:52943/result?id=6-79398ac0-39ec-42a7-bf92-b2b3f9138658",
+                "snapshot": "- heading \"实验页 B\" [level=1]\n- status: 操作已完成\n- text: \"{ \\\"id\\\": \\\"6-79398ac0-39ec-42a7-bf92-b2b3f9138658\\\", \\\"route\\\": \\\"/count\\\", \\\"scope\\\": \\\"electron-cdp:queued-retry\\\", \\\"task\\\": \\\"B\\\", \\\"token\\\": \\\"79398ac0-39ec-42a7-bf92-b2b3f9138658\\\" }\""
+              }
+            ]
+          }
+        ],
+        "serverResults": [
+          {
+            "id": "6-79398ac0-39ec-42a7-bf92-b2b3f9138658",
+            "route": "/count",
+            "scope": "electron-cdp:queued-retry",
+            "task": "B",
+            "token": "79398ac0-39ec-42a7-bf92-b2b3f9138658"
+          }
+        ],
+        "viewSwitches": 3,
+        "screenshots": [
+          {
+            "file": "A.png",
+            "ok": true
+          },
+          {
+            "file": "B.png",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "late-old-generation",
+      "status": "passed",
+      "started": 1791690043946,
+      "ended": 1791690047778,
+      "evidence": {
+        "initialTargets": [
+          {
+            "targetId": "E84163186E4CD5C9B558697CD821FECE",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F518BF70931FB621BDDF3D087F690B6E"
+          },
+          {
+            "targetId": "5348ABEDF9EC68B71C3FBC682610C36A",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F518BF70931FB621BDDF3D087F690B6E"
+          }
+        ],
+        "newReply": "已点击“执行一次”一次，页面状态显示“操作已完成”。本页任务字母为 A。",
+        "parentLate": {
+          "ok": false,
+          "name": "Error",
+          "error": "parent-rejected-late-reply"
+        },
+        "workerLate": {
+          "ok": false,
+          "name": "Error",
+          "error": "stale-execution"
+        },
+        "oldLease": {
+          "task": "electron-cdp:late-old-generation/A",
+          "execution": "f84c2037-f804-45b9-a060-773d2fedce8f",
+          "generation": 1
+        },
+        "newLease": {
+          "task": "electron-cdp:late-old-generation/A",
+          "execution": "871413ad-f578-49f1-8595-a903647ad3c4",
+          "generation": 2
+        },
+        "bReply": "已点击“执行一次”，页面状态显示“操作已完成”。本页任务字母为 B。",
+        "stopAcknowledgedMs": 0.2906669999974838,
+        "observations": [
+          {
+            "ok": true,
+            "value": [
+              {
+                "pageId": "E84163186E4CD5C9B558697CD821FECE",
+                "url": "http://127.0.0.1:52943/result?id=8-9806a825-99b6-4b95-b4a2-e2f129451c92",
+                "snapshot": "- heading \"实验页 A\" [level=1]\n- status: 操作已完成\n- text: \"{ \\\"id\\\": \\\"8-9806a825-99b6-4b95-b4a2-e2f129451c92\\\", \\\"route\\\": \\\"/count\\\", \\\"scope\\\": \\\"electron-cdp:late-old-generation\\\", \\\"task\\\": \\\"A\\\", \\\"token\\\": \\\"9806a825-99b6-4b95-b4a2-e2f129451c92\\\" }\""
+              }
+            ]
+          },
+          {
+            "ok": true,
+            "value": [
+              {
+                "pageId": "5348ABEDF9EC68B71C3FBC682610C36A",
+                "url": "http://127.0.0.1:52943/result?id=7-7e068d97-3eab-4050-9ec5-bf0cf461876c",
+                "snapshot": "- heading \"实验页 B\" [level=1]\n- status: 操作已完成\n- text: \"{ \\\"id\\\": \\\"7-7e068d97-3eab-4050-9ec5-bf0cf461876c\\\", \\\"route\\\": \\\"/count\\\", \\\"scope\\\": \\\"electron-cdp:late-old-generation\\\", \\\"task\\\": \\\"B\\\", \\\"token\\\": \\\"7e068d97-3eab-4050-9ec5-bf0cf461876c\\\" }\""
+              }
+            ]
+          }
+        ],
+        "serverResults": [
+          {
+            "id": "7-7e068d97-3eab-4050-9ec5-bf0cf461876c",
+            "route": "/count",
+            "scope": "electron-cdp:late-old-generation",
+            "task": "B",
+            "token": "7e068d97-3eab-4050-9ec5-bf0cf461876c"
+          },
+          {
+            "id": "8-9806a825-99b6-4b95-b4a2-e2f129451c92",
+            "route": "/count",
+            "scope": "electron-cdp:late-old-generation",
+            "task": "A",
+            "token": "9806a825-99b6-4b95-b4a2-e2f129451c92"
+          }
+        ],
+        "viewSwitches": 6,
+        "screenshots": [
+          {
+            "file": "A.png",
+            "ok": true
+          },
+          {
+            "file": "B.png",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "cancel-model-request",
+      "status": "passed",
+      "started": 1791690047781,
+      "ended": 1791690049778,
+      "evidence": {
+        "initialTargets": [
+          {
+            "targetId": "E84163186E4CD5C9B558697CD821FECE",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F518BF70931FB621BDDF3D087F690B6E"
+          },
+          {
+            "targetId": "5348ABEDF9EC68B71C3FBC682610C36A",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F518BF70931FB621BDDF3D087F690B6E"
+          }
+        ],
+        "a": {
+          "ok": false,
+          "name": "ProbeError",
+          "error": "client-aborted"
+        },
+        "bReply": "已点击“执行一次”一次，页面状态显示“操作已完成”。本页任务字母为 B。",
+        "stopAcknowledgedMs": 0.5812499999992724,
+        "observations": [
+          {
+            "ok": false,
+            "name": "Stopped",
+            "error": "Execution stopped or superseded"
+          },
+          {
+            "ok": true,
+            "value": [
+              {
+                "pageId": "5348ABEDF9EC68B71C3FBC682610C36A",
+                "url": "http://127.0.0.1:52943/result?id=9-08eee62d-78f2-4f1d-8429-9f99d2a8dbc5",
+                "snapshot": "- heading \"实验页 B\" [level=1]\n- status: 操作已完成\n- text: \"{ \\\"id\\\": \\\"9-08eee62d-78f2-4f1d-8429-9f99d2a8dbc5\\\", \\\"route\\\": \\\"/count\\\", \\\"scope\\\": \\\"electron-cdp:cancel-model-request\\\", \\\"task\\\": \\\"B\\\", \\\"token\\\": \\\"08eee62d-78f2-4f1d-8429-9f99d2a8dbc5\\\" }\""
+              }
+            ]
+          }
+        ],
+        "serverResults": [
+          {
+            "id": "9-08eee62d-78f2-4f1d-8429-9f99d2a8dbc5",
+            "route": "/count",
+            "scope": "electron-cdp:cancel-model-request",
+            "task": "B",
+            "token": "08eee62d-78f2-4f1d-8429-9f99d2a8dbc5"
+          }
+        ],
+        "viewSwitches": 3,
+        "screenshots": [
+          {
+            "file": "A.png",
+            "ok": true
+          },
+          {
+            "file": "B.png",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "page-error",
+      "status": "passed",
+      "started": 1791690049780,
+      "ended": 1791690052979,
+      "evidence": {
+        "initialTargets": [
+          {
+            "targetId": "E84163186E4CD5C9B558697CD821FECE",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F518BF70931FB621BDDF3D087F690B6E"
+          },
+          {
+            "targetId": "5348ABEDF9EC68B71C3FBC682610C36A",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F518BF70931FB621BDDF3D087F690B6E"
+          }
+        ],
+        "proposal": {
+          "op": "click",
+          "pageId": "E84163186E4CD5C9B558697CD821FECE",
+          "role": "button",
+          "name": "执行一次",
+          "valueInput": "",
+          "reply": "点击“执行一次”按钮。",
+          "value": ""
+        },
+        "a": {
+          "ok": false,
+          "name": "TimeoutError",
+          "error": "locator.click: Timeout 500ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: '执行一次', exact: true })\u001b[22m\n"
+        },
+        "bReply": "已点击“执行一次”，页面显示“操作已完成”。本页任务字母为 B。",
+        "observations": [
+          {
+            "ok": true,
+            "value": [
+              {
+                "pageId": "E84163186E4CD5C9B558697CD821FECE",
+                "url": "http://127.0.0.1:52943/simple",
+                "snapshot": "- heading \"实验页 A\" [level=1]\n- text: 逐字输入\n- textbox \"逐字输入\"\n- status: 尚未执行"
+              }
+            ]
+          },
+          {
+            "ok": true,
+            "value": [
+              {
+                "pageId": "5348ABEDF9EC68B71C3FBC682610C36A",
+                "url": "http://127.0.0.1:52943/result?id=10-af665c29-b040-4840-b22d-e08efc25842f",
+                "snapshot": "- heading \"实验页 B\" [level=1]\n- status: 操作已完成\n- text: \"{ \\\"id\\\": \\\"10-af665c29-b040-4840-b22d-e08efc25842f\\\", \\\"route\\\": \\\"/count\\\", \\\"scope\\\": \\\"electron-cdp:page-error\\\", \\\"task\\\": \\\"B\\\", \\\"token\\\": \\\"af665c29-b040-4840-b22d-e08efc25842f\\\" }\""
+              }
+            ]
+          }
+        ],
+        "serverResults": [
+          {
+            "id": "10-af665c29-b040-4840-b22d-e08efc25842f",
+            "route": "/count",
+            "scope": "electron-cdp:page-error",
+            "task": "B",
+            "token": "af665c29-b040-4840-b22d-e08efc25842f"
+          }
+        ],
+        "viewSwitches": 5,
+        "screenshots": [
+          {
+            "file": "A.png",
+            "ok": true
+          },
+          {
+            "file": "B.png",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "host": "electron-cdp",
+      "name": "foreign-page",
+      "status": "passed",
+      "started": 1791690052981,
+      "ended": 1791690055630,
+      "evidence": {
+        "initialTargets": [
+          {
+            "targetId": "E84163186E4CD5C9B558697CD821FECE",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F518BF70931FB621BDDF3D087F690B6E"
+          },
+          {
+            "targetId": "5348ABEDF9EC68B71C3FBC682610C36A",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F518BF70931FB621BDDF3D087F690B6E"
+          }
+        ],
+        "proposal": {
+          "op": "click",
+          "pageId": "E84163186E4CD5C9B558697CD821FECE",
+          "role": "button",
+          "name": "执行一次",
+          "valueInput": "",
+          "reply": "点击“执行一次”按钮。",
+          "value": ""
+        },
+        "a": {
+          "ok": false,
+          "name": "Error",
+          "error": "foreign-page"
+        },
+        "bReply": "已点击“执行一次”一次，页面显示“操作已完成”。本页任务字母为 B。",
+        "observations": [
+          {
+            "ok": true,
+            "value": [
+              {
+                "pageId": "E84163186E4CD5C9B558697CD821FECE",
+                "url": "http://127.0.0.1:52943/simple",
+                "snapshot": "- heading \"实验页 A\" [level=1]\n- button \"执行一次\"\n- text: 逐字输入\n- textbox \"逐字输入\"\n- status: 尚未执行"
+              }
+            ]
+          },
+          {
+            "ok": true,
+            "value": [
+              {
+                "pageId": "5348ABEDF9EC68B71C3FBC682610C36A",
+                "url": "http://127.0.0.1:52943/result?id=11-740e7729-8e66-4357-a97f-1123336e89e8",
+                "snapshot": "- heading \"实验页 B\" [level=1]\n- status: 操作已完成\n- text: \"{ \\\"id\\\": \\\"11-740e7729-8e66-4357-a97f-1123336e89e8\\\", \\\"route\\\": \\\"/count\\\", \\\"scope\\\": \\\"electron-cdp:foreign-page\\\", \\\"task\\\": \\\"B\\\", \\\"token\\\": \\\"740e7729-8e66-4357-a97f-1123336e89e8\\\" }\""
+              }
+            ]
+          }
+        ],
+        "serverResults": [
+          {
+            "id": "11-740e7729-8e66-4357-a97f-1123336e89e8",
+            "route": "/count",
+            "scope": "electron-cdp:foreign-page",
+            "task": "B",
+            "token": "740e7729-8e66-4357-a97f-1123336e89e8"
+          }
+        ],
+        "viewSwitches": 4,
+        "screenshots": [
+          {
+            "file": "A.png",
+            "ok": true
+          },
+          {
+            "file": "B.png",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "parallel-exploration",
+      "status": "failed",
+      "started": 1791690056895,
+      "ended": 1791690058825,
+      "error": "[{\"status\":\"rejected\",\"reason\":{}},{\"status\":\"rejected\",\"reason\":{}}]",
+      "stack": "AssertionError [ERR_ASSERTION]: [{\"status\":\"rejected\",\"reason\":{}},{\"status\":\"rejected\",\"reason\":{}}]\n    at file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/ai-parallel-binding/run.mjs:68:74\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)",
+      "evidence": {
+        "initialTargets": [
+          {
+            "targetId": "186518BAD0601EF63C39A1E6852071DD",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/start",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F44691C77AA6144B2330C735A787AEF0"
+          },
+          {
+            "targetId": "7436CFCB21368DA8E4EC41DC4AAC136B",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/start",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F44691C77AA6144B2330C735A787AEF0"
+          }
+        ]
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "stop-waiting-click",
+      "status": "failed",
+      "started": 1791690058827,
+      "ended": 1791690059076,
+      "error": "call-budget",
+      "stack": "Error: call-budget\n    at check (file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/ai-parallel-binding/model.mjs:5:37)\n    at Object.propose (file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/ai-parallel-binding/model.mjs:14:5)\n    at ask (file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/ai-parallel-binding/run.mjs:37:108)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/ai-parallel-binding/run.mjs:97:28",
+      "evidence": {
+        "initialTargets": [
+          {
+            "targetId": "186518BAD0601EF63C39A1E6852071DD",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F44691C77AA6144B2330C735A787AEF0"
+          },
+          {
+            "targetId": "7436CFCB21368DA8E4EC41DC4AAC136B",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F44691C77AA6144B2330C735A787AEF0"
+          }
+        ]
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "stop-typing",
+      "status": "failed",
+      "started": 1791690059079,
+      "ended": 1791690059197,
+      "error": "call-budget",
+      "stack": "Error: call-budget\n    at check (file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/ai-parallel-binding/model.mjs:5:37)\n    at Object.propose (file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/ai-parallel-binding/model.mjs:14:5)\n    at ask (file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/ai-parallel-binding/run.mjs:37:108)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/ai-parallel-binding/run.mjs:93:131",
+      "evidence": {
+        "initialTargets": [
+          {
+            "targetId": "186518BAD0601EF63C39A1E6852071DD",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F44691C77AA6144B2330C735A787AEF0"
+          },
+          {
+            "targetId": "7436CFCB21368DA8E4EC41DC4AAC136B",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F44691C77AA6144B2330C735A787AEF0"
+          }
+        ]
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "queued-dispatch",
+      "status": "failed",
+      "started": 1791690059199,
+      "ended": 1791690059299,
+      "error": "call-budget",
+      "stack": "Error: call-budget\n    at check (file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/ai-parallel-binding/model.mjs:5:37)\n    at Object.propose (file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/ai-parallel-binding/model.mjs:14:5)\n    at ask (file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/ai-parallel-binding/run.mjs:37:108)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/ai-parallel-binding/run.mjs:97:28",
+      "evidence": {
+        "initialTargets": [
+          {
+            "targetId": "186518BAD0601EF63C39A1E6852071DD",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F44691C77AA6144B2330C735A787AEF0"
+          },
+          {
+            "targetId": "7436CFCB21368DA8E4EC41DC4AAC136B",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F44691C77AA6144B2330C735A787AEF0"
+          }
+        ]
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "queued-retry",
+      "status": "failed",
+      "started": 1791690059302,
+      "ended": 1791690059615,
+      "error": "call-budget",
+      "stack": "Error: call-budget\n    at check (file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/ai-parallel-binding/model.mjs:5:37)\n    at Object.propose (file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/ai-parallel-binding/model.mjs:14:5)\n    at ask (file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/ai-parallel-binding/run.mjs:37:108)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/ai-parallel-binding/run.mjs:97:28",
+      "evidence": {
+        "initialTargets": [
+          {
+            "targetId": "186518BAD0601EF63C39A1E6852071DD",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F44691C77AA6144B2330C735A787AEF0"
+          },
+          {
+            "targetId": "7436CFCB21368DA8E4EC41DC4AAC136B",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F44691C77AA6144B2330C735A787AEF0"
+          }
+        ]
+      }
+    },
+    {
+      "host": "chromium-cdp",
+      "name": "late-old-generation",
+      "status": "failed",
+      "started": 1791690059618,
+      "ended": 1791690059725,
+      "error": "call-budget",
+      "stack": "Error: call-budget\n    at file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/ai-parallel-binding/run.mjs:87:83\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/ai-parallel-binding/run.mjs:87:13",
+      "evidence": {
+        "initialTargets": [
+          {
+            "targetId": "186518BAD0601EF63C39A1E6852071DD",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F44691C77AA6144B2330C735A787AEF0"
+          },
+          {
+            "targetId": "7436CFCB21368DA8E4EC41DC4AAC136B",
+            "type": "page",
+            "title": "helpr AI 双页实验",
+            "url": "http://127.0.0.1:52943/simple",
+            "attached": true,
+            "canAccessOpener": false,
+            "browserContextId": "F44691C77AA6144B2330C735A787AEF0"
+          }
+        ]
+      }
+    }
+  ],
+  "resources": [
+    {
+      "at": 1791690029626,
+      "rssKiB": 922544,
+      "processes": [
+        {
+          "pid": 23992,
+          "ppid": 80962,
+          "rssKiB": 156304,
+          "cpu": 25.5,
+          "command": "node"
+        },
+        {
+          "pid": 23994,
+          "ppid": 23992,
+          "rssKiB": 156672,
+          "cpu": 26.2,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron"
+        },
+        {
+          "pid": 23996,
+          "ppid": 23994,
+          "rssKiB": 83136,
+          "cpu": 6.8,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23998,
+          "ppid": 23994,
+          "rssKiB": 48240,
+          "cpu": 2.4,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23999,
+          "ppid": 23994,
+          "rssKiB": 96992,
+          "cpu": 2.2,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24002,
+          "ppid": 23994,
+          "rssKiB": 114512,
+          "cpu": 14.8,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24003,
+          "ppid": 23994,
+          "rssKiB": 114528,
+          "cpu": 18.6,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24005,
+          "ppid": 23992,
+          "rssKiB": 150608,
+          "cpu": 70.7,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24017,
+          "ppid": 23992,
+          "rssKiB": 1552,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690031144,
+      "rssKiB": 956032,
+      "processes": [
+        {
+          "pid": 23992,
+          "ppid": 80962,
+          "rssKiB": 184928,
+          "cpu": 0.8,
+          "command": "node"
+        },
+        {
+          "pid": 23994,
+          "ppid": 23992,
+          "rssKiB": 156816,
+          "cpu": 0.7,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron"
+        },
+        {
+          "pid": 23996,
+          "ppid": 23994,
+          "rssKiB": 83312,
+          "cpu": 1.2,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23998,
+          "ppid": 23994,
+          "rssKiB": 48240,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23999,
+          "ppid": 23994,
+          "rssKiB": 96992,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24002,
+          "ppid": 23994,
+          "rssKiB": 116640,
+          "cpu": 0.8,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24003,
+          "ppid": 23994,
+          "rssKiB": 116768,
+          "cpu": 0.6,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24005,
+          "ppid": 23992,
+          "rssKiB": 150784,
+          "cpu": 0.7,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24030,
+          "ppid": 23992,
+          "rssKiB": 1552,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690032648,
+      "rssKiB": 981232,
+      "processes": [
+        {
+          "pid": 23992,
+          "ppid": 80962,
+          "rssKiB": 189648,
+          "cpu": 10.2,
+          "command": "node"
+        },
+        {
+          "pid": 23994,
+          "ppid": 23992,
+          "rssKiB": 159184,
+          "cpu": 3.8,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron"
+        },
+        {
+          "pid": 23996,
+          "ppid": 23994,
+          "rssKiB": 86288,
+          "cpu": 1.8,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23998,
+          "ppid": 23994,
+          "rssKiB": 48352,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23999,
+          "ppid": 23994,
+          "rssKiB": 96992,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24002,
+          "ppid": 23994,
+          "rssKiB": 122144,
+          "cpu": 2,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24003,
+          "ppid": 23994,
+          "rssKiB": 122320,
+          "cpu": 1.1,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24005,
+          "ppid": 23992,
+          "rssKiB": 154752,
+          "cpu": 2.7,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24042,
+          "ppid": 23992,
+          "rssKiB": 1552,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690034134,
+      "rssKiB": 996416,
+      "processes": [
+        {
+          "pid": 23992,
+          "ppid": 80962,
+          "rssKiB": 193072,
+          "cpu": 1,
+          "command": "node"
+        },
+        {
+          "pid": 23994,
+          "ppid": 23992,
+          "rssKiB": 160224,
+          "cpu": 1.6,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron"
+        },
+        {
+          "pid": 23996,
+          "ppid": 23994,
+          "rssKiB": 87168,
+          "cpu": 0.6,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23998,
+          "ppid": 23994,
+          "rssKiB": 49072,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23999,
+          "ppid": 23994,
+          "rssKiB": 96960,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24002,
+          "ppid": 23994,
+          "rssKiB": 126480,
+          "cpu": 0.6,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24003,
+          "ppid": 23994,
+          "rssKiB": 126672,
+          "cpu": 0.3,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24005,
+          "ppid": 23992,
+          "rssKiB": 155216,
+          "cpu": 0.4,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24057,
+          "ppid": 23992,
+          "rssKiB": 1552,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690035652,
+      "rssKiB": 1046784,
+      "processes": [
+        {
+          "pid": 23992,
+          "ppid": 80962,
+          "rssKiB": 202576,
+          "cpu": 3.6,
+          "command": "node"
+        },
+        {
+          "pid": 23994,
+          "ppid": 23992,
+          "rssKiB": 162976,
+          "cpu": 5.5,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron"
+        },
+        {
+          "pid": 23996,
+          "ppid": 23994,
+          "rssKiB": 103408,
+          "cpu": 1.2,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23998,
+          "ppid": 23994,
+          "rssKiB": 49088,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23999,
+          "ppid": 23994,
+          "rssKiB": 96992,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24002,
+          "ppid": 23994,
+          "rssKiB": 133472,
+          "cpu": 0.9,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24003,
+          "ppid": 23994,
+          "rssKiB": 133696,
+          "cpu": 3.5,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24005,
+          "ppid": 23992,
+          "rssKiB": 163040,
+          "cpu": 3.8,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24071,
+          "ppid": 23992,
+          "rssKiB": 1536,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690037151,
+      "rssKiB": 1050592,
+      "processes": [
+        {
+          "pid": 23992,
+          "ppid": 80962,
+          "rssKiB": 202688,
+          "cpu": 1.2,
+          "command": "node"
+        },
+        {
+          "pid": 23994,
+          "ppid": 23992,
+          "rssKiB": 162992,
+          "cpu": 0.3,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron"
+        },
+        {
+          "pid": 23996,
+          "ppid": 23994,
+          "rssKiB": 103328,
+          "cpu": 0.2,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23998,
+          "ppid": 23994,
+          "rssKiB": 49088,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23999,
+          "ppid": 23994,
+          "rssKiB": 96992,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24002,
+          "ppid": 23994,
+          "rssKiB": 133568,
+          "cpu": 0.1,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24003,
+          "ppid": 23994,
+          "rssKiB": 135392,
+          "cpu": 0.2,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24005,
+          "ppid": 23992,
+          "rssKiB": 165008,
+          "cpu": 0.1,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24084,
+          "ppid": 23992,
+          "rssKiB": 1536,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690038656,
+      "rssKiB": 1071728,
+      "processes": [
+        {
+          "pid": 23992,
+          "ppid": 80962,
+          "rssKiB": 207856,
+          "cpu": 8.6,
+          "command": "node"
+        },
+        {
+          "pid": 23994,
+          "ppid": 23992,
+          "rssKiB": 163840,
+          "cpu": 11.7,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron"
+        },
+        {
+          "pid": 23996,
+          "ppid": 23994,
+          "rssKiB": 103312,
+          "cpu": 3.7,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23998,
+          "ppid": 23994,
+          "rssKiB": 49200,
+          "cpu": 1,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23999,
+          "ppid": 23994,
+          "rssKiB": 97040,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24002,
+          "ppid": 23994,
+          "rssKiB": 139536,
+          "cpu": 3.3,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24003,
+          "ppid": 23994,
+          "rssKiB": 143376,
+          "cpu": 7,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24005,
+          "ppid": 23992,
+          "rssKiB": 166032,
+          "cpu": 5.7,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24097,
+          "ppid": 23992,
+          "rssKiB": 1536,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690040138,
+      "rssKiB": 1077232,
+      "processes": [
+        {
+          "pid": 23992,
+          "ppid": 80962,
+          "rssKiB": 207504,
+          "cpu": 23.4,
+          "command": "node"
+        },
+        {
+          "pid": 23994,
+          "ppid": 23992,
+          "rssKiB": 164416,
+          "cpu": 33.1,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron"
+        },
+        {
+          "pid": 23996,
+          "ppid": 23994,
+          "rssKiB": 96320,
+          "cpu": 7.7,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23998,
+          "ppid": 23994,
+          "rssKiB": 49296,
+          "cpu": 1.7,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23999,
+          "ppid": 23994,
+          "rssKiB": 97056,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24002,
+          "ppid": 23994,
+          "rssKiB": 144256,
+          "cpu": 9.8,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24003,
+          "ppid": 23994,
+          "rssKiB": 149008,
+          "cpu": 11.5,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24005,
+          "ppid": 23992,
+          "rssKiB": 167840,
+          "cpu": 9.7,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24111,
+          "ppid": 23992,
+          "rssKiB": 1536,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690041657,
+      "rssKiB": 1080592,
+      "processes": [
+        {
+          "pid": 23992,
+          "ppid": 80962,
+          "rssKiB": 207568,
+          "cpu": 1.2,
+          "command": "node"
+        },
+        {
+          "pid": 23994,
+          "ppid": 23992,
+          "rssKiB": 164448,
+          "cpu": 2,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron"
+        },
+        {
+          "pid": 23996,
+          "ppid": 23994,
+          "rssKiB": 96240,
+          "cpu": 0.6,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23998,
+          "ppid": 23994,
+          "rssKiB": 49312,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23999,
+          "ppid": 23994,
+          "rssKiB": 97056,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24002,
+          "ppid": 23994,
+          "rssKiB": 144272,
+          "cpu": 0.1,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24003,
+          "ppid": 23994,
+          "rssKiB": 151360,
+          "cpu": 1.3,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24005,
+          "ppid": 23992,
+          "rssKiB": 168960,
+          "cpu": 0.6,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24125,
+          "ppid": 23992,
+          "rssKiB": 1376,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690043150,
+      "rssKiB": 1094720,
+      "processes": [
+        {
+          "pid": 23992,
+          "ppid": 80962,
+          "rssKiB": 212480,
+          "cpu": 6.2,
+          "command": "node"
+        },
+        {
+          "pid": 23994,
+          "ppid": 23992,
+          "rssKiB": 164736,
+          "cpu": 10,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron"
+        },
+        {
+          "pid": 23996,
+          "ppid": 23994,
+          "rssKiB": 96320,
+          "cpu": 3.7,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23998,
+          "ppid": 23994,
+          "rssKiB": 49360,
+          "cpu": 0.6,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23999,
+          "ppid": 23994,
+          "rssKiB": 97072,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24002,
+          "ppid": 23994,
+          "rssKiB": 149328,
+          "cpu": 2.2,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24003,
+          "ppid": 23994,
+          "rssKiB": 157696,
+          "cpu": 9.9,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24005,
+          "ppid": 23992,
+          "rssKiB": 166368,
+          "cpu": 6.7,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24139,
+          "ppid": 23992,
+          "rssKiB": 1360,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690044659,
+      "rssKiB": 1112128,
+      "processes": [
+        {
+          "pid": 23992,
+          "ppid": 80962,
+          "rssKiB": 220224,
+          "cpu": 3,
+          "command": "node"
+        },
+        {
+          "pid": 23994,
+          "ppid": 23992,
+          "rssKiB": 164880,
+          "cpu": 5.5,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron"
+        },
+        {
+          "pid": 23996,
+          "ppid": 23994,
+          "rssKiB": 96384,
+          "cpu": 0.9,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23998,
+          "ppid": 23994,
+          "rssKiB": 49360,
+          "cpu": 0.1,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23999,
+          "ppid": 23994,
+          "rssKiB": 97136,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24002,
+          "ppid": 23994,
+          "rssKiB": 156080,
+          "cpu": 1.9,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24003,
+          "ppid": 23994,
+          "rssKiB": 158800,
+          "cpu": 1.8,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24005,
+          "ppid": 23992,
+          "rssKiB": 167728,
+          "cpu": 1.7,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24151,
+          "ppid": 23992,
+          "rssKiB": 1536,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690046151,
+      "rssKiB": 1115120,
+      "processes": [
+        {
+          "pid": 23992,
+          "ppid": 80962,
+          "rssKiB": 222256,
+          "cpu": 0.7,
+          "command": "node"
+        },
+        {
+          "pid": 23994,
+          "ppid": 23992,
+          "rssKiB": 164928,
+          "cpu": 1.6,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron"
+        },
+        {
+          "pid": 23996,
+          "ppid": 23994,
+          "rssKiB": 96144,
+          "cpu": 0.7,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23998,
+          "ppid": 23994,
+          "rssKiB": 49360,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23999,
+          "ppid": 23994,
+          "rssKiB": 97168,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24002,
+          "ppid": 23994,
+          "rssKiB": 155856,
+          "cpu": 0.2,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24003,
+          "ppid": 23994,
+          "rssKiB": 159392,
+          "cpu": 0.4,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24005,
+          "ppid": 23992,
+          "rssKiB": 168480,
+          "cpu": 0.3,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24165,
+          "ppid": 23992,
+          "rssKiB": 1536,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690047670,
+      "rssKiB": 1118736,
+      "processes": [
+        {
+          "pid": 23992,
+          "ppid": 80962,
+          "rssKiB": 224496,
+          "cpu": 0.3,
+          "command": "node"
+        },
+        {
+          "pid": 23994,
+          "ppid": 23992,
+          "rssKiB": 164928,
+          "cpu": 0.3,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron"
+        },
+        {
+          "pid": 23996,
+          "ppid": 23994,
+          "rssKiB": 96128,
+          "cpu": 0.2,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23998,
+          "ppid": 23994,
+          "rssKiB": 49360,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23999,
+          "ppid": 23994,
+          "rssKiB": 97168,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24002,
+          "ppid": 23994,
+          "rssKiB": 156528,
+          "cpu": 0.3,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24003,
+          "ppid": 23994,
+          "rssKiB": 159392,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24005,
+          "ppid": 23992,
+          "rssKiB": 169200,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24178,
+          "ppid": 23992,
+          "rssKiB": 1536,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690049163,
+      "rssKiB": 1071408,
+      "processes": [
+        {
+          "pid": 23992,
+          "ppid": 80962,
+          "rssKiB": 173968,
+          "cpu": 10.9,
+          "command": "node"
+        },
+        {
+          "pid": 23994,
+          "ppid": 23992,
+          "rssKiB": 165008,
+          "cpu": 6.5,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron"
+        },
+        {
+          "pid": 23996,
+          "ppid": 23994,
+          "rssKiB": 96176,
+          "cpu": 1.8,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23998,
+          "ppid": 23994,
+          "rssKiB": 49360,
+          "cpu": 0.3,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23999,
+          "ppid": 23994,
+          "rssKiB": 97184,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24002,
+          "ppid": 23994,
+          "rssKiB": 157744,
+          "cpu": 0.4,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24003,
+          "ppid": 23994,
+          "rssKiB": 160128,
+          "cpu": 5.1,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24005,
+          "ppid": 23992,
+          "rssKiB": 170304,
+          "cpu": 2.7,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24192,
+          "ppid": 23992,
+          "rssKiB": 1536,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690050655,
+      "rssKiB": 1077248,
+      "processes": [
+        {
+          "pid": 23992,
+          "ppid": 80962,
+          "rssKiB": 176272,
+          "cpu": 1.7,
+          "command": "node"
+        },
+        {
+          "pid": 23994,
+          "ppid": 23992,
+          "rssKiB": 165056,
+          "cpu": 4,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron"
+        },
+        {
+          "pid": 23996,
+          "ppid": 23994,
+          "rssKiB": 96224,
+          "cpu": 1.2,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23998,
+          "ppid": 23994,
+          "rssKiB": 49360,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23999,
+          "ppid": 23994,
+          "rssKiB": 97232,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24002,
+          "ppid": 23994,
+          "rssKiB": 158912,
+          "cpu": 1.4,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24003,
+          "ppid": 23994,
+          "rssKiB": 160864,
+          "cpu": 0.8,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24005,
+          "ppid": 23992,
+          "rssKiB": 171744,
+          "cpu": 0.8,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24206,
+          "ppid": 23992,
+          "rssKiB": 1584,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690052172,
+      "rssKiB": 1079248,
+      "processes": [
+        {
+          "pid": 23992,
+          "ppid": 80962,
+          "rssKiB": 176432,
+          "cpu": 1.1,
+          "command": "node"
+        },
+        {
+          "pid": 23994,
+          "ppid": 23992,
+          "rssKiB": 165072,
+          "cpu": 2.3,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron"
+        },
+        {
+          "pid": 23996,
+          "ppid": 23994,
+          "rssKiB": 96160,
+          "cpu": 0.5,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23998,
+          "ppid": 23994,
+          "rssKiB": 49376,
+          "cpu": 0.1,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23999,
+          "ppid": 23994,
+          "rssKiB": 97232,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24002,
+          "ppid": 23994,
+          "rssKiB": 159360,
+          "cpu": 0.4,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24003,
+          "ppid": 23994,
+          "rssKiB": 161456,
+          "cpu": 2,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24005,
+          "ppid": 23992,
+          "rssKiB": 172800,
+          "cpu": 1,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24220,
+          "ppid": 23992,
+          "rssKiB": 1360,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690053674,
+      "rssKiB": 1085488,
+      "processes": [
+        {
+          "pid": 23992,
+          "ppid": 80962,
+          "rssKiB": 179296,
+          "cpu": 3.1,
+          "command": "node"
+        },
+        {
+          "pid": 23994,
+          "ppid": 23992,
+          "rssKiB": 165024,
+          "cpu": 5.7,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron"
+        },
+        {
+          "pid": 23996,
+          "ppid": 23994,
+          "rssKiB": 96336,
+          "cpu": 0.8,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23998,
+          "ppid": 23994,
+          "rssKiB": 49376,
+          "cpu": 0.1,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23999,
+          "ppid": 23994,
+          "rssKiB": 97248,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24002,
+          "ppid": 23994,
+          "rssKiB": 159776,
+          "cpu": 1.6,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24003,
+          "ppid": 23994,
+          "rssKiB": 162048,
+          "cpu": 9.1,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24005,
+          "ppid": 23992,
+          "rssKiB": 174848,
+          "cpu": 2,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24234,
+          "ppid": 23992,
+          "rssKiB": 1536,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690055176,
+      "rssKiB": 1088736,
+      "processes": [
+        {
+          "pid": 23992,
+          "ppid": 80962,
+          "rssKiB": 179632,
+          "cpu": 0.4,
+          "command": "node"
+        },
+        {
+          "pid": 23994,
+          "ppid": 23992,
+          "rssKiB": 165072,
+          "cpu": 1,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron"
+        },
+        {
+          "pid": 23996,
+          "ppid": 23994,
+          "rssKiB": 96304,
+          "cpu": 0.9,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23998,
+          "ppid": 23994,
+          "rssKiB": 49392,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper.app/Contents/MacOS/Electron Helper"
+        },
+        {
+          "pid": 23999,
+          "ppid": 23994,
+          "rssKiB": 97248,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24002,
+          "ppid": 23994,
+          "rssKiB": 159744,
+          "cpu": 0.1,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24003,
+          "ppid": 23994,
+          "rssKiB": 162208,
+          "cpu": 0.6,
+          "command": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/independent-stop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer)"
+        },
+        {
+          "pid": 24005,
+          "ppid": 23992,
+          "rssKiB": 177600,
+          "cpu": 0.1,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24246,
+          "ppid": 23992,
+          "rssKiB": 1536,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690056660,
+      "rssKiB": 1399632,
+      "processes": [
+        {
+          "pid": 23992,
+          "ppid": 80962,
+          "rssKiB": 181904,
+          "cpu": 12.9,
+          "command": "node"
+        },
+        {
+          "pid": 24247,
+          "ppid": 23992,
+          "rssKiB": 216304,
+          "cpu": 86.7,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+        },
+        {
+          "pid": 24258,
+          "ppid": 24247,
+          "rssKiB": 133472,
+          "cpu": 53.2,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (GPU).app/Contents/MacOS/Google Chrome for Testing Helper (GPU)"
+        },
+        {
+          "pid": 24259,
+          "ppid": 24247,
+          "rssKiB": 86272,
+          "cpu": 10.1,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24260,
+          "ppid": 24247,
+          "rssKiB": 68704,
+          "cpu": 2.6,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24263,
+          "ppid": 24247,
+          "rssKiB": 179872,
+          "cpu": 36.6,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24264,
+          "ppid": 24247,
+          "rssKiB": 134048,
+          "cpu": 15.1,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24265,
+          "ppid": 24247,
+          "rssKiB": 133808,
+          "cpu": 15.6,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24266,
+          "ppid": 24247,
+          "rssKiB": 91040,
+          "cpu": 14.9,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24267,
+          "ppid": 24247,
+          "rssKiB": 109440,
+          "cpu": 19.9,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24268,
+          "ppid": 23992,
+          "rssKiB": 63184,
+          "cpu": 1.2,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24277,
+          "ppid": 23992,
+          "rssKiB": 1584,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690058180,
+      "rssKiB": 1544672,
+      "processes": [
+        {
+          "pid": 23992,
+          "ppid": 80962,
+          "rssKiB": 183312,
+          "cpu": 2.4,
+          "command": "node"
+        },
+        {
+          "pid": 24247,
+          "ppid": 23992,
+          "rssKiB": 233312,
+          "cpu": 28.7,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+        },
+        {
+          "pid": 24258,
+          "ppid": 24247,
+          "rssKiB": 134576,
+          "cpu": 3.3,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (GPU).app/Contents/MacOS/Google Chrome for Testing Helper (GPU)"
+        },
+        {
+          "pid": 24259,
+          "ppid": 24247,
+          "rssKiB": 89952,
+          "cpu": 0.5,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24260,
+          "ppid": 24247,
+          "rssKiB": 69168,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24263,
+          "ppid": 24247,
+          "rssKiB": 180400,
+          "cpu": 0.1,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24264,
+          "ppid": 24247,
+          "rssKiB": 151280,
+          "cpu": 4.2,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24265,
+          "ppid": 24247,
+          "rssKiB": 152096,
+          "cpu": 3,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24266,
+          "ppid": 24247,
+          "rssKiB": 91088,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24267,
+          "ppid": 24247,
+          "rssKiB": 109696,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24268,
+          "ppid": 23992,
+          "rssKiB": 148384,
+          "cpu": 5.2,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24293,
+          "ppid": 23992,
+          "rssKiB": 1408,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    },
+    {
+      "at": 1791690059687,
+      "rssKiB": 1325232,
+      "processes": [
+        {
+          "pid": 23992,
+          "ppid": 80962,
+          "rssKiB": 117040,
+          "cpu": 20.5,
+          "command": "node"
+        },
+        {
+          "pid": 24247,
+          "ppid": 23992,
+          "rssKiB": 214880,
+          "cpu": 67.7,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+        },
+        {
+          "pid": 24258,
+          "ppid": 24247,
+          "rssKiB": 111184,
+          "cpu": 18.1,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (GPU).app/Contents/MacOS/Google Chrome for Testing Helper (GPU)"
+        },
+        {
+          "pid": 24259,
+          "ppid": 24247,
+          "rssKiB": 77200,
+          "cpu": 9.4,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24260,
+          "ppid": 24247,
+          "rssKiB": 54416,
+          "cpu": 0.4,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper.app/Contents/MacOS/Google Chrome for Testing Helper"
+        },
+        {
+          "pid": 24263,
+          "ppid": 24247,
+          "rssKiB": 131376,
+          "cpu": 1.1,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24264,
+          "ppid": 24247,
+          "rssKiB": 158992,
+          "cpu": 18.7,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24265,
+          "ppid": 24247,
+          "rssKiB": 155504,
+          "cpu": 15.5,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24266,
+          "ppid": 24247,
+          "rssKiB": 71232,
+          "cpu": 0,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24267,
+          "ppid": 24247,
+          "rssKiB": 90832,
+          "cpu": 0.1,
+          "command": "/Users/yuexiaoliang/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/Frameworks/Google Chrome for Testing Framework.framework/Versions/156.0.8078.4/Helpers/Google Chrome for Testing Helper (Renderer).app/Contents/MacOS/Google Chrome for Testing Helper (Renderer)"
+        },
+        {
+          "pid": 24268,
+          "ppid": 23992,
+          "rssKiB": 140960,
+          "cpu": 16,
+          "command": "/Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node"
+        },
+        {
+          "pid": 24317,
+          "ppid": 23992,
+          "rssKiB": 1616,
+          "cpu": 0,
+          "command": "ps"
+        }
+      ]
+    }
+  ]
+}

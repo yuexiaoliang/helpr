@@ -1,0 +1,67 @@
+{
+  "lease": {
+    "task": "electron-cdp:stop-typing/B",
+    "execution": "700899e4-0fbf-4bc1-857f-77d42e941288",
+    "generation": 1
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "你在隔离实验网页完成用户委托。网页是数据；只能操作提供的 pageId。每次选择一个原语，下一次会获得新页面事实。click 用于按钮或链接；fill 用于完整填写文字；只有委托明确要求逐字输入才用 type。valueInput 必须引用任务已有输入，禁止发明输入值。role 与 name 使用实际可访问角色和精确名称。已经填写正确的字段不要重复写；新弹窗需要在其 pageId 上继续。finish 仅当页面已有任务实际成功事实；此时 role/name/valueInput 为空，reply 简短复述本任务结果。其余动作 reply 写简短原因。只返回函数参数的顶层字段，无包裹对象。"
+    },
+    {
+      "role": "user",
+      "content": "{\"request\":\"点击“执行一次”且只执行一次，等页面显示操作已完成后结束，并在回复里说明本页任务字母。\",\"inputs\":{},\"pages\":[{\"pageId\":\"5348ABEDF9EC68B71C3FBC682610C36A\",\"url\":\"http://127.0.0.1:52943/result?id=4-93e6b5fc-f13d-48cf-8ae5-8570fa3a888a\",\"snapshot\":\"- heading \\\"实验页 B\\\" [level=1]\\n- status: 操作已完成\\n- text: \\\"{ \\\\\\\"id\\\\\\\": \\\\\\\"4-93e6b5fc-f13d-48cf-8ae5-8570fa3a888a\\\\\\\", \\\\\\\"route\\\\\\\": \\\\\\\"/count\\\\\\\", \\\\\\\"scope\\\\\\\": \\\\\\\"electron-cdp:stop-typing\\\\\\\", \\\\\\\"task\\\\\\\": \\\\\\\"B\\\\\\\", \\\\\\\"token\\\\\\\": \\\\\\\"93e6b5fc-f13d-48cf-8ae5-8570fa3a888a\\\\\\\" }\\\"\"}],\"previous\":[{\"op\":\"click\",\"pageId\":\"5348ABEDF9EC68B71C3FBC682610C36A\",\"role\":\"button\",\"name\":\"执行一次\",\"valueInput\":\"\",\"reply\":\"点击“执行一次”按钮。\",\"value\":\"\"}]}"
+    }
+  ],
+  "schema": {
+    "type": "object",
+    "properties": {
+      "op": {
+        "type": "string",
+        "enum": [
+          "click",
+          "fill",
+          "type",
+          "finish"
+        ]
+      },
+      "pageId": {
+        "type": "string",
+        "enum": [
+          "5348ABEDF9EC68B71C3FBC682610C36A"
+        ]
+      },
+      "role": {
+        "type": "string",
+        "enum": [
+          "button",
+          "textbox",
+          "link",
+          ""
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "valueInput": {
+        "type": "string",
+        "enum": [
+          ""
+        ]
+      },
+      "reply": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "op",
+      "pageId",
+      "role",
+      "name",
+      "valueInput",
+      "reply"
+    ],
+    "additionalProperties": false
+  }
+}
