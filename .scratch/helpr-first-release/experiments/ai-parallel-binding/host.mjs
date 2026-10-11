@@ -29,9 +29,8 @@ export async function openHost(kind,base,out){
       const all=await worker.evaluate(()=>globalThis.identities());
       return targets.map(id=>({targetId:id.targetId,tabId:all.targets.find(t=>t.id===id.targetId)?.tabId}));
     }
-    return {kind,endpoint,pages,ids,mappings,control,versions:app?await app.evaluate(()=>process.versions):{chromium:control.version()},
+    return {kind,endpoint,pages,ids,mappings,control,app,versions:app?await app.evaluate(()=>process.versions):{chromium:control.version()},
       async show(label){if(app)return app.evaluate((_e,label)=>global.aiLab.show(label),label);await pages[['A','B'].indexOf(label)].bringToFront();return {active:(await worker.evaluate(()=>chrome.tabs.query({active:true}))).map(t=>({id:t.id,url:t.url}))};},
-      async revealForCapture(page){if(app){const id=await pageIdentity(page);await app.evaluate(({BrowserWindow,webContents},id)=>{global.aiLab.show('split');const wc=webContents.fromDevToolsTargetId(id);const w=wc&&BrowserWindow.fromWebContents(wc);w?.showInactive();},id.targetId);}else await page.bringToFront();},
       async close(){await control.close();if(app)await app.close();if(context)await context.close();}};
   }catch(e){await control?.close().catch(()=>{});await app?.close().catch(()=>{});await context?.close().catch(()=>{});throw e;}
 }

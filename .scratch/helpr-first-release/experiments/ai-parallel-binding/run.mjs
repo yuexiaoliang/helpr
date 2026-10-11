@@ -1,41 +1,58 @@
 import { fork,execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { readFile,writeFile,mkdir,copyFile,readdir } from 'node:fs/promises';
+import { readFile,mkdir,copyFile,readdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { randomUUID,createHash } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 import path from 'node:path';
 import os from 'node:os';
 import assert from 'node:assert/strict';
 import { setTimeout as delay } from 'node:timers/promises';
 import { createLab,deferred,until } from './lab.mjs';
 import { modelSession } from './model.mjs';
+import { openRun, readStatus, atomicJSON } from './control.mjs';
+import { planExperiment } from './plan.mjs';
+import { historicalRegistration } from './registration.mjs';
+import { collectScreenshots } from './capture.mjs';
 const directory=path.dirname(fileURLToPath(import.meta.url));
-const root=path.resolve(process.argv[2]||directory+'/artifacts/'+new Date().toISOString().replace(/[:.]/g,'-'));
+const argumentsList=process.argv.slice(2),flags=argumentsList.filter(a=>a.startsWith('--'));
+if(flags.some(f=>!['--plan','--status'].includes(f))||flags.length>1||argumentsList.filter(a=>!a.startsWith('--')).length>1)throw new Error('usage: node run.mjs [output-directory] [--plan|--status]');
+const root=path.resolve(argumentsList.find(a=>!a.startsWith('--'))||directory+'/artifacts/'+new Date().toISOString().replace(/[:.]/g,'-'));
 const names=['parallel-exploration','stop-waiting-click','stop-typing','queued-dispatch','queued-retry','late-old-generation','cancel-model-request','page-error','foreign-page'];
-const coreFiles=['worker.mjs','model.mjs','lab.mjs','electron.cjs'];
-const coreHashes=Object.fromEntries(await Promise.all(coreFiles.map(async f=>[f,createHash('sha256').update(await readFile(directory+'/'+f)).digest('hex')])));
-const completed=new Set();
-for(const entry of await readdir(root+'/attempts').catch(()=>[])){
-  const previous=JSON.parse(await readFile(root+'/attempts/'+entry+'/results.json','utf8').catch(()=>'null'));
-  if(previous&&coreFiles.every(f=>previous.metadata.sourceHashes[f]===coreHashes[f]))for(const r of previous.results)if(r.status==='passed')completed.add(r.host+':'+r.name);
+const registration=await historicalRegistration(directory),ledgerPath=directory+'/private/experiment-state.json';
+if(flags.includes('--status')){
+  const status=await readStatus(ledgerPath,registration);
+  console.log(JSON.stringify({...status,results:status.results.map(({evidence,...r})=>r)},null,2));process.exit(0);
 }
-const plan=JSON.parse(await readFile(root+'/PLAN.json','utf8').catch(()=>'null'));
-const hostFilter=process.env.HOST_FILTER||plan?.host,caseFilter=process.env.CASE_FILTER?.split(',')||plan?.cases;
+let selection;
+try{selection=JSON.parse(await readFile(root+'/PLAN.json','utf8'));}catch(error){if(error.code!=='ENOENT')throw error;}
+const hostFilter=process.env.HOST_FILTER||selection?.host,caseFilter=process.env.CASE_FILTER?.split(',')||selection?.cases;
+if(hostFilter&&!['electron-cdp','chromium-cdp'].includes(hostFilter))throw new Error('unknown-host');
+if(caseFilter&&(!Array.isArray(caseFilter)||caseFilter.some(n=>!names.includes(n))))throw new Error('unknown-case');
 const selectedKinds=['electron-cdp','chromium-cdp'].filter(k=>!hostFilter||k===hostFilter);
-const casesFor=kind=>names.filter(n=>(!caseFilter||caseFilter.includes(n))&&!completed.has(kind+':'+n));
-if(process.argv.includes('--plan')){
-  const meta=JSON.parse(await readFile(root+'/model-meta.json','utf8').catch(()=>'null'));
-  console.log(JSON.stringify({root,completed:[...completed],remaining:selectedKinds.flatMap(k=>casesFor(k).map(n=>k+':'+n)),callsRemaining:meta?meta.limits.calls-meta.calls.length:96,timeRemainingMs:meta?Math.max(0,meta.deadline-Date.now()):40*60000},null,2));
-  process.exit(0);
+const cases=selectedKinds.flatMap(k=>names.filter(n=>!caseFilter||caseFilter.includes(n)).map(n=>k+':'+n));
+const config=JSON.parse(await readFile(directory+'/../model-api/config.example.json','utf8'));
+const plan=await planExperiment({directory,ledgerPath,registration,config,cases});
+if(flags.includes('--plan')){console.log(JSON.stringify({root,...plan},null,2));process.exit(0);}
+if(!plan.remaining.length){console.log(JSON.stringify({root,completed:plan.completed,remaining:[]}));process.exit(0);}
+if(!plan.budget.callsRemaining||!plan.budget.tokensRemaining||!plan.budget.timeRemainingMs){
+  console.error(JSON.stringify({error:'experiment-budget-exhausted',budget:plan.budget,notRun:plan.remaining}));process.exit(1);
 }
-const {openHost,pageIdentity}=await import('./host.mjs');
-await mkdir(root+'/attempts',{recursive:true});
-const attempt=(await readdir(root+'/attempts')).length+1,out=root+'/attempts/'+String(attempt).padStart(2,'0');
-await mkdir(out+'/source',{recursive:true});await writeFile(directory+'/artifacts/latest.txt',root+'\n');
-const hashes={};for(const f of ['run.mjs','worker.mjs','host.mjs','model.mjs','lab.mjs','electron.cjs']){await copyFile(directory+'/'+f,out+'/source/'+f);hashes[f]=createHash('sha256').update(await readFile(directory+'/'+f)).digest('hex');}
-const lab=await createLab(out),model=await modelSession(root,lab.log),results=[],resources=[];
+const casesFor=kind=>names.filter(n=>plan.remaining.includes(kind+':'+n));
+const attempt=(await readdir(root+'/attempts').catch(error=>{if(error.code==='ENOENT')return [];throw error;})).length+1,out=root+'/attempts/'+String(attempt).padStart(2,'0');
+const control=await openRun({ledgerPath,registration,fingerprint:plan.fingerprint,output:out});
+let openHost,pageIdentity,lab,model;
+const hashes={...plan.fingerprint.sourceHashes,'capture.mjs':plan.fingerprint.captureHash};
+try{
+  ({openHost,pageIdentity}=await import('./host.mjs'));
+  await mkdir(out+'/source',{recursive:true});
+  for(const file of Object.keys(hashes)){
+    const target=out+'/source/'+file.replace(/^\.\.\//,'shared/');await mkdir(path.dirname(target),{recursive:true});await copyFile(directory+'/'+file,target);
+  }
+  lab=await createLab(out);model=await modelSession(out,lab.log,{run:control,config});
+}catch(error){await lab?.close().catch(()=>{});await control.close();throw error;}
+const results=[],resources=[];
 const metadata={startedAt:new Date().toISOString(),attempt,pid:process.pid,sourceHashes:hashes,node:process.version,platform:os.platform(),arch:os.arch(),release:os.release(),playwright:'1.64.0',electron:'44.7.0',base:lab.base,scope:'real model + visible browser + local synthetic website; automatic fault injection, no human input'};
-const save=async()=>{await lab.flush();await writeFile(out+'/results.json',JSON.stringify({metadata,results,resources},null,2)+'\n');};
+const save=async()=>{await lab.flush();await atomicJSON(out+'/results.json',{metadata,results,resources});};
 const capture=p=>p.then(value=>({ok:true,value}),e=>({ok:false,name:e.name,error:e.message}));
 async function sample(){try{const {stdout}=await promisify(execFile)('ps',['-axo','pid=,ppid=,rss=,pcpu=,comm=']);const all=stdout.trim().split('\n').map(line=>{const m=/^\s*(\d+)\s+(\d+)\s+(\d+)\s+(\S+)\s+(.+)$/.exec(line);return m&&{pid:+m[1],ppid:+m[2],rssKiB:+m[3],cpu:+m[4],command:m[5]};}).filter(Boolean);const ids=new Set([process.pid]);for(let i=0;i<8;i++)for(const p of all)if(ids.has(p.ppid))ids.add(p.pid);const group=all.filter(p=>ids.has(p.pid));resources.push({at:Date.now(),rssKiB:group.reduce((s,p)=>s+p.rssKiB,0),processes:group});}catch{}}
 const sampler=setInterval(()=>sample(),1500);sampler.unref();
@@ -59,17 +76,17 @@ let host,rpc;
 try{
   for(const kind of selectedKinds){
     if(!casesFor(kind).length)continue;
-    if(model.meta.calls.length>=model.meta.limits.calls||Date.now()>=model.meta.deadline){metadata.notRun=selectedKinds.flatMap(k=>casesFor(k).map(n=>k+':'+n));metadata.budgetExhausted=true;break;}
+    if(!(await readStatus(ledgerPath)).budget.callsRemaining||!(await readStatus(ledgerPath)).budget.timeRemainingMs){metadata.notRun=selectedKinds.flatMap(k=>casesFor(k).map(n=>k+':'+n));metadata.budgetExhausted=true;break;}
     host=await openHost(kind,lab.base,out);metadata[kind]={versions:host.versions,mappings:await host.mappings()};
     assert(metadata[kind].mappings.every(m=>Number.isInteger(m.tabId??m.webContentsId)),'native-target-mapping');
     rpc=rpcClient(host.endpoint);metadata[kind].worker=await rpc.ready;
     for(const name of casesFor(kind)){
-      if(model.meta.calls.length>=model.meta.limits.calls||Date.now()>=model.meta.deadline){metadata.notRun=casesFor(kind).filter(n=>!results.some(r=>r.host===kind&&r.name===n));metadata.budgetExhausted=true;break;}
+      if(!(await readStatus(ledgerPath)).budget.callsRemaining||!(await readStatus(ledgerPath)).budget.timeRemainingMs){metadata.notRun=casesFor(kind).filter(n=>!results.some(r=>r.host===kind&&r.name===n));metadata.budgetExhausted=true;break;}
       const scope=kind+':'+name,caseDir=out+'/'+scope.replaceAll(':','-');await mkdir(caseDir,{recursive:true});
       const started=Date.now(),evidence={},cleanup=[];let a,b,bResult,pendingA,bPromise,stopMs,switching=true;
       lab.log({kind:'case-start',scope});
-      try{
-        assert(Date.now()<model.meta.deadline,'time-budget');
+      const outcome=await control.runCase({key:scope,execute:async()=>{
+        assert((await readStatus(ledgerPath)).budget.timeRemainingMs>0,'time-budget');
         for(const p of host.control.contexts().flatMap(c=>c.pages()))if(!host.pages.includes(p)&&!p.url().startsWith('data:')&&!p.url().startsWith('chrome-extension:'))await p.close();
         const configs=['A','B'].map(task=>({scope,task,token:randomUUID(),disabled:task==='A'&&['stop-waiting-click','queued-retry'].includes(name)}));
         for(const [i,p]of host.pages.entries()){
@@ -141,23 +158,24 @@ try{
           assert(!scopeEvents.some(l=>l.kind==='primitive-start'&&l.task===e.task&&l.generation===e.generation&&l.seq>e.seq),'dispatch-after-stop');
         }
         evidence.viewSwitches=scopeEvents.filter(e=>e.kind==='view-switched').length;
-        evidence.screenshots=[];
-        const screenshot=async(p,file)=>{await host.revealForCapture(p);const result=await capture(p.screenshot({path:caseDir+'/'+file,timeout:4000}));evidence.screenshots.push({file,ok:result.ok,error:result.error});};
-        for(const [i,p]of host.pages.entries())await screenshot(p,['A','B'][i]+'.png');
-        if(name==='parallel-exploration')for(const [i,p]of host.control.contexts().flatMap(c=>c.pages()).filter(p=>p.url().includes('/result')).entries())await screenshot(p,'result-'+i+'.png');
-        results.push({host:kind,name,status:'passed',started,ended:Date.now(),evidence});console.log('PASS '+scope);
-      }catch(e){results.push({host:kind,name,status:'failed',started,ended:Date.now(),error:e.message,stack:e.stack,evidence:{...evidence,switchLoop:undefined}});console.log('FAIL '+scope+' '+e.message.slice(0,500));}
-      finally{
-        switching=false;for(const f of cleanup)f();lab.releaseAll();await rpc.call('release',{gate:scope}).catch(()=>{});
-        for(const t of [a,b])if(t?.active)await stop(rpc,t).catch(()=>{});
-        await Promise.allSettled([pendingA,bPromise].filter(Boolean));await save();
-      }
+        return evidence;
+      },capture:()=>collectScreenshots(host,name,caseDir),cleanup:async()=>{
+        switching=false;for(const f of cleanup)f();lab.releaseAll();await rpc.call('release',{gate:scope});
+        for(const t of [a,b])if(t?.active)await stop(rpc,t);
+        await Promise.allSettled([pendingA,bPromise].filter(Boolean));
+      }});
+      results.push({host:kind,name,status:outcome.status,started,ended:Date.now(),error:outcome.error,
+        evidence:{...outcome.evidence,screenshots:outcome.capture.evidence},capture:outcome.capture,cleanup:outcome.cleanup});
+      console.log(outcome.status.toUpperCase()+' '+scope);await save();
+      if(outcome.cleanup?.status==='failed')throw new Error('case-cleanup-failed:'+outcome.cleanup.error);
     }
     await rpc.close();rpc=undefined;await host.close();host=undefined;
   }
 }catch(e){metadata.fatal=e.message;console.error(e);process.exitCode=1;}
 finally{
-  clearInterval(sampler);lab.releaseAll();await rpc?.close().catch(()=>{});await host?.close().catch(()=>{});metadata.endedAt=new Date().toISOString();await sample();await save();await model.persist();await lab.close();
-  console.log(JSON.stringify({root,out,cases:results.length,failures:results.filter(r=>r.status!=='passed').map(r=>r.host+':'+r.name),modelCalls:model.meta.calls.length,usage:model.meta.calls.reduce((n,c)=>n+(c.usage?.total_tokens||0),0)}));
+  clearInterval(sampler);lab.releaseAll();
+  try{await rpc?.close().catch(()=>{});await host?.close().catch(()=>{});metadata.endedAt=new Date().toISOString();await sample();await save();}
+  finally{try{await lab.close();}finally{await control.close();}}
+  console.log(JSON.stringify({root,out,cases:results.length,failures:results.filter(r=>r.status!=='passed').map(r=>r.host+':'+r.name),budget:(await readStatus(ledgerPath)).budget}));
   if(results.some(r=>r.status!=='passed'))process.exitCode=1;
 }

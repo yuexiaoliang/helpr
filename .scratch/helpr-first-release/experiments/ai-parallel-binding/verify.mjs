@@ -9,6 +9,12 @@ import assert from 'node:assert/strict';
 const base=path.dirname(fileURLToPath(import.meta.url)),read=async f=>JSON.parse(await readFile(f,'utf8'));
 const studies=['artifacts/2026-10-11T03-38-56-107Z','artifacts/chromium-missing-cases'];
 const cases=['parallel-exploration','stop-waiting-click','stop-typing','queued-dispatch','queued-retry','late-old-generation','cancel-model-request','page-error','foreign-page'];
+const historicalProtocol={
+  "worker.mjs": "8cd966213ba05077f8439466b70487a1fa6bb7d3976b43d2370d3986c5b0dc04",
+  "model.mjs": "331b96149ee0bd6bbe8dae81800163270e9d091c5d9a2b8fba3460322e9c11d8",
+  "lab.mjs": "c11ad62ebb7d2556c1ae22d325793675ecb210251df0a1916fcbc2b6fc08d79e",
+  "electron.cjs": "73c9ac59fa2aec11cb400bf27ebce735c344b9b6bb891b4af301d9fd95091dae"
+};
 const attempts=[],budgets=[],byCase=new Map(),failures=[];let primitiveCount=0,observations=0,modelInputs=0;
 const inputs=new Map(),allCalls=[];
 for(const study of studies){
@@ -42,9 +48,9 @@ for(const study of studies){
       assert(input.user.pages.every(p=>owned.has(p.pageId)),'model saw another execution page');
     }
     for(const file of ['worker.mjs','model.mjs','lab.mjs','electron.cjs']){
-      const current=createHash('sha256').update(await readFile(base+'/'+file)).digest('hex');
-      assert.equal(current,data.metadata.sourceHashes[file],'execution protocol changed after evidence');
-      assert.equal(current,createHash('sha256').update(await readFile(base+'/'+dir+'/source/'+file)).digest('hex'));
+      const expected=historicalProtocol[file];
+      assert.equal(expected,data.metadata.sourceHashes[file],'historical protocol hash changed');
+      assert.equal(expected,createHash('sha256').update(await readFile(base+'/'+dir+'/source/'+file)).digest('hex'));
     }
     const attempt={dir,metadata:data.metadata,results:data.results,events,resources:data.resources};attempts.push(attempt);
     for(const r of data.results){
@@ -102,7 +108,8 @@ const peak=resources.reduce((a,b)=>b.rssKiB>a.rssKiB?b:a);
 const screenshotCount=(await Promise.all(attempts.map(async a=>{let n=0;for(const item of await readdir(base+'/'+a.dir,{withFileTypes:true}))if(item.isDirectory()&&item.name!=='profiles'&&item.name!=='source')n+=(await readdir(base+'/'+a.dir+'/'+item.name)).filter(f=>f.endsWith('.png')).length;return n;}))).reduce((a,b)=>a+b,0);
 const plans=[];
 for(const study of studies){const before=await readFile(base+'/'+study+'/model-meta.json');const {stdout}=await promisify(execFile)(process.execPath,[base+'/run.mjs',base+'/'+study,'--plan']);const after=await readFile(base+'/'+study+'/model-meta.json');assert(before.equals(after),'plan mutated model records');plans.push(JSON.parse(stdout));}
-assert.equal(plans[0].remaining.length,5);assert.equal(plans[0].callsRemaining,0);assert.equal(plans[1].remaining.length,0);
-const output={verifiedAt:new Date().toISOString(),uniqueCases:selected.length,passed:selected.length,primitiveCount,observations,modelInputs,screenshotCount,budgets,totalCalls:budgets.reduce((s,b)=>s+b.calls,0),knownTokens:budgets.reduce((s,b)=>s+b.knownTokens,0),missingUsageCalls:budgets.reduce((s,b)=>s+b.missingUsage.length,0),failures,resources:{samples:resources.length,peakRssMiB:peak.rssKiB/1024,peakAt:peak.at,peakAttempt:peak.dir,interpretation:'1.5-second samples of runner process tree RSS; sums shared pages and includes driver/host/worker/renderers, not a product or steady-state memory estimate'},checks:{pageOwnership:true,stoppedGenerationFenced:true,modelPageIsolation:true,realModelOverlapBothHosts:true,realServerOverlapBothHosts:true,independentBResults:true,sameExecutionProtocolAcrossStudies:true,resumePlanReadOnly:true},selected};
+assert.equal(plans[0].remaining.length,18);assert.equal(plans[1].remaining.length,5);
+for(const plan of plans){assert.equal(plan.budget.calls,113);assert.equal(plan.budget.callsRemaining,0);assert.equal(plan.completed.length,0);}
+const output={verifiedAt:new Date().toISOString(),uniqueCases:selected.length,passed:selected.length,primitiveCount,observations,modelInputs,screenshotCount,budgets,totalCalls:budgets.reduce((s,b)=>s+b.calls,0),knownTokens:budgets.reduce((s,b)=>s+b.knownTokens,0),missingUsageCalls:budgets.reduce((s,b)=>s+b.missingUsage.length,0),failures,resources:{samples:resources.length,peakRssMiB:peak.rssKiB/1024,peakAt:peak.at,peakAttempt:peak.dir,interpretation:'1.5-second samples of runner process tree RSS; sums shared pages and includes driver/host/worker/renderers, not a product or steady-state memory estimate'},checks:{pageOwnership:true,stoppedGenerationFenced:true,modelPageIsolation:true,realModelOverlapBothHosts:true,realServerOverlapBothHosts:true,independentBResults:true,sameExecutionProtocolAcrossStudies:true,resumePlanReadOnly:true,historicalResultsNotReusedByCurrentDriver:true},selected};
 if(!process.argv.includes('--check'))await writeFile(base+'/evidence-index.json',JSON.stringify(output,null,2)+'\n');
 console.log(JSON.stringify({uniqueCases:output.uniqueCases,passed:output.passed,primitiveCount,observations,modelInputs,screenshotCount,totalCalls:output.totalCalls,knownTokens:output.knownTokens,missingUsageCalls:output.missingUsageCalls,peakRssMiB:output.resources.peakRssMiB,checks:output.checks},null,2));
