@@ -1,0 +1,15 @@
+{
+  "role": "assistant",
+  "content": "",
+  "tool_calls": [
+    {
+      "index": 0,
+      "id": "call_00_HPqKE0f8Qh5G3SL30WlY9039",
+      "type": "function",
+      "function": {
+        "name": "record_proposal",
+        "arguments": "{\"target\": {\"frame\": \"editor-canvas\", \"by\": \"role\", \"role\": \"document\", \"name\": \"Block: Paragraph\"}, \"reasoning\": \"正文填写后，编辑器画布中的段落块可访问名称由「Empty block; start writing or type forward slash to choose a block」变为「Block: Paragraph」，这是填写后仍然成立且唯一的实际观察位置，其内容即为本次输入的正文。因此以 editor-canvas 中 role=document、name=\\\"Block: Paragraph\\\" 作为稳定定位。\"}"
+      }
+    }
+  ]
+}

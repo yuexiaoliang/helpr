@@ -1,0 +1,101 @@
+{
+  "rejected": true,
+  "reason": "模板目标为「新建文章」（kind=new_post），而本次委托要求修改已存在的文章（目标地址 http://home.ts-ali.internal:38080/?p=6），目标操作不相容；且模板约束为「除本次新建测试记录外，不得改动已有文章或网站设置」，与本次「只允许修改本次指定的目标文章」冲突。因此 compatible=false，inputs 为空。",
+  "proposal": {
+    "compatible": false,
+    "reason": "模板目标为「新建文章」（kind=new_post），而本次委托要求修改已存在的文章（目标地址 http://home.ts-ali.internal:38080/?p=6），目标操作不相容；且模板约束为「除本次新建测试记录外，不得改动已有文章或网站设置」，与本次「只允许修改本次指定的目标文章」冲突。因此 compatible=false，inputs 为空。",
+    "goalKind": "edit_post",
+    "goal": "修改已存在的目标文章（http://home.ts-ali.internal:38080/?p=6），标题改为「自主归纳 negative-update staged」，正文替换为指定完整内容，仅选择分类「Excel 验证」，并将原始 Excel 文件作为可下载附件加入正文，立即公开发布。",
+    "strings": [
+      {
+        "key": "post_title",
+        "description": "目标文章的标题",
+        "value": "自主归纳 negative-update staged",
+        "quote": "标题是「自主归纳 negative-update staged」"
+      },
+      {
+        "key": "post_content",
+        "description": "目标文章的正文完整内容",
+        "value": "本文与附件均为虚构实验素材。样本 negative-update，校验编号 bf0182f157。请保留原始文件，不改写表格内容。",
+        "quote": "正文完整内容是「本文与附件均为虚构实验素材。样本 negative-update，校验编号 bf0182f157。请保留原始文件，不改写表格内容。」"
+      },
+      {
+        "key": "post_category",
+        "description": "文章选择的分类",
+        "value": "Excel 验证",
+        "quote": "只选择分类「Excel 验证」，不选默认分类"
+      },
+      {
+        "key": "target_post_url",
+        "description": "本次允许修改的目标文章地址",
+        "value": "http://home.ts-ali.internal:38080/?p=6",
+        "quote": "目标文章地址为 http://home.ts-ali.internal:38080/?p=6"
+      }
+    ],
+    "files": [
+      {
+        "key": "attachment_excel",
+        "description": "作为可下载附件加入正文的原始 Excel 文件",
+        "attachmentId": "material-1"
+      }
+    ],
+    "constraints": [
+      {
+        "description": "文章需立即公开发布，而非保存草稿",
+        "quote": "立即公开发布"
+      },
+      {
+        "description": "只选择分类「Excel 验证」，不选默认分类",
+        "quote": "只选择分类「Excel 验证」，不选默认分类"
+      },
+      {
+        "description": "附件须为原始 Excel 文件，不读取或改写其内容",
+        "quote": "把原始 Excel 文件作为可下载附件加入正文，不读取或改写 Excel 内容"
+      },
+      {
+        "description": "只允许修改本次指定的目标文章，不得改动其它文章或网站设置",
+        "quote": "只允许修改本次指定的目标文章，不得改动其它文章或网站设置"
+      },
+      {
+        "description": "不得自行增加建议内容",
+        "quote": "不要自行增加建议内容"
+      }
+    ],
+    "inputs": {
+      "post_title": {
+        "key": "post_title",
+        "description": "目标文章的标题",
+        "value": "自主归纳 negative-update staged",
+        "quote": "标题是「自主归纳 negative-update staged」",
+        "type": "string"
+      },
+      "post_content": {
+        "key": "post_content",
+        "description": "目标文章的正文完整内容",
+        "value": "本文与附件均为虚构实验素材。样本 negative-update，校验编号 bf0182f157。请保留原始文件，不改写表格内容。",
+        "quote": "正文完整内容是「本文与附件均为虚构实验素材。样本 negative-update，校验编号 bf0182f157。请保留原始文件，不改写表格内容。」",
+        "type": "string"
+      },
+      "post_category": {
+        "key": "post_category",
+        "description": "文章选择的分类",
+        "value": "Excel 验证",
+        "quote": "只选择分类「Excel 验证」，不选默认分类",
+        "type": "string"
+      },
+      "target_post_url": {
+        "key": "target_post_url",
+        "description": "本次允许修改的目标文章地址",
+        "value": "http://home.ts-ali.internal:38080/?p=6",
+        "quote": "目标文章地址为 http://home.ts-ali.internal:38080/?p=6",
+        "type": "string"
+      },
+      "attachment_excel": {
+        "key": "attachment_excel",
+        "description": "作为可下载附件加入正文的原始 Excel 文件",
+        "attachmentId": "material-1",
+        "type": "file"
+      }
+    }
+  }
+}

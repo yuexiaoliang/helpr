@@ -21,7 +21,7 @@ Map: [helpr 首版技术决策地图](../map.md)
 
 ## Answer
 
-2026-10-10：完成独立 Chromium + Playwright + `deepseek-flash` 的真实后台实验。[实测报告](../experiments/runtime-flow-replay/REPORT.md)、[复现入口](../experiments/runtime-flow-replay/README.md)和[四阶段汇总](../experiments/runtime-flow-replay/artifacts/2026-10-10T10-30-00-complete/summary.json)已保存。
+2026-10-10：完成独立 Chromium + Playwright + `deepseek-flash` 的真实后台实验。[实测报告](../experiments/runtime-flow-replay/REPORT.md)、[复现入口](../experiments/runtime-flow-replay/README.md)和[四阶段汇总](../experiments/runtime-flow-replay/artifacts/2026-10-10T10-25-45-629Z/2026-10-10T10-30-00-complete/summary.json)已保存。
 
 从无业务流程开始，AI 学出 17 个成功步骤并实际发布 Excel 附件。更换标题、正文和文件后，新进程加载原文件完成发布，网页重放调用模型 0 次。把标题控件改名后，原步骤失败，AI 用 1 次调用修复；核对实际公开文章及下载文件后保存新版本，再由另一个新进程以第 4 份素材零模型重放成功。四次正式结果的附件均逐字节一致，四份素材的哈希不同。
 

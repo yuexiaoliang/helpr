@@ -1,0 +1,39 @@
+[
+  {
+    "kind": "value",
+    "target": {
+      "frame": "editor-canvas",
+      "by": "role",
+      "role": "textbox",
+      "name": "Add title"
+    },
+    "compare": "equals",
+    "expected": {
+      "input": "post_title"
+    },
+    "covers": "post_title"
+  },
+  {
+    "kind": "value",
+    "target": {
+      "frame": "editor-canvas",
+      "by": "text",
+      "name": "本文与附件均为虚构实验素材。样本 learn-2，校验编号 6a5d5558df。请保留原始文件，不改写表格内容。"
+    },
+    "compare": "equals",
+    "expected": {
+      "input": "post_content"
+    },
+    "covers": "post_content"
+  },
+  {
+    "kind": "checked",
+    "target": {
+      "frame": "main",
+      "by": "role",
+      "role": "checkbox",
+      "name": "Excel 验证"
+    },
+    "expected": true
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "role": "assistant",
+  "content": "",
+  "tool_calls": [
+    {
+      "index": 0,
+      "id": "call_00_FR8v1TmD68Pucz5FmlSy7763",
+      "type": "function",
+      "function": {
+        "name": "record_proposal",
+        "arguments": "{\"proposal\": {\"after\": [{\"kind\": \"value\", \"target\": {\"frame\": \"editor-canvas\", \"by\": \"role\", \"role\": \"document\", \"name\": \"Block: Paragraph\"}, \"compare\": \"equals\", \"expected\": {\"input\": \"body\"}}], \"reasoning\": \"动作已成功：正文段落已填入，但可访问名称从 'Empty block; start writing or type forward slash to choose a block' 变为 'Block: Paragraph'，因此旧定位失效。改用当前实际结构定位该段落（role=document, name='Block: Paragraph'），并核对值等于原始输入 body。\"}}"
+      }
+    }
+  ]
+}

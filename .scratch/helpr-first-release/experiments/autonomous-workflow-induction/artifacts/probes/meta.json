@@ -1,0 +1,200 @@
+{
+  "startedAt": "2026-10-10T14:32:43.098Z",
+  "modelCalls": [
+    {
+      "label": "native-format-repair",
+      "startedAt": "2026-10-10T14:32:43.102Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 637,
+        "completion_tokens": 329,
+        "total_tokens": 966,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 637
+      },
+      "endedAt": "2026-10-10T14:32:44.327Z",
+      "durationMs": 1224.271291
+    },
+    {
+      "label": "native-fresh-proposal",
+      "startedAt": "2026-10-10T14:32:44.329Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 4089,
+        "completion_tokens": 375,
+        "total_tokens": 4464,
+        "prompt_cache_hit_tokens": 640,
+        "prompt_cache_miss_tokens": 3449
+      },
+      "endedAt": "2026-10-10T14:32:46.328Z",
+      "durationMs": 1999.798041
+    },
+    {
+      "label": "applicability-batch",
+      "startedAt": "2026-10-10T14:32:46.338Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 1603,
+        "completion_tokens": 2003,
+        "total_tokens": 3606,
+        "prompt_cache_hit_tokens": 128,
+        "prompt_cache_miss_tokens": 1475
+      },
+      "endedAt": "2026-10-10T14:32:52.432Z",
+      "durationMs": 6094.7758330000015
+    }
+  ],
+  "cases": [
+    {
+      "label": "native-format-repair",
+      "validJsonAndLocalShape": true,
+      "proposal": {
+        "action": {
+          "op": "fill",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "document",
+            "name": "Empty block; start writing or type forward slash to choose a block"
+          },
+          "value": {
+            "input": "body"
+          }
+        },
+        "effect": "edit",
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "document",
+              "name": "Empty block; start writing or type forward slash to choose a block"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "document",
+              "name": "Empty block; start writing or type forward slash to choose a block"
+            },
+            "compare": "contains",
+            "expected": {
+              "input": "body"
+            }
+          }
+        ],
+        "commitChecks": [],
+        "note": "标题已满足。当前编辑器画布中已有选中的空段落块（document \"Empty block; start writing or type forward slash to choose a block\"），下一步直接向该块填入正文，无需再点击 Add default block。"
+      },
+      "semanticCorrectness": "not-established",
+      "dispatched": false
+    },
+    {
+      "label": "native-fresh-proposal",
+      "validJsonAndLocalShape": true,
+      "proposal": {
+        "note": "标题已由程序核实填写完成（observedInputs 中 title 已满足），当前 editor-canvas 中已存在一个选中的空段落块（role=document，名称 \"Empty block; start writing or type forward slash to choose a block\"），因此下一步直接向该块填入正文，无需再点击 \"Add default block\"（该按钮此前不存在，s4 已失败，不再重复）。正文填入后再处理分类与附件。",
+        "action": {
+          "op": "fill",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "document",
+            "name": "Empty block; start writing or type forward slash to choose a block"
+          },
+          "value": {
+            "input": "body"
+          }
+        },
+        "effect": "edit",
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "document",
+              "name": "Empty block; start writing or type forward slash to choose a block"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "document",
+              "name": "Empty block; start writing or type forward slash to choose a block"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "body"
+            }
+          }
+        ],
+        "commitChecks": []
+      },
+      "semanticCorrectness": "not-established",
+      "dispatched": false
+    },
+    {
+      "label": "applicability-publish",
+      "compatible": true,
+      "expectedCompatible": true,
+      "correct": true,
+      "reason": "与已学习流程语义一致：在指定测试网站新建文章、立即公开发布、指定分类、原始 Excel 作为可下载附件加入正文且不读取改写内容、不改动其它文章或设置。",
+      "citationChecksPassed": true,
+      "dispatched": false
+    },
+    {
+      "label": "applicability-draft",
+      "compatible": false,
+      "expectedCompatible": false,
+      "correct": true,
+      "reason": "本次委托要求只保存为草稿、不允许公开发布，与已学习流程「立即公开发布」的发布语义不一致，不能更改要求以匹配流程。",
+      "citationChecksPassed": true,
+      "dispatched": false
+    },
+    {
+      "label": "applicability-update",
+      "compatible": false,
+      "expectedCompatible": false,
+      "correct": true,
+      "reason": "本次委托要求修改已存在的指定文章，与已学习流程「新建文章」的操作语义不一致，不能更改要求以匹配流程。",
+      "citationChecksPassed": true,
+      "dispatched": false
+    },
+    {
+      "label": "applicability-summarize",
+      "compatible": false,
+      "expectedCompatible": false,
+      "correct": true,
+      "reason": "本次委托要求读取 Excel 数据生成正文摘要且不放置原文件下载链接，与已学习流程「原始 Excel 作为可下载附件加入正文、不读取或改写内容」的素材处理语义不一致，不能更改要求以匹配流程。",
+      "citationChecksPassed": true,
+      "dispatched": false
+    }
+  ],
+  "endedAt": "2026-10-10T14:32:52.435Z",
+  "tokens": 9036,
+  "sourceHashes": {
+    "probes.mjs": "35cc83a564da73ec1b710e817aa8e96fb5f173c8f20a60930389525dde026e4c",
+    "runtime.mjs": "00ad1f3b4e67c4d99d16f9de1b044713b62dfab02af9cce9639baa3449c92b61",
+    "prompts.mjs": "578e0dca8d4fbd18350f8d403d8ebededb64ca9fbc67a6ee03a7231702815a9e",
+    "fixtures.mjs": "0cab7fde2d2a7463df1515cb5fffd8152d3c445ce743d14ef7b1e55e2c4bae98"
+  }
+}

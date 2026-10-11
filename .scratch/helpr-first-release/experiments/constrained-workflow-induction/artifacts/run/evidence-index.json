@@ -1,0 +1,339 @@
+{
+  "outcome": "complete-workflow-not-established",
+  "limits": {
+    "calls": 80,
+    "tokens": 400000,
+    "phases": {
+      "learn": [
+        50,
+        250000
+      ],
+      "calibrate": [
+        16,
+        80000
+      ],
+      "evaluate": [
+        14,
+        70000
+      ]
+    },
+    "revisions": 6,
+    "protocolRevisions": 3
+  },
+  "startedAt": "2026-10-10T15:01:39.038Z",
+  "stoppedAfter": "2026-10-10T15:13:24.868Z",
+  "stopReason": "three-protocol-revisions-used; current upload-authorization assumption falsified; remaining model budget not repurposed",
+  "requests": 28,
+  "tokens": 150296,
+  "unknownUsageRequests": 0,
+  "protocolRevisions": [
+    {
+      "at": "2026-10-10T15:03:40.766Z",
+      "reason": "修正 condition.input 元数据与结构化绑定表达式冲突，改名 covers；点击视口前置检查；动作超时保守标记不确定；限制非安全请求同源。未添加网站规则。",
+      "evidence": "learn/results.json"
+    },
+    {
+      "at": "2026-10-10T15:06:29.737Z",
+      "reason": "提交提议在动作前要求完整条件，同时保留独立网络拦截；要求显式动态控件名绑定，向规划器回传未覆盖输入和请求拒绝。复用本轮自动日志中已成功且未触及不相容绑定或提交的前缀。未加入网站选择器或绑定。",
+      "evidence": "learn-2/results.json"
+    },
+    {
+      "at": "2026-10-10T15:08:46.426Z",
+      "reason": "相等条件的观察名称若等于其明确输入，只绑定该输入，不替换常量。已有前缀按此通用规则归一后重新实测。最终只读结果提取使用提交前已核验条件凭据，避免要求提交后的编辑器维持原 DOM；最终成功仍由公开结果和原始字节独立核对。",
+      "evidence": "learn-3/results.json"
+    }
+  ],
+  "formatRepairs": 0,
+  "phases": {
+    "learn": {
+      "requests": 27,
+      "tokens": 148507
+    },
+    "calibrate": {
+      "requests": 1,
+      "tokens": 1789
+    },
+    "evaluate": {
+      "requests": 0,
+      "tokens": 0
+    }
+  },
+  "runs": [
+    {
+      "name": "learn",
+      "status": "failed",
+      "completedSteps": 1,
+      "error": {
+        "code": "condition-unsatisfied",
+        "message": "condition-unsatisfied",
+        "detail": {
+          "evidence": [
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Add title"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "post_title"
+                },
+                "input": "post_title"
+              },
+              "ok": false,
+              "error": "Error"
+            }
+          ]
+        },
+        "executed": true
+      },
+      "failures": [
+        {
+          "op": "click",
+          "code": "TimeoutError",
+          "executed": false
+        },
+        {
+          "op": "fill",
+          "code": "condition-unsatisfied",
+          "executed": true
+        }
+      ],
+      "evidence": "learn/results.json"
+    },
+    {
+      "name": "learn-2",
+      "status": "failed",
+      "completedSteps": 11,
+      "error": {
+        "code": "TimeoutError",
+        "message": "locator.click: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('region', { name: 'Editor top bar', exact: true }).getByRole('button', { name: 'Publish', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" aria-expanded=\"true\" aria-disabled=\"false\" class=\"components-button editor-post-publish-panel__toggle editor-post-publish-button__button is-primary is-compact\">Publish</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be ",
+        "executed": false,
+        "executionUncertain": true
+      },
+      "failures": [
+        {
+          "op": "click",
+          "code": "target-outside-viewport"
+        },
+        {
+          "op": "fill",
+          "code": "fill-target-type"
+        },
+        {
+          "op": "fill",
+          "code": "fill-target-type"
+        },
+        {
+          "op": "click",
+          "code": "TimeoutError",
+          "executed": false
+        }
+      ],
+      "evidence": "learn-2/results.json"
+    },
+    {
+      "name": "learn-3",
+      "status": "failed",
+      "completedSteps": 3,
+      "error": {
+        "code": "condition-unsatisfied",
+        "message": "condition-unsatisfied",
+        "detail": {
+          "evidence": [
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "text",
+                  "name": "本文与附件均为虚构实验素材。样本 learn-2，校验编号 6a5d5558df。请保留原始文件，不改写表格内容。"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "post_content"
+                },
+                "covers": "post_content"
+              },
+              "ok": false,
+              "count": 0
+            }
+          ]
+        },
+        "executed": true,
+        "executionUncertain": false
+      },
+      "failures": [],
+      "source": {
+        "file": "artifacts/run/learn-2/results.json",
+        "hash": "019dc2f3c19e21bfa47e929baa3634734d18f13b1eadbbe9d577b24d44eeeda7",
+        "steps": [
+          "s1",
+          "s2",
+          "s3"
+        ]
+      },
+      "evidence": "learn-3/results.json"
+    },
+    {
+      "name": "learn-4",
+      "status": "failed",
+      "completedSteps": 10,
+      "error": {
+        "code": "Error",
+        "message": "upload-not-observed",
+        "executed": true,
+        "executionUncertain": false
+      },
+      "failures": [
+        {
+          "op": "upload",
+          "code": "upload-target-type"
+        },
+        {
+          "op": "upload",
+          "code": "Error",
+          "executed": true
+        }
+      ],
+      "source": {
+        "file": "artifacts/run/learn-2/results.json",
+        "hash": "019dc2f3c19e21bfa47e929baa3634734d18f13b1eadbbe9d577b24d44eeeda7",
+        "steps": [
+          "s1",
+          "s2",
+          "s3",
+          "s4",
+          "s5",
+          "s6",
+          "s7"
+        ],
+        "normalizations": [
+          {
+            "step": "s4",
+            "before": [
+              {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "text",
+                  "name": "本文与附件均为虚构实验素材。样本 learn-2，校验编号 6a5d5558df。请保留原始文件，不改写表格内容。"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "post_content"
+                },
+                "covers": "post_content"
+              }
+            ],
+            "after": [
+              {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "text",
+                  "name": {
+                    "input": "post_content"
+                  }
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "post_content"
+                },
+                "covers": "post_content"
+              }
+            ],
+            "rule": "equal-input-observation-name"
+          }
+        ]
+      },
+      "evidence": "learn-4/results.json"
+    }
+  ],
+  "partialCalibration": {
+    "passed": true,
+    "newTaskId": "diagnostic-calibration",
+    "steps": 10,
+    "fullWorkflow": false,
+    "modelCallsDuringBrowserExecution": 0,
+    "evidence": "diagnostic-calibration/results.json"
+  },
+  "uploadObservation": {
+    "sourceBytes": 3755,
+    "multipart": [
+      {
+        "probe": "upload-shape",
+        "method": "POST",
+        "path": "/index.php",
+        "contentType": "multipart/form-data; boundary=----WebKitFormBoundaryi3ItgIYmMl4s9sLs",
+        "bodyAvailable": true,
+        "bodyBytes": 353,
+        "bodySha256": "7449c673100c54609f8564346e0bedda4b8618dcb0b65d163cb432a956ccf13b",
+        "sourceSha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+        "jsonTopLevelKeys": null
+      }
+    ],
+    "authorizedUploadCompleted": false
+  },
+  "wrongEffect": {
+    "requests": [
+      {
+        "at": "2026-10-10T15:13:21.741Z",
+        "type": "mutation-request",
+        "method": "POST",
+        "path": "/index.php",
+        "effectProposal": "read",
+        "operation": "click",
+        "outcome": "blocked",
+        "code": "inputs-not-covered",
+        "detail": {
+          "covered": [
+            "post_title",
+            "post_content",
+            "post_category"
+          ],
+          "required": [
+            "post_title",
+            "post_content",
+            "post_category",
+            "attachment_excel"
+          ]
+        }
+      }
+    ],
+    "passed": true,
+    "evidence": "diagnostic-calibration/events.jsonl"
+  },
+  "schemaNegatives": [
+    {
+      "name": "wrapper",
+      "passed": true,
+      "code": "schema-extra-field"
+    },
+    {
+      "name": "extra-field",
+      "passed": true,
+      "code": "schema-extra-field"
+    },
+    {
+      "name": "wrong-type",
+      "passed": true,
+      "code": "schema-type"
+    }
+  ],
+  "notExecuted": [
+    "complete candidate validation",
+    "pending-versus-completed upload condition",
+    "successful public publication",
+    "independent download byte comparison",
+    "heldout materials and text",
+    "near-intent applicability negatives",
+    "full constant-collision case",
+    "changed-control case"
+  ],
+  "candidate.json": "absent",
+  "frozen-candidate.json": "absent"
+}

@@ -1,0 +1,1631 @@
+{
+  "phase": "evaluate",
+  "startedAt": "2026-10-11T02:01:16.381Z",
+  "runs": [
+    {
+      "name": "heldout",
+      "trace": [
+        {
+          "id": "s1",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s2",
+          "op": "fill",
+          "executed": true
+        },
+        {
+          "id": "s3",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s4",
+          "op": "fill",
+          "executed": true
+        },
+        {
+          "id": "s5",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s6",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s7",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s8",
+          "op": "check",
+          "executed": true
+        },
+        {
+          "id": "s9",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s10",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s11",
+          "op": "upload",
+          "executed": true,
+          "pending": "upload-pending.json",
+          "settled": "upload-settled.json",
+          "negative": {
+            "passed": false,
+            "code": "artifact-origin",
+            "detail": {}
+          }
+        },
+        {
+          "id": "s12",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s13",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s14",
+          "op": "finish",
+          "resultUrl": "http://home.ts-ali.internal:38080/?p=109",
+          "readyReceipt": {
+            "at": "2026-10-11T02:02:10.150Z",
+            "taskDigest": "a70d070ba78d32d8d61f7be1ccd7b315bc46f252f2f4bf2de1e0f50259a810d0",
+            "rulesDigest": "332bc709bed1e0d254d8422cfdc84203a0c210f75a25b415a3daf79545d1300f",
+            "evidence": [
+              {
+                "condition": {
+                  "kind": "value",
+                  "target": {
+                    "frame": "editor-canvas",
+                    "by": "role",
+                    "role": "textbox",
+                    "name": "Add title"
+                  },
+                  "compare": "equals",
+                  "expected": {
+                    "input": "post_title"
+                  },
+                  "covers": "post_title"
+                },
+                "ok": true,
+                "actual": "自主归纳 heldout staged",
+                "expected": "自主归纳 heldout staged"
+              },
+              {
+                "condition": {
+                  "kind": "value",
+                  "target": {
+                    "frame": "editor-canvas",
+                    "by": "text",
+                    "name": {
+                      "input": "post_content"
+                    }
+                  },
+                  "compare": "equals",
+                  "expected": {
+                    "input": "post_content"
+                  },
+                  "covers": "post_content"
+                },
+                "ok": true,
+                "actual": "本文与附件均为虚构实验素材。样本 heldout，校验编号 87c3b01f49。请保留原始文件，不改写表格内容。",
+                "expected": "本文与附件均为虚构实验素材。样本 heldout，校验编号 87c3b01f49。请保留原始文件，不改写表格内容。"
+              },
+              {
+                "condition": {
+                  "kind": "checked",
+                  "target": {
+                    "frame": "main",
+                    "by": "role",
+                    "role": "checkbox",
+                    "name": {
+                      "input": "post_category"
+                    }
+                  },
+                  "expected": true,
+                  "covers": "post_category"
+                },
+                "ok": true,
+                "actual": true
+              },
+              {
+                "condition": {
+                  "kind": "checked",
+                  "target": {
+                    "frame": "main",
+                    "by": "role",
+                    "role": "checkbox",
+                    "name": "Uncategorized"
+                  },
+                  "expected": false,
+                  "constraintQuote": "只选择分类「Excel 验证」，不选默认分类"
+                },
+                "ok": true,
+                "actual": false
+              },
+              {
+                "condition": {
+                  "kind": "artifact",
+                  "target": {
+                    "frame": "editor-canvas",
+                    "by": "role",
+                    "role": "textbox",
+                    "name": "Write file name…"
+                  },
+                  "expected": {
+                    "input": "attachment_excel",
+                    "field": "sha256"
+                  },
+                  "covers": "attachment_excel"
+                },
+                "ok": true,
+                "actual": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+              }
+            ]
+          }
+        }
+      ],
+      "status": "completed",
+      "candidateHash": "1d5773930c0e60224748911306ce6f9c4a02eb1b95cb460d347751ea2c2b4082",
+      "taskHash": "a70d070ba78d32d8d61f7be1ccd7b315bc46f252f2f4bf2de1e0f50259a810d0",
+      "result": {
+        "url": "http://home.ts-ali.internal:38080/?p=109",
+        "runtimeEvidence": [
+          {
+            "condition": {
+              "kind": "text",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "heading",
+                "name": {
+                  "input": "post_title"
+                },
+                "level": 1
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "post_title"
+              },
+              "covers": "post_title"
+            },
+            "ok": true,
+            "actual": "自主归纳 heldout staged",
+            "expected": "自主归纳 heldout staged"
+          },
+          {
+            "condition": {
+              "kind": "text",
+              "target": {
+                "frame": "main",
+                "by": "text",
+                "name": {
+                  "input": "post_content"
+                }
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "post_content"
+              },
+              "covers": "post_content"
+            },
+            "ok": true,
+            "actual": "本文与附件均为虚构实验素材。样本 heldout，校验编号 87c3b01f49。请保留原始文件，不改写表格内容。",
+            "expected": "本文与附件均为虚构实验素材。样本 heldout，校验编号 87c3b01f49。请保留原始文件，不改写表格内容。"
+          },
+          {
+            "condition": {
+              "kind": "text",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "link",
+                "name": {
+                  "input": "post_category"
+                }
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "post_category"
+              },
+              "covers": "post_category"
+            },
+            "ok": true,
+            "actual": "Excel 验证",
+            "expected": "Excel 验证"
+          },
+          {
+            "condition": {
+              "kind": "download",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "link",
+                "name": {
+                  "input": "attachment_excel",
+                  "field": "stem"
+                }
+              },
+              "expected": {
+                "input": "attachment_excel",
+                "field": "sha256"
+              },
+              "covers": "attachment_excel"
+            },
+            "ok": true,
+            "actual": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+            "downloadedName": "heldout-staged.xlsx"
+          }
+        ],
+        "independent": {
+          "verified": true,
+          "unauthenticatedContext": true,
+          "url": "http://home.ts-ali.internal:38080/?p=109",
+          "title": "自主归纳 heldout staged",
+          "body": "本文与附件均为虚构实验素材。样本 heldout，校验编号 87c3b01f49。请保留原始文件，不改写表格内容。",
+          "category": "Excel 验证",
+          "attachmentUrl": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/heldout-staged.xlsx",
+          "downloadedName": "heldout-staged.xlsx",
+          "sourceBytes": 3755,
+          "downloadedBytes": 3755,
+          "sha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+          "exactBytesMatch": true
+        }
+      },
+      "modelCallsDuringBrowserReplay": 0
+    },
+    {
+      "name": "heldout-collision",
+      "trace": [
+        {
+          "id": "s1",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s2",
+          "op": "fill",
+          "executed": true
+        },
+        {
+          "id": "s3",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s4",
+          "op": "fill",
+          "executed": true
+        },
+        {
+          "id": "s5",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s6",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s7",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s8",
+          "op": "check",
+          "executed": true
+        },
+        {
+          "id": "s9",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s10",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s11",
+          "op": "upload",
+          "executed": true,
+          "pending": "upload-pending.json",
+          "settled": "upload-settled.json",
+          "negative": {
+            "passed": false,
+            "code": "artifact-origin",
+            "detail": {}
+          }
+        },
+        {
+          "id": "s12",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s13",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s14",
+          "op": "finish",
+          "resultUrl": "http://home.ts-ali.internal:38080/?p=112",
+          "readyReceipt": {
+            "at": "2026-10-11T02:03:08.528Z",
+            "taskDigest": "9df19b9e8e9dc727dd74c1943298743351ac880b31614056e145582718cb5aeb",
+            "rulesDigest": "332bc709bed1e0d254d8422cfdc84203a0c210f75a25b415a3daf79545d1300f",
+            "evidence": [
+              {
+                "condition": {
+                  "kind": "value",
+                  "target": {
+                    "frame": "editor-canvas",
+                    "by": "role",
+                    "role": "textbox",
+                    "name": "Add title"
+                  },
+                  "compare": "equals",
+                  "expected": {
+                    "input": "post_title"
+                  },
+                  "covers": "post_title"
+                },
+                "ok": true,
+                "actual": "File",
+                "expected": "File"
+              },
+              {
+                "condition": {
+                  "kind": "value",
+                  "target": {
+                    "frame": "editor-canvas",
+                    "by": "text",
+                    "name": {
+                      "input": "post_content"
+                    }
+                  },
+                  "compare": "equals",
+                  "expected": {
+                    "input": "post_content"
+                  },
+                  "covers": "post_content"
+                },
+                "ok": true,
+                "actual": "本文与附件均为虚构实验素材。样本 heldout-collision，校验编号 b650297563。请保留原始文件，不改写表格内容。",
+                "expected": "本文与附件均为虚构实验素材。样本 heldout-collision，校验编号 b650297563。请保留原始文件，不改写表格内容。"
+              },
+              {
+                "condition": {
+                  "kind": "checked",
+                  "target": {
+                    "frame": "main",
+                    "by": "role",
+                    "role": "checkbox",
+                    "name": {
+                      "input": "post_category"
+                    }
+                  },
+                  "expected": true,
+                  "covers": "post_category"
+                },
+                "ok": true,
+                "actual": true
+              },
+              {
+                "condition": {
+                  "kind": "checked",
+                  "target": {
+                    "frame": "main",
+                    "by": "role",
+                    "role": "checkbox",
+                    "name": "Uncategorized"
+                  },
+                  "expected": false,
+                  "constraintQuote": "只选择分类「Excel 验证」，不选默认分类"
+                },
+                "ok": true,
+                "actual": false
+              },
+              {
+                "condition": {
+                  "kind": "artifact",
+                  "target": {
+                    "frame": "editor-canvas",
+                    "by": "role",
+                    "role": "textbox",
+                    "name": "Write file name…"
+                  },
+                  "expected": {
+                    "input": "attachment_excel",
+                    "field": "sha256"
+                  },
+                  "covers": "attachment_excel"
+                },
+                "ok": true,
+                "actual": "2920f2e32ead356702ec76f643c4718bca55ab1a4f823aa139354651e754ef9a"
+              }
+            ]
+          }
+        }
+      ],
+      "status": "completed",
+      "candidateHash": "1d5773930c0e60224748911306ce6f9c4a02eb1b95cb460d347751ea2c2b4082",
+      "taskHash": "9df19b9e8e9dc727dd74c1943298743351ac880b31614056e145582718cb5aeb",
+      "result": {
+        "url": "http://home.ts-ali.internal:38080/?p=112",
+        "runtimeEvidence": [
+          {
+            "condition": {
+              "kind": "text",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "heading",
+                "name": {
+                  "input": "post_title"
+                },
+                "level": 1
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "post_title"
+              },
+              "covers": "post_title"
+            },
+            "ok": true,
+            "actual": "File",
+            "expected": "File"
+          },
+          {
+            "condition": {
+              "kind": "text",
+              "target": {
+                "frame": "main",
+                "by": "text",
+                "name": {
+                  "input": "post_content"
+                }
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "post_content"
+              },
+              "covers": "post_content"
+            },
+            "ok": true,
+            "actual": "本文与附件均为虚构实验素材。样本 heldout-collision，校验编号 b650297563。请保留原始文件，不改写表格内容。",
+            "expected": "本文与附件均为虚构实验素材。样本 heldout-collision，校验编号 b650297563。请保留原始文件，不改写表格内容。"
+          },
+          {
+            "condition": {
+              "kind": "text",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "link",
+                "name": {
+                  "input": "post_category"
+                }
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "post_category"
+              },
+              "covers": "post_category"
+            },
+            "ok": true,
+            "actual": "Excel 验证",
+            "expected": "Excel 验证"
+          },
+          {
+            "condition": {
+              "kind": "download",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "link",
+                "name": {
+                  "input": "attachment_excel",
+                  "field": "stem"
+                }
+              },
+              "expected": {
+                "input": "attachment_excel",
+                "field": "sha256"
+              },
+              "covers": "attachment_excel"
+            },
+            "ok": true,
+            "actual": "2920f2e32ead356702ec76f643c4718bca55ab1a4f823aa139354651e754ef9a",
+            "downloadedName": "heldout-collision-staged.xlsx"
+          }
+        ],
+        "independent": {
+          "verified": true,
+          "unauthenticatedContext": true,
+          "url": "http://home.ts-ali.internal:38080/?p=112",
+          "title": "File",
+          "body": "本文与附件均为虚构实验素材。样本 heldout-collision，校验编号 b650297563。请保留原始文件，不改写表格内容。",
+          "category": "Excel 验证",
+          "attachmentUrl": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/heldout-collision-staged.xlsx",
+          "downloadedName": "heldout-collision-staged.xlsx",
+          "sourceBytes": 3756,
+          "downloadedBytes": 3756,
+          "sha256": "2920f2e32ead356702ec76f643c4718bca55ab1a4f823aa139354651e754ef9a",
+          "exactBytesMatch": true
+        }
+      },
+      "modelCallsDuringBrowserReplay": 0
+    },
+    {
+      "name": "negative-draft",
+      "status": "correctly-rejected",
+      "reason": "模板要求「立即公开发布」，而本次委托明确要求「只保存为草稿，不允许公开发布」，目标操作（发布 vs 草稿）不相容，因此不兼容。",
+      "browserDispatched": false
+    },
+    {
+      "name": "negative-update",
+      "status": "correctly-rejected",
+      "reason": "模板目标为「新建文章」（kind=new_post），而本次委托要求修改已存在的文章（目标地址 http://home.ts-ali.internal:38080/?p=6），目标操作不相容；且模板约束为「除本次新建测试记录外，不得改动已有文章或网站设置」，与本次「只允许修改本次指定的目标文章」冲突。因此 compatible=false，inputs 为空。",
+      "browserDispatched": false
+    },
+    {
+      "name": "negative-summarize",
+      "status": "correctly-rejected",
+      "reason": "模板要求将原始 Excel 文件作为可下载附件加入正文且不读取或改写其内容，而本次委托要求读取 Excel 数据生成正文摘要且不要放置原文件下载链接，两者在素材处理方式上不相容；同时模板标题为「自主归纳 learn-3 staged」，与委托标题「自主归纳 negative-summarize staged」不一致，故不兼容。",
+      "browserDispatched": false
+    },
+    {
+      "name": "changed-control",
+      "trace": [
+        {
+          "id": "s1",
+          "op": "click",
+          "executed": true
+        }
+      ],
+      "status": "correctly-blocked",
+      "candidateHash": "1d5773930c0e60224748911306ce6f9c4a02eb1b95cb460d347751ea2c2b4082",
+      "taskHash": "60a1507154c0da5e2735feb6a7ce169bbfcef559cd2d3d60bd722024c4fdd3c6",
+      "error": {
+        "code": "condition-unsatisfied",
+        "message": "condition-unsatisfied",
+        "detail": {
+          "evidence": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Add title"
+                }
+              },
+              "ok": false,
+              "count": 0
+            }
+          ]
+        }
+      },
+      "lastObservation": {
+        "url": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+        "nodes": [
+          {
+            "id": "n1",
+            "frame": "main",
+            "role": "menuitem",
+            "name": "About WordPress",
+            "tag": "a",
+            "value": "About WordPress",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "href": "http://home.ts-ali.internal:38080/wp-admin/about.php",
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "menuitem",
+              "name": "About WordPress"
+            }
+          },
+          {
+            "id": "n2",
+            "frame": "main",
+            "role": "menuitem",
+            "name": "helpr 验证后台（仅测试）",
+            "tag": "a",
+            "value": "helpr 验证后台（仅测试）",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "href": "http://home.ts-ali.internal:38080/",
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "menuitem",
+              "name": "helpr 验证后台（仅测试）"
+            }
+          },
+          {
+            "id": "n3",
+            "frame": "main",
+            "role": "menuitem",
+            "name": "⌘K Open command palette",
+            "tag": "a",
+            "value": "⌘K Open command palette",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "href": "#",
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "menuitem",
+              "name": "⌘K Open command palette"
+            }
+          },
+          {
+            "id": "n4",
+            "frame": "main",
+            "role": "menuitem",
+            "name": "0 Comments in moderation",
+            "tag": "a",
+            "value": "00 Comments in moderation",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "href": "http://home.ts-ali.internal:38080/wp-admin/edit-comments.php",
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "menuitem",
+              "name": "0 Comments in moderation"
+            }
+          },
+          {
+            "id": "n5",
+            "frame": "main",
+            "role": "menuitem",
+            "name": "New",
+            "tag": "a",
+            "value": "New",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "href": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "menuitem",
+              "name": "New"
+            }
+          },
+          {
+            "id": "n6",
+            "frame": "main",
+            "role": "menuitem",
+            "name": "Howdy, helpr 测试用户",
+            "tag": "a",
+            "value": "Howdy, helpr 测试用户",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "href": "http://home.ts-ali.internal:38080/wp-admin/profile.php",
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "menuitem",
+              "name": "Howdy, helpr 测试用户"
+            }
+          },
+          {
+            "id": "n7",
+            "frame": "main",
+            "role": "heading",
+            "name": "Add Post",
+            "tag": "h1",
+            "value": "Add Post",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": false,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "heading",
+              "name": "Add Post",
+              "level": 1
+            }
+          },
+          {
+            "id": "n8",
+            "frame": "main",
+            "role": "region",
+            "name": "Editor top bar",
+            "tag": "div",
+            "value": "No title· PostSave draftPreview(opens in a new tab)Publish",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "region",
+              "name": "Editor top bar"
+            }
+          },
+          {
+            "id": "n9",
+            "frame": "main",
+            "role": "link",
+            "name": "View Posts",
+            "tag": "a",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "href": "edit.php?post_type=post",
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "link",
+              "name": "View Posts"
+            }
+          },
+          {
+            "id": "n10",
+            "frame": "main",
+            "role": "button",
+            "name": "Block Inserter",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Block Inserter"
+            }
+          },
+          {
+            "id": "n11",
+            "frame": "main",
+            "role": "button",
+            "name": "Undo",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": true,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Undo"
+            }
+          },
+          {
+            "id": "n12",
+            "frame": "main",
+            "role": "button",
+            "name": "Redo",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": true,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Redo"
+            }
+          },
+          {
+            "id": "n13",
+            "frame": "main",
+            "role": "button",
+            "name": "Document Overview",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Document Overview"
+            }
+          },
+          {
+            "id": "n14",
+            "frame": "main",
+            "role": "button",
+            "name": "No title · Post",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "No title · Post"
+            }
+          },
+          {
+            "id": "n15",
+            "frame": "main",
+            "role": "heading",
+            "name": "No title · Post",
+            "tag": "h1",
+            "value": "No title· Post",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "heading",
+              "name": "No title · Post",
+              "level": 1
+            }
+          },
+          {
+            "id": "n16",
+            "frame": "main",
+            "role": "button",
+            "name": "Save draft",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": true,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Save draft"
+            }
+          },
+          {
+            "id": "n17",
+            "frame": "main",
+            "role": "button",
+            "name": "View",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "View"
+            }
+          },
+          {
+            "id": "n18",
+            "frame": "main",
+            "role": "button",
+            "name": "Settings",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Settings"
+            }
+          },
+          {
+            "id": "n19",
+            "frame": "main",
+            "role": "button",
+            "name": "Publish",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": true,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Publish"
+            }
+          },
+          {
+            "id": "n20",
+            "frame": "main",
+            "role": "button",
+            "name": "Options",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Options"
+            }
+          },
+          {
+            "id": "n21",
+            "frame": "main",
+            "role": "region",
+            "name": "Editor content",
+            "tag": "div",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "region",
+              "name": "Editor content"
+            }
+          },
+          {
+            "id": "n22",
+            "frame": "main",
+            "role": "region",
+            "name": "Editor settings",
+            "tag": "div",
+            "value": "PostBlockNo titleSet featured imageDrop files to uploadAdd an excerpt…Last edited a second ago.StatusDraftPublishImmediatelySlug115TemplateSingle PostsDiscussionClosedFormatStandardCategoriesExcel 验证UncategorizedTags",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "region",
+              "name": "Editor settings"
+            }
+          },
+          {
+            "id": "n23",
+            "frame": "main",
+            "role": "tab",
+            "name": "Post",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "tab",
+              "name": "Post"
+            }
+          },
+          {
+            "id": "n24",
+            "frame": "main",
+            "role": "tab",
+            "name": "Block",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "tab",
+              "name": "Block"
+            }
+          },
+          {
+            "id": "n25",
+            "frame": "main",
+            "role": "button",
+            "name": "Close Settings",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Close Settings"
+            }
+          },
+          {
+            "id": "n26",
+            "frame": "main",
+            "role": "heading",
+            "name": "No title",
+            "tag": "h2",
+            "value": "No title",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "heading",
+              "name": "No title",
+              "level": 2
+            }
+          },
+          {
+            "id": "n27",
+            "frame": "main",
+            "role": "button",
+            "name": "Actions",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Actions"
+            }
+          },
+          {
+            "id": "n28",
+            "frame": "main",
+            "role": "button",
+            "name": "Set featured image",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Set featured image"
+            }
+          },
+          {
+            "id": "n29",
+            "frame": "main",
+            "role": "button",
+            "name": "Add an excerpt…",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Add an excerpt…"
+            }
+          },
+          {
+            "id": "n30",
+            "frame": "main",
+            "role": "button",
+            "name": "Template options",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Template options"
+            }
+          },
+          {
+            "id": "n31",
+            "frame": "main",
+            "role": "button",
+            "name": "Change discussion options",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Change discussion options"
+            }
+          },
+          {
+            "id": "n32",
+            "frame": "main",
+            "role": "heading",
+            "name": "Categories",
+            "tag": "h2",
+            "value": "Categories",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "heading",
+              "name": "Categories",
+              "level": 2
+            }
+          },
+          {
+            "id": "n33",
+            "frame": "main",
+            "role": "button",
+            "name": "Categories",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Categories"
+            }
+          },
+          {
+            "id": "n34",
+            "frame": "main",
+            "role": "checkbox",
+            "name": "Excel 验证",
+            "tag": "input",
+            "type": "checkbox",
+            "value": "1",
+            "editable": true,
+            "checked": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "checkbox",
+              "name": "Excel 验证"
+            }
+          },
+          {
+            "id": "n35",
+            "frame": "main",
+            "role": "checkbox",
+            "name": "Uncategorized",
+            "tag": "input",
+            "type": "checkbox",
+            "value": "1",
+            "editable": true,
+            "checked": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "checkbox",
+              "name": "Uncategorized"
+            }
+          },
+          {
+            "id": "n36",
+            "frame": "main",
+            "role": "heading",
+            "name": "Tags",
+            "tag": "h2",
+            "value": "Tags",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "heading",
+              "name": "Tags",
+              "level": 2
+            }
+          },
+          {
+            "id": "n37",
+            "frame": "main",
+            "role": "button",
+            "name": "Tags",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Tags"
+            }
+          },
+          {
+            "id": "n38",
+            "frame": "main",
+            "role": "region",
+            "name": "Editor publish",
+            "tag": "div",
+            "value": "Open publish panel",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": false,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "region",
+              "name": "Editor publish"
+            }
+          },
+          {
+            "id": "n39",
+            "frame": "main",
+            "role": "button",
+            "name": "Open publish panel",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": false,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Open publish panel"
+            }
+          },
+          {
+            "id": "n40",
+            "frame": "main",
+            "role": "region",
+            "name": "Editor footer",
+            "tag": "div",
+            "value": "Post",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "region",
+              "name": "Editor footer"
+            }
+          },
+          {
+            "id": "n41",
+            "frame": "main",
+            "role": "text",
+            "name": "No title· Post",
+            "tag": "h1",
+            "value": "No title· Post",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "text",
+              "name": "No title· Post"
+            }
+          },
+          {
+            "id": "n42",
+            "frame": "main",
+            "role": "text",
+            "name": "Categories",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "text",
+              "name": "Categories"
+            }
+          },
+          {
+            "id": "n43",
+            "frame": "main",
+            "role": "text",
+            "name": "Tags",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "text",
+              "name": "Tags"
+            }
+          },
+          {
+            "id": "n44",
+            "frame": "editor-canvas",
+            "role": "textbox",
+            "name": "实验更名后的输入",
+            "tag": "h1",
+            "value": "",
+            "editable": true,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "实验更名后的输入"
+            }
+          },
+          {
+            "id": "n45",
+            "frame": "editor-canvas",
+            "role": "button",
+            "name": "Add default block",
+            "tag": "p",
+            "value": "Type / to choose a block",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "button",
+              "name": "Add default block"
+            }
+          },
+          {
+            "id": "n46",
+            "frame": "editor-canvas",
+            "role": "button",
+            "name": "Add block",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "button",
+              "name": "Add block"
+            }
+          },
+          {
+            "id": "n47",
+            "frame": "editor-canvas",
+            "role": "text",
+            "name": "Type / to choose a block",
+            "tag": "p",
+            "value": "Type / to choose a block",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "editor-canvas",
+              "by": "text",
+              "name": "Type / to choose a block"
+            }
+          }
+        ],
+        "aria": [
+          {
+            "frame": "main",
+            "aria": "- navigation \"Toolbar\":\n  - menu:\n    - group:\n      - menuitem \"About WordPress\"\n    - group:\n      - menuitem \"helpr 验证后台（仅测试）\"\n    - group:\n      - menuitem \"⌘K Open command palette\"\n    - group:\n      - menuitem \"0 Comments in moderation\"\n    - group:\n      - menuitem \"New\"\n  - menu:\n    - group:\n      - menuitem \"Howdy, helpr 测试用户\"\n- main:\n  - heading \"Add Post\" [level=1]\n  - region \"Editor top bar\":\n    - link \"View Posts\":\n      - /url: edit.php?post_type=post\n    - toolbar \"Document tools\":\n      - button \"Block Inserter\"\n      - button \"Undo\" [disabled]\n      - button \"Redo\" [disabled]\n      - button \"Document Overview\"\n    - button \"No title · Post\":\n      - heading \"No title · Post\" [level=1]\n    - button \"Save draft\" [disabled]\n    - button \"View\"\n    - button \"Settings\" [expanded] [pressed]\n    - button \"Publish\" [disabled]\n    - button \"Options\"\n  - region \"Editor content\":\n    - iframe\n  - region \"Editor settings\":\n    - tablist:\n      - tab \"Post\" [selected]\n      - tab \"Block\"\n    - button \"Close Settings\"\n    - tabpanel \"Post\":\n      - heading \"No title\" [level=2]\n      - button \"Actions\"\n      - button \"Set featured image\"\n      - button \"Add an excerpt…\"\n      - text: Last edited a second ago. Status\n      - 'button \"Change status: Draft\"': Draft\n      - text: Publish\n      - 'button \"Change date: Immediately\"': Immediately\n      - text: Slug\n      - 'button \"Change link: 115\"': \"115\"\n      - text: Template\n      - button \"Template options\": Single Posts\n      - text: Discussion\n      - button \"Change discussion options\": Closed\n      - text: Format\n      - 'button \"Change format: Standard\"': Standard\n      - heading \"Categories\" [level=2]:\n        - button \"Categories\" [expanded]\n      - group \"Categories\":\n        - checkbox \"Excel 验证\"\n        - text: Excel 验证\n        - checkbox \"Uncategorized\"\n        - text: Uncategorized\n      - heading \"Tags\" [level=2]:\n        - button \"Tags\"\n  - region \"Editor publish\":\n    - button \"Open publish panel\"\n  - region \"Editor footer\":\n    - list \"Block breadcrumb\":\n      - listitem: Post"
+          },
+          {
+            "frame": "editor-canvas",
+            "aria": "- textbox \"实验更名后的输入\": Add title\n- button \"Add default block\": Type / to choose a block\n- button \"Add block\""
+          }
+        ]
+      },
+      "modelCallsDuringBrowserReplay": 0
+    }
+  ],
+  "sourceHashes": {
+    "protocol.mjs": "e0117fd4bebfa8593ad90151a3a64e43c404c13f92d5ce3905a61871968726f9",
+    "runtime.mjs": "f5672faad87afbe00eecfefb78fbcaa9f0d314e0d716efc7b721cf908b8f6a0b",
+    "upload-permit.mjs": "afbd15e9cba7dbf3c71968211124704722ef71539bf60a056b84f7330be9bd62",
+    "run.mjs": "19a288a71b7235fdd51dfacb5501f9d42f5875deb1838e90f73cb5003dd1e7aa"
+  },
+  "endedAt": "2026-10-11T02:04:11.033Z",
+  "calls": 31,
+  "tokens": 131003
+}

@@ -1,0 +1,7 @@
+{
+  "instruction": "只修复给定输出的 JSON 语法，不改变任何字段、动作、条件或值，不添加内容。返回单个合法 JSON 对象。",
+  "input": {
+    "invalidJson": "{\"note\":\"标题已满足。当前编辑器画布中已有选中的空段落块（document \\\"Empty block; start writing or type forward slash to choose a block\\\"），下一步直接向该块填入正文，无需再点击 Add default block。\",\"action\":{\"op\":\"fill\",\"target\":{\"frame\":\"editor-canvas\",\"by\":\"role\",\"role\":\"document\",\"name\":\"Empty block; start writing or type forward slash to choose a block\"},\"value\":{\"input\":\"body\"}},\"effect\":\"edit\",\"before\":[{\"kind\":\"visible\",\"target\":{\"frame\":\"editor-canvas\",\"by\":\"role\",\"role\":\"document\",\"name\":\"Empty block; start writing or type forward slash to choose a block\"}}],\"after\":[{\"kind\":\"value\",\"target\":{\"frame\":\"editor-canvas\",\"by\":\"role\",\"role\":\"document\",\"name\":\"Empty block; start writing or type forward slash to choose a block\"},\"compare\":\"contains\",\"expected\":{\"input\":\"body\"}}]},\"commitChecks\":[]}",
+    "error": "Unexpected non-whitespace character after JSON at position 746 (line 1 column 747)"
+  }
+}

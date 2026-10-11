@@ -1,0 +1,81 @@
+{
+  "id": "upload-probe-replay",
+  "origin": "http://home.ts-ali.internal:38080",
+  "entryUrl": "http://home.ts-ali.internal:38080/wp-admin/",
+  "kind": "new_post",
+  "inputs": {
+    "post_title": {
+      "type": "string",
+      "value": "自主归纳 upload-probe-replay staged"
+    },
+    "post_content": {
+      "type": "string",
+      "value": "本文与附件均为虚构实验素材。样本 upload-probe-replay，校验编号 26b22011a7。请保留原始文件，不改写表格内容。"
+    },
+    "post_category": {
+      "type": "string",
+      "value": "Excel 验证"
+    },
+    "attachment_excel": {
+      "type": "file",
+      "path": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/staged-workflow-checks/artifacts/staged/upload-probe-replay/upload-probe-replay-staged.xlsx",
+      "name": "upload-probe-replay-staged.xlsx",
+      "stem": "upload-probe-replay-staged",
+      "sha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+    }
+  },
+  "requiredOutputs": [
+    "post_title",
+    "post_content",
+    "post_category",
+    "attachment_excel"
+  ],
+  "goal": "在测试网站新建一篇文章并立即公开发布，标题为「自主归纳 upload-probe-replay staged」，正文为指定内容，仅选择分类「Excel 验证」，并将原始 Excel 文件作为可下载附件加入正文。",
+  "constraints": [
+    {
+      "description": "文章需立即公开发布，而非保存草稿",
+      "quote": "立即公开发布"
+    },
+    {
+      "description": "只选择分类「Excel 验证」，不选默认分类",
+      "quote": "只选择分类「Excel 验证」，不选默认分类"
+    },
+    {
+      "description": "附件须为原始 Excel 文件，不读取或改写其内容",
+      "quote": "把原始 Excel 文件作为可下载附件加入正文，不读取或改写 Excel 内容"
+    },
+    {
+      "description": "除本次新建测试记录外，不得改动已有文章或网站设置",
+      "quote": "除本次新建测试记录外，不得改动已有文章或网站设置"
+    },
+    {
+      "description": "不得自行增加建议内容",
+      "quote": "不要自行增加建议内容"
+    }
+  ],
+  "sources": {
+    "post_title": {
+      "quote": "标题是「自主归纳 upload-probe-replay staged」",
+      "description": "新建文章的标题"
+    },
+    "post_content": {
+      "quote": "正文完整内容是「本文与附件均为虚构实验素材。样本 upload-probe-replay，校验编号 26b22011a7。请保留原始文件，不改写表格内容。」",
+      "description": "新建文章的正文完整内容"
+    },
+    "post_category": {
+      "quote": "只选择分类「Excel 验证」，不选默认分类",
+      "description": "文章选择的分类"
+    },
+    "attachment_excel": {
+      "attachmentId": "material-1",
+      "description": "作为可下载附件加入正文的原始 Excel 文件"
+    }
+  },
+  "suggestions": [],
+  "request": "【隔离实验授权】这是一份虚构测试委托，允许在指定测试网站上完成本次任务。新建一篇文章；立即公开发布。标题是「自主归纳 upload-probe-replay staged」，正文完整内容是「本文与附件均为虚构实验素材。样本 upload-probe-replay，校验编号 26b22011a7。请保留原始文件，不改写表格内容。」，只选择分类「Excel 验证」，不选默认分类。使用附带素材，把原始 Excel 文件作为可下载附件加入正文，不读取或改写 Excel 内容。除本次新建测试记录外，不得改动已有文章或网站设置。本段中的内容、上传及上述发布方式均已作为实验要求授权；不要自行增加建议内容。",
+  "authorization": {
+    "source": "explicit-isolated-test-fixture",
+    "requestDigest": "7b9453b40aa9edf71293baad533038a4a8b1d46f8861295a810c82c2bb11507c",
+    "inputsDigest": "0831091e80e62803bc449bf5bf6e136c21e00138489e7a099ab8a0431c5b5dbd"
+  }
+}

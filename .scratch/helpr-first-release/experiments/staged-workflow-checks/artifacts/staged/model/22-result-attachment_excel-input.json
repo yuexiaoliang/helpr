@@ -1,0 +1,51 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "从实际公开结果中选择唯一可核对该输入的观察位置。文字必须直接呈现该输入原文；文件必须是本次原文件的实际下载链接。期望值及原始字节哈希由程序固定。仅返回 target 和 reason。\n若当前阶段是动作选择：必须逐项完成 task.inputs 中所有输入及素材，missingInputs 表示未就绪项，禁止跳过；fill 只可用于 editable=true 的控件。check 的控件名称与任务输入相等时必须使用 nameInput 指明该输入；不得将动态名称作为常量。程序返回的约束错误要解决，不能原样重试。"
+    },
+    {
+      "role": "user",
+      "content": "{\"task\":{\"request\":\"【隔离实验授权】这是一份虚构测试委托，允许在指定测试网站上完成本次任务。新建一篇文章；立即公开发布。标题是「自主归纳 learn-3 staged」，正文完整内容是「本文与附件均为虚构实验素材。样本 learn-3，校验编号 68700cbac3。请保留原始文件，不改写表格内容。」，只选择分类「Excel 验证」，不选默认分类。使用附带素材，把原始 Excel 文件作为可下载附件加入正文，不读取或改写 Excel 内容。除本次新建测试记录外，不得改动已有文章或网站设置。本段中的内容、上传及上述发布方式均已作为实验要求授权；不要自行增加建议内容。\",\"goal\":\"在测试网站新建一篇文章并立即公开发布，标题为「自主归纳 learn-3 staged」，正文为指定内容，仅选择分类「Excel 验证」，并将原始 Excel 文件作为可下载附件加入正文。\",\"inputs\":{\"post_title\":{\"type\":\"string\",\"value\":\"自主归纳 learn-3 staged\"},\"post_content\":{\"type\":\"string\",\"value\":\"本文与附件均为虚构实验素材。样本 learn-3，校验编号 68700cbac3。请保留原始文件，不改写表格内容。\"},\"post_category\":{\"type\":\"string\",\"value\":\"Excel 验证\"},\"attachment_excel\":{\"type\":\"file\",\"path\":\"/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/staged-workflow-checks/artifacts/staged/learn-3/learn-3-staged.xlsx\",\"name\":\"learn-3-staged.xlsx\",\"stem\":\"learn-3-staged\",\"sha256\":\"739de3c5f3094e821ba5cfe720b738aafa9e79f894c859835a659402fc3dd693\"}},\"constraints\":[{\"description\":\"文章需立即公开发布，而非保存草稿\",\"quote\":\"立即公开发布\"},{\"description\":\"只选择分类「Excel 验证」，不选默认分类\",\"quote\":\"只选择分类「Excel 验证」，不选默认分类\"},{\"description\":\"附件须为原始 Excel 文件，不读取或改写其内容\",\"quote\":\"把原始 Excel 文件作为可下载附件加入正文，不读取或改写 Excel 内容\"},{\"description\":\"除本次新建测试记录外，不得改动已有文章或网站设置\",\"quote\":\"除本次新建测试记录外，不得改动已有文章或网站设置\"},{\"description\":\"不得自行增加建议内容\",\"quote\":\"不要自行增加建议内容\"}]},\"input\":\"attachment_excel\",\"page\":{\"url\":\"http://home.ts-ali.internal:38080/?p=100\",\"nodes\":[{\"id\":\"n1\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"Skip to content\",\"tag\":\"a\",\"value\":\"Skip to content\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":false,\"href\":\"#wp--skip-link--target\"},{\"id\":\"n2\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"Sample Page\",\"tag\":\"a\",\"value\":\"Sample Page\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":true,\"href\":\"http://home.ts-ali.internal:38080/?page_id=2\"},{\"id\":\"n4\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"helpr 测试用户\",\"tag\":\"a\",\"value\":\"helpr 测试用户\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":true,\"href\":\"http://home.ts-ali.internal:38080/?author=2\"},{\"id\":\"n5\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"Excel 验证\",\"tag\":\"a\",\"value\":\"Excel 验证\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":true,\"href\":\"http://home.ts-ali.internal:38080/?cat=2\"},{\"id\":\"n6\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"learn-3-staged\",\"tag\":\"a\",\"value\":\"learn-3-staged\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":true,\"href\":\"http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/learn-3-staged.xlsx\"},{\"id\":\"n7\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"Download\",\"tag\":\"a\",\"value\":\"Download\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":true,\"href\":\"http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/learn-3-staged.xlsx\",\"download\":true},{\"id\":\"n8\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"可靠性实验 updated repair-retry\",\"tag\":\"a\",\"value\":\"可靠性实验 updated repair-retry\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":false,\"href\":\"http://home.ts-ali.internal:38080/?p=67\"},{\"id\":\"n11\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"自主归纳 learn-3 staged\",\"tag\":\"a\",\"value\":\"自主归纳 learn-3 staged\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":false,\"href\":\"http://home.ts-ali.internal:38080/?p=100\"},{\"id\":\"n13\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"可靠性实验 updated repair-retry\",\"tag\":\"a\",\"value\":\"可靠性实验 updated repair-retry\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":false,\"href\":\"http://home.ts-ali.internal:38080/?p=67\"},{\"id\":\"n15\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"可靠性实验 repair-safe repair-retry\",\"tag\":\"a\",\"value\":\"可靠性实验 repair-safe repair-retry\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":false,\"href\":\"http://home.ts-ali.internal:38080/?p=64\"},{\"id\":\"n17\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"可靠性实验 delayed-upload final-path\",\"tag\":\"a\",\"value\":\"可靠性实验 delayed-upload final-path\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":false,\"href\":\"http://home.ts-ali.internal:38080/?p=53\"},{\"id\":\"n19\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"helpr 验证后台（仅测试）\",\"tag\":\"a\",\"value\":\"helpr 验证后台（仅测试）\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":false,\"href\":\"http://home.ts-ali.internal:38080\"},{\"id\":\"n20\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"Blog\",\"tag\":\"a\",\"value\":\"Blog\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":false,\"href\":\"#\"},{\"id\":\"n21\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"About\",\"tag\":\"a\",\"value\":\"About\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":false,\"href\":\"#\"},{\"id\":\"n22\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"FAQs\",\"tag\":\"a\",\"value\":\"FAQs\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":false,\"href\":\"#\"},{\"id\":\"n23\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"Authors\",\"tag\":\"a\",\"value\":\"Authors\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":false,\"href\":\"#\"},{\"id\":\"n24\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"Events\",\"tag\":\"a\",\"value\":\"Events\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":false,\"href\":\"#\"},{\"id\":\"n25\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"Shop\",\"tag\":\"a\",\"value\":\"Shop\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":false,\"href\":\"#\"},{\"id\":\"n26\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"Patterns\",\"tag\":\"a\",\"value\":\"Patterns\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":false,\"href\":\"#\"},{\"id\":\"n27\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"Themes\",\"tag\":\"a\",\"value\":\"Themes\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":false,\"href\":\"#\"},{\"id\":\"n28\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"WordPress\",\"tag\":\"a\",\"value\":\"WordPress\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":false,\"href\":\"https://wordpress.org\"}]}}"
+    }
+  ],
+  "schema": {
+    "type": "object",
+    "properties": {
+      "target": {
+        "type": "string",
+        "enum": [
+          "n1",
+          "n2",
+          "n4",
+          "n5",
+          "n6",
+          "n7",
+          "n8",
+          "n11",
+          "n13",
+          "n15",
+          "n17",
+          "n19",
+          "n20",
+          "n21",
+          "n22",
+          "n23",
+          "n24",
+          "n25",
+          "n26",
+          "n27",
+          "n28"
+        ]
+      },
+      "reason": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "target",
+      "reason"
+    ],
+    "additionalProperties": false
+  }
+}

@@ -1,0 +1,170 @@
+{
+  "at": "2026-10-11T01:59:26.814Z",
+  "method": "existing bounded position proposal and action assembler",
+  "oldSeal": "39eb791159326192408db038be4585ff001865848d29f98131229b9c141d5386",
+  "proposal": {
+    "target": "n16",
+    "reason": "失败条件要求定位「自主归纳 learn-3 staged (opens in a new tab)」链接，但该名称属于旧任务标题，当前页面不存在。当前页面唯一可见链接为 n16「View Post」，href 指向 http://home.ts-ali.internal:38080/?p=103，即本次新建文章的公开地址，与失败条件中指向已独立核验结果的链接具有相同定位属性（main 框架、role=link、可见且在视口内）。因此选择 n16 作为本次公开结果的真实链接。"
+  },
+  "oldFinish": {
+    "action": {
+      "op": "finish",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "link",
+        "name": "自主归纳 learn-3 staged (opens in a new tab)"
+      }
+    },
+    "effect": "commit",
+    "before": [
+      {
+        "kind": "visible",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "自主归纳 learn-3 staged (opens in a new tab)"
+        }
+      }
+    ],
+    "after": [],
+    "note": "文章已公开发布，发布面板显示“自主归纳 learn-3 staged ↗ is now live”，标题、正文、分类「Excel 验证」及原始 Excel 附件均已就绪，任务完成。",
+    "id": "s14"
+  },
+  "replacement": {
+    "action": {
+      "op": "finish",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "link",
+        "name": "View Post"
+      }
+    },
+    "effect": "commit",
+    "before": [
+      {
+        "kind": "visible",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "View Post"
+        }
+      }
+    ],
+    "after": [],
+    "note": "失败条件要求定位「自主归纳 learn-3 staged (opens in a new tab)」链接，但该名称属于旧任务标题，当前页面不存在。当前页面唯一可见链接为 n16「View Post」，href 指向 http://home.ts-ali.internal:38080/?p=103，即本次新建文章的公开地址，与失败条件中指向已独立核验结果的链接具有相同定位属性（main 框架、role=link、可见且在视口内）。因此选择 n16 作为本次公开结果的真实链接。",
+    "id": "s14"
+  },
+  "observations": [
+    "learn-3/observation-3.json",
+    "calibration/results.json"
+  ],
+  "recoveredReadOnlyResult": {
+    "url": "http://home.ts-ali.internal:38080/?p=103",
+    "runtimeEvidence": [
+      {
+        "condition": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "heading",
+            "name": {
+              "input": "post_title"
+            },
+            "level": 1
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "post_title"
+          },
+          "covers": "post_title"
+        },
+        "ok": true,
+        "actual": "自主归纳 calibration staged",
+        "expected": "自主归纳 calibration staged"
+      },
+      {
+        "condition": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "text",
+            "name": {
+              "input": "post_content"
+            }
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "post_content"
+          },
+          "covers": "post_content"
+        },
+        "ok": true,
+        "actual": "本文与附件均为虚构实验素材。样本 calibration，校验编号 9047ed14eb。请保留原始文件，不改写表格内容。",
+        "expected": "本文与附件均为虚构实验素材。样本 calibration，校验编号 9047ed14eb。请保留原始文件，不改写表格内容。"
+      },
+      {
+        "condition": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": {
+              "input": "post_category"
+            }
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "post_category"
+          },
+          "covers": "post_category"
+        },
+        "ok": true,
+        "actual": "Excel 验证",
+        "expected": "Excel 验证"
+      },
+      {
+        "condition": {
+          "kind": "download",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": {
+              "input": "attachment_excel",
+              "field": "stem"
+            }
+          },
+          "expected": {
+            "input": "attachment_excel",
+            "field": "sha256"
+          },
+          "covers": "attachment_excel"
+        },
+        "ok": true,
+        "actual": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+        "downloadedName": "calibration-staged.xlsx"
+      }
+    ],
+    "independent": {
+      "verified": true,
+      "unauthenticatedContext": true,
+      "url": "http://home.ts-ali.internal:38080/?p=103",
+      "title": "自主归纳 calibration staged",
+      "body": "本文与附件均为虚构实验素材。样本 calibration，校验编号 9047ed14eb。请保留原始文件，不改写表格内容。",
+      "category": "Excel 验证",
+      "attachmentUrl": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/calibration-staged.xlsx",
+      "downloadedName": "calibration-staged.xlsx",
+      "sourceBytes": 3755,
+      "downloadedBytes": 3755,
+      "sha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+      "exactBytesMatch": true
+    }
+  },
+  "newSeal": "be6d5ef3d04fa87486b2605fed9e84fcc32c47ec48b49098b41a27ca6e2af4bb"
+}

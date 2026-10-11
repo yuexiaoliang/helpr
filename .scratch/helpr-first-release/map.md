@@ -13,7 +13,7 @@ Status: open
 - 始终使用中文。每次工作先读仓库 [协作约定](../../AGENTS.md)、[术语表](../../GLOSSARY.md)及相关 ADR；首版 [本机执行](../../docs/adr/0001-local-execution.md)，[具体任务逻辑来自运行时流程](../../docs/adr/0002-runtime-workflows.md)。
 - 每次调用遵循 [wayfinder](../../.agents/skills/wayfinder/SKILL.md)。对话决策使用 [grilling](../../.agents/skills/grilling/SKILL.md)和 [domain-modeling](../../.agents/skills/domain-modeling/SKILL.md)；资料调查使用 [research](../../.agents/skills/research/SKILL.md)；状态或界面讨论使用 [prototype](../../.agents/skills/prototype/SKILL.md)；设计 Module 与 Interface 时使用 [codebase-design](../../.agents/skills/codebase-design/SKILL.md)。按事项需要读取对应技能，不把阅读材料当作完成实验。
 - 本地图使用 [本地事项管理约定](../../docs/agents/issue-tracker.md)。子事项位于 `issues/`，先创建事项再设置依赖；从 `Status: open`、全部依赖已解决的事项中按编号选取，先改为 `claimed` 再工作。事项按名称引用，答案只记录在对应事项的 `Answer` 中，地图仅索引结论。
-- 2026-10-10，用户强调探路与复用是核心，要求更严谨可靠的设计。可靠性约定实验已取得反例与真实结果证据，但最终候选仍有实验程序辅助组装；当前优先推进 [验证无需人工修订的流程归纳与条件校准](issues/15-autonomous-workflow-induction.md)，完成后恢复按编号选取。执行约定可行与自动学习成立须分别取得证据，再作为执行组合选型的依据。
+- 2026-10-10，用户强调探路与复用是核心，要求更严谨可靠的设计。[验证上传授权与完整流程的分阶段检查](issues/17-upload-authorization-and-workflow-checks.md) 已补全当前后台的真实路径、模型校准与冻结后保留集，结束该前置验证的优先处理，恢复按编号选取。完整复用证据与所有副作用均在授权范围内的保证仍须区分，已暴露的请求关联未知由独立事项进入最终组合选择。
 - `Mode: HITL` 需要真人参与相关核对或决策；`Mode: AFK` 可由 agent 独立工作。真实鼠标、中文输入与粘贴的对照，不能用自动化事件冒充真人证据。用户无需为此学习调度或锁等内部机制。
 - 技术实验归为 `task`：它们取得下一项决定必需的运行事实。`prototype` 用于让用户核对状态或界面行为，其模拟结果不能替代真实浏览器证据。实验只做到足以回答问题，产物标明实验用途，不发展成预设架构的产品实现。
 - 已有 [WordPress 网页验证证据](../../docs/testing/validation-backend.md)只证明独立后台的附件发布路径可用。已有 [浏览器原语调查](../../docs/research/browser-execution-primitives.md)、[可见工作区调查](../../docs/research/visible-browser-workspace.md)和 [并行调查](../../docs/research/parallel-execution-feasibility.md)可复用，所列未执行实验仍需取得证据。
@@ -30,6 +30,9 @@ Status: open
 - [确认现有模型 API 的接入条件](issues/03-model-api-access.md)：测试模型 `deepseek-flash` 的 8 项真实接口检查通过；用户可自行配置服务，实际网页执行器组合继续验证。
 - [验证参数化流程的冷启动重放与修复更新](issues/05-runtime-flow-replay.md)：在预定义参数和独立测试断言下，AI 学得的动作序列可换素材跨进程重放，受控控件变化经修复后保存新版；两次稳定重放均无模型调用，尚未证明完整流程的适用性与学习机制。
 - [验证流程适用性、步骤条件与修复边界](issues/14-workflow-reliability-contract.md)：候选执行约定取得 15 类场景的符合预期证据，旧可见性等待的误判与受限修复均得到验证；最终候选仍有实验程序辅助组装，自动归纳缺口转为独立前置验证。
+- [验证无需人工修订的流程归纳与条件校准](issues/15-autonomous-workflow-induction.md)：完整自动归纳未通过；受限字段观察提议取得真实正反状态、换文字局部复用及控件变更时停止的证据，完整闭环转为后续前置验证。
+- [验证受限提议下的完整流程归纳](issues/16-constrained-workflow-induction.md)：十步局部复用及错误效果提议拦截得到验证；上传字节观测假设被反例否定，完整路径与保留集仍未成立。
+- [验证上传授权与完整流程的分阶段检查](issues/17-upload-authorization-and-workflow-checks.md)：十四步完整路径、模型校准与冻结后保留集通过；分阶段证据可用，请求与副作用的关联保证仍需独立验证。
 
 ## Not yet specified
 

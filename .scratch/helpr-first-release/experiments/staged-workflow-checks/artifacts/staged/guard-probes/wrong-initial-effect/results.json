@@ -1,0 +1,193 @@
+{
+  "mode": "wrong-initial-effect",
+  "status": "correctly-blocked",
+  "trace": [
+    {
+      "id": "s1",
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "id": "s2",
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "id": "s3",
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "id": "s4",
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "id": "s5",
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "id": "s6",
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "id": "s7",
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "id": "s8",
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "id": "s9",
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "id": "s10",
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "step": {
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Publish"
+          }
+        },
+        "effect": "read",
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Publish"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Publish",
+              "within": {
+                "frame": "main",
+                "by": "role",
+                "role": "region",
+                "name": "Editor publish"
+              }
+            }
+          }
+        ],
+        "note": "标题、正文、分类均已就绪，点击 Publish 立即公开发布",
+        "id": "wrong-initial-s9"
+      },
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "step": {
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Publish",
+            "within": {
+              "frame": "main",
+              "by": "role",
+              "role": "region",
+              "name": "Editor publish"
+            }
+          }
+        },
+        "effect": "read",
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Publish",
+              "within": {
+                "frame": "main",
+                "by": "role",
+                "role": "region",
+                "name": "Editor publish"
+              }
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Close"
+            }
+          }
+        ],
+        "note": "在发布确认面板中点击 Publish 立即公开发布文章",
+        "id": "wrong-initial-s10"
+      },
+      "result": {
+        "executed": true
+      }
+    }
+  ],
+  "source": "earlier observed controls, initial unsealed proposals injected as read",
+  "requests": [
+    {
+      "at": "2026-10-11T01:47:23.375Z",
+      "type": "mutation-request",
+      "method": "POST",
+      "path": "/index.php",
+      "effectProposal": "read",
+      "operation": "click",
+      "outcome": "blocked",
+      "code": "inputs-not-covered",
+      "detail": {
+        "covered": [
+          "post_title",
+          "post_content",
+          "post_category"
+        ],
+        "required": [
+          "post_title",
+          "post_content",
+          "post_category",
+          "attachment_excel"
+        ]
+      }
+    }
+  ],
+  "uploadHolds": []
+}

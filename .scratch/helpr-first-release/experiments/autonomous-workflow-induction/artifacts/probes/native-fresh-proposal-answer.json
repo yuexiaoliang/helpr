@@ -1,0 +1,15 @@
+{
+  "role": "assistant",
+  "content": "",
+  "tool_calls": [
+    {
+      "index": 0,
+      "id": "call_00_zii7rsf2rWn2TBMNrCnB4843",
+      "type": "function",
+      "function": {
+        "name": "record_proposal",
+        "arguments": "{\"note\": \"标题已由程序核实填写完成（observedInputs 中 title 已满足），当前 editor-canvas 中已存在一个选中的空段落块（role=document，名称 \\\"Empty block; start writing or type forward slash to choose a block\\\"），因此下一步直接向该块填入正文，无需再点击 \\\"Add default block\\\"（该按钮此前不存在，s4 已失败，不再重复）。正文填入后再处理分类与附件。\", \"action\": {\"op\": \"fill\", \"target\": {\"frame\": \"editor-canvas\", \"by\": \"role\", \"role\": \"document\", \"name\": \"Empty block; start writing or type forward slash to choose a block\"}, \"value\": {\"input\": \"body\"}}, \"effect\": \"edit\", \"before\": [{\"kind\": \"visible\", \"target\": {\"frame\": \"editor-canvas\", \"by\": \"role\", \"role\": \"document\", \"name\": \"Empty block; start writing or type forward slash to choose a block\"}}], \"after\": [{\"kind\": \"value\", \"target\": {\"frame\": \"editor-canvas\", \"by\": \"role\", \"role\": \"document\", \"name\": \"Empty block; start writing or type forward slash to choose a block\"}, \"compare\": \"equals\", \"expected\": {\"input\": \"body\"}}], \"commitChecks\": []}"
+      }
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "instruction": "只修复给定输出的 JSON 语法，不改变任何字段、动作、条件或值，不添加内容。返回单个合法 JSON 对象。",
+  "input": {
+    "invalidJson": "{\"after\": [{\"kind\": \"value\", \"target\": {\"frame\": \"editor-canvas\", \"by\": \"role\", \"role\": \"document\", \"name\": \"Block: Paragraph\"}, \"compare\": \"contains\", \"expected\": {\"input\": \"body\"}}], \"reasoning\": \"动作已成功：正文段落已填入，但可访问名称从「Empty block; start writing or type forward slash to choose a block」变为「Block: Paragraph」（因为段落不再为空）。因此原 after 定位失效（count=0）。修订为按当前实际结构定位该段落 document，并仍核对内容包含原始 body 输入值。\"}}",
+    "error": "Unexpected non-whitespace character after JSON at position 390 (line 1 column 391)"
+  }
+}

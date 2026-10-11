@@ -1,0 +1,182 @@
+{
+  "startedAt": "2026-10-10T14:20:03.658Z",
+  "budget": {
+    "calls": 48,
+    "tokens": 235082,
+    "minutes": 30,
+    "candidateRevisions": 2
+  },
+  "campaign": {
+    "prior": "attempt-a",
+    "priorCalls": 16,
+    "priorTokens": 164918,
+    "maxTotalCalls": 64,
+    "maxTotalTokens": 400000
+  },
+  "modelCalls": [
+    {
+      "label": "parse-learn",
+      "startedAt": "2026-10-10T14:20:03.898Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 498,
+        "completion_tokens": 415,
+        "total_tokens": 913,
+        "prompt_cache_hit_tokens": 128,
+        "prompt_cache_miss_tokens": 370
+      },
+      "endedAt": "2026-10-10T14:20:05.966Z",
+      "durationMs": 2067.9444590000003
+    },
+    {
+      "label": "explore-0",
+      "startedAt": "2026-10-10T14:20:18.283Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 3841,
+        "completion_tokens": 96,
+        "total_tokens": 3937,
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 3329
+      },
+      "endedAt": "2026-10-10T14:20:19.059Z",
+      "durationMs": 776.4295839999995
+    },
+    {
+      "label": "explore-1",
+      "startedAt": "2026-10-10T14:20:54.155Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 4360,
+        "completion_tokens": 110,
+        "total_tokens": 4470,
+        "prompt_cache_hit_tokens": 3584,
+        "prompt_cache_miss_tokens": 776
+      },
+      "endedAt": "2026-10-10T14:20:54.952Z",
+      "durationMs": 796.7197920000035
+    },
+    {
+      "label": "explore-2",
+      "startedAt": "2026-10-10T14:21:38.919Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 3063,
+        "completion_tokens": 169,
+        "total_tokens": 3232,
+        "prompt_cache_hit_tokens": 1024,
+        "prompt_cache_miss_tokens": 2039
+      },
+      "endedAt": "2026-10-10T14:21:40.033Z",
+      "durationMs": 1113.5314580000122
+    },
+    {
+      "label": "explore-3",
+      "startedAt": "2026-10-10T14:21:40.104Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 3261,
+        "completion_tokens": 170,
+        "total_tokens": 3431,
+        "prompt_cache_hit_tokens": 1024,
+        "prompt_cache_miss_tokens": 2237
+      },
+      "endedAt": "2026-10-10T14:21:41.094Z",
+      "durationMs": 989.6590830000059
+    },
+    {
+      "label": "explore-4",
+      "startedAt": "2026-10-10T14:21:41.151Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 3123,
+        "completion_tokens": 135,
+        "total_tokens": 3258,
+        "prompt_cache_hit_tokens": 2432,
+        "prompt_cache_miss_tokens": 691
+      },
+      "endedAt": "2026-10-10T14:21:41.873Z",
+      "durationMs": 722.0438329999888
+    },
+    {
+      "label": "explore-5",
+      "startedAt": "2026-10-10T14:21:58.137Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 3601,
+        "completion_tokens": 203,
+        "total_tokens": 3804,
+        "prompt_cache_hit_tokens": 1024,
+        "prompt_cache_miss_tokens": 2577
+      },
+      "endedAt": "2026-10-10T14:21:59.216Z",
+      "durationMs": 1079.3066249999974
+    }
+  ],
+  "outcomes": [
+    {
+      "phase": "learn",
+      "status": "failed",
+      "error": {
+        "code": "condition-unsatisfied",
+        "message": "condition-unsatisfied",
+        "detail": {
+          "evidence": [
+            {
+              "condition": {
+                "kind": "text",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "document",
+                  "name": "Empty block; start writing or type forward slash to choose a block"
+                },
+                "compare": "contains",
+                "expected": {
+                  "input": "body"
+                }
+              },
+              "ok": false,
+              "count": 0
+            }
+          ]
+        },
+        "executed": true,
+        "status": "blocked"
+      }
+    }
+  ],
+  "sourceHashes": {
+    "run.mjs": "b0c8432f5b20506e139be50e50e11f780af0c5fe96f1a15ef7aa94620b913db8",
+    "runtime.mjs": "00ad1f3b4e67c4d99d16f9de1b044713b62dfab02af9cce9639baa3449c92b61",
+    "prompts.mjs": "03f6a616cf8684d32e24fd864f56d83bcca6821ab5928dbfb769d1506674cf75",
+    "fixtures.mjs": "a15764c2fddba06f03ff8daa67bdba0ea8fdf836e97402f27a74868ed1dd6250",
+    "../model-api/client.mjs": "70d88c5b1149792f5549a6cf3c15748d0ea1ca34809c6741e63f0bd9581996ae",
+    "../workflow-reliability/executor.mjs": "1f52ad429617b9b6e01081b75254a52fb30af6e46f5468d2ea1f6d4428582b9c"
+  },
+  "model": "deepseek-flash",
+  "status": "finished",
+  "endedAt": "2026-10-10T14:22:15.491Z",
+  "tokens": 23045
+}

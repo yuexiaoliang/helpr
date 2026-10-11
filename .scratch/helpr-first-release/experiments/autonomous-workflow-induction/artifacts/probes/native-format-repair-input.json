@@ -1,0 +1,62 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "通过指定工具修正给定输出的 JSON 语法。保持所有字段、动作、条件及值原意，不执行操作。"
+    },
+    {
+      "role": "user",
+      "content": "{\"note\":\"标题已满足。当前编辑器画布中已有选中的空段落块（document \\\"Empty block; start writing or type forward slash to choose a block\\\"），下一步直接向该块填入正文，无需再点击 Add default block。\",\"action\":{\"op\":\"fill\",\"target\":{\"frame\":\"editor-canvas\",\"by\":\"role\",\"role\":\"document\",\"name\":\"Empty block; start writing or type forward slash to choose a block\"},\"value\":{\"input\":\"body\"}},\"effect\":\"edit\",\"before\":[{\"kind\":\"visible\",\"target\":{\"frame\":\"editor-canvas\",\"by\":\"role\",\"role\":\"document\",\"name\":\"Empty block; start writing or type forward slash to choose a block\"}}],\"after\":[{\"kind\":\"value\",\"target\":{\"frame\":\"editor-canvas\",\"by\":\"role\",\"role\":\"document\",\"name\":\"Empty block; start writing or type forward slash to choose a block\"},\"compare\":\"contains\",\"expected\":{\"input\":\"body\"}}]},\"commitChecks\":[]}"
+    }
+  ],
+  "schema": {
+    "type": "object",
+    "properties": {
+      "note": {
+        "type": "string"
+      },
+      "action": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "effect": {
+        "type": "string",
+        "enum": [
+          "read",
+          "edit",
+          "upload",
+          "commit"
+        ]
+      },
+      "before": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "after": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "commitChecks": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "required": [
+      "action",
+      "effect",
+      "before",
+      "after",
+      "commitChecks"
+    ],
+    "additionalProperties": false
+  }
+}

@@ -1,0 +1,870 @@
+{
+  "generatedAt": "2026-10-11T02:10:49.437Z",
+  "startedAt": "2026-10-11T01:34:53.547Z",
+  "finishedAt": "2026-10-11T02:09:02.661Z",
+  "elapsedMs": 2049114,
+  "deadline": "2026-10-11T02:44:53.548Z",
+  "limits": {
+    "calls": 60,
+    "tokens": 260000,
+    "phases": {
+      "probe": [
+        8,
+        40000
+      ],
+      "learn": [
+        26,
+        120000
+      ],
+      "calibrate": [
+        12,
+        50000
+      ],
+      "evaluate": [
+        14,
+        50000
+      ]
+    },
+    "revisions": 6,
+    "protocolRevisions": 4
+  },
+  "calls": 33,
+  "tokens": 134617,
+  "phases": {
+    "probe": {
+      "calls": 8,
+      "tokens": 13945,
+      "inputUnderstandingCalls": 7
+    },
+    "learn": {
+      "calls": 16,
+      "tokens": 105344,
+      "inputUnderstandingCalls": 3
+    },
+    "calibrate": {
+      "calls": 3,
+      "tokens": 4593,
+      "inputUnderstandingCalls": 2
+    },
+    "evaluate": {
+      "calls": 6,
+      "tokens": 10735,
+      "inputUnderstandingCalls": 6
+    }
+  },
+  "formatRevisions": 0,
+  "protocolRevisions": [
+    {
+      "at": "2026-10-11T01:41:15.959Z",
+      "revision": 1,
+      "reason": "上传事件后原控件正常替换；凭据绑定到选择事件的真实控件，文档导航/素材/任务/重复选择使其失效，不能要求旧节点一直附着。",
+      "evidence": "upload-probe-learn/events.jsonl"
+    },
+    {
+      "at": "2026-10-11T01:48:12.778Z",
+      "revision": 2,
+      "reason": "完整归纳前补充通用布尔约束观察、文件结果名称显式绑定，并将普通写请求限定到当前 click/press 动作；后台写请求不因已就绪而自动放行。",
+      "evidence": "source-full-learning"
+    },
+    {
+      "at": "2026-10-11T01:50:59.501Z",
+      "revision": 3,
+      "reason": "补充布尔约束时排除已有检查的同一 DOM 控件，避免重复归纳已绑定位置；学习阶段固定源素材字节，以保留不同字节文件供冻结后验证。",
+      "evidence": "learn/results.json"
+    },
+    {
+      "at": "2026-10-11T01:53:52.907Z",
+      "revision": 4,
+      "reason": "正常历史只呈现已验证完成及条件，暂停反例和后台拦截保留诊断日志；没有文件输入时不提供 upload 操作；当前动作使用派发前就绪证据跨越其自身界面切换，请求前仍重核素材和任务，不跨动作复用。",
+      "evidence": "learn-2/results.json"
+    }
+  ],
+  "cases": [
+    {
+      "file": "calibration/results.json",
+      "name": "calibration",
+      "status": "uncertain",
+      "error": {
+        "code": "condition-unsatisfied",
+        "message": "condition-unsatisfied",
+        "detail": {
+          "evidence": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "link",
+                  "name": "自主归纳 learn-3 staged (opens in a new tab)"
+                }
+              },
+              "ok": false,
+              "count": 0
+            }
+          ]
+        },
+        "executed": true,
+        "executionUncertain": false
+      },
+      "browserModelCalls": 0,
+      "steps": 12,
+      "uploadPending": {
+        "passed": false,
+        "code": "artifact-origin",
+        "detail": {}
+      },
+      "effectProbe": {
+        "actualAction": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Publish"
+          }
+        },
+        "incorrectProposal": "read",
+        "caught": {
+          "code": "condition-unsatisfied",
+          "message": "condition-unsatisfied",
+          "detail": {
+            "evidence": [
+              {
+                "condition": {
+                  "kind": "value",
+                  "target": {
+                    "frame": "editor-canvas",
+                    "by": "role",
+                    "role": "textbox",
+                    "name": "Add title"
+                  },
+                  "compare": "equals",
+                  "expected": {
+                    "input": "post_title"
+                  },
+                  "covers": "post_title"
+                },
+                "ok": false,
+                "actual": "实验注入：尚未满足授权内容",
+                "expected": "自主归纳 calibration staged"
+              },
+              {
+                "condition": {
+                  "kind": "value",
+                  "target": {
+                    "frame": "editor-canvas",
+                    "by": "text",
+                    "name": {
+                      "input": "post_content"
+                    }
+                  },
+                  "compare": "equals",
+                  "expected": {
+                    "input": "post_content"
+                  },
+                  "covers": "post_content"
+                },
+                "ok": true,
+                "actual": "本文与附件均为虚构实验素材。样本 calibration，校验编号 9047ed14eb。请保留原始文件，不改写表格内容。",
+                "expected": "本文与附件均为虚构实验素材。样本 calibration，校验编号 9047ed14eb。请保留原始文件，不改写表格内容。"
+              },
+              {
+                "condition": {
+                  "kind": "checked",
+                  "target": {
+                    "frame": "main",
+                    "by": "role",
+                    "role": "checkbox",
+                    "name": {
+                      "input": "post_category"
+                    }
+                  },
+                  "expected": true,
+                  "covers": "post_category"
+                },
+                "ok": true,
+                "actual": true
+              },
+              {
+                "condition": {
+                  "kind": "checked",
+                  "target": {
+                    "frame": "main",
+                    "by": "role",
+                    "role": "checkbox",
+                    "name": "Uncategorized"
+                  },
+                  "expected": false,
+                  "constraintQuote": "只选择分类「Excel 验证」，不选默认分类"
+                },
+                "ok": true,
+                "actual": false
+              }
+            ]
+          }
+        },
+        "dispatchPrevented": true
+      }
+    },
+    {
+      "file": "calibration-2/results.json",
+      "name": "calibration-2",
+      "status": "completed",
+      "browserModelCalls": 0,
+      "steps": 14,
+      "url": "http://home.ts-ali.internal:38080/?p=106",
+      "independentlyVerified": true,
+      "fileHash": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+      "exactBytesMatch": true,
+      "uploadPending": {
+        "passed": false,
+        "code": "artifact-origin",
+        "detail": {}
+      },
+      "effectProbe": {
+        "actualAction": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Publish"
+          }
+        },
+        "incorrectProposal": "read",
+        "caught": {
+          "code": "condition-unsatisfied",
+          "message": "condition-unsatisfied",
+          "detail": {
+            "evidence": [
+              {
+                "condition": {
+                  "kind": "value",
+                  "target": {
+                    "frame": "editor-canvas",
+                    "by": "role",
+                    "role": "textbox",
+                    "name": "Add title"
+                  },
+                  "compare": "equals",
+                  "expected": {
+                    "input": "post_title"
+                  },
+                  "covers": "post_title"
+                },
+                "ok": false,
+                "actual": "实验注入：尚未满足授权内容",
+                "expected": "自主归纳 calibration-2 staged"
+              },
+              {
+                "condition": {
+                  "kind": "value",
+                  "target": {
+                    "frame": "editor-canvas",
+                    "by": "text",
+                    "name": {
+                      "input": "post_content"
+                    }
+                  },
+                  "compare": "equals",
+                  "expected": {
+                    "input": "post_content"
+                  },
+                  "covers": "post_content"
+                },
+                "ok": true,
+                "actual": "本文与附件均为虚构实验素材。样本 calibration-2，校验编号 554c22cf7c。请保留原始文件，不改写表格内容。",
+                "expected": "本文与附件均为虚构实验素材。样本 calibration-2，校验编号 554c22cf7c。请保留原始文件，不改写表格内容。"
+              },
+              {
+                "condition": {
+                  "kind": "checked",
+                  "target": {
+                    "frame": "main",
+                    "by": "role",
+                    "role": "checkbox",
+                    "name": {
+                      "input": "post_category"
+                    }
+                  },
+                  "expected": true,
+                  "covers": "post_category"
+                },
+                "ok": true,
+                "actual": true
+              },
+              {
+                "condition": {
+                  "kind": "checked",
+                  "target": {
+                    "frame": "main",
+                    "by": "role",
+                    "role": "checkbox",
+                    "name": "Uncategorized"
+                  },
+                  "expected": false,
+                  "constraintQuote": "只选择分类「Excel 验证」，不选默认分类"
+                },
+                "ok": true,
+                "actual": false
+              }
+            ]
+          }
+        },
+        "dispatchPrevented": true
+      }
+    },
+    {
+      "file": "changed-control/results.json",
+      "name": "changed-control",
+      "status": "correctly-blocked",
+      "error": {
+        "code": "condition-unsatisfied",
+        "message": "condition-unsatisfied",
+        "detail": {
+          "evidence": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Add title"
+                }
+              },
+              "ok": false,
+              "count": 0
+            }
+          ]
+        }
+      },
+      "browserModelCalls": 0,
+      "steps": 1
+    },
+    {
+      "file": "guard-probes/material-change/results.json",
+      "name": "material-change",
+      "status": "correctly-blocked",
+      "error": {
+        "code": "upload-request-blocked",
+        "message": "upload-request-blocked",
+        "detail": {
+          "blocked": "material-changed"
+        },
+        "executed": true
+      },
+      "browserModelCalls": 0,
+      "steps": 10
+    },
+    {
+      "file": "guard-probes/document-change/results.json",
+      "name": "document-change",
+      "status": "correctly-blocked",
+      "error": {
+        "code": "upload-request-blocked",
+        "message": "upload-request-blocked",
+        "detail": {
+          "blocked": "upload-permit-stale"
+        },
+        "executed": true
+      },
+      "browserModelCalls": 0,
+      "steps": 10
+    },
+    {
+      "file": "guard-probes/ordinary-request/results.json",
+      "name": "ordinary-request",
+      "status": "ordinary-blocked-authorized-upload-completed",
+      "browserModelCalls": 0,
+      "steps": 11
+    },
+    {
+      "file": "guard-probes/wrong-initial-effect/results.json",
+      "name": "wrong-initial-effect",
+      "status": "correctly-blocked",
+      "browserModelCalls": 0,
+      "steps": 12
+    },
+    {
+      "file": "guard-probes-final/wrong-initial-effect/results.json",
+      "name": "wrong-initial-effect",
+      "status": "correctly-blocked",
+      "browserModelCalls": 0,
+      "steps": 12
+    },
+    {
+      "file": "heldout/results.json",
+      "name": "heldout",
+      "status": "completed",
+      "browserModelCalls": 0,
+      "steps": 14,
+      "url": "http://home.ts-ali.internal:38080/?p=109",
+      "independentlyVerified": true,
+      "fileHash": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+      "exactBytesMatch": true,
+      "uploadPending": {
+        "passed": false,
+        "code": "artifact-origin",
+        "detail": {}
+      }
+    },
+    {
+      "file": "heldout-collision/results.json",
+      "name": "heldout-collision",
+      "status": "completed",
+      "browserModelCalls": 0,
+      "steps": 14,
+      "url": "http://home.ts-ali.internal:38080/?p=112",
+      "independentlyVerified": true,
+      "fileHash": "2920f2e32ead356702ec76f643c4718bca55ab1a4f823aa139354651e754ef9a",
+      "exactBytesMatch": true,
+      "uploadPending": {
+        "passed": false,
+        "code": "artifact-origin",
+        "detail": {}
+      }
+    },
+    {
+      "file": "learn/results.json",
+      "name": "learn",
+      "status": "failed",
+      "error": {
+        "code": "constraint-dynamic-name-needs-binding",
+        "message": "constraint-dynamic-name-needs-binding",
+        "detail": {}
+      },
+      "steps": 11,
+      "uploadPending": {
+        "passed": false,
+        "code": "artifact-origin",
+        "detail": {}
+      }
+    },
+    {
+      "file": "learn-2/results.json",
+      "name": "learn-2",
+      "status": "failed",
+      "error": {
+        "code": "no-progress-limit",
+        "message": "no-progress-limit",
+        "detail": {}
+      },
+      "steps": 11,
+      "uploadPending": {
+        "passed": false,
+        "code": "artifact-origin",
+        "detail": {}
+      }
+    },
+    {
+      "file": "learn-3/results.json",
+      "name": "learn-3",
+      "status": "learned-unvalidated",
+      "steps": 14,
+      "url": "http://home.ts-ali.internal:38080/?p=100",
+      "independentlyVerified": true,
+      "fileHash": "739de3c5f3094e821ba5cfe720b738aafa9e79f894c859835a659402fc3dd693",
+      "exactBytesMatch": true,
+      "uploadPending": {
+        "passed": false,
+        "code": "artifact-origin",
+        "detail": {}
+      }
+    },
+    {
+      "file": "negative-draft/results.json",
+      "name": "negative-draft",
+      "status": "correctly-rejected"
+    },
+    {
+      "file": "negative-summarize/results.json",
+      "name": "negative-summarize",
+      "status": "correctly-rejected"
+    },
+    {
+      "file": "negative-update/results.json",
+      "name": "negative-update",
+      "status": "correctly-rejected"
+    },
+    {
+      "file": "observation-probe/results.json",
+      "name": "observation-probe",
+      "status": "observation-supported"
+    },
+    {
+      "file": "permit-invalidations/task-change/results.json",
+      "name": "task-change",
+      "status": "correctly-blocked",
+      "error": {
+        "code": "upload-request-blocked",
+        "message": "upload-request-blocked",
+        "detail": {
+          "blocked": "task-changed"
+        }
+      },
+      "browserModelCalls": 0
+    },
+    {
+      "file": "permit-invalidations/completed-permit-reuse/results.json",
+      "name": "completed-permit-reuse",
+      "status": "correctly-blocked",
+      "browserModelCalls": 0
+    },
+    {
+      "file": "upload-probe-learn/results.json",
+      "name": "upload-probe-learn",
+      "status": "failed",
+      "error": {
+        "code": "Error",
+        "message": "upload-not-observed",
+        "executed": true
+      },
+      "browserModelCalls": 0,
+      "steps": 10
+    },
+    {
+      "file": "upload-probe-learn-2/results.json",
+      "name": "upload-probe-learn-2",
+      "status": "upload-completed",
+      "browserModelCalls": 1,
+      "steps": 11
+    },
+    {
+      "file": "upload-probe-replay/results.json",
+      "name": "upload-probe-replay",
+      "status": "upload-completed",
+      "browserModelCalls": 0,
+      "steps": 11,
+      "uploadPending": {
+        "passed": false,
+        "code": "artifact-origin",
+        "detail": {}
+      }
+    }
+  ],
+  "candidate": {
+    "steps": 14,
+    "seal": "be6d5ef3d04fa87486b2605fed9e84fcc32c47ec48b49098b41a27ca6e2af4bb",
+    "createdAt": "2026-10-11T01:55:34.364Z",
+    "source": {
+      "file": "artifacts/staged/learn-2/results.json",
+      "hash": "9c383f11f210b64f3185ff369a1f7dca715760b95b9ee8f0f7fcb9fc2ee232a2",
+      "steps": [
+        "s1",
+        "s2",
+        "s3",
+        "s4",
+        "s5",
+        "s6",
+        "s7",
+        "s8",
+        "s9",
+        "s10",
+        "s11"
+      ]
+    }
+  },
+  "frozen": {
+    "hash": "1d5773930c0e60224748911306ce6f9c4a02eb1b95cb460d347751ea2c2b4082",
+    "validatedAt": "2026-10-11T02:00:49.699Z",
+    "source": "calibration-2/results.json"
+  },
+  "generation": {
+    "candidateHash": "1d5773930c0e60224748911306ce6f9c4a02eb1b95cb460d347751ea2c2b4082",
+    "frozenAt": "2026-10-11T02:00:49.699Z",
+    "startedAt": "2026-10-11T02:01:16.382Z",
+    "cases": [
+      {
+        "name": "heldout",
+        "createdAt": "2026-10-11T02:01:16.386Z",
+        "requestDigest": "d8362d303d99a9584ac8f692ff9c76f63c6d08eaf1899d933d8a29f4b2a57552",
+        "materialHashes": [
+          "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+        ]
+      },
+      {
+        "name": "heldout-collision",
+        "createdAt": "2026-10-11T02:02:15.545Z",
+        "requestDigest": "904af4a91c586e6cae390db28ff06dba7e92c4ab9c11d1aa5e0d51c25ad53002",
+        "materialHashes": [
+          "2920f2e32ead356702ec76f643c4718bca55ab1a4f823aa139354651e754ef9a"
+        ]
+      },
+      {
+        "name": "negative-draft",
+        "createdAt": "2026-10-11T02:03:13.142Z",
+        "requestDigest": "a1b95cda19e23d84dd0588eeed7f0a790c58f9b433d49c5eabba6ec62d48eb95",
+        "materialHashes": [
+          "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+        ]
+      },
+      {
+        "name": "negative-update",
+        "createdAt": "2026-10-11T02:03:15.308Z",
+        "requestDigest": "f6200b4caf1810e095acd5423fb908c3bb37efcf1bb1d1e9395f3a368a756863",
+        "materialHashes": [
+          "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+        ]
+      },
+      {
+        "name": "negative-summarize",
+        "createdAt": "2026-10-11T02:03:17.926Z",
+        "requestDigest": "b419b1c909420510008e0834422f23e0625db8cb68db2d3d5ec2373dd61c882e",
+        "materialHashes": [
+          "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+        ]
+      },
+      {
+        "name": "changed-control",
+        "createdAt": "2026-10-11T02:03:20.106Z",
+        "requestDigest": "8bb402ac4b540a9097013ecd3253465315aa43f66c8fe8f8b9bc705641648b2d",
+        "materialHashes": [
+          "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+        ]
+      }
+    ]
+  },
+  "positionCalibration": {
+    "at": "2026-10-11T01:59:26.814Z",
+    "method": "existing bounded position proposal and action assembler",
+    "oldSeal": "39eb791159326192408db038be4585ff001865848d29f98131229b9c141d5386",
+    "proposal": {
+      "target": "n16",
+      "reason": "失败条件要求定位「自主归纳 learn-3 staged (opens in a new tab)」链接，但该名称属于旧任务标题，当前页面不存在。当前页面唯一可见链接为 n16「View Post」，href 指向 http://home.ts-ali.internal:38080/?p=103，即本次新建文章的公开地址，与失败条件中指向已独立核验结果的链接具有相同定位属性（main 框架、role=link、可见且在视口内）。因此选择 n16 作为本次公开结果的真实链接。"
+    },
+    "oldFinish": {
+      "action": {
+        "op": "finish",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "自主归纳 learn-3 staged (opens in a new tab)"
+        }
+      },
+      "effect": "commit",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": "自主归纳 learn-3 staged (opens in a new tab)"
+          }
+        }
+      ],
+      "after": [],
+      "note": "文章已公开发布，发布面板显示“自主归纳 learn-3 staged ↗ is now live”，标题、正文、分类「Excel 验证」及原始 Excel 附件均已就绪，任务完成。",
+      "id": "s14"
+    },
+    "replacement": {
+      "action": {
+        "op": "finish",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "View Post"
+        }
+      },
+      "effect": "commit",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": "View Post"
+          }
+        }
+      ],
+      "after": [],
+      "note": "失败条件要求定位「自主归纳 learn-3 staged (opens in a new tab)」链接，但该名称属于旧任务标题，当前页面不存在。当前页面唯一可见链接为 n16「View Post」，href 指向 http://home.ts-ali.internal:38080/?p=103，即本次新建文章的公开地址，与失败条件中指向已独立核验结果的链接具有相同定位属性（main 框架、role=link、可见且在视口内）。因此选择 n16 作为本次公开结果的真实链接。",
+      "id": "s14"
+    },
+    "observations": [
+      "learn-3/observation-3.json",
+      "calibration/results.json"
+    ],
+    "recoveredReadOnlyResult": {
+      "url": "http://home.ts-ali.internal:38080/?p=103",
+      "runtimeEvidence": [
+        {
+          "condition": {
+            "kind": "text",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "heading",
+              "name": {
+                "input": "post_title"
+              },
+              "level": 1
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "post_title"
+            },
+            "covers": "post_title"
+          },
+          "ok": true,
+          "actual": "自主归纳 calibration staged",
+          "expected": "自主归纳 calibration staged"
+        },
+        {
+          "condition": {
+            "kind": "text",
+            "target": {
+              "frame": "main",
+              "by": "text",
+              "name": {
+                "input": "post_content"
+              }
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "post_content"
+            },
+            "covers": "post_content"
+          },
+          "ok": true,
+          "actual": "本文与附件均为虚构实验素材。样本 calibration，校验编号 9047ed14eb。请保留原始文件，不改写表格内容。",
+          "expected": "本文与附件均为虚构实验素材。样本 calibration，校验编号 9047ed14eb。请保留原始文件，不改写表格内容。"
+        },
+        {
+          "condition": {
+            "kind": "text",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "link",
+              "name": {
+                "input": "post_category"
+              }
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "post_category"
+            },
+            "covers": "post_category"
+          },
+          "ok": true,
+          "actual": "Excel 验证",
+          "expected": "Excel 验证"
+        },
+        {
+          "condition": {
+            "kind": "download",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "link",
+              "name": {
+                "input": "attachment_excel",
+                "field": "stem"
+              }
+            },
+            "expected": {
+              "input": "attachment_excel",
+              "field": "sha256"
+            },
+            "covers": "attachment_excel"
+          },
+          "ok": true,
+          "actual": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+          "downloadedName": "calibration-staged.xlsx"
+        }
+      ],
+      "independent": {
+        "verified": true,
+        "unauthenticatedContext": true,
+        "url": "http://home.ts-ali.internal:38080/?p=103",
+        "title": "自主归纳 calibration staged",
+        "body": "本文与附件均为虚构实验素材。样本 calibration，校验编号 9047ed14eb。请保留原始文件，不改写表格内容。",
+        "category": "Excel 验证",
+        "attachmentUrl": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/calibration-staged.xlsx",
+        "downloadedName": "calibration-staged.xlsx",
+        "sourceBytes": 3755,
+        "downloadedBytes": 3755,
+        "sha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+        "exactBytesMatch": true
+      }
+    },
+    "newSeal": "be6d5ef3d04fa87486b2605fed9e84fcc32c47ec48b49098b41a27ca6e2af4bb"
+  },
+  "sealedTamper": {
+    "status": "correctly-rejected",
+    "error": {
+      "code": "candidate-seal-changed",
+      "message": "candidate-seal-changed",
+      "detail": {}
+    },
+    "browserDispatched": false
+  },
+  "protocolNegatives": [
+    {
+      "invalid": {
+        "proposal": {}
+      },
+      "status": "rejected",
+      "error": {
+        "code": "schema-extra-field",
+        "message": "schema-extra-field",
+        "detail": {
+          "at": "$",
+          "actual": [
+            "proposal"
+          ]
+        }
+      }
+    },
+    {
+      "invalid": {
+        "compatible": true
+      },
+      "status": "rejected",
+      "error": {
+        "code": "schema-missing-field",
+        "message": "schema-missing-field",
+        "detail": {
+          "at": "$",
+          "expected": [
+            "compatible",
+            "reason",
+            "goalKind",
+            "goal",
+            "strings",
+            "files",
+            "constraints"
+          ]
+        }
+      }
+    },
+    {
+      "invalid": {
+        "compatible": "true"
+      },
+      "status": "rejected",
+      "error": {
+        "code": "schema-missing-field",
+        "message": "schema-missing-field",
+        "detail": {
+          "at": "$",
+          "expected": [
+            "compatible",
+            "reason",
+            "goalKind",
+            "goal",
+            "strings",
+            "files",
+            "constraints"
+          ]
+        }
+      }
+    }
+  ]
+}

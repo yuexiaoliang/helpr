@@ -1,0 +1,31 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "原 finish 名称包含旧任务标题，换文字后无法定位。以下候选均是训练时指向已独立核验结果、且在本次实际页面具有相同定位属性的链接。请选择本次公开结果的真实链接。只选择位置，不改任务、结果条件或执行权限。\n若当前阶段是动作选择：必须逐项完成 task.inputs 中所有输入及素材，missingInputs 表示未就绪项，禁止跳过；fill 只可用于 editable=true 的控件。check 的控件名称与任务输入相等时必须使用 nameInput 指明该输入；不得将动态名称作为常量。程序返回的约束错误要解决，不能原样重试。"
+    },
+    {
+      "role": "user",
+      "content": "{\"task\":{\"goal\":\"在测试网站新建一篇文章并立即公开发布，标题为「自主归纳 calibration staged」，正文为指定内容，仅选择分类「Excel 验证」，并将原始 Excel 文件作为可下载附件加入正文。\",\"inputs\":{\"post_title\":{\"type\":\"string\",\"value\":\"自主归纳 calibration staged\"},\"post_content\":{\"type\":\"string\",\"value\":\"本文与附件均为虚构实验素材。样本 calibration，校验编号 9047ed14eb。请保留原始文件，不改写表格内容。\"},\"post_category\":{\"type\":\"string\",\"value\":\"Excel 验证\"},\"attachment_excel\":{\"type\":\"file\",\"path\":\"/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/staged-workflow-checks/artifacts/staged/calibration/calibration-staged.xlsx\",\"name\":\"calibration-staged.xlsx\",\"stem\":\"calibration-staged\",\"sha256\":\"fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602\"}}},\"failure\":{\"code\":\"condition-unsatisfied\",\"message\":\"condition-unsatisfied\",\"detail\":{\"evidence\":[{\"condition\":{\"kind\":\"visible\",\"target\":{\"frame\":\"main\",\"by\":\"role\",\"role\":\"link\",\"name\":\"自主归纳 learn-3 staged (opens in a new tab)\"}},\"ok\":false,\"count\":0}]},\"executed\":true,\"executionUncertain\":false},\"page\":{\"url\":\"http://home.ts-ali.internal:38080/wp-admin/post.php?post=103&action=edit\",\"nodes\":[{\"id\":\"n16\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"View Post\",\"tag\":\"a\",\"value\":\"\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":true,\"href\":\"http://home.ts-ali.internal:38080/?p=103\"}]}}"
+    }
+  ],
+  "schema": {
+    "type": "object",
+    "properties": {
+      "target": {
+        "type": "string",
+        "enum": [
+          "n16"
+        ]
+      },
+      "reason": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "target",
+      "reason"
+    ],
+    "additionalProperties": false
+  }
+}

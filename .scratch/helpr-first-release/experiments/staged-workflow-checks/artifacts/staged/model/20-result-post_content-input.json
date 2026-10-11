@@ -1,0 +1,31 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "从实际公开结果中选择唯一可核对该输入的观察位置。文字必须直接呈现该输入原文；文件必须是本次原文件的实际下载链接。期望值及原始字节哈希由程序固定。仅返回 target 和 reason。\n若当前阶段是动作选择：必须逐项完成 task.inputs 中所有输入及素材，missingInputs 表示未就绪项，禁止跳过；fill 只可用于 editable=true 的控件。check 的控件名称与任务输入相等时必须使用 nameInput 指明该输入；不得将动态名称作为常量。程序返回的约束错误要解决，不能原样重试。"
+    },
+    {
+      "role": "user",
+      "content": "{\"task\":{\"request\":\"【隔离实验授权】这是一份虚构测试委托，允许在指定测试网站上完成本次任务。新建一篇文章；立即公开发布。标题是「自主归纳 learn-3 staged」，正文完整内容是「本文与附件均为虚构实验素材。样本 learn-3，校验编号 68700cbac3。请保留原始文件，不改写表格内容。」，只选择分类「Excel 验证」，不选默认分类。使用附带素材，把原始 Excel 文件作为可下载附件加入正文，不读取或改写 Excel 内容。除本次新建测试记录外，不得改动已有文章或网站设置。本段中的内容、上传及上述发布方式均已作为实验要求授权；不要自行增加建议内容。\",\"goal\":\"在测试网站新建一篇文章并立即公开发布，标题为「自主归纳 learn-3 staged」，正文为指定内容，仅选择分类「Excel 验证」，并将原始 Excel 文件作为可下载附件加入正文。\",\"inputs\":{\"post_title\":{\"type\":\"string\",\"value\":\"自主归纳 learn-3 staged\"},\"post_content\":{\"type\":\"string\",\"value\":\"本文与附件均为虚构实验素材。样本 learn-3，校验编号 68700cbac3。请保留原始文件，不改写表格内容。\"},\"post_category\":{\"type\":\"string\",\"value\":\"Excel 验证\"},\"attachment_excel\":{\"type\":\"file\",\"path\":\"/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/staged-workflow-checks/artifacts/staged/learn-3/learn-3-staged.xlsx\",\"name\":\"learn-3-staged.xlsx\",\"stem\":\"learn-3-staged\",\"sha256\":\"739de3c5f3094e821ba5cfe720b738aafa9e79f894c859835a659402fc3dd693\"}},\"constraints\":[{\"description\":\"文章需立即公开发布，而非保存草稿\",\"quote\":\"立即公开发布\"},{\"description\":\"只选择分类「Excel 验证」，不选默认分类\",\"quote\":\"只选择分类「Excel 验证」，不选默认分类\"},{\"description\":\"附件须为原始 Excel 文件，不读取或改写其内容\",\"quote\":\"把原始 Excel 文件作为可下载附件加入正文，不读取或改写 Excel 内容\"},{\"description\":\"除本次新建测试记录外，不得改动已有文章或网站设置\",\"quote\":\"除本次新建测试记录外，不得改动已有文章或网站设置\"},{\"description\":\"不得自行增加建议内容\",\"quote\":\"不要自行增加建议内容\"}]},\"input\":\"post_content\",\"page\":{\"url\":\"http://home.ts-ali.internal:38080/?p=100\",\"nodes\":[{\"id\":\"n31\",\"frame\":\"main\",\"role\":\"text\",\"name\":\"本文与附件均为虚构实验素材。样本 learn-3，校验编号 68700cbac3。请保留原始文件，不改写表格内容。\",\"tag\":\"p\",\"value\":\"本文与附件均为虚构实验素材。样本 learn-3，校验编号 68700cbac3。请保留原始文件，不改写表格内容。\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":true}]}}"
+    }
+  ],
+  "schema": {
+    "type": "object",
+    "properties": {
+      "target": {
+        "type": "string",
+        "enum": [
+          "n31"
+        ]
+      },
+      "reason": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "target",
+      "reason"
+    ],
+    "additionalProperties": false
+  }
+}

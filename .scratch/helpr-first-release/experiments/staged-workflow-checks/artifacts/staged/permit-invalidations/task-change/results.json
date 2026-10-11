@@ -1,0 +1,100 @@
+{
+  "mode": "task-change",
+  "status": "correctly-blocked",
+  "receipt": {
+    "id": "b266c9f7-6279-4c23-850e-873f4d8dd72b",
+    "execution": "10512cc6-ebc4-4aaa-a44c-34c1cf4ac131",
+    "taskDigest": "e77be1aaffcb7b0d125cec3a6fbee395114a3d54cc8fdd543210b08a272f4f02",
+    "key": "attachment_excel",
+    "sourceHash": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+    "sourceBytes": 3755,
+    "topUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+    "controlFrame": "editor-canvas"
+  },
+  "error": {
+    "code": "upload-request-blocked",
+    "message": "upload-request-blocked",
+    "detail": {
+      "blocked": "task-changed"
+    }
+  },
+  "requests": [
+    {
+      "at": "2026-10-11T02:05:10.621Z",
+      "type": "mutation-request",
+      "method": "POST",
+      "path": "/index.php",
+      "effectProposal": "read",
+      "operation": "click",
+      "outcome": "blocked",
+      "code": "inputs-not-covered",
+      "detail": {
+        "covered": [
+          "post_title",
+          "post_content"
+        ],
+        "required": [
+          "post_title",
+          "post_content",
+          "post_category",
+          "attachment_excel"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-11T02:05:11.034Z",
+      "type": "mutation-request",
+      "method": "POST",
+      "path": "/index.php",
+      "effectProposal": "read",
+      "operation": "click",
+      "outcome": "blocked",
+      "code": "inputs-not-covered",
+      "detail": {
+        "covered": [
+          "post_title",
+          "post_content"
+        ],
+        "required": [
+          "post_title",
+          "post_content",
+          "post_category",
+          "attachment_excel"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-11T02:05:16.163Z",
+      "type": "mutation-request",
+      "method": "POST",
+      "path": "/index.php",
+      "effectProposal": "upload",
+      "operation": "upload",
+      "uploadReceipt": {
+        "id": "b266c9f7-6279-4c23-850e-873f4d8dd72b",
+        "execution": "10512cc6-ebc4-4aaa-a44c-34c1cf4ac131",
+        "taskDigest": "e77be1aaffcb7b0d125cec3a6fbee395114a3d54cc8fdd543210b08a272f4f02",
+        "key": "attachment_excel",
+        "sourceHash": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+        "sourceBytes": 3755,
+        "topUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+        "controlFrame": "editor-canvas",
+        "selected": {
+          "events": 1,
+          "connectedAtSelection": true,
+          "stillAttached": false,
+          "name": "permit-invalidations-staged.xlsx",
+          "bytes": 3755,
+          "sha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+        },
+        "requestFrame": "main",
+        "exposedBodyBytes": 355,
+        "association": "one active typed upload + exact selected bytes + ancestor frame + exact single filename"
+      },
+      "authorization": "selected-file-and-correlated-request",
+      "outcome": "blocked",
+      "code": "task-changed",
+      "detail": {}
+    }
+  ]
+}

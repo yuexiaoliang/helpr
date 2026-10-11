@@ -1,0 +1,597 @@
+{
+  "name": "upload-probe-replay",
+  "task": {
+    "id": "upload-probe-replay",
+    "origin": "http://home.ts-ali.internal:38080",
+    "entryUrl": "http://home.ts-ali.internal:38080/wp-admin/",
+    "kind": "new_post",
+    "inputs": {
+      "post_title": {
+        "type": "string",
+        "value": "自主归纳 upload-probe-replay staged"
+      },
+      "post_content": {
+        "type": "string",
+        "value": "本文与附件均为虚构实验素材。样本 upload-probe-replay，校验编号 26b22011a7。请保留原始文件，不改写表格内容。"
+      },
+      "post_category": {
+        "type": "string",
+        "value": "Excel 验证"
+      },
+      "attachment_excel": {
+        "type": "file",
+        "path": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/staged-workflow-checks/artifacts/staged/upload-probe-replay/upload-probe-replay-staged.xlsx",
+        "name": "upload-probe-replay-staged.xlsx",
+        "stem": "upload-probe-replay-staged",
+        "sha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+      }
+    },
+    "requiredOutputs": [
+      "post_title",
+      "post_content",
+      "post_category",
+      "attachment_excel"
+    ],
+    "goal": "在测试网站新建一篇文章并立即公开发布，标题为「自主归纳 upload-probe-replay staged」，正文为指定内容，仅选择分类「Excel 验证」，并将原始 Excel 文件作为可下载附件加入正文。",
+    "constraints": [
+      {
+        "description": "文章需立即公开发布，而非保存草稿",
+        "quote": "立即公开发布"
+      },
+      {
+        "description": "只选择分类「Excel 验证」，不选默认分类",
+        "quote": "只选择分类「Excel 验证」，不选默认分类"
+      },
+      {
+        "description": "附件须为原始 Excel 文件，不读取或改写其内容",
+        "quote": "把原始 Excel 文件作为可下载附件加入正文，不读取或改写 Excel 内容"
+      },
+      {
+        "description": "除本次新建测试记录外，不得改动已有文章或网站设置",
+        "quote": "除本次新建测试记录外，不得改动已有文章或网站设置"
+      },
+      {
+        "description": "不得自行增加建议内容",
+        "quote": "不要自行增加建议内容"
+      }
+    ],
+    "sources": {
+      "post_title": {
+        "quote": "标题是「自主归纳 upload-probe-replay staged」",
+        "description": "新建文章的标题"
+      },
+      "post_content": {
+        "quote": "正文完整内容是「本文与附件均为虚构实验素材。样本 upload-probe-replay，校验编号 26b22011a7。请保留原始文件，不改写表格内容。」",
+        "description": "新建文章的正文完整内容"
+      },
+      "post_category": {
+        "quote": "只选择分类「Excel 验证」，不选默认分类",
+        "description": "文章选择的分类"
+      },
+      "attachment_excel": {
+        "attachmentId": "material-1",
+        "description": "作为可下载附件加入正文的原始 Excel 文件"
+      }
+    },
+    "suggestions": [],
+    "request": "【隔离实验授权】这是一份虚构测试委托，允许在指定测试网站上完成本次任务。新建一篇文章；立即公开发布。标题是「自主归纳 upload-probe-replay staged」，正文完整内容是「本文与附件均为虚构实验素材。样本 upload-probe-replay，校验编号 26b22011a7。请保留原始文件，不改写表格内容。」，只选择分类「Excel 验证」，不选默认分类。使用附带素材，把原始 Excel 文件作为可下载附件加入正文，不读取或改写 Excel 内容。除本次新建测试记录外，不得改动已有文章或网站设置。本段中的内容、上传及上述发布方式均已作为实验要求授权；不要自行增加建议内容。",
+    "authorization": {
+      "source": "explicit-isolated-test-fixture",
+      "requestDigest": "7b9453b40aa9edf71293baad533038a4a8b1d46f8861295a810c82c2bb11507c",
+      "inputsDigest": "0831091e80e62803bc449bf5bf6e136c21e00138489e7a099ab8a0431c5b5dbd"
+    }
+  },
+  "trace": [
+    {
+      "step": {
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "menuitem",
+            "name": "New"
+          }
+        },
+        "effect": "read",
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "menuitem",
+              "name": "New"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            }
+          }
+        ],
+        "note": "通过顶部 New 菜单进入新建文章页面（n6 在视口外）",
+        "id": "s1"
+      },
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "step": {
+        "action": {
+          "op": "fill",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Add title"
+          },
+          "value": {
+            "input": "post_title"
+          }
+        },
+        "effect": "edit",
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "post_title"
+            },
+            "covers": "post_title"
+          }
+        ],
+        "note": "填写文章标题",
+        "id": "s2"
+      },
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "step": {
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "button",
+            "name": "Add default block"
+          }
+        },
+        "effect": "edit",
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "button",
+              "name": "Add default block"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "document",
+              "name": "Empty block; start writing or type forward slash to choose a block"
+            }
+          }
+        ],
+        "note": "点击正文默认段落块使其进入可编辑状态，以便填入正文内容",
+        "id": "s3"
+      },
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "step": {
+        "action": {
+          "op": "fill",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "document",
+            "name": "Empty block; start writing or type forward slash to choose a block"
+          },
+          "value": {
+            "input": "post_content"
+          }
+        },
+        "effect": "edit",
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "document",
+              "name": "Empty block; start writing or type forward slash to choose a block"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "text",
+              "name": {
+                "input": "post_content"
+              }
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "post_content"
+            },
+            "covers": "post_content"
+          }
+        ],
+        "note": "在正文默认段落块填入指定正文内容",
+        "id": "s4"
+      },
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "step": {
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Settings"
+          }
+        },
+        "effect": "read",
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Settings"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Settings"
+            }
+          }
+        ],
+        "note": "打开设置面板以选择分类",
+        "id": "s5"
+      },
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "step": {
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Settings"
+          }
+        },
+        "effect": "read",
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Settings"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "tab",
+              "name": "Post"
+            }
+          }
+        ],
+        "note": "打开设置面板以选择分类并添加附件",
+        "id": "s6"
+      },
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "step": {
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "tab",
+            "name": "Post"
+          }
+        },
+        "effect": "read",
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "tab",
+              "name": "Post"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "checkbox",
+              "name": "Excel 验证"
+            }
+          }
+        ],
+        "note": "打开 Post 设置标签以配置分类",
+        "id": "s7"
+      },
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "step": {
+        "action": {
+          "op": "check",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "checkbox",
+            "name": {
+              "input": "post_category"
+            }
+          },
+          "value": true
+        },
+        "effect": "edit",
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "checkbox",
+              "name": {
+                "input": "post_category"
+              }
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "checked",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "checkbox",
+              "name": {
+                "input": "post_category"
+              }
+            },
+            "expected": true,
+            "covers": "post_category"
+          }
+        ],
+        "note": "勾选分类「Excel 验证」，对应输入 post_category。",
+        "id": "s8"
+      },
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "step": {
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Block Inserter"
+          }
+        },
+        "effect": "edit",
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Block Inserter"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "option",
+              "name": "File"
+            }
+          }
+        ],
+        "note": "打开区块插入器，以便插入文件区块来上传 Excel 附件。",
+        "id": "s9"
+      },
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "step": {
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "option",
+            "name": "File"
+          }
+        },
+        "effect": "edit",
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "option",
+              "name": "File"
+            }
+          }
+        ],
+        "after": [],
+        "note": "在区块插入器中点击 File 区块，以便在正文中加入可下载的 Excel 附件。",
+        "id": "s10"
+      },
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "step": {
+        "action": {
+          "op": "upload",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "css",
+            "selector": "input[type=\"file\"]"
+          },
+          "value": {
+            "input": "attachment_excel",
+            "field": "path"
+          }
+        },
+        "effect": "upload",
+        "before": [],
+        "after": [
+          {
+            "kind": "artifact",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Write file name…"
+            },
+            "expected": {
+              "input": "attachment_excel",
+              "field": "sha256"
+            },
+            "covers": "attachment_excel"
+          }
+        ],
+        "note": "通过 File 块的隐藏 file-input 上传原始 Excel 文件作为可下载附件，不读取或改写其内容。",
+        "id": "s11"
+      },
+      "result": {
+        "executed": true,
+        "pending": "upload-pending.json",
+        "settled": "upload-settled.json",
+        "negative": {
+          "passed": false,
+          "code": "artifact-origin",
+          "detail": {}
+        }
+      }
+    }
+  ],
+  "status": "upload-completed",
+  "source": {
+    "file": "../constrained-workflow-induction/artifacts/run/learn-4/results.json",
+    "hash": "e3d86ece3d21a10404b1043ffc83be3014744a0bb4d1d6844a8da158cdb16b9d",
+    "steps": [
+      "s1",
+      "s2",
+      "s3",
+      "s4",
+      "s5",
+      "s6",
+      "s7",
+      "s8",
+      "s9",
+      "s10"
+    ]
+  },
+  "completionEvidence": [
+    {
+      "condition": {
+        "kind": "artifact",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "Write file name…"
+        },
+        "expected": {
+          "input": "attachment_excel",
+          "field": "sha256"
+        },
+        "covers": "attachment_excel"
+      },
+      "ok": true,
+      "actual": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+    }
+  ],
+  "modelCallsDuringBrowserReplay": 0,
+  "endedAt": "2026-10-11T01:43:55.342Z"
+}

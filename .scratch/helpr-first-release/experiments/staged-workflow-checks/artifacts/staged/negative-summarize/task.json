@@ -1,0 +1,79 @@
+{
+  "rejected": true,
+  "reason": "模板要求将原始 Excel 文件作为可下载附件加入正文且不读取或改写其内容，而本次委托要求读取 Excel 数据生成正文摘要且不要放置原文件下载链接，两者在素材处理方式上不相容；同时模板标题为「自主归纳 learn-3 staged」，与委托标题「自主归纳 negative-summarize staged」不一致，故不兼容。",
+  "proposal": {
+    "compatible": false,
+    "reason": "模板要求将原始 Excel 文件作为可下载附件加入正文且不读取或改写其内容，而本次委托要求读取 Excel 数据生成正文摘要且不要放置原文件下载链接，两者在素材处理方式上不相容；同时模板标题为「自主归纳 learn-3 staged」，与委托标题「自主归纳 negative-summarize staged」不一致，故不兼容。",
+    "goalKind": "new_post",
+    "goal": "在测试网站新建一篇文章并立即公开发布，标题为「自主归纳 negative-summarize staged」，正文根据附件 Excel 数据生成摘要，仅选择分类「Excel 验证」，不放置原文件下载链接。",
+    "strings": [
+      {
+        "key": "post_title",
+        "description": "新建文章的标题",
+        "value": "自主归纳 negative-summarize staged",
+        "quote": "标题是「自主归纳 negative-summarize staged」"
+      },
+      {
+        "key": "post_category",
+        "description": "文章选择的分类",
+        "value": "Excel 验证",
+        "quote": "只选择分类「Excel 验证」"
+      }
+    ],
+    "files": [
+      {
+        "key": "attachment_excel",
+        "description": "用于读取数据生成正文摘要的 Excel 素材",
+        "attachmentId": "material-1"
+      }
+    ],
+    "constraints": [
+      {
+        "description": "文章需立即公开发布，而非保存草稿",
+        "quote": "立即公开发布"
+      },
+      {
+        "description": "只选择分类「Excel 验证」，不选默认分类",
+        "quote": "只选择分类「Excel 验证」，不选默认分类"
+      },
+      {
+        "description": "正文应根据附件数据生成摘要",
+        "quote": "正文应根据附件数据生成摘要"
+      },
+      {
+        "description": "不要放置原文件下载链接",
+        "quote": "不要放置原文件下载链接"
+      },
+      {
+        "description": "除本次新建测试记录外，不得改动已有文章或网站设置",
+        "quote": "除本次新建测试记录外，不得改动已有文章或网站设置"
+      },
+      {
+        "description": "不得自行增加建议内容",
+        "quote": "不要自行增加建议内容"
+      }
+    ],
+    "inputs": {
+      "post_title": {
+        "key": "post_title",
+        "description": "新建文章的标题",
+        "value": "自主归纳 negative-summarize staged",
+        "quote": "标题是「自主归纳 negative-summarize staged」",
+        "type": "string"
+      },
+      "post_category": {
+        "key": "post_category",
+        "description": "文章选择的分类",
+        "value": "Excel 验证",
+        "quote": "只选择分类「Excel 验证」",
+        "type": "string"
+      },
+      "attachment_excel": {
+        "key": "attachment_excel",
+        "description": "用于读取数据生成正文摘要的 Excel 素材",
+        "attachmentId": "material-1",
+        "type": "file"
+      }
+    }
+  }
+}

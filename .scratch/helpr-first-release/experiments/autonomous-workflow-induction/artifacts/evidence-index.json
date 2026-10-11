@@ -1,0 +1,1226 @@
+{
+  "date": "2026-10-10",
+  "completeWorkflowsLearned": 0,
+  "attempts": [
+    {
+      "name": "attempt-a",
+      "status": "failed",
+      "error": {
+        "code": "client-aborted",
+        "message": "client-aborted"
+      },
+      "completedSteps": 13,
+      "failures": 2,
+      "modelCalls": 16,
+      "reportedTokens": 164918,
+      "outputMode": "json-object",
+      "sourceHashes": {
+        "run.mjs": "2bb6ae4ef33c76014fb349809bbfdd5beabf4920eba4b266371298694d13b241",
+        "runtime.mjs": "577412e86cb3878e4c035781b072f2e4a929a760573f1c37a8c6fcac04d40b34",
+        "prompts.mjs": "98549de585b7b9685775fac26e1b3cbdf4c1d6ae72f39a35e9936e2afe61d705",
+        "fixtures.mjs": "a15764c2fddba06f03ff8daa67bdba0ea8fdf836e97402f27a74868ed1dd6250",
+        "../model-api/client.mjs": "70d88c5b1149792f5549a6cf3c15748d0ea1ca34809c6741e63f0bd9581996ae",
+        "../workflow-reliability/executor.mjs": "1f52ad429617b9b6e01081b75254a52fb30af6e46f5468d2ea1f6d4428582b9c"
+      },
+      "metadata": "artifacts/attempt-a/meta.json",
+      "result": "artifacts/attempt-a/learn/results.json"
+    },
+    {
+      "name": "attempt-b",
+      "status": "failed",
+      "error": {
+        "code": "condition-unsatisfied",
+        "message": "condition-unsatisfied",
+        "detail": {
+          "evidence": [
+            {
+              "condition": {
+                "kind": "text",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "document",
+                  "name": "Empty block; start writing or type forward slash to choose a block"
+                },
+                "compare": "contains",
+                "expected": {
+                  "input": "body"
+                }
+              },
+              "ok": false,
+              "count": 0
+            }
+          ]
+        },
+        "executed": true,
+        "status": "blocked"
+      },
+      "completedSteps": 3,
+      "failures": 5,
+      "modelCalls": 7,
+      "reportedTokens": 23045,
+      "outputMode": "json-object",
+      "sourceHashes": {
+        "run.mjs": "b0c8432f5b20506e139be50e50e11f780af0c5fe96f1a15ef7aa94620b913db8",
+        "runtime.mjs": "00ad1f3b4e67c4d99d16f9de1b044713b62dfab02af9cce9639baa3449c92b61",
+        "prompts.mjs": "03f6a616cf8684d32e24fd864f56d83bcca6821ab5928dbfb769d1506674cf75",
+        "fixtures.mjs": "a15764c2fddba06f03ff8daa67bdba0ea8fdf836e97402f27a74868ed1dd6250",
+        "../model-api/client.mjs": "70d88c5b1149792f5549a6cf3c15748d0ea1ca34809c6741e63f0bd9581996ae",
+        "../workflow-reliability/executor.mjs": "1f52ad429617b9b6e01081b75254a52fb30af6e46f5468d2ea1f6d4428582b9c"
+      },
+      "metadata": "artifacts/attempt-b/meta.json",
+      "result": "artifacts/attempt-b/learn/results.json"
+    },
+    {
+      "name": "attempt-c",
+      "status": "failed",
+      "error": {
+        "code": "SyntaxError",
+        "message": "Unexpected non-whitespace character after JSON at position 641 (line 1 column 642)"
+      },
+      "completedSteps": 6,
+      "failures": 3,
+      "modelCalls": 11,
+      "reportedTokens": 42411,
+      "outputMode": "json-object",
+      "sourceHashes": {
+        "run.mjs": "3c573e06afd0b30d609d454fe8b7981b3aa033c3783b45e1d556417013a5cca2",
+        "runtime.mjs": "00ad1f3b4e67c4d99d16f9de1b044713b62dfab02af9cce9639baa3449c92b61",
+        "prompts.mjs": "578e0dca8d4fbd18350f8d403d8ebededb64ca9fbc67a6ee03a7231702815a9e",
+        "fixtures.mjs": "0cab7fde2d2a7463df1515cb5fffd8152d3c445ce743d14ef7b1e55e2c4bae98",
+        "../model-api/client.mjs": "70d88c5b1149792f5549a6cf3c15748d0ea1ca34809c6741e63f0bd9581996ae",
+        "../workflow-reliability/executor.mjs": "1f52ad429617b9b6e01081b75254a52fb30af6e46f5468d2ea1f6d4428582b9c"
+      },
+      "metadata": "artifacts/attempt-c/meta.json",
+      "result": "artifacts/attempt-c/learn/results.json"
+    },
+    {
+      "name": "attempt-d",
+      "status": "failed",
+      "error": {
+        "code": "SyntaxError",
+        "message": "Unexpected non-whitespace character after JSON at position 746 (line 1 column 747)"
+      },
+      "completedSteps": 4,
+      "failures": 3,
+      "modelCalls": 9,
+      "reportedTokens": 30064,
+      "outputMode": "json-object",
+      "sourceHashes": {
+        "run.mjs": "97ff8ac7a48c3bcb713262379bc6ec4037782cd55341ab3e5a65959d247bd948",
+        "runtime.mjs": "00ad1f3b4e67c4d99d16f9de1b044713b62dfab02af9cce9639baa3449c92b61",
+        "prompts.mjs": "578e0dca8d4fbd18350f8d403d8ebededb64ca9fbc67a6ee03a7231702815a9e",
+        "fixtures.mjs": "0cab7fde2d2a7463df1515cb5fffd8152d3c445ce743d14ef7b1e55e2c4bae98",
+        "../model-api/client.mjs": "70d88c5b1149792f5549a6cf3c15748d0ea1ca34809c6741e63f0bd9581996ae",
+        "../workflow-reliability/executor.mjs": "1f52ad429617b9b6e01081b75254a52fb30af6e46f5468d2ea1f6d4428582b9c"
+      },
+      "metadata": "artifacts/attempt-d/meta.json",
+      "result": "artifacts/attempt-d/learn/results.json"
+    },
+    {
+      "name": "attempt-e",
+      "status": "failed",
+      "error": {
+        "code": "step-condition-not-calibrated",
+        "message": "step-condition-not-calibrated",
+        "detail": {
+          "step": "s5"
+        },
+        "status": "blocked"
+      },
+      "completedSteps": 4,
+      "failures": 1,
+      "modelCalls": 5,
+      "reportedTokens": 16154,
+      "outputMode": "native-function",
+      "sourceHashes": {
+        "run.mjs": "e52ef782ef2808006b2458e8440024948a9432bb9a0829515b7f87ce11d6ef60",
+        "runtime.mjs": "6c6afcc7fd8bd0f14783b32d8158d6d8c7baf843f32b7451923ab547d193c5a8",
+        "prompts.mjs": "578e0dca8d4fbd18350f8d403d8ebededb64ca9fbc67a6ee03a7231702815a9e",
+        "fixtures.mjs": "0cab7fde2d2a7463df1515cb5fffd8152d3c445ce743d14ef7b1e55e2c4bae98",
+        "../model-api/client.mjs": "70d88c5b1149792f5549a6cf3c15748d0ea1ca34809c6741e63f0bd9581996ae",
+        "../workflow-reliability/executor.mjs": "1f52ad429617b9b6e01081b75254a52fb30af6e46f5468d2ea1f6d4428582b9c"
+      },
+      "metadata": "artifacts/attempt-e/meta.json",
+      "result": "artifacts/attempt-e/learn/results.json"
+    }
+  ],
+  "semanticCases": [
+    {
+      "label": "applicability-publish",
+      "compatible": true,
+      "expectedCompatible": true,
+      "correct": true,
+      "reason": "与已学习流程语义一致：在指定测试网站新建文章、立即公开发布、指定分类、原始 Excel 作为可下载附件加入正文且不读取改写内容、不改动其它文章或设置。",
+      "citationChecksPassed": true,
+      "dispatched": false
+    },
+    {
+      "label": "applicability-draft",
+      "compatible": false,
+      "expectedCompatible": false,
+      "correct": true,
+      "reason": "本次委托要求只保存为草稿、不允许公开发布，与已学习流程「立即公开发布」的发布语义不一致，不能更改要求以匹配流程。",
+      "citationChecksPassed": true,
+      "dispatched": false
+    },
+    {
+      "label": "applicability-update",
+      "compatible": false,
+      "expectedCompatible": false,
+      "correct": true,
+      "reason": "本次委托要求修改已存在的指定文章，与已学习流程「新建文章」的操作语义不一致，不能更改要求以匹配流程。",
+      "citationChecksPassed": true,
+      "dispatched": false
+    },
+    {
+      "label": "applicability-summarize",
+      "compatible": false,
+      "expectedCompatible": false,
+      "correct": true,
+      "reason": "本次委托要求读取 Excel 数据生成正文摘要且不放置原文件下载链接，与已学习流程「原始 Excel 作为可下载附件加入正文、不读取或改写内容」的素材处理语义不一致，不能更改要求以匹配流程。",
+      "citationChecksPassed": true,
+      "dispatched": false
+    }
+  ],
+  "localConditionRuns": [
+    {
+      "name": "calibration",
+      "status": "partial-completed",
+      "passed": true,
+      "negativePassed": false,
+      "independentExpectedBodyFound": true,
+      "commitDispatched": false,
+      "result": "artifacts/condition-probe/calibration/results.json"
+    },
+    {
+      "name": "heldout-collision",
+      "status": "partial-completed",
+      "passed": true,
+      "negativePassed": false,
+      "independentExpectedBodyFound": true,
+      "commitDispatched": false,
+      "result": "artifacts/condition-probe/heldout-collision/results.json"
+    },
+    {
+      "name": "changed-control",
+      "status": "correctly-blocked",
+      "passed": true,
+      "negativePassed": false,
+      "commitDispatched": false,
+      "result": "artifacts/condition-probe/changed-control/results.json"
+    }
+  ],
+  "inheritedIntegrityRegression": {
+    "source": "../workflow-reliability/artifacts/focused-bound-candidate/candidate.json",
+    "sourceDigest": "396fd4b9d98e312053a63afcadef7cbad2a1e62c64e645dd5060c6ebb7b88199",
+    "provenance": "previous-experiment-assisted-candidate; offline-regression-only",
+    "cases": [
+      {
+        "name": "commit-relabelled-read",
+        "rejected": true,
+        "code": "action-or-effect-changed",
+        "detail": {
+          "step": "s13"
+        },
+        "browserOpened": false
+      },
+      {
+        "name": "task-input-tamper",
+        "rejected": true,
+        "code": "task-changed",
+        "actualInterfaceCalled": true,
+        "browserOpened": false
+      }
+    ],
+    "baselineAccepted": true
+  },
+  "model": {
+    "calls": 54,
+    "reportedTokens": 293903,
+    "missingUsage": [
+      {
+        "run": "attempt-a",
+        "label": "explore-14",
+        "error": "client-aborted"
+      }
+    ],
+    "records": [
+      {
+        "run": "attempt-a",
+        "label": "parse-learn",
+        "startedAt": "2026-10-10T14:16:50.415Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 498,
+          "completion_tokens": 428,
+          "total_tokens": 926,
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 498
+        },
+        "endedAt": "2026-10-10T14:16:52.189Z",
+        "durationMs": 1773.877
+      },
+      {
+        "run": "attempt-a",
+        "label": "explore-0",
+        "startedAt": "2026-10-10T14:17:05.872Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 7039,
+          "completion_tokens": 110,
+          "total_tokens": 7149,
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 7039
+        },
+        "endedAt": "2026-10-10T14:17:06.877Z",
+        "durationMs": 1004.8279999999977
+      },
+      {
+        "run": "attempt-a",
+        "label": "explore-1",
+        "startedAt": "2026-10-10T14:17:41.981Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 12998,
+          "completion_tokens": 119,
+          "total_tokens": 13117,
+          "prompt_cache_hit_tokens": 6912,
+          "prompt_cache_miss_tokens": 6086
+        },
+        "endedAt": "2026-10-10T14:17:42.997Z",
+        "durationMs": 1016.2542919999978
+      },
+      {
+        "run": "attempt-a",
+        "label": "explore-2",
+        "startedAt": "2026-10-10T14:18:27.822Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 10836,
+          "completion_tokens": 160,
+          "total_tokens": 10996,
+          "prompt_cache_hit_tokens": 1408,
+          "prompt_cache_miss_tokens": 9428
+        },
+        "endedAt": "2026-10-10T14:18:28.996Z",
+        "durationMs": 1174.3797919999924
+      },
+      {
+        "run": "attempt-a",
+        "label": "explore-3",
+        "startedAt": "2026-10-10T14:18:29.079Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 11017,
+          "completion_tokens": 161,
+          "total_tokens": 11178,
+          "prompt_cache_hit_tokens": 1664,
+          "prompt_cache_miss_tokens": 9353
+        },
+        "endedAt": "2026-10-10T14:18:29.964Z",
+        "durationMs": 885.2993750000023
+      },
+      {
+        "run": "attempt-a",
+        "label": "explore-4",
+        "startedAt": "2026-10-10T14:18:30.144Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 11542,
+          "completion_tokens": 175,
+          "total_tokens": 11717,
+          "prompt_cache_hit_tokens": 1792,
+          "prompt_cache_miss_tokens": 9750
+        },
+        "endedAt": "2026-10-10T14:18:31.694Z",
+        "durationMs": 1549.4309170000051
+      },
+      {
+        "run": "attempt-a",
+        "label": "explore-5",
+        "startedAt": "2026-10-10T14:18:31.804Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 11353,
+          "completion_tokens": 146,
+          "total_tokens": 11499,
+          "prompt_cache_hit_tokens": 1792,
+          "prompt_cache_miss_tokens": 9561
+        },
+        "endedAt": "2026-10-10T14:18:32.727Z",
+        "durationMs": 923.3462500000023
+      },
+      {
+        "run": "attempt-a",
+        "label": "explore-6",
+        "startedAt": "2026-10-10T14:18:32.799Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 11526,
+          "completion_tokens": 150,
+          "total_tokens": 11676,
+          "prompt_cache_hit_tokens": 3584,
+          "prompt_cache_miss_tokens": 7942
+        },
+        "endedAt": "2026-10-10T14:18:34.130Z",
+        "durationMs": 1331.2498329999944
+      },
+      {
+        "run": "attempt-a",
+        "label": "explore-7",
+        "startedAt": "2026-10-10T14:18:34.232Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 11703,
+          "completion_tokens": 149,
+          "total_tokens": 11852,
+          "prompt_cache_hit_tokens": 3712,
+          "prompt_cache_miss_tokens": 7991
+        },
+        "endedAt": "2026-10-10T14:18:35.206Z",
+        "durationMs": 974.3688750000001
+      },
+      {
+        "run": "attempt-a",
+        "label": "explore-8",
+        "startedAt": "2026-10-10T14:18:35.265Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 11879,
+          "completion_tokens": 149,
+          "total_tokens": 12028,
+          "prompt_cache_hit_tokens": 3968,
+          "prompt_cache_miss_tokens": 7911
+        },
+        "endedAt": "2026-10-10T14:18:36.163Z",
+        "durationMs": 898.1182919999992
+      },
+      {
+        "run": "attempt-a",
+        "label": "explore-9",
+        "startedAt": "2026-10-10T14:18:36.245Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 12055,
+          "completion_tokens": 149,
+          "total_tokens": 12204,
+          "prompt_cache_hit_tokens": 4096,
+          "prompt_cache_miss_tokens": 7959
+        },
+        "endedAt": "2026-10-10T14:18:37.269Z",
+        "durationMs": 1024.4094999999943
+      },
+      {
+        "run": "attempt-a",
+        "label": "explore-10",
+        "startedAt": "2026-10-10T14:18:37.350Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 12231,
+          "completion_tokens": 149,
+          "total_tokens": 12380,
+          "prompt_cache_hit_tokens": 4224,
+          "prompt_cache_miss_tokens": 8007
+        },
+        "endedAt": "2026-10-10T14:18:38.921Z",
+        "durationMs": 1571.2312089999905
+      },
+      {
+        "run": "attempt-a",
+        "label": "explore-11",
+        "startedAt": "2026-10-10T14:18:39.005Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 12407,
+          "completion_tokens": 149,
+          "total_tokens": 12556,
+          "prompt_cache_hit_tokens": 4480,
+          "prompt_cache_miss_tokens": 7927
+        },
+        "endedAt": "2026-10-10T14:18:39.763Z",
+        "durationMs": 757.4807079999882
+      },
+      {
+        "run": "attempt-a",
+        "label": "explore-12",
+        "startedAt": "2026-10-10T14:18:39.839Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 12583,
+          "completion_tokens": 149,
+          "total_tokens": 12732,
+          "prompt_cache_hit_tokens": 4608,
+          "prompt_cache_miss_tokens": 7975
+        },
+        "endedAt": "2026-10-10T14:18:41.096Z",
+        "durationMs": 1257.4122919999936
+      },
+      {
+        "run": "attempt-a",
+        "label": "explore-13",
+        "startedAt": "2026-10-10T14:18:41.178Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 12759,
+          "completion_tokens": 149,
+          "total_tokens": 12908,
+          "prompt_cache_hit_tokens": 4736,
+          "prompt_cache_miss_tokens": 8023
+        },
+        "endedAt": "2026-10-10T14:18:42.229Z",
+        "durationMs": 1050.5031660000095
+      },
+      {
+        "run": "attempt-a",
+        "label": "explore-14",
+        "startedAt": "2026-10-10T14:18:42.302Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "error": "client-aborted",
+        "endedAt": "2026-10-10T14:18:42.557Z",
+        "durationMs": 254.70124999999825
+      },
+      {
+        "run": "attempt-b",
+        "label": "parse-learn",
+        "startedAt": "2026-10-10T14:20:03.898Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 498,
+          "completion_tokens": 415,
+          "total_tokens": 913,
+          "prompt_cache_hit_tokens": 128,
+          "prompt_cache_miss_tokens": 370
+        },
+        "endedAt": "2026-10-10T14:20:05.966Z",
+        "durationMs": 2067.9444590000003
+      },
+      {
+        "run": "attempt-b",
+        "label": "explore-0",
+        "startedAt": "2026-10-10T14:20:18.283Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 3841,
+          "completion_tokens": 96,
+          "total_tokens": 3937,
+          "prompt_cache_hit_tokens": 512,
+          "prompt_cache_miss_tokens": 3329
+        },
+        "endedAt": "2026-10-10T14:20:19.059Z",
+        "durationMs": 776.4295839999995
+      },
+      {
+        "run": "attempt-b",
+        "label": "explore-1",
+        "startedAt": "2026-10-10T14:20:54.155Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 4360,
+          "completion_tokens": 110,
+          "total_tokens": 4470,
+          "prompt_cache_hit_tokens": 3584,
+          "prompt_cache_miss_tokens": 776
+        },
+        "endedAt": "2026-10-10T14:20:54.952Z",
+        "durationMs": 796.7197920000035
+      },
+      {
+        "run": "attempt-b",
+        "label": "explore-2",
+        "startedAt": "2026-10-10T14:21:38.919Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 3063,
+          "completion_tokens": 169,
+          "total_tokens": 3232,
+          "prompt_cache_hit_tokens": 1024,
+          "prompt_cache_miss_tokens": 2039
+        },
+        "endedAt": "2026-10-10T14:21:40.033Z",
+        "durationMs": 1113.5314580000122
+      },
+      {
+        "run": "attempt-b",
+        "label": "explore-3",
+        "startedAt": "2026-10-10T14:21:40.104Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 3261,
+          "completion_tokens": 170,
+          "total_tokens": 3431,
+          "prompt_cache_hit_tokens": 1024,
+          "prompt_cache_miss_tokens": 2237
+        },
+        "endedAt": "2026-10-10T14:21:41.094Z",
+        "durationMs": 989.6590830000059
+      },
+      {
+        "run": "attempt-b",
+        "label": "explore-4",
+        "startedAt": "2026-10-10T14:21:41.151Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 3123,
+          "completion_tokens": 135,
+          "total_tokens": 3258,
+          "prompt_cache_hit_tokens": 2432,
+          "prompt_cache_miss_tokens": 691
+        },
+        "endedAt": "2026-10-10T14:21:41.873Z",
+        "durationMs": 722.0438329999888
+      },
+      {
+        "run": "attempt-b",
+        "label": "explore-5",
+        "startedAt": "2026-10-10T14:21:58.137Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 3601,
+          "completion_tokens": 203,
+          "total_tokens": 3804,
+          "prompt_cache_hit_tokens": 1024,
+          "prompt_cache_miss_tokens": 2577
+        },
+        "endedAt": "2026-10-10T14:21:59.216Z",
+        "durationMs": 1079.3066249999974
+      },
+      {
+        "run": "attempt-c",
+        "label": "parse-learn",
+        "startedAt": "2026-10-10T14:23:31.393Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 500,
+          "completion_tokens": 439,
+          "total_tokens": 939,
+          "prompt_cache_hit_tokens": 128,
+          "prompt_cache_miss_tokens": 372
+        },
+        "endedAt": "2026-10-10T14:23:33.440Z",
+        "durationMs": 2046.518416
+      },
+      {
+        "run": "attempt-c",
+        "label": "explore-0",
+        "startedAt": "2026-10-10T14:23:46.501Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 3838,
+          "completion_tokens": 97,
+          "total_tokens": 3935,
+          "prompt_cache_hit_tokens": 768,
+          "prompt_cache_miss_tokens": 3070
+        },
+        "endedAt": "2026-10-10T14:23:47.351Z",
+        "durationMs": 850.0734580000008
+      },
+      {
+        "run": "attempt-c",
+        "label": "explore-1",
+        "startedAt": "2026-10-10T14:24:22.437Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 4358,
+          "completion_tokens": 110,
+          "total_tokens": 4468,
+          "prompt_cache_hit_tokens": 3712,
+          "prompt_cache_miss_tokens": 646
+        },
+        "endedAt": "2026-10-10T14:24:23.577Z",
+        "durationMs": 1140.3790829999998
+      },
+      {
+        "run": "attempt-c",
+        "label": "explore-2",
+        "startedAt": "2026-10-10T14:24:23.694Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 4443,
+          "completion_tokens": 113,
+          "total_tokens": 4556,
+          "prompt_cache_hit_tokens": 1792,
+          "prompt_cache_miss_tokens": 2651
+        },
+        "endedAt": "2026-10-10T14:24:24.566Z",
+        "durationMs": 872.710583
+      },
+      {
+        "run": "attempt-c",
+        "label": "post-calibrate-s2-0",
+        "startedAt": "2026-10-10T14:25:08.167Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 5253,
+          "completion_tokens": 201,
+          "total_tokens": 5454,
+          "prompt_cache_hit_tokens": 384,
+          "prompt_cache_miss_tokens": 4869
+        },
+        "endedAt": "2026-10-10T14:25:09.807Z",
+        "durationMs": 1640.224166999993
+      },
+      {
+        "run": "attempt-c",
+        "label": "explore-3",
+        "startedAt": "2026-10-10T14:25:09.877Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 3375,
+          "completion_tokens": 147,
+          "total_tokens": 3522,
+          "prompt_cache_hit_tokens": 1024,
+          "prompt_cache_miss_tokens": 2351
+        },
+        "endedAt": "2026-10-10T14:25:10.598Z",
+        "durationMs": 721.5378329999949
+      },
+      {
+        "run": "attempt-c",
+        "label": "explore-4",
+        "startedAt": "2026-10-10T14:25:10.704Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 3573,
+          "completion_tokens": 132,
+          "total_tokens": 3705,
+          "prompt_cache_hit_tokens": 1024,
+          "prompt_cache_miss_tokens": 2549
+        },
+        "endedAt": "2026-10-10T14:25:11.835Z",
+        "durationMs": 1131.2824159999873
+      },
+      {
+        "run": "attempt-c",
+        "label": "explore-5",
+        "startedAt": "2026-10-10T14:25:12.104Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 3666,
+          "completion_tokens": 164,
+          "total_tokens": 3830,
+          "prompt_cache_hit_tokens": 1920,
+          "prompt_cache_miss_tokens": 1746
+        },
+        "endedAt": "2026-10-10T14:25:13.234Z",
+        "durationMs": 1130.5858750000043
+      },
+      {
+        "run": "attempt-c",
+        "label": "explore-6",
+        "startedAt": "2026-10-10T14:25:13.313Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 3529,
+          "completion_tokens": 140,
+          "total_tokens": 3669,
+          "prompt_cache_hit_tokens": 2688,
+          "prompt_cache_miss_tokens": 841
+        },
+        "endedAt": "2026-10-10T14:25:14.469Z",
+        "durationMs": 1156.2270829999907
+      },
+      {
+        "run": "attempt-c",
+        "label": "explore-7",
+        "startedAt": "2026-10-10T14:25:14.619Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 3938,
+          "completion_tokens": 167,
+          "total_tokens": 4105,
+          "prompt_cache_hit_tokens": 1024,
+          "prompt_cache_miss_tokens": 2914
+        },
+        "endedAt": "2026-10-10T14:25:15.575Z",
+        "durationMs": 955.9595829999889
+      },
+      {
+        "run": "attempt-c",
+        "label": "explore-8",
+        "startedAt": "2026-10-10T14:25:15.679Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 4048,
+          "completion_tokens": 180,
+          "total_tokens": 4228,
+          "prompt_cache_hit_tokens": 3072,
+          "prompt_cache_miss_tokens": 976
+        },
+        "endedAt": "2026-10-10T14:25:16.690Z",
+        "durationMs": 1011.5340410000063
+      },
+      {
+        "run": "attempt-d",
+        "label": "parse-learn",
+        "startedAt": "2026-10-10T14:27:19.671Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 762,
+          "completion_tokens": 457,
+          "total_tokens": 1219,
+          "prompt_cache_hit_tokens": 128,
+          "prompt_cache_miss_tokens": 634
+        },
+        "endedAt": "2026-10-10T14:27:21.563Z",
+        "durationMs": 1892.443
+      },
+      {
+        "run": "attempt-d",
+        "label": "explore-1",
+        "startedAt": "2026-10-10T14:27:57.057Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 3983,
+          "completion_tokens": 108,
+          "total_tokens": 4091,
+          "prompt_cache_hit_tokens": 768,
+          "prompt_cache_miss_tokens": 3215
+        },
+        "endedAt": "2026-10-10T14:27:58.010Z",
+        "durationMs": 952.7975000000006
+      },
+      {
+        "run": "attempt-d",
+        "label": "explore-2",
+        "startedAt": "2026-10-10T14:27:58.161Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 4065,
+          "completion_tokens": 129,
+          "total_tokens": 4194,
+          "prompt_cache_hit_tokens": 3584,
+          "prompt_cache_miss_tokens": 481
+        },
+        "endedAt": "2026-10-10T14:27:58.944Z",
+        "durationMs": 783.1823340000046
+      },
+      {
+        "run": "attempt-d",
+        "label": "post-calibrate-s2-0",
+        "startedAt": "2026-10-10T14:28:48.671Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 5278,
+          "completion_tokens": 187,
+          "total_tokens": 5465,
+          "prompt_cache_hit_tokens": 640,
+          "prompt_cache_miss_tokens": 4638
+        },
+        "endedAt": "2026-10-10T14:28:50.129Z",
+        "durationMs": 1458.541916999995
+      },
+      {
+        "run": "attempt-d",
+        "label": "explore-3",
+        "startedAt": "2026-10-10T14:28:50.199Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 2959,
+          "completion_tokens": 152,
+          "total_tokens": 3111,
+          "prompt_cache_hit_tokens": 1024,
+          "prompt_cache_miss_tokens": 1935
+        },
+        "endedAt": "2026-10-10T14:28:51.535Z",
+        "durationMs": 1336.3499589999992
+      },
+      {
+        "run": "attempt-d",
+        "label": "explore-4",
+        "startedAt": "2026-10-10T14:28:51.637Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 3157,
+          "completion_tokens": 142,
+          "total_tokens": 3299,
+          "prompt_cache_hit_tokens": 1024,
+          "prompt_cache_miss_tokens": 2133
+        },
+        "endedAt": "2026-10-10T14:28:52.539Z",
+        "durationMs": 901.7143749999959
+      },
+      {
+        "run": "attempt-d",
+        "label": "post-calibrate-s4-0",
+        "startedAt": "2026-10-10T14:29:08.777Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 4110,
+          "completion_tokens": 119,
+          "total_tokens": 4229,
+          "prompt_cache_hit_tokens": 1280,
+          "prompt_cache_miss_tokens": 2830
+        },
+        "endedAt": "2026-10-10T14:29:09.805Z",
+        "durationMs": 1028.0896659999999
+      },
+      {
+        "run": "attempt-d",
+        "label": "explore-5",
+        "startedAt": "2026-10-10T14:29:09.873Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 3702,
+          "completion_tokens": 203,
+          "total_tokens": 3905,
+          "prompt_cache_hit_tokens": 1024,
+          "prompt_cache_miss_tokens": 2678
+        },
+        "endedAt": "2026-10-10T14:29:11.673Z",
+        "durationMs": 1799.483957999997
+      },
+      {
+        "run": "attempt-d",
+        "label": "explore-5-json-repair",
+        "startedAt": "2026-10-10T14:29:11.682Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 348,
+          "completion_tokens": 203,
+          "total_tokens": 551,
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 348
+        },
+        "endedAt": "2026-10-10T14:29:12.566Z",
+        "durationMs": 883.640790999998
+      },
+      {
+        "run": "attempt-e",
+        "label": "parse-learn",
+        "startedAt": "2026-10-10T14:33:45.567Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "tool_calls",
+        "usage": {
+          "prompt_tokens": 992,
+          "completion_tokens": 607,
+          "total_tokens": 1599,
+          "prompt_cache_hit_tokens": 128,
+          "prompt_cache_miss_tokens": 864
+        },
+        "endedAt": "2026-10-10T14:33:47.526Z",
+        "durationMs": 1958.9121669999997
+      },
+      {
+        "run": "attempt-e",
+        "label": "explore-4",
+        "startedAt": "2026-10-10T14:34:29.640Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "tool_calls",
+        "usage": {
+          "prompt_tokens": 3497,
+          "completion_tokens": 366,
+          "total_tokens": 3863,
+          "prompt_cache_hit_tokens": 640,
+          "prompt_cache_miss_tokens": 2857
+        },
+        "endedAt": "2026-10-10T14:34:31.655Z",
+        "durationMs": 2015.2525000000023
+      },
+      {
+        "run": "attempt-e",
+        "label": "post-calibrate-s5-0",
+        "startedAt": "2026-10-10T14:34:47.882Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "tool_calls",
+        "usage": {
+          "prompt_tokens": 4900,
+          "completion_tokens": 165,
+          "total_tokens": 5065,
+          "prompt_cache_hit_tokens": 512,
+          "prompt_cache_miss_tokens": 4388
+        },
+        "endedAt": "2026-10-10T14:34:48.948Z",
+        "durationMs": 1066.6581250000017
+      },
+      {
+        "run": "attempt-e",
+        "label": "post-calibrate-s5-0-json-repair",
+        "startedAt": "2026-10-10T14:34:48.950Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "tool_calls",
+        "usage": {
+          "prompt_tokens": 464,
+          "completion_tokens": 169,
+          "total_tokens": 633,
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 464
+        },
+        "endedAt": "2026-10-10T14:34:49.788Z",
+        "durationMs": 838.0449579999986
+      },
+      {
+        "run": "attempt-e",
+        "label": "post-calibrate-s5-1",
+        "startedAt": "2026-10-10T14:34:49.806Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "tool_calls",
+        "usage": {
+          "prompt_tokens": 4829,
+          "completion_tokens": 165,
+          "total_tokens": 4994,
+          "prompt_cache_hit_tokens": 1664,
+          "prompt_cache_miss_tokens": 3165
+        },
+        "endedAt": "2026-10-10T14:34:51.114Z",
+        "durationMs": 1307.8989999999976
+      },
+      {
+        "run": "probes",
+        "label": "native-format-repair",
+        "startedAt": "2026-10-10T14:32:43.102Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "tool_calls",
+        "usage": {
+          "prompt_tokens": 637,
+          "completion_tokens": 329,
+          "total_tokens": 966,
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 637
+        },
+        "endedAt": "2026-10-10T14:32:44.327Z",
+        "durationMs": 1224.271291
+      },
+      {
+        "run": "probes",
+        "label": "native-fresh-proposal",
+        "startedAt": "2026-10-10T14:32:44.329Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "tool_calls",
+        "usage": {
+          "prompt_tokens": 4089,
+          "completion_tokens": 375,
+          "total_tokens": 4464,
+          "prompt_cache_hit_tokens": 640,
+          "prompt_cache_miss_tokens": 3449
+        },
+        "endedAt": "2026-10-10T14:32:46.328Z",
+        "durationMs": 1999.798041
+      },
+      {
+        "run": "probes",
+        "label": "applicability-batch",
+        "startedAt": "2026-10-10T14:32:46.338Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "tool_calls",
+        "usage": {
+          "prompt_tokens": 1603,
+          "completion_tokens": 2003,
+          "total_tokens": 3606,
+          "prompt_cache_hit_tokens": 128,
+          "prompt_cache_miss_tokens": 1475
+        },
+        "endedAt": "2026-10-10T14:32:52.432Z",
+        "durationMs": 6094.7758330000015
+      },
+      {
+        "run": "condition-probe",
+        "label": "read-position",
+        "startedAt": "2026-10-10T14:37:36.637Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "tool_calls",
+        "usage": {
+          "prompt_tokens": 4673,
+          "completion_tokens": 150,
+          "total_tokens": 4823,
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 4673
+        },
+        "endedAt": "2026-10-10T14:37:37.733Z",
+        "durationMs": 1096.59125
+      },
+      {
+        "run": "condition-probe",
+        "label": "parse-calibration",
+        "startedAt": "2026-10-10T14:37:37.737Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "tool_calls",
+        "usage": {
+          "prompt_tokens": 1123,
+          "completion_tokens": 601,
+          "total_tokens": 1724,
+          "prompt_cache_hit_tokens": 128,
+          "prompt_cache_miss_tokens": 995
+        },
+        "endedAt": "2026-10-10T14:37:39.685Z",
+        "durationMs": 1947.5640409999999
+      },
+      {
+        "run": "condition-probe",
+        "label": "parse-heldout-collision",
+        "startedAt": "2026-10-10T14:38:10.227Z",
+        "requestedModel": "deepseek-flash",
+        "httpStatus": 200,
+        "servedModel": "deepseek-flash",
+        "finishReason": "tool_calls",
+        "usage": {
+          "prompt_tokens": 1122,
+          "completion_tokens": 606,
+          "total_tokens": 1728,
+          "prompt_cache_hit_tokens": 512,
+          "prompt_cache_miss_tokens": 610
+        },
+        "endedAt": "2026-10-10T14:38:12.513Z",
+        "durationMs": 2285.842875000002
+      }
+    ]
+  },
+  "currentSourceHashes": {
+    "condition-probe.mjs": "2229ee482beb419a14ad266a035cf5c897454d18bdf6158dd5f987336d11fc15",
+    "fixtures.mjs": "0cab7fde2d2a7463df1515cb5fffd8152d3c445ce743d14ef7b1e55e2c4bae98",
+    "integrity-probe.mjs": "a1118e0dd600ad4965cf8adb425c70829394e2205e7a46ba0d312e84db80fe73",
+    "package-lock.json": "b873118617e889b5720f5a93f03cbe4be98c9dc83ddaf3632043ea1c0b377a00",
+    "probes.mjs": "35cc83a564da73ec1b710e817aa8e96fb5f173c8f20a60930389525dde026e4c",
+    "prompts.mjs": "578e0dca8d4fbd18350f8d403d8ebededb64ca9fbc67a6ee03a7231702815a9e",
+    "run.mjs": "e52ef782ef2808006b2458e8440024948a9432bb9a0829515b7f87ce11d6ef60",
+    "runtime.mjs": "6c6afcc7fd8bd0f14783b32d8158d6d8c7baf843f32b7451923ab547d193c5a8",
+    "summarize.mjs": "fcec3b35e3bef9a720d1256769b5dbce6896036793915db25e5f9eef9b707f69"
+  }
+}

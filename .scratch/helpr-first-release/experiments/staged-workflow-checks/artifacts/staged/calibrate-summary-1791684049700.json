@@ -1,0 +1,394 @@
+{
+  "phase": "calibrate",
+  "startedAt": "2026-10-11T01:59:49.440Z",
+  "runs": [
+    {
+      "name": "calibration-2",
+      "trace": [
+        {
+          "id": "s1",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s2",
+          "op": "fill",
+          "executed": true
+        },
+        {
+          "id": "s3",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s4",
+          "op": "fill",
+          "executed": true
+        },
+        {
+          "id": "s5",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s6",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s7",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s8",
+          "op": "check",
+          "executed": true
+        },
+        {
+          "id": "s9",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s10",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s11",
+          "op": "upload",
+          "executed": true,
+          "pending": "upload-pending.json",
+          "settled": "upload-settled.json",
+          "negative": {
+            "passed": false,
+            "code": "artifact-origin",
+            "detail": {}
+          }
+        },
+        {
+          "id": "s12",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s13",
+          "op": "click",
+          "executed": true
+        },
+        {
+          "id": "s14",
+          "op": "finish",
+          "resultUrl": "http://home.ts-ali.internal:38080/?p=106",
+          "readyReceipt": {
+            "at": "2026-10-11T02:00:46.370Z",
+            "taskDigest": "6aeb3bda8c0698ccda97ec5075e8d34ceff2d11c83b53ad8a3de7f09ef6d30e5",
+            "rulesDigest": "332bc709bed1e0d254d8422cfdc84203a0c210f75a25b415a3daf79545d1300f",
+            "evidence": [
+              {
+                "condition": {
+                  "kind": "value",
+                  "target": {
+                    "frame": "editor-canvas",
+                    "by": "role",
+                    "role": "textbox",
+                    "name": "Add title"
+                  },
+                  "compare": "equals",
+                  "expected": {
+                    "input": "post_title"
+                  },
+                  "covers": "post_title"
+                },
+                "ok": true,
+                "actual": "自主归纳 calibration-2 staged",
+                "expected": "自主归纳 calibration-2 staged"
+              },
+              {
+                "condition": {
+                  "kind": "value",
+                  "target": {
+                    "frame": "editor-canvas",
+                    "by": "text",
+                    "name": {
+                      "input": "post_content"
+                    }
+                  },
+                  "compare": "equals",
+                  "expected": {
+                    "input": "post_content"
+                  },
+                  "covers": "post_content"
+                },
+                "ok": true,
+                "actual": "本文与附件均为虚构实验素材。样本 calibration-2，校验编号 554c22cf7c。请保留原始文件，不改写表格内容。",
+                "expected": "本文与附件均为虚构实验素材。样本 calibration-2，校验编号 554c22cf7c。请保留原始文件，不改写表格内容。"
+              },
+              {
+                "condition": {
+                  "kind": "checked",
+                  "target": {
+                    "frame": "main",
+                    "by": "role",
+                    "role": "checkbox",
+                    "name": {
+                      "input": "post_category"
+                    }
+                  },
+                  "expected": true,
+                  "covers": "post_category"
+                },
+                "ok": true,
+                "actual": true
+              },
+              {
+                "condition": {
+                  "kind": "checked",
+                  "target": {
+                    "frame": "main",
+                    "by": "role",
+                    "role": "checkbox",
+                    "name": "Uncategorized"
+                  },
+                  "expected": false,
+                  "constraintQuote": "只选择分类「Excel 验证」，不选默认分类"
+                },
+                "ok": true,
+                "actual": false
+              },
+              {
+                "condition": {
+                  "kind": "artifact",
+                  "target": {
+                    "frame": "editor-canvas",
+                    "by": "role",
+                    "role": "textbox",
+                    "name": "Write file name…"
+                  },
+                  "expected": {
+                    "input": "attachment_excel",
+                    "field": "sha256"
+                  },
+                  "covers": "attachment_excel"
+                },
+                "ok": true,
+                "actual": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+              }
+            ]
+          }
+        }
+      ],
+      "status": "completed",
+      "candidateHash": "3281444b83b6b23a2bf452c555fd58e3b24ad930c2075b989e1021d51518b6a4",
+      "taskHash": "6aeb3bda8c0698ccda97ec5075e8d34ceff2d11c83b53ad8a3de7f09ef6d30e5",
+      "effectProbe": {
+        "actualAction": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Publish"
+          }
+        },
+        "incorrectProposal": "read",
+        "caught": {
+          "code": "condition-unsatisfied",
+          "message": "condition-unsatisfied",
+          "detail": {
+            "evidence": [
+              {
+                "condition": {
+                  "kind": "value",
+                  "target": {
+                    "frame": "editor-canvas",
+                    "by": "role",
+                    "role": "textbox",
+                    "name": "Add title"
+                  },
+                  "compare": "equals",
+                  "expected": {
+                    "input": "post_title"
+                  },
+                  "covers": "post_title"
+                },
+                "ok": false,
+                "actual": "实验注入：尚未满足授权内容",
+                "expected": "自主归纳 calibration-2 staged"
+              },
+              {
+                "condition": {
+                  "kind": "value",
+                  "target": {
+                    "frame": "editor-canvas",
+                    "by": "text",
+                    "name": {
+                      "input": "post_content"
+                    }
+                  },
+                  "compare": "equals",
+                  "expected": {
+                    "input": "post_content"
+                  },
+                  "covers": "post_content"
+                },
+                "ok": true,
+                "actual": "本文与附件均为虚构实验素材。样本 calibration-2，校验编号 554c22cf7c。请保留原始文件，不改写表格内容。",
+                "expected": "本文与附件均为虚构实验素材。样本 calibration-2，校验编号 554c22cf7c。请保留原始文件，不改写表格内容。"
+              },
+              {
+                "condition": {
+                  "kind": "checked",
+                  "target": {
+                    "frame": "main",
+                    "by": "role",
+                    "role": "checkbox",
+                    "name": {
+                      "input": "post_category"
+                    }
+                  },
+                  "expected": true,
+                  "covers": "post_category"
+                },
+                "ok": true,
+                "actual": true
+              },
+              {
+                "condition": {
+                  "kind": "checked",
+                  "target": {
+                    "frame": "main",
+                    "by": "role",
+                    "role": "checkbox",
+                    "name": "Uncategorized"
+                  },
+                  "expected": false,
+                  "constraintQuote": "只选择分类「Excel 验证」，不选默认分类"
+                },
+                "ok": true,
+                "actual": false
+              }
+            ]
+          }
+        },
+        "dispatchPrevented": true
+      },
+      "result": {
+        "url": "http://home.ts-ali.internal:38080/?p=106",
+        "runtimeEvidence": [
+          {
+            "condition": {
+              "kind": "text",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "heading",
+                "name": {
+                  "input": "post_title"
+                },
+                "level": 1
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "post_title"
+              },
+              "covers": "post_title"
+            },
+            "ok": true,
+            "actual": "自主归纳 calibration-2 staged",
+            "expected": "自主归纳 calibration-2 staged"
+          },
+          {
+            "condition": {
+              "kind": "text",
+              "target": {
+                "frame": "main",
+                "by": "text",
+                "name": {
+                  "input": "post_content"
+                }
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "post_content"
+              },
+              "covers": "post_content"
+            },
+            "ok": true,
+            "actual": "本文与附件均为虚构实验素材。样本 calibration-2，校验编号 554c22cf7c。请保留原始文件，不改写表格内容。",
+            "expected": "本文与附件均为虚构实验素材。样本 calibration-2，校验编号 554c22cf7c。请保留原始文件，不改写表格内容。"
+          },
+          {
+            "condition": {
+              "kind": "text",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "link",
+                "name": {
+                  "input": "post_category"
+                }
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "post_category"
+              },
+              "covers": "post_category"
+            },
+            "ok": true,
+            "actual": "Excel 验证",
+            "expected": "Excel 验证"
+          },
+          {
+            "condition": {
+              "kind": "download",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "link",
+                "name": {
+                  "input": "attachment_excel",
+                  "field": "stem"
+                }
+              },
+              "expected": {
+                "input": "attachment_excel",
+                "field": "sha256"
+              },
+              "covers": "attachment_excel"
+            },
+            "ok": true,
+            "actual": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+            "downloadedName": "calibration-2-staged.xlsx"
+          }
+        ],
+        "independent": {
+          "verified": true,
+          "unauthenticatedContext": true,
+          "url": "http://home.ts-ali.internal:38080/?p=106",
+          "title": "自主归纳 calibration-2 staged",
+          "body": "本文与附件均为虚构实验素材。样本 calibration-2，校验编号 554c22cf7c。请保留原始文件，不改写表格内容。",
+          "category": "Excel 验证",
+          "attachmentUrl": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/calibration-2-staged.xlsx",
+          "downloadedName": "calibration-2-staged.xlsx",
+          "sourceBytes": 3755,
+          "downloadedBytes": 3755,
+          "sha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+          "exactBytesMatch": true
+        }
+      },
+      "modelCallsDuringBrowserReplay": 0
+    }
+  ],
+  "sourceHashes": {
+    "protocol.mjs": "e0117fd4bebfa8593ad90151a3a64e43c404c13f92d5ce3905a61871968726f9",
+    "runtime.mjs": "f5672faad87afbe00eecfefb78fbcaa9f0d314e0d716efc7b721cf908b8f6a0b",
+    "upload-permit.mjs": "afbd15e9cba7dbf3c71968211124704722ef71539bf60a056b84f7330be9bd62",
+    "run.mjs": "19a288a71b7235fdd51dfacb5501f9d42f5875deb1838e90f73cb5003dd1e7aa",
+    "calibrate-repaired.mjs": "0946d0af5e63fa22d1ebfb8390724dc92f0ed09788c9273a93e04af08d5e5539"
+  },
+  "endedAt": "2026-10-11T02:00:49.700Z",
+  "calls": 25,
+  "tokens": 120268
+}

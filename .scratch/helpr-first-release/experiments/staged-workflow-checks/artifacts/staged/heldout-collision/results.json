@@ -1,0 +1,286 @@
+{
+  "name": "heldout-collision",
+  "trace": [
+    {
+      "id": "s1",
+      "op": "click",
+      "executed": true
+    },
+    {
+      "id": "s2",
+      "op": "fill",
+      "executed": true
+    },
+    {
+      "id": "s3",
+      "op": "click",
+      "executed": true
+    },
+    {
+      "id": "s4",
+      "op": "fill",
+      "executed": true
+    },
+    {
+      "id": "s5",
+      "op": "click",
+      "executed": true
+    },
+    {
+      "id": "s6",
+      "op": "click",
+      "executed": true
+    },
+    {
+      "id": "s7",
+      "op": "click",
+      "executed": true
+    },
+    {
+      "id": "s8",
+      "op": "check",
+      "executed": true
+    },
+    {
+      "id": "s9",
+      "op": "click",
+      "executed": true
+    },
+    {
+      "id": "s10",
+      "op": "click",
+      "executed": true
+    },
+    {
+      "id": "s11",
+      "op": "upload",
+      "executed": true,
+      "pending": "upload-pending.json",
+      "settled": "upload-settled.json",
+      "negative": {
+        "passed": false,
+        "code": "artifact-origin",
+        "detail": {}
+      }
+    },
+    {
+      "id": "s12",
+      "op": "click",
+      "executed": true
+    },
+    {
+      "id": "s13",
+      "op": "click",
+      "executed": true
+    },
+    {
+      "id": "s14",
+      "op": "finish",
+      "resultUrl": "http://home.ts-ali.internal:38080/?p=112",
+      "readyReceipt": {
+        "at": "2026-10-11T02:03:08.528Z",
+        "taskDigest": "9df19b9e8e9dc727dd74c1943298743351ac880b31614056e145582718cb5aeb",
+        "rulesDigest": "332bc709bed1e0d254d8422cfdc84203a0c210f75a25b415a3daf79545d1300f",
+        "evidence": [
+          {
+            "condition": {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Add title"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "post_title"
+              },
+              "covers": "post_title"
+            },
+            "ok": true,
+            "actual": "File",
+            "expected": "File"
+          },
+          {
+            "condition": {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "text",
+                "name": {
+                  "input": "post_content"
+                }
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "post_content"
+              },
+              "covers": "post_content"
+            },
+            "ok": true,
+            "actual": "本文与附件均为虚构实验素材。样本 heldout-collision，校验编号 b650297563。请保留原始文件，不改写表格内容。",
+            "expected": "本文与附件均为虚构实验素材。样本 heldout-collision，校验编号 b650297563。请保留原始文件，不改写表格内容。"
+          },
+          {
+            "condition": {
+              "kind": "checked",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "checkbox",
+                "name": {
+                  "input": "post_category"
+                }
+              },
+              "expected": true,
+              "covers": "post_category"
+            },
+            "ok": true,
+            "actual": true
+          },
+          {
+            "condition": {
+              "kind": "checked",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "checkbox",
+                "name": "Uncategorized"
+              },
+              "expected": false,
+              "constraintQuote": "只选择分类「Excel 验证」，不选默认分类"
+            },
+            "ok": true,
+            "actual": false
+          },
+          {
+            "condition": {
+              "kind": "artifact",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Write file name…"
+              },
+              "expected": {
+                "input": "attachment_excel",
+                "field": "sha256"
+              },
+              "covers": "attachment_excel"
+            },
+            "ok": true,
+            "actual": "2920f2e32ead356702ec76f643c4718bca55ab1a4f823aa139354651e754ef9a"
+          }
+        ]
+      }
+    }
+  ],
+  "status": "completed",
+  "candidateHash": "1d5773930c0e60224748911306ce6f9c4a02eb1b95cb460d347751ea2c2b4082",
+  "taskHash": "9df19b9e8e9dc727dd74c1943298743351ac880b31614056e145582718cb5aeb",
+  "result": {
+    "url": "http://home.ts-ali.internal:38080/?p=112",
+    "runtimeEvidence": [
+      {
+        "condition": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "heading",
+            "name": {
+              "input": "post_title"
+            },
+            "level": 1
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "post_title"
+          },
+          "covers": "post_title"
+        },
+        "ok": true,
+        "actual": "File",
+        "expected": "File"
+      },
+      {
+        "condition": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "text",
+            "name": {
+              "input": "post_content"
+            }
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "post_content"
+          },
+          "covers": "post_content"
+        },
+        "ok": true,
+        "actual": "本文与附件均为虚构实验素材。样本 heldout-collision，校验编号 b650297563。请保留原始文件，不改写表格内容。",
+        "expected": "本文与附件均为虚构实验素材。样本 heldout-collision，校验编号 b650297563。请保留原始文件，不改写表格内容。"
+      },
+      {
+        "condition": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": {
+              "input": "post_category"
+            }
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "post_category"
+          },
+          "covers": "post_category"
+        },
+        "ok": true,
+        "actual": "Excel 验证",
+        "expected": "Excel 验证"
+      },
+      {
+        "condition": {
+          "kind": "download",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": {
+              "input": "attachment_excel",
+              "field": "stem"
+            }
+          },
+          "expected": {
+            "input": "attachment_excel",
+            "field": "sha256"
+          },
+          "covers": "attachment_excel"
+        },
+        "ok": true,
+        "actual": "2920f2e32ead356702ec76f643c4718bca55ab1a4f823aa139354651e754ef9a",
+        "downloadedName": "heldout-collision-staged.xlsx"
+      }
+    ],
+    "independent": {
+      "verified": true,
+      "unauthenticatedContext": true,
+      "url": "http://home.ts-ali.internal:38080/?p=112",
+      "title": "File",
+      "body": "本文与附件均为虚构实验素材。样本 heldout-collision，校验编号 b650297563。请保留原始文件，不改写表格内容。",
+      "category": "Excel 验证",
+      "attachmentUrl": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/heldout-collision-staged.xlsx",
+      "downloadedName": "heldout-collision-staged.xlsx",
+      "sourceBytes": 3756,
+      "downloadedBytes": 3756,
+      "sha256": "2920f2e32ead356702ec76f643c4718bca55ab1a4f823aa139354651e754ef9a",
+      "exactBytesMatch": true
+    }
+  },
+  "modelCallsDuringBrowserReplay": 0
+}

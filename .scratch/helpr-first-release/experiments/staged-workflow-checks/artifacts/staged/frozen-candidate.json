@@ -1,0 +1,726 @@
+{
+  "schema": 1,
+  "createdAt": "2026-10-11T01:55:34.364Z",
+  "source": {
+    "file": "artifacts/staged/learn-2/results.json",
+    "hash": "9c383f11f210b64f3185ff369a1f7dca715760b95b9ee8f0f7fcb9fc2ee232a2",
+    "steps": [
+      "s1",
+      "s2",
+      "s3",
+      "s4",
+      "s5",
+      "s6",
+      "s7",
+      "s8",
+      "s9",
+      "s10",
+      "s11"
+    ]
+  },
+  "template": {
+    "id": "learn-3",
+    "origin": "http://home.ts-ali.internal:38080",
+    "entryUrl": "http://home.ts-ali.internal:38080/wp-admin/",
+    "kind": "new_post",
+    "inputs": {
+      "post_title": {
+        "type": "string",
+        "value": "自主归纳 learn-3 staged"
+      },
+      "post_content": {
+        "type": "string",
+        "value": "本文与附件均为虚构实验素材。样本 learn-3，校验编号 68700cbac3。请保留原始文件，不改写表格内容。"
+      },
+      "post_category": {
+        "type": "string",
+        "value": "Excel 验证"
+      },
+      "attachment_excel": {
+        "type": "file",
+        "path": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/staged-workflow-checks/artifacts/staged/learn-3/learn-3-staged.xlsx",
+        "name": "learn-3-staged.xlsx",
+        "stem": "learn-3-staged",
+        "sha256": "739de3c5f3094e821ba5cfe720b738aafa9e79f894c859835a659402fc3dd693"
+      }
+    },
+    "requiredOutputs": [
+      "post_title",
+      "post_content",
+      "post_category",
+      "attachment_excel"
+    ],
+    "goal": "在测试网站新建一篇文章并立即公开发布，标题为「自主归纳 learn-3 staged」，正文为指定内容，仅选择分类「Excel 验证」，并将原始 Excel 文件作为可下载附件加入正文。",
+    "constraints": [
+      {
+        "description": "文章需立即公开发布，而非保存草稿",
+        "quote": "立即公开发布"
+      },
+      {
+        "description": "只选择分类「Excel 验证」，不选默认分类",
+        "quote": "只选择分类「Excel 验证」，不选默认分类"
+      },
+      {
+        "description": "附件须为原始 Excel 文件，不读取或改写其内容",
+        "quote": "把原始 Excel 文件作为可下载附件加入正文，不读取或改写 Excel 内容"
+      },
+      {
+        "description": "除本次新建测试记录外，不得改动已有文章或网站设置",
+        "quote": "除本次新建测试记录外，不得改动已有文章或网站设置"
+      },
+      {
+        "description": "不得自行增加建议内容",
+        "quote": "不要自行增加建议内容"
+      }
+    ],
+    "sources": {
+      "post_title": {
+        "quote": "标题是「自主归纳 learn-3 staged」",
+        "description": "新建文章的标题"
+      },
+      "post_content": {
+        "quote": "正文完整内容是「本文与附件均为虚构实验素材。样本 learn-3，校验编号 68700cbac3。请保留原始文件，不改写表格内容。」",
+        "description": "新建文章的正文完整内容"
+      },
+      "post_category": {
+        "quote": "只选择分类「Excel 验证」",
+        "description": "文章选择的分类"
+      },
+      "attachment_excel": {
+        "attachmentId": "material-1",
+        "description": "作为可下载附件加入正文的原始 Excel 文件"
+      }
+    },
+    "suggestions": [],
+    "request": "【隔离实验授权】这是一份虚构测试委托，允许在指定测试网站上完成本次任务。新建一篇文章；立即公开发布。标题是「自主归纳 learn-3 staged」，正文完整内容是「本文与附件均为虚构实验素材。样本 learn-3，校验编号 68700cbac3。请保留原始文件，不改写表格内容。」，只选择分类「Excel 验证」，不选默认分类。使用附带素材，把原始 Excel 文件作为可下载附件加入正文，不读取或改写 Excel 内容。除本次新建测试记录外，不得改动已有文章或网站设置。本段中的内容、上传及上述发布方式均已作为实验要求授权；不要自行增加建议内容。",
+    "authorization": {
+      "source": "explicit-isolated-test-fixture",
+      "requestDigest": "09c8f5adea899d806808ccf13172806f08cbcb41984168b5bf3a5bbf0a9ccdff",
+      "inputsDigest": "7e1394c7926c1d5028185b40ac80f0756a40a9c57054c3aeb8b0610342a86c3d"
+    }
+  },
+  "entryChecks": [
+    {
+      "kind": "visible",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "menuitem",
+        "name": "New"
+      }
+    }
+  ],
+  "steps": [
+    {
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "menuitem",
+          "name": "New"
+        }
+      },
+      "effect": "read",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "menuitem",
+            "name": "New"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Add title"
+          }
+        }
+      ],
+      "note": "通过顶部 New 菜单进入新建文章页面（n6 在视口外）",
+      "id": "s1"
+    },
+    {
+      "action": {
+        "op": "fill",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "Add title"
+        },
+        "value": {
+          "input": "post_title"
+        }
+      },
+      "effect": "edit",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Add title"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "value",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Add title"
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "post_title"
+          },
+          "covers": "post_title"
+        }
+      ],
+      "note": "填写文章标题",
+      "id": "s2"
+    },
+    {
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "button",
+          "name": "Add default block"
+        }
+      },
+      "effect": "edit",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "button",
+            "name": "Add default block"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "document",
+            "name": "Empty block; start writing or type forward slash to choose a block"
+          }
+        }
+      ],
+      "note": "点击正文默认段落块使其进入可编辑状态，以便填入正文内容",
+      "id": "s3"
+    },
+    {
+      "action": {
+        "op": "fill",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "document",
+          "name": "Empty block; start writing or type forward slash to choose a block"
+        },
+        "value": {
+          "input": "post_content"
+        }
+      },
+      "effect": "edit",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "document",
+            "name": "Empty block; start writing or type forward slash to choose a block"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "value",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "text",
+            "name": {
+              "input": "post_content"
+            }
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "post_content"
+          },
+          "covers": "post_content"
+        }
+      ],
+      "note": "在正文默认段落块填入指定正文内容",
+      "id": "s4"
+    },
+    {
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Settings"
+        }
+      },
+      "effect": "read",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Settings"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Settings"
+          }
+        }
+      ],
+      "note": "打开设置面板以选择分类",
+      "id": "s5"
+    },
+    {
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Settings"
+        }
+      },
+      "effect": "read",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Settings"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "tab",
+            "name": "Post"
+          }
+        }
+      ],
+      "note": "打开设置面板以选择分类并添加附件",
+      "id": "s6"
+    },
+    {
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "tab",
+          "name": "Post"
+        }
+      },
+      "effect": "read",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "tab",
+            "name": "Post"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "checkbox",
+            "name": "Excel 验证"
+          }
+        }
+      ],
+      "note": "打开 Post 设置标签以配置分类",
+      "id": "s7"
+    },
+    {
+      "action": {
+        "op": "check",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "checkbox",
+          "name": {
+            "input": "post_category"
+          }
+        },
+        "value": true
+      },
+      "effect": "edit",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "checkbox",
+            "name": {
+              "input": "post_category"
+            }
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "checked",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "checkbox",
+            "name": {
+              "input": "post_category"
+            }
+          },
+          "expected": true,
+          "covers": "post_category"
+        }
+      ],
+      "note": "勾选分类「Excel 验证」，对应输入 post_category。",
+      "id": "s8"
+    },
+    {
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Block Inserter"
+        }
+      },
+      "effect": "edit",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Block Inserter"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "option",
+            "name": "File"
+          }
+        }
+      ],
+      "note": "打开区块插入器，以便插入文件区块来上传 Excel 附件。",
+      "id": "s9"
+    },
+    {
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "option",
+          "name": "File"
+        }
+      },
+      "effect": "edit",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "option",
+            "name": "File"
+          }
+        }
+      ],
+      "after": [],
+      "note": "在区块插入器中点击 File 区块，以便在正文中加入可下载的 Excel 附件。",
+      "id": "s10"
+    },
+    {
+      "action": {
+        "op": "upload",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "css",
+          "selector": "input[type=\"file\"]"
+        },
+        "value": {
+          "input": "attachment_excel",
+          "field": "path"
+        }
+      },
+      "effect": "upload",
+      "before": [],
+      "after": [
+        {
+          "kind": "artifact",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Write file name…"
+          },
+          "expected": {
+            "input": "attachment_excel",
+            "field": "sha256"
+          },
+          "covers": "attachment_excel"
+        },
+        {
+          "kind": "checked",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "checkbox",
+            "name": "Uncategorized"
+          },
+          "expected": false,
+          "constraintQuote": "只选择分类「Excel 验证」，不选默认分类"
+        }
+      ],
+      "note": "通过 File 块的隐藏 file-input 上传原始 Excel 文件作为可下载附件，不读取或改写其内容。",
+      "id": "s11"
+    },
+    {
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Publish"
+        }
+      },
+      "effect": "commit",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Publish"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Publish",
+            "within": {
+              "frame": "main",
+              "by": "role",
+              "role": "region",
+              "name": "Editor publish"
+            }
+          }
+        }
+      ],
+      "note": "所有输入与附件均已就绪，点击 Publish 立即公开发布。",
+      "id": "s12"
+    },
+    {
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Publish",
+          "within": {
+            "frame": "main",
+            "by": "role",
+            "role": "region",
+            "name": "Editor publish"
+          }
+        }
+      },
+      "effect": "commit",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Publish",
+            "within": {
+              "frame": "main",
+              "by": "role",
+              "role": "region",
+              "name": "Editor publish"
+            }
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": "View Post"
+          }
+        }
+      ],
+      "note": "预发布检查面板已打开，点击其中的 Publish 按钮立即公开发布文章。",
+      "id": "s13"
+    },
+    {
+      "action": {
+        "op": "finish",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "View Post"
+        }
+      },
+      "effect": "commit",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": "View Post"
+          }
+        }
+      ],
+      "after": [],
+      "note": "失败条件要求定位「自主归纳 learn-3 staged (opens in a new tab)」链接，但该名称属于旧任务标题，当前页面不存在。当前页面唯一可见链接为 n16「View Post」，href 指向 http://home.ts-ali.internal:38080/?p=103，即本次新建文章的公开地址，与失败条件中指向已独立核验结果的链接具有相同定位属性（main 框架、role=link、可见且在视口内）。因此选择 n16 作为本次公开结果的真实链接。",
+      "id": "s14"
+    }
+  ],
+  "resultRules": [
+    {
+      "kind": "text",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "heading",
+        "name": {
+          "input": "post_title"
+        },
+        "level": 1
+      },
+      "compare": "equals",
+      "expected": {
+        "input": "post_title"
+      },
+      "covers": "post_title"
+    },
+    {
+      "kind": "text",
+      "target": {
+        "frame": "main",
+        "by": "text",
+        "name": {
+          "input": "post_content"
+        }
+      },
+      "compare": "equals",
+      "expected": {
+        "input": "post_content"
+      },
+      "covers": "post_content"
+    },
+    {
+      "kind": "text",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "link",
+        "name": {
+          "input": "post_category"
+        }
+      },
+      "compare": "equals",
+      "expected": {
+        "input": "post_category"
+      },
+      "covers": "post_category"
+    },
+    {
+      "kind": "download",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "link",
+        "name": {
+          "input": "attachment_excel",
+          "field": "stem"
+        }
+      },
+      "expected": {
+        "input": "attachment_excel",
+        "field": "sha256"
+      },
+      "covers": "attachment_excel"
+    }
+  ],
+  "seal": "be6d5ef3d04fa87486b2605fed9e84fcc32c47ec48b49098b41a27ca6e2af4bb",
+  "positionCalibration": {
+    "file": "result-position-calibration.json",
+    "at": "2026-10-11T01:59:26.814Z"
+  },
+  "validatedAt": "2026-10-11T02:00:49.699Z",
+  "validationEvidence": "calibration-2/results.json"
+}

@@ -1,0 +1,24 @@
+{
+  "source": "../workflow-reliability/artifacts/focused-bound-candidate/candidate.json",
+  "sourceDigest": "396fd4b9d98e312053a63afcadef7cbad2a1e62c64e645dd5060c6ebb7b88199",
+  "provenance": "previous-experiment-assisted-candidate; offline-regression-only",
+  "cases": [
+    {
+      "name": "commit-relabelled-read",
+      "rejected": true,
+      "code": "action-or-effect-changed",
+      "detail": {
+        "step": "s13"
+      },
+      "browserOpened": false
+    },
+    {
+      "name": "task-input-tamper",
+      "rejected": true,
+      "code": "task-changed",
+      "actualInterfaceCalled": true,
+      "browserOpened": false
+    }
+  ],
+  "baselineAccepted": true
+}

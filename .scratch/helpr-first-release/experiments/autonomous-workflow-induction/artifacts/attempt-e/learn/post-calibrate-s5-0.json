@@ -1,0 +1,20 @@
+{
+  "original": [
+    {
+      "kind": "value",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "document",
+        "name": "Empty block; start writing or type forward slash to choose a block"
+      },
+      "compare": "contains",
+      "expected": {
+        "input": "body"
+      }
+    }
+  ],
+  "correction": {
+    "invalidJson": "{\"after\": [{\"kind\": \"value\", \"target\": {\"frame\": \"editor-canvas\", \"by\": \"role\", \"role\": \"document\", \"name\": \"Block: Paragraph\"}, \"compare\": \"contains\", \"expected\": {\"input\": \"body\"}}], \"reasoning\": \"动作已成功：正文段落已填入，但可访问名称从「Empty block; start writing or type forward slash to choose a block」变为「Block: Paragraph」（因为段落不再为空）。因此原 after 定位失效（count=0）。修订为按当前实际结构定位该段落 document，并仍核对内容包含原始 body 输入值。\"}"
+  }
+}

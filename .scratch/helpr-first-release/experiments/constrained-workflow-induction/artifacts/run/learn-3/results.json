@@ -1,0 +1,1837 @@
+{
+  "name": "learn-3",
+  "trace": [
+    {
+      "step": {
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "menuitem",
+            "name": "New"
+          }
+        },
+        "effect": "read",
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "menuitem",
+              "name": "New"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            }
+          }
+        ],
+        "note": "通过顶部 New 菜单进入新建文章页面（n6 在视口外）",
+        "id": "s1"
+      },
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "step": {
+        "action": {
+          "op": "fill",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Add title"
+          },
+          "value": {
+            "input": "post_title"
+          }
+        },
+        "effect": "edit",
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "post_title"
+            },
+            "covers": "post_title"
+          }
+        ],
+        "note": "填写文章标题",
+        "id": "s2"
+      },
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "step": {
+        "action": {
+          "op": "click",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "button",
+            "name": "Add default block"
+          }
+        },
+        "effect": "edit",
+        "before": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "button",
+              "name": "Add default block"
+            }
+          }
+        ],
+        "after": [
+          {
+            "kind": "visible",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "document",
+              "name": "Empty block; start writing or type forward slash to choose a block"
+            }
+          }
+        ],
+        "note": "点击正文默认段落块使其进入可编辑状态，以便填入正文内容",
+        "id": "s3"
+      },
+      "result": {
+        "executed": true
+      }
+    }
+  ],
+  "failures": [],
+  "task": {
+    "id": "learn-3",
+    "origin": "http://home.ts-ali.internal:38080",
+    "entryUrl": "http://home.ts-ali.internal:38080/wp-admin/",
+    "kind": "new_post",
+    "inputs": {
+      "post_title": {
+        "type": "string",
+        "value": "自主归纳 learn-3 run"
+      },
+      "post_content": {
+        "type": "string",
+        "value": "本文与附件均为虚构实验素材。样本 learn-3，校验编号 4933e3d4b8。请保留原始文件，不改写表格内容。"
+      },
+      "post_category": {
+        "type": "string",
+        "value": "Excel 验证"
+      },
+      "attachment_excel": {
+        "type": "file",
+        "path": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/constrained-workflow-induction/artifacts/run/learn-3/learn-3-run.xlsx",
+        "name": "learn-3-run.xlsx",
+        "stem": "learn-3-run",
+        "sha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+      }
+    },
+    "requiredOutputs": [
+      "post_title",
+      "post_content",
+      "post_category",
+      "attachment_excel"
+    ],
+    "goal": "在测试网站新建一篇文章并立即公开发布，标题为「自主归纳 learn-3 run」，正文为指定内容，仅选择分类「Excel 验证」，并将原始 Excel 文件作为可下载附件加入正文。",
+    "constraints": [
+      {
+        "description": "文章需立即公开发布，而非保存草稿",
+        "quote": "立即公开发布"
+      },
+      {
+        "description": "只选择分类「Excel 验证」，不选默认分类",
+        "quote": "只选择分类「Excel 验证」，不选默认分类"
+      },
+      {
+        "description": "附件须为原始 Excel 文件，不读取或改写其内容",
+        "quote": "把原始 Excel 文件作为可下载附件加入正文，不读取或改写 Excel 内容"
+      },
+      {
+        "description": "除本次新建测试记录外，不得改动已有文章或网站设置",
+        "quote": "除本次新建测试记录外，不得改动已有文章或网站设置"
+      },
+      {
+        "description": "不得自行增加建议内容",
+        "quote": "不要自行增加建议内容"
+      }
+    ],
+    "sources": {
+      "post_title": {
+        "quote": "标题是「自主归纳 learn-3 run」",
+        "description": "新建文章的标题"
+      },
+      "post_content": {
+        "quote": "正文完整内容是「本文与附件均为虚构实验素材。样本 learn-3，校验编号 4933e3d4b8。请保留原始文件，不改写表格内容。」",
+        "description": "新建文章的正文完整内容"
+      },
+      "post_category": {
+        "quote": "只选择分类「Excel 验证」，不选默认分类",
+        "description": "文章选择的分类"
+      },
+      "attachment_excel": {
+        "attachmentId": "material-1",
+        "description": "作为可下载附件加入正文的原始 Excel 文件"
+      }
+    },
+    "suggestions": [],
+    "request": "【隔离实验授权】这是一份虚构测试委托，允许在指定测试网站上完成本次任务。新建一篇文章；立即公开发布。标题是「自主归纳 learn-3 run」，正文完整内容是「本文与附件均为虚构实验素材。样本 learn-3，校验编号 4933e3d4b8。请保留原始文件，不改写表格内容。」，只选择分类「Excel 验证」，不选默认分类。使用附带素材，把原始 Excel 文件作为可下载附件加入正文，不读取或改写 Excel 内容。除本次新建测试记录外，不得改动已有文章或网站设置。本段中的内容、上传及上述发布方式均已作为实验要求授权；不要自行增加建议内容。",
+    "authorization": {
+      "source": "explicit-isolated-test-fixture",
+      "requestDigest": "a2836a67b5c2d210685fcd4f35aabb96b51ed353f39b43d83a42545f3aacf7c9",
+      "inputsDigest": "e5cccbe11634b3bb1533eb4636110b41c67dc6ec900017faae4f87d31e798b78"
+    }
+  },
+  "status": "failed",
+  "reusedSource": {
+    "file": "artifacts/run/learn-2/results.json",
+    "hash": "019dc2f3c19e21bfa47e929baa3634734d18f13b1eadbbe9d577b24d44eeeda7",
+    "steps": [
+      "s1",
+      "s2",
+      "s3"
+    ]
+  },
+  "error": {
+    "code": "condition-unsatisfied",
+    "message": "condition-unsatisfied",
+    "detail": {
+      "evidence": [
+        {
+          "condition": {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "text",
+              "name": "本文与附件均为虚构实验素材。样本 learn-2，校验编号 6a5d5558df。请保留原始文件，不改写表格内容。"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "post_content"
+            },
+            "covers": "post_content"
+          },
+          "ok": false,
+          "count": 0
+        }
+      ]
+    },
+    "executed": true,
+    "executionUncertain": false
+  },
+  "lastObservation": {
+    "url": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+    "nodes": [
+      {
+        "id": "n1",
+        "frame": "main",
+        "role": "menuitem",
+        "name": "About WordPress",
+        "tag": "a",
+        "value": "About WordPress",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "href": "http://home.ts-ali.internal:38080/wp-admin/about.php",
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "menuitem",
+          "name": "About WordPress"
+        }
+      },
+      {
+        "id": "n2",
+        "frame": "main",
+        "role": "menuitem",
+        "name": "helpr 验证后台（仅测试）",
+        "tag": "a",
+        "value": "helpr 验证后台（仅测试）",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "href": "http://home.ts-ali.internal:38080/",
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "menuitem",
+          "name": "helpr 验证后台（仅测试）"
+        }
+      },
+      {
+        "id": "n3",
+        "frame": "main",
+        "role": "menuitem",
+        "name": "⌘K Open command palette",
+        "tag": "a",
+        "value": "⌘K Open command palette",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "href": "#",
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "menuitem",
+          "name": "⌘K Open command palette"
+        }
+      },
+      {
+        "id": "n4",
+        "frame": "main",
+        "role": "menuitem",
+        "name": "0 Comments in moderation",
+        "tag": "a",
+        "value": "00 Comments in moderation",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "href": "http://home.ts-ali.internal:38080/wp-admin/edit-comments.php",
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "menuitem",
+          "name": "0 Comments in moderation"
+        }
+      },
+      {
+        "id": "n5",
+        "frame": "main",
+        "role": "menuitem",
+        "name": "New",
+        "tag": "a",
+        "value": "New",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "href": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "menuitem",
+          "name": "New"
+        }
+      },
+      {
+        "id": "n6",
+        "frame": "main",
+        "role": "menuitem",
+        "name": "Howdy, helpr 测试用户",
+        "tag": "a",
+        "value": "Howdy, helpr 测试用户",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "href": "http://home.ts-ali.internal:38080/wp-admin/profile.php",
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "menuitem",
+          "name": "Howdy, helpr 测试用户"
+        }
+      },
+      {
+        "id": "n7",
+        "frame": "main",
+        "role": "heading",
+        "name": "Add Post",
+        "tag": "h1",
+        "value": "Add Post",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": false,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "heading",
+          "name": "Add Post",
+          "level": 1
+        }
+      },
+      {
+        "id": "n8",
+        "frame": "main",
+        "role": "region",
+        "name": "Editor top bar",
+        "tag": "div",
+        "value": "自主归纳 learn-3 run· PostSave draftPreview(opens in a new tab)Publish",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "region",
+          "name": "Editor top bar"
+        }
+      },
+      {
+        "id": "n9",
+        "frame": "main",
+        "role": "link",
+        "name": "View Posts",
+        "tag": "a",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "href": "edit.php?post_type=post",
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "View Posts"
+        }
+      },
+      {
+        "id": "n10",
+        "frame": "main",
+        "role": "button",
+        "name": "Block Inserter",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Block Inserter"
+        }
+      },
+      {
+        "id": "n11",
+        "frame": "main",
+        "role": "button",
+        "name": "Undo",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Undo"
+        }
+      },
+      {
+        "id": "n12",
+        "frame": "main",
+        "role": "button",
+        "name": "Redo",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": true,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Redo"
+        }
+      },
+      {
+        "id": "n13",
+        "frame": "main",
+        "role": "button",
+        "name": "Document Overview",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Document Overview"
+        }
+      },
+      {
+        "id": "n14",
+        "frame": "main",
+        "role": "button",
+        "name": "自主归纳 learn-3 run · Post",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "自主归纳 learn-3 run · Post"
+        }
+      },
+      {
+        "id": "n15",
+        "frame": "main",
+        "role": "heading",
+        "name": "自主归纳 learn-3 run · Post",
+        "tag": "h1",
+        "value": "自主归纳 learn-3 run· Post",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "heading",
+          "name": "自主归纳 learn-3 run · Post",
+          "level": 1
+        }
+      },
+      {
+        "id": "n16",
+        "frame": "main",
+        "role": "button",
+        "name": "Save draft",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Save draft"
+        }
+      },
+      {
+        "id": "n17",
+        "frame": "main",
+        "role": "button",
+        "name": "View",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "View"
+        }
+      },
+      {
+        "id": "n18",
+        "frame": "main",
+        "role": "button",
+        "name": "Settings",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Settings"
+        }
+      },
+      {
+        "id": "n19",
+        "frame": "main",
+        "role": "button",
+        "name": "Publish",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Publish"
+        }
+      },
+      {
+        "id": "n20",
+        "frame": "main",
+        "role": "button",
+        "name": "Options",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Options",
+          "within": {
+            "frame": "main",
+            "by": "role",
+            "role": "region",
+            "name": "Editor top bar"
+          }
+        }
+      },
+      {
+        "id": "n21",
+        "frame": "main",
+        "role": "region",
+        "name": "Editor content",
+        "tag": "div",
+        "value": "Change block type or styleChange alignmentChange text alignmentDisplays more block tools",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "region",
+          "name": "Editor content"
+        }
+      },
+      {
+        "id": "n22",
+        "frame": "main",
+        "role": "button",
+        "name": "Paragraph",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Paragraph"
+        }
+      },
+      {
+        "id": "n23",
+        "frame": "main",
+        "role": "button",
+        "name": "Align",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Align"
+        }
+      },
+      {
+        "id": "n24",
+        "frame": "main",
+        "role": "button",
+        "name": "Align text",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Align text"
+        }
+      },
+      {
+        "id": "n25",
+        "frame": "main",
+        "role": "button",
+        "name": "Bold",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Bold"
+        }
+      },
+      {
+        "id": "n26",
+        "frame": "main",
+        "role": "button",
+        "name": "Italic",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Italic"
+        }
+      },
+      {
+        "id": "n27",
+        "frame": "main",
+        "role": "button",
+        "name": "Link",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Link"
+        }
+      },
+      {
+        "id": "n28",
+        "frame": "main",
+        "role": "button",
+        "name": "More",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "More"
+        }
+      },
+      {
+        "id": "n29",
+        "frame": "main",
+        "role": "button",
+        "name": "Options",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Options",
+          "within": {
+            "frame": "main",
+            "by": "role",
+            "role": "toolbar",
+            "name": "Block tools"
+          }
+        }
+      },
+      {
+        "id": "n30",
+        "frame": "main",
+        "role": "region",
+        "name": "Editor settings",
+        "tag": "div",
+        "value": "PostBlockParagraphStart with the basic building block of all narrative.StylesDefaultDisplaySubtitleAnnotationTypographyColorFont sizeFont sizeSMLXLXXLBackgroundColorGradientDimensionsAll options are currently hiddenBorderAll options are currently hiddenElementsAll options are currently hiddenAdvancedSkip to the selected block",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "region",
+          "name": "Editor settings"
+        }
+      },
+      {
+        "id": "n31",
+        "frame": "main",
+        "role": "tab",
+        "name": "Post",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "tab",
+          "name": "Post"
+        }
+      },
+      {
+        "id": "n32",
+        "frame": "main",
+        "role": "tab",
+        "name": "Block",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "tab",
+          "name": "Block"
+        }
+      },
+      {
+        "id": "n33",
+        "frame": "main",
+        "role": "button",
+        "name": "Close Settings",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Close Settings"
+        }
+      },
+      {
+        "id": "n34",
+        "frame": "main",
+        "role": "heading",
+        "name": "Paragraph",
+        "tag": "h2",
+        "value": "Paragraph",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "heading",
+          "name": "Paragraph",
+          "level": 2
+        }
+      },
+      {
+        "id": "n35",
+        "frame": "main",
+        "role": "heading",
+        "name": "Styles",
+        "tag": "h2",
+        "value": "Styles",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "heading",
+          "name": "Styles",
+          "level": 2
+        }
+      },
+      {
+        "id": "n36",
+        "frame": "main",
+        "role": "button",
+        "name": "Styles options",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Styles options"
+        }
+      },
+      {
+        "id": "n37",
+        "frame": "main",
+        "role": "button",
+        "name": "Default",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Default"
+        }
+      },
+      {
+        "id": "n38",
+        "frame": "main",
+        "role": "button",
+        "name": "Display",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Display"
+        }
+      },
+      {
+        "id": "n39",
+        "frame": "main",
+        "role": "button",
+        "name": "Subtitle",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Subtitle"
+        }
+      },
+      {
+        "id": "n40",
+        "frame": "main",
+        "role": "button",
+        "name": "Annotation",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Annotation"
+        }
+      },
+      {
+        "id": "n41",
+        "frame": "main",
+        "role": "heading",
+        "name": "Typography",
+        "tag": "h2",
+        "value": "Typography",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "heading",
+          "name": "Typography",
+          "level": 2
+        }
+      },
+      {
+        "id": "n42",
+        "frame": "main",
+        "role": "button",
+        "name": "Typography options",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Typography options"
+        }
+      },
+      {
+        "id": "n43",
+        "frame": "main",
+        "role": "button",
+        "name": "Set custom size",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Set custom size"
+        }
+      },
+      {
+        "id": "n44",
+        "frame": "main",
+        "role": "radio",
+        "name": "Small",
+        "tag": "button",
+        "type": "button",
+        "value": "small",
+        "editable": false,
+        "checked": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "radio",
+          "name": "Small"
+        }
+      },
+      {
+        "id": "n45",
+        "frame": "main",
+        "role": "radio",
+        "name": "Medium",
+        "tag": "button",
+        "type": "button",
+        "value": "medium",
+        "editable": false,
+        "checked": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "radio",
+          "name": "Medium"
+        }
+      },
+      {
+        "id": "n46",
+        "frame": "main",
+        "role": "radio",
+        "name": "Large",
+        "tag": "button",
+        "type": "button",
+        "value": "large",
+        "editable": false,
+        "checked": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "radio",
+          "name": "Large"
+        }
+      },
+      {
+        "id": "n47",
+        "frame": "main",
+        "role": "radio",
+        "name": "Extra Large",
+        "tag": "button",
+        "type": "button",
+        "value": "x-large",
+        "editable": false,
+        "checked": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "radio",
+          "name": "Extra Large"
+        }
+      },
+      {
+        "id": "n48",
+        "frame": "main",
+        "role": "radio",
+        "name": "Extra Extra Large",
+        "tag": "button",
+        "type": "button",
+        "value": "xx-large",
+        "editable": false,
+        "checked": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "radio",
+          "name": "Extra Extra Large"
+        }
+      },
+      {
+        "id": "n49",
+        "frame": "main",
+        "role": "heading",
+        "name": "Background",
+        "tag": "h2",
+        "value": "Background",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "heading",
+          "name": "Background",
+          "level": 2
+        }
+      },
+      {
+        "id": "n50",
+        "frame": "main",
+        "role": "button",
+        "name": "Background options",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Background options"
+        }
+      },
+      {
+        "id": "n51",
+        "frame": "main",
+        "role": "button",
+        "name": "Gradient",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Gradient"
+        }
+      },
+      {
+        "id": "n52",
+        "frame": "main",
+        "role": "heading",
+        "name": "Dimensions",
+        "tag": "h2",
+        "value": "Dimensions",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "heading",
+          "name": "Dimensions",
+          "level": 2
+        }
+      },
+      {
+        "id": "n53",
+        "frame": "main",
+        "role": "button",
+        "name": "Dimensions options",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Dimensions options"
+        }
+      },
+      {
+        "id": "n54",
+        "frame": "main",
+        "role": "heading",
+        "name": "Border",
+        "tag": "h2",
+        "value": "Border",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "heading",
+          "name": "Border",
+          "level": 2
+        }
+      },
+      {
+        "id": "n55",
+        "frame": "main",
+        "role": "button",
+        "name": "Border options",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Border options"
+        }
+      },
+      {
+        "id": "n56",
+        "frame": "main",
+        "role": "heading",
+        "name": "Elements",
+        "tag": "h2",
+        "value": "Elements",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "heading",
+          "name": "Elements",
+          "level": 2
+        }
+      },
+      {
+        "id": "n57",
+        "frame": "main",
+        "role": "button",
+        "name": "Elements options",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Elements options"
+        }
+      },
+      {
+        "id": "n58",
+        "frame": "main",
+        "role": "heading",
+        "name": "Advanced",
+        "tag": "h2",
+        "value": "Advanced",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "heading",
+          "name": "Advanced",
+          "level": 2
+        }
+      },
+      {
+        "id": "n59",
+        "frame": "main",
+        "role": "button",
+        "name": "Advanced",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Advanced"
+        }
+      },
+      {
+        "id": "n60",
+        "frame": "main",
+        "role": "button",
+        "name": "Skip to the selected block",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": false,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Skip to the selected block"
+        }
+      },
+      {
+        "id": "n61",
+        "frame": "main",
+        "role": "region",
+        "name": "Editor publish",
+        "tag": "div",
+        "value": "Open publish panel",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": false,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "region",
+          "name": "Editor publish"
+        }
+      },
+      {
+        "id": "n62",
+        "frame": "main",
+        "role": "button",
+        "name": "Open publish panel",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": false,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Open publish panel"
+        }
+      },
+      {
+        "id": "n63",
+        "frame": "main",
+        "role": "region",
+        "name": "Editor footer",
+        "tag": "div",
+        "value": "PostParagraph",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "region",
+          "name": "Editor footer"
+        }
+      },
+      {
+        "id": "n64",
+        "frame": "main",
+        "role": "button",
+        "name": "Post",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Post"
+        }
+      },
+      {
+        "id": "n65",
+        "frame": "main",
+        "role": "text",
+        "name": "自主归纳 learn-3 run· Post",
+        "tag": "h1",
+        "value": "自主归纳 learn-3 run· Post",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "text",
+          "name": "自主归纳 learn-3 run· Post"
+        }
+      },
+      {
+        "id": "n66",
+        "frame": "main",
+        "role": "text",
+        "name": "Styles",
+        "tag": "h2",
+        "value": "Styles",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "text",
+          "name": "Styles"
+        }
+      },
+      {
+        "id": "n67",
+        "frame": "main",
+        "role": "text",
+        "name": "Typography",
+        "tag": "h2",
+        "value": "Typography",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "text",
+          "name": "Typography"
+        }
+      },
+      {
+        "id": "n68",
+        "frame": "main",
+        "role": "text",
+        "name": "Background",
+        "tag": "h2",
+        "value": "Background",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "text",
+          "name": "Background"
+        }
+      },
+      {
+        "id": "n69",
+        "frame": "main",
+        "role": "text",
+        "name": "Dimensions",
+        "tag": "h2",
+        "value": "Dimensions",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "text",
+          "name": "Dimensions"
+        }
+      },
+      {
+        "id": "n70",
+        "frame": "main",
+        "role": "text",
+        "name": "Border",
+        "tag": "h2",
+        "value": "Border",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "text",
+          "name": "Border"
+        }
+      },
+      {
+        "id": "n71",
+        "frame": "main",
+        "role": "text",
+        "name": "Elements",
+        "tag": "h2",
+        "value": "Elements",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "text",
+          "name": "Elements"
+        }
+      },
+      {
+        "id": "n72",
+        "frame": "main",
+        "role": "text",
+        "name": "Advanced",
+        "tag": "button",
+        "type": "button",
+        "value": "",
+        "editable": false,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "main",
+          "by": "text",
+          "name": "Advanced"
+        }
+      },
+      {
+        "id": "n73",
+        "frame": "editor-canvas",
+        "role": "textbox",
+        "name": "Add title",
+        "tag": "h1",
+        "value": "自主归纳 learn-3 run",
+        "editable": true,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "Add title"
+        }
+      },
+      {
+        "id": "n74",
+        "frame": "editor-canvas",
+        "role": "text",
+        "name": "自主归纳 learn-3 run",
+        "tag": "h1",
+        "value": "自主归纳 learn-3 run",
+        "editable": true,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "editor-canvas",
+          "by": "text",
+          "name": "自主归纳 learn-3 run"
+        }
+      },
+      {
+        "id": "n75",
+        "frame": "editor-canvas",
+        "role": "text",
+        "name": "本文与附件均为虚构实验素材。样本 learn-3，校验编号 4933e3d4b8。请保留原始文件，不改写表格内容。",
+        "tag": "p",
+        "value": "本文与附件均为虚构实验素材。样本 learn-3，校验编号 4933e3d4b8。请保留原始文件，不改写表格内容。",
+        "editable": true,
+        "disabled": false,
+        "visible": true,
+        "inViewport": true,
+        "download": false,
+        "submit": false,
+        "target": {
+          "frame": "editor-canvas",
+          "by": "text",
+          "name": "本文与附件均为虚构实验素材。样本 learn-3，校验编号 4933e3d4b8。请保留原始文件，不改写表格内容。"
+        }
+      }
+    ],
+    "aria": [
+      {
+        "frame": "main",
+        "aria": "- navigation \"Toolbar\":\n  - menu:\n    - group:\n      - menuitem \"About WordPress\"\n    - group:\n      - menuitem \"helpr 验证后台（仅测试）\"\n    - group:\n      - menuitem \"⌘K Open command palette\"\n    - group:\n      - menuitem \"0 Comments in moderation\"\n    - group:\n      - menuitem \"New\"\n  - menu:\n    - group:\n      - menuitem \"Howdy, helpr 测试用户\"\n- main:\n  - heading \"Add Post\" [level=1]\n  - region \"Editor top bar\":\n    - link \"View Posts\":\n      - /url: edit.php?post_type=post\n    - toolbar \"Document tools\":\n      - button \"Block Inserter\"\n      - button \"Undo\"\n      - button \"Redo\" [disabled]\n      - button \"Document Overview\"\n    - button \"自主归纳 learn-3 run · Post\":\n      - heading \"自主归纳 learn-3 run · Post\" [level=1]\n    - button \"Save draft\"\n    - button \"View\"\n    - button \"Settings\" [expanded] [pressed]\n    - button \"Publish\"\n    - button \"Options\"\n  - region \"Editor content\":\n    - toolbar \"Block tools\":\n      - button \"Paragraph\"\n      - text: Change block type or style\n      - button \"Align\"\n      - text: Change alignment\n      - button \"Align text\"\n      - text: Change text alignment\n      - button \"Bold\"\n      - button \"Italic\"\n      - button \"Link\"\n      - button \"More\"\n      - text: Displays more block tools\n      - button \"Options\"\n    - iframe\n  - region \"Editor settings\":\n    - tablist:\n      - tab \"Post\"\n      - tab \"Block\" [selected]\n    - button \"Close Settings\"\n    - tabpanel \"Block\":\n      - heading \"Paragraph\" [level=2]\n      - text: Start with the basic building block of all narrative.\n      - heading \"Styles\" [level=2]\n      - button \"Styles options\"\n      - button \"Default\"\n      - button \"Display\"\n      - button \"Subtitle\"\n      - button \"Annotation\"\n      - heading \"Typography\" [level=2]\n      - button \"Typography options\"\n      - button \"Color\"\n      - group \"Font size\":\n        - text: Font size\n        - button \"Set custom size\"\n        - text: Font size\n        - radiogroup \"Font size\":\n          - radio \"Small\": S\n          - radio \"Medium\": M\n          - radio \"Large\": L\n          - radio \"Extra Large\": XL\n          - radio \"Extra Extra Large\": XXL\n      - heading \"Background\" [level=2]\n      - button \"Background options\"\n      - button \"Color\"\n      - button \"Gradient\"\n      - heading \"Dimensions\" [level=2]\n      - button \"Dimensions options\"\n      - text: All options are currently hidden\n      - heading \"Border\" [level=2]\n      - button \"Border options\"\n      - text: All options are currently hidden\n      - heading \"Elements\" [level=2]\n      - button \"Elements options\"\n      - text: All options are currently hidden\n      - heading \"Advanced\" [level=2]:\n        - button \"Advanced\"\n      - button \"Skip to the selected block\"\n  - region \"Editor publish\":\n    - button \"Open publish panel\"\n  - region \"Editor footer\":\n    - list \"Block breadcrumb\":\n      - listitem:\n        - button \"Post\"\n      - listitem: Paragraph"
+      },
+      {
+        "frame": "editor-canvas",
+        "aria": "- textbox \"Add title\"\n- 'document \"Block: Paragraph\"': 本文与附件均为虚构实验素材。样本 learn-3，校验编号 4933e3d4b8。请保留原始文件，不改写表格内容。"
+      }
+    ]
+  }
+}

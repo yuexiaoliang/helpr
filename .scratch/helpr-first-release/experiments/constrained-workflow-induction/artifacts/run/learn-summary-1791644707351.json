@@ -1,0 +1,1990 @@
+{
+  "phase": "learn",
+  "startedAt": "2026-10-10T15:03:41.008Z",
+  "runs": [
+    {
+      "name": "learn-2",
+      "trace": [
+        {
+          "step": {
+            "action": {
+              "op": "click",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "menuitem",
+                "name": "New"
+              }
+            },
+            "effect": "read",
+            "before": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "menuitem",
+                  "name": "New"
+                }
+              }
+            ],
+            "after": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Add title"
+                }
+              }
+            ],
+            "note": "通过顶部 New 菜单进入新建文章页面（n6 在视口外）",
+            "id": "s1"
+          },
+          "result": {
+            "executed": true
+          }
+        },
+        {
+          "step": {
+            "action": {
+              "op": "fill",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Add title"
+              },
+              "value": {
+                "input": "post_title"
+              }
+            },
+            "effect": "edit",
+            "before": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Add title"
+                }
+              }
+            ],
+            "after": [
+              {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Add title"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "post_title"
+                },
+                "covers": "post_title"
+              }
+            ],
+            "note": "填写文章标题",
+            "id": "s2"
+          },
+          "result": {
+            "executed": true
+          }
+        },
+        {
+          "step": {
+            "action": {
+              "op": "click",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "button",
+                "name": "Add default block"
+              }
+            },
+            "effect": "edit",
+            "before": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "button",
+                  "name": "Add default block"
+                }
+              }
+            ],
+            "after": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "document",
+                  "name": "Empty block; start writing or type forward slash to choose a block"
+                }
+              }
+            ],
+            "note": "点击正文默认段落块使其进入可编辑状态，以便填入正文内容",
+            "id": "s3"
+          },
+          "result": {
+            "executed": true
+          }
+        },
+        {
+          "step": {
+            "action": {
+              "op": "fill",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "document",
+                "name": "Empty block; start writing or type forward slash to choose a block"
+              },
+              "value": {
+                "input": "post_content"
+              }
+            },
+            "effect": "edit",
+            "before": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "document",
+                  "name": "Empty block; start writing or type forward slash to choose a block"
+                }
+              }
+            ],
+            "after": [
+              {
+                "kind": "value",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "text",
+                  "name": "本文与附件均为虚构实验素材。样本 learn-2，校验编号 6a5d5558df。请保留原始文件，不改写表格内容。"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "post_content"
+                },
+                "covers": "post_content"
+              }
+            ],
+            "note": "在正文默认段落块填入指定正文内容",
+            "id": "s4"
+          },
+          "result": {
+            "executed": true
+          }
+        },
+        {
+          "step": {
+            "action": {
+              "op": "click",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "button",
+                "name": "Settings"
+              }
+            },
+            "effect": "read",
+            "before": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "button",
+                  "name": "Settings"
+                }
+              }
+            ],
+            "after": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "button",
+                  "name": "Settings"
+                }
+              }
+            ],
+            "note": "打开设置面板以选择分类",
+            "id": "s5"
+          },
+          "result": {
+            "executed": true
+          }
+        },
+        {
+          "step": {
+            "action": {
+              "op": "click",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "button",
+                "name": "Settings"
+              }
+            },
+            "effect": "read",
+            "before": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "button",
+                  "name": "Settings"
+                }
+              }
+            ],
+            "after": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "tab",
+                  "name": "Post"
+                }
+              }
+            ],
+            "note": "打开设置面板以选择分类并添加附件",
+            "id": "s6"
+          },
+          "result": {
+            "executed": true
+          }
+        },
+        {
+          "step": {
+            "action": {
+              "op": "click",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "tab",
+                "name": "Post"
+              }
+            },
+            "effect": "read",
+            "before": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "tab",
+                  "name": "Post"
+                }
+              }
+            ],
+            "after": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "checkbox",
+                  "name": "Excel 验证"
+                }
+              }
+            ],
+            "note": "打开 Post 设置标签以配置分类",
+            "id": "s7"
+          },
+          "result": {
+            "executed": true
+          }
+        },
+        {
+          "step": {
+            "action": {
+              "op": "check",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "checkbox",
+                "name": "Excel 验证"
+              },
+              "value": true
+            },
+            "effect": "edit",
+            "before": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "checkbox",
+                  "name": "Excel 验证"
+                }
+              }
+            ],
+            "after": [
+              {
+                "kind": "checked",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "checkbox",
+                  "name": "Excel 验证"
+                },
+                "expected": true
+              }
+            ],
+            "note": "只选择分类「Excel 验证」，不选默认分类",
+            "id": "s8"
+          },
+          "result": {
+            "executed": true
+          }
+        },
+        {
+          "step": {
+            "action": {
+              "op": "click",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "button",
+                "name": "Publish"
+              }
+            },
+            "effect": "commit",
+            "before": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "button",
+                  "name": "Publish"
+                }
+              }
+            ],
+            "after": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "button",
+                  "name": "Publish",
+                  "within": {
+                    "frame": "main",
+                    "by": "role",
+                    "role": "region",
+                    "name": "Editor publish"
+                  }
+                }
+              }
+            ],
+            "note": "标题、正文、分类均已就绪，点击 Publish 立即公开发布",
+            "id": "s9"
+          },
+          "result": {
+            "executed": true
+          }
+        },
+        {
+          "step": {
+            "action": {
+              "op": "click",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "button",
+                "name": "Publish",
+                "within": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "region",
+                  "name": "Editor publish"
+                }
+              }
+            },
+            "effect": "commit",
+            "before": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "button",
+                  "name": "Publish",
+                  "within": {
+                    "frame": "main",
+                    "by": "role",
+                    "role": "region",
+                    "name": "Editor publish"
+                  }
+                }
+              }
+            ],
+            "after": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "button",
+                  "name": "Close"
+                }
+              }
+            ],
+            "note": "在发布确认面板中点击 Publish 立即公开发布文章",
+            "id": "s10"
+          },
+          "result": {
+            "executed": true
+          }
+        },
+        {
+          "step": {
+            "action": {
+              "op": "click",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "button",
+                "name": "Close"
+              }
+            },
+            "effect": "read",
+            "before": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "button",
+                  "name": "Close"
+                }
+              }
+            ],
+            "after": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "button",
+                  "name": "Publish",
+                  "within": {
+                    "frame": "main",
+                    "by": "role",
+                    "role": "region",
+                    "name": "Editor top bar"
+                  }
+                }
+              }
+            ],
+            "note": "关闭发布失败的错误提示，以便继续编辑正文并添加附件",
+            "id": "s11"
+          },
+          "result": {
+            "executed": true
+          }
+        }
+      ],
+      "failures": [
+        {
+          "proposal": {
+            "op": "click",
+            "target": "n6",
+            "valueInput": "",
+            "literal": "",
+            "checked": false,
+            "nameInput": "",
+            "effect": "read",
+            "reason": "进入新建文章页面"
+          },
+          "error": {
+            "code": "target-outside-viewport",
+            "message": "target-outside-viewport",
+            "detail": {}
+          }
+        },
+        {
+          "proposal": {
+            "op": "fill",
+            "target": "n45",
+            "valueInput": "post_content",
+            "literal": "",
+            "checked": false,
+            "nameInput": "",
+            "effect": "edit",
+            "reason": "在正文默认段落块填入指定正文内容"
+          },
+          "error": {
+            "code": "fill-target-type",
+            "message": "fill-target-type",
+            "detail": {}
+          }
+        },
+        {
+          "proposal": {
+            "op": "fill",
+            "target": "n48",
+            "valueInput": "post_content",
+            "literal": "",
+            "checked": false,
+            "nameInput": "",
+            "effect": "edit",
+            "reason": "在正文默认段落块填入指定正文内容"
+          },
+          "error": {
+            "code": "fill-target-type",
+            "message": "fill-target-type",
+            "detail": {}
+          }
+        },
+        {
+          "proposal": {
+            "op": "click",
+            "target": "n18",
+            "valueInput": "",
+            "literal": "",
+            "checked": false,
+            "nameInput": "",
+            "effect": "commit",
+            "reason": "点击发布按钮，打开发布确认面板以完成公开发布"
+          },
+          "step": {
+            "action": {
+              "op": "click",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "button",
+                "name": "Publish",
+                "within": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "region",
+                  "name": "Editor top bar"
+                }
+              }
+            },
+            "effect": "commit",
+            "before": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "button",
+                  "name": "Publish",
+                  "within": {
+                    "frame": "main",
+                    "by": "role",
+                    "role": "region",
+                    "name": "Editor top bar"
+                  }
+                }
+              }
+            ],
+            "after": [],
+            "note": "点击发布按钮，打开发布确认面板以完成公开发布",
+            "id": "s12"
+          },
+          "error": {
+            "code": "TimeoutError",
+            "message": "locator.click: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('region', { name: 'Editor top bar', exact: true }).getByRole('button', { name: 'Publish', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" aria-expanded=\"true\" aria-disabled=\"false\" class=\"components-button editor-post-publish-panel__toggle editor-post-publish-button__button is-primary is-compact\">Publish</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be ",
+            "executed": false,
+            "executionUncertain": true
+          }
+        }
+      ],
+      "task": {
+        "id": "learn-2",
+        "origin": "http://home.ts-ali.internal:38080",
+        "entryUrl": "http://home.ts-ali.internal:38080/wp-admin/",
+        "kind": "new_post",
+        "inputs": {
+          "post_title": {
+            "type": "string",
+            "value": "自主归纳 learn-2 run"
+          },
+          "post_content": {
+            "type": "string",
+            "value": "本文与附件均为虚构实验素材。样本 learn-2，校验编号 6a5d5558df。请保留原始文件，不改写表格内容。"
+          },
+          "post_category": {
+            "type": "string",
+            "value": "Excel 验证"
+          },
+          "attachment_excel": {
+            "type": "file",
+            "path": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/constrained-workflow-induction/artifacts/run/learn-2/learn-2-run.xlsx",
+            "name": "learn-2-run.xlsx",
+            "stem": "learn-2-run",
+            "sha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+          }
+        },
+        "requiredOutputs": [
+          "post_title",
+          "post_content",
+          "post_category",
+          "attachment_excel"
+        ],
+        "goal": "在测试网站新建一篇文章并立即公开发布，标题为「自主归纳 learn-2 run」，正文为指定内容，仅选择分类「Excel 验证」，并将原始 Excel 文件作为可下载附件加入正文。",
+        "constraints": [
+          {
+            "description": "文章需立即公开发布，而非保存草稿",
+            "quote": "立即公开发布"
+          },
+          {
+            "description": "只选择分类「Excel 验证」，不选默认分类",
+            "quote": "只选择分类「Excel 验证」，不选默认分类"
+          },
+          {
+            "description": "附件须为原始 Excel 文件，不读取或改写其内容",
+            "quote": "把原始 Excel 文件作为可下载附件加入正文，不读取或改写 Excel 内容"
+          },
+          {
+            "description": "除本次新建测试记录外，不得改动已有文章或网站设置",
+            "quote": "除本次新建测试记录外，不得改动已有文章或网站设置"
+          },
+          {
+            "description": "不得自行增加建议内容",
+            "quote": "不要自行增加建议内容"
+          }
+        ],
+        "sources": {
+          "post_title": {
+            "quote": "标题是「自主归纳 learn-2 run」",
+            "description": "新建文章的标题"
+          },
+          "post_content": {
+            "quote": "正文完整内容是「本文与附件均为虚构实验素材。样本 learn-2，校验编号 6a5d5558df。请保留原始文件，不改写表格内容。」",
+            "description": "新建文章的正文完整内容"
+          },
+          "post_category": {
+            "quote": "只选择分类「Excel 验证」",
+            "description": "文章选择的分类"
+          },
+          "attachment_excel": {
+            "attachmentId": "material-1",
+            "description": "作为可下载附件加入正文的原始 Excel 文件"
+          }
+        },
+        "suggestions": [],
+        "request": "【隔离实验授权】这是一份虚构测试委托，允许在指定测试网站上完成本次任务。新建一篇文章；立即公开发布。标题是「自主归纳 learn-2 run」，正文完整内容是「本文与附件均为虚构实验素材。样本 learn-2，校验编号 6a5d5558df。请保留原始文件，不改写表格内容。」，只选择分类「Excel 验证」，不选默认分类。使用附带素材，把原始 Excel 文件作为可下载附件加入正文，不读取或改写 Excel 内容。除本次新建测试记录外，不得改动已有文章或网站设置。本段中的内容、上传及上述发布方式均已作为实验要求授权；不要自行增加建议内容。",
+        "authorization": {
+          "source": "explicit-isolated-test-fixture",
+          "requestDigest": "7b42b8c090ac9ac4b373ef63c66e0744abce99e10789b6a6666e387f0aa325e1",
+          "inputsDigest": "3523e35a8080b85233fe18a715b8d96f50b89137d5a8c500432698596199967f"
+        }
+      },
+      "status": "failed",
+      "error": {
+        "code": "TimeoutError",
+        "message": "locator.click: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('region', { name: 'Editor top bar', exact: true }).getByRole('button', { name: 'Publish', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" aria-expanded=\"true\" aria-disabled=\"false\" class=\"components-button editor-post-publish-panel__toggle editor-post-publish-button__button is-primary is-compact\">Publish</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be ",
+        "executed": false,
+        "executionUncertain": true
+      },
+      "lastObservation": {
+        "url": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+        "nodes": [
+          {
+            "id": "n1",
+            "frame": "main",
+            "role": "menuitem",
+            "name": "About WordPress",
+            "tag": "a",
+            "value": "About WordPress",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "href": "http://home.ts-ali.internal:38080/wp-admin/about.php",
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "menuitem",
+              "name": "About WordPress"
+            }
+          },
+          {
+            "id": "n2",
+            "frame": "main",
+            "role": "menuitem",
+            "name": "helpr 验证后台（仅测试）",
+            "tag": "a",
+            "value": "helpr 验证后台（仅测试）",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "href": "http://home.ts-ali.internal:38080/",
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "menuitem",
+              "name": "helpr 验证后台（仅测试）"
+            }
+          },
+          {
+            "id": "n3",
+            "frame": "main",
+            "role": "menuitem",
+            "name": "⌘K Open command palette",
+            "tag": "a",
+            "value": "⌘K Open command palette",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "href": "#",
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "menuitem",
+              "name": "⌘K Open command palette"
+            }
+          },
+          {
+            "id": "n4",
+            "frame": "main",
+            "role": "menuitem",
+            "name": "0 Comments in moderation",
+            "tag": "a",
+            "value": "00 Comments in moderation",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "href": "http://home.ts-ali.internal:38080/wp-admin/edit-comments.php",
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "menuitem",
+              "name": "0 Comments in moderation"
+            }
+          },
+          {
+            "id": "n5",
+            "frame": "main",
+            "role": "menuitem",
+            "name": "New",
+            "tag": "a",
+            "value": "New",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "href": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "menuitem",
+              "name": "New"
+            }
+          },
+          {
+            "id": "n6",
+            "frame": "main",
+            "role": "menuitem",
+            "name": "Howdy, helpr 测试用户",
+            "tag": "a",
+            "value": "Howdy, helpr 测试用户",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "href": "http://home.ts-ali.internal:38080/wp-admin/profile.php",
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "menuitem",
+              "name": "Howdy, helpr 测试用户"
+            }
+          },
+          {
+            "id": "n7",
+            "frame": "main",
+            "role": "heading",
+            "name": "Add Post",
+            "tag": "h1",
+            "value": "Add Post",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": false,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "heading",
+              "name": "Add Post",
+              "level": 1
+            }
+          },
+          {
+            "id": "n8",
+            "frame": "main",
+            "role": "region",
+            "name": "Editor top bar",
+            "tag": "div",
+            "value": "自主归纳 learn-2 run· PostPreview(opens in a new tab)Publish",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "region",
+              "name": "Editor top bar"
+            }
+          },
+          {
+            "id": "n9",
+            "frame": "main",
+            "role": "link",
+            "name": "View Posts",
+            "tag": "a",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "href": "edit.php?post_type=post",
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "link",
+              "name": "View Posts"
+            }
+          },
+          {
+            "id": "n10",
+            "frame": "main",
+            "role": "button",
+            "name": "Block Inserter",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Block Inserter"
+            }
+          },
+          {
+            "id": "n11",
+            "frame": "main",
+            "role": "button",
+            "name": "Undo",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Undo"
+            }
+          },
+          {
+            "id": "n12",
+            "frame": "main",
+            "role": "button",
+            "name": "Redo",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": true,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Redo"
+            }
+          },
+          {
+            "id": "n13",
+            "frame": "main",
+            "role": "button",
+            "name": "Document Overview",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Document Overview"
+            }
+          },
+          {
+            "id": "n14",
+            "frame": "main",
+            "role": "button",
+            "name": "自主归纳 learn-2 run · Post",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "自主归纳 learn-2 run · Post"
+            }
+          },
+          {
+            "id": "n15",
+            "frame": "main",
+            "role": "heading",
+            "name": "自主归纳 learn-2 run · Post",
+            "tag": "h1",
+            "value": "自主归纳 learn-2 run· Post",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "heading",
+              "name": "自主归纳 learn-2 run · Post",
+              "level": 1
+            }
+          },
+          {
+            "id": "n16",
+            "frame": "main",
+            "role": "button",
+            "name": "View",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "View"
+            }
+          },
+          {
+            "id": "n17",
+            "frame": "main",
+            "role": "button",
+            "name": "Settings",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Settings"
+            }
+          },
+          {
+            "id": "n18",
+            "frame": "main",
+            "role": "button",
+            "name": "Publish",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Publish",
+              "within": {
+                "frame": "main",
+                "by": "role",
+                "role": "region",
+                "name": "Editor top bar"
+              }
+            }
+          },
+          {
+            "id": "n19",
+            "frame": "main",
+            "role": "button",
+            "name": "Options",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Options",
+              "within": {
+                "frame": "main",
+                "by": "role",
+                "role": "region",
+                "name": "Editor top bar"
+              }
+            }
+          },
+          {
+            "id": "n20",
+            "frame": "main",
+            "role": "region",
+            "name": "Editor content",
+            "tag": "div",
+            "value": "Change block type or styleChange alignmentChange text alignmentDisplays more block tools",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "region",
+              "name": "Editor content"
+            }
+          },
+          {
+            "id": "n21",
+            "frame": "main",
+            "role": "button",
+            "name": "Paragraph",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Paragraph"
+            }
+          },
+          {
+            "id": "n22",
+            "frame": "main",
+            "role": "button",
+            "name": "Align",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Align"
+            }
+          },
+          {
+            "id": "n23",
+            "frame": "main",
+            "role": "button",
+            "name": "Align text",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Align text"
+            }
+          },
+          {
+            "id": "n24",
+            "frame": "main",
+            "role": "button",
+            "name": "Bold",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Bold"
+            }
+          },
+          {
+            "id": "n25",
+            "frame": "main",
+            "role": "button",
+            "name": "Italic",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Italic"
+            }
+          },
+          {
+            "id": "n26",
+            "frame": "main",
+            "role": "button",
+            "name": "Link",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Link"
+            }
+          },
+          {
+            "id": "n27",
+            "frame": "main",
+            "role": "button",
+            "name": "More",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "More"
+            }
+          },
+          {
+            "id": "n28",
+            "frame": "main",
+            "role": "button",
+            "name": "Options",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Options",
+              "within": {
+                "frame": "main",
+                "by": "role",
+                "role": "toolbar",
+                "name": "Block tools"
+              }
+            }
+          },
+          {
+            "id": "n29",
+            "frame": "main",
+            "role": "region",
+            "name": "Editor settings",
+            "tag": "div",
+            "value": "PostBlock自主归纳 learn-2 runSet featured imageDrop files to uploadAdd an excerpt…3 words, 1 minute read time.Last edited a minute ago.StatusPublishedPublishImmediatelySlug自主归纳-learn-2-runTemplateSingle PostsDiscussionClosedFormatStandardCategoriesExcel 验证UncategorizedTags",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "region",
+              "name": "Editor settings"
+            }
+          },
+          {
+            "id": "n30",
+            "frame": "main",
+            "role": "tab",
+            "name": "Post",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "tab",
+              "name": "Post"
+            }
+          },
+          {
+            "id": "n31",
+            "frame": "main",
+            "role": "tab",
+            "name": "Block",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "tab",
+              "name": "Block"
+            }
+          },
+          {
+            "id": "n32",
+            "frame": "main",
+            "role": "button",
+            "name": "Close Settings",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Close Settings"
+            }
+          },
+          {
+            "id": "n33",
+            "frame": "main",
+            "role": "heading",
+            "name": "自主归纳 learn-2 run",
+            "tag": "h2",
+            "value": "自主归纳 learn-2 run",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "heading",
+              "name": "自主归纳 learn-2 run",
+              "level": 2
+            }
+          },
+          {
+            "id": "n34",
+            "frame": "main",
+            "role": "button",
+            "name": "Actions",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Actions"
+            }
+          },
+          {
+            "id": "n35",
+            "frame": "main",
+            "role": "button",
+            "name": "Set featured image",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Set featured image"
+            }
+          },
+          {
+            "id": "n36",
+            "frame": "main",
+            "role": "button",
+            "name": "Add an excerpt…",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Add an excerpt…"
+            }
+          },
+          {
+            "id": "n37",
+            "frame": "main",
+            "role": "button",
+            "name": "Template options",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Template options"
+            }
+          },
+          {
+            "id": "n38",
+            "frame": "main",
+            "role": "button",
+            "name": "Change discussion options",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Change discussion options"
+            }
+          },
+          {
+            "id": "n39",
+            "frame": "main",
+            "role": "heading",
+            "name": "Categories",
+            "tag": "h2",
+            "value": "Categories",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "heading",
+              "name": "Categories",
+              "level": 2
+            }
+          },
+          {
+            "id": "n40",
+            "frame": "main",
+            "role": "button",
+            "name": "Categories",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Categories"
+            }
+          },
+          {
+            "id": "n41",
+            "frame": "main",
+            "role": "checkbox",
+            "name": "Excel 验证",
+            "tag": "input",
+            "type": "checkbox",
+            "value": "1",
+            "editable": true,
+            "checked": true,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "checkbox",
+              "name": "Excel 验证"
+            }
+          },
+          {
+            "id": "n42",
+            "frame": "main",
+            "role": "checkbox",
+            "name": "Uncategorized",
+            "tag": "input",
+            "type": "checkbox",
+            "value": "1",
+            "editable": true,
+            "checked": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "checkbox",
+              "name": "Uncategorized"
+            }
+          },
+          {
+            "id": "n43",
+            "frame": "main",
+            "role": "heading",
+            "name": "Tags",
+            "tag": "h2",
+            "value": "Tags",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "heading",
+              "name": "Tags",
+              "level": 2
+            }
+          },
+          {
+            "id": "n44",
+            "frame": "main",
+            "role": "button",
+            "name": "Tags",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Tags"
+            }
+          },
+          {
+            "id": "n45",
+            "frame": "main",
+            "role": "region",
+            "name": "Editor publish",
+            "tag": "div",
+            "value": "CancelPublishAre you ready to publish?Double-check your settings before publishing.helpr 验证后台（仅测试）home.ts-ali.internal:38080Visibility:PublicPublish:ImmediatelyAlways show pre-publish checks.",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": false,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "region",
+              "name": "Editor publish"
+            }
+          },
+          {
+            "id": "n46",
+            "frame": "main",
+            "role": "button",
+            "name": "Cancel",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Cancel"
+            }
+          },
+          {
+            "id": "n47",
+            "frame": "main",
+            "role": "button",
+            "name": "Publish",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Publish",
+              "within": {
+                "frame": "main",
+                "by": "role",
+                "role": "region",
+                "name": "Editor publish"
+              }
+            }
+          },
+          {
+            "id": "n48",
+            "frame": "main",
+            "role": "checkbox",
+            "name": "Always show pre-publish checks.",
+            "tag": "input",
+            "type": "checkbox",
+            "value": "1",
+            "editable": true,
+            "checked": true,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "checkbox",
+              "name": "Always show pre-publish checks."
+            }
+          },
+          {
+            "id": "n49",
+            "frame": "main",
+            "role": "region",
+            "name": "Editor footer",
+            "tag": "div",
+            "value": "PostParagraph",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "region",
+              "name": "Editor footer"
+            }
+          },
+          {
+            "id": "n50",
+            "frame": "main",
+            "role": "button",
+            "name": "Post",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Post"
+            }
+          },
+          {
+            "id": "n51",
+            "frame": "main",
+            "role": "text",
+            "name": "自主归纳 learn-2 run· Post",
+            "tag": "h1",
+            "value": "自主归纳 learn-2 run· Post",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "text",
+              "name": "自主归纳 learn-2 run· Post"
+            }
+          },
+          {
+            "id": "n52",
+            "frame": "main",
+            "role": "text",
+            "name": "Categories",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "text",
+              "name": "Categories"
+            }
+          },
+          {
+            "id": "n53",
+            "frame": "main",
+            "role": "text",
+            "name": "Tags",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "text",
+              "name": "Tags"
+            }
+          },
+          {
+            "id": "n54",
+            "frame": "main",
+            "role": "text",
+            "name": "Double-check your settings before publishing.",
+            "tag": "p",
+            "value": "Double-check your settings before publishing.",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "text",
+              "name": "Double-check your settings before publishing."
+            }
+          },
+          {
+            "id": "n55",
+            "frame": "main",
+            "role": "text",
+            "name": "Visibility:Public",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "text",
+              "name": "Visibility:Public"
+            }
+          },
+          {
+            "id": "n56",
+            "frame": "main",
+            "role": "text",
+            "name": "Publish:Immediately",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "text",
+              "name": "Publish:Immediately"
+            }
+          },
+          {
+            "id": "n57",
+            "frame": "main",
+            "role": "text",
+            "name": "Notifications",
+            "tag": "p",
+            "value": "Notifications",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": false,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "text",
+              "name": "Notifications"
+            }
+          },
+          {
+            "id": "n58",
+            "frame": "editor-canvas",
+            "role": "textbox",
+            "name": "Add title",
+            "tag": "h1",
+            "value": "自主归纳 learn-2 run",
+            "editable": true,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            }
+          },
+          {
+            "id": "n59",
+            "frame": "editor-canvas",
+            "role": "text",
+            "name": "自主归纳 learn-2 run",
+            "tag": "h1",
+            "value": "自主归纳 learn-2 run",
+            "editable": true,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "editor-canvas",
+              "by": "text",
+              "name": "自主归纳 learn-2 run"
+            }
+          },
+          {
+            "id": "n60",
+            "frame": "editor-canvas",
+            "role": "text",
+            "name": "本文与附件均为虚构实验素材。样本 learn-2，校验编号 6a5d5558df。请保留原始文件，不改写表格内容。",
+            "tag": "p",
+            "value": "本文与附件均为虚构实验素材。样本 learn-2，校验编号 6a5d5558df。请保留原始文件，不改写表格内容。",
+            "editable": true,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "editor-canvas",
+              "by": "text",
+              "name": "本文与附件均为虚构实验素材。样本 learn-2，校验编号 6a5d5558df。请保留原始文件，不改写表格内容。"
+            }
+          }
+        ],
+        "aria": [
+          {
+            "frame": "main",
+            "aria": "- navigation \"Toolbar\":\n  - menu:\n    - group:\n      - menuitem \"About WordPress\"\n    - group:\n      - menuitem \"helpr 验证后台（仅测试）\"\n    - group:\n      - menuitem \"⌘K Open command palette\"\n    - group:\n      - menuitem \"0 Comments in moderation\"\n    - group:\n      - menuitem \"New\"\n  - menu:\n    - group:\n      - menuitem \"Howdy, helpr 测试用户\"\n- main:\n  - heading \"Add Post\" [level=1]\n  - region \"Editor top bar\":\n    - link \"View Posts\":\n      - /url: edit.php?post_type=post\n    - toolbar \"Document tools\":\n      - button \"Block Inserter\"\n      - button \"Undo\"\n      - button \"Redo\" [disabled]\n      - button \"Document Overview\"\n    - button \"自主归纳 learn-2 run · Post\":\n      - heading \"自主归纳 learn-2 run · Post\" [level=1]\n    - button \"View\"\n    - button \"Settings\" [expanded] [pressed]\n    - button \"Publish\" [expanded]\n    - button \"Options\"\n  - region \"Editor content\":\n    - toolbar \"Block tools\":\n      - button \"Paragraph\"\n      - text: Change block type or style\n      - button \"Align\"\n      - text: Change alignment\n      - button \"Align text\"\n      - text: Change text alignment\n      - button \"Bold\"\n      - button \"Italic\"\n      - button \"Link\"\n      - button \"More\"\n      - text: Displays more block tools\n      - button \"Options\"\n    - iframe\n  - region \"Editor settings\":\n    - tablist:\n      - tab \"Post\" [selected]\n      - tab \"Block\"\n    - button \"Close Settings\"\n    - tabpanel \"Post\":\n      - heading \"自主归纳 learn-2 run\" [level=2]\n      - button \"Actions\"\n      - button \"Set featured image\"\n      - button \"Add an excerpt…\"\n      - text: 3 words, 1 minute read time. Last edited a minute ago. Status\n      - 'button \"Change status: Published\"': Published\n      - text: Publish\n      - 'button \"Change date: Immediately\"': Immediately\n      - text: Slug\n      - 'button \"Change link: 自主归纳-learn-2-run\"': 自主归纳-learn-2-run\n      - text: Template\n      - button \"Template options\": Single Posts\n      - text: Discussion\n      - button \"Change discussion options\": Closed\n      - text: Format\n      - 'button \"Change format: Standard\"': Standard\n      - heading \"Categories\" [level=2]:\n        - button \"Categories\" [expanded]\n      - group \"Categories\":\n        - checkbox \"Excel 验证\" [checked]\n        - text: Excel 验证\n        - checkbox \"Uncategorized\"\n        - text: Uncategorized\n      - heading \"Tags\" [level=2]:\n        - button \"Tags\"\n  - region \"Editor publish\":\n    - button \"Cancel\"\n    - button \"Publish\"\n    - strong: Are you ready to publish?\n    - paragraph: Double-check your settings before publishing.\n    - text: helpr 验证后台（仅测试） home.ts-ali.internal:38080\n    - 'heading \"Visibility: Public\" [level=2]':\n      - 'button \"Visibility: Public\"'\n    - 'heading \"Publish: Immediately\" [level=2]':\n      - 'button \"Publish: Immediately\"'\n    - checkbox \"Always show pre-publish checks.\" [checked]\n    - text: Always show pre-publish checks.\n  - region \"Editor footer\":\n    - list \"Block breadcrumb\":\n      - listitem:\n        - button \"Post\"\n      - listitem: Paragraph\n- paragraph: Notifications\n- text: Publishing failed. Could not get a valid response from the server."
+          },
+          {
+            "frame": "editor-canvas",
+            "aria": "- textbox \"Add title\"\n- 'document \"Block: Paragraph\"': 本文与附件均为虚构实验素材。样本 learn-2，校验编号 6a5d5558df。请保留原始文件，不改写表格内容。"
+          }
+        ]
+      }
+    }
+  ],
+  "sourceHashes": {
+    "protocol.mjs": "5a5c9487b45b8dac52976f3bae96ad824a9a01739afd0d6dd6e11007bed0624e",
+    "runtime.mjs": "0565ed5ff85a1fb0f25cbb569fe781deeeb90798fdce7385548b2af4fde76b70",
+    "run.mjs": "9cde273b58df4b1bc0446f915b68c50bd2cae97f2b39a5e8ccf249f243acb510"
+  },
+  "endedAt": "2026-10-10T15:05:07.351Z",
+  "calls": 20,
+  "tokens": 104385
+}

@@ -1,0 +1,291 @@
+{
+  "startedAt": "2026-10-11T02:04:30.577Z",
+  "task": {
+    "id": "permit-invalidations",
+    "origin": "http://home.ts-ali.internal:38080",
+    "entryUrl": "http://home.ts-ali.internal:38080/wp-admin/",
+    "kind": "new_post",
+    "inputs": {
+      "post_title": {
+        "type": "string",
+        "value": "自主归纳 permit-invalidations staged"
+      },
+      "post_content": {
+        "type": "string",
+        "value": "本文与附件均为虚构实验素材。样本 permit-invalidations，校验编号 ca58568f7a。请保留原始文件，不改写表格内容。"
+      },
+      "post_category": {
+        "type": "string",
+        "value": "Excel 验证"
+      },
+      "attachment_excel": {
+        "type": "file",
+        "path": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/staged-workflow-checks/artifacts/staged/permit-invalidations/permit-invalidations-staged.xlsx",
+        "name": "permit-invalidations-staged.xlsx",
+        "stem": "permit-invalidations-staged",
+        "sha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+      }
+    },
+    "requiredOutputs": [
+      "post_title",
+      "post_content",
+      "post_category",
+      "attachment_excel"
+    ],
+    "goal": "在测试网站新建一篇文章并立即公开发布，标题为「自主归纳 permit-invalidations staged」，正文为指定内容，仅选择分类「Excel 验证」，并将原始 Excel 文件作为可下载附件加入正文。",
+    "constraints": [
+      {
+        "description": "文章需立即公开发布，而非保存草稿",
+        "quote": "立即公开发布"
+      },
+      {
+        "description": "只选择分类「Excel 验证」，不选默认分类",
+        "quote": "只选择分类「Excel 验证」，不选默认分类"
+      },
+      {
+        "description": "附件须为原始 Excel 文件，不读取或改写其内容",
+        "quote": "把原始 Excel 文件作为可下载附件加入正文，不读取或改写 Excel 内容"
+      },
+      {
+        "description": "除本次新建测试记录外，不得改动已有文章或网站设置",
+        "quote": "除本次新建测试记录外，不得改动已有文章或网站设置"
+      },
+      {
+        "description": "不得自行增加建议内容",
+        "quote": "不要自行增加建议内容"
+      }
+    ],
+    "sources": {
+      "post_title": {
+        "quote": "标题是「自主归纳 permit-invalidations staged」",
+        "description": "新建文章的标题"
+      },
+      "post_content": {
+        "quote": "正文完整内容是「本文与附件均为虚构实验素材。样本 permit-invalidations，校验编号 ca58568f7a。请保留原始文件，不改写表格内容。」",
+        "description": "新建文章的正文完整内容"
+      },
+      "post_category": {
+        "quote": "只选择分类「Excel 验证」",
+        "description": "文章选择的分类"
+      },
+      "attachment_excel": {
+        "attachmentId": "material-1",
+        "description": "作为可下载附件加入正文的原始 Excel 文件"
+      }
+    },
+    "suggestions": [],
+    "request": "【隔离实验授权】这是一份虚构测试委托，允许在指定测试网站上完成本次任务。新建一篇文章；立即公开发布。标题是「自主归纳 permit-invalidations staged」，正文完整内容是「本文与附件均为虚构实验素材。样本 permit-invalidations，校验编号 ca58568f7a。请保留原始文件，不改写表格内容。」，只选择分类「Excel 验证」，不选默认分类。使用附带素材，把原始 Excel 文件作为可下载附件加入正文，不读取或改写 Excel 内容。除本次新建测试记录外，不得改动已有文章或网站设置。本段中的内容、上传及上述发布方式均已作为实验要求授权；不要自行增加建议内容。",
+    "authorization": {
+      "source": "explicit-isolated-test-fixture",
+      "requestDigest": "5a228d96c4f78f1f054b477dc4f48f4197b7967af2dd62cfa05dc660badc7914",
+      "inputsDigest": "fd7000177bde948269a3f1690af189bdc8ba522cd222233f23a65b08944964d7"
+    }
+  },
+  "runs": [
+    {
+      "mode": "task-change",
+      "status": "correctly-blocked",
+      "receipt": {
+        "id": "b266c9f7-6279-4c23-850e-873f4d8dd72b",
+        "execution": "10512cc6-ebc4-4aaa-a44c-34c1cf4ac131",
+        "taskDigest": "e77be1aaffcb7b0d125cec3a6fbee395114a3d54cc8fdd543210b08a272f4f02",
+        "key": "attachment_excel",
+        "sourceHash": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+        "sourceBytes": 3755,
+        "topUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+        "controlFrame": "editor-canvas"
+      },
+      "error": {
+        "code": "upload-request-blocked",
+        "message": "upload-request-blocked",
+        "detail": {
+          "blocked": "task-changed"
+        }
+      },
+      "requests": [
+        {
+          "at": "2026-10-11T02:05:10.621Z",
+          "type": "mutation-request",
+          "method": "POST",
+          "path": "/index.php",
+          "effectProposal": "read",
+          "operation": "click",
+          "outcome": "blocked",
+          "code": "inputs-not-covered",
+          "detail": {
+            "covered": [
+              "post_title",
+              "post_content"
+            ],
+            "required": [
+              "post_title",
+              "post_content",
+              "post_category",
+              "attachment_excel"
+            ]
+          }
+        },
+        {
+          "at": "2026-10-11T02:05:11.034Z",
+          "type": "mutation-request",
+          "method": "POST",
+          "path": "/index.php",
+          "effectProposal": "read",
+          "operation": "click",
+          "outcome": "blocked",
+          "code": "inputs-not-covered",
+          "detail": {
+            "covered": [
+              "post_title",
+              "post_content"
+            ],
+            "required": [
+              "post_title",
+              "post_content",
+              "post_category",
+              "attachment_excel"
+            ]
+          }
+        },
+        {
+          "at": "2026-10-11T02:05:16.163Z",
+          "type": "mutation-request",
+          "method": "POST",
+          "path": "/index.php",
+          "effectProposal": "upload",
+          "operation": "upload",
+          "uploadReceipt": {
+            "id": "b266c9f7-6279-4c23-850e-873f4d8dd72b",
+            "execution": "10512cc6-ebc4-4aaa-a44c-34c1cf4ac131",
+            "taskDigest": "e77be1aaffcb7b0d125cec3a6fbee395114a3d54cc8fdd543210b08a272f4f02",
+            "key": "attachment_excel",
+            "sourceHash": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+            "sourceBytes": 3755,
+            "topUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+            "controlFrame": "editor-canvas",
+            "selected": {
+              "events": 1,
+              "connectedAtSelection": true,
+              "stillAttached": false,
+              "name": "permit-invalidations-staged.xlsx",
+              "bytes": 3755,
+              "sha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+            },
+            "requestFrame": "main",
+            "exposedBodyBytes": 355,
+            "association": "one active typed upload + exact selected bytes + ancestor frame + exact single filename"
+          },
+          "authorization": "selected-file-and-correlated-request",
+          "outcome": "blocked",
+          "code": "task-changed",
+          "detail": {}
+        }
+      ]
+    },
+    {
+      "mode": "completed-permit-reuse",
+      "status": "correctly-blocked",
+      "receipt": {
+        "id": "ecabc67e-5842-4aae-92fc-5ed57aa75578",
+        "execution": "015604c5-6d99-4db0-aa1d-ed82f1bfef97",
+        "taskDigest": "e77be1aaffcb7b0d125cec3a6fbee395114a3d54cc8fdd543210b08a272f4f02",
+        "key": "attachment_excel",
+        "sourceHash": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+        "sourceBytes": 3755,
+        "topUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+        "controlFrame": "editor-canvas"
+      },
+      "refusal": "upload-permit-stale",
+      "requests": [
+        {
+          "at": "2026-10-11T02:05:57.276Z",
+          "type": "mutation-request",
+          "method": "POST",
+          "path": "/index.php",
+          "effectProposal": "read",
+          "operation": "click",
+          "outcome": "blocked",
+          "code": "inputs-not-covered",
+          "detail": {
+            "covered": [
+              "post_title",
+              "post_content"
+            ],
+            "required": [
+              "post_title",
+              "post_content",
+              "post_category",
+              "attachment_excel"
+            ]
+          }
+        },
+        {
+          "at": "2026-10-11T02:05:57.704Z",
+          "type": "mutation-request",
+          "method": "POST",
+          "path": "/index.php",
+          "effectProposal": "read",
+          "operation": "click",
+          "outcome": "blocked",
+          "code": "inputs-not-covered",
+          "detail": {
+            "covered": [
+              "post_title",
+              "post_content"
+            ],
+            "required": [
+              "post_title",
+              "post_content",
+              "post_category",
+              "attachment_excel"
+            ]
+          }
+        },
+        {
+          "at": "2026-10-11T02:06:02.853Z",
+          "type": "mutation-request",
+          "method": "POST",
+          "path": "/index.php",
+          "effectProposal": "upload",
+          "operation": "upload",
+          "uploadReceipt": {
+            "id": "ecabc67e-5842-4aae-92fc-5ed57aa75578",
+            "execution": "015604c5-6d99-4db0-aa1d-ed82f1bfef97",
+            "taskDigest": "e77be1aaffcb7b0d125cec3a6fbee395114a3d54cc8fdd543210b08a272f4f02",
+            "key": "attachment_excel",
+            "sourceHash": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+            "sourceBytes": 3755,
+            "topUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+            "controlFrame": "editor-canvas",
+            "selected": {
+              "events": 1,
+              "connectedAtSelection": true,
+              "stillAttached": false,
+              "name": "permit-invalidations-staged.xlsx",
+              "bytes": 3755,
+              "sha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+            },
+            "requestFrame": "main",
+            "exposedBodyBytes": 355,
+            "association": "one active typed upload + exact selected bytes + ancestor frame + exact single filename"
+          },
+          "authorization": "selected-file-and-correlated-request",
+          "outcome": "allowed"
+        },
+        {
+          "at": "2026-10-11T02:06:05.537Z",
+          "type": "mutation-request",
+          "method": "POST",
+          "path": "/wp-admin/admin-ajax.php",
+          "effectProposal": "upload",
+          "operation": "upload",
+          "outcome": "blocked",
+          "code": "upload-permit-consumed",
+          "detail": {}
+        }
+      ]
+    }
+  ],
+  "modelCallsDuringBrowserExecution": 0,
+  "endedAt": "2026-10-11T02:06:07.193Z"
+}

@@ -1,0 +1,219 @@
+[
+  {
+    "at": "2026-10-10T14:20:19.084Z",
+    "type": "dispatch",
+    "step": "s1",
+    "effect": "read",
+    "action": {
+      "op": "click",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "link",
+        "name": "Add Post"
+      }
+    }
+  },
+  {
+    "at": "2026-10-10T14:20:54.973Z",
+    "type": "dispatch",
+    "step": "s1",
+    "effect": "read",
+    "action": {
+      "op": "click",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "menuitem",
+        "name": "New"
+      }
+    }
+  },
+  {
+    "type": "network-write",
+    "method": "POST",
+    "pathname": "/wp-admin/admin-ajax.php",
+    "at": 1791642092806
+  },
+  {
+    "at": "2026-10-10T14:21:38.904Z",
+    "type": "exploration-step",
+    "id": "s1",
+    "outcome": {
+      "executed": true,
+      "failedPostcondition": {
+        "code": "condition-unsatisfied",
+        "message": "condition-unsatisfied",
+        "detail": {
+          "evidence": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "menuitem",
+                  "name": "Post"
+                }
+              },
+              "ok": false,
+              "count": 0
+            }
+          ]
+        },
+        "executed": true,
+        "status": "blocked"
+      }
+    }
+  },
+  {
+    "at": "2026-10-10T14:21:40.053Z",
+    "type": "dispatch",
+    "step": "s2",
+    "effect": "edit",
+    "action": {
+      "op": "fill",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "textbox",
+        "name": "Add title"
+      },
+      "value": "自主归纳 learn attempt-b"
+    }
+  },
+  {
+    "at": "2026-10-10T14:21:40.091Z",
+    "type": "exploration-step",
+    "id": "s2",
+    "outcome": {
+      "executed": true,
+      "evidence": [
+        {
+          "condition": {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "title"
+            }
+          },
+          "ok": true,
+          "actual": "自主归纳 learn attempt-b",
+          "expected": "自主归纳 learn attempt-b"
+        }
+      ]
+    }
+  },
+  {
+    "at": "2026-10-10T14:21:41.117Z",
+    "type": "dispatch",
+    "step": "s3",
+    "effect": "edit",
+    "action": {
+      "op": "fill",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "button",
+        "name": "Add default block"
+      },
+      "value": "本文与附件均为虚构实验素材。样本 learn，校验编号 bbf6bf228d。请保留原始文件，不改写表格内容。"
+    }
+  },
+  {
+    "at": "2026-10-10T14:21:41.906Z",
+    "type": "dispatch",
+    "step": "s3",
+    "effect": "edit",
+    "action": {
+      "op": "click",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "button",
+        "name": "Add default block"
+      }
+    }
+  },
+  {
+    "type": "network-write",
+    "method": "POST",
+    "pathname": "/wp-admin/admin-ajax.php",
+    "at": 1791642102806
+  },
+  {
+    "type": "network-write",
+    "method": "POST",
+    "pathname": "/wp-admin/admin-ajax.php",
+    "at": 1791642112805
+  },
+  {
+    "at": "2026-10-10T14:21:58.118Z",
+    "type": "exploration-step",
+    "id": "s3",
+    "outcome": {
+      "executed": true,
+      "failedPostcondition": {
+        "code": "condition-unsatisfied",
+        "message": "condition-unsatisfied",
+        "detail": {
+          "evidence": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "editor-canvas",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Add default block"
+                }
+              },
+              "ok": false,
+              "count": 0
+            }
+          ]
+        },
+        "executed": true,
+        "status": "blocked"
+      }
+    }
+  },
+  {
+    "at": "2026-10-10T14:21:59.245Z",
+    "type": "dispatch",
+    "step": "s4",
+    "effect": "edit",
+    "action": {
+      "op": "fill",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "document",
+        "name": "Empty block; start writing or type forward slash to choose a block"
+      },
+      "value": "本文与附件均为虚构实验素材。样本 learn，校验编号 bbf6bf228d。请保留原始文件，不改写表格内容。"
+    }
+  },
+  {
+    "type": "network-write",
+    "method": "POST",
+    "pathname": "/wp-admin/admin-ajax.php",
+    "at": 1791642122806
+  },
+  {
+    "type": "network-write",
+    "method": "POST",
+    "pathname": "/wp-admin/admin-ajax.php",
+    "at": 1791642132805
+  },
+  {
+    "type": "upload-released",
+    "at": 1791642135473
+  }
+]

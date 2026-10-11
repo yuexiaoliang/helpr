@@ -1,0 +1,38 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "选择本次上传文件的实际可读链接，以便读取原始字节并比较授权素材哈希；不能用可编辑文件名代替完成证据。仅返回真实链接编号。\n若当前阶段是动作选择：必须逐项完成 task.inputs 中所有输入及素材，missingInputs 表示未就绪项，禁止跳过；fill 只可用于 editable=true 的控件。check 的控件名称与任务输入相等时必须使用 nameInput 指明该输入；不得将动态名称作为常量。程序返回的约束错误要解决，不能原样重试。"
+    },
+    {
+      "role": "user",
+      "content": "{\"input\":\"attachment_excel\",\"file\":{\"type\":\"file\",\"path\":\"/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/staged-workflow-checks/artifacts/staged/upload-probe-learn-2/upload-probe-learn-2-staged.xlsx\",\"name\":\"upload-probe-learn-2-staged.xlsx\",\"stem\":\"upload-probe-learn-2-staged\",\"sha256\":\"fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602\"},\"page\":{\"url\":\"http://home.ts-ali.internal:38080/wp-admin/post-new.php\",\"nodes\":[{\"id\":\"n1\",\"frame\":\"main\",\"role\":\"menuitem\",\"name\":\"About WordPress\",\"tag\":\"a\",\"value\":\"About WordPress\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":true,\"href\":\"http://home.ts-ali.internal:38080/wp-admin/about.php\"},{\"id\":\"n2\",\"frame\":\"main\",\"role\":\"menuitem\",\"name\":\"helpr 验证后台（仅测试）\",\"tag\":\"a\",\"value\":\"helpr 验证后台（仅测试）\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":true,\"href\":\"http://home.ts-ali.internal:38080/\"},{\"id\":\"n3\",\"frame\":\"main\",\"role\":\"menuitem\",\"name\":\"⌘K Open command palette\",\"tag\":\"a\",\"value\":\"⌘K Open command palette\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":true,\"href\":\"#\"},{\"id\":\"n4\",\"frame\":\"main\",\"role\":\"menuitem\",\"name\":\"0 Comments in moderation\",\"tag\":\"a\",\"value\":\"00 Comments in moderation\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":true,\"href\":\"http://home.ts-ali.internal:38080/wp-admin/edit-comments.php\"},{\"id\":\"n5\",\"frame\":\"main\",\"role\":\"menuitem\",\"name\":\"New\",\"tag\":\"a\",\"value\":\"New\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":true,\"href\":\"http://home.ts-ali.internal:38080/wp-admin/post-new.php\"},{\"id\":\"n6\",\"frame\":\"main\",\"role\":\"menuitem\",\"name\":\"Howdy, helpr 测试用户\",\"tag\":\"a\",\"value\":\"Howdy, helpr 测试用户\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":true,\"href\":\"http://home.ts-ali.internal:38080/wp-admin/profile.php\"},{\"id\":\"n9\",\"frame\":\"main\",\"role\":\"link\",\"name\":\"View Posts\",\"tag\":\"a\",\"value\":\"\",\"editable\":false,\"disabled\":false,\"visible\":true,\"inViewport\":true,\"href\":\"edit.php?post_type=post\"},{\"id\":\"n184\",\"frame\":\"editor-canvas\",\"role\":\"textbox\",\"name\":\"Write file name…\",\"tag\":\"a\",\"value\":\"upload-probe-learn-2-staged\",\"editable\":true,\"disabled\":false,\"visible\":true,\"inViewport\":true,\"href\":\"http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/upload-probe-learn-2-staged.xlsx\"}]}}"
+    }
+  ],
+  "schema": {
+    "type": "object",
+    "properties": {
+      "target": {
+        "type": "string",
+        "enum": [
+          "n1",
+          "n2",
+          "n3",
+          "n4",
+          "n5",
+          "n6",
+          "n9",
+          "n184"
+        ]
+      },
+      "reason": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "target",
+      "reason"
+    ],
+    "additionalProperties": false
+  }
+}

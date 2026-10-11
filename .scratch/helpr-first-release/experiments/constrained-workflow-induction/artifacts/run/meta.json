@@ -1,0 +1,549 @@
+{
+  "startedAt": "2026-10-10T15:01:39.038Z",
+  "deadline": 1791648699038,
+  "limits": {
+    "calls": 80,
+    "tokens": 400000,
+    "phases": {
+      "learn": [
+        50,
+        250000
+      ],
+      "calibrate": [
+        16,
+        80000
+      ],
+      "evaluate": [
+        14,
+        70000
+      ]
+    },
+    "revisions": 6,
+    "protocolRevisions": 3
+  },
+  "revisions": 0,
+  "protocolRevisions": [
+    {
+      "at": "2026-10-10T15:03:40.766Z",
+      "reason": "修正 condition.input 元数据与结构化绑定表达式冲突，改名 covers；点击视口前置检查；动作超时保守标记不确定；限制非安全请求同源。未添加网站规则。",
+      "evidence": "learn/results.json"
+    },
+    {
+      "at": "2026-10-10T15:06:29.737Z",
+      "reason": "提交提议在动作前要求完整条件，同时保留独立网络拦截；要求显式动态控件名绑定，向规划器回传未覆盖输入和请求拒绝。复用本轮自动日志中已成功且未触及不相容绑定或提交的前缀。未加入网站选择器或绑定。",
+      "evidence": "learn-2/results.json"
+    },
+    {
+      "at": "2026-10-10T15:08:46.426Z",
+      "reason": "相等条件的观察名称若等于其明确输入，只绑定该输入，不替换常量。已有前缀按此通用规则归一后重新实测。最终只读结果提取使用提交前已核验条件凭据，避免要求提交后的编辑器维持原 DOM；最终成功仍由公开结果和原始字节独立核对。",
+      "evidence": "learn-3/results.json"
+    }
+  ],
+  "calls": [
+    {
+      "label": "parse-learn",
+      "startedAt": "2026-10-10T15:01:39.047Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 826,
+        "completion_tokens": 570,
+        "total_tokens": 1396,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 826
+      },
+      "endedAt": "2026-10-10T15:01:41.665Z",
+      "durationMs": 2617.916792,
+      "phase": "learn"
+    },
+    {
+      "label": "action-0",
+      "startedAt": "2026-10-10T15:01:56.974Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 7581,
+        "completion_tokens": 148,
+        "total_tokens": 7729,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 7581
+      },
+      "endedAt": "2026-10-10T15:01:58.147Z",
+      "durationMs": 1172.963499999998,
+      "phase": "learn"
+    },
+    {
+      "label": "action-1",
+      "startedAt": "2026-10-10T15:02:10.602Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 7937,
+        "completion_tokens": 151,
+        "total_tokens": 8088,
+        "prompt_cache_hit_tokens": 7552,
+        "prompt_cache_miss_tokens": 385
+      },
+      "endedAt": "2026-10-10T15:02:11.620Z",
+      "durationMs": 1018.3227499999994,
+      "phase": "learn"
+    },
+    {
+      "label": "action-2",
+      "startedAt": "2026-10-10T15:02:39.673Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 4285,
+        "completion_tokens": 146,
+        "total_tokens": 4431,
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 3773
+      },
+      "endedAt": "2026-10-10T15:02:40.759Z",
+      "durationMs": 1085.6677080000009,
+      "phase": "learn"
+    },
+    {
+      "label": "parse-learn-2",
+      "startedAt": "2026-10-10T15:03:41.013Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 834,
+        "completion_tokens": 596,
+        "total_tokens": 1430,
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 322
+      },
+      "endedAt": "2026-10-10T15:03:43.645Z",
+      "durationMs": 2632.3053750000004,
+      "phase": "learn"
+    },
+    {
+      "label": "action-0",
+      "startedAt": "2026-10-10T15:03:56.147Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 7620,
+        "completion_tokens": 144,
+        "total_tokens": 7764,
+        "prompt_cache_hit_tokens": 896,
+        "prompt_cache_miss_tokens": 6724
+      },
+      "endedAt": "2026-10-10T15:03:57.811Z",
+      "durationMs": 1663.9112079999995,
+      "phase": "learn"
+    },
+    {
+      "label": "action-1",
+      "startedAt": "2026-10-10T15:03:58.222Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 7682,
+        "completion_tokens": 158,
+        "total_tokens": 7840,
+        "prompt_cache_hit_tokens": 7424,
+        "prompt_cache_miss_tokens": 258
+      },
+      "endedAt": "2026-10-10T15:03:59.263Z",
+      "durationMs": 1040.6315840000025,
+      "phase": "learn"
+    },
+    {
+      "label": "action-2",
+      "startedAt": "2026-10-10T15:04:27.798Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 4030,
+        "completion_tokens": 146,
+        "total_tokens": 4176,
+        "prompt_cache_hit_tokens": 768,
+        "prompt_cache_miss_tokens": 3262
+      },
+      "endedAt": "2026-10-10T15:04:28.940Z",
+      "durationMs": 1142.5127500000017,
+      "phase": "learn"
+    },
+    {
+      "label": "action-3",
+      "startedAt": "2026-10-10T15:04:29.816Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 4184,
+        "completion_tokens": 152,
+        "total_tokens": 4336,
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 3672
+      },
+      "endedAt": "2026-10-10T15:04:31.137Z",
+      "durationMs": 1320.9650830000028,
+      "phase": "learn"
+    },
+    {
+      "label": "action-4",
+      "startedAt": "2026-10-10T15:04:31.348Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 4249,
+        "completion_tokens": 152,
+        "total_tokens": 4401,
+        "prompt_cache_hit_tokens": 4096,
+        "prompt_cache_miss_tokens": 153
+      },
+      "endedAt": "2026-10-10T15:04:32.568Z",
+      "durationMs": 1220.1204169999983,
+      "phase": "learn"
+    },
+    {
+      "label": "action-5",
+      "startedAt": "2026-10-10T15:04:32.783Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 4314,
+        "completion_tokens": 155,
+        "total_tokens": 4469,
+        "prompt_cache_hit_tokens": 4096,
+        "prompt_cache_miss_tokens": 218
+      },
+      "endedAt": "2026-10-10T15:04:33.969Z",
+      "durationMs": 1185.4698330000028,
+      "phase": "learn"
+    },
+    {
+      "label": "action-6",
+      "startedAt": "2026-10-10T15:04:35.148Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 5306,
+        "completion_tokens": 152,
+        "total_tokens": 5458,
+        "prompt_cache_hit_tokens": 640,
+        "prompt_cache_miss_tokens": 4666
+      },
+      "endedAt": "2026-10-10T15:04:36.426Z",
+      "durationMs": 1277.4406669999953,
+      "phase": "learn"
+    },
+    {
+      "label": "action-7",
+      "startedAt": "2026-10-10T15:04:38.153Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 5843,
+        "completion_tokens": 146,
+        "total_tokens": 5989,
+        "prompt_cache_hit_tokens": 640,
+        "prompt_cache_miss_tokens": 5203
+      },
+      "endedAt": "2026-10-10T15:04:39.312Z",
+      "durationMs": 1159.7147499999992,
+      "phase": "learn"
+    },
+    {
+      "label": "action-8",
+      "startedAt": "2026-10-10T15:04:40.046Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 3911,
+        "completion_tokens": 149,
+        "total_tokens": 4060,
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 3399
+      },
+      "endedAt": "2026-10-10T15:04:41.235Z",
+      "durationMs": 1189.7313330000034,
+      "phase": "learn"
+    },
+    {
+      "label": "action-9",
+      "startedAt": "2026-10-10T15:04:42.397Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 5905,
+        "completion_tokens": 148,
+        "total_tokens": 6053,
+        "prompt_cache_hit_tokens": 5376,
+        "prompt_cache_miss_tokens": 529
+      },
+      "endedAt": "2026-10-10T15:04:43.622Z",
+      "durationMs": 1225.2268750000003,
+      "phase": "learn"
+    },
+    {
+      "label": "action-10",
+      "startedAt": "2026-10-10T15:04:44.572Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 4929,
+        "completion_tokens": 152,
+        "total_tokens": 5081,
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 4417
+      },
+      "endedAt": "2026-10-10T15:04:45.702Z",
+      "durationMs": 1130.7015000000029,
+      "phase": "learn"
+    },
+    {
+      "label": "action-11",
+      "startedAt": "2026-10-10T15:04:46.630Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 4966,
+        "completion_tokens": 156,
+        "total_tokens": 5122,
+        "prompt_cache_hit_tokens": 3584,
+        "prompt_cache_miss_tokens": 1382
+      },
+      "endedAt": "2026-10-10T15:04:47.786Z",
+      "durationMs": 1156.5819999999949,
+      "phase": "learn"
+    },
+    {
+      "label": "action-12",
+      "startedAt": "2026-10-10T15:04:48.766Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 5269,
+        "completion_tokens": 153,
+        "total_tokens": 5422,
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 4757
+      },
+      "endedAt": "2026-10-10T15:04:49.963Z",
+      "durationMs": 1196.3151249999937,
+      "phase": "learn"
+    },
+    {
+      "label": "action-13",
+      "startedAt": "2026-10-10T15:04:50.950Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 5435,
+        "completion_tokens": 153,
+        "total_tokens": 5588,
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 4923
+      },
+      "endedAt": "2026-10-10T15:04:52.390Z",
+      "durationMs": 1439.4022079999995,
+      "phase": "learn"
+    },
+    {
+      "label": "action-14",
+      "startedAt": "2026-10-10T15:04:53.366Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 5399,
+        "completion_tokens": 153,
+        "total_tokens": 5552,
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 4887
+      },
+      "endedAt": "2026-10-10T15:04:54.947Z",
+      "durationMs": 1580.1585420000047,
+      "phase": "learn"
+    },
+    {
+      "label": "parse-learn-3",
+      "startedAt": "2026-10-10T15:06:30.160Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 1189,
+        "completion_tokens": 613,
+        "total_tokens": 1802,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1189
+      },
+      "endedAt": "2026-10-10T15:06:32.949Z",
+      "durationMs": 2788.928917,
+      "phase": "learn"
+    },
+    {
+      "label": "parse-learn-4",
+      "startedAt": "2026-10-10T15:08:46.675Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 1187,
+        "completion_tokens": 619,
+        "total_tokens": 1806,
+        "prompt_cache_hit_tokens": 640,
+        "prompt_cache_miss_tokens": 547
+      },
+      "endedAt": "2026-10-10T15:08:49.398Z",
+      "durationMs": 2723.110416,
+      "phase": "learn"
+    },
+    {
+      "label": "action-0",
+      "startedAt": "2026-10-10T15:09:32.702Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 5008,
+        "completion_tokens": 155,
+        "total_tokens": 5163,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 5008
+      },
+      "endedAt": "2026-10-10T15:09:33.926Z",
+      "durationMs": 1223.9945420000004,
+      "phase": "learn"
+    },
+    {
+      "label": "action-1",
+      "startedAt": "2026-10-10T15:09:34.944Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 5047,
+        "completion_tokens": 168,
+        "total_tokens": 5215,
+        "prompt_cache_hit_tokens": 3584,
+        "prompt_cache_miss_tokens": 1463
+      },
+      "endedAt": "2026-10-10T15:09:36.159Z",
+      "durationMs": 1214.6237499999988,
+      "phase": "learn"
+    },
+    {
+      "label": "action-2",
+      "startedAt": "2026-10-10T15:09:36.410Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 5128,
+        "completion_tokens": 154,
+        "total_tokens": 5282,
+        "prompt_cache_hit_tokens": 4608,
+        "prompt_cache_miss_tokens": 520
+      },
+      "endedAt": "2026-10-10T15:09:37.570Z",
+      "durationMs": 1160.8234999999986,
+      "phase": "learn"
+    },
+    {
+      "label": "action-3",
+      "startedAt": "2026-10-10T15:09:43.365Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 12182,
+        "completion_tokens": 159,
+        "total_tokens": 12341,
+        "prompt_cache_hit_tokens": 640,
+        "prompt_cache_miss_tokens": 11542
+      },
+      "endedAt": "2026-10-10T15:09:45.052Z",
+      "durationMs": 1687.5117089999985,
+      "phase": "learn"
+    },
+    {
+      "label": "action-4",
+      "startedAt": "2026-10-10T15:09:50.771Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 12345,
+        "completion_tokens": 168,
+        "total_tokens": 12513,
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 11193
+      },
+      "endedAt": "2026-10-10T15:09:52.221Z",
+      "durationMs": 1449.6443749999962,
+      "phase": "learn"
+    },
+    {
+      "label": "parse-diagnostic-calibration",
+      "startedAt": "2026-10-10T15:12:11.331Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 1187,
+        "completion_tokens": 602,
+        "total_tokens": 1789,
+        "prompt_cache_hit_tokens": 640,
+        "prompt_cache_miss_tokens": 547
+      },
+      "endedAt": "2026-10-10T15:12:13.800Z",
+      "durationMs": 2468.9700420000004,
+      "phase": "calibrate"
+    }
+  ],
+  "learnRuns": 4
+}

@@ -1,0 +1,185 @@
+{
+  "mode": "material-change",
+  "status": "correctly-blocked",
+  "trace": [
+    {
+      "id": "s1",
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "id": "s2",
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "id": "s3",
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "id": "s4",
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "id": "s5",
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "id": "s6",
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "id": "s7",
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "id": "s8",
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "id": "s9",
+      "result": {
+        "executed": true
+      }
+    },
+    {
+      "id": "s10",
+      "result": {
+        "executed": true
+      }
+    }
+  ],
+  "error": {
+    "code": "upload-request-blocked",
+    "message": "upload-request-blocked",
+    "detail": {
+      "blocked": "material-changed"
+    },
+    "executed": true
+  },
+  "requests": [
+    {
+      "at": "2026-10-11T01:44:59.079Z",
+      "type": "mutation-request",
+      "method": "POST",
+      "path": "/index.php",
+      "effectProposal": "read",
+      "operation": "click",
+      "outcome": "blocked",
+      "code": "inputs-not-covered",
+      "detail": {
+        "covered": [
+          "post_title",
+          "post_content"
+        ],
+        "required": [
+          "post_title",
+          "post_content",
+          "post_category",
+          "attachment_excel"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-11T01:44:59.488Z",
+      "type": "mutation-request",
+      "method": "POST",
+      "path": "/index.php",
+      "effectProposal": "read",
+      "operation": "click",
+      "outcome": "blocked",
+      "code": "inputs-not-covered",
+      "detail": {
+        "covered": [
+          "post_title",
+          "post_content"
+        ],
+        "required": [
+          "post_title",
+          "post_content",
+          "post_category",
+          "attachment_excel"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-11T01:45:04.614Z",
+      "type": "mutation-request",
+      "method": "POST",
+      "path": "/index.php",
+      "effectProposal": "upload",
+      "operation": "upload",
+      "uploadReceipt": {
+        "id": "72fb0e76-a1da-4d04-b905-927f8cc9587c",
+        "execution": "7de6d0be-f48c-4c7f-89d0-18341746a20f",
+        "taskDigest": "22e2b6e217d897869f6b549dab8565e7f29fa64bb01ab8688f828cd1eb736ad7",
+        "key": "attachment_excel",
+        "sourceHash": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+        "sourceBytes": 3755,
+        "topUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+        "controlFrame": "editor-canvas",
+        "selected": {
+          "events": 1,
+          "connectedAtSelection": true,
+          "stillAttached": false,
+          "name": "guard-probes-staged.xlsx",
+          "bytes": 3755,
+          "sha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+        },
+        "requestFrame": "main",
+        "exposedBodyBytes": 346,
+        "association": "one active typed upload + exact selected bytes + ancestor frame + exact single filename"
+      },
+      "authorization": "selected-file-and-correlated-request",
+      "outcome": "blocked",
+      "code": "material-changed",
+      "detail": {}
+    }
+  ],
+  "uploadHolds": [
+    {
+      "at": "2026-10-11T01:45:01.776Z",
+      "type": "upload-held",
+      "method": "POST",
+      "path": "/index.php",
+      "effectProposal": "upload",
+      "operation": "upload",
+      "uploadReceipt": {
+        "id": "72fb0e76-a1da-4d04-b905-927f8cc9587c",
+        "execution": "7de6d0be-f48c-4c7f-89d0-18341746a20f",
+        "taskDigest": "22e2b6e217d897869f6b549dab8565e7f29fa64bb01ab8688f828cd1eb736ad7",
+        "key": "attachment_excel",
+        "sourceHash": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+        "sourceBytes": 3755,
+        "topUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+        "controlFrame": "editor-canvas",
+        "selected": {
+          "events": 1,
+          "connectedAtSelection": true,
+          "stillAttached": false,
+          "name": "guard-probes-staged.xlsx",
+          "bytes": 3755,
+          "sha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+        },
+        "requestFrame": "main",
+        "exposedBodyBytes": 346,
+        "association": "one active typed upload + exact selected bytes + ancestor frame + exact single filename"
+      },
+      "authorization": "selected-file-and-correlated-request"
+    }
+  ]
+}

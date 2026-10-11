@@ -1,0 +1,58 @@
+{
+  "compatible": true,
+  "reason": "首次解析，委托明确要求在指定测试网站新建文章并立即公开发布，包含标题、正文、分类、附件及不改动其他内容的约束，语义完整可执行。",
+  "goalKind": "新建并公开发布文章",
+  "goal": "在指定测试网站新建一篇文章并立即公开发布，使用给定标题、正文和分类，并将原始 Excel 文件作为可下载附件加入正文。",
+  "constraints": [
+    {
+      "meaning": "新建文章而非修改已有文章",
+      "quote": "新建一篇文章"
+    },
+    {
+      "meaning": "立即公开发布，而非保存草稿",
+      "quote": "立即公开发布"
+    },
+    {
+      "meaning": "只选择指定分类，不选默认分类",
+      "quote": "只选择分类「Excel 验证」，不选默认分类"
+    },
+    {
+      "meaning": "附件以原始文件形式加入正文，不读取或改写 Excel 内容",
+      "quote": "把原始 Excel 文件作为可下载附件加入正文，不读取或改写 Excel 内容"
+    },
+    {
+      "meaning": "除本次新建记录外不得改动已有文章或网站设置",
+      "quote": "除本次新建测试记录外，不得改动已有文章或网站设置"
+    },
+    {
+      "meaning": "不得自行增加建议内容",
+      "quote": "不要自行增加建议内容"
+    }
+  ],
+  "inputs": {
+    "title": {
+      "type": "string",
+      "value": "自主归纳 learn attempt-a",
+      "quote": "标题是「自主归纳 learn attempt-a」",
+      "description": "文章标题"
+    },
+    "body": {
+      "type": "string",
+      "value": "本文与附件均为虚构实验素材。样本 learn，校验编号 4699b77716。请保留原始文件，不改写表格内容。",
+      "quote": "正文完整内容是「本文与附件均为虚构实验素材。样本 learn，校验编号 4699b77716。请保留原始文件，不改写表格内容。」",
+      "description": "文章正文完整内容"
+    },
+    "category": {
+      "type": "string",
+      "value": "Excel 验证",
+      "quote": "只选择分类「Excel 验证」",
+      "description": "文章分类"
+    },
+    "attachment": {
+      "type": "file",
+      "attachmentId": "material-1",
+      "description": "作为可下载附件加入正文的原始 Excel 文件"
+    }
+  },
+  "suggestions": []
+}

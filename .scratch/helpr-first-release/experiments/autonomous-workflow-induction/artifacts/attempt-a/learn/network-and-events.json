@@ -1,0 +1,607 @@
+[
+  {
+    "at": "2026-10-10T14:17:06.908Z",
+    "type": "dispatch",
+    "step": "s1",
+    "effect": "read",
+    "action": {
+      "op": "click",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "link",
+        "name": "Add Post"
+      }
+    }
+  },
+  {
+    "at": "2026-10-10T14:17:43.018Z",
+    "type": "dispatch",
+    "step": "s1",
+    "effect": "read",
+    "action": {
+      "op": "click",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "menuitem",
+        "name": "New"
+      }
+    }
+  },
+  {
+    "type": "network-write",
+    "method": "POST",
+    "pathname": "/wp-admin/admin-ajax.php",
+    "at": 1791641901662
+  },
+  {
+    "at": "2026-10-10T14:18:27.805Z",
+    "type": "exploration-step",
+    "id": "s1",
+    "outcome": {
+      "executed": true,
+      "failedPostcondition": {
+        "code": "condition-unsatisfied",
+        "message": "condition-unsatisfied",
+        "detail": {
+          "evidence": [
+            {
+              "condition": {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Add title"
+                }
+              },
+              "ok": false,
+              "count": 0
+            }
+          ]
+        },
+        "executed": true,
+        "status": "blocked"
+      }
+    }
+  },
+  {
+    "at": "2026-10-10T14:18:29.019Z",
+    "type": "dispatch",
+    "step": "s2",
+    "effect": "edit",
+    "action": {
+      "op": "fill",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "textbox",
+        "name": "Add title"
+      },
+      "value": "自主归纳 learn attempt-a"
+    }
+  },
+  {
+    "at": "2026-10-10T14:18:29.065Z",
+    "type": "exploration-step",
+    "id": "s2",
+    "outcome": {
+      "executed": true,
+      "evidence": [
+        {
+          "condition": {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "title"
+            }
+          },
+          "ok": true,
+          "actual": "自主归纳 learn attempt-a",
+          "expected": "自主归纳 learn attempt-a"
+        }
+      ]
+    }
+  },
+  {
+    "at": "2026-10-10T14:18:30.006Z",
+    "type": "dispatch",
+    "step": "s3",
+    "effect": "edit",
+    "action": {
+      "op": "click",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "button",
+        "name": "Add default block"
+      }
+    }
+  },
+  {
+    "at": "2026-10-10T14:18:30.130Z",
+    "type": "exploration-step",
+    "id": "s3",
+    "outcome": {
+      "executed": true,
+      "evidence": [
+        {
+          "condition": {
+            "kind": "visible",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            }
+          },
+          "ok": true,
+          "count": 1
+        }
+      ]
+    }
+  },
+  {
+    "type": "network-write",
+    "method": "POST",
+    "pathname": "/wp-admin/admin-ajax.php",
+    "at": 1791641911660
+  },
+  {
+    "at": "2026-10-10T14:18:31.723Z",
+    "type": "dispatch",
+    "step": "s4",
+    "effect": "edit",
+    "action": {
+      "op": "fill",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "textbox",
+        "name": "Add title"
+      },
+      "value": "自主归纳 learn attempt-a"
+    }
+  },
+  {
+    "at": "2026-10-10T14:18:31.790Z",
+    "type": "exploration-step",
+    "id": "s4",
+    "outcome": {
+      "executed": true,
+      "evidence": [
+        {
+          "condition": {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "title"
+            }
+          },
+          "ok": true,
+          "actual": "自主归纳 learn attempt-a",
+          "expected": "自主归纳 learn attempt-a"
+        }
+      ]
+    }
+  },
+  {
+    "at": "2026-10-10T14:18:32.748Z",
+    "type": "dispatch",
+    "step": "s5",
+    "effect": "edit",
+    "action": {
+      "op": "fill",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "textbox",
+        "name": "Add title"
+      },
+      "value": "自主归纳 learn attempt-a"
+    }
+  },
+  {
+    "at": "2026-10-10T14:18:32.785Z",
+    "type": "exploration-step",
+    "id": "s5",
+    "outcome": {
+      "executed": true,
+      "evidence": [
+        {
+          "condition": {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "title"
+            }
+          },
+          "ok": true,
+          "actual": "自主归纳 learn attempt-a",
+          "expected": "自主归纳 learn attempt-a"
+        }
+      ]
+    }
+  },
+  {
+    "at": "2026-10-10T14:18:34.156Z",
+    "type": "dispatch",
+    "step": "s6",
+    "effect": "edit",
+    "action": {
+      "op": "fill",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "textbox",
+        "name": "Add title"
+      },
+      "value": "自主归纳 learn attempt-a"
+    }
+  },
+  {
+    "at": "2026-10-10T14:18:34.196Z",
+    "type": "exploration-step",
+    "id": "s6",
+    "outcome": {
+      "executed": true,
+      "evidence": [
+        {
+          "condition": {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "title"
+            }
+          },
+          "ok": true,
+          "actual": "自主归纳 learn attempt-a",
+          "expected": "自主归纳 learn attempt-a"
+        }
+      ]
+    }
+  },
+  {
+    "at": "2026-10-10T14:18:35.223Z",
+    "type": "dispatch",
+    "step": "s7",
+    "effect": "edit",
+    "action": {
+      "op": "fill",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "textbox",
+        "name": "Add title"
+      },
+      "value": "自主归纳 learn attempt-a"
+    }
+  },
+  {
+    "at": "2026-10-10T14:18:35.252Z",
+    "type": "exploration-step",
+    "id": "s7",
+    "outcome": {
+      "executed": true,
+      "evidence": [
+        {
+          "condition": {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "title"
+            }
+          },
+          "ok": true,
+          "actual": "自主归纳 learn attempt-a",
+          "expected": "自主归纳 learn attempt-a"
+        }
+      ]
+    }
+  },
+  {
+    "at": "2026-10-10T14:18:36.186Z",
+    "type": "dispatch",
+    "step": "s8",
+    "effect": "edit",
+    "action": {
+      "op": "fill",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "textbox",
+        "name": "Add title"
+      },
+      "value": "自主归纳 learn attempt-a"
+    }
+  },
+  {
+    "at": "2026-10-10T14:18:36.227Z",
+    "type": "exploration-step",
+    "id": "s8",
+    "outcome": {
+      "executed": true,
+      "evidence": [
+        {
+          "condition": {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "title"
+            }
+          },
+          "ok": true,
+          "actual": "自主归纳 learn attempt-a",
+          "expected": "自主归纳 learn attempt-a"
+        }
+      ]
+    }
+  },
+  {
+    "at": "2026-10-10T14:18:37.291Z",
+    "type": "dispatch",
+    "step": "s9",
+    "effect": "edit",
+    "action": {
+      "op": "fill",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "textbox",
+        "name": "Add title"
+      },
+      "value": "自主归纳 learn attempt-a"
+    }
+  },
+  {
+    "at": "2026-10-10T14:18:37.330Z",
+    "type": "exploration-step",
+    "id": "s9",
+    "outcome": {
+      "executed": true,
+      "evidence": [
+        {
+          "condition": {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "title"
+            }
+          },
+          "ok": true,
+          "actual": "自主归纳 learn attempt-a",
+          "expected": "自主归纳 learn attempt-a"
+        }
+      ]
+    }
+  },
+  {
+    "at": "2026-10-10T14:18:38.948Z",
+    "type": "dispatch",
+    "step": "s10",
+    "effect": "edit",
+    "action": {
+      "op": "fill",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "textbox",
+        "name": "Add title"
+      },
+      "value": "自主归纳 learn attempt-a"
+    }
+  },
+  {
+    "at": "2026-10-10T14:18:38.990Z",
+    "type": "exploration-step",
+    "id": "s10",
+    "outcome": {
+      "executed": true,
+      "evidence": [
+        {
+          "condition": {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "title"
+            }
+          },
+          "ok": true,
+          "actual": "自主归纳 learn attempt-a",
+          "expected": "自主归纳 learn attempt-a"
+        }
+      ]
+    }
+  },
+  {
+    "at": "2026-10-10T14:18:39.784Z",
+    "type": "dispatch",
+    "step": "s11",
+    "effect": "edit",
+    "action": {
+      "op": "fill",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "textbox",
+        "name": "Add title"
+      },
+      "value": "自主归纳 learn attempt-a"
+    }
+  },
+  {
+    "at": "2026-10-10T14:18:39.823Z",
+    "type": "exploration-step",
+    "id": "s11",
+    "outcome": {
+      "executed": true,
+      "evidence": [
+        {
+          "condition": {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "title"
+            }
+          },
+          "ok": true,
+          "actual": "自主归纳 learn attempt-a",
+          "expected": "自主归纳 learn attempt-a"
+        }
+      ]
+    }
+  },
+  {
+    "at": "2026-10-10T14:18:41.120Z",
+    "type": "dispatch",
+    "step": "s12",
+    "effect": "edit",
+    "action": {
+      "op": "fill",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "textbox",
+        "name": "Add title"
+      },
+      "value": "自主归纳 learn attempt-a"
+    }
+  },
+  {
+    "at": "2026-10-10T14:18:41.163Z",
+    "type": "exploration-step",
+    "id": "s12",
+    "outcome": {
+      "executed": true,
+      "evidence": [
+        {
+          "condition": {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "title"
+            }
+          },
+          "ok": true,
+          "actual": "自主归纳 learn attempt-a",
+          "expected": "自主归纳 learn attempt-a"
+        }
+      ]
+    }
+  },
+  {
+    "type": "network-write",
+    "method": "POST",
+    "pathname": "/wp-admin/admin-ajax.php",
+    "at": 1791641921659
+  },
+  {
+    "at": "2026-10-10T14:18:42.247Z",
+    "type": "dispatch",
+    "step": "s13",
+    "effect": "edit",
+    "action": {
+      "op": "fill",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "textbox",
+        "name": "Add title"
+      },
+      "value": "自主归纳 learn attempt-a"
+    }
+  },
+  {
+    "at": "2026-10-10T14:18:42.282Z",
+    "type": "exploration-step",
+    "id": "s13",
+    "outcome": {
+      "executed": true,
+      "evidence": [
+        {
+          "condition": {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "title"
+            }
+          },
+          "ok": true,
+          "actual": "自主归纳 learn attempt-a",
+          "expected": "自主归纳 learn attempt-a"
+        }
+      ]
+    }
+  },
+  {
+    "type": "upload-released",
+    "at": 1791641922570
+  }
+]

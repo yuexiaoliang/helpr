@@ -1,0 +1,150 @@
+{
+  "startedAt": "2026-10-10T14:33:45.322Z",
+  "budget": {
+    "calls": 18,
+    "tokens": 130526,
+    "minutes": 12,
+    "candidateRevisions": 2
+  },
+  "campaign": {
+    "prior": [
+      "attempt-a",
+      "attempt-b",
+      "attempt-c",
+      "attempt-d",
+      "probes"
+    ],
+    "priorCalls": 46,
+    "priorTokens": 269474,
+    "maxTotalCalls": 64,
+    "maxTotalTokens": 400000
+  },
+  "modelCalls": [
+    {
+      "label": "parse-learn",
+      "startedAt": "2026-10-10T14:33:45.567Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 992,
+        "completion_tokens": 607,
+        "total_tokens": 1599,
+        "prompt_cache_hit_tokens": 128,
+        "prompt_cache_miss_tokens": 864
+      },
+      "endedAt": "2026-10-10T14:33:47.526Z",
+      "durationMs": 1958.9121669999997
+    },
+    {
+      "label": "explore-4",
+      "startedAt": "2026-10-10T14:34:29.640Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 3497,
+        "completion_tokens": 366,
+        "total_tokens": 3863,
+        "prompt_cache_hit_tokens": 640,
+        "prompt_cache_miss_tokens": 2857
+      },
+      "endedAt": "2026-10-10T14:34:31.655Z",
+      "durationMs": 2015.2525000000023
+    },
+    {
+      "label": "post-calibrate-s5-0",
+      "startedAt": "2026-10-10T14:34:47.882Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 4900,
+        "completion_tokens": 165,
+        "total_tokens": 5065,
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 4388
+      },
+      "endedAt": "2026-10-10T14:34:48.948Z",
+      "durationMs": 1066.6581250000017
+    },
+    {
+      "label": "post-calibrate-s5-0-json-repair",
+      "startedAt": "2026-10-10T14:34:48.950Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 464,
+        "completion_tokens": 169,
+        "total_tokens": 633,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 464
+      },
+      "endedAt": "2026-10-10T14:34:49.788Z",
+      "durationMs": 838.0449579999986
+    },
+    {
+      "label": "post-calibrate-s5-1",
+      "startedAt": "2026-10-10T14:34:49.806Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 4829,
+        "completion_tokens": 165,
+        "total_tokens": 4994,
+        "prompt_cache_hit_tokens": 1664,
+        "prompt_cache_miss_tokens": 3165
+      },
+      "endedAt": "2026-10-10T14:34:51.114Z",
+      "durationMs": 1307.8989999999976
+    }
+  ],
+  "outcomes": [
+    {
+      "phase": "learn",
+      "status": "failed",
+      "error": {
+        "code": "step-condition-not-calibrated",
+        "message": "step-condition-not-calibrated",
+        "detail": {
+          "step": "s5"
+        },
+        "status": "blocked"
+      }
+    }
+  ],
+  "sourceHashes": {
+    "run.mjs": "e52ef782ef2808006b2458e8440024948a9432bb9a0829515b7f87ce11d6ef60",
+    "runtime.mjs": "6c6afcc7fd8bd0f14783b32d8158d6d8c7baf843f32b7451923ab547d193c5a8",
+    "prompts.mjs": "578e0dca8d4fbd18350f8d403d8ebededb64ca9fbc67a6ee03a7231702815a9e",
+    "fixtures.mjs": "0cab7fde2d2a7463df1515cb5fffd8152d3c445ce743d14ef7b1e55e2c4bae98",
+    "../model-api/client.mjs": "70d88c5b1149792f5549a6cf3c15748d0ea1ca34809c6741e63f0bd9581996ae",
+    "../workflow-reliability/executor.mjs": "1f52ad429617b9b6e01081b75254a52fb30af6e46f5468d2ea1f6d4428582b9c"
+  },
+  "sourceHistory": [
+    {
+      "mode": "learn",
+      "at": "2026-10-10T14:33:45.564Z",
+      "hashes": {
+        "run.mjs": "e52ef782ef2808006b2458e8440024948a9432bb9a0829515b7f87ce11d6ef60",
+        "runtime.mjs": "6c6afcc7fd8bd0f14783b32d8158d6d8c7baf843f32b7451923ab547d193c5a8",
+        "prompts.mjs": "578e0dca8d4fbd18350f8d403d8ebededb64ca9fbc67a6ee03a7231702815a9e",
+        "fixtures.mjs": "0cab7fde2d2a7463df1515cb5fffd8152d3c445ce743d14ef7b1e55e2c4bae98",
+        "../model-api/client.mjs": "70d88c5b1149792f5549a6cf3c15748d0ea1ca34809c6741e63f0bd9581996ae",
+        "../workflow-reliability/executor.mjs": "1f52ad429617b9b6e01081b75254a52fb30af6e46f5468d2ea1f6d4428582b9c"
+      }
+    }
+  ],
+  "model": "deepseek-flash",
+  "outputMode": "native-function",
+  "status": "finished",
+  "endedAt": "2026-10-10T14:34:51.214Z",
+  "tokens": 16154
+}

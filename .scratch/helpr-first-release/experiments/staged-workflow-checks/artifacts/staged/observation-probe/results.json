@@ -1,0 +1,145 @@
+{
+  "startedAt": "2026-10-11T01:35:14.368Z",
+  "scope": "observe-only using unchanged rejecting runtime",
+  "task": {
+    "id": "observation-probe",
+    "origin": "http://home.ts-ali.internal:38080",
+    "entryUrl": "http://home.ts-ali.internal:38080/wp-admin/",
+    "kind": "new_post",
+    "inputs": {
+      "post_title": {
+        "type": "string",
+        "value": "自主归纳 observation-probe staged"
+      },
+      "post_content": {
+        "type": "string",
+        "value": "本文与附件均为虚构实验素材。样本 observation-probe，校验编号 b2e1c66172。请保留原始文件，不改写表格内容。"
+      },
+      "post_category": {
+        "type": "string",
+        "value": "Excel 验证"
+      },
+      "attachment_excel": {
+        "type": "file",
+        "path": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/staged-workflow-checks/artifacts/staged/observation-probe/observation-probe-staged.xlsx",
+        "name": "observation-probe-staged.xlsx",
+        "stem": "observation-probe-staged",
+        "sha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+      }
+    },
+    "requiredOutputs": [
+      "post_title",
+      "post_content",
+      "post_category",
+      "attachment_excel"
+    ],
+    "goal": "在测试网站新建一篇文章并立即公开发布，标题为「自主归纳 observation-probe staged」，正文为指定内容，仅选择分类「Excel 验证」，并将原始 Excel 文件作为可下载附件加入正文。",
+    "constraints": [
+      {
+        "description": "文章需立即公开发布，而非保存草稿",
+        "quote": "立即公开发布"
+      },
+      {
+        "description": "只选择分类「Excel 验证」，不选默认分类",
+        "quote": "只选择分类「Excel 验证」，不选默认分类"
+      },
+      {
+        "description": "附件须为原始 Excel 文件，不读取或改写其内容",
+        "quote": "把原始 Excel 文件作为可下载附件加入正文，不读取或改写 Excel 内容"
+      },
+      {
+        "description": "除本次新建测试记录外，不得改动已有文章或网站设置",
+        "quote": "除本次新建测试记录外，不得改动已有文章或网站设置"
+      },
+      {
+        "description": "不得自行增加建议内容",
+        "quote": "不要自行增加建议内容"
+      }
+    ],
+    "sources": {
+      "post_title": {
+        "quote": "标题是「自主归纳 observation-probe staged」",
+        "description": "新建文章的标题"
+      },
+      "post_content": {
+        "quote": "正文完整内容是「本文与附件均为虚构实验素材。样本 observation-probe，校验编号 b2e1c66172。请保留原始文件，不改写表格内容。」",
+        "description": "新建文章的正文完整内容"
+      },
+      "post_category": {
+        "quote": "只选择分类「Excel 验证」",
+        "description": "文章选择的分类"
+      },
+      "attachment_excel": {
+        "attachmentId": "material-1",
+        "description": "作为可下载附件加入正文的原始 Excel 文件"
+      }
+    },
+    "suggestions": [],
+    "request": "【隔离实验授权】这是一份虚构测试委托，允许在指定测试网站上完成本次任务。新建一篇文章；立即公开发布。标题是「自主归纳 observation-probe staged」，正文完整内容是「本文与附件均为虚构实验素材。样本 observation-probe，校验编号 b2e1c66172。请保留原始文件，不改写表格内容。」，只选择分类「Excel 验证」，不选默认分类。使用附带素材，把原始 Excel 文件作为可下载附件加入正文，不读取或改写 Excel 内容。除本次新建测试记录外，不得改动已有文章或网站设置。本段中的内容、上传及上述发布方式均已作为实验要求授权；不要自行增加建议内容。",
+    "authorization": {
+      "source": "explicit-isolated-test-fixture",
+      "requestDigest": "74e0b115daf724d0d8350d8c87a2696c9661b92f5aa916cdff23efba3728b80b",
+      "inputsDigest": "4c3ebb8c87fde99d6fae4b5cf49e9025f8fe7ef8c706fbff00c301fc00bfb6a0"
+    }
+  },
+  "steps": [
+    "s1",
+    "s2",
+    "s3",
+    "s4",
+    "s5",
+    "s6",
+    "s7",
+    "s8",
+    "s9",
+    "s10"
+  ],
+  "requests": [
+    {
+      "method": "POST",
+      "origin": "http://home.ts-ali.internal:38080",
+      "path": "/index.php",
+      "requestFrame": "main",
+      "requestFrameUrl": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+      "fileHeaders": [
+        {
+          "field": "file",
+          "filename": "observation-probe-staged.xlsx"
+        },
+        {
+          "field": "post"
+        }
+      ],
+      "reportedBodyBytes": 351,
+      "selection": {
+        "events": 1,
+        "connectedAtEvent": true,
+        "url": "blob:http://home.ts-ali.internal:38080/4d83cf08-052e-4763-81a4-e328d462da5c",
+        "files": [
+          {
+            "name": "observation-probe-staged.xlsx",
+            "size": 3755,
+            "type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "sha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+          }
+        ]
+      },
+      "inputStillConnected": true,
+      "observedAt": "2026-10-11T01:35:48.190Z"
+    }
+  ],
+  "expectedRejection": {
+    "code": "Error",
+    "message": "upload-not-observed",
+    "executed": true
+  },
+  "source": {
+    "name": "observation-probe-staged.xlsx",
+    "sha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+    "bytes": 3755
+  },
+  "selectionMatches": true,
+  "requestMetadataMatches": true,
+  "status": "observation-supported",
+  "endedAt": "2026-10-11T01:36:08.161Z"
+}

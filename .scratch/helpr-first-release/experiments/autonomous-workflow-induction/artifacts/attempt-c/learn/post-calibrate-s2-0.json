@@ -1,0 +1,54 @@
+{
+  "original": [
+    {
+      "kind": "visible",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "menuitem",
+        "name": "Post"
+      }
+    }
+  ],
+  "correction": {
+    "after": [
+      {
+        "kind": "visible",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "heading",
+          "name": "Add Post"
+        }
+      },
+      {
+        "kind": "visible",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Publish"
+        }
+      },
+      {
+        "kind": "visible",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "checkbox",
+          "name": "Excel 验证"
+        }
+      },
+      {
+        "kind": "visible",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "checkbox",
+          "name": "Uncategorized"
+        }
+      }
+    ],
+    "reasoning": "点击工具栏 New 后实际到达 post-new.php 新建文章编辑器（Add Post），而非展开含 Post 菜单项的菜单，因此原 after 中 menuitem \"Post\" 不存在。修订为核对已进入新建文章阶段：可见 Add Post 标题、Publish 按钮，以及分类面板中的 Excel 验证 与 Uncategorized 复选框，均与后续填写/发布意图一致，且未改变动作或输入。"
+  }
+}

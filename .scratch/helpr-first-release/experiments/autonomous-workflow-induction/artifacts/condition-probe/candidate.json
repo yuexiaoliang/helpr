@@ -1,0 +1,215 @@
+{
+  "prefix": [
+    {
+      "id": "s1",
+      "action": {
+        "op": "hover",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "Posts"
+        }
+      },
+      "effect": "read",
+      "before": [],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": "Add Post"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s2",
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "Add Post"
+        }
+      },
+      "effect": "read",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": "Add Post"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "heading",
+            "name": "Add Post"
+          }
+        },
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Add title"
+          }
+        },
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Publish"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s3",
+      "action": {
+        "op": "fill",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "Add title"
+        },
+        "value": {
+          "input": "title"
+        }
+      },
+      "effect": "edit",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Add title"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "value",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "textbox",
+            "name": "Add title"
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "title"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s4",
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "button",
+          "name": "Add default block"
+        }
+      },
+      "effect": "edit",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "button",
+            "name": "Add default block"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "editor-canvas",
+            "by": "role",
+            "role": "document",
+            "name": "Empty block; start writing or type forward slash to choose a block"
+          }
+        }
+      ]
+    }
+  ],
+  "learnedStep": {
+    "id": "s5",
+    "action": {
+      "op": "fill",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "document",
+        "name": "Empty block; start writing or type forward slash to choose a block"
+      },
+      "value": {
+        "input": "body"
+      }
+    },
+    "effect": "edit",
+    "before": [
+      {
+        "kind": "visible",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "document",
+          "name": "Empty block; start writing or type forward slash to choose a block"
+        }
+      }
+    ],
+    "after": [
+      {
+        "kind": "value",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "document",
+          "name": "Block: Paragraph"
+        },
+        "compare": "equals",
+        "expected": {
+          "input": "body"
+        }
+      }
+    ]
+  },
+  "proposal": {
+    "target": {
+      "frame": "editor-canvas",
+      "by": "role",
+      "role": "document",
+      "name": "Block: Paragraph"
+    },
+    "reasoning": "正文填写后，编辑器画布中的段落块可访问名称由「Empty block; start writing or type forward slash to choose a block」变为「Block: Paragraph」，这是填写后仍然成立且唯一的实际观察位置，其内容即为本次输入的正文。因此以 editor-canvas 中 role=document、name=\"Block: Paragraph\" 作为稳定定位。"
+  },
+  "assembly": {
+    "rule": "通用 fill 操作的后置条件固定为原 action.value 的相等比较；模型仅生成 target。原 action 来自自动解析委托及真实探索，不改网站动作或任务绑定。",
+    "originalActionSeal": "1cbfe259c41bde0de2b01cf0448275980c91ade0675448df87f35759adb843eb",
+    "unchangedAction": true
+  }
+}

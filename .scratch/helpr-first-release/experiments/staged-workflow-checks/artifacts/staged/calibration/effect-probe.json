@@ -1,0 +1,92 @@
+{
+  "actualAction": {
+    "op": "click",
+    "target": {
+      "frame": "main",
+      "by": "role",
+      "role": "button",
+      "name": "Publish"
+    }
+  },
+  "incorrectProposal": "read",
+  "caught": {
+    "code": "condition-unsatisfied",
+    "message": "condition-unsatisfied",
+    "detail": {
+      "evidence": [
+        {
+          "condition": {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "role",
+              "role": "textbox",
+              "name": "Add title"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "post_title"
+            },
+            "covers": "post_title"
+          },
+          "ok": false,
+          "actual": "实验注入：尚未满足授权内容",
+          "expected": "自主归纳 calibration staged"
+        },
+        {
+          "condition": {
+            "kind": "value",
+            "target": {
+              "frame": "editor-canvas",
+              "by": "text",
+              "name": {
+                "input": "post_content"
+              }
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "post_content"
+            },
+            "covers": "post_content"
+          },
+          "ok": true,
+          "actual": "本文与附件均为虚构实验素材。样本 calibration，校验编号 9047ed14eb。请保留原始文件，不改写表格内容。",
+          "expected": "本文与附件均为虚构实验素材。样本 calibration，校验编号 9047ed14eb。请保留原始文件，不改写表格内容。"
+        },
+        {
+          "condition": {
+            "kind": "checked",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "checkbox",
+              "name": {
+                "input": "post_category"
+              }
+            },
+            "expected": true,
+            "covers": "post_category"
+          },
+          "ok": true,
+          "actual": true
+        },
+        {
+          "condition": {
+            "kind": "checked",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "checkbox",
+              "name": "Uncategorized"
+            },
+            "expected": false,
+            "constraintQuote": "只选择分类「Excel 验证」，不选默认分类"
+          },
+          "ok": true,
+          "actual": false
+        }
+      ]
+    }
+  },
+  "dispatchPrevented": true
+}

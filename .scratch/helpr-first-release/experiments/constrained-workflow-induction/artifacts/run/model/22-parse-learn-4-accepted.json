@@ -1,0 +1,55 @@
+{
+  "compatible": true,
+  "reason": "模板为新建文章并立即公开发布，与委托的目标操作（新建、公开发布）、素材处理方式（原始 Excel 作为可下载附件、不读取改写）一致；输入 key 与类型完全对应：post_title/post_content/post_category 为字符串，attachment_excel 为文件。标题、正文、分类均取自委托原文，未增加建议内容。",
+  "goalKind": "new_post",
+  "goal": "在测试网站新建一篇文章并立即公开发布，标题为「自主归纳 learn-4 run」，正文为指定内容，仅选择分类「Excel 验证」，并将原始 Excel 文件作为可下载附件加入正文。",
+  "strings": [
+    {
+      "key": "post_title",
+      "description": "新建文章的标题",
+      "value": "自主归纳 learn-4 run",
+      "quote": "标题是「自主归纳 learn-4 run」"
+    },
+    {
+      "key": "post_content",
+      "description": "新建文章的正文完整内容",
+      "value": "本文与附件均为虚构实验素材。样本 learn-4，校验编号 0a333c8264。请保留原始文件，不改写表格内容。",
+      "quote": "正文完整内容是「本文与附件均为虚构实验素材。样本 learn-4，校验编号 0a333c8264。请保留原始文件，不改写表格内容。」"
+    },
+    {
+      "key": "post_category",
+      "description": "文章选择的分类",
+      "value": "Excel 验证",
+      "quote": "只选择分类「Excel 验证」"
+    }
+  ],
+  "files": [
+    {
+      "key": "attachment_excel",
+      "description": "作为可下载附件加入正文的原始 Excel 文件",
+      "attachmentId": "material-1"
+    }
+  ],
+  "constraints": [
+    {
+      "description": "文章需立即公开发布，而非保存草稿",
+      "quote": "立即公开发布"
+    },
+    {
+      "description": "只选择分类「Excel 验证」，不选默认分类",
+      "quote": "只选择分类「Excel 验证」，不选默认分类"
+    },
+    {
+      "description": "附件须为原始 Excel 文件，不读取或改写其内容",
+      "quote": "把原始 Excel 文件作为可下载附件加入正文，不读取或改写 Excel 内容"
+    },
+    {
+      "description": "除本次新建测试记录外，不得改动已有文章或网站设置",
+      "quote": "除本次新建测试记录外，不得改动已有文章或网站设置"
+    },
+    {
+      "description": "不得自行增加建议内容",
+      "quote": "不要自行增加建议内容"
+    }
+  ]
+}

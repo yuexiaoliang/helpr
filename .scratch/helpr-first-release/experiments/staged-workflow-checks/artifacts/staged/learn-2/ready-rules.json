@@ -1,0 +1,69 @@
+[
+  {
+    "kind": "value",
+    "target": {
+      "frame": "editor-canvas",
+      "by": "role",
+      "role": "textbox",
+      "name": "Add title"
+    },
+    "compare": "equals",
+    "expected": {
+      "input": "post_title"
+    },
+    "covers": "post_title"
+  },
+  {
+    "kind": "value",
+    "target": {
+      "frame": "editor-canvas",
+      "by": "text",
+      "name": {
+        "input": "post_content"
+      }
+    },
+    "compare": "equals",
+    "expected": {
+      "input": "post_content"
+    },
+    "covers": "post_content"
+  },
+  {
+    "kind": "checked",
+    "target": {
+      "frame": "main",
+      "by": "role",
+      "role": "checkbox",
+      "name": {
+        "input": "post_category"
+      }
+    },
+    "expected": true,
+    "covers": "post_category"
+  },
+  {
+    "kind": "artifact",
+    "target": {
+      "frame": "editor-canvas",
+      "by": "role",
+      "role": "textbox",
+      "name": "Write file name…"
+    },
+    "expected": {
+      "input": "attachment_excel",
+      "field": "sha256"
+    },
+    "covers": "attachment_excel"
+  },
+  {
+    "kind": "checked",
+    "target": {
+      "frame": "main",
+      "by": "role",
+      "role": "checkbox",
+      "name": "Uncategorized"
+    },
+    "expected": false,
+    "constraintQuote": "只选择分类「Excel 验证」，不选默认分类"
+  }
+]

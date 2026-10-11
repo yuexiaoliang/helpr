@@ -1,0 +1,27 @@
+{
+  "original": [
+    {
+      "kind": "visible",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "button",
+        "name": "Add default block"
+      }
+    }
+  ],
+  "correction": {
+    "after": [
+      {
+        "kind": "visible",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "document",
+          "name": "Empty block; start writing or type forward slash to choose a block"
+        }
+      }
+    ],
+    "reasoning": "点击“Add default block”后，编辑器画布中新增了一个空的段落块，其可访问名称为“Empty block; start writing or type forward slash to choose a block”，原先的“Add default block”按钮已消失。因此后置条件应改为该空段落块可见，表示已成功插入默认块并处于可输入状态。"
+  }
+}

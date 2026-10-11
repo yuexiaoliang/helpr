@@ -1,0 +1,286 @@
+{
+  "name": "heldout",
+  "trace": [
+    {
+      "id": "s1",
+      "op": "click",
+      "executed": true
+    },
+    {
+      "id": "s2",
+      "op": "fill",
+      "executed": true
+    },
+    {
+      "id": "s3",
+      "op": "click",
+      "executed": true
+    },
+    {
+      "id": "s4",
+      "op": "fill",
+      "executed": true
+    },
+    {
+      "id": "s5",
+      "op": "click",
+      "executed": true
+    },
+    {
+      "id": "s6",
+      "op": "click",
+      "executed": true
+    },
+    {
+      "id": "s7",
+      "op": "click",
+      "executed": true
+    },
+    {
+      "id": "s8",
+      "op": "check",
+      "executed": true
+    },
+    {
+      "id": "s9",
+      "op": "click",
+      "executed": true
+    },
+    {
+      "id": "s10",
+      "op": "click",
+      "executed": true
+    },
+    {
+      "id": "s11",
+      "op": "upload",
+      "executed": true,
+      "pending": "upload-pending.json",
+      "settled": "upload-settled.json",
+      "negative": {
+        "passed": false,
+        "code": "artifact-origin",
+        "detail": {}
+      }
+    },
+    {
+      "id": "s12",
+      "op": "click",
+      "executed": true
+    },
+    {
+      "id": "s13",
+      "op": "click",
+      "executed": true
+    },
+    {
+      "id": "s14",
+      "op": "finish",
+      "resultUrl": "http://home.ts-ali.internal:38080/?p=109",
+      "readyReceipt": {
+        "at": "2026-10-11T02:02:10.150Z",
+        "taskDigest": "a70d070ba78d32d8d61f7be1ccd7b315bc46f252f2f4bf2de1e0f50259a810d0",
+        "rulesDigest": "332bc709bed1e0d254d8422cfdc84203a0c210f75a25b415a3daf79545d1300f",
+        "evidence": [
+          {
+            "condition": {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Add title"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "post_title"
+              },
+              "covers": "post_title"
+            },
+            "ok": true,
+            "actual": "自主归纳 heldout staged",
+            "expected": "自主归纳 heldout staged"
+          },
+          {
+            "condition": {
+              "kind": "value",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "text",
+                "name": {
+                  "input": "post_content"
+                }
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "post_content"
+              },
+              "covers": "post_content"
+            },
+            "ok": true,
+            "actual": "本文与附件均为虚构实验素材。样本 heldout，校验编号 87c3b01f49。请保留原始文件，不改写表格内容。",
+            "expected": "本文与附件均为虚构实验素材。样本 heldout，校验编号 87c3b01f49。请保留原始文件，不改写表格内容。"
+          },
+          {
+            "condition": {
+              "kind": "checked",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "checkbox",
+                "name": {
+                  "input": "post_category"
+                }
+              },
+              "expected": true,
+              "covers": "post_category"
+            },
+            "ok": true,
+            "actual": true
+          },
+          {
+            "condition": {
+              "kind": "checked",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "checkbox",
+                "name": "Uncategorized"
+              },
+              "expected": false,
+              "constraintQuote": "只选择分类「Excel 验证」，不选默认分类"
+            },
+            "ok": true,
+            "actual": false
+          },
+          {
+            "condition": {
+              "kind": "artifact",
+              "target": {
+                "frame": "editor-canvas",
+                "by": "role",
+                "role": "textbox",
+                "name": "Write file name…"
+              },
+              "expected": {
+                "input": "attachment_excel",
+                "field": "sha256"
+              },
+              "covers": "attachment_excel"
+            },
+            "ok": true,
+            "actual": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+          }
+        ]
+      }
+    }
+  ],
+  "status": "completed",
+  "candidateHash": "1d5773930c0e60224748911306ce6f9c4a02eb1b95cb460d347751ea2c2b4082",
+  "taskHash": "a70d070ba78d32d8d61f7be1ccd7b315bc46f252f2f4bf2de1e0f50259a810d0",
+  "result": {
+    "url": "http://home.ts-ali.internal:38080/?p=109",
+    "runtimeEvidence": [
+      {
+        "condition": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "heading",
+            "name": {
+              "input": "post_title"
+            },
+            "level": 1
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "post_title"
+          },
+          "covers": "post_title"
+        },
+        "ok": true,
+        "actual": "自主归纳 heldout staged",
+        "expected": "自主归纳 heldout staged"
+      },
+      {
+        "condition": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "text",
+            "name": {
+              "input": "post_content"
+            }
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "post_content"
+          },
+          "covers": "post_content"
+        },
+        "ok": true,
+        "actual": "本文与附件均为虚构实验素材。样本 heldout，校验编号 87c3b01f49。请保留原始文件，不改写表格内容。",
+        "expected": "本文与附件均为虚构实验素材。样本 heldout，校验编号 87c3b01f49。请保留原始文件，不改写表格内容。"
+      },
+      {
+        "condition": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": {
+              "input": "post_category"
+            }
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "post_category"
+          },
+          "covers": "post_category"
+        },
+        "ok": true,
+        "actual": "Excel 验证",
+        "expected": "Excel 验证"
+      },
+      {
+        "condition": {
+          "kind": "download",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": {
+              "input": "attachment_excel",
+              "field": "stem"
+            }
+          },
+          "expected": {
+            "input": "attachment_excel",
+            "field": "sha256"
+          },
+          "covers": "attachment_excel"
+        },
+        "ok": true,
+        "actual": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+        "downloadedName": "heldout-staged.xlsx"
+      }
+    ],
+    "independent": {
+      "verified": true,
+      "unauthenticatedContext": true,
+      "url": "http://home.ts-ali.internal:38080/?p=109",
+      "title": "自主归纳 heldout staged",
+      "body": "本文与附件均为虚构实验素材。样本 heldout，校验编号 87c3b01f49。请保留原始文件，不改写表格内容。",
+      "category": "Excel 验证",
+      "attachmentUrl": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/heldout-staged.xlsx",
+      "downloadedName": "heldout-staged.xlsx",
+      "sourceBytes": 3755,
+      "downloadedBytes": 3755,
+      "sha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+      "exactBytesMatch": true
+    }
+  },
+  "modelCallsDuringBrowserReplay": 0
+}

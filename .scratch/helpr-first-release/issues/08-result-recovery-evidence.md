@@ -22,3 +22,5 @@ Map: [helpr 首版技术决策地图](../map.md)
 ## Comments
 
 2026-10-10：[流程重放实验](../experiments/runtime-flow-replay/REPORT.md#失败样本与修正) 已出现“发布成功，结果读取因重复链接报错”的真实样本，独立事后核对确认文章和附件均已存在。它可作为本事项的输入，不能直接当作提交中断恢复已通过；后续仍需控制中断位置并验证无重复发布。
+
+2026-10-10：[分阶段检查的首次完整校准](../experiments/staged-workflow-checks/artifacts/staged/calibration/results.json) 又出现发布请求已发出、结果链接沿用旧标题而返回 `uncertain` 的样本。[只读位置校准](../experiments/staged-workflow-checks/artifacts/staged/result-position-calibration.json) 随后核实了该委托的公开产出，没有再次发布同一委托。它提供实际恢复材料，尚未验证进程中断、双任务记录归属或自动恢复策略。
