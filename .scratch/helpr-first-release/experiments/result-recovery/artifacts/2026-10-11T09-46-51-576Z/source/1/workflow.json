@@ -1,0 +1,235 @@
+{
+  "schema": 1,
+  "version": 1,
+  "entryUrl": "{{entryUrl}}",
+  "origin": "{{origin}}",
+  "requiredParams": [
+    "origin",
+    "entryUrl",
+    "title",
+    "body",
+    "category",
+    "filePath",
+    "fileName",
+    "fileStem"
+  ],
+  "goal": "在已登录的测试后台新建一篇文章，标题为 {{title}}，正文为 {{body}}，把本次 {{filePath}} 上传并加入正文供读者下载，分类为 {{category}}（不选 Uncategorized）。发布文章并取得实际公开文章链接。所有内容和本次发布都已经授权。这不是更新已有文章。",
+  "createdAt": "2026-10-10T10:25:58.284Z",
+  "source": "live-model-exploration",
+  "steps": [
+    {
+      "action": {
+        "op": "hover",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "Posts"
+        }
+      },
+      "intent": "当前在仪表盘，需要新建文章。Posts 菜单下的 Add Post 链接在快照中不可见（inViewport=false），但 Posts 菜单本身可见，先悬停展开其子菜单以显示 Add Post 入口。"
+    },
+    {
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "Add Post"
+        }
+      },
+      "intent": "悬停 Posts 后子菜单已展开，Add Post 链接现在出现在快照中，点击进入新建文章页面。"
+    },
+    {
+      "action": {
+        "op": "fill",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "Add title"
+        },
+        "value": "{{title}}"
+      },
+      "intent": "上次等待标题输入框失败，因为标题输入框实际位于 editor-canvas iframe 中，可访问名称为 Add title。现在直接在该 frame 中定位并填写标题。"
+    },
+    {
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "button",
+          "name": "Add default block"
+        }
+      },
+      "intent": "标题已在 editor-canvas 的 Add title 中填好。下一步在正文区域输入正文：点击 editor-canvas 中的 Add default block 占位段落使其获得焦点，随后填入 {{body}}。"
+    },
+    {
+      "action": {
+        "op": "fill",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "document",
+          "name": "Empty block; start writing or type forward slash to choose a block"
+        },
+        "value": "{{body}}"
+      },
+      "intent": "标题已填好，正文段落块已选中。现在直接在 editor-canvas 的正文段落（document 角色，Empty block）中填入 {{body}}，完成正文输入。"
+    },
+    {
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "tab",
+          "name": "Post"
+        }
+      },
+      "intent": "标题和正文已填好。下一步需要上传附件并加入正文。当前快照中编辑器设置面板显示的是 Block 标签，没有可见的文件上传控件；需要先切换到 Post 标签查看分类和附件相关设置。但更直接的做法是：在正文段落块中通过块插入器添加文件块。不过快照中未显示文件块入口。先点击编辑器设置中的 Post 标签，以便后续设置分类并寻找附件上传入口。"
+    },
+    {
+      "action": {
+        "op": "check",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "checkbox",
+          "name": "{{category}}"
+        },
+        "value": true
+      },
+      "intent": "标题和正文已填好，当前 Post 设置面板已展开且显示 Categories 复选框。下一步先勾选分类 {{category}}（Excel 验证），这是发布前必须完成的设置，且该复选框在快照中唯一可见。"
+    },
+    {
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Block Inserter"
+        }
+      },
+      "intent": "标题、正文和分类已完成。下一步需要把附件加入正文：点击编辑器顶栏的 Block Inserter 打开块插入器，从中选择文件块以上传 {{filePath}}。"
+    },
+    {
+      "action": {
+        "op": "fill",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "searchbox",
+          "name": "Search"
+        },
+        "value": "File"
+      },
+      "intent": "块插入器已打开，但当前只显示文本类块，没有文件块入口。需要先在搜索框中输入 File 以筛选出文件块，然后才能选择并上传附件。"
+    },
+    {
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "option",
+          "name": "File"
+        }
+      },
+      "intent": "块插入器已打开且搜索框已输入 File，快照中 Media 列表下出现唯一的 File 块选项，点击它以插入文件块，随后即可上传 {{filePath}}。"
+    },
+    {
+      "action": {
+        "op": "upload",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "css",
+          "selector": "input[type=file]"
+        },
+        "value": "{{filePath}}"
+      },
+      "intent": "File 块已插入，editor-canvas 中出现隐藏的 file input 和可见的 Upload 按钮。直接对隐藏 file input 执行 upload，上传 {{filePath}}，随后等待处理完成。"
+    },
+    {
+      "action": {
+        "op": "wait",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "Download button text"
+        }
+      },
+      "intent": "上次等待标题输入框失败是因为标题在 editor-canvas 而非 main。当前快照显示文件正在上传（Uploading — learn-...xlsx），需等待上传完成后再发布。先等待 editor-canvas 中的文件块下载按钮文本出现，确认上传处理完成。"
+    },
+    {
+      "action": {
+        "op": "wait",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "Write file name…"
+        }
+      },
+      "intent": "上传仍在进行（页面显示 Uploading — learn-...xlsx），文件块已插入且下载按钮文本控件已出现。等待上传完成后再发布，避免发布不完整内容。"
+    },
+    {
+      "action": {
+        "op": "wait",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "Write file name…"
+        }
+      },
+      "intent": "上传仍在进行（页面显示 Uploading — learn-...xlsx），文件块已插入且下载按钮文本控件已出现。等待上传完成后再发布，避免发布不完整内容。"
+    },
+    {
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Publish"
+        }
+      },
+      "intent": "上传已完成（页面显示 Upload complete，文件块中已出现文件名 learn-2026-10-10T10-25-45-629Z 和 Download 按钮文本），标题、正文、分类均已就绪。下一步点击 Publish 按钮发布文章。"
+    },
+    {
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Publish",
+          "within": {
+            "frame": "main",
+            "by": "role",
+            "role": "region",
+            "name": "Editor publish"
+          }
+        }
+      },
+      "intent": "上次点击 Publish 因严格模式匹配到两个同名按钮而失败。当前快照显示预发布检查面板（region \"Editor publish\"）已展开，其中包含唯一的发布确认按钮（editor-post-publish-button），点击它以完成发布。"
+    },
+    {
+      "action": {
+        "op": "finish",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "View Post (opens in a new tab)"
+        }
+      },
+      "intent": "文章已发布成功，页面显示“is now live.”，并提供公开链接 http://home.ts-ali.internal:38080/?p=13。任务要求取得实际公开文章链接，因此用 finish 指向该已发布结果链接。"
+    }
+  ]
+}

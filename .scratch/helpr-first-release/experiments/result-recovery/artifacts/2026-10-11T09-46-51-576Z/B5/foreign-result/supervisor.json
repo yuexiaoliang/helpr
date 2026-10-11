@@ -1,0 +1,141 @@
+{
+  "caseName": "B5",
+  "mode": "recover",
+  "outputName": "foreign-result",
+  "pid": 55220,
+  "browserPids": [
+    55221,
+    55224,
+    55222,
+    55223
+  ],
+  "exit": {
+    "code": 0,
+    "signal": null
+  },
+  "result": {
+    "taskId": "2026-10-11T09-46-51-576Z/B5",
+    "executionId": "dbf53628-6ebc-47c6-b8d4-65ae95110a1d",
+    "intent": "running",
+    "previousPhase": "prepared",
+    "candidates": [
+      {
+        "editorUrl": "http://home.ts-ali.internal:38080/wp-admin/post.php?post=133&action=edit",
+        "text": "Select 恢复验证 同名双任务 2026-10-11T09-46-51-576Z\n\t\n恢复验证 同名双任务 2026-10-11T09-46-51-576Z — Draft\nEdit | Quick Edit | Trash | Preview\n\thelpr 测试用户\tExcel 验证\t—\nNo tags\n\t\n—\nNo comments\n\tLast Modified\n2026/10/11 at 6:06 am",
+        "resultUrl": null
+      },
+      {
+        "editorUrl": "http://home.ts-ali.internal:38080/wp-admin/post.php?post=132&action=edit",
+        "text": "Select 恢复验证 同名双任务 2026-10-11T09-46-51-576Z\n\t\n恢复验证 同名双任务 2026-10-11T09-46-51-576Z\nEdit | Quick Edit | Trash | View\n\thelpr 测试用户\tExcel 验证\t—\nNo tags\n\t\n—\nNo comments\n\tPublished\n2026/10/11 at 6:06 am",
+        "resultUrl": "http://home.ts-ali.internal:38080/?p=132"
+      },
+      {
+        "editorUrl": "http://home.ts-ali.internal:38080/wp-admin/post.php?post=127&action=edit",
+        "text": "Select 恢复验证 同名双任务 2026-10-11T09-46-51-576Z\n\t\n恢复验证 同名双任务 2026-10-11T09-46-51-576Z — Draft\nEdit | Quick Edit | Trash | Preview\n\thelpr 测试用户\tExcel 验证\t—\nNo tags\n\t\n—\nNo comments\n\tLast Modified\n2026/10/11 at 6:01 am",
+        "resultUrl": null
+      },
+      {
+        "editorUrl": "http://home.ts-ali.internal:38080/wp-admin/post.php?post=126&action=edit",
+        "text": "Select 恢复验证 同名双任务 2026-10-11T09-46-51-576Z\n\t\n恢复验证 同名双任务 2026-10-11T09-46-51-576Z — Draft\nEdit | Quick Edit | Trash | Preview\n\thelpr 测试用户\tExcel 验证\t—\nNo tags\n\t\n—\nNo comments\n\tLast Modified\n2026/10/11 at 6:01 am",
+        "resultUrl": null
+      }
+    ],
+    "decision": "uncertain",
+    "automaticAction": "none",
+    "pid": 55220,
+    "resultUrl": "http://home.ts-ali.internal:38080/?p=132",
+    "reason": "result-not-confirmed",
+    "error": "condition-unsatisfied",
+    "detail": {
+      "evidence": [
+        {
+          "condition": {
+            "kind": "text",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "heading",
+              "name": {
+                "input": "post_title"
+              },
+              "level": 1
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "post_title"
+            },
+            "covers": "post_title"
+          },
+          "ok": true,
+          "actual": "恢复验证 同名双任务 2026-10-11T09-46-51-576Z",
+          "expected": "恢复验证 同名双任务 2026-10-11T09-46-51-576Z"
+        },
+        {
+          "condition": {
+            "kind": "text",
+            "target": {
+              "frame": "main",
+              "by": "text",
+              "name": {
+                "input": "post_content"
+              }
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "post_content"
+            },
+            "covers": "post_content"
+          },
+          "ok": false,
+          "count": 0
+        },
+        {
+          "condition": {
+            "kind": "text",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "link",
+              "name": {
+                "input": "post_category"
+              }
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "post_category"
+            },
+            "covers": "post_category"
+          },
+          "ok": true,
+          "actual": "Excel 验证",
+          "expected": "Excel 验证"
+        },
+        {
+          "condition": {
+            "kind": "download",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "link",
+              "name": {
+                "input": "attachment_excel",
+                "field": "stem"
+              }
+            },
+            "expected": {
+              "input": "attachment_excel",
+              "field": "sha256"
+            },
+            "covers": "attachment_excel"
+          },
+          "ok": false,
+          "count": 0
+        }
+      ]
+    }
+  },
+  "forwardedPublications": 0,
+  "forwardedUploads": 0,
+  "blockedWrites": 2,
+  "stderr": ""
+}

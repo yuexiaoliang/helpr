@@ -16,7 +16,7 @@ try {
     execFileSync(process.execPath, ['--check', file], { cwd: root, stdio: 'pipe' });
   }
   console.log(`语法检查通过：${files.length} 个源码文件（排除历史快照）。`);
-  execFileSync(process.execPath, ['--test', experiment + 'model-api/client.test.mjs', experiment + 'ai-parallel-binding/control.test.mjs'], { cwd: root, stdio: 'inherit' });
+  execFileSync(process.execPath, ['--test', experiment + 'model-api/client.test.mjs', experiment + 'ai-parallel-binding/control.test.mjs', experiment + 'result-recovery/record.test.mjs'], { cwd: root, stdio: 'inherit' });
   execFileSync(process.execPath, [experiment + 'ai-parallel-binding/verify.mjs', '--check'], { cwd: root, stdio: 'inherit' });
 } catch (error) {
   if (error.stderr?.length) process.stderr.write(error.stderr);

@@ -1,0 +1,140 @@
+{
+  "caseName": "A5",
+  "mode": "recover",
+  "outputName": "visible-again",
+  "pid": 55528,
+  "browserPids": [
+    55529,
+    55534,
+    55532,
+    55533
+  ],
+  "exit": {
+    "code": 0,
+    "signal": null
+  },
+  "result": {
+    "taskId": "2026-10-11T09-46-51-576Z/A5",
+    "executionId": "cb6f0131-21f2-4d79-8e77-a8f8d61acbd1",
+    "intent": "running",
+    "previousPhase": "dispatching",
+    "candidates": [
+      {
+        "editorUrl": "http://home.ts-ali.internal:38080/wp-admin/post.php?post=133&action=edit",
+        "text": "Select 恢复验证 同名双任务 2026-10-11T09-46-51-576Z\n\t\n恢复验证 同名双任务 2026-10-11T09-46-51-576Z — Draft\nEdit | Quick Edit | Trash | Preview\n\thelpr 测试用户\tExcel 验证\t—\nNo tags\n\t\n—\nNo comments\n\tLast Modified\n2026/10/11 at 6:06 am",
+        "resultUrl": null
+      },
+      {
+        "editorUrl": "http://home.ts-ali.internal:38080/wp-admin/post.php?post=132&action=edit",
+        "text": "Select 恢复验证 同名双任务 2026-10-11T09-46-51-576Z\n\t\n恢复验证 同名双任务 2026-10-11T09-46-51-576Z\nEdit | Quick Edit | Trash | View\n\thelpr 测试用户\tExcel 验证\t—\nNo tags\n\t\n—\nNo comments\n\tPublished\n2026/10/11 at 6:06 am",
+        "resultUrl": "http://home.ts-ali.internal:38080/?p=132"
+      },
+      {
+        "editorUrl": "http://home.ts-ali.internal:38080/wp-admin/post.php?post=127&action=edit",
+        "text": "Select 恢复验证 同名双任务 2026-10-11T09-46-51-576Z\n\t\n恢复验证 同名双任务 2026-10-11T09-46-51-576Z — Draft\nEdit | Quick Edit | Trash | Preview\n\thelpr 测试用户\tExcel 验证\t—\nNo tags\n\t\n—\nNo comments\n\tLast Modified\n2026/10/11 at 6:01 am",
+        "resultUrl": null
+      },
+      {
+        "editorUrl": "http://home.ts-ali.internal:38080/wp-admin/post.php?post=126&action=edit",
+        "text": "Select 恢复验证 同名双任务 2026-10-11T09-46-51-576Z\n\t\n恢复验证 同名双任务 2026-10-11T09-46-51-576Z — Draft\nEdit | Quick Edit | Trash | Preview\n\thelpr 测试用户\tExcel 验证\t—\nNo tags\n\t\n—\nNo comments\n\tLast Modified\n2026/10/11 at 6:01 am",
+        "resultUrl": null
+      }
+    ],
+    "decision": "completed",
+    "automaticAction": "none",
+    "pid": 55528,
+    "observedEffect": "completed",
+    "resultUrl": "http://home.ts-ali.internal:38080/?p=132",
+    "evidence": [
+      {
+        "condition": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "heading",
+            "name": {
+              "input": "post_title"
+            },
+            "level": 1
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "post_title"
+          },
+          "covers": "post_title"
+        },
+        "ok": true,
+        "actual": "恢复验证 同名双任务 2026-10-11T09-46-51-576Z",
+        "expected": "恢复验证 同名双任务 2026-10-11T09-46-51-576Z"
+      },
+      {
+        "condition": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "text",
+            "name": {
+              "input": "post_content"
+            }
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "post_content"
+          },
+          "covers": "post_content"
+        },
+        "ok": true,
+        "actual": "虚构恢复实验。任务 A5，执行 280df5a7-a080-4579-981b-312f1ecd315f，附件内容独立核对。",
+        "expected": "虚构恢复实验。任务 A5，执行 280df5a7-a080-4579-981b-312f1ecd315f，附件内容独立核对。"
+      },
+      {
+        "condition": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": {
+              "input": "post_category"
+            }
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "post_category"
+          },
+          "covers": "post_category"
+        },
+        "ok": true,
+        "actual": "Excel 验证",
+        "expected": "Excel 验证"
+      },
+      {
+        "condition": {
+          "kind": "download",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": {
+              "input": "attachment_excel",
+              "field": "stem"
+            }
+          },
+          "expected": {
+            "input": "attachment_excel",
+            "field": "sha256"
+          },
+          "covers": "attachment_excel"
+        },
+        "ok": true,
+        "actual": "739de3c5f3094e821ba5cfe720b738aafa9e79f894c859835a659402fc3dd693",
+        "downloadedName": "A5-2026-10-11T09-46-51-576Z.xlsx"
+      }
+    ]
+  },
+  "forwardedPublications": 0,
+  "forwardedUploads": 0,
+  "blockedWrites": 2,
+  "stderr": ""
+}

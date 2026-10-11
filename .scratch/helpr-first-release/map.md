@@ -34,6 +34,8 @@ Status: open
 - [验证受限提议下的完整流程归纳](issues/16-constrained-workflow-induction.md)：十步局部复用及错误效果提议拦截得到验证；上传字节观测假设被反例否定，完整路径与保留集仍未成立。
 - [验证上传授权与完整流程的分阶段检查](issues/17-upload-authorization-and-workflow-checks.md)：十四步完整路径、模型校准与冻结后保留集通过；分阶段证据可用，请求与副作用的关联保证仍需独立验证。
 - [验证可见工作区中的 AI 双页操作归属](issues/06-ai-parallel-binding.md)：两种宿主各取得九项真实模型与逐原语控制证据，页面、弹窗、停止及错误保持归属；完整业务并行与真人接管仍不能由此推定。
+- [验证提交中断后的实际结果判定](issues/08-result-recovery-evidence.md)：四种中断位置取得重新判定与有限续跑证据，同名任务及用户意图保持归属；可能已派发且结果不明时不自动重试。
+- [核对并行执行与用户参与的状态模型](issues/09-participation-state-model.md)：原型明确各任务的参与与控制归属；用户确认停止后明确继续时先核对再续做，已完成不重发。
 
 ## Not yet specified
 

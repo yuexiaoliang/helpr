@@ -1,0 +1,202 @@
+{
+  "schema": 1,
+  "source": {
+    "actions": "../runtime-flow-replay/artifacts/2026-10-10T10-25-45-629Z/workflow-v1.json",
+    "conditions": "../staged-workflow-checks/artifacts/staged/frozen-candidate.json",
+    "recovery": "本轮通过真实 Posts 列表观察校准，未自动学习"
+  },
+  "listUrl": "http://home.ts-ali.internal:38080/wp-admin/edit.php",
+  "search": {
+    "by": "role",
+    "role": "searchbox",
+    "name": "Search Posts:"
+  },
+  "searchButton": {
+    "by": "role",
+    "role": "button",
+    "name": "Search Posts"
+  },
+  "rows": {
+    "by": "css",
+    "selector": "tbody tr"
+  },
+  "editLink": {
+    "by": "role",
+    "role": "link",
+    "name": {
+      "concat": [
+        "Edit “",
+        {
+          "input": "post_title"
+        },
+        "”"
+      ]
+    }
+  },
+  "viewLink": {
+    "by": "role",
+    "role": "link",
+    "name": {
+      "concat": [
+        "View “",
+        {
+          "input": "post_title"
+        },
+        "”"
+      ]
+    }
+  },
+  "saveDraft": {
+    "op": "click",
+    "target": {
+      "frame": "main",
+      "by": "role",
+      "role": "button",
+      "name": "Save draft"
+    }
+  },
+  "savedRecordQuery": "post",
+  "draftText": "Draft",
+  "draftChecks": [
+    {
+      "kind": "value",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "textbox",
+        "name": "Add title"
+      },
+      "compare": "equals",
+      "expected": {
+        "input": "post_title"
+      },
+      "covers": "post_title"
+    },
+    {
+      "kind": "value",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "text",
+        "name": {
+          "input": "post_content"
+        }
+      },
+      "compare": "equals",
+      "expected": {
+        "input": "post_content"
+      },
+      "covers": "post_content"
+    },
+    {
+      "kind": "checked",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "checkbox",
+        "name": {
+          "input": "post_category"
+        }
+      },
+      "expected": true,
+      "covers": "post_category"
+    },
+    {
+      "kind": "checked",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "checkbox",
+        "name": "Uncategorized"
+      },
+      "expected": false,
+      "constraintQuote": "只选择分类「Excel 验证」，不选默认分类"
+    }
+  ],
+  "draftArtifact": {
+    "kind": "artifact",
+    "target": {
+      "frame": "editor-canvas",
+      "by": "role",
+      "role": "textbox",
+      "name": "Write file name…"
+    },
+    "expected": {
+      "input": "attachment_excel",
+      "field": "sha256"
+    },
+    "covers": "attachment_excel"
+  },
+  "resultChecks": [
+    {
+      "kind": "text",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "heading",
+        "name": {
+          "input": "post_title"
+        },
+        "level": 1
+      },
+      "compare": "equals",
+      "expected": {
+        "input": "post_title"
+      },
+      "covers": "post_title"
+    },
+    {
+      "kind": "text",
+      "target": {
+        "frame": "main",
+        "by": "text",
+        "name": {
+          "input": "post_content"
+        }
+      },
+      "compare": "equals",
+      "expected": {
+        "input": "post_content"
+      },
+      "covers": "post_content"
+    },
+    {
+      "kind": "text",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "link",
+        "name": {
+          "input": "post_category"
+        }
+      },
+      "compare": "equals",
+      "expected": {
+        "input": "post_category"
+      },
+      "covers": "post_category"
+    },
+    {
+      "kind": "download",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "link",
+        "name": {
+          "input": "attachment_excel",
+          "field": "stem"
+        }
+      },
+      "expected": {
+        "input": "attachment_excel",
+        "field": "sha256"
+      },
+      "covers": "attachment_excel"
+    }
+  ],
+  "prepareSteps": 14,
+  "publishSteps": [
+    14,
+    15
+  ],
+  "finishStep": 16
+}

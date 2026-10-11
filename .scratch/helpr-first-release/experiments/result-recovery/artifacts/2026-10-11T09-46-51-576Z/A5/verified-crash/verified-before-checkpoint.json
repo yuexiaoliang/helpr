@@ -1,0 +1,91 @@
+{
+  "resultUrl": "http://home.ts-ali.internal:38080/?p=132",
+  "evidence": [
+    {
+      "condition": {
+        "kind": "text",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "heading",
+          "name": {
+            "input": "post_title"
+          },
+          "level": 1
+        },
+        "compare": "equals",
+        "expected": {
+          "input": "post_title"
+        },
+        "covers": "post_title"
+      },
+      "ok": true,
+      "actual": "恢复验证 同名双任务 2026-10-11T09-46-51-576Z",
+      "expected": "恢复验证 同名双任务 2026-10-11T09-46-51-576Z"
+    },
+    {
+      "condition": {
+        "kind": "text",
+        "target": {
+          "frame": "main",
+          "by": "text",
+          "name": {
+            "input": "post_content"
+          }
+        },
+        "compare": "equals",
+        "expected": {
+          "input": "post_content"
+        },
+        "covers": "post_content"
+      },
+      "ok": true,
+      "actual": "虚构恢复实验。任务 A5，执行 280df5a7-a080-4579-981b-312f1ecd315f，附件内容独立核对。",
+      "expected": "虚构恢复实验。任务 A5，执行 280df5a7-a080-4579-981b-312f1ecd315f，附件内容独立核对。"
+    },
+    {
+      "condition": {
+        "kind": "text",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": {
+            "input": "post_category"
+          }
+        },
+        "compare": "equals",
+        "expected": {
+          "input": "post_category"
+        },
+        "covers": "post_category"
+      },
+      "ok": true,
+      "actual": "Excel 验证",
+      "expected": "Excel 验证"
+    },
+    {
+      "condition": {
+        "kind": "download",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": {
+            "input": "attachment_excel",
+            "field": "stem"
+          }
+        },
+        "expected": {
+          "input": "attachment_excel",
+          "field": "sha256"
+        },
+        "covers": "attachment_excel"
+      },
+      "ok": true,
+      "actual": "739de3c5f3094e821ba5cfe720b738aafa9e79f894c859835a659402fc3dd693",
+      "downloadedName": "A5-2026-10-11T09-46-51-576Z.xlsx"
+    }
+  ],
+  "pid": 55550
+}
