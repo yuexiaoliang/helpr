@@ -40,7 +40,7 @@
 <script id="state-module">
 // 一次性逻辑模型：纯数据变换；不访问 DOM、网络或存储。
 const Model = (() => {
-  const name = t => `${t.name} · 第 ${t.run} 次`;
+  const name = t => `${t.key} · ${t.name} · 第 ${t.run} 次`;
   const done = t => t.phase === 'done';
   const ended = t => done(t) || t.intent === 'stopped';
   const request = (s,t) => s.requests.find(q => q.execution === t.id && q.state === 'open');
