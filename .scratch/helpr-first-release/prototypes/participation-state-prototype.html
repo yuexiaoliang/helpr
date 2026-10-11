@@ -11,7 +11,7 @@
   <h1>每项任务，保留自己的进度与决定</h1>
   <p class="intro">要核对的问题：两项任务同时推进时，确认、接管、继续、停止、修正目标、收起和重启，是否始终作用于正确的那一次执行？你可以自由点击，也可以按下方情境逐步体验。</p>
   <div class="notice"><strong>一次性逻辑原型。</strong> 所有网页、回复和重启均为内存模拟，没有真实发布、模型调用或磁盘恢复；刷新页面即可重置。这不是正式工作区的视觉设计。 <a href="#walkthrough">从引导演练开始 ↓</a></div>
-  <div class="review">待真人核对的候选行为：本次执行停止后，“继续”先保持停止；需明确重新执行才能开启新一轮。停止前已产生的结果仍保留。这个选择尚未写入产品共识。</div>
+  <div class="review">已确认：停止后明确说“继续”，先核对已有结果，再续做剩余工作；已经完成就告知结果，不重复提交。结果仍不确定时继续核对。查看历史、重新登录或重启程序不会自行恢复已停止的任务。</div>
   <section class="section" aria-labelledby="state-heading">
     <div class="bar"><h2 id="state-heading">当前状态</h2><div id="summary" class="pills"></div></div>
     <p id="assumption" class="muted"></p>
@@ -156,17 +156,19 @@ const Model = (() => {
       t.intent='stopped';t.epoch++;expire(s,t,'本次执行已停止');t.check=false;
       log(`${name(t)}已停止，不再派发动作；已有结果和定时计划保留。`);return finish();
     }
-    if(ended(t)){log('本次执行已结束。候选行为：不以“继续”重启旧执行；如需再做，明确发起新一轮。');return finish();}
+    if(a==='continue'){
+      t.intent='auto';t.epoch++;
+      if(done(t)){log(`${name(t)}已有核实的完整结果；直接告知结果，没有再次提交。`);return finish();}
+      t.check=true;if(t.view==='history')t.view='hidden';
+      if(t.approved!==t.content&&!request(s,t))ask(s,t);
+      log(`收到${name(t)}新的“继续”指令；先核对已有结果与现场，再续做剩余工作，仍须满足内容确认和登录条件。旧回复与旧处理结果不会因此重新生效。`);return finish();
+    }
+    if(ended(t)){log(done(t)?'本次已有核实的完整结果，没有再次提交。':'本次已停止；仅在收到新的明确“继续”指令后，先核对再续做。');return finish();}
     if(a==='capture'){s.captured={id:t.id,epoch:t.epoch,used:false};log(`暂时留住${name(t)}的一条处理结果，稍后可模拟送达。`);return finish();}
     if(a==='ask'){t.approved=null;ask(s,t);log(`${name(t)}在等待本次内容确认；不受影响的其它任务可以继续。`);return finish();}
     if(a==='web-input'){
       t.intent='human';t.epoch++;t.content++;t.approved=null;expire(s,t,'你已改动网页内容');
       log(`你在${name(t)}的网页输入文字，系统立即让出操作；本次内容已有变化。`);return finish();
-    }
-    if(a==='continue'){
-      t.intent='auto';t.check=true;
-      if(t.approved!==t.content&&!request(s,t))ask(s,t);
-      log(`收到${name(t)}的“继续”；仍须满足内容确认、登录和现场核对，不把它当成批准新内容。`);return finish();
     }
     if(a==='change-goal'){
       if(t.sent){log('原提交已经发出：先核对原结果，再根据你的新目标确定后续；不会悄悄重发。');return finish();}
@@ -202,7 +204,11 @@ const scenarios=[
  {id:'takeover',title:'查看与接管',description:'切换任务与移动鼠标只是在查看。输入网页才接管；说“继续”后，改过的内容仍需确认。',steps:[
  ['view','A1','查看 A','A 仍可自动推进'],['mouse','A1','只移动鼠标','操作归属不变'],['web-input','A1','在 A 网页中改一段文字','A 让出操作，B 继续'],['tick','B1','让 B 推进一步','B 的进度独立'],['continue','A1','对 A 说“继续”','变更后的内容需要确认'],['reply-current','A1','确认 A 的新内容','先排队核对现场'],['complete','B1','让 B 完成','释放一次执行机会'],['check-unchanged','A1','确认 A 现场与素材匹配','才继续自动操作']]},
  {id:'stop',title:'停止与迟到',description:'停止立即生效。旧处理结果不能继续操作网页；已发出的请求仍可能在网站生效。',steps:[
- ['capture','A1','暂时留住 A 的处理结果','记录它属于停止前的 A'],['sent','A1','模拟 A 请求已发出','网站结果尚未确定'],['stop','A1','停止 A','没有二次确认'],['deliver','B1','看 B 时收到 A 的旧结果','不能操作 A，也不能转交 B'],['observe-done','A1','核对发现 A 已经发布','保留“已停止”和实际产出'],['continue','A1','停止后再说“继续”','待你核对的候选：不重启旧执行']]},
+ ['capture','A1','暂时留住 A 的处理结果','记录它属于停止前的 A'],['sent','A1','模拟 A 请求已发出','网站结果尚未确定'],['stop','A1','停止 A','没有二次确认'],['deliver','B1','看 B 时收到 A 的旧结果','不能操作 A，也不能转交 B'],['observe-done','A1','核对发现 A 已经发布','保留“已停止”和实际产出'],['continue','A1','停止后再说“继续”','已有核实结果，告知完成，不重发'],['sent','A1','尝试再次提交','已完成的工作不会重做']]},
+ {id:'resume',title:'停止后续做',description:'关闭时停止了尚未提交的任务。重新查看保持停止；新的“继续”才允许核对与续做，旧问题和旧处理结果仍然失效。',steps:[
+ ['capture','A1','暂时留住 A 的处理结果','稍后在继续后送达'],['ask','A1','让 A 等待内容确认','保留停止前的问题'],['close','A1','点击 A 标签页的 ×','显示关闭提示'],['close-stop','A1','停止并关闭 A','停止且保留历史'],['reopen','A1','从历史重新查看 A','仍然停止，不自行恢复'],['continue','A1','明确对 A 说“继续”','核对前仍需确认本次内容'],['old-reply','A1','送达停止前的确认回复','不能批准继续后的当前问题'],['deliver','B1','送达停止前的处理结果','即使已说继续，旧结果仍不能操作网页'],['reply-current','A1','确认 A 当前内容','只确认这次问题'],['complete','B1','让 B 完成','A 获得核对机会'],['check-unchanged','A1','核对 A 草稿与素材一致','确认剩余工作后继续'],['complete','A1','完成 A 的剩余发布','只产生一次发布结果']]},
+ {id:'resume-unknown',title:'继续时结果不明',description:'停止前的请求可能已生效。明确继续也不能证明尚未发布；结果不明时保留核对，查到完整结果后告知完成。',steps:[
+ ['sent','A1','模拟 A 请求已经发出','请求没有回执'],['stop','A1','停止 A','停止后续派发'],['continue','A1','明确对 A 说“继续”','保留已派发事实，先核对'],['complete','B1','让 B 完成','A 获得核对机会'],['check-unchanged','A1','核对时暂未找到产出','仍无法证明没有发布'],['continue','A1','再次对 A 说“继续”','继续核对，不把指令当作允许重发'],['sent','A1','尝试重新提交','结果不明时不再次提交'],['observe-done','A1','稍后核实 A 已经发布','告知完整结果，不重发']]},
  {id:'goal',title:'修正与旧确认',description:'先出现旧内容确认，再把目标改为活动栏目。旧确认不能批准修改后的目标。',steps:[
  ['ask','A1','先让 A 请求内容确认','保存旧问题'],['change-goal','A1','改为发布到活动栏目','显示新的目标和内容'],['old-reply','A1','送达旧问题的“同意”','新目标仍未获批准'],['continue','A1','先对 A 说“继续”','仍不能替代内容确认'],['reply-current','A1','确认新目标的内容','仅批准这次新内容']]},
  {id:'hide',title:'收起与提醒',description:'收起不停止，重新打开不重跑。即使标签页已收起，也能从提醒处理同一任务。',steps:[
