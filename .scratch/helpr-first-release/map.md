@@ -43,6 +43,7 @@ Status: open
 - [验证页面变化后的输入归属与继续](issues/19-page-lifecycle-input-ownership.md#answer)：刷新失配已复现定位，受控生命周期中的重新绑定与核对后继续通过；未知归属仍暂停两项，升级兼容及真实休眠恢复未获保证。
 - [确定浏览器承载与流程执行组合](issues/07-browser-runtime-decision.md#answer)：首版采用 macOS / Electron、Playwright 与统一受控的结构化流程执行；用户接受未知输入时暂停两项及网站隐含写入的明确保证范围。
 - [确定执行记录、流程更新与定时恢复的约定](issues/10-durable-execution-contract.md#answer)：统一保存本机关联记录，按约定、目标和素材版本记处理事实；恢复先核对、旧工作不重复领取，并发流程候选不互相覆盖，持久一致性与自动恢复依据另行验证。
+- [确定本机交付、权限与更新约定](issues/20-local-delivery-and-updates.md#answer)：当前 Mac 自用、关窗口继续、遵循休眠、本机保留与备份；自动检测、默认手动安装及可选空闲自动更新，控制隔离和打包更新另行验证。
 
 ## Not yet specified
 
@@ -55,4 +56,6 @@ Status: open
 - 承诺微信公众号、小红书等具体平台已受支持；支持范围以相应真实网页验证为准。
 - 为选定后台或 Excel 任务编写产品专用业务实现，或默认沿用 flowpolit 的技术架构。
 - 在本轮首版交付 Windows、Linux 等其它平台；用户已选择先支持 macOS，其它平台取得同等证据后另行支持。
+- 首版同时覆盖其它 Mac 环境或正式向他人分发：当前先交付本人这台 Apple Silicon / macOS 14.8.3 的 Mac，扩大范围另行取得条件与证据；自用应用的自动检测及可选空闲更新仍在首版范围，见[本机交付约定](issues/20-local-delivery-and-updates.md#answer)。
+- 默认自动到期删除历史或自动将备份上传云端：首版采用本机保留、用户主动清理与本机备份，见[本机交付约定](issues/20-local-delivery-and-updates.md#answer)。
 - 构建能在发送前证明并隔离任意网站全部隐含写入的通用系统；已确认首版按委托约束 helpr 自身操作并核对结果，发现异常仍须停止后续自动动作和核对，详见[确定浏览器承载与流程执行组合](issues/07-browser-runtime-decision.md#answer)。

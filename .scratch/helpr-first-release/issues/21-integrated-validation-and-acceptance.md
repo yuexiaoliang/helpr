@@ -4,7 +4,7 @@ Type: grilling
 Label: wayfinder:grilling
 Mode: HITL
 Status: open
-Blocked by: 07, 10, 20, 22, 23
+Blocked by: 07, 10, 20, 22, 23, 24, 25
 Map: [helpr 首版技术决策地图](../map.md)
 
 ## Question
@@ -27,3 +27,5 @@ Map: [helpr 首版技术决策地图](../map.md)
 ## Comments
 
 2026-10-12，[确定执行记录、流程更新与定时恢复的约定](10-durable-execution-contract.md#answer)明确单一持久记录拥有者、SQLite 与独立不可变文件。新增前置[验证持久记录与执行资格的中断一致性](22-durable-record-consistency.md)和[验证恢复核对依据的自动形成](23-autonomous-recovery-evidence.md)，以区分本地协议可用、真实恢复依据可形成和完整产品已验收。最终安排须覆盖未完成素材不重复领取、有效确认不丢失、并发修复不互相覆盖，以及记录保存失败时的明确反馈。
+
+2026-10-12，[确定本机交付、权限与更新约定](20-local-delivery-and-updates.md#answer)确定当前 Mac 自用、关窗口继续、尊重休眠、主动清理及本机备份，并明确自动检测、默认手动安装和可选闲时自动更新。新增前置[验证浏览器控制连接与宿主隔离](24-private-browser-control.md)及[验证 macOS 自用应用的封装、更新与运行恢复](25-macos-packaged-lifecycle.md)。签名与可信更新来源尚须验证，不能将自用范围解释成取消用户要求的更新能力。

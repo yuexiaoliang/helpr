@@ -4,7 +4,7 @@ Type: task
 Label: wayfinder:task
 Mode: AFK
 Status: open
-Blocked by: 08, 10, 22
+Blocked by: 08, 10, 22, 24
 Map: [helpr 首版技术决策地图](../map.md)
 
 ## Question
@@ -12,6 +12,8 @@ Map: [helpr 首版技术决策地图](../map.md)
 现有恢复实验依靠操作者校准的定位与恢复入口。按已选浏览器和持久化协议，系统能否在正常学习与执行中，自行取得并保存目标身份、已核对检查点和结果／恢复规则，使新进程能够核对已有结果或有限续做，而无需维护者事后填入记录地址、网站选择器或成功判断？
 
 前提为[验证提交中断后的实际结果判定](08-result-recovery-evidence.md#answer)、[确定执行记录、流程更新与定时恢复的约定](10-durable-execution-contract.md#answer)和[验证持久记录与执行资格的中断一致性](22-durable-record-consistency.md)。采用的浏览器及流程路线见[确定浏览器承载与流程执行组合](07-browser-runtime-decision.md#answer)。
+
+交付调查又暴露了裸 CDP 连接的访问缺口，因此先等待[验证浏览器控制连接与宿主隔离](24-private-browser-control.md)确定可用连接；本实验使用该路径，不将旧的无认证端口直接当作产品运行入口。
 
 复用已有运行时流程能力、选定的 Electron / Playwright 路径和独立验证后台，保持实验规模只足以回答上述问题。模型提出的定位及规则必须有实际观察依据，经过通用执行入口校验；测试代理只控制故障并独立计数，网站特定知识不得进入产品候选的恢复判定。
 
