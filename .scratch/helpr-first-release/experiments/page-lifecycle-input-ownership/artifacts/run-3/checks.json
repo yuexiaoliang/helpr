@@ -1,0 +1,199 @@
+[
+  {
+    "name": "initial-A-input-stops-only-A",
+    "pass": true
+  },
+  {
+    "name": "reloaded-A-input-stops-only-A",
+    "pass": false,
+    "detail": {
+      "event": {
+        "seq": 9,
+        "at": 1791790608650,
+        "source": "automatic-native-probe",
+        "kind": "native-input",
+        "owner": "unknown",
+        "type": "mouseDown",
+        "receiverClass": "RenderWidgetHostViewCocoa",
+        "x": 100,
+        "y": 150,
+        "timestamp": 6382.878770208334,
+        "eventNumber": 9901,
+        "modifiers": 0,
+        "testInjection": true
+      },
+      "before": {
+        "task": "A",
+        "documentId": "512f11c0-1d56-4b84-93a4-251231a42d58",
+        "url": "http://127.0.0.1:53836/fixture?task=A",
+        "count": 1,
+        "text": "原有文字",
+        "focused": true,
+        "active": ""
+      },
+      "after": {
+        "task": "A",
+        "documentId": "20e1c619-0850-48ef-8ac3-f591883c7069",
+        "url": "http://127.0.0.1:53836/fixture?task=A",
+        "count": 0,
+        "text": "原有文字",
+        "focused": true,
+        "active": ""
+      },
+      "active": {
+        "A": false,
+        "B": false
+      }
+    }
+  },
+  {
+    "name": "B-can-continue-after-A-reload-input",
+    "pass": false,
+    "detail": {
+      "bError": "Execution stopped or superseded"
+    }
+  },
+  {
+    "name": "restoring-focus-alone-does-not-fix-stale-tag",
+    "pass": true,
+    "detail": {
+      "focus": {
+        "owner": "unknown",
+        "chain": [
+          {
+            "identity": "0x10403211e00",
+            "class": "RenderWidgetHostViewCocoa",
+            "x": 0,
+            "y": 60,
+            "width": 550,
+            "height": 700
+          },
+          {
+            "identity": "0x10402e24fc0",
+            "class": "WebContentsViewCocoa",
+            "x": 0,
+            "y": 60,
+            "width": 550,
+            "height": 700
+          },
+          {
+            "identity": "0x10400127e80",
+            "class": "BridgedContentView",
+            "x": 0,
+            "y": 0,
+            "width": 1100,
+            "height": 772
+          },
+          {
+            "identity": "0x10400352580",
+            "class": "NativeWidgetMacNSWindowTitledFrame",
+            "x": 0,
+            "y": -28,
+            "width": 1100,
+            "height": 800
+          }
+        ]
+      },
+      "event": {
+        "seq": 20,
+        "at": 1791790608764,
+        "source": "automatic-native-probe",
+        "kind": "native-input",
+        "owner": "unknown",
+        "type": "keyDown",
+        "receiverClass": "RenderWidgetHostViewCocoa",
+        "x": 0,
+        "y": 772,
+        "timestamp": 6382.970327958334,
+        "eventNumber": 0,
+        "modifiers": 0,
+        "keyCode": 0,
+        "testInjection": false
+      }
+    }
+  },
+  {
+    "name": "current-page-handle-survives-reload",
+    "pass": true
+  },
+  {
+    "name": "retagging-A-alone-restores-independent-mouse-owner",
+    "pass": true,
+    "detail": {
+      "event": {
+        "seq": 25,
+        "at": 1791790608825,
+        "source": "automatic-native-probe",
+        "kind": "native-input",
+        "owner": "A",
+        "type": "mouseDown",
+        "receiverClass": "RenderWidgetHostViewCocoa",
+        "x": 100,
+        "y": 150,
+        "timestamp": 6383.054168583334,
+        "eventNumber": 9901,
+        "modifiers": 0,
+        "testInjection": true
+      },
+      "afterRetag": {
+        "owner": "A",
+        "chain": [
+          {
+            "identity": "0x10403211e00",
+            "class": "RenderWidgetHostViewCocoa",
+            "x": 0,
+            "y": 60,
+            "width": 550,
+            "height": 700
+          },
+          {
+            "identity": "0x10402e24fc0",
+            "class": "WebContentsViewCocoa",
+            "x": 0,
+            "y": 60,
+            "width": 550,
+            "height": 700
+          },
+          {
+            "identity": "0x10400127e80",
+            "class": "BridgedContentView",
+            "x": 0,
+            "y": 0,
+            "width": 1100,
+            "height": 772
+          },
+          {
+            "identity": "0x10400352580",
+            "class": "NativeWidgetMacNSWindowTitledFrame",
+            "x": 0,
+            "y": -28,
+            "width": 1100,
+            "height": 800
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "retagging-A-restores-independent-keyboard-owner",
+    "pass": true,
+    "detail": {
+      "event": {
+        "seq": 32,
+        "at": 1791790608943,
+        "source": "automatic-native-probe",
+        "kind": "native-input",
+        "owner": "A",
+        "type": "keyDown",
+        "receiverClass": "RenderWidgetHostViewCocoa",
+        "x": 0,
+        "y": 772,
+        "timestamp": 6383.16109225,
+        "eventNumber": 0,
+        "modifiers": 0,
+        "keyCode": 0,
+        "testInjection": false
+      }
+    }
+  }
+]

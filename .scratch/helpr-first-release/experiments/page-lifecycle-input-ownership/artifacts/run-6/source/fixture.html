@@ -1,0 +1,11 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>helpr 页面变化核对</title>
+<style>body{font:18px system-ui;margin:24px;background:#f4f7fa;color:#172c45}button,input{font:18px system-ui;padding:10px;margin:12px 8px 12px 0}input{width:80%}#manual{display:block;width:90%;background:#174d80;color:white;border:0;border-radius:7px}#tick{margin-top:30px}</style>
+<h2 id="title"></h2><p>虚构网页 · 原生输入均为工具探针</p><p>自动进度：<strong id="count">0</strong></p>
+<button id="manual">网页操作</button><input id="text" value="原有文字"><br><button id="tick">自动推进</button><button id="pending" disabled>等待网页</button>
+<script>
+const task=new URLSearchParams(location.search).get('task');const documentId=crypto.randomUUID();let count=0,last=Promise.resolve();
+document.querySelector('#title').textContent='任务 '+task;
+async function commit(kind){const response=await fetch('/commit',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({task,documentId,kind})});const row=await response.json();count=row.count;document.querySelector('#count').textContent=count;return row;}
+for(const [id,kind]of [['manual','manual'],['tick','auto'],['pending','late']])document.querySelector('#'+id).onclick=()=>last=commit(kind);
+window.lab={snapshot:()=>({task,documentId,url:location.href,count,text:document.querySelector('#text').value,focused:document.hasFocus(),active:document.activeElement?.id}),wait:()=>last};
+</script></html>

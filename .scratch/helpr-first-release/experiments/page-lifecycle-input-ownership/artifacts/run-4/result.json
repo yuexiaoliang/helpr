@@ -1,0 +1,524 @@
+{
+  "mode": "candidate",
+  "checks": [
+    {
+      "name": "reload-invalidates-old-operation",
+      "pass": true,
+      "detail": {
+        "changed": {
+          "before": {
+            "task": "A",
+            "documentId": "dd0d46c8-2480-4e13-98f9-3d4850a76c4f",
+            "url": "http://127.0.0.1:54333/fixture?task=A",
+            "count": 0,
+            "text": "原有文字",
+            "focused": false,
+            "active": ""
+          },
+          "after": {
+            "task": "A",
+            "documentId": "1fe060ad-844c-444e-bb1a-39959d9c6ce6",
+            "url": "http://127.0.0.1:54333/fixture?task=A",
+            "count": 0,
+            "text": "原有文字",
+            "focused": true,
+            "active": ""
+          }
+        }
+      }
+    },
+    {
+      "name": "reload-keeps-owned-outer-subtree",
+      "pass": true,
+      "detail": {
+        "nativeBefore": {
+          "owner": "A",
+          "chain": [
+            {
+              "identity": "0x1040021cd00",
+              "class": "RenderWidgetHostViewCocoa",
+              "x": 0,
+              "y": 60,
+              "width": 550,
+              "height": 700
+            },
+            {
+              "identity": "0x10402ec4780",
+              "class": "WebContentsViewCocoa",
+              "x": 0,
+              "y": 60,
+              "width": 550,
+              "height": 700
+            },
+            {
+              "identity": "0x10400127e80",
+              "class": "BridgedContentView",
+              "x": 0,
+              "y": 0,
+              "width": 1100,
+              "height": 772
+            },
+            {
+              "identity": "0x10400352580",
+              "class": "NativeWidgetMacNSWindowTitledFrame",
+              "x": 0,
+              "y": -28,
+              "width": 1100,
+              "height": 800
+            }
+          ]
+        },
+        "nativeAfter": {
+          "owner": "A",
+          "chain": [
+            {
+              "identity": "0x10403246900",
+              "class": "RenderWidgetHostViewCocoa",
+              "x": 0,
+              "y": 60,
+              "width": 550,
+              "height": 700
+            },
+            {
+              "identity": "0x10402ec4780",
+              "class": "WebContentsViewCocoa",
+              "x": 0,
+              "y": 60,
+              "width": 550,
+              "height": 700
+            },
+            {
+              "identity": "0x10400127e80",
+              "class": "BridgedContentView",
+              "x": 0,
+              "y": 0,
+              "width": 1100,
+              "height": 772
+            },
+            {
+              "identity": "0x10400352580",
+              "class": "NativeWidgetMacNSWindowTitledFrame",
+              "x": 0,
+              "y": -28,
+              "width": 1100,
+              "height": 800
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "self-reload-A-input-stops-only-A",
+      "pass": true
+    },
+    {
+      "name": "takeover-requires-explicit-continue",
+      "pass": true
+    },
+    {
+      "name": "explicit-continue-keeps-current-text-and-B-progress",
+      "pass": true
+    },
+    {
+      "name": "keyboard-after-reload-only-yields-A",
+      "pass": true,
+      "detail": {
+        "event": {
+          "seq": 83,
+          "at": 1791791086629,
+          "source": "automatic-native-probe",
+          "kind": "native-input",
+          "owner": "A",
+          "type": "keyDown",
+          "receiverClass": "RenderWidgetHostViewCocoa",
+          "x": 0,
+          "y": 772,
+          "timestamp": 6860.856990666667,
+          "eventNumber": 0,
+          "modifiers": 0,
+          "keyCode": 0,
+          "testInjection": false
+        }
+      }
+    },
+    {
+      "name": "native-key-actually-edits-current-document",
+      "pass": true,
+      "detail": {
+        "before": {
+          "task": "A",
+          "documentId": "ca33fab7-bfe5-4b93-81ef-3a8dc0f8dabb",
+          "url": "http://127.0.0.1:54333/fixture?task=A",
+          "count": 0,
+          "text": "原有文字",
+          "focused": true,
+          "active": "text"
+        },
+        "after": {
+          "task": "A",
+          "documentId": "ca33fab7-bfe5-4b93-81ef-3a8dc0f8dabb",
+          "url": "http://127.0.0.1:54333/fixture?task=A",
+          "count": 0,
+          "text": "a原有文字",
+          "focused": true,
+          "active": "text"
+        }
+      }
+    },
+    {
+      "name": "navigation-input-owned-before-control-rebind",
+      "pass": true,
+      "detail": {
+        "changed": {
+          "before": {
+            "task": "A",
+            "documentId": "ca33fab7-bfe5-4b93-81ef-3a8dc0f8dabb",
+            "url": "http://127.0.0.1:54333/fixture?task=A",
+            "count": 0,
+            "text": "a原有文字",
+            "focused": true,
+            "active": "text"
+          },
+          "after": {
+            "task": "A",
+            "documentId": "dbe1fe00-1427-4978-98f1-9f79882e7637",
+            "url": "http://127.0.0.1:54333/fixture?task=A&revision=2",
+            "count": 0,
+            "text": "原有文字",
+            "focused": true,
+            "active": ""
+          }
+        }
+      }
+    },
+    {
+      "name": "previous-navigation-token-rejected",
+      "pass": true
+    },
+    {
+      "name": "second-origin-rebind-preserves-task-owner",
+      "pass": true,
+      "detail": {
+        "changed": {
+          "before": {
+            "task": "A",
+            "documentId": "dbe1fe00-1427-4978-98f1-9f79882e7637",
+            "url": "http://127.0.0.1:54333/fixture?task=A&revision=2",
+            "count": 2,
+            "text": "原有文字",
+            "focused": true,
+            "active": "tick"
+          },
+          "after": {
+            "task": "A",
+            "documentId": "a28bb33c-eff5-4567-a9b1-dae9331e9009",
+            "url": "http://127.0.0.1:54334/fixture?task=A",
+            "count": 0,
+            "text": "原有文字",
+            "focused": true,
+            "active": ""
+          }
+        }
+      }
+    },
+    {
+      "name": "second-origin-does-not-reuse-old-operation",
+      "pass": true
+    },
+    {
+      "name": "replacement-has-new-target-and-correct-input-owner",
+      "pass": true,
+      "detail": {
+        "oldId": 2,
+        "newId": 5
+      }
+    },
+    {
+      "name": "replaced-view-old-page-actually-closed",
+      "pass": true
+    },
+    {
+      "name": "replacement-rejects-old-task-token",
+      "pass": true
+    },
+    {
+      "name": "binding-uses-registered-target-not-url",
+      "pass": true,
+      "detail": {
+        "registeredId": 5,
+        "decoyId": 6,
+        "expectedDoc": "eb96737f-d567-404f-b332-f98cda6010d2",
+        "decoyDoc": "f1291f17-b01f-4298-a5a9-83e93cec6e49"
+      }
+    },
+    {
+      "name": "navigation-cancels-wait-and-rejects-old-queue",
+      "pass": true,
+      "detail": {
+        "pendingResult": {
+          "resolved": false,
+          "error": "locator.click: Execution stopped or superseded\nCall log:\n\u001b[2m  - waiting for locator('#pending')\u001b[22m\n\u001b[2m    - locator resolved to <button disabled id=\"pending\">等待网页</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is not enabled\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 100ms\u001b[22m\n\u001b[2m  - operation was aborted: Execution stopped or superseded\u001b[22m\n"
+        },
+        "oldAttempt": {
+          "rejected": true,
+          "error": "stale-page-binding"
+        }
+      }
+    },
+    {
+      "name": "old-pending-click-never-reaches-server",
+      "pass": true
+    },
+    {
+      "name": "reload-and-rebind-do-not-clear-user-stop",
+      "pass": true
+    },
+    {
+      "name": "explicit-A-continue-leaves-user-stopped-B-stopped",
+      "pass": true
+    },
+    {
+      "name": "disconnected-control-rejects-old-operation",
+      "pass": true
+    },
+    {
+      "name": "reconnect-only-does-not-resume-stopped-work",
+      "pass": true
+    },
+    {
+      "name": "reconnect-continue-reads-current-page-and-preserves-text",
+      "pass": true
+    },
+    {
+      "name": "reconnect-does-not-restart-user-stopped-B",
+      "pass": true
+    },
+    {
+      "name": "old-control-token-stays-invalid-after-reconnect",
+      "pass": true
+    },
+    {
+      "name": "host-view-switch-and-chat:completed",
+      "pass": false,
+      "detail": {
+        "message": "native-subtree-bounds-mismatch",
+        "stack": "Error: native-subtree-bounds-mismatch\n    at bindNonTasks (/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/page-lifecycle-input-ownership/cases.cjs:13:41)\n    at layout (/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/page-lifecycle-input-ownership/cases.cjs:22:3)\n    at /Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/page-lifecycle-input-ownership/cases.cjs:141:70\n    at scenario (/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/page-lifecycle-input-ownership/cases.cjs:52:13)\n    at async candidateChecks (/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/page-lifecycle-input-ownership/cases.cjs:140:3)\n    at async main (/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/page-lifecycle-input-ownership/electron.cjs:45:3)"
+      }
+    },
+    {
+      "name": "unknown-not-relabelled-as-A",
+      "pass": true,
+      "detail": {
+        "event": {
+          "seq": 357,
+          "at": 1791791088104,
+          "source": "automatic-native-probe",
+          "kind": "native-input",
+          "owner": "unknown",
+          "type": "mouseDown",
+          "receiverClass": "RenderWidgetHostViewCocoa",
+          "x": 100,
+          "y": 150,
+          "timestamp": 6862.338794125,
+          "eventNumber": 9901,
+          "modifiers": 0,
+          "testInjection": true
+        },
+        "states": {
+          "A": {
+            "active": false,
+            "ready": true,
+            "reasons": [
+              "unknown-input"
+            ],
+            "generation": 21,
+            "wcId": 5,
+            "bindingSerial": 36,
+            "documentEpoch": 11,
+            "viewVersion": 2
+          },
+          "B": {
+            "active": false,
+            "ready": true,
+            "reasons": [
+              "unknown-input"
+            ],
+            "generation": 12,
+            "wcId": 3,
+            "bindingSerial": 37,
+            "documentEpoch": 3,
+            "viewVersion": 1
+          }
+        }
+      }
+    },
+    {
+      "name": "unknown-does-not-auto-resume",
+      "pass": true
+    },
+    {
+      "name": "continue-rechecks-owner-and-keeps-other-unknown-task-paused",
+      "pass": true
+    },
+    {
+      "name": "verification-result-from-old-document-rejected",
+      "pass": true,
+      "detail": {
+        "result": {
+          "rejected": true,
+          "error": "binding-changed-during-observation"
+        }
+      }
+    },
+    {
+      "name": "fresh-verification-can-resume-after-race",
+      "pass": true
+    },
+    {
+      "name": "explicit-continue-cannot-skip-page-verification",
+      "pass": true,
+      "detail": {
+        "result": {
+          "rejected": true,
+          "error": "current-page-unverified"
+        }
+      }
+    }
+  ],
+  "pass": false,
+  "receipts": [
+    {
+      "task": "B",
+      "documentId": "afa45573-d18b-48fe-ac51-b9b7ee35a411",
+      "kind": "auto",
+      "count": 1,
+      "at": 1791791086540
+    },
+    {
+      "task": "A",
+      "documentId": "1fe060ad-844c-444e-bb1a-39959d9c6ce6",
+      "kind": "auto",
+      "count": 1,
+      "at": 1791791086540
+    },
+    {
+      "task": "B",
+      "documentId": "afa45573-d18b-48fe-ac51-b9b7ee35a411",
+      "kind": "auto",
+      "count": 2,
+      "at": 1791791086644
+    },
+    {
+      "task": "B",
+      "documentId": "afa45573-d18b-48fe-ac51-b9b7ee35a411",
+      "kind": "auto",
+      "count": 3,
+      "at": 1791791086702
+    },
+    {
+      "task": "B",
+      "documentId": "afa45573-d18b-48fe-ac51-b9b7ee35a411",
+      "kind": "auto",
+      "count": 4,
+      "at": 1791791086803
+    },
+    {
+      "task": "A",
+      "documentId": "dbe1fe00-1427-4978-98f1-9f79882e7637",
+      "kind": "auto",
+      "count": 2,
+      "at": 1791791086804
+    },
+    {
+      "task": "B",
+      "documentId": "afa45573-d18b-48fe-ac51-b9b7ee35a411",
+      "kind": "auto",
+      "count": 5,
+      "at": 1791791086903
+    },
+    {
+      "task": "B",
+      "documentId": "afa45573-d18b-48fe-ac51-b9b7ee35a411",
+      "kind": "auto",
+      "count": 6,
+      "at": 1791791086969
+    },
+    {
+      "task": "B",
+      "documentId": "afa45573-d18b-48fe-ac51-b9b7ee35a411",
+      "kind": "auto",
+      "count": 7,
+      "at": 1791791087070
+    },
+    {
+      "task": "A",
+      "documentId": "eb96737f-d567-404f-b332-f98cda6010d2",
+      "kind": "auto",
+      "count": 3,
+      "at": 1791791087153
+    },
+    {
+      "task": "B",
+      "documentId": "afa45573-d18b-48fe-ac51-b9b7ee35a411",
+      "kind": "auto",
+      "count": 8,
+      "at": 1791791087173
+    },
+    {
+      "task": "B",
+      "documentId": "afa45573-d18b-48fe-ac51-b9b7ee35a411",
+      "kind": "auto",
+      "count": 9,
+      "at": 1791791087270
+    },
+    {
+      "task": "B",
+      "documentId": "afa45573-d18b-48fe-ac51-b9b7ee35a411",
+      "kind": "auto",
+      "count": 10,
+      "at": 1791791087335
+    },
+    {
+      "task": "A",
+      "documentId": "552fca8e-8f67-43c0-9762-d77bc4dab5ae",
+      "kind": "auto",
+      "count": 4,
+      "at": 1791791087370
+    },
+    {
+      "task": "A",
+      "documentId": "f825911d-abed-4767-8510-8fe8ea2b05b7",
+      "kind": "auto",
+      "count": 5,
+      "at": 1791791087621
+    },
+    {
+      "task": "A",
+      "documentId": "f825911d-abed-4767-8510-8fe8ea2b05b7",
+      "kind": "auto",
+      "count": 6,
+      "at": 1791791087886
+    },
+    {
+      "task": "A",
+      "documentId": "f825911d-abed-4767-8510-8fe8ea2b05b7",
+      "kind": "auto",
+      "count": 7,
+      "at": 1791791088136
+    },
+    {
+      "task": "A",
+      "documentId": "513f7975-30d4-49c4-9763-ecaf615685c0",
+      "kind": "auto",
+      "count": 8,
+      "at": 1791791088426
+    },
+    {
+      "task": "B",
+      "documentId": "afa45573-d18b-48fe-ac51-b9b7ee35a411",
+      "kind": "auto",
+      "count": 11,
+      "at": 1791791088438
+    }
+  ]
+}

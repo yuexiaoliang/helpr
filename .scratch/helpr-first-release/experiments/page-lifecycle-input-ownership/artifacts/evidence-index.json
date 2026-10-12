@@ -1,0 +1,365 @@
+{
+  "audit": "passed",
+  "auditorSha256": "6700b35914c4feb037b02213d8b180fb7f7cafe4d09708ea84a16643ecce622c",
+  "budgetSha256": "a3e324d5a2bf50a1e36b01f825ffebe871a2f4081e25d7f9bf2d78df1dc75ff2",
+  "launches": 6,
+  "cases": 35,
+  "sourceVersions": 4,
+  "binaryChecks": {
+    "candidate-native.node": "verified-present-local-build",
+    "legacy-native.node": "verified-present-local-build"
+  },
+  "operatorSource": "automatic-native-probe; no new human samples",
+  "runs": [
+    {
+      "run": "run-1",
+      "mode": "baseline",
+      "sourceVersion": "d35f784be73fe9255b4d0797109ad4a2e7a333989798c2b7c480695335b2aa0d",
+      "cases": 1,
+      "checks": 3,
+      "passedChecks": 1,
+      "expectedFailures": [
+        "B-can-continue-after-A-reload-input",
+        "reloaded-A-input-stops-only-A"
+      ],
+      "nativeInputs": 2,
+      "unknownInputs": [
+        9
+      ],
+      "repeatedProbeKeys": [],
+      "candidate": null,
+      "artifactSha256": {
+        "checks.json": "ee52a47837870092d60647cdd37cf7cf7bff4c01e34f92686d14e4957c3de15b",
+        "environment.json": "eea7f7336dc1d1c1603631a8db71f03495e632f46419803e8fd860adf92b25de",
+        "events.jsonl": "62a56305d807b944a8ddaf381ba87ea8706306950c5e5d30589c5c985d724bdf",
+        "result.json": "676cf37c7d056735082f535bfd3957c04f5bea7eb14d181f34131232e1318c88",
+        "server.json": "5d03d6b77bd2da899ff2fcdc16b4b58398afa92b09c8442bd7a1bacb7be3e41e",
+        "source/PLAN.md": "d4664e2685ac5c60e18eec1bdd01bfa7175ca17c538cb342417a25e5e34b1cbf",
+        "source/control.mjs": "fb93f1532d4bb0373d16abc53f3863c8a51e6937ef5ef60511e45bd09f43040b",
+        "source/electron.cjs": "9add836ce6b32606d3ba11ca094cd85d28449967bc13cb50fa61861a855e8a73",
+        "source/fixture.html": "f6fde96e9a6e11a36915b948fb95ca8811c56439143c3ddb5ef18deedad95c51",
+        "source/hashes.json": "c686316e363e253af813475361f4042ed2cbc36eda15e2bb597158312ce90843",
+        "source/legacy-native-build.json": "bc0b4adf364cd2bec21125d035ab31ad2773e8478d822832d5fb87995e0519a7",
+        "source/legacy-native.mm": "f4d6e17ecb03e47bb74db99e38de13f98ce0bc4e152e28db2cb147d44c5ad214",
+        "source/run.mjs": "cbf7a8344673de20c7ee0505a81b15ad88751593f460a4e0bd4069bbd6b94167",
+        "stderr.log": "e7f239e601a2d9c83a5e55d45bc6e55bb6906b716205aa27dec6b0dedf0782de",
+        "stdout.log": "0df3a8edbacb14577072b6a99f7226aff3aa841347262b08e800fab48005a196"
+      }
+    },
+    {
+      "run": "run-2",
+      "mode": "baseline",
+      "sourceVersion": "d35f784be73fe9255b4d0797109ad4a2e7a333989798c2b7c480695335b2aa0d",
+      "cases": 1,
+      "checks": 3,
+      "passedChecks": 1,
+      "expectedFailures": [
+        "B-can-continue-after-A-reload-input",
+        "reloaded-A-input-stops-only-A"
+      ],
+      "nativeInputs": 2,
+      "unknownInputs": [
+        9
+      ],
+      "repeatedProbeKeys": [],
+      "candidate": null,
+      "artifactSha256": {
+        "checks.json": "a56ce6102d5a836727e579f7030b409b4bd0419f24b13e8beca60927b6321fb4",
+        "environment.json": "ae943677aa3f62a897af2a95a4482062da0bd7b5d5c97f7d86922325611a1fa8",
+        "events.jsonl": "b7fe67cc950b7646e5875ed0d9927b9178afc71c456b914f147a19eccdc3dd4a",
+        "result.json": "2b4faec699b45a47e1184691721d28cce414f45cc022edd3a9ab2f3ac0046ec7",
+        "server.json": "ab9c09fe3cd69464915849cc4b6c12230a828d2b84eae2288770ed305c9e4b28",
+        "source/PLAN.md": "d4664e2685ac5c60e18eec1bdd01bfa7175ca17c538cb342417a25e5e34b1cbf",
+        "source/control.mjs": "fb93f1532d4bb0373d16abc53f3863c8a51e6937ef5ef60511e45bd09f43040b",
+        "source/electron.cjs": "9add836ce6b32606d3ba11ca094cd85d28449967bc13cb50fa61861a855e8a73",
+        "source/fixture.html": "f6fde96e9a6e11a36915b948fb95ca8811c56439143c3ddb5ef18deedad95c51",
+        "source/hashes.json": "c686316e363e253af813475361f4042ed2cbc36eda15e2bb597158312ce90843",
+        "source/legacy-native-build.json": "bc0b4adf364cd2bec21125d035ab31ad2773e8478d822832d5fb87995e0519a7",
+        "source/legacy-native.mm": "f4d6e17ecb03e47bb74db99e38de13f98ce0bc4e152e28db2cb147d44c5ad214",
+        "source/run.mjs": "cbf7a8344673de20c7ee0505a81b15ad88751593f460a4e0bd4069bbd6b94167",
+        "stderr.log": "b163d5ab35b5ca901285d1df236cf3db0bcc096b6584cc515163ebe9ef3e53c0",
+        "stdout.log": "0df3a8edbacb14577072b6a99f7226aff3aa841347262b08e800fab48005a196"
+      }
+    },
+    {
+      "run": "run-3",
+      "mode": "diagnostic",
+      "sourceVersion": "d428d9e4a74d38459f3da8d26c76b47234c9a2b6a5c68e9032d319137596e582",
+      "cases": 1,
+      "checks": 7,
+      "passedChecks": 5,
+      "expectedFailures": [
+        "B-can-continue-after-A-reload-input",
+        "reloaded-A-input-stops-only-A"
+      ],
+      "nativeInputs": 7,
+      "unknownInputs": [
+        9,
+        17,
+        20
+      ],
+      "repeatedProbeKeys": [
+        {
+          "originalSeq": 17,
+          "repeatedSeq": 20,
+          "timestamp": 6382.970327958334
+        },
+        {
+          "originalSeq": 30,
+          "repeatedSeq": 32,
+          "timestamp": 6383.16109225
+        }
+      ],
+      "candidate": null,
+      "artifactSha256": {
+        "checks.json": "689033b8c09684c6cf9115a0daddb6cca3da9f9e1638284bf6fccfa758bcb92b",
+        "environment.json": "becae83f8b75c747a6a2969a9d6c8a2a598d7cc8d3d2a2bad68f7cd46d94dc52",
+        "events.jsonl": "893ec6a0ae90c93f1424e66acedef9eadc31fc7c2f4483c085fa68ababbfa8f5",
+        "native-before-after.json": "9f0d4c5ef7b4971fbd850519d22a79e29453166db9616028b4157c3d3fb62cd7",
+        "result.json": "fbf30d6bfd3a62047be09f79214b160ff37b8e5dca61a0fb5892d4eb4134479a",
+        "server.json": "7c82438f9b5bcd6853ef657b5b9ba9c8638673d453505daf115e4df17bb3e300",
+        "source/PLAN.md": "d4664e2685ac5c60e18eec1bdd01bfa7175ca17c538cb342417a25e5e34b1cbf",
+        "source/build.mjs": "e9a98cda3e9174a1e5b2884fc07fb88840d15b9cb4920350e25e60682fd5b0ff",
+        "source/control.mjs": "fb93f1532d4bb0373d16abc53f3863c8a51e6937ef5ef60511e45bd09f43040b",
+        "source/electron.cjs": "cb8d02d9fa58ed4636102b99df27bdfa0b3a1067e2a3979f98ee1877667d282b",
+        "source/fixture.html": "f6fde96e9a6e11a36915b948fb95ca8811c56439143c3ddb5ef18deedad95c51",
+        "source/hashes.json": "90492a406cf3ba26860f3908d0f8911cce3491ff75f723646643f8b3681f1546",
+        "source/legacy-native-build.json": "bc0b4adf364cd2bec21125d035ab31ad2773e8478d822832d5fb87995e0519a7",
+        "source/legacy-native.mm": "f4d6e17ecb03e47bb74db99e38de13f98ce0bc4e152e28db2cb147d44c5ad214",
+        "source/native/input-monitor.mm": "e189850d5b2f46171c7b2255ce1297c9a6996482df04be34e4f033b2a0902c44",
+        "source/run.mjs": "8eb217d83460c5be396d9a232bb54f3aeb8ea55d2d130f10004607faa53d2cd1",
+        "stderr.log": "83706fb3412040a771c5a5ae99ba4ba6043b4e9fd75978a02b62e390bbae1f03",
+        "stdout.log": "bb19003bd54b49b120f2da002182bd807e255a3cdf7d8a5497e4407a95a901f2"
+      }
+    },
+    {
+      "run": "run-4",
+      "mode": "candidate",
+      "sourceVersion": "ad218878f0ecc0c865648d43567194665e8e9de79bd3f0f17fccc9753afdd057",
+      "cases": 13,
+      "checks": 31,
+      "passedChecks": 30,
+      "expectedFailures": [
+        "host-view-switch-and-chat:completed"
+      ],
+      "nativeInputs": 7,
+      "unknownInputs": [
+        357
+      ],
+      "repeatedProbeKeys": [
+        {
+          "originalSeq": 79,
+          "repeatedSeq": 83,
+          "timestamp": 6860.856990666667
+        }
+      ],
+      "candidate": {
+        "resumesVerified": 37,
+        "independentProgress": [
+          {
+            "inputSeq": 79,
+            "type": "keyDown",
+            "BDispatchSeqs": [
+              86
+            ],
+            "BReceiptCounts": [
+              3
+            ]
+          },
+          {
+            "inputSeq": 83,
+            "type": "keyDown",
+            "BDispatchSeqs": [
+              86
+            ],
+            "BReceiptCounts": [
+              3
+            ]
+          },
+          {
+            "inputSeq": 146,
+            "type": "mouseDown",
+            "BDispatchSeqs": [
+              149
+            ],
+            "BReceiptCounts": [
+              5
+            ]
+          }
+        ],
+        "lateReceipts": 0
+      },
+      "artifactSha256": {
+        "candidate-summary.json": "f074dfa86ea42aa2aaadec679f4f92b300805d18e2bfd0d5e5aba2f455493219",
+        "cases.json": "fdfb909a441da29122fe49ba55ba973ec1ed96674191a3488a73fb07c31844d8",
+        "checks.json": "a5a044f88625b8a092c5b1400b07df90df7af1cadf5d05b712a1e8672e6bb775",
+        "environment.json": "2605140b32cb6e6128fe3c95cb27c98d9587632ac9129063642d3e9513c99a02",
+        "events.jsonl": "cc135ddc90d037ae9a38db482754f912369c13f669cb4fc3e0899630498cf795",
+        "result.json": "34ee147625101cf4bfef9188b7ed60042c923fec7fb708d7c0fa464e2488ffe7",
+        "server.json": "eda12063b17f9c555f0f597613e5f1087a1967eb56bfd32e9e9aa928205ea3f9",
+        "source/PLAN.md": "d4664e2685ac5c60e18eec1bdd01bfa7175ca17c538cb342417a25e5e34b1cbf",
+        "source/build.mjs": "e9a98cda3e9174a1e5b2884fc07fb88840d15b9cb4920350e25e60682fd5b0ff",
+        "source/cases.cjs": "d3850b6fb01996491eda010e643b7a96e513c4cc2e722bb2e806a8c06ea9ff02",
+        "source/control.mjs": "fb93f1532d4bb0373d16abc53f3863c8a51e6937ef5ef60511e45bd09f43040b",
+        "source/electron.cjs": "a4c10373ce644e0492661ba1460f3c77e3daf7c4871f94cec8319b3932a19767",
+        "source/fixture.html": "f6fde96e9a6e11a36915b948fb95ca8811c56439143c3ddb5ef18deedad95c51",
+        "source/hashes.json": "85a13fcb8080e19acc761a7bd4478b41caf0b6cf0048a71b4c9d4f0949659dd3",
+        "source/legacy-native-build.json": "bc0b4adf364cd2bec21125d035ab31ad2773e8478d822832d5fb87995e0519a7",
+        "source/legacy-native.mm": "f4d6e17ecb03e47bb74db99e38de13f98ce0bc4e152e28db2cb147d44c5ad214",
+        "source/native/input-monitor.mm": "b6b5732742a3134e8a29dc04a8843ed6e99209fb57c9f1d563a51ee05d05f603",
+        "source/ownership.cjs": "46794c0367e69c0657f283498b7a0e07ce3d252b0c7f0673e5fb6e0662ce505d",
+        "source/run.mjs": "a4f8b12893811c14ae195a2e3b667c202fda240e9a2dc64e9d0fd4e40b1a731e",
+        "stderr.log": "895bf795944b6916995c21f9d29bc3bdf73d28ec5cfb1d03f4d09776b2f3e063",
+        "stdout.log": "0fd969dfd7ac5388444b83630f494c92d4cecdbc336e9cec6753d6216f903a06"
+      }
+    },
+    {
+      "run": "run-5",
+      "mode": "candidate",
+      "sourceVersion": "2ace8032d6fa182bd5f234b676774d734c163652dc4bdf83bd9b3e191d8b7cbf",
+      "cases": 14,
+      "checks": 35,
+      "passedChecks": 35,
+      "expectedFailures": [],
+      "nativeInputs": 10,
+      "unknownInputs": [
+        373
+      ],
+      "repeatedProbeKeys": [
+        {
+          "originalSeq": 79,
+          "repeatedSeq": 83,
+          "timestamp": 7297.371359333334
+        }
+      ],
+      "candidate": {
+        "resumesVerified": 40,
+        "independentProgress": [
+          {
+            "inputSeq": 79,
+            "type": "keyDown",
+            "BDispatchSeqs": [
+              86
+            ],
+            "BReceiptCounts": [
+              3
+            ]
+          },
+          {
+            "inputSeq": 83,
+            "type": "keyDown",
+            "BDispatchSeqs": [
+              86
+            ],
+            "BReceiptCounts": [
+              3
+            ]
+          },
+          {
+            "inputSeq": 146,
+            "type": "mouseDown",
+            "BDispatchSeqs": [
+              149
+            ],
+            "BReceiptCounts": [
+              5
+            ]
+          }
+        ],
+        "lateReceipts": 0
+      },
+      "artifactSha256": {
+        "candidate-summary.json": "e8e8d1320a317bd4e285a3931753b477c1953d0f89d1903066c21ac3cdc00b45",
+        "cases.json": "8848a928a072fb7531bbf67d90dc578e1e62ec7dc16d68a37e8a5a0eb68676aa",
+        "checks.json": "81ddbf37fff9ade36e4c7ee3a111a8de0c183749038bd212f7c57b0a3979dd1a",
+        "environment.json": "39d2d144f0f0cd179397f47e9fc827d0aa4a4ab39db89d897d25e05b9becde21",
+        "events.jsonl": "b4b27e04c0014af4f4600637bad4f9aa6350902b5340937de2c1e76cef8187d0",
+        "result.json": "9b5426528d5aeed8f3be0102ccedbc1d3b9982d402586dbff08f1337d461bde5",
+        "server.json": "7bf3545cb088eb9cb8aff0bb04222a62e44e90f1229c50fddd64d53341bee8f0",
+        "source/PLAN.md": "d4664e2685ac5c60e18eec1bdd01bfa7175ca17c538cb342417a25e5e34b1cbf",
+        "source/build.mjs": "e9a98cda3e9174a1e5b2884fc07fb88840d15b9cb4920350e25e60682fd5b0ff",
+        "source/candidate-native-build.json": "3646bc3f2d6da42944c837c8ee6f6b9ee959951bf7fcd557f619baafcc9c091d",
+        "source/cases.cjs": "320c56bb892d06a7f957a1b5377b1eb2f6dd093c0135accd04df82f3c3628e7c",
+        "source/control.mjs": "fb93f1532d4bb0373d16abc53f3863c8a51e6937ef5ef60511e45bd09f43040b",
+        "source/electron.cjs": "41aaf901a40926a3341fdd1e677d45abe65978d2d821c7ec47e0d1a3b624a954",
+        "source/fixture.html": "f6fde96e9a6e11a36915b948fb95ca8811c56439143c3ddb5ef18deedad95c51",
+        "source/hashes.json": "5e3687b79d7d31992b2d496987e5472d4a3aa22cda6304d7623f2c6b415dda88",
+        "source/legacy-native-build.json": "bc0b4adf364cd2bec21125d035ab31ad2773e8478d822832d5fb87995e0519a7",
+        "source/legacy-native.mm": "f4d6e17ecb03e47bb74db99e38de13f98ce0bc4e152e28db2cb147d44c5ad214",
+        "source/native/input-monitor.mm": "b6b5732742a3134e8a29dc04a8843ed6e99209fb57c9f1d563a51ee05d05f603",
+        "source/ownership.cjs": "fd6ab434dbffbd64778054bbbf13d728fa7ef423c5fe28aa55ca9c7c74aeed52",
+        "source/run.mjs": "bcd7cbb434b96d2a7fbfca888022243ef4633568e9162485549c2ade7cc73e1c",
+        "stderr.log": "0be1c4e698c03ba3e3eeb32080b7052f0a0aa9d1ed9037c761418ab6bd444dba",
+        "stdout.log": "b1c845f02cfcc6d98bdc2931b123fc94f76066f950194e4733102d516137b441"
+      }
+    },
+    {
+      "run": "run-6",
+      "mode": "candidate",
+      "sourceVersion": "2ace8032d6fa182bd5f234b676774d734c163652dc4bdf83bd9b3e191d8b7cbf",
+      "cases": 5,
+      "checks": 15,
+      "passedChecks": 15,
+      "expectedFailures": [],
+      "nativeInputs": 7,
+      "unknownInputs": [],
+      "repeatedProbeKeys": [
+        {
+          "originalSeq": 80,
+          "repeatedSeq": 84,
+          "timestamp": 7391.417046833334
+        }
+      ],
+      "candidate": {
+        "resumesVerified": 15,
+        "independentProgress": [
+          {
+            "inputSeq": 80,
+            "type": "keyDown",
+            "BDispatchSeqs": [
+              86
+            ],
+            "BReceiptCounts": [
+              3
+            ]
+          },
+          {
+            "inputSeq": 84,
+            "type": "keyDown",
+            "BDispatchSeqs": [
+              86
+            ],
+            "BReceiptCounts": [
+              3
+            ]
+          }
+        ],
+        "lateReceipts": 0
+      },
+      "artifactSha256": {
+        "candidate-summary.json": "2db25ae115d9ff754e8e07a424c722bd2c055964a6921344d4dea4b9016f0ec7",
+        "cases.json": "31ebdb0de7f5db9fbd0f31424bbd941a2ef3e954d3280613e1dd8a6ae82f81a7",
+        "checks.json": "c173f26f9bd25b9c36c42c8a7e8d300b89802855f4fb0c1de0ecf595e57a87e1",
+        "environment.json": "b5d77229a5e26a6bf2a34d0501705c41773dc2169069d753ff9061ed0e21097e",
+        "events.jsonl": "a1b3f2c8406520037210a07894c34f8a8f509c8902d8716062a194aa05ed2f18",
+        "result.json": "ba7fcdf2d2238e9192dc801bacef6c3749914151f47cdd86b181162d70833a4a",
+        "server.json": "22ac4c9ba861d8d0d69922a8603f3dfd530c7a109817f710adb4719bb6c9413b",
+        "source/PLAN.md": "d4664e2685ac5c60e18eec1bdd01bfa7175ca17c538cb342417a25e5e34b1cbf",
+        "source/build.mjs": "e9a98cda3e9174a1e5b2884fc07fb88840d15b9cb4920350e25e60682fd5b0ff",
+        "source/candidate-native-build.json": "3646bc3f2d6da42944c837c8ee6f6b9ee959951bf7fcd557f619baafcc9c091d",
+        "source/cases.cjs": "320c56bb892d06a7f957a1b5377b1eb2f6dd093c0135accd04df82f3c3628e7c",
+        "source/control.mjs": "fb93f1532d4bb0373d16abc53f3863c8a51e6937ef5ef60511e45bd09f43040b",
+        "source/electron.cjs": "41aaf901a40926a3341fdd1e677d45abe65978d2d821c7ec47e0d1a3b624a954",
+        "source/fixture.html": "f6fde96e9a6e11a36915b948fb95ca8811c56439143c3ddb5ef18deedad95c51",
+        "source/hashes.json": "5e3687b79d7d31992b2d496987e5472d4a3aa22cda6304d7623f2c6b415dda88",
+        "source/legacy-native-build.json": "bc0b4adf364cd2bec21125d035ab31ad2773e8478d822832d5fb87995e0519a7",
+        "source/legacy-native.mm": "f4d6e17ecb03e47bb74db99e38de13f98ce0bc4e152e28db2cb147d44c5ad214",
+        "source/native/input-monitor.mm": "b6b5732742a3134e8a29dc04a8843ed6e99209fb57c9f1d563a51ee05d05f603",
+        "source/ownership.cjs": "fd6ab434dbffbd64778054bbbf13d728fa7ef423c5fe28aa55ca9c7c74aeed52",
+        "source/run.mjs": "bcd7cbb434b96d2a7fbfca888022243ef4633568e9162485549c2ade7cc73e1c",
+        "stderr.log": "699ee3f3eb06d32a6013e704be213ceeea7b867daf5caafffb5ed9db7432e94c",
+        "stdout.log": "80beb2847005ad46a5d89de2e64f43f3dcde7deba2381985bd08612d94164e39"
+      }
+    }
+  ]
+}

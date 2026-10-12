@@ -1,0 +1,76 @@
+{
+  "mode": "baseline",
+  "checks": [
+    {
+      "name": "initial-A-input-stops-only-A",
+      "pass": true
+    },
+    {
+      "name": "reloaded-A-input-stops-only-A",
+      "pass": false,
+      "detail": {
+        "event": {
+          "seq": 9,
+          "at": 1791790406986,
+          "source": "automatic-native-probe",
+          "kind": "native-input",
+          "owner": "unknown",
+          "type": "mouseDown",
+          "receiverClass": "RenderWidgetHostViewCocoa",
+          "x": 100,
+          "y": 150,
+          "timestamp": 6181.211714541667,
+          "eventNumber": 9901,
+          "modifiers": 0,
+          "testInjection": true
+        },
+        "before": {
+          "task": "A",
+          "documentId": "a8d295f3-a0cf-4d30-bfd3-fca8bb930c04",
+          "url": "http://127.0.0.1:53608/fixture?task=A",
+          "count": 1,
+          "text": "原有文字",
+          "focused": true,
+          "active": ""
+        },
+        "after": {
+          "task": "A",
+          "documentId": "d5798cfb-6e55-4c9a-b193-f45cd242964e",
+          "url": "http://127.0.0.1:53608/fixture?task=A",
+          "count": 0,
+          "text": "原有文字",
+          "focused": true,
+          "active": ""
+        },
+        "active": {
+          "A": false,
+          "B": false
+        }
+      }
+    },
+    {
+      "name": "B-can-continue-after-A-reload-input",
+      "pass": false,
+      "detail": {
+        "bError": "Execution stopped or superseded"
+      }
+    }
+  ],
+  "pass": false,
+  "receipts": [
+    {
+      "task": "A",
+      "documentId": "a8d295f3-a0cf-4d30-bfd3-fca8bb930c04",
+      "kind": "auto",
+      "count": 1,
+      "at": 1791790406719
+    },
+    {
+      "task": "B",
+      "documentId": "d6639281-36a6-4b2c-ab26-9b1b3539c3b1",
+      "kind": "auto",
+      "count": 1,
+      "at": 1791790406761
+    }
+  ]
+}

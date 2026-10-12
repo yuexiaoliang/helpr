@@ -1,0 +1,1254 @@
+[
+  {
+    "name": "self-reload-mouse-and-explicit-continue",
+    "checks": [
+      {
+        "name": "reload-invalidates-old-operation",
+        "pass": true,
+        "detail": {
+          "changed": {
+            "before": {
+              "task": "A",
+              "documentId": "dffc50df-fd2c-4aa9-afd0-8b7440287064",
+              "url": "http://127.0.0.1:55083/fixture?task=A",
+              "count": 0,
+              "text": "原有文字",
+              "focused": false,
+              "active": ""
+            },
+            "after": {
+              "task": "A",
+              "documentId": "b6f55668-22c1-497b-9b99-0385af3880a0",
+              "url": "http://127.0.0.1:55083/fixture?task=A",
+              "count": 0,
+              "text": "原有文字",
+              "focused": true,
+              "active": ""
+            }
+          }
+        }
+      },
+      {
+        "name": "reload-keeps-owned-outer-subtree",
+        "pass": true,
+        "detail": {
+          "nativeBefore": {
+            "owner": "A",
+            "chain": [
+              {
+                "identity": "0x10c0023cd00",
+                "class": "RenderWidgetHostViewCocoa",
+                "x": 0,
+                "y": 60,
+                "width": 550,
+                "height": 700
+              },
+              {
+                "identity": "0x10c02ee4780",
+                "class": "WebContentsViewCocoa",
+                "x": 0,
+                "y": 60,
+                "width": 550,
+                "height": 700
+              },
+              {
+                "identity": "0x10c00127e80",
+                "class": "BridgedContentView",
+                "x": 0,
+                "y": 0,
+                "width": 1100,
+                "height": 772
+              },
+              {
+                "identity": "0x10c00362580",
+                "class": "NativeWidgetMacNSWindowTitledFrame",
+                "x": 0,
+                "y": -28,
+                "width": 1100,
+                "height": 800
+              }
+            ]
+          },
+          "nativeAfter": {
+            "owner": "A",
+            "chain": [
+              {
+                "identity": "0x10c031e6e00",
+                "class": "RenderWidgetHostViewCocoa",
+                "x": 0,
+                "y": 60,
+                "width": 550,
+                "height": 700
+              },
+              {
+                "identity": "0x10c02ee4780",
+                "class": "WebContentsViewCocoa",
+                "x": 0,
+                "y": 60,
+                "width": 550,
+                "height": 700
+              },
+              {
+                "identity": "0x10c00127e80",
+                "class": "BridgedContentView",
+                "x": 0,
+                "y": 0,
+                "width": 1100,
+                "height": 772
+              },
+              {
+                "identity": "0x10c00362580",
+                "class": "NativeWidgetMacNSWindowTitledFrame",
+                "x": 0,
+                "y": -28,
+                "width": 1100,
+                "height": 800
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "self-reload-A-input-stops-only-A",
+        "pass": true
+      },
+      {
+        "name": "takeover-requires-explicit-continue",
+        "pass": true
+      },
+      {
+        "name": "explicit-continue-keeps-current-text-and-B-progress",
+        "pass": true
+      }
+    ],
+    "states": {
+      "A": {
+        "active": true,
+        "ready": true,
+        "reasons": [],
+        "generation": 4,
+        "wcId": 2,
+        "bindingSerial": 6,
+        "documentEpoch": 2,
+        "viewVersion": 1
+      },
+      "B": {
+        "active": true,
+        "ready": true,
+        "reasons": [],
+        "generation": 2,
+        "wcId": 3,
+        "bindingSerial": 4,
+        "documentEpoch": 1,
+        "viewVersion": 1
+      }
+    },
+    "server": {
+      "A": 1,
+      "B": 1
+    },
+    "snapshots": {
+      "A": {
+        "task": "A",
+        "documentId": "b6f55668-22c1-497b-9b99-0385af3880a0",
+        "url": "http://127.0.0.1:55083/fixture?task=A",
+        "count": 1,
+        "text": "当前页面文字",
+        "focused": true,
+        "active": "tick"
+      },
+      "B": {
+        "task": "B",
+        "documentId": "2c4af5b0-6cd9-43c8-8775-f8240b41209e",
+        "url": "http://127.0.0.1:55083/fixture?task=B",
+        "count": 1,
+        "text": "原有文字",
+        "focused": true,
+        "active": "tick"
+      }
+    }
+  },
+  {
+    "name": "reload-keyboard-owner",
+    "checks": [
+      {
+        "name": "keyboard-after-reload-only-yields-A",
+        "pass": true,
+        "detail": {
+          "event": {
+            "seq": 83,
+            "at": 1791791523148,
+            "source": "automatic-native-probe",
+            "kind": "native-input",
+            "owner": "A",
+            "type": "keyDown",
+            "receiverClass": "RenderWidgetHostViewCocoa",
+            "x": 0,
+            "y": 772,
+            "timestamp": 7297.371359333334,
+            "eventNumber": 0,
+            "modifiers": 0,
+            "keyCode": 0,
+            "testInjection": false
+          }
+        }
+      },
+      {
+        "name": "native-key-actually-edits-current-document",
+        "pass": true,
+        "detail": {
+          "before": {
+            "task": "A",
+            "documentId": "fe6bb233-477e-486d-a036-b8d8fd7b51b5",
+            "url": "http://127.0.0.1:55083/fixture?task=A",
+            "count": 0,
+            "text": "原有文字",
+            "focused": true,
+            "active": "text"
+          },
+          "after": {
+            "task": "A",
+            "documentId": "fe6bb233-477e-486d-a036-b8d8fd7b51b5",
+            "url": "http://127.0.0.1:55083/fixture?task=A",
+            "count": 0,
+            "text": "a原有文字",
+            "focused": true,
+            "active": "text"
+          }
+        }
+      }
+    ],
+    "states": {
+      "A": {
+        "active": false,
+        "ready": true,
+        "reasons": [
+          "takeover"
+        ],
+        "generation": 6,
+        "wcId": 2,
+        "bindingSerial": 9,
+        "documentEpoch": 3,
+        "viewVersion": 1
+      },
+      "B": {
+        "active": true,
+        "ready": true,
+        "reasons": [],
+        "generation": 3,
+        "wcId": 3,
+        "bindingSerial": 8,
+        "documentEpoch": 1,
+        "viewVersion": 1
+      }
+    },
+    "server": {
+      "A": 1,
+      "B": 2
+    },
+    "snapshots": {
+      "A": {
+        "task": "A",
+        "documentId": "fe6bb233-477e-486d-a036-b8d8fd7b51b5",
+        "url": "http://127.0.0.1:55083/fixture?task=A",
+        "count": 0,
+        "text": "a原有文字",
+        "focused": true,
+        "active": "text"
+      },
+      "B": {
+        "task": "B",
+        "documentId": "2c4af5b0-6cd9-43c8-8775-f8240b41209e",
+        "url": "http://127.0.0.1:55083/fixture?task=B",
+        "count": 2,
+        "text": "原有文字",
+        "focused": true,
+        "active": "tick"
+      }
+    }
+  },
+  {
+    "name": "same-origin-navigation",
+    "checks": [
+      {
+        "name": "navigation-input-owned-before-control-rebind",
+        "pass": true,
+        "detail": {
+          "changed": {
+            "before": {
+              "task": "A",
+              "documentId": "fe6bb233-477e-486d-a036-b8d8fd7b51b5",
+              "url": "http://127.0.0.1:55083/fixture?task=A",
+              "count": 0,
+              "text": "a原有文字",
+              "focused": true,
+              "active": "text"
+            },
+            "after": {
+              "task": "A",
+              "documentId": "d4b8a9ce-f0bd-453f-a80e-8fbd6bc73131",
+              "url": "http://127.0.0.1:55083/fixture?task=A&revision=2",
+              "count": 0,
+              "text": "原有文字",
+              "focused": true,
+              "active": ""
+            }
+          }
+        }
+      },
+      {
+        "name": "previous-navigation-token-rejected",
+        "pass": true
+      }
+    ],
+    "states": {
+      "A": {
+        "active": true,
+        "ready": true,
+        "reasons": [],
+        "generation": 8,
+        "wcId": 2,
+        "bindingSerial": 12,
+        "documentEpoch": 4,
+        "viewVersion": 1
+      },
+      "B": {
+        "active": true,
+        "ready": true,
+        "reasons": [],
+        "generation": 4,
+        "wcId": 3,
+        "bindingSerial": 11,
+        "documentEpoch": 1,
+        "viewVersion": 1
+      }
+    },
+    "server": {
+      "A": 2,
+      "B": 4
+    },
+    "snapshots": {
+      "A": {
+        "task": "A",
+        "documentId": "d4b8a9ce-f0bd-453f-a80e-8fbd6bc73131",
+        "url": "http://127.0.0.1:55083/fixture?task=A&revision=2",
+        "count": 2,
+        "text": "原有文字",
+        "focused": true,
+        "active": "tick"
+      },
+      "B": {
+        "task": "B",
+        "documentId": "2c4af5b0-6cd9-43c8-8775-f8240b41209e",
+        "url": "http://127.0.0.1:55083/fixture?task=B",
+        "count": 4,
+        "text": "原有文字",
+        "focused": true,
+        "active": "tick"
+      }
+    }
+  },
+  {
+    "name": "second-loopback-origin-navigation",
+    "checks": [
+      {
+        "name": "second-origin-rebind-preserves-task-owner",
+        "pass": true,
+        "detail": {
+          "changed": {
+            "before": {
+              "task": "A",
+              "documentId": "d4b8a9ce-f0bd-453f-a80e-8fbd6bc73131",
+              "url": "http://127.0.0.1:55083/fixture?task=A&revision=2",
+              "count": 2,
+              "text": "原有文字",
+              "focused": true,
+              "active": "tick"
+            },
+            "after": {
+              "task": "A",
+              "documentId": "9d43692e-3494-45bb-b0f5-1cd161e45f4b",
+              "url": "http://127.0.0.1:55084/fixture?task=A",
+              "count": 0,
+              "text": "原有文字",
+              "focused": true,
+              "active": ""
+            }
+          }
+        }
+      },
+      {
+        "name": "second-origin-does-not-reuse-old-operation",
+        "pass": true
+      }
+    ],
+    "states": {
+      "A": {
+        "active": false,
+        "ready": true,
+        "reasons": [
+          "takeover"
+        ],
+        "generation": 10,
+        "wcId": 2,
+        "bindingSerial": 15,
+        "documentEpoch": 5,
+        "viewVersion": 1
+      },
+      "B": {
+        "active": true,
+        "ready": true,
+        "reasons": [],
+        "generation": 5,
+        "wcId": 3,
+        "bindingSerial": 14,
+        "documentEpoch": 1,
+        "viewVersion": 1
+      }
+    },
+    "server": {
+      "A": 2,
+      "B": 5
+    },
+    "snapshots": {
+      "A": {
+        "task": "A",
+        "documentId": "9d43692e-3494-45bb-b0f5-1cd161e45f4b",
+        "url": "http://127.0.0.1:55084/fixture?task=A",
+        "count": 0,
+        "text": "原有文字",
+        "focused": true,
+        "active": ""
+      },
+      "B": {
+        "task": "B",
+        "documentId": "2c4af5b0-6cd9-43c8-8775-f8240b41209e",
+        "url": "http://127.0.0.1:55083/fixture?task=B",
+        "count": 4,
+        "text": "原有文字",
+        "focused": true,
+        "active": "tick"
+      }
+    }
+  },
+  {
+    "name": "webcontents-view-replacement",
+    "checks": [
+      {
+        "name": "replacement-has-new-target-and-correct-input-owner",
+        "pass": true,
+        "detail": {
+          "oldId": 2,
+          "newId": 5
+        }
+      },
+      {
+        "name": "replaced-view-old-page-actually-closed",
+        "pass": true
+      },
+      {
+        "name": "replacement-rejects-old-task-token",
+        "pass": true
+      }
+    ],
+    "states": {
+      "A": {
+        "active": false,
+        "ready": true,
+        "reasons": [
+          "takeover"
+        ],
+        "generation": 12,
+        "wcId": 5,
+        "bindingSerial": 18,
+        "documentEpoch": 7,
+        "viewVersion": 2
+      },
+      "B": {
+        "active": true,
+        "ready": true,
+        "reasons": [],
+        "generation": 6,
+        "wcId": 3,
+        "bindingSerial": 17,
+        "documentEpoch": 1,
+        "viewVersion": 1
+      }
+    },
+    "server": {
+      "A": 2,
+      "B": 6
+    },
+    "snapshots": {
+      "A": {
+        "task": "A",
+        "documentId": "3ead40d2-f29e-4a1a-911e-1fe9e341d4e0",
+        "url": "http://127.0.0.1:55083/fixture?task=A",
+        "count": 0,
+        "text": "原有文字",
+        "focused": true,
+        "active": ""
+      },
+      "B": {
+        "task": "B",
+        "documentId": "2c4af5b0-6cd9-43c8-8775-f8240b41209e",
+        "url": "http://127.0.0.1:55083/fixture?task=B",
+        "count": 6,
+        "text": "原有文字",
+        "focused": true,
+        "active": "tick"
+      }
+    }
+  },
+  {
+    "name": "duplicate-url-does-not-claim-task",
+    "checks": [
+      {
+        "name": "binding-uses-registered-target-not-url",
+        "pass": true,
+        "detail": {
+          "registeredId": 5,
+          "decoyId": 6,
+          "expectedDoc": "3ead40d2-f29e-4a1a-911e-1fe9e341d4e0",
+          "decoyDoc": "1079a795-c132-45f3-ba32-c31a5a2aedc1"
+        }
+      }
+    ],
+    "states": {
+      "A": {
+        "active": true,
+        "ready": true,
+        "reasons": [],
+        "generation": 13,
+        "wcId": 5,
+        "bindingSerial": 21,
+        "documentEpoch": 7,
+        "viewVersion": 2
+      },
+      "B": {
+        "active": true,
+        "ready": true,
+        "reasons": [],
+        "generation": 7,
+        "wcId": 3,
+        "bindingSerial": 20,
+        "documentEpoch": 1,
+        "viewVersion": 1
+      }
+    },
+    "server": {
+      "A": 3,
+      "B": 8
+    },
+    "snapshots": {
+      "A": {
+        "task": "A",
+        "documentId": "3ead40d2-f29e-4a1a-911e-1fe9e341d4e0",
+        "url": "http://127.0.0.1:55083/fixture?task=A",
+        "count": 3,
+        "text": "原有文字",
+        "focused": true,
+        "active": "tick"
+      },
+      "B": {
+        "task": "B",
+        "documentId": "2c4af5b0-6cd9-43c8-8775-f8240b41209e",
+        "url": "http://127.0.0.1:55083/fixture?task=B",
+        "count": 8,
+        "text": "原有文字",
+        "focused": true,
+        "active": "tick"
+      }
+    }
+  },
+  {
+    "name": "pending-click-during-navigation",
+    "checks": [
+      {
+        "name": "navigation-cancels-wait-and-rejects-old-queue",
+        "pass": true,
+        "detail": {
+          "pendingResult": {
+            "resolved": false,
+            "error": "locator.click: Execution stopped or superseded\nCall log:\n\u001b[2m  - waiting for locator('#pending')\u001b[22m\n\u001b[2m    - locator resolved to <button disabled id=\"pending\">等待网页</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is not enabled\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 100ms\u001b[22m\n\u001b[2m  - operation was aborted: Execution stopped or superseded\u001b[22m\n"
+          },
+          "oldAttempt": {
+            "rejected": true,
+            "error": "stale-page-binding"
+          }
+        }
+      },
+      {
+        "name": "old-pending-click-never-reaches-server",
+        "pass": true
+      }
+    ],
+    "states": {
+      "A": {
+        "active": true,
+        "ready": true,
+        "reasons": [],
+        "generation": 15,
+        "wcId": 5,
+        "bindingSerial": 24,
+        "documentEpoch": 8,
+        "viewVersion": 2
+      },
+      "B": {
+        "active": true,
+        "ready": true,
+        "reasons": [],
+        "generation": 8,
+        "wcId": 3,
+        "bindingSerial": 23,
+        "documentEpoch": 1,
+        "viewVersion": 1
+      }
+    },
+    "server": {
+      "A": 4,
+      "B": 10
+    },
+    "snapshots": {
+      "A": {
+        "task": "A",
+        "documentId": "038c85b5-9ecc-4da0-8e48-c9c583ad8c12",
+        "url": "http://127.0.0.1:55083/fixture?task=A",
+        "count": 4,
+        "text": "原有文字",
+        "focused": true,
+        "active": "tick"
+      },
+      "B": {
+        "task": "B",
+        "documentId": "2c4af5b0-6cd9-43c8-8775-f8240b41209e",
+        "url": "http://127.0.0.1:55083/fixture?task=B",
+        "count": 10,
+        "text": "原有文字",
+        "focused": true,
+        "active": "tick"
+      }
+    }
+  },
+  {
+    "name": "reload-after-user-stop",
+    "checks": [
+      {
+        "name": "reload-and-rebind-do-not-clear-user-stop",
+        "pass": true
+      },
+      {
+        "name": "explicit-A-continue-leaves-user-stopped-B-stopped",
+        "pass": true
+      }
+    ],
+    "states": {
+      "A": {
+        "active": true,
+        "ready": true,
+        "reasons": [],
+        "generation": 17,
+        "wcId": 5,
+        "bindingSerial": 28,
+        "documentEpoch": 9,
+        "viewVersion": 2
+      },
+      "B": {
+        "active": false,
+        "ready": true,
+        "reasons": [
+          "user-stop"
+        ],
+        "generation": 9,
+        "wcId": 3,
+        "bindingSerial": 26,
+        "documentEpoch": 1,
+        "viewVersion": 1
+      }
+    },
+    "server": {
+      "A": 5,
+      "B": 11
+    },
+    "snapshots": {
+      "A": {
+        "task": "A",
+        "documentId": "5a4d4553-0053-43c9-8533-cb01a07fbe08",
+        "url": "http://127.0.0.1:55083/fixture?task=A",
+        "count": 5,
+        "text": "原有文字",
+        "focused": true,
+        "active": "tick"
+      },
+      "B": {
+        "task": "B",
+        "documentId": "2c4af5b0-6cd9-43c8-8775-f8240b41209e",
+        "url": "http://127.0.0.1:55083/fixture?task=B",
+        "count": 11,
+        "text": "原有文字",
+        "focused": true,
+        "active": "tick"
+      }
+    }
+  },
+  {
+    "name": "control-disconnect-and-explicit-continue",
+    "checks": [
+      {
+        "name": "disconnected-control-rejects-old-operation",
+        "pass": true
+      },
+      {
+        "name": "reconnect-only-does-not-resume-stopped-work",
+        "pass": true
+      },
+      {
+        "name": "reconnect-continue-reads-current-page-and-preserves-text",
+        "pass": true
+      },
+      {
+        "name": "reconnect-does-not-restart-user-stopped-B",
+        "pass": true
+      },
+      {
+        "name": "old-control-token-stays-invalid-after-reconnect",
+        "pass": true
+      }
+    ],
+    "states": {
+      "A": {
+        "active": true,
+        "ready": true,
+        "reasons": [],
+        "generation": 19,
+        "wcId": 5,
+        "bindingSerial": 33,
+        "documentEpoch": 11,
+        "viewVersion": 2
+      },
+      "B": {
+        "active": false,
+        "ready": true,
+        "reasons": [
+          "user-stop",
+          "page-handle-closed",
+          "connection-lost"
+        ],
+        "generation": 10,
+        "wcId": 3,
+        "bindingSerial": 32,
+        "documentEpoch": 3,
+        "viewVersion": 1
+      }
+    },
+    "server": {
+      "A": 6,
+      "B": 11
+    },
+    "snapshots": {
+      "A": {
+        "task": "A",
+        "documentId": "5a4d4553-0053-43c9-8533-cb01a07fbe08",
+        "url": "http://127.0.0.1:55083/fixture?task=A",
+        "count": 6,
+        "text": "连接恢复后保留",
+        "focused": true,
+        "active": "tick"
+      },
+      "B": {
+        "task": "B",
+        "documentId": "2c4af5b0-6cd9-43c8-8775-f8240b41209e",
+        "url": "http://127.0.0.1:55083/fixture?task=B",
+        "count": 11,
+        "text": "原有文字",
+        "focused": true,
+        "active": "tick"
+      }
+    }
+  },
+  {
+    "name": "host-view-switch-and-chat",
+    "checks": [
+      {
+        "name": "host-layout-restores-chat-above-replaced-view",
+        "pass": true,
+        "detail": {
+          "before": {
+            "owner": "A",
+            "chain": [
+              {
+                "identity": "0x10c031e7800",
+                "class": "RenderWidgetHostViewCocoa",
+                "x": 0,
+                "y": 60,
+                "width": 1100,
+                "height": 700
+              },
+              {
+                "identity": "0x10c02eeb000",
+                "class": "WebContentsViewCocoa",
+                "x": 0,
+                "y": 60,
+                "width": 1100,
+                "height": 700
+              },
+              {
+                "identity": "0x10c00127e80",
+                "class": "BridgedContentView",
+                "x": 0,
+                "y": 0,
+                "width": 1100,
+                "height": 772
+              },
+              {
+                "identity": "0x10c00362580",
+                "class": "NativeWidgetMacNSWindowTitledFrame",
+                "x": 0,
+                "y": -28,
+                "width": 1100,
+                "height": 800
+              }
+            ]
+          },
+          "after": {
+            "owner": "chat",
+            "chain": [
+              {
+                "identity": "0x10c031e1e00",
+                "class": "RenderWidgetHostViewCocoa",
+                "x": 800,
+                "y": 600,
+                "width": 290,
+                "height": 130
+              },
+              {
+                "identity": "0x10c02ee6e00",
+                "class": "WebContentsViewCocoa",
+                "x": 800,
+                "y": 600,
+                "width": 290,
+                "height": 130
+              },
+              {
+                "identity": "0x10c00127e80",
+                "class": "BridgedContentView",
+                "x": 0,
+                "y": 0,
+                "width": 1100,
+                "height": 772
+              },
+              {
+                "identity": "0x10c00362580",
+                "class": "NativeWidgetMacNSWindowTitledFrame",
+                "x": 0,
+                "y": -28,
+                "width": 1100,
+                "height": 800
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "view-switch-chat-shell-do-not-take-over",
+        "pass": true,
+        "detail": {
+          "chat": {
+            "seq": 351,
+            "at": 1791791524806,
+            "source": "automatic-native-probe",
+            "kind": "native-input",
+            "owner": "chat",
+            "type": "mouseDown",
+            "receiverClass": "RenderWidgetHostViewCocoa",
+            "x": 930,
+            "y": 650,
+            "timestamp": 7299.046317083334,
+            "eventNumber": 9901,
+            "modifiers": 0,
+            "testInjection": true
+          },
+          "shell": {
+            "seq": 352,
+            "at": 1791791524807,
+            "source": "automatic-native-probe",
+            "kind": "native-input",
+            "owner": "shell",
+            "type": "mouseDown",
+            "receiverClass": "RenderWidgetHostViewCocoa",
+            "x": 200,
+            "y": 20,
+            "timestamp": 7299.046736583334,
+            "eventNumber": 9901,
+            "modifiers": 0,
+            "testInjection": true
+          }
+        }
+      },
+      {
+        "name": "post-switch-A-input-keeps-B-active",
+        "pass": true
+      }
+    ],
+    "states": {
+      "A": {
+        "active": false,
+        "ready": true,
+        "reasons": [
+          "takeover"
+        ],
+        "generation": 20,
+        "wcId": 5,
+        "bindingSerial": 34,
+        "documentEpoch": 11,
+        "viewVersion": 2
+      },
+      "B": {
+        "active": true,
+        "ready": true,
+        "reasons": [],
+        "generation": 11,
+        "wcId": 3,
+        "bindingSerial": 35,
+        "documentEpoch": 3,
+        "viewVersion": 1
+      }
+    },
+    "server": {
+      "A": 6,
+      "B": 12
+    },
+    "snapshots": {
+      "A": {
+        "task": "A",
+        "documentId": "5a4d4553-0053-43c9-8533-cb01a07fbe08",
+        "url": "http://127.0.0.1:55083/fixture?task=A",
+        "count": 6,
+        "text": "连接恢复后保留",
+        "focused": true,
+        "active": ""
+      },
+      "B": {
+        "task": "B",
+        "documentId": "2c4af5b0-6cd9-43c8-8775-f8240b41209e",
+        "url": "http://127.0.0.1:55083/fixture?task=B",
+        "count": 12,
+        "text": "原有文字",
+        "focused": true,
+        "active": "tick"
+      }
+    }
+  },
+  {
+    "name": "unknown-owner-stays-unknown",
+    "checks": [
+      {
+        "name": "unknown-not-relabelled-as-A",
+        "pass": true,
+        "detail": {
+          "event": {
+            "seq": 373,
+            "at": 1791791524821,
+            "source": "automatic-native-probe",
+            "kind": "native-input",
+            "owner": "unknown",
+            "type": "mouseDown",
+            "receiverClass": "RenderWidgetHostViewCocoa",
+            "x": 100,
+            "y": 150,
+            "timestamp": 7299.0614052500005,
+            "eventNumber": 9901,
+            "modifiers": 0,
+            "testInjection": true
+          },
+          "states": {
+            "A": {
+              "active": false,
+              "ready": true,
+              "reasons": [
+                "unknown-input"
+              ],
+              "generation": 21,
+              "wcId": 5,
+              "bindingSerial": 36,
+              "documentEpoch": 11,
+              "viewVersion": 2
+            },
+            "B": {
+              "active": false,
+              "ready": true,
+              "reasons": [
+                "unknown-input"
+              ],
+              "generation": 12,
+              "wcId": 3,
+              "bindingSerial": 37,
+              "documentEpoch": 3,
+              "viewVersion": 1
+            }
+          }
+        }
+      },
+      {
+        "name": "unknown-does-not-auto-resume",
+        "pass": true
+      },
+      {
+        "name": "continue-rechecks-owner-and-keeps-other-unknown-task-paused",
+        "pass": true
+      }
+    ],
+    "states": {
+      "A": {
+        "active": true,
+        "ready": true,
+        "reasons": [],
+        "generation": 22,
+        "wcId": 5,
+        "bindingSerial": 38,
+        "documentEpoch": 11,
+        "viewVersion": 2
+      },
+      "B": {
+        "active": false,
+        "ready": true,
+        "reasons": [
+          "unknown-input"
+        ],
+        "generation": 12,
+        "wcId": 3,
+        "bindingSerial": 37,
+        "documentEpoch": 3,
+        "viewVersion": 1
+      }
+    },
+    "server": {
+      "A": 7,
+      "B": 12
+    },
+    "snapshots": {
+      "A": {
+        "task": "A",
+        "documentId": "5a4d4553-0053-43c9-8533-cb01a07fbe08",
+        "url": "http://127.0.0.1:55083/fixture?task=A",
+        "count": 7,
+        "text": "连接恢复后保留",
+        "focused": true,
+        "active": "tick"
+      },
+      "B": {
+        "task": "B",
+        "documentId": "2c4af5b0-6cd9-43c8-8775-f8240b41209e",
+        "url": "http://127.0.0.1:55083/fixture?task=B",
+        "count": 12,
+        "text": "原有文字",
+        "focused": true,
+        "active": "tick"
+      }
+    }
+  },
+  {
+    "name": "navigation-during-page-verification",
+    "checks": [
+      {
+        "name": "verification-result-from-old-document-rejected",
+        "pass": true,
+        "detail": {
+          "result": {
+            "rejected": true,
+            "error": "binding-changed-during-observation"
+          }
+        }
+      },
+      {
+        "name": "fresh-verification-can-resume-after-race",
+        "pass": true
+      }
+    ],
+    "states": {
+      "A": {
+        "active": true,
+        "ready": true,
+        "reasons": [],
+        "generation": 24,
+        "wcId": 5,
+        "bindingSerial": 41,
+        "documentEpoch": 12,
+        "viewVersion": 2
+      },
+      "B": {
+        "active": true,
+        "ready": true,
+        "reasons": [],
+        "generation": 13,
+        "wcId": 3,
+        "bindingSerial": 40,
+        "documentEpoch": 3,
+        "viewVersion": 1
+      }
+    },
+    "server": {
+      "A": 8,
+      "B": 12
+    },
+    "snapshots": {
+      "A": {
+        "task": "A",
+        "documentId": "5111b7db-68ef-4338-8ef5-57cebbf53f74",
+        "url": "http://127.0.0.1:55083/fixture?task=A",
+        "count": 8,
+        "text": "原有文字",
+        "focused": true,
+        "active": "tick"
+      },
+      "B": {
+        "task": "B",
+        "documentId": "2c4af5b0-6cd9-43c8-8775-f8240b41209e",
+        "url": "http://127.0.0.1:55083/fixture?task=B",
+        "count": 12,
+        "text": "原有文字",
+        "focused": true,
+        "active": "tick"
+      }
+    }
+  },
+  {
+    "name": "new-stop-during-page-verification",
+    "checks": [
+      {
+        "name": "new-user-stop-wins-over-earlier-continue",
+        "pass": true,
+        "detail": {
+          "result": {
+            "rejected": true,
+            "error": "new-stop-during-verification"
+          },
+          "state": {
+            "active": false,
+            "ready": true,
+            "reasons": [
+              "user-stop"
+            ],
+            "generation": 25,
+            "wcId": 5,
+            "bindingSerial": 44,
+            "documentEpoch": 12,
+            "viewVersion": 2
+          }
+        }
+      },
+      {
+        "name": "later-explicit-continue-can-follow-new-stop",
+        "pass": true
+      }
+    ],
+    "states": {
+      "A": {
+        "active": true,
+        "ready": true,
+        "reasons": [],
+        "generation": 26,
+        "wcId": 5,
+        "bindingSerial": 45,
+        "documentEpoch": 12,
+        "viewVersion": 2
+      },
+      "B": {
+        "active": true,
+        "ready": true,
+        "reasons": [],
+        "generation": 14,
+        "wcId": 3,
+        "bindingSerial": 43,
+        "documentEpoch": 3,
+        "viewVersion": 1
+      }
+    },
+    "server": {
+      "A": 9,
+      "B": 14
+    },
+    "snapshots": {
+      "A": {
+        "task": "A",
+        "documentId": "5111b7db-68ef-4338-8ef5-57cebbf53f74",
+        "url": "http://127.0.0.1:55083/fixture?task=A",
+        "count": 9,
+        "text": "原有文字",
+        "focused": true,
+        "active": "tick"
+      },
+      "B": {
+        "task": "B",
+        "documentId": "2c4af5b0-6cd9-43c8-8775-f8240b41209e",
+        "url": "http://127.0.0.1:55083/fixture?task=B",
+        "count": 14,
+        "text": "原有文字",
+        "focused": true,
+        "active": "tick"
+      }
+    }
+  },
+  {
+    "name": "unverifiable-page-does-not-resume",
+    "checks": [
+      {
+        "name": "explicit-continue-cannot-skip-page-verification",
+        "pass": true,
+        "detail": {
+          "result": {
+            "rejected": true,
+            "error": "current-page-unverified"
+          }
+        }
+      }
+    ],
+    "states": {
+      "A": {
+        "active": false,
+        "ready": false,
+        "reasons": [
+          "document-change"
+        ],
+        "generation": 27,
+        "wcId": 5,
+        "documentEpoch": 14,
+        "viewVersion": 2
+      },
+      "B": {
+        "active": true,
+        "ready": true,
+        "reasons": [],
+        "generation": 15,
+        "wcId": 3,
+        "bindingSerial": 47,
+        "documentEpoch": 3,
+        "viewVersion": 1
+      }
+    },
+    "server": {
+      "A": 9,
+      "B": 14
+    },
+    "snapshots": {
+      "A": {
+        "task": "A",
+        "documentId": "0a474f98-3087-44cb-ad4e-c0f7633d6b2e",
+        "url": "http://127.0.0.1:55083/fixture?task=A",
+        "count": 0,
+        "text": "原有文字",
+        "focused": true,
+        "active": ""
+      },
+      "B": {
+        "task": "B",
+        "documentId": "2c4af5b0-6cd9-43c8-8775-f8240b41209e",
+        "url": "http://127.0.0.1:55083/fixture?task=B",
+        "count": 14,
+        "text": "原有文字",
+        "focused": true,
+        "active": "tick"
+      }
+    }
+  }
+]

@@ -40,6 +40,7 @@ Status: open
 - [验证人工接管的输入识别与让出操作](issues/12-human-input-takeover.md#answer)：macOS / Electron 已登记视图中的真人点击、中文、粘贴及核对后继续通过；页面变化后的归属缺口保留为选型前置验证。
 - [验证素材、内容预览与发布版本的关联](issues/13-material-preview-binding.md#answer)：两版 Excel、真实模型建议与三次网页发布保持来源和确认归属，旧确认及参数替换被拒绝；取得持久化所需的最小版本关系。
 - [验证网页动作、上传数据与写请求的关联边界](issues/18-action-request-association.md#answer)：完整 HTTP 实体检查能约束受控请求和文件，时间窗口、文件名及同内容一次性许可仍有误关联反例；通用授权保证未成立，范围取舍进入组合选择。
+- [验证页面变化后的输入归属与继续](issues/19-page-lifecycle-input-ownership.md#answer)：刷新失配已复现定位，受控生命周期中的重新绑定与核对后继续通过；未知归属仍暂停两项，升级兼容及真实休眠恢复未获保证。
 
 ## Not yet specified
 

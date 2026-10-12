@@ -1,0 +1,10 @@
+import {execFileSync} from 'node:child_process';
+import {mkdir,writeFile} from 'node:fs/promises';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=path.dirname(fileURLToPath(import.meta.url));
+const headers=process.env.NODE_HEADERS||path.resolve(path.dirname(process.execPath),'../include/node');
+await mkdir(root+'/build',{recursive:true});
+const args=['-bundle','-undefined','dynamic_lookup','-std=c++17','-fobjc-arc','-framework','Cocoa','-I',headers,root+'/native/input-monitor.mm','-o',root+'/build/input-monitor.node'];
+execFileSync('clang++',args,{stdio:'inherit'});
+await writeFile(root+'/build/metadata.json',JSON.stringify({at:new Date().toISOString(),compiler:execFileSync('clang++',['--version'],{encoding:'utf8'}),headers,args,node:process.version},null,2)+'\n');
