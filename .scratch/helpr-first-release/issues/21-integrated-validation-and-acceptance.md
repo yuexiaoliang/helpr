@@ -4,7 +4,7 @@ Type: grilling
 Label: wayfinder:grilling
 Mode: HITL
 Status: open
-Blocked by: 07, 10, 20
+Blocked by: 07, 10, 20, 22, 23
 Map: [helpr 首版技术决策地图](../map.md)
 
 ## Question
@@ -23,3 +23,7 @@ Map: [helpr 首版技术决策地图](../map.md)
 - 每轮验证的预算、重复与失败记录、成果保存、停止条件和发布前通过条件；明确实验授权与正式任务授权的区别。接受网站隐含写入没有通用隔离保证，不等于可把已观察到的越界或无法确认结果忽略。
 
 输出可交给实现规格的检查与验收安排，不重新缩小既有五项场景、两项并行或直接接管要求。若证据缺口确实需要改变这些要求，单独带着具体事实与用户讨论；不能直接删掉验收条目。
+
+## Comments
+
+2026-10-12，[确定执行记录、流程更新与定时恢复的约定](10-durable-execution-contract.md#answer)明确单一持久记录拥有者、SQLite 与独立不可变文件。新增前置[验证持久记录与执行资格的中断一致性](22-durable-record-consistency.md)和[验证恢复核对依据的自动形成](23-autonomous-recovery-evidence.md)，以区分本地协议可用、真实恢复依据可形成和完整产品已验收。最终安排须覆盖未完成素材不重复领取、有效确认不丢失、并发修复不互相覆盖，以及记录保存失败时的明确反馈。

@@ -42,6 +42,7 @@ Status: open
 - [验证网页动作、上传数据与写请求的关联边界](issues/18-action-request-association.md#answer)：完整 HTTP 实体检查能约束受控请求和文件，时间窗口、文件名及同内容一次性许可仍有误关联反例；通用授权保证未成立，范围取舍进入组合选择。
 - [验证页面变化后的输入归属与继续](issues/19-page-lifecycle-input-ownership.md#answer)：刷新失配已复现定位，受控生命周期中的重新绑定与核对后继续通过；未知归属仍暂停两项，升级兼容及真实休眠恢复未获保证。
 - [确定浏览器承载与流程执行组合](issues/07-browser-runtime-decision.md#answer)：首版采用 macOS / Electron、Playwright 与统一受控的结构化流程执行；用户接受未知输入时暂停两项及网站隐含写入的明确保证范围。
+- [确定执行记录、流程更新与定时恢复的约定](issues/10-durable-execution-contract.md#answer)：统一保存本机关联记录，按约定、目标和素材版本记处理事实；恢复先核对、旧工作不重复领取，并发流程候选不互相覆盖，持久一致性与自动恢复依据另行验证。
 
 ## Not yet specified
 
