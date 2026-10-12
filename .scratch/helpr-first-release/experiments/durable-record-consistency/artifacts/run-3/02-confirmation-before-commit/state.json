@@ -1,0 +1,144 @@
+{
+  "epoch": 2,
+  "halted": false,
+  "blocked": [],
+  "integrity": [
+    {
+      "integrity_check": "ok"
+    }
+  ],
+  "foreignKeys": [],
+  "materials": [
+    {
+      "hash": "21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51",
+      "size": 15
+    }
+  ],
+  "flows": [
+    {
+      "id": "F",
+      "current": "v1"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "v1",
+      "flow": "F",
+      "parent": null,
+      "body": "{\"step\":\"submit\"}",
+      "evidence": "fixture-initial"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "4bca649d-07fe-4cca-8cc8-6742ced0db14",
+      "work_key": "{\"agreement\":\"daily-v1\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"period\":\"2026-10-12\",\"repeat\":null,\"target\":\"A\"}",
+      "material": "21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51",
+      "target": "A",
+      "content": "确认内容一",
+      "content_version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6",
+      "flow": "F",
+      "fixed_flow": "v1",
+      "intent": "auto",
+      "revision": 1,
+      "progress": "done",
+      "active_run": null
+    }
+  ],
+  "rounds": [
+    {
+      "plan": "P",
+      "tick": "t1",
+      "selection": "{\"agreement\":\"daily-v1\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"period\":\"2026-10-12\",\"repeat\":null,\"target\":\"A\"}",
+      "task": "4bca649d-07fe-4cca-8cc8-6742ced0db14"
+    }
+  ],
+  "participation": [
+    {
+      "id": "9f0f7722-aeeb-418d-a020-6fd1dcea0c17",
+      "task": "4bca649d-07fe-4cca-8cc8-6742ced0db14",
+      "version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6",
+      "status": "accepted"
+    }
+  ],
+  "confirmations": [
+    {
+      "request": "9f0f7722-aeeb-418d-a020-6fd1dcea0c17",
+      "task": "4bca649d-07fe-4cca-8cc8-6742ced0db14",
+      "version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6"
+    }
+  ],
+  "runs": [
+    {
+      "id": "130f6b93-6b3d-4f3d-aa3c-2994afc147f0",
+      "task": "4bca649d-07fe-4cca-8cc8-6742ced0db14",
+      "epoch": 2,
+      "revision": 1,
+      "flow_version": "v1"
+    }
+  ],
+  "actions": [
+    {
+      "id": "caf9da86-bbad-4b42-b6d8-a595cfeefee2",
+      "task": "4bca649d-07fe-4cca-8cc8-6742ced0db14",
+      "run": "130f6b93-6b3d-4f3d-aa3c-2994afc147f0",
+      "material": "21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51",
+      "content_version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6",
+      "target": "A",
+      "stage": "verified"
+    }
+  ],
+  "receipts": [
+    {
+      "action": "caf9da86-bbad-4b42-b6d8-a595cfeefee2",
+      "evidence": "{\"action\":\"caf9da86-bbad-4b42-b6d8-a595cfeefee2\",\"kind\":\"completed\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"target\":\"A\",\"task\":\"4bca649d-07fe-4cca-8cc8-6742ced0db14\",\"time\":1791798324381,\"version\":\"73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6\"}"
+    }
+  ],
+  "requests": [
+    {
+      "id": "ddda7e60-3f32-4117-93d7-a24d9232e777",
+      "input": "{\"body\":{\"step\":\"submit\"},\"flow\":\"F\",\"id\":\"ddda7e60-3f32-4117-93d7-a24d9232e777\",\"op\":\"flow\",\"version\":\"v1\"}",
+      "output": "{\"version\":\"v1\"}"
+    },
+    {
+      "id": "ab90fd77-8520-4584-98e6-bc6254b347dd",
+      "input": "{\"bytes\":\"57Sg5p2Q54mI5pys5LiA\",\"id\":\"ab90fd77-8520-4584-98e6-bc6254b347dd\",\"op\":\"material\"}",
+      "output": "{\"hash\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"size\":15}"
+    },
+    {
+      "id": "dd2b745b-3a80-470f-9da5-0e781a1c1c45",
+      "input": "{\"agreement\":\"daily-v1\",\"content\":\"确认内容一\",\"flow\":\"F\",\"id\":\"dd2b745b-3a80-470f-9da5-0e781a1c1c45\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"op\":\"select\",\"period\":\"2026-10-12\",\"plan\":\"P\",\"target\":\"A\",\"tick\":\"t1\"}",
+      "output": "{\"task\":\"4bca649d-07fe-4cca-8cc8-6742ced0db14\"}"
+    },
+    {
+      "id": "7f56bef8-5023-425c-ac9d-3a991b988d6b",
+      "input": "{\"id\":\"7f56bef8-5023-425c-ac9d-3a991b988d6b\",\"op\":\"answer\",\"request\":\"9f0f7722-aeeb-418d-a020-6fd1dcea0c17\",\"version\":\"73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6\"}",
+      "output": "{\"accepted\":true,\"task\":\"4bca649d-07fe-4cca-8cc8-6742ced0db14\"}"
+    },
+    {
+      "id": "5072dcdc-94bc-4670-b785-f99834b725f1",
+      "input": "{\"id\":\"5072dcdc-94bc-4670-b785-f99834b725f1\",\"op\":\"answer\",\"request\":\"9f0f7722-aeeb-418d-a020-6fd1dcea0c17\",\"version\":\"73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6\"}",
+      "output": "{\"accepted\":true,\"task\":\"4bca649d-07fe-4cca-8cc8-6742ced0db14\"}"
+    },
+    {
+      "id": "272c6bfb-40f4-4f58-88c7-14f44c820cba",
+      "input": "{\"id\":\"272c6bfb-40f4-4f58-88c7-14f44c820cba\",\"op\":\"claim\",\"revision\":1,\"task\":\"4bca649d-07fe-4cca-8cc8-6742ced0db14\"}",
+      "output": "{\"token\":\"130f6b93-6b3d-4f3d-aa3c-2994afc147f0\",\"flow\":\"v1\"}"
+    },
+    {
+      "id": "3bbc68d2-0afe-4482-9284-8d6e97b07666",
+      "input": "{\"id\":\"3bbc68d2-0afe-4482-9284-8d6e97b07666\",\"op\":\"reserve\",\"task\":\"4bca649d-07fe-4cca-8cc8-6742ced0db14\",\"token\":\"130f6b93-6b3d-4f3d-aa3c-2994afc147f0\"}",
+      "output": "{\"action\":\"caf9da86-bbad-4b42-b6d8-a595cfeefee2\"}"
+    },
+    {
+      "id": "baf6042c-0af0-451b-94b6-591536257041",
+      "input": "{\"action\":\"caf9da86-bbad-4b42-b6d8-a595cfeefee2\",\"id\":\"baf6042c-0af0-451b-94b6-591536257041\",\"op\":\"perform\",\"task\":\"4bca649d-07fe-4cca-8cc8-6742ced0db14\",\"token\":\"130f6b93-6b3d-4f3d-aa3c-2994afc147f0\"}",
+      "output": "{\"action\":\"caf9da86-bbad-4b42-b6d8-a595cfeefee2\"}"
+    },
+    {
+      "id": "29bb0967-96a8-47a2-a506-ee53da631a5c",
+      "input": "{\"id\":\"29bb0967-96a8-47a2-a506-ee53da631a5c\",\"op\":\"reconcile\",\"revision\":1,\"task\":\"4bca649d-07fe-4cca-8cc8-6742ced0db14\"}",
+      "output": "{\"progress\":\"done\",\"intent\":\"auto\"}"
+    }
+  ]
+}

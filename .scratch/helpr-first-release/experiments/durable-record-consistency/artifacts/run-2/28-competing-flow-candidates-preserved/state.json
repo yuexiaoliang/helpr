@@ -1,0 +1,196 @@
+{
+  "epoch": 1,
+  "halted": false,
+  "blocked": [],
+  "integrity": [
+    {
+      "integrity_check": "ok"
+    }
+  ],
+  "foreignKeys": [],
+  "materials": [
+    {
+      "hash": "21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51",
+      "size": 15
+    }
+  ],
+  "flows": [
+    {
+      "id": "F",
+      "current": "v2b"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "v1",
+      "flow": "F",
+      "parent": null,
+      "body": "{\"step\":\"submit\"}",
+      "evidence": "fixture-initial"
+    },
+    {
+      "id": "v2a",
+      "flow": "F",
+      "parent": "v1",
+      "body": "{\"step\":\"v2a\"}",
+      "evidence": "verified-fixture"
+    },
+    {
+      "id": "v2b",
+      "flow": "F",
+      "parent": "v1",
+      "body": "{\"step\":\"v2b\"}",
+      "evidence": "verified-fixture"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "f41f39ee-0889-4063-ba5e-d4941bc9c3a7",
+      "work_key": "{\"agreement\":\"daily-v1\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"period\":\"2026-10-12\",\"repeat\":null,\"target\":\"A\"}",
+      "material": "21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51",
+      "target": "A",
+      "content": "确认内容一",
+      "content_version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6",
+      "flow": "F",
+      "fixed_flow": "v1",
+      "intent": "auto",
+      "revision": 1,
+      "progress": "pending",
+      "active_run": "1b77c3fe-9bb9-4ead-8a25-acd0f9f66596"
+    },
+    {
+      "id": "0fbc8c1a-46b0-434e-a717-900e89320d69",
+      "work_key": "{\"agreement\":\"daily-v1\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"period\":\"2026-10-12\",\"repeat\":null,\"target\":\"B\"}",
+      "material": "21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51",
+      "target": "B",
+      "content": "确认内容一",
+      "content_version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6",
+      "flow": "F",
+      "fixed_flow": "v1",
+      "intent": "auto",
+      "revision": 1,
+      "progress": "pending",
+      "active_run": "fe1c22d7-9764-477e-8fac-99580c2b5f71"
+    }
+  ],
+  "rounds": [
+    {
+      "plan": "P",
+      "tick": "t1",
+      "selection": "{\"agreement\":\"daily-v1\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"period\":\"2026-10-12\",\"repeat\":null,\"target\":\"A\"}",
+      "task": "f41f39ee-0889-4063-ba5e-d4941bc9c3a7"
+    },
+    {
+      "plan": "P",
+      "tick": "t2",
+      "selection": "{\"agreement\":\"daily-v1\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"period\":\"2026-10-12\",\"repeat\":null,\"target\":\"B\"}",
+      "task": "0fbc8c1a-46b0-434e-a717-900e89320d69"
+    }
+  ],
+  "participation": [
+    {
+      "id": "879572a8-332b-455f-a558-1055e62f0363",
+      "task": "f41f39ee-0889-4063-ba5e-d4941bc9c3a7",
+      "version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6",
+      "status": "accepted"
+    },
+    {
+      "id": "67282e61-7b3e-4589-b5d0-aa7ceb6aaa7d",
+      "task": "0fbc8c1a-46b0-434e-a717-900e89320d69",
+      "version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6",
+      "status": "accepted"
+    }
+  ],
+  "confirmations": [
+    {
+      "request": "879572a8-332b-455f-a558-1055e62f0363",
+      "task": "f41f39ee-0889-4063-ba5e-d4941bc9c3a7",
+      "version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6"
+    },
+    {
+      "request": "67282e61-7b3e-4589-b5d0-aa7ceb6aaa7d",
+      "task": "0fbc8c1a-46b0-434e-a717-900e89320d69",
+      "version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6"
+    }
+  ],
+  "runs": [
+    {
+      "id": "1b77c3fe-9bb9-4ead-8a25-acd0f9f66596",
+      "task": "f41f39ee-0889-4063-ba5e-d4941bc9c3a7",
+      "epoch": 1,
+      "revision": 1,
+      "flow_version": "v1"
+    },
+    {
+      "id": "fe1c22d7-9764-477e-8fac-99580c2b5f71",
+      "task": "0fbc8c1a-46b0-434e-a717-900e89320d69",
+      "epoch": 1,
+      "revision": 1,
+      "flow_version": "v1"
+    }
+  ],
+  "actions": [],
+  "receipts": [],
+  "requests": [
+    {
+      "id": "176f6b64-925d-46a5-86ed-0fcacf04475a",
+      "input": "{\"body\":{\"step\":\"submit\"},\"flow\":\"F\",\"id\":\"176f6b64-925d-46a5-86ed-0fcacf04475a\",\"op\":\"flow\",\"version\":\"v1\"}",
+      "output": "{\"version\":\"v1\"}"
+    },
+    {
+      "id": "859766d4-f5ff-46ae-8b27-86046dffa286",
+      "input": "{\"bytes\":\"57Sg5p2Q54mI5pys5LiA\",\"id\":\"859766d4-f5ff-46ae-8b27-86046dffa286\",\"op\":\"material\"}",
+      "output": "{\"hash\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"size\":15}"
+    },
+    {
+      "id": "a7afb65a-404f-488d-856f-d1fe9d511712",
+      "input": "{\"agreement\":\"daily-v1\",\"content\":\"确认内容一\",\"flow\":\"F\",\"id\":\"a7afb65a-404f-488d-856f-d1fe9d511712\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"op\":\"select\",\"period\":\"2026-10-12\",\"plan\":\"P\",\"target\":\"A\",\"tick\":\"t1\"}",
+      "output": "{\"task\":\"f41f39ee-0889-4063-ba5e-d4941bc9c3a7\"}"
+    },
+    {
+      "id": "cf6a75b1-ec48-4cbf-933b-835390ca170f",
+      "input": "{\"bytes\":\"57Sg5p2Q54mI5pys5LiA\",\"id\":\"cf6a75b1-ec48-4cbf-933b-835390ca170f\",\"op\":\"material\"}",
+      "output": "{\"hash\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"size\":15}"
+    },
+    {
+      "id": "899e419c-078b-4a14-97b0-4633e14db81d",
+      "input": "{\"agreement\":\"daily-v1\",\"content\":\"确认内容一\",\"flow\":\"F\",\"id\":\"899e419c-078b-4a14-97b0-4633e14db81d\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"op\":\"select\",\"period\":\"2026-10-12\",\"plan\":\"P\",\"target\":\"B\",\"tick\":\"t2\"}",
+      "output": "{\"task\":\"0fbc8c1a-46b0-434e-a717-900e89320d69\"}"
+    },
+    {
+      "id": "5ff3cf37-9ded-4015-8012-fd079cf3f11a",
+      "input": "{\"id\":\"5ff3cf37-9ded-4015-8012-fd079cf3f11a\",\"op\":\"answer\",\"request\":\"879572a8-332b-455f-a558-1055e62f0363\",\"version\":\"73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6\"}",
+      "output": "{\"accepted\":true,\"task\":\"f41f39ee-0889-4063-ba5e-d4941bc9c3a7\"}"
+    },
+    {
+      "id": "5b324fd5-1359-4fb1-bc6c-5d18baf83636",
+      "input": "{\"id\":\"5b324fd5-1359-4fb1-bc6c-5d18baf83636\",\"op\":\"answer\",\"request\":\"67282e61-7b3e-4589-b5d0-aa7ceb6aaa7d\",\"version\":\"73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6\"}",
+      "output": "{\"accepted\":true,\"task\":\"0fbc8c1a-46b0-434e-a717-900e89320d69\"}"
+    },
+    {
+      "id": "2435e9ad-f771-466d-9d07-e7fadd9a5ff4",
+      "input": "{\"id\":\"2435e9ad-f771-466d-9d07-e7fadd9a5ff4\",\"op\":\"claim\",\"revision\":1,\"task\":\"f41f39ee-0889-4063-ba5e-d4941bc9c3a7\"}",
+      "output": "{\"token\":\"1b77c3fe-9bb9-4ead-8a25-acd0f9f66596\",\"flow\":\"v1\"}"
+    },
+    {
+      "id": "dcf96ca5-3124-4bdd-bc4b-ff55e2e2009e",
+      "input": "{\"id\":\"dcf96ca5-3124-4bdd-bc4b-ff55e2e2009e\",\"op\":\"claim\",\"revision\":1,\"task\":\"0fbc8c1a-46b0-434e-a717-900e89320d69\"}",
+      "output": "{\"token\":\"fe1c22d7-9764-477e-8fac-99580c2b5f71\",\"flow\":\"v1\"}"
+    },
+    {
+      "id": "c1f90111-7a1a-47d6-98a7-463b578636fc",
+      "input": "{\"body\":{\"step\":\"v2a\"},\"evidence\":\"verified-fixture\",\"flow\":\"F\",\"id\":\"c1f90111-7a1a-47d6-98a7-463b578636fc\",\"op\":\"candidate\",\"parent\":\"v1\",\"version\":\"v2a\"}",
+      "output": "{\"version\":\"v2a\"}"
+    },
+    {
+      "id": "0ef4b188-7a42-47b8-9bbb-d99680e1b829",
+      "input": "{\"body\":{\"step\":\"v2b\"},\"evidence\":\"verified-fixture\",\"flow\":\"F\",\"id\":\"0ef4b188-7a42-47b8-9bbb-d99680e1b829\",\"op\":\"candidate\",\"parent\":\"v1\",\"version\":\"v2b\"}",
+      "output": "{\"version\":\"v2b\"}"
+    },
+    {
+      "id": "46a54373-07a4-4086-9173-bfe07649fb85",
+      "input": "{\"id\":\"46a54373-07a4-4086-9173-bfe07649fb85\",\"op\":\"adopt\",\"version\":\"v2b\"}",
+      "output": "{\"version\":\"v2b\"}"
+    }
+  ]
+}

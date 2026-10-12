@@ -44,6 +44,9 @@ Status: open
 - [确定浏览器承载与流程执行组合](issues/07-browser-runtime-decision.md#answer)：首版采用 macOS / Electron、Playwright 与统一受控的结构化流程执行；用户接受未知输入时暂停两项及网站隐含写入的明确保证范围。
 - [确定执行记录、流程更新与定时恢复的约定](issues/10-durable-execution-contract.md#answer)：统一保存本机关联记录，按约定、目标和素材版本记处理事实；恢复先核对、旧工作不重复领取，并发流程候选不互相覆盖，持久一致性与自动恢复依据另行验证。
 - [确定本机交付、权限与更新约定](issues/20-local-delivery-and-updates.md#answer)：当前 Mac 自用、关窗口继续、遵循休眠、本机保留与备份；自动检测、默认手动安装及可选空闲自动更新，控制隔离和打包更新另行验证。
+- [验证持久记录与执行资格的中断一致性](issues/22-durable-record-consistency.md#answer)：本机中断与并发记录取得受控证据，容量遗漏和启动锁争用经反例修订；已派发效果与未落盘意图仍保留明确限制，真实网页和交付验证继续。
+- [验证浏览器控制连接与宿主隔离](issues/24-private-browser-control.md#answer)：私有 pipe 与受管进程转接取得 43 项限定证据，补齐消息顺序及自有视图退出；无裸调试端口，未覆盖协议和真实网站仍须继续核对。
+- [验证恢复核对依据的自动形成](issues/23-autonomous-recovery-evidence.md#answer)：真实模型与执行形成恢复依据，冻结后新进程可核对草稿及丢失回执的结果；无稳定关联或提交不确定时仍不重发，完整组合与打包继续验证。
 
 ## Not yet specified
 

@@ -1,0 +1,170 @@
+[
+  {
+    "command": "flow",
+    "id": "fefcdfb8-e141-40d4-a388-0ea086b88cde",
+    "inputBytes": 108,
+    "inputHash": "23aa01e79af2b85e8c0cd0fcbe01403876bb6001e53adf8262ea58a2ef15bf43"
+  },
+  {
+    "id": "fefcdfb8-e141-40d4-a388-0ea086b88cde",
+    "ok": true,
+    "output": {
+      "version": "v1"
+    }
+  },
+  {
+    "command": "material",
+    "id": "55539cb2-3ccb-4098-967d-545b3f87207a",
+    "inputBytes": 92,
+    "inputHash": "b1098b679f9808a9e4f80607fa0dd6be207eb90f7d932caa1845dd8bff93a0c0"
+  },
+  {
+    "id": "55539cb2-3ccb-4098-967d-545b3f87207a",
+    "ok": true,
+    "output": {
+      "hash": "21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51",
+      "size": 15
+    }
+  },
+  {
+    "command": "select",
+    "id": "a3a0578c-8bb3-4751-a887-48f78b7b46ba",
+    "inputBytes": 247,
+    "inputHash": "e55efc13408c150e657d95a8fee70becbb12d5dbc80436d4c8467c1f5e3acb78"
+  },
+  {
+    "id": "a3a0578c-8bb3-4751-a887-48f78b7b46ba",
+    "ok": true,
+    "output": {
+      "task": "cc3e477b-3cba-462b-b476-18a7442fd96f"
+    }
+  },
+  {
+    "command": "read",
+    "inputBytes": 13,
+    "inputHash": "6a7d7208cfa2929e876b088255688b200b3bb15de1c2d638b408cb510a9eb2ed"
+  },
+  {
+    "ok": true,
+    "output": "snapshot"
+  },
+  {
+    "command": "answer",
+    "id": "1ef8c556-6645-43b4-b586-27e4d98347d4",
+    "inputBytes": 185,
+    "inputHash": "b6b6d8a66f53b96b8e3ef2c6f03c1c96c606c72fc9799713905ff589ef71aab7"
+  },
+  {
+    "id": "1ef8c556-6645-43b4-b586-27e4d98347d4",
+    "ok": true,
+    "output": {
+      "accepted": true,
+      "task": "cc3e477b-3cba-462b-b476-18a7442fd96f"
+    }
+  },
+  {
+    "command": "read",
+    "inputBytes": 13,
+    "inputHash": "6a7d7208cfa2929e876b088255688b200b3bb15de1c2d638b408cb510a9eb2ed"
+  },
+  {
+    "ok": true,
+    "output": "snapshot"
+  },
+  {
+    "command": "claim",
+    "id": "b8961fca-d998-4327-936c-91ee93785606",
+    "inputBytes": 117,
+    "inputHash": "d1d53d7aef9fb611b9bbf76591443b21558547baeae24ee8649c1dcb5ccabaef"
+  },
+  {
+    "command": "claim",
+    "id": "f85aeab7-cac2-4d97-a66b-8c3ca78feff1",
+    "inputBytes": 117,
+    "inputHash": "9104d4a2d76ba9340bd1f1721117b80b9d882cc4cbbb00f8b0f4528a9195795b"
+  },
+  {
+    "id": "b8961fca-d998-4327-936c-91ee93785606",
+    "ok": true,
+    "output": {
+      "token": "897ca2ac-5041-44b9-85f0-f02b640260d1",
+      "flow": "v1"
+    }
+  },
+  {
+    "id": "f85aeab7-cac2-4d97-a66b-8c3ca78feff1",
+    "ok": false,
+    "code": "NOT_CLAIMABLE",
+    "message": "NOT_CLAIMABLE"
+  },
+  {
+    "command": "read",
+    "inputBytes": 13,
+    "inputHash": "6a7d7208cfa2929e876b088255688b200b3bb15de1c2d638b408cb510a9eb2ed"
+  },
+  {
+    "ok": true,
+    "output": "snapshot"
+  },
+  {
+    "command": "claim",
+    "id": "28302fb6-cd2f-4903-b343-30d3cbe8b6b3",
+    "inputBytes": 117,
+    "inputHash": "ba160631d0c868fa00e0198ad602d833df69989686c40b8ca9c0c463ddd3592c"
+  },
+  {
+    "id": "28302fb6-cd2f-4903-b343-30d3cbe8b6b3",
+    "ok": true,
+    "output": {
+      "token": "0592a068-bc85-48b9-a9fa-24830865c993",
+      "flow": "v1"
+    }
+  },
+  {
+    "command": "reserve",
+    "id": "8013fe07-8407-4b7b-b2d9-0f5fe32edaa2",
+    "inputBytes": 153,
+    "inputHash": "a22b3eb0da0ef5b300eeb618cf8471a13fb33df9b0f9605624d34c5a8648aaa6"
+  },
+  {
+    "id": "8013fe07-8407-4b7b-b2d9-0f5fe32edaa2",
+    "ok": false,
+    "code": "STALE_RUN",
+    "message": "STALE_RUN"
+  },
+  {
+    "command": "reserve",
+    "id": "d8215701-a745-407e-868d-982ec146ae4d",
+    "inputBytes": 153,
+    "inputHash": "59f5a3ad93345b40b16da6fbe08868b635ec4cc7ea1be5ffff9525f8e6be0c9a"
+  },
+  {
+    "id": "d8215701-a745-407e-868d-982ec146ae4d",
+    "ok": true,
+    "output": {
+      "action": "f3b253d9-4642-4d4e-9773-7d6922f445c8"
+    }
+  },
+  {
+    "command": "perform",
+    "id": "8cd9910f-989b-4ce6-b110-05a938af34da",
+    "inputBytes": 201,
+    "inputHash": "198f76a4f3e253ccb265af375e3c5e78251568ab667ba3fa35b1fa0c903611a0"
+  },
+  {
+    "id": "8cd9910f-989b-4ce6-b110-05a938af34da",
+    "ok": true,
+    "output": {
+      "action": "f3b253d9-4642-4d4e-9773-7d6922f445c8"
+    }
+  },
+  {
+    "command": "read",
+    "inputBytes": 13,
+    "inputHash": "6a7d7208cfa2929e876b088255688b200b3bb15de1c2d638b408cb510a9eb2ed"
+  },
+  {
+    "ok": true,
+    "output": "snapshot"
+  }
+]

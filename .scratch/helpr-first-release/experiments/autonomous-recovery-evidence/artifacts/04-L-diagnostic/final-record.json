@@ -1,0 +1,85 @@
+{
+  "task": {
+    "id": "L",
+    "executionId": "auto-recovery-20261012-L",
+    "origin": "http://home.ts-ali.internal:38080",
+    "entryUrl": "http://home.ts-ali.internal:38080/wp-admin/",
+    "inputs": {
+      "post_title": {
+        "type": "string",
+        "value": "自动恢复依据 同名核对 20261012"
+      },
+      "post_content": {
+        "type": "string",
+        "value": "本文和附件为虚构测试材料。恢复样本 L，校验内容版本 72dfcfb0c470。仅用于验证本次恢复记录。"
+      },
+      "post_category": {
+        "type": "string",
+        "value": "Excel 验证"
+      },
+      "attachment_excel": {
+        "type": "file",
+        "path": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/autonomous-recovery-evidence/artifacts/materials/recovery-20261012-L.xlsx",
+        "name": "recovery-20261012-L.xlsx",
+        "stem": "recovery-20261012-L",
+        "sha256": "24975a58ca79a07925847d9d536edcfd26b248feba4faf17a310975c9025eb0f"
+      }
+    },
+    "authorization": {
+      "source": "explicit-isolated-test-fixture",
+      "intent": "new public record with original attachment",
+      "notHumanConfirmation": true
+    }
+  },
+  "taskHash": "d3924be74f762e0626f357cd15ac40bd6c24a1a66fb6f07edc664bff632529f1",
+  "revision": 9,
+  "controlGeneration": 0,
+  "intent": "running",
+  "phase": "preparing",
+  "navigations": [
+    {
+      "url": "http://home.ts-ali.internal:38080/wp-login.php?redirect_to=http%3A%2F%2Fhome.ts-ali.internal%3A38080%2Fwp-admin%2F&reauth=1",
+      "method": "main-frame-navigation",
+      "time": 1791802436430
+    },
+    {
+      "url": "http://home.ts-ali.internal:38080/wp-admin/",
+      "method": "main-frame-navigation",
+      "time": 1791802640116
+    },
+    {
+      "url": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+      "method": "main-frame-navigation",
+      "time": 1791802653700
+    }
+  ],
+  "artifacts": [],
+  "checkpoints": [
+    {
+      "phase": "preparing",
+      "taskHash": "d3924be74f762e0626f357cd15ac40bd6c24a1a66fb6f07edc664bff632529f1",
+      "epoch": 2
+    },
+    {
+      "phase": "preparing",
+      "taskHash": "d3924be74f762e0626f357cd15ac40bd6c24a1a66fb6f07edc664bff632529f1",
+      "epoch": 3
+    }
+  ],
+  "dispatches": [
+    {
+      "kind": "step",
+      "id": "s1",
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "menuitem",
+          "name": "New"
+        }
+      },
+      "epoch": 3
+    }
+  ]
+}

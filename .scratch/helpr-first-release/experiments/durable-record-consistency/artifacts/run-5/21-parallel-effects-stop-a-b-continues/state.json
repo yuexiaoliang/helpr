@@ -1,0 +1,232 @@
+{
+  "epoch": 1,
+  "halted": false,
+  "blocked": [
+    "18f5df2a-7e52-4e88-aa49-ac70a8a0277e"
+  ],
+  "integrity": [
+    {
+      "integrity_check": "ok"
+    }
+  ],
+  "foreignKeys": [],
+  "materials": [
+    {
+      "hash": "21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51",
+      "size": 15
+    }
+  ],
+  "flows": [
+    {
+      "id": "F",
+      "current": "v1"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "v1",
+      "flow": "F",
+      "parent": null,
+      "body": "{\"step\":\"submit\"}",
+      "evidence": "fixture-initial"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "18f5df2a-7e52-4e88-aa49-ac70a8a0277e",
+      "work_key": "{\"agreement\":\"daily-v1\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"period\":\"2026-10-12\",\"repeat\":null,\"target\":\"A\"}",
+      "material": "21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51",
+      "target": "A",
+      "content": "确认内容一",
+      "content_version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6",
+      "flow": "F",
+      "fixed_flow": "v1",
+      "intent": "stop",
+      "revision": 2,
+      "progress": "done",
+      "active_run": null
+    },
+    {
+      "id": "7346cea0-56de-4d22-a6a0-00150b95ceda",
+      "work_key": "{\"agreement\":\"daily-v1\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"period\":\"2026-10-12\",\"repeat\":null,\"target\":\"B\"}",
+      "material": "21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51",
+      "target": "B",
+      "content": "确认内容一",
+      "content_version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6",
+      "flow": "F",
+      "fixed_flow": "v1",
+      "intent": "auto",
+      "revision": 1,
+      "progress": "done",
+      "active_run": null
+    }
+  ],
+  "rounds": [
+    {
+      "plan": "P",
+      "tick": "t1",
+      "selection": "{\"agreement\":\"daily-v1\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"period\":\"2026-10-12\",\"repeat\":null,\"target\":\"A\"}",
+      "task": "18f5df2a-7e52-4e88-aa49-ac70a8a0277e"
+    },
+    {
+      "plan": "P",
+      "tick": "t2",
+      "selection": "{\"agreement\":\"daily-v1\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"period\":\"2026-10-12\",\"repeat\":null,\"target\":\"B\"}",
+      "task": "7346cea0-56de-4d22-a6a0-00150b95ceda"
+    }
+  ],
+  "participation": [
+    {
+      "id": "99eed1c2-811e-4419-8170-6bf198db7e41",
+      "task": "18f5df2a-7e52-4e88-aa49-ac70a8a0277e",
+      "version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6",
+      "status": "accepted"
+    },
+    {
+      "id": "07cca54a-0f38-4c0a-94b2-3cacb97f9f6d",
+      "task": "7346cea0-56de-4d22-a6a0-00150b95ceda",
+      "version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6",
+      "status": "accepted"
+    }
+  ],
+  "confirmations": [
+    {
+      "request": "99eed1c2-811e-4419-8170-6bf198db7e41",
+      "task": "18f5df2a-7e52-4e88-aa49-ac70a8a0277e",
+      "version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6"
+    },
+    {
+      "request": "07cca54a-0f38-4c0a-94b2-3cacb97f9f6d",
+      "task": "7346cea0-56de-4d22-a6a0-00150b95ceda",
+      "version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6"
+    }
+  ],
+  "runs": [
+    {
+      "id": "c3815c74-737d-4f5d-85d4-6e7559051e21",
+      "task": "18f5df2a-7e52-4e88-aa49-ac70a8a0277e",
+      "epoch": 1,
+      "revision": 1,
+      "flow_version": "v1"
+    },
+    {
+      "id": "26b46763-cdd3-4d1e-8c6c-001d76e6ba71",
+      "task": "7346cea0-56de-4d22-a6a0-00150b95ceda",
+      "epoch": 1,
+      "revision": 1,
+      "flow_version": "v1"
+    }
+  ],
+  "actions": [
+    {
+      "id": "c0dce7c8-7d4c-4bab-8b4e-61cb882e53e5",
+      "task": "18f5df2a-7e52-4e88-aa49-ac70a8a0277e",
+      "run": "c3815c74-737d-4f5d-85d4-6e7559051e21",
+      "material": "21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51",
+      "content_version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6",
+      "target": "A",
+      "stage": "verified"
+    },
+    {
+      "id": "f946045a-89af-427a-8712-6b586a039ba8",
+      "task": "7346cea0-56de-4d22-a6a0-00150b95ceda",
+      "run": "26b46763-cdd3-4d1e-8c6c-001d76e6ba71",
+      "material": "21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51",
+      "content_version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6",
+      "target": "B",
+      "stage": "verified"
+    }
+  ],
+  "receipts": [
+    {
+      "action": "c0dce7c8-7d4c-4bab-8b4e-61cb882e53e5",
+      "evidence": "{\"action\":\"c0dce7c8-7d4c-4bab-8b4e-61cb882e53e5\",\"kind\":\"completed\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"target\":\"A\",\"task\":\"18f5df2a-7e52-4e88-aa49-ac70a8a0277e\",\"time\":1791798577303,\"version\":\"73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6\"}"
+    },
+    {
+      "action": "f946045a-89af-427a-8712-6b586a039ba8",
+      "evidence": "{\"action\":\"f946045a-89af-427a-8712-6b586a039ba8\",\"kind\":\"completed\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"target\":\"B\",\"task\":\"7346cea0-56de-4d22-a6a0-00150b95ceda\",\"time\":1791798577308,\"version\":\"73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6\"}"
+    }
+  ],
+  "requests": [
+    {
+      "id": "9d6219c0-80ad-4579-ba01-3f251feb5626",
+      "input": "{\"body\":{\"step\":\"submit\"},\"flow\":\"F\",\"id\":\"9d6219c0-80ad-4579-ba01-3f251feb5626\",\"op\":\"flow\",\"version\":\"v1\"}",
+      "output": "{\"version\":\"v1\"}"
+    },
+    {
+      "id": "9fec02de-b95f-4e87-afd0-24e8cd2e980b",
+      "input": "{\"bytes\":\"57Sg5p2Q54mI5pys5LiA\",\"id\":\"9fec02de-b95f-4e87-afd0-24e8cd2e980b\",\"op\":\"material\"}",
+      "output": "{\"hash\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"size\":15}"
+    },
+    {
+      "id": "a6ce9c20-df8c-44a4-9876-f671b88dbbe8",
+      "input": "{\"agreement\":\"daily-v1\",\"content\":\"确认内容一\",\"flow\":\"F\",\"id\":\"a6ce9c20-df8c-44a4-9876-f671b88dbbe8\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"op\":\"select\",\"period\":\"2026-10-12\",\"plan\":\"P\",\"target\":\"A\",\"tick\":\"t1\"}",
+      "output": "{\"task\":\"18f5df2a-7e52-4e88-aa49-ac70a8a0277e\"}"
+    },
+    {
+      "id": "35903d3d-8c53-4a47-a29c-fb709650e31c",
+      "input": "{\"bytes\":\"57Sg5p2Q54mI5pys5LiA\",\"id\":\"35903d3d-8c53-4a47-a29c-fb709650e31c\",\"op\":\"material\"}",
+      "output": "{\"hash\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"size\":15}"
+    },
+    {
+      "id": "463539e2-060b-4090-88ee-e25cd3f89aa3",
+      "input": "{\"agreement\":\"daily-v1\",\"content\":\"确认内容一\",\"flow\":\"F\",\"id\":\"463539e2-060b-4090-88ee-e25cd3f89aa3\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"op\":\"select\",\"period\":\"2026-10-12\",\"plan\":\"P\",\"target\":\"B\",\"tick\":\"t2\"}",
+      "output": "{\"task\":\"7346cea0-56de-4d22-a6a0-00150b95ceda\"}"
+    },
+    {
+      "id": "b42d3e4d-4f5d-4ac8-989b-789067c046b8",
+      "input": "{\"id\":\"b42d3e4d-4f5d-4ac8-989b-789067c046b8\",\"op\":\"answer\",\"request\":\"99eed1c2-811e-4419-8170-6bf198db7e41\",\"version\":\"73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6\"}",
+      "output": "{\"accepted\":true,\"task\":\"18f5df2a-7e52-4e88-aa49-ac70a8a0277e\"}"
+    },
+    {
+      "id": "52915a60-d6bc-47c0-8b86-8dd5edf8c939",
+      "input": "{\"id\":\"52915a60-d6bc-47c0-8b86-8dd5edf8c939\",\"op\":\"answer\",\"request\":\"07cca54a-0f38-4c0a-94b2-3cacb97f9f6d\",\"version\":\"73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6\"}",
+      "output": "{\"accepted\":true,\"task\":\"7346cea0-56de-4d22-a6a0-00150b95ceda\"}"
+    },
+    {
+      "id": "9e19849d-d38d-4311-92e2-82b9191bb63b",
+      "input": "{\"id\":\"9e19849d-d38d-4311-92e2-82b9191bb63b\",\"op\":\"claim\",\"revision\":1,\"task\":\"18f5df2a-7e52-4e88-aa49-ac70a8a0277e\"}",
+      "output": "{\"token\":\"c3815c74-737d-4f5d-85d4-6e7559051e21\",\"flow\":\"v1\"}"
+    },
+    {
+      "id": "fa1e5309-7792-4c92-a57b-77860aeb82c5",
+      "input": "{\"id\":\"fa1e5309-7792-4c92-a57b-77860aeb82c5\",\"op\":\"reserve\",\"task\":\"18f5df2a-7e52-4e88-aa49-ac70a8a0277e\",\"token\":\"c3815c74-737d-4f5d-85d4-6e7559051e21\"}",
+      "output": "{\"action\":\"c0dce7c8-7d4c-4bab-8b4e-61cb882e53e5\"}"
+    },
+    {
+      "id": "c91643af-bbcc-4966-9528-d32ee96b2c93",
+      "input": "{\"id\":\"c91643af-bbcc-4966-9528-d32ee96b2c93\",\"op\":\"claim\",\"revision\":1,\"task\":\"7346cea0-56de-4d22-a6a0-00150b95ceda\"}",
+      "output": "{\"token\":\"26b46763-cdd3-4d1e-8c6c-001d76e6ba71\",\"flow\":\"v1\"}"
+    },
+    {
+      "id": "ab46f4af-8bb4-4dcf-9bf3-20a44f4826df",
+      "input": "{\"id\":\"ab46f4af-8bb4-4dcf-9bf3-20a44f4826df\",\"op\":\"reserve\",\"task\":\"7346cea0-56de-4d22-a6a0-00150b95ceda\",\"token\":\"26b46763-cdd3-4d1e-8c6c-001d76e6ba71\"}",
+      "output": "{\"action\":\"f946045a-89af-427a-8712-6b586a039ba8\"}"
+    },
+    {
+      "id": "f9e33be3-717e-414c-8f00-68405d633e72",
+      "input": "{\"action\":\"c0dce7c8-7d4c-4bab-8b4e-61cb882e53e5\",\"id\":\"f9e33be3-717e-414c-8f00-68405d633e72\",\"op\":\"perform\",\"task\":\"18f5df2a-7e52-4e88-aa49-ac70a8a0277e\",\"token\":\"c3815c74-737d-4f5d-85d4-6e7559051e21\"}",
+      "output": "{\"action\":\"c0dce7c8-7d4c-4bab-8b4e-61cb882e53e5\"}"
+    },
+    {
+      "id": "ccc2efe0-4411-45ec-bad9-7588257b6f5a",
+      "input": "{\"action\":\"f946045a-89af-427a-8712-6b586a039ba8\",\"id\":\"ccc2efe0-4411-45ec-bad9-7588257b6f5a\",\"op\":\"perform\",\"task\":\"7346cea0-56de-4d22-a6a0-00150b95ceda\",\"token\":\"26b46763-cdd3-4d1e-8c6c-001d76e6ba71\"}",
+      "output": "{\"action\":\"f946045a-89af-427a-8712-6b586a039ba8\"}"
+    },
+    {
+      "id": "89022301-548a-43bf-87dd-3afd63273f05",
+      "input": "{\"id\":\"89022301-548a-43bf-87dd-3afd63273f05\",\"kind\":\"stop\",\"op\":\"intent\",\"revision\":1,\"task\":\"18f5df2a-7e52-4e88-aa49-ac70a8a0277e\"}",
+      "output": "{\"intent\":\"stop\",\"revision\":2}"
+    },
+    {
+      "id": "5c565e98-690e-4b82-a605-bf7fae73deb7",
+      "input": "{\"id\":\"5c565e98-690e-4b82-a605-bf7fae73deb7\",\"op\":\"reconcile\",\"revision\":2,\"task\":\"18f5df2a-7e52-4e88-aa49-ac70a8a0277e\"}",
+      "output": "{\"progress\":\"done\",\"intent\":\"stop\"}"
+    },
+    {
+      "id": "3ebafac8-ff4b-41c0-adb7-e4e1b382585e",
+      "input": "{\"id\":\"3ebafac8-ff4b-41c0-adb7-e4e1b382585e\",\"op\":\"reconcile\",\"revision\":1,\"task\":\"7346cea0-56de-4d22-a6a0-00150b95ceda\"}",
+      "output": "{\"progress\":\"done\",\"intent\":\"auto\"}"
+    }
+  ]
+}

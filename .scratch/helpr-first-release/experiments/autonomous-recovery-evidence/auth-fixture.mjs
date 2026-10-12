@@ -1,0 +1,7 @@
+// Test login setup, separate from candidate learning. Never writes credential values to evidence.
+import {execFileSync} from 'node:child_process';import {parseEnv} from 'node:util';import {createRequire} from 'node:module';import fs from 'node:fs';import path from 'node:path';
+import {here,save,ensure} from './common.mjs';
+const require=createRequire(import.meta.url),{request}=require('../visible-page-control/node_modules/playwright');
+const values=parseEnv(execFileSync('ssh',['essh-home',"awk '/^WP_TEST_USER=|^WP_TEST_PASSWORD=/' /home/yuexiaoliang/services/helpr-validation-wordpress/.env"],{encoding:'utf8'}));
+const origin='http://home.ts-ali.internal:38080',ctx=await request.newContext();
+try{await ctx.get(origin+'/wp-login.php');const response=await ctx.post(origin+'/wp-login.php',{form:{log:values.WP_TEST_USER,pwd:values.WP_TEST_PASSWORD,'wp-submit':'Log In',redirect_to:origin+'/wp-admin/',testcookie:'1',rememberme:'forever'}});ensure(!response.url().includes('wp-login'),'test-login-failed');const file=path.join(here,'private/auth.json');await ctx.storageState({path:file});fs.chmodSync(file,0o600);save(path.join(here,'artifacts/auth-setup.json'),{at:new Date().toISOString(),account:'dedicated-test-author',authenticated:true,method:'HTTP-login-fixture',previousState:'embedded-server-expiry-2026-10-12T10:16:13Z',secretsSaved:'private/auth.json (ignored)'});console.log('Dedicated test-author login refreshed.');}finally{await ctx.dispose();}

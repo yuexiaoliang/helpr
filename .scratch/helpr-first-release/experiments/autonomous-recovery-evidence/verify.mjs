@@ -1,0 +1,43 @@
+// Offline audit only: no browser, credentials, model requests, or website writes.
+import fs from 'node:fs';import path from 'node:path';import assert from 'node:assert/strict';import {DatabaseSync} from 'node:sqlite';
+import {here,load,hash,sources} from './common.mjs';
+const checks=[];function check(name,fn){try{fn();checks.push({name,passed:true});}catch(e){checks.push({name,passed:false,message:e.message});}}
+const artifacts=path.join(here,'artifacts'),runs=fs.readdirSync(artifacts).filter(f=>/^\d\d-/.test(f)).map(name=>({name,dir:path.join(artifacts,name)}));
+const freeze=load(path.join(here,'freeze.json')),rules=load(path.join(here,'rules.json')),ledger=load(path.join(here,'ledger.json')),models=load(path.join(here,'model-ledger.json'));
+check('frozen candidate and runtime rules',()=>{assert.deepEqual(sources(),freeze.sources);assert.equal(hash(rules),freeze.rulesHash);});
+check('frozen imported dependencies',()=>{for(const [f,digest] of Object.entries(freeze.dependencies))assert.equal(hash(fs.readFileSync(path.resolve(here,f))),digest,f);});
+check('all fixed budgets include failures',()=>{for(const [kind,n] of Object.entries(ledger.counts))assert(n<=ledger.limits[kind],kind);assert.equal(ledger.counts.modelCalls,models.calls.length);assert(models.reserved<=ledger.limits.tokens);assert.equal(ledger.counts.starts,runs.length);assert.equal(ledger.originalLimits.preparation,6);assert.equal(ledger.limits.preparation,8);});
+check('model proposals originate in real observed nodes',()=>{
+ const learned=runs.find(r=>r.name.endsWith('-L3-learn')),saveProposal=load(rules.proof.save),identity=load(rules.proof.identity),entry=load(rules.proof.resultEntry);
+ const before=load(path.join(learned.dir,'before-save.json')),after=load(path.join(learned.dir,'after-save.json')),reopened=load(path.join(learned.dir,'reopened-editor.json'));
+ assert.deepEqual(before.nodes.find(n=>n.id===saveProposal.target).target,rules.saveAction.target);assert.equal(identity.queryKey,rules.identity.queryKey);assert(new URL(after.url).searchParams.has(identity.queryKey));assert.deepEqual(reopened.nodes.find(n=>n.id===entry.target).target,rules.resultEntry.target);
+});
+for(const run of runs){
+ const recorded=load(path.join(run.dir,'sources.json'));
+ check(run.name+' source snapshot',()=>{for(const [f,digest] of Object.entries(recorded))assert.equal(hash(fs.readFileSync(path.join(run.dir,'source',f))),digest,f);});
+ check(run.name+' owned processes ended',()=>assert.deepEqual(load(path.join(run.dir,'cleanup.json')).remaining,[]));
+ if(/-(U|H|G2)-(prepare|recover|resume|intents|guards|negative)$/.test(run.name))check(run.name+' used frozen candidate',()=>assert.deepEqual(recorded,freeze.sources));
+}
+const events=runs.flatMap(run=>fs.readFileSync(path.join(run.dir,'events.jsonl'),'utf8').trim().split('\n').filter(Boolean).map(s=>({...JSON.parse(s),run:run.name})));
+check('independent upload and publication counts',()=>{for(const kind of ['upload','publication'])assert.equal(events.filter(e=>e.kind==='fixture-upstream-response'&&e.effect===kind).length,ledger.counts[kind]);});
+const pick=(suffix,decision)=>runs.filter(r=>r.name.endsWith(suffix)).map(r=>({run:r,...(fs.existsSync(path.join(r.dir,'result.json'))?{value:load(path.join(r.dir,'result.json'))}:{})})).find(r=>r.value&&(!decision||r.value.decision===decision));
+check('upload-only interruption keeps uploaded bytes and remains unknown',()=>{const r=pick('-U-recover').value;assert.equal(r.decision,'uncertain');assert.equal(r.reason,'stable-identity-unavailable');assert.equal(r.knownArtifacts.length,1);assert.equal(r.knownArtifacts[0].ok,true);});
+check('saved navigation recovered before prepared checkpoint',()=>{const r=pick('-H-recover','ready-to-continue').value;assert.equal(r.previousPhase,'preparing');assert.equal(r.observedEffect,'draft-ready');assert(r.evidence.every(e=>e.ok));});
+check('lost receipt recovered from actual complete result',()=>{const r=pick('-H-recover','completed').value;assert.equal(r.observedEffect,'completed');assert(r.evidence.every(e=>e.ok));assert.equal(events.filter(e=>e.kind==='fixture-receipt-withheld').length,1);});
+check('verified-before-record interruption also survives',()=>assert(runs.some(r=>r.name.endsWith('-H-recover')&&fs.existsSync(path.join(r.dir,'interruption.json'))&&load(path.join(r.dir,'interruption.json')).phase==='result-verified')));
+check('unknown final dispatch is never replayed',()=>{const r=pick('-G2-recover').value;assert.equal(r.decision,'uncertain');assert.equal(r.reason,'final-may-have-been-dispatched');assert.equal(events.filter(e=>e.run.includes('-G2-')&&e.kind==='fixture-upstream-response'&&e.effect==='publication').length,0);});
+check('stop takeover waiting and unknown input remain held',()=>{const r=pick('-H-intents').value;assert.deepEqual(r.outcomes.map(o=>o.intent),['stopped','takeover','waiting','unknown-input','running']);assert.deepEqual(r.outcomes.map(o=>o.decision),['held','held','held','held','completed']);assert(r.outcomes.every(o=>o.automaticAction==='none'&&o.observedEffect==='completed'));});
+check('late authority and incomplete rules rejected',()=>{const r=pick('-H-guards').value;assert(r.results.every(x=>x.passed));assert(r.results.some(x=>x.name==='other-execution-identity'&&x.reason==='identity-owned-by-other-execution'));assert(r.results.some(x=>x.name==='old-action-after-explicit-continue'&&x.reason==='stale-control-generation'));});
+check('wrong version and nonunique/wrong observed rule rejected',()=>{const r=pick('-H-negative').value;assert.equal(r.results.length,3);assert(r.results.every(x=>x.passed&&x.reason==='condition-not-confirmed'));const expected=load(path.join(here,'tasks.json')).find(t=>t.id==='H').inputs;assert.equal(r.results[0].detail.evidence.sha256,expected.attachment_excel.sha256);assert(r.results[1].detail.evidence.count>1);assert.equal(r.results[2].detail.evidence.actual,expected.post_content.value);});
+check('external content change is not claimed as completion',()=>{const r=pick('-L3-recover').value;assert.equal(r.decision,'uncertain');assert.equal(r.reason,'result-not-confirmed');});
+const oracleFiles=fs.readdirSync(path.join(artifacts,'oracle')).filter(f=>/^(L3|H)-\d+\.json$/.test(f));
+check('independent same-title outputs match respective byte versions',()=>{
+ const all=oracleFiles.map(f=>load(path.join(artifacts,'oracle',f)));const h=all.filter(x=>x.taskId==='H').find(x=>x.ownMatches===1&&x.candidates.length>=2);assert(h);assert.equal(h.candidates.filter(c=>c.bodyMatches&&c.materialMatches&&c.categories.join(',')==='2').length,1);
+ assert(all.some(x=>x.taskId==='L3'&&x.ownMatches===1));assert(all.some(x=>x.taskId==='L3'&&x.ownMatches===0));
+});
+check('new read capability respects frame and node ownership',()=>{const d=load(path.join(artifacts,'09-L-diagnostic/diagnostic.json'));assert(d.passed);assert.equal(d.capabilities.length,5);assert(d.capabilities.every(c=>c.passed));});
+check('live control owner host and worker have no TCP listener',()=>{const r=load(path.join(artifacts,'20-G2-recover/listener-audit.json'));assert.equal(r.livePids.length,3);assert.equal(r.listeners,'');assert.equal(r.exitCode,1);});
+check('a real changed byte version works after the freeze',()=>{const all=load(path.join(here,'tasks.json')),g=all.find(t=>t.id==='G2'),l=all.find(t=>t.id==='L3');assert.notEqual(g.inputs.attachment_excel.sha256,l.inputs.attachment_excel.sha256);const o=load(path.join(artifacts,'oracle/draft-G2.json'));assert.equal(o.status,'draft');assert(o.titleMatches&&o.bodyMatches&&o.materialMatches);assert.deepEqual(o.categories,[2]);});
+check('SQLite records and saved materials are intact',()=>{const db=new DatabaseSync(path.join(artifacts,'state.sqlite'),{readOnly:true});assert.equal(db.prepare('PRAGMA integrity_check').get().integrity_check,'ok');for(const row of db.prepare('SELECT record FROM tasks').all()){const r=JSON.parse(row.record);assert.equal(hash(r.task),r.taskHash);for(const v of Object.values(r.task.inputs))if(v.type==='file')assert.equal(hash(fs.readFileSync(v.path)),v.sha256);}db.close();});
+if(fs.existsSync(path.join(here,'evidence-index.json')))check('raw evidence index hashes',()=>{const index=load(path.join(here,'evidence-index.json'));for(const [file,digest] of Object.entries(index.files))assert.equal(hash(fs.readFileSync(path.join(here,file))),digest,file);});
+const summary={checks:checks.length,passed:checks.filter(c=>c.passed).length,failed:checks.filter(c=>!c.passed),counts:ledger.counts,modelTokens:models.calls.reduce((n,c)=>n+(c.usage?.total_tokens||0),0)};console.log(JSON.stringify(summary,null,2));if(summary.failed.length)process.exitCode=1;

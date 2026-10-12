@@ -71,6 +71,6 @@
 
 技术路线已选定为 Electron 真实网页与独立任务对话、Playwright 网页操作，以及 helpr 自有的统一执行和结构化运行时流程机制。首次探索、复用与修复都经过同一检查与停止入口，Stagehand 暂不进入首版关键执行路径；详见 [ADR-0003](../adr/0003-electron-controlled-execution.md)与[选型结论](../../.scratch/helpr-first-release/issues/07-browser-runtime-decision.md#answer)。
 
-持久化方案已选择本机 SQLite 统一关联记录与独立素材版本，恢复先核对实际结果，已接受的有效确认不会因重启丢弃，并发修复保留各自成果；见[确定执行记录、流程更新与定时恢复的约定](../../.scratch/helpr-first-release/issues/10-durable-execution-contract.md#answer)和 [ADR-0004](../adr/0004-local-durable-records.md)。后续验证持久一致性、恢复依据自动形成、浏览器控制连接隔离及应用打包更新，再确定组合验收安排。独立技术实验已取得有限证据，完整产品能力仍须实现并验收。
+持久化方案已选择本机 SQLite 统一关联记录与独立素材版本，恢复先核对实际结果，已接受的有效确认不会因重启丢弃，并发修复保留各自成果；见[确定执行记录、流程更新与定时恢复的约定](../../.scratch/helpr-first-release/issues/10-durable-execution-contract.md#answer)和 [ADR-0004](../adr/0004-local-durable-records.md)。[持久记录的中断与并发验证](../../.scratch/helpr-first-release/issues/22-durable-record-consistency.md#answer)与[私有控制连接验证](../../.scratch/helpr-first-release/issues/24-private-browser-control.md#answer)已取得本机受控证据；恢复依据自动形成也已取得[限定证据](../../.scratch/helpr-first-release/issues/23-autonomous-recovery-evidence.md#answer)；后续验证应用打包更新，再确定组合验收安排。独立技术实验已取得有限证据，完整产品能力仍须实现并验收。
 
 旧版 flowpolit 只用于参考已核实的功能和界面，本轮需求与架构独立确定。后续沿技术决策地图补足影响规格的约定与证据，再形成实现规格和分阶段任务。

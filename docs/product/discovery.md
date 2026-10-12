@@ -143,6 +143,8 @@
 
 自用范围不取消更新能力。签名身份、可信更新来源、凭据延续、打包后原生输入识别及真实休眠恢复须在[封装与运行验证](../../.scratch/helpr-first-release/issues/25-macos-packaged-lifecycle.md)中取得证据。模型凭据保护、网站会话、素材范围及远程网页与宿主的边界按[交付约定](../../.scratch/helpr-first-release/issues/20-local-delivery-and-updates.md#answer)落实；实验工具的屏幕录制／辅助功能权限不直接成为产品必须申请的权限。
 
+2026-10-12，[控制连接与宿主隔离](../../.scratch/helpr-first-release/issues/24-private-browser-control.md#answer)已在当前 Mac 取得 43 项限定运行证据：使用私有连接和受管进程转接，检查每项操作的资格与页面归属；停止 A 后 B 继续，控制拥有者异常退出时关闭自有网页与工作者。没有开放裸调试端口，未覆盖能力仍拒绝。此结果不等于真实网站、共享登录、原生接管或打包组合已经通过。
+
 ## 模型服务
 
 首版先接入用户已有的模型 API，在设置中配置一次服务地址、模型和凭据，正常任务对话无需用户关心模型选择。保留更换服务的能力，任务和流程不绑定某一家提供方。
@@ -181,6 +183,10 @@ helpr 或电脑意外退出后，重新启动时恢复任务记录。对中断�
 
 2026-10-12，已选择[本机持久记录与恢复协议](../../.scratch/helpr-first-release/issues/10-durable-execution-contract.md#answer)：统一保存任务、确认、动作、计划和素材处理的关联事实，选中素材保留固定版本；关键记录可靠保存后才派发网页动作，保存失败时暂停依赖它的自动工作。网站可能已经完成而本地未记成功，恢复仍以实际核对为准。已经接受的有效确认保留，停止使旧派发资格失效；明确继续后核对确认或发布约定是否仍适用，不重复要求仍然有效的确认。
 
+2026-10-12，[持久记录与执行资格验证](../../.scratch/helpr-first-release/issues/22-durable-record-consistency.md#answer)已取得本机进程中断、重复通知和并发竞争下的受控证据，并根据反例补齐候选的容量检查与启动锁等待。已经收到的效果仍可能在进程停止后完成；尚未可靠保存的停止指令也不能声称跨重启必然保留。真实网页恢复依据、实际浏览器控制、打包和断电能力不由该实验推定。
+
+2026-10-12，[恢复依据自动形成](../../.scratch/helpr-first-release/issues/23-autonomous-recovery-evidence.md#answer)已在私有控制路径及真实后台取得限定证据。模型从实际观察形成保存、目标识别与结果入口规则；冻结后新进程可核对草稿或丢失回执的结果，缺少稳定身份及派发不确定时仍不重发。已保留失败、素材夹具修正和暂停意图反例；未将此次单任务实验算作任意网站、真实并行、原生接管或完整交付通过。
+
 ## 旧版参考的解释
 
 旧版项目位置及参考边界见根目录 `AGENTS.md`。
@@ -201,6 +207,6 @@ helpr 或电脑意外退出后，重新启动时恢复任务记录。对中断�
 
 2026-10-12，用户已选择首版技术组合：Electron 承载真实网页与独立任务对话，Playwright 操作网页，helpr 统一检查、停止、学习与复用；模型提议经过同一执行入口，Stagehand 暂不进入首版关键执行路径。理由和代价见 [ADR-0003](../adr/0003-electron-controlled-execution.md)，具体约定和保证范围见[选型结论](../../.scratch/helpr-first-release/issues/07-browser-runtime-decision.md#answer)。
 
-流程保存与版本采用、实际结果记录、素材处理和调度恢复已形成[协议](../../.scratch/helpr-first-release/issues/10-durable-execution-contract.md#answer)，存储取舍见 [ADR-0004](../adr/0004-local-durable-records.md)。[本机交付、权限与更新约定](../../.scratch/helpr-first-release/issues/20-local-delivery-and-updates.md#answer)已确定；持久一致性、恢复依据的自动形成、浏览器控制连接隔离及打包更新仍需专项验证，最终组合验收安排继续沿地图确定。技术路线与协议已选定，产品能力仍须实现并验收。
+流程保存与版本采用、实际结果记录、素材处理和调度恢复已形成[协议](../../.scratch/helpr-first-release/issues/10-durable-execution-contract.md#answer)，存储取舍见 [ADR-0004](../adr/0004-local-durable-records.md)。[本机交付、权限与更新约定](../../.scratch/helpr-first-release/issues/20-local-delivery-and-updates.md#answer)已确定；持久一致性、私有控制连接及恢复依据自动形成已取得上述限定证据，打包更新继续专项验证，最终组合验收安排继续沿地图确定。技术路线与协议已选定，产品能力仍须实现并验收。
 
 共同阻碍解除后的具体积压安排，由 AI 结合任务与用户已有约定判断；需要新的取舍时再与用户确定，不要求本轮为未来所有任务预先选定同一处理方式。

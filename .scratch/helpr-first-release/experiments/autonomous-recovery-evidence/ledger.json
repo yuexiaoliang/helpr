@@ -1,0 +1,548 @@
+{
+  "limits": {
+    "starts": 24,
+    "preparation": 8,
+    "upload": 6,
+    "publication": 3,
+    "externalEdit": 1,
+    "modelCalls": 12,
+    "tokens": 140000,
+    "recovery": 30,
+    "oracleReads": 80,
+    "revisions": 4
+  },
+  "counts": {
+    "preparation": 8,
+    "starts": 24,
+    "revisions": 4,
+    "upload": 4,
+    "modelCalls": 3,
+    "publication": 2,
+    "oracleReads": 21,
+    "recovery": 13,
+    "externalEdit": 1
+  },
+  "events": [
+    {
+      "at": "2026-10-12T10:53:52.722Z",
+      "kind": "preparation",
+      "taskId": "L",
+      "mode": "learn"
+    },
+    {
+      "at": "2026-10-12T10:53:52.724Z",
+      "kind": "starts",
+      "taskId": "L",
+      "mode": "learn",
+      "stopAt": ""
+    },
+    {
+      "at": "2026-10-12T10:56:24.431Z",
+      "kind": "revisions",
+      "reason": "Refresh expired test login; permit restart only before any recorded action or artifact. No prior website effect observed."
+    },
+    {
+      "at": "2026-10-12T10:57:17.820Z",
+      "kind": "preparation",
+      "taskId": "L",
+      "mode": "learn"
+    },
+    {
+      "at": "2026-10-12T10:57:17.820Z",
+      "kind": "starts",
+      "taskId": "L",
+      "mode": "learn",
+      "stopAt": ""
+    },
+    {
+      "at": "2026-10-12T11:00:12.624Z",
+      "kind": "starts",
+      "taskId": "L",
+      "mode": "diagnostic",
+      "stopAt": ""
+    },
+    {
+      "at": "2026-10-12T11:02:04.684Z",
+      "kind": "starts",
+      "taskId": "L",
+      "mode": "diagnostic",
+      "stopAt": ""
+    },
+    {
+      "at": "2026-10-12T11:04:17.276Z",
+      "kind": "revisions",
+      "reason": "Restore generic navigation DOMContentLoaded wait; add pre-freeze negative probes. Original 10-second condition fails; same condition passes after navigation readiness in read-only experiment."
+    },
+    {
+      "at": "2026-10-12T11:04:17.345Z",
+      "kind": "preparation",
+      "taskId": "L2",
+      "mode": "learn"
+    },
+    {
+      "at": "2026-10-12T11:04:17.346Z",
+      "kind": "starts",
+      "taskId": "L2",
+      "mode": "learn",
+      "stopAt": ""
+    },
+    {
+      "at": "2026-10-12T11:08:11.653Z",
+      "kind": "starts",
+      "taskId": "L",
+      "mode": "diagnostic",
+      "stopAt": "dashboard"
+    },
+    {
+      "at": "2026-10-12T11:09:50.954Z",
+      "kind": "revisions",
+      "reason": "Bound navigation readiness at 90 seconds after retained cold-load timeout; group read-only intent probes before source freeze. No additional preparation allowance or relaxed result predicate."
+    },
+    {
+      "at": "2026-10-12T11:09:50.994Z",
+      "kind": "preparation",
+      "taskId": "L2",
+      "mode": "learn"
+    },
+    {
+      "at": "2026-10-12T11:09:50.995Z",
+      "kind": "starts",
+      "taskId": "L2",
+      "mode": "learn",
+      "stopAt": ""
+    },
+    {
+      "at": "2026-10-12T11:14:31.866Z",
+      "kind": "revisions",
+      "reason": "Admit DOM.getFrameOwner only for a known frame and register its typed backend node; AMENDMENT-1 preserves all counters."
+    },
+    {
+      "at": "2026-10-12T11:14:31.905Z",
+      "kind": "starts",
+      "taskId": "L",
+      "mode": "diagnostic",
+      "stopAt": "frame-owner"
+    },
+    {
+      "at": "2026-10-12T11:16:53.198Z",
+      "kind": "starts",
+      "taskId": "L",
+      "mode": "diagnostic",
+      "stopAt": "frame-owner"
+    },
+    {
+      "at": "2026-10-12T11:17:52.292Z",
+      "kind": "preparation",
+      "taskId": "L3",
+      "mode": "learn"
+    },
+    {
+      "at": "2026-10-12T11:17:52.293Z",
+      "kind": "starts",
+      "taskId": "L3",
+      "mode": "learn",
+      "stopAt": ""
+    },
+    {
+      "at": "2026-10-12T11:18:27.737Z",
+      "kind": "upload",
+      "api": "/wp/v2/media"
+    },
+    {
+      "at": "2026-10-12T11:18:32.253Z",
+      "kind": "modelCalls",
+      "label": "save-action",
+      "tokenBound": 47634
+    },
+    {
+      "at": "2026-10-12T11:18:37.821Z",
+      "kind": "modelCalls",
+      "label": "stable-identity",
+      "tokenBound": 4802
+    },
+    {
+      "at": "2026-10-12T11:18:39.800Z",
+      "kind": "publication",
+      "api": "/wp/v2/posts/149"
+    },
+    {
+      "at": "2026-10-12T11:18:44.249Z",
+      "kind": "modelCalls",
+      "label": "recovery-result-link",
+      "tokenBound": 16598
+    },
+    {
+      "at": "2026-10-12T11:19:14.508Z",
+      "kind": "oracleReads",
+      "taskId": "L3",
+      "url": "http://home.ts-ali.internal:38080/?rest_route=/wp/v2/posts&per_page=100&search=%E8%87%AA%E5%8A%A8%E6%81%A2%E5%A4%8D%E4%BE%9D%E6%8D%AE%20%E5%90%8C%E5%90%8D%E6%A0%B8%E5%AF%B9%2020261012"
+    },
+    {
+      "at": "2026-10-12T11:19:14.953Z",
+      "kind": "oracleReads",
+      "taskId": "L3",
+      "url": "http://home.ts-ali.internal:38080/?p=149"
+    },
+    {
+      "at": "2026-10-12T11:19:15.264Z",
+      "kind": "oracleReads",
+      "taskId": "L3",
+      "url": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/recovery-20261012-L.xlsx"
+    },
+    {
+      "at": "2026-10-12T11:19:26.797Z",
+      "kind": "preparation",
+      "taskId": "U",
+      "mode": "prepare"
+    },
+    {
+      "at": "2026-10-12T11:19:26.798Z",
+      "kind": "starts",
+      "taskId": "U",
+      "mode": "prepare",
+      "stopAt": "uploaded"
+    },
+    {
+      "at": "2026-10-12T11:20:01.420Z",
+      "kind": "upload",
+      "api": "/wp/v2/media"
+    },
+    {
+      "at": "2026-10-12T11:20:59.374Z",
+      "kind": "recovery",
+      "taskId": "U",
+      "mode": "recover"
+    },
+    {
+      "at": "2026-10-12T11:20:59.375Z",
+      "kind": "starts",
+      "taskId": "U",
+      "mode": "recover",
+      "stopAt": ""
+    },
+    {
+      "at": "2026-10-12T11:21:16.704Z",
+      "kind": "preparation",
+      "taskId": "H",
+      "mode": "prepare"
+    },
+    {
+      "at": "2026-10-12T11:21:16.705Z",
+      "kind": "starts",
+      "taskId": "H",
+      "mode": "prepare",
+      "stopAt": "saved-navigation"
+    },
+    {
+      "at": "2026-10-12T11:21:51.859Z",
+      "kind": "upload",
+      "api": "/wp/v2/media"
+    },
+    {
+      "at": "2026-10-12T11:22:44.552Z",
+      "kind": "recovery",
+      "taskId": "H",
+      "mode": "recover"
+    },
+    {
+      "at": "2026-10-12T11:22:44.553Z",
+      "kind": "starts",
+      "taskId": "H",
+      "mode": "recover",
+      "stopAt": ""
+    },
+    {
+      "at": "2026-10-12T11:23:26.527Z",
+      "kind": "recovery",
+      "taskId": "H",
+      "mode": "resume"
+    },
+    {
+      "at": "2026-10-12T11:23:26.528Z",
+      "kind": "starts",
+      "taskId": "H",
+      "mode": "resume",
+      "stopAt": "response-lost"
+    },
+    {
+      "at": "2026-10-12T11:23:59.279Z",
+      "kind": "publication",
+      "api": "/wp/v2/posts/154"
+    },
+    {
+      "at": "2026-10-12T11:24:04.420Z",
+      "kind": "oracleReads",
+      "taskId": "H",
+      "url": "http://home.ts-ali.internal:38080/?rest_route=/wp/v2/posts&per_page=100&search=%E8%87%AA%E5%8A%A8%E6%81%A2%E5%A4%8D%E4%BE%9D%E6%8D%AE%20%E5%90%8C%E5%90%8D%E6%A0%B8%E5%AF%B9%2020261012"
+    },
+    {
+      "at": "2026-10-12T11:24:04.605Z",
+      "kind": "oracleReads",
+      "taskId": "H",
+      "url": "http://home.ts-ali.internal:38080/?p=154"
+    },
+    {
+      "at": "2026-10-12T11:24:04.859Z",
+      "kind": "oracleReads",
+      "taskId": "H",
+      "url": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/recovery-20261012-H.xlsx"
+    },
+    {
+      "at": "2026-10-12T11:24:04.914Z",
+      "kind": "oracleReads",
+      "taskId": "H",
+      "url": "http://home.ts-ali.internal:38080/?p=149"
+    },
+    {
+      "at": "2026-10-12T11:24:05.064Z",
+      "kind": "oracleReads",
+      "taskId": "H",
+      "url": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/recovery-20261012-L.xlsx"
+    },
+    {
+      "at": "2026-10-12T11:24:05.189Z",
+      "kind": "recovery",
+      "taskId": "H",
+      "mode": "recover"
+    },
+    {
+      "at": "2026-10-12T11:24:05.190Z",
+      "kind": "starts",
+      "taskId": "H",
+      "mode": "recover",
+      "stopAt": "result-verified"
+    },
+    {
+      "at": "2026-10-12T11:25:19.755Z",
+      "kind": "recovery",
+      "taskId": "H",
+      "mode": "recover"
+    },
+    {
+      "at": "2026-10-12T11:25:19.756Z",
+      "kind": "starts",
+      "taskId": "H",
+      "mode": "recover",
+      "stopAt": ""
+    },
+    {
+      "at": "2026-10-12T11:26:17.767Z",
+      "kind": "preparation",
+      "taskId": "G2",
+      "mode": "prepare"
+    },
+    {
+      "at": "2026-10-12T11:26:17.768Z",
+      "kind": "starts",
+      "taskId": "G2",
+      "mode": "prepare",
+      "stopAt": ""
+    },
+    {
+      "at": "2026-10-12T11:26:56.130Z",
+      "kind": "upload",
+      "api": "/wp/v2/media"
+    },
+    {
+      "at": "2026-10-12T11:27:18.028Z",
+      "kind": "recovery",
+      "taskId": "G2",
+      "mode": "resume"
+    },
+    {
+      "at": "2026-10-12T11:27:18.028Z",
+      "kind": "starts",
+      "taskId": "G2",
+      "mode": "resume",
+      "stopAt": "dispatch-gap"
+    },
+    {
+      "at": "2026-10-12T11:28:21.784Z",
+      "kind": "recovery",
+      "taskId": "G2",
+      "mode": "recover"
+    },
+    {
+      "at": "2026-10-12T11:28:21.785Z",
+      "kind": "starts",
+      "taskId": "G2",
+      "mode": "recover",
+      "stopAt": ""
+    },
+    {
+      "at": "2026-10-12T11:28:22.927Z",
+      "kind": "oracleReads",
+      "taskId": "G2",
+      "url": "http://home.ts-ali.internal:38080/wp-admin/post.php?post=157&action=edit"
+    },
+    {
+      "at": "2026-10-12T11:28:28.754Z",
+      "kind": "oracleReads",
+      "taskId": "G2",
+      "url": "http://home.ts-ali.internal:38080/?rest_route=/wp/v2/posts/157&context=edit"
+    },
+    {
+      "at": "2026-10-12T11:28:29.397Z",
+      "kind": "oracleReads",
+      "taskId": "G2",
+      "url": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/recovery-20261012-G2.xlsx"
+    },
+    {
+      "at": "2026-10-12T11:29:15.728Z",
+      "kind": "recovery",
+      "taskId": "H",
+      "mode": "intents"
+    },
+    {
+      "at": "2026-10-12T11:29:15.729Z",
+      "kind": "recovery",
+      "taskId": "H",
+      "mode": "intents"
+    },
+    {
+      "at": "2026-10-12T11:29:15.729Z",
+      "kind": "recovery",
+      "taskId": "H",
+      "mode": "intents"
+    },
+    {
+      "at": "2026-10-12T11:29:15.730Z",
+      "kind": "recovery",
+      "taskId": "H",
+      "mode": "intents"
+    },
+    {
+      "at": "2026-10-12T11:29:15.730Z",
+      "kind": "recovery",
+      "taskId": "H",
+      "mode": "intents"
+    },
+    {
+      "at": "2026-10-12T11:29:15.730Z",
+      "kind": "starts",
+      "taskId": "H",
+      "mode": "intents",
+      "stopAt": ""
+    },
+    {
+      "at": "2026-10-12T11:30:08.602Z",
+      "kind": "oracleReads",
+      "taskId": "L3",
+      "url": "http://home.ts-ali.internal:38080/?rest_route=/wp/v2/posts&per_page=100&search=%E8%87%AA%E5%8A%A8%E6%81%A2%E5%A4%8D%E4%BE%9D%E6%8D%AE%20%E5%90%8C%E5%90%8D%E6%A0%B8%E5%AF%B9%2020261012"
+    },
+    {
+      "at": "2026-10-12T11:30:08.842Z",
+      "kind": "oracleReads",
+      "taskId": "L3",
+      "url": "http://home.ts-ali.internal:38080/?p=154"
+    },
+    {
+      "at": "2026-10-12T11:30:09.228Z",
+      "kind": "oracleReads",
+      "taskId": "L3",
+      "url": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/recovery-20261012-H.xlsx"
+    },
+    {
+      "at": "2026-10-12T11:30:09.285Z",
+      "kind": "oracleReads",
+      "taskId": "L3",
+      "url": "http://home.ts-ali.internal:38080/?p=149"
+    },
+    {
+      "at": "2026-10-12T11:30:09.455Z",
+      "kind": "oracleReads",
+      "taskId": "L3",
+      "url": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/recovery-20261012-L.xlsx"
+    },
+    {
+      "at": "2026-10-12T11:30:09.510Z",
+      "kind": "externalEdit",
+      "taskId": "L3",
+      "id": 149
+    },
+    {
+      "at": "2026-10-12T11:30:09.510Z",
+      "kind": "oracleReads",
+      "taskId": "L3",
+      "url": "http://home.ts-ali.internal:38080/wp-admin/post.php?post=149&action=edit"
+    },
+    {
+      "at": "2026-10-12T11:31:05.293Z",
+      "kind": "starts",
+      "taskId": "H",
+      "mode": "guards",
+      "stopAt": ""
+    },
+    {
+      "at": "2026-10-12T11:32:06.373Z",
+      "kind": "starts",
+      "taskId": "H",
+      "mode": "negative",
+      "stopAt": ""
+    },
+    {
+      "at": "2026-10-12T11:32:07.531Z",
+      "kind": "oracleReads",
+      "taskId": "L3",
+      "url": "http://home.ts-ali.internal:38080/?rest_route=/wp/v2/posts&per_page=100&search=%E8%87%AA%E5%8A%A8%E6%81%A2%E5%A4%8D%E4%BE%9D%E6%8D%AE%20%E5%90%8C%E5%90%8D%E6%A0%B8%E5%AF%B9%2020261012"
+    },
+    {
+      "at": "2026-10-12T11:32:07.711Z",
+      "kind": "oracleReads",
+      "taskId": "L3",
+      "url": "http://home.ts-ali.internal:38080/?p=154"
+    },
+    {
+      "at": "2026-10-12T11:32:07.957Z",
+      "kind": "oracleReads",
+      "taskId": "L3",
+      "url": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/recovery-20261012-H.xlsx"
+    },
+    {
+      "at": "2026-10-12T11:32:08.016Z",
+      "kind": "oracleReads",
+      "taskId": "L3",
+      "url": "http://home.ts-ali.internal:38080/?p=149"
+    },
+    {
+      "at": "2026-10-12T11:33:25.263Z",
+      "kind": "recovery",
+      "taskId": "L3",
+      "mode": "recover"
+    },
+    {
+      "at": "2026-10-12T11:33:25.264Z",
+      "kind": "starts",
+      "taskId": "L3",
+      "mode": "recover",
+      "stopAt": ""
+    }
+  ],
+  "startedAt": 1791802432724,
+  "deadline": 1791807832724,
+  "originalLimits": {
+    "starts": 24,
+    "preparation": 6,
+    "upload": 6,
+    "publication": 3,
+    "externalEdit": 1,
+    "modelCalls": 12,
+    "tokens": 140000,
+    "recovery": 30,
+    "oracleReads": 80,
+    "revisions": 4
+  },
+  "amendments": [
+    {
+      "file": "AMENDMENT-1.md",
+      "at": "2026-10-12T11:14:31.865Z",
+      "countsAtChange": {
+        "preparation": 4,
+        "starts": 7,
+        "revisions": 3
+      }
+    }
+  ],
+  "closedAt": "2026-10-12T11:43:12.835Z",
+  "elapsedMs": 2960111
+}

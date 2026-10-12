@@ -1,0 +1,257 @@
+{
+  "schema": 1,
+  "saveAction": {
+    "op": "click",
+    "target": {
+      "frame": "main",
+      "by": "role",
+      "role": "button",
+      "name": "Save draft"
+    }
+  },
+  "identity": {
+    "pathname": "/wp-admin/post.php",
+    "queryKey": "post"
+  },
+  "readyRules": [
+    {
+      "kind": "value",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "textbox",
+        "name": "Add title"
+      },
+      "compare": "equals",
+      "expected": {
+        "input": "post_title"
+      },
+      "covers": "post_title"
+    },
+    {
+      "kind": "value",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "text",
+        "name": {
+          "input": "post_content"
+        }
+      },
+      "compare": "equals",
+      "expected": {
+        "input": "post_content"
+      },
+      "covers": "post_content"
+    },
+    {
+      "kind": "checked",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "checkbox",
+        "name": {
+          "input": "post_category"
+        }
+      },
+      "expected": true,
+      "covers": "post_category"
+    },
+    {
+      "kind": "artifact",
+      "target": {
+        "frame": "editor-canvas",
+        "by": "role",
+        "role": "textbox",
+        "name": "Write file name…"
+      },
+      "expected": {
+        "input": "attachment_excel",
+        "field": "sha256"
+      },
+      "covers": "attachment_excel"
+    },
+    {
+      "kind": "checked",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "checkbox",
+        "name": "Uncategorized"
+      },
+      "expected": false,
+      "constraintQuote": "只选择分类「Excel 验证」，不选默认分类"
+    }
+  ],
+  "resultRules": [
+    {
+      "kind": "text",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "heading",
+        "name": {
+          "input": "post_title"
+        },
+        "level": 1
+      },
+      "compare": "equals",
+      "expected": {
+        "input": "post_title"
+      },
+      "covers": "post_title"
+    },
+    {
+      "kind": "text",
+      "target": {
+        "frame": "main",
+        "by": "text",
+        "name": {
+          "input": "post_content"
+        }
+      },
+      "compare": "equals",
+      "expected": {
+        "input": "post_content"
+      },
+      "covers": "post_content"
+    },
+    {
+      "kind": "text",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "link",
+        "name": {
+          "input": "post_category"
+        }
+      },
+      "compare": "equals",
+      "expected": {
+        "input": "post_category"
+      },
+      "covers": "post_category"
+    },
+    {
+      "kind": "download",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "link",
+        "name": {
+          "input": "attachment_excel",
+          "field": "stem"
+        }
+      },
+      "expected": {
+        "input": "attachment_excel",
+        "field": "sha256"
+      },
+      "covers": "attachment_excel"
+    }
+  ],
+  "finalSteps": [
+    {
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Publish"
+        }
+      },
+      "effect": "commit",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Publish"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Publish",
+            "within": {
+              "frame": "main",
+              "by": "role",
+              "role": "region",
+              "name": "Editor publish"
+            }
+          }
+        }
+      ],
+      "note": "所有输入与附件均已就绪，点击 Publish 立即公开发布。",
+      "id": "s12"
+    },
+    {
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Publish",
+          "within": {
+            "frame": "main",
+            "by": "role",
+            "role": "region",
+            "name": "Editor publish"
+          }
+        }
+      },
+      "effect": "commit",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Publish",
+            "within": {
+              "frame": "main",
+              "by": "role",
+              "role": "region",
+              "name": "Editor publish"
+            }
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": "View Post"
+          }
+        }
+      ],
+      "note": "预发布检查面板已打开，点击其中的 Publish 按钮立即公开发布文章。",
+      "id": "s13"
+    }
+  ],
+  "proof": {
+    "save": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/autonomous-recovery-evidence/artifacts/model/01-save-action-proposal.json",
+    "identity": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/autonomous-recovery-evidence/artifacts/model/02-stable-identity-proposal.json",
+    "resultEntry": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/autonomous-recovery-evidence/artifacts/model/03-recovery-result-link-proposal.json"
+  },
+  "resultEntry": {
+    "target": {
+      "frame": "main",
+      "by": "role",
+      "role": "link",
+      "name": "View Post"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+<!doctype html><meta charset="utf-8"><title>网页控制隔离夹具</title>
+<style>body{font:17px system-ui;padding:20px;background:#f3f6fa;color:#17324d}button,input,a{margin:8px;padding:9px}iframe{height:100px;width:95%}</style>
+<h1 id="title"></h1><p id="count">0</p><input id="text"><button id="add">增加</button>
+<input type="file"><button id="popup">打开所属任务弹窗</button><a id="download" href="/download">下载虚构文件</a>
+<iframe id="same" src="/frame"></iframe><iframe id="cross"></iframe>
+<script>
+const task=new URL(location.href).searchParams.get('task')||'frame';document.querySelector('#title').textContent='任务 '+task;
+document.querySelector('#add').onclick=()=>document.querySelector('#count').textContent=String(Number(document.querySelector('#count').textContent)+1);
+document.querySelector('#popup').onclick=()=>window.open('/popup?task='+task,'task-'+task);
+document.querySelector('#cross').src=location.origin.replace('127.0.0.1','localhost')+'/frame?cross=1';
+window.effect=(id)=>fetch('/effect?task='+task+'&id='+id).then(r=>r.json());
+window.capabilities=()=>({require:typeof require,process:typeof process,helpr:typeof window.helpr,ipcRenderer:typeof window.ipcRenderer,credentialKeys:Object.keys(window).filter(k=>/token|credential/i.test(k))});
+</script>

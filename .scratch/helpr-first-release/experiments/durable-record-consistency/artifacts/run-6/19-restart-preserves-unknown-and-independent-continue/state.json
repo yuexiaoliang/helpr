@@ -1,0 +1,190 @@
+{
+  "epoch": 2,
+  "halted": false,
+  "blocked": [],
+  "integrity": [
+    {
+      "integrity_check": "ok"
+    }
+  ],
+  "foreignKeys": [],
+  "materials": [
+    {
+      "hash": "21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51",
+      "size": 15
+    }
+  ],
+  "flows": [
+    {
+      "id": "F",
+      "current": "v1"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "v1",
+      "flow": "F",
+      "parent": null,
+      "body": "{\"step\":\"submit\"}",
+      "evidence": "fixture-initial"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "79236565-4d34-4281-9c09-58a91e53b95b",
+      "work_key": "{\"agreement\":\"daily-v1\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"period\":\"2026-10-12\",\"repeat\":null,\"target\":\"A\"}",
+      "material": "21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51",
+      "target": "A",
+      "content": "确认内容一",
+      "content_version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6",
+      "flow": "F",
+      "fixed_flow": "v1",
+      "intent": "auto",
+      "revision": 3,
+      "progress": "unknown",
+      "active_run": "049fa3e6-9791-44ac-9676-f3c8c9562c7a"
+    },
+    {
+      "id": "bbf1efc6-66cc-4a46-a085-9c30e27c1689",
+      "work_key": "{\"agreement\":\"daily-v1\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"period\":\"2026-10-12\",\"repeat\":null,\"target\":\"B\"}",
+      "material": "21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51",
+      "target": "B",
+      "content": "确认内容一",
+      "content_version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6",
+      "flow": "F",
+      "fixed_flow": "v1",
+      "intent": "stop",
+      "revision": 2,
+      "progress": "pending",
+      "active_run": null
+    }
+  ],
+  "rounds": [
+    {
+      "plan": "P",
+      "tick": "t1",
+      "selection": "{\"agreement\":\"daily-v1\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"period\":\"2026-10-12\",\"repeat\":null,\"target\":\"A\"}",
+      "task": "79236565-4d34-4281-9c09-58a91e53b95b"
+    },
+    {
+      "plan": "P",
+      "tick": "t2",
+      "selection": "{\"agreement\":\"daily-v1\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"period\":\"2026-10-12\",\"repeat\":null,\"target\":\"B\"}",
+      "task": "bbf1efc6-66cc-4a46-a085-9c30e27c1689"
+    }
+  ],
+  "participation": [
+    {
+      "id": "fb8872b0-7708-4108-a848-88c40e6a3b43",
+      "task": "79236565-4d34-4281-9c09-58a91e53b95b",
+      "version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6",
+      "status": "accepted"
+    },
+    {
+      "id": "055269ac-a9bb-4191-8232-5d64a76ce55b",
+      "task": "bbf1efc6-66cc-4a46-a085-9c30e27c1689",
+      "version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6",
+      "status": "accepted"
+    }
+  ],
+  "confirmations": [
+    {
+      "request": "fb8872b0-7708-4108-a848-88c40e6a3b43",
+      "task": "79236565-4d34-4281-9c09-58a91e53b95b",
+      "version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6"
+    },
+    {
+      "request": "055269ac-a9bb-4191-8232-5d64a76ce55b",
+      "task": "bbf1efc6-66cc-4a46-a085-9c30e27c1689",
+      "version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6"
+    }
+  ],
+  "runs": [
+    {
+      "id": "049fa3e6-9791-44ac-9676-f3c8c9562c7a",
+      "task": "79236565-4d34-4281-9c09-58a91e53b95b",
+      "epoch": 2,
+      "revision": 3,
+      "flow_version": "v1"
+    }
+  ],
+  "actions": [
+    {
+      "id": "a736fe3f-f7e4-4f28-bcb3-654373456619",
+      "task": "79236565-4d34-4281-9c09-58a91e53b95b",
+      "run": "049fa3e6-9791-44ac-9676-f3c8c9562c7a",
+      "material": "21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51",
+      "content_version": "73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6",
+      "target": "A",
+      "stage": "attempted"
+    }
+  ],
+  "receipts": [],
+  "requests": [
+    {
+      "id": "59c4a817-3c0b-42cb-ab1c-f001f63e7fe6",
+      "input": "{\"body\":{\"step\":\"submit\"},\"flow\":\"F\",\"id\":\"59c4a817-3c0b-42cb-ab1c-f001f63e7fe6\",\"op\":\"flow\",\"version\":\"v1\"}",
+      "output": "{\"version\":\"v1\"}"
+    },
+    {
+      "id": "d43a513f-86b0-4505-89e5-4cc3476cf61c",
+      "input": "{\"bytes\":\"57Sg5p2Q54mI5pys5LiA\",\"id\":\"d43a513f-86b0-4505-89e5-4cc3476cf61c\",\"op\":\"material\"}",
+      "output": "{\"hash\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"size\":15}"
+    },
+    {
+      "id": "f587717d-351d-4ff5-b5ca-b170481dd834",
+      "input": "{\"agreement\":\"daily-v1\",\"content\":\"确认内容一\",\"flow\":\"F\",\"id\":\"f587717d-351d-4ff5-b5ca-b170481dd834\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"op\":\"select\",\"period\":\"2026-10-12\",\"plan\":\"P\",\"target\":\"A\",\"tick\":\"t1\"}",
+      "output": "{\"task\":\"79236565-4d34-4281-9c09-58a91e53b95b\"}"
+    },
+    {
+      "id": "ec6add41-1919-4b1c-84d9-c5511bf3683a",
+      "input": "{\"bytes\":\"57Sg5p2Q54mI5pys5LiA\",\"id\":\"ec6add41-1919-4b1c-84d9-c5511bf3683a\",\"op\":\"material\"}",
+      "output": "{\"hash\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"size\":15}"
+    },
+    {
+      "id": "db46ca98-f091-4e85-a7df-1f2ea5818760",
+      "input": "{\"agreement\":\"daily-v1\",\"content\":\"确认内容一\",\"flow\":\"F\",\"id\":\"db46ca98-f091-4e85-a7df-1f2ea5818760\",\"material\":\"21e09fc575b245d55bcddd9883a8586f51f91926430b342595dad2c6d5ee5c51\",\"op\":\"select\",\"period\":\"2026-10-12\",\"plan\":\"P\",\"target\":\"B\",\"tick\":\"t2\"}",
+      "output": "{\"task\":\"bbf1efc6-66cc-4a46-a085-9c30e27c1689\"}"
+    },
+    {
+      "id": "d5e0dfc0-b54d-4824-b20a-f8de1beb5a57",
+      "input": "{\"id\":\"d5e0dfc0-b54d-4824-b20a-f8de1beb5a57\",\"op\":\"answer\",\"request\":\"fb8872b0-7708-4108-a848-88c40e6a3b43\",\"version\":\"73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6\"}",
+      "output": "{\"accepted\":true,\"task\":\"79236565-4d34-4281-9c09-58a91e53b95b\"}"
+    },
+    {
+      "id": "c2bfc8d1-d3d8-435d-bc3b-940f7ff583de",
+      "input": "{\"id\":\"c2bfc8d1-d3d8-435d-bc3b-940f7ff583de\",\"op\":\"answer\",\"request\":\"055269ac-a9bb-4191-8232-5d64a76ce55b\",\"version\":\"73ebe44de00985df09a85b6b8d268a644c55c0745aa533381d752f2c3bde50f6\"}",
+      "output": "{\"accepted\":true,\"task\":\"bbf1efc6-66cc-4a46-a085-9c30e27c1689\"}"
+    },
+    {
+      "id": "a7811c89-a98f-4dd0-b546-430fd5c9594d",
+      "input": "{\"id\":\"a7811c89-a98f-4dd0-b546-430fd5c9594d\",\"kind\":\"unknown\",\"op\":\"intent\",\"revision\":1,\"task\":\"79236565-4d34-4281-9c09-58a91e53b95b\"}",
+      "output": "{\"intent\":\"unknown\",\"revision\":2}"
+    },
+    {
+      "id": "afeffb82-6303-45df-beda-9865ef567b58",
+      "input": "{\"id\":\"afeffb82-6303-45df-beda-9865ef567b58\",\"kind\":\"stop\",\"op\":\"intent\",\"revision\":1,\"task\":\"bbf1efc6-66cc-4a46-a085-9c30e27c1689\"}",
+      "output": "{\"intent\":\"stop\",\"revision\":2}"
+    },
+    {
+      "id": "71d8e2ab-2cef-4dde-8d56-10903cc5a4ea",
+      "input": "{\"id\":\"71d8e2ab-2cef-4dde-8d56-10903cc5a4ea\",\"kind\":\"continue\",\"op\":\"intent\",\"revision\":2,\"task\":\"79236565-4d34-4281-9c09-58a91e53b95b\"}",
+      "output": "{\"intent\":\"auto\",\"revision\":3}"
+    },
+    {
+      "id": "ca2b7b73-f233-4346-978e-1ef7e9ac196d",
+      "input": "{\"id\":\"ca2b7b73-f233-4346-978e-1ef7e9ac196d\",\"op\":\"claim\",\"revision\":3,\"task\":\"79236565-4d34-4281-9c09-58a91e53b95b\"}",
+      "output": "{\"token\":\"049fa3e6-9791-44ac-9676-f3c8c9562c7a\",\"flow\":\"v1\"}"
+    },
+    {
+      "id": "5f53645b-a6ae-453a-81ff-7b8e52710501",
+      "input": "{\"id\":\"5f53645b-a6ae-453a-81ff-7b8e52710501\",\"op\":\"reserve\",\"task\":\"79236565-4d34-4281-9c09-58a91e53b95b\",\"token\":\"049fa3e6-9791-44ac-9676-f3c8c9562c7a\"}",
+      "output": "{\"action\":\"a736fe3f-f7e4-4f28-bcb3-654373456619\"}"
+    },
+    {
+      "id": "6a0503d2-a676-4116-a04e-59a6c6edc037",
+      "input": "{\"action\":\"a736fe3f-f7e4-4f28-bcb3-654373456619\",\"id\":\"6a0503d2-a676-4116-a04e-59a6c6edc037\",\"op\":\"perform\",\"task\":\"79236565-4d34-4281-9c09-58a91e53b95b\",\"token\":\"049fa3e6-9791-44ac-9676-f3c8c9562c7a\"}",
+      "output": "{\"action\":\"a736fe3f-f7e4-4f28-bcb3-654373456619\"}"
+    }
+  ]
+}

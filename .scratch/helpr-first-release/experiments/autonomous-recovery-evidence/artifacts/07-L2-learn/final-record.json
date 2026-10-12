@@ -1,0 +1,123 @@
+{
+  "task": {
+    "id": "L2",
+    "executionId": "auto-recovery-20261012-L-retry",
+    "origin": "http://home.ts-ali.internal:38080",
+    "entryUrl": "http://home.ts-ali.internal:38080/wp-admin/",
+    "inputs": {
+      "post_title": {
+        "type": "string",
+        "value": "自动恢复依据 同名核对 20261012"
+      },
+      "post_content": {
+        "type": "string",
+        "value": "本文和附件为虚构测试材料。恢复样本 L2，校验内容版本 72dfcfb0c470。仅用于验证本次恢复记录。"
+      },
+      "post_category": {
+        "type": "string",
+        "value": "Excel 验证"
+      },
+      "attachment_excel": {
+        "type": "file",
+        "path": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/autonomous-recovery-evidence/artifacts/materials/recovery-20261012-L.xlsx",
+        "name": "recovery-20261012-L.xlsx",
+        "stem": "recovery-20261012-L",
+        "sha256": "24975a58ca79a07925847d9d536edcfd26b248feba4faf17a310975c9025eb0f"
+      }
+    },
+    "authorization": {
+      "source": "explicit-isolated-test-fixture",
+      "intent": "new public record with original attachment",
+      "notHumanConfirmation": true
+    }
+  },
+  "taskHash": "adcee9790c5e189a8c8e88257a0385c979b08c3a246aae89a225ae0bf1281b3f",
+  "revision": 14,
+  "controlGeneration": 0,
+  "intent": "running",
+  "phase": "preparing",
+  "navigations": [
+    {
+      "url": "http://home.ts-ali.internal:38080/wp-admin/",
+      "method": "main-frame-navigation",
+      "time": 1791803058485
+    },
+    {
+      "url": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+      "method": "main-frame-navigation",
+      "time": 1791803406094
+    }
+  ],
+  "artifacts": [],
+  "checkpoints": [
+    {
+      "phase": "preparing",
+      "taskHash": "adcee9790c5e189a8c8e88257a0385c979b08c3a246aae89a225ae0bf1281b3f",
+      "epoch": 7
+    },
+    {
+      "phase": "preparing",
+      "taskHash": "adcee9790c5e189a8c8e88257a0385c979b08c3a246aae89a225ae0bf1281b3f",
+      "epoch": 9
+    },
+    {
+      "step": "s1",
+      "verified": true,
+      "taskHash": "adcee9790c5e189a8c8e88257a0385c979b08c3a246aae89a225ae0bf1281b3f",
+      "epoch": 9
+    },
+    {
+      "step": "s2",
+      "verified": true,
+      "taskHash": "adcee9790c5e189a8c8e88257a0385c979b08c3a246aae89a225ae0bf1281b3f",
+      "epoch": 9
+    }
+  ],
+  "dispatches": [
+    {
+      "kind": "step",
+      "id": "s1",
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "menuitem",
+          "name": "New"
+        }
+      },
+      "epoch": 9
+    },
+    {
+      "kind": "step",
+      "id": "s2",
+      "action": {
+        "op": "fill",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "textbox",
+          "name": "Add title"
+        },
+        "value": {
+          "input": "post_title"
+        }
+      },
+      "epoch": 9
+    },
+    {
+      "kind": "step",
+      "id": "s3",
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "editor-canvas",
+          "by": "role",
+          "role": "button",
+          "name": "Add default block"
+        }
+      },
+      "epoch": 9
+    }
+  ]
+}

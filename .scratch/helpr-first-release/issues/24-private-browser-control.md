@@ -3,7 +3,7 @@
 Type: task
 Label: wayfinder:task
 Mode: AFK
-Status: open
+Status: resolved
 Blocked by: 07, 20
 Map: [helpr 首版技术决策地图](../map.md)
 
@@ -26,3 +26,19 @@ Map: [helpr 首版技术决策地图](../map.md)
 固定 Electron、Playwright 与候选源码，记录完整启动参数、监听面、断开行为、负例和能力覆盖。预算在运行前确定；本轮模型调用与远程上传／发布均为零。不扫描无关应用或网络，不使用真实登录或模型凭据。
 
 输出支持的控制路径、与原有停止/页面归属证据的差异和剩余限制。不能把一个未经授权连接被拒绝当作全部 CDP 协议已隔离，也不承诺抵御已控制同一用户账号或操作系统的攻击者。只做到足以选择交付控制机制，不构建完整产品。
+
+## Answer
+
+后续补充：2026-10-12，[恢复依据自动形成实验](23-autonomous-recovery-evidence.md#answer)通过同一私有路径完成真实上传、发布及中断后核对。它发现 iframe 点击还需要 `DOM.getFrameOwner`，在该实验的独立候选中增加已归属 frame 的只读能力和类型化 backend node 登记，实际点击及越界拒绝通过。本事项的冻结源码与 43 项原始结果保持不变；新增能力与真实业务证据来自后续实验，不能倒填为本事项已经测过。
+
+2026-10-12，已完成[本机控制连接与宿主隔离实验](../experiments/private-browser-control/REPORT.md)。采用长期控制进程独占 Electron 私有调试 pipe、任务工作者经受管进程通信和显式能力转接连接 Playwright 的路径。所用 Playwright 1.64.0 发布类型和实测支持 `connectOverCDP(ConnectOverCDPTransport)`，无需另开网络转接或裸调试端口，也无需转用 `webContents.debugger`。这是对已选 Electron／外部 Playwright 路线的具体化。
+
+最终冻结版本 43 项检查全部通过。当前资格可连接；缺少、伪造、跨通道借用、过期和撤销资格拒绝；页面、frame、session 与宿主 target 的越权尝试拒绝。真实双页请求存在推进重叠，所属 iframe／popup 可操作。停止 A 后新动作和重连被拒绝，B 继续；停止前已被网站接受的 A 请求仍可晚完成，未被误当成撤回。
+
+远程页面及同源子 frame 没有 Node／宿主桥；宿主命令、导航、popup、文件、下载和权限取得限定正反证据。最终枚举的控制进程、Electron、工作者及子进程无 TCP 监听，控制资格在本轮证据中无字节泄漏。候选仅提供已核对的协议能力，未覆盖能力默认拒绝；共享登录、同源存储和网站写入仍可能互相影响，不能以页面隔离替代资源协调。
+
+5 次启动内保留全部失败：隐藏窗口等待、转接消息顺序导致初始化信息丢失、测试断言及未处理拒绝，以及控制拥有者退出后网页视图未关闭。最后一项在显式关闭自有 WebContentsView 后取得完整退出证据；只看到 pipe 断开或 `before-quit` 不够。最终宿主与受管工作者退出，无继续派发；正常退出保存、真实休眠和打包生命周期另行验证。
+
+本轮共 169 个场景实例、73 次本机 HTTP 请求；模型调用、远程上传与发布均为 0，未耗尽 [预定预算](../experiments/private-browser-control/PLAN.md)。只读[证据校验器](../experiments/private-browser-control/verify.mjs)核对完整文件索引、冻结源码、依赖、最终断言、独立网站账本及停止／退出记录。
+
+下一步[验证恢复核对依据的自动形成](23-autonomous-recovery-evidence.md)使用此私有路径，结合持久记录和真实流程取得证据。实验的资格授予、文件选择及用户意图均由夹具给定，不代表产品已自行理解和保存这些关系；不把当前允许列表当成全部 CDP 的隔离证明，不缩减真实网站、自用打包、两项并行及直接接管的既定验收范围。

@@ -81,6 +81,8 @@ helpr 统一拥有工作区、浏览器控制连接及其执行进程，复用[�
 
 首个验证候选由长期存活的 helpr 控制进程持有 Electron 私有调试 pipe，通过受认证、受当前任务／页面／执行资格限制的转接供工作者连接，消除能绕过检查的裸调试端口。所用 [Electron 源码](https://github.com/electron/electron/blob/v44.7.0/shell/browser/electron_browser_main_parts.cc)在 pipe 断开时请求应用退出，而 [Playwright `connectOverCDP`](https://playwright.dev/docs/api/class-browsertype#browser-type-connect-over-cdp)接收 HTTP／WebSocket 地址；不能把 pipe 直接交给可随单项停止的工作者，也不能假设 Playwright 已原生支持这条组合。候选不成立时再比较宿主调试 Interface 与私有进程通信，明确是否需要修订原路线。
 
+后续核验更新：上述网页文档只列 HTTP／WebSocket，不足以排除发布包中的其他重载。[控制连接验证](24-private-browser-control.md#answer)已核对 Playwright 1.64.0 的发布类型与实际运行，支持 `ConnectOverCDPTransport`，因此能直接通过受管进程通信转接私有 pipe。已有 43 项限定证据；对应版本仍须显式关闭自有 WebContentsView 才能完整退出。此处保留原候选形成时的依据，后续采用该验证结论。
+
 远程网页启用 renderer sandbox 与 context isolation，禁用 Node integration，保留 web security；网页不持有模型密钥、本机文件能力或任意宿主 IPC。对话使用独立宿主页面，IPC 校验发送 frame、角色和具体允许操作；导航、新窗口、外部协议、下载及网页权限请求经宿主管理，并保留合法任务页面的归属。依据 [Electron 安全指南](https://www.electronjs.org/docs/latest/tutorial/security)，这些是交付前须检验的宿主边界，不是任意网站隐含写入已被隔离的证明，也不承诺抵御已控制用户账号或操作系统的攻击者。
 
 ### 保留、清理和本机备份

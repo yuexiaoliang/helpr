@@ -1,0 +1,93 @@
+{
+  "decision": "negative-probes",
+  "source": "explicit-counterfactual-fixtures",
+  "results": [
+    {
+      "name": "actual-download-does-not-match-another-version",
+      "passed": true,
+      "reason": "condition-not-confirmed",
+      "detail": {
+        "rule": {
+          "kind": "download",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": {
+              "input": "attachment_excel",
+              "field": "stem"
+            }
+          },
+          "expected": {
+            "input": "attachment_excel",
+            "field": "sha256"
+          },
+          "covers": "attachment_excel"
+        },
+        "evidence": {
+          "kind": "download",
+          "covers": "attachment_excel",
+          "count": 1,
+          "url": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/10/recovery-20261012-H.xlsx",
+          "sha256": "24975a58ca79a07925847d9d536edcfd26b248feba4faf17a310975c9025eb0f",
+          "bytes": 3714,
+          "ok": false
+        }
+      }
+    },
+    {
+      "name": "nonunique-proposed-position",
+      "passed": true,
+      "reason": "condition-not-confirmed",
+      "detail": {
+        "rule": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "css",
+            "selector": "a"
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "post_title"
+          },
+          "covers": "post_title"
+        },
+        "evidence": {
+          "kind": "text",
+          "covers": "post_title",
+          "count": 44
+        }
+      }
+    },
+    {
+      "name": "wrong-observed-position",
+      "passed": true,
+      "reason": "condition-not-confirmed",
+      "detail": {
+        "rule": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "text",
+            "name": {
+              "input": "post_content"
+            }
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "post_title"
+          },
+          "covers": "post_title"
+        },
+        "evidence": {
+          "kind": "text",
+          "covers": "post_title",
+          "count": 1,
+          "actual": "本文和附件为虚构测试材料。恢复样本 H，校验内容版本 44bd7ae60f47。仅用于验证本次恢复记录。",
+          "ok": false
+        }
+      }
+    }
+  ]
+}

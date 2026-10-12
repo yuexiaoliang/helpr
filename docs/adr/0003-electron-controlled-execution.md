@@ -7,3 +7,7 @@
 用户接受两项明确边界：无法确认窗口内手动输入归属时，说明原因并暂停窗口内两项任务，重新核对后由对应任务的明确继续恢复；核对 helpr 自己的动作、素材、目标和实际结果，但不承诺在发送前拦截网站脚本的所有隐含写入。观察到异常或提交结果不明时停止后续自动动作并核对，不盲目重发。完整组合仍须验收，选择路线不表示所有能力已经实现。依据、替代方案及用户答复见[浏览器承载与流程执行组合](../../.scratch/helpr-first-release/issues/07-browser-runtime-decision.md#answer)。
 
 2026-10-12 的[交付调查](../../.scratch/helpr-first-release/issues/20-local-delivery-and-updates.md#answer)明确：外部 CDP 路线不等于批准无认证的裸回环端口。现有端口可被第二客户端控制，正式入口须具备身份、任务归属与执行资格检查且没有旁路。私有 pipe 加受控转接只是待验证候选，其生命周期不能绑定到可单独停止的任务工作者；具体路径由[浏览器控制连接与宿主隔离验证](../../.scratch/helpr-first-release/issues/24-private-browser-control.md)取得证据后确定，若改变关键保证则回到本决定修订。
+
+随后完成的[控制连接验证](../../.scratch/helpr-first-release/issues/24-private-browser-control.md#answer)支持采用长期控制拥有者独占私有 pipe、Playwright 工作者经受管进程通道与显式能力转接连接的路径，不再暴露裸调试端口。所用 Playwright 发布包支持直接接入进程通信的 transport；转接逐条校验资格、页面和 session 归属，未覆盖能力拒绝。相应代价是维护协议能力及消息顺序、升级复验，以及控制拥有者退出时显式关闭自有网页视图。单项停止仅撤销该项资格，不结束另一项任务的宿主；已被网站接受的效果仍可能完成。当前 43 项本机检查不代替真实流程、共享资源、原生接管和打包组合验收，也没有改变本 ADR 既定保证范围。
+
+[恢复依据自动形成实验](../../.scratch/helpr-first-release/issues/23-autonomous-recovery-evidence.md#answer)随后通过该私有路径完成真实上传、发布和中断后核对。真实 iframe 点击需要补充已归属 frame 的 `DOM.getFrameOwner` 读取及类型化节点登记；实际操作和越界拒绝已核对，没有扩大为全权 CDP。该增量支持既定路线，也说明协议覆盖和升级兼容须按真实工作流验证；单任务恢复不替代并行、原生输入和打包组合。
