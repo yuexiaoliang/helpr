@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "receivedAt": 1791786973777,
+    "method": "GET",
+    "path": "/fixture/strict-matching-timer",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "generationAtReceipt": 0,
+    "decision": "forwarded",
+    "resource": true,
+    "forwardedAt": 1791786973777,
+    "responseAt": 1791786973778,
+    "status": 200
+  },
+  {
+    "id": 2,
+    "receivedAt": 1791786973781,
+    "method": "GET",
+    "path": "/client.js?case=strict-matching-timer",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "generationAtReceipt": 0,
+    "decision": "forwarded",
+    "resource": true,
+    "forwardedAt": 1791786973781,
+    "responseAt": 1791786973782,
+    "status": 200
+  },
+  {
+    "id": 3,
+    "receivedAt": 1791786974152,
+    "method": "POST",
+    "path": "/sink/strict-matching-timer",
+    "bytes": 63,
+    "sha256": "42e855b5f31d296bae15e5948e3c0ffdc3438f54d4db26e15cc5d47079281957",
+    "generationAtReceipt": 1,
+    "contractId": "contract-strict-matching-timer",
+    "decision": "forwarded",
+    "resource": false,
+    "forwardedAt": 1791786974153,
+    "responseAt": 1791786974156,
+    "status": 200
+  },
+  {
+    "id": 4,
+    "receivedAt": 1791786974221,
+    "method": "POST",
+    "path": "/sink/strict-matching-timer",
+    "bytes": 63,
+    "sha256": "42e855b5f31d296bae15e5948e3c0ffdc3438f54d4db26e15cc5d47079281957",
+    "generationAtReceipt": 1,
+    "decision": "blocked",
+    "reason": "contract-consumed"
+  }
+]

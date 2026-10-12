@@ -1,0 +1,138 @@
+{
+  "call": 4,
+  "inputHash": "dd574ceebf28dd8d781c5bd0d8f64bc09c0a545c661f761aa01d00c6c38a849a",
+  "answer": {
+    "role": "assistant",
+    "content": "{\"title\":\"虚构台账样本数量说明\",\"blocks\":[{\"template\":\"本文档全部为虚构测试数据。\",\"bindings\":[]},{\"template\":\"样本编号：{{sample1}}，数量：{{qty1}}{{unit1}}。\",\"bindings\":[{\"key\":\"sample1\",\"operation\":\"cell\",\"refs\":[\"虚构台账!A2\"],\"value\":\"NORTH-001\"},{\"key\":\"qty1\",\"operation\":\"cell\",\"refs\":[\"虚构台账!B2\"],\"value\":9},{\"key\":\"unit1\",\"operation\":\"cell\",\"refs\":[\"虚构台账!C2\"],\"value\":\"份\"}]},{\"template\":\"样本编号：{{sample2}}，数量：{{qty2}}{{unit2}}。\",\"bindings\":[{\"key\":\"sample2\",\"operation\":\"cell\",\"refs\":[\"虚构台账!A3\"],\"value\":\"SOUTH-002\"},{\"key\":\"qty2\",\"operation\":\"cell\",\"refs\":[\"虚构台账!B3\"],\"value\":7},{\"key\":\"unit2\",\"operation\":\"cell\",\"refs\":[\"虚构台账!C3\"],\"value\":\"份\"}]},{\"template\":\"样本编号：{{sample3}}，数量：{{qty3}}{{unit3}}。\",\"bindings\":[{\"key\":\"sample3\",\"operation\":\"cell\",\"refs\":[\"虚构台账!A4\"],\"value\":\"ZERO-003\"},{\"key\":\"qty3\",\"operation\":\"cell\",\"refs\":[\"虚构台账!B4\"],\"value\":0},{\"key\":\"unit3\",\"operation\":\"cell\",\"refs\":[\"虚构台账!C4\"],\"value\":\"份\"}]},{\"template\":\"合计：{{total}}份。\",\"bindings\":[{\"key\":\"total\",\"operation\":\"sum\",\"refs\":[\"虚构台账!B2\",\"虚构台账!B3\",\"虚构台账!B4\"],\"value\":16}]}]}"
+  },
+  "proposal": {
+    "title": "虚构台账样本数量说明",
+    "blocks": [
+      {
+        "template": "本文档全部为虚构测试数据。",
+        "bindings": []
+      },
+      {
+        "template": "样本编号：{{sample1}}，数量：{{qty1}}{{unit1}}。",
+        "bindings": [
+          {
+            "key": "sample1",
+            "operation": "cell",
+            "refs": [
+              "虚构台账!A2"
+            ],
+            "value": "NORTH-001"
+          },
+          {
+            "key": "qty1",
+            "operation": "cell",
+            "refs": [
+              "虚构台账!B2"
+            ],
+            "value": 9
+          },
+          {
+            "key": "unit1",
+            "operation": "cell",
+            "refs": [
+              "虚构台账!C2"
+            ],
+            "value": "份"
+          }
+        ]
+      },
+      {
+        "template": "样本编号：{{sample2}}，数量：{{qty2}}{{unit2}}。",
+        "bindings": [
+          {
+            "key": "sample2",
+            "operation": "cell",
+            "refs": [
+              "虚构台账!A3"
+            ],
+            "value": "SOUTH-002"
+          },
+          {
+            "key": "qty2",
+            "operation": "cell",
+            "refs": [
+              "虚构台账!B3"
+            ],
+            "value": 7
+          },
+          {
+            "key": "unit2",
+            "operation": "cell",
+            "refs": [
+              "虚构台账!C3"
+            ],
+            "value": "份"
+          }
+        ]
+      },
+      {
+        "template": "样本编号：{{sample3}}，数量：{{qty3}}{{unit3}}。",
+        "bindings": [
+          {
+            "key": "sample3",
+            "operation": "cell",
+            "refs": [
+              "虚构台账!A4"
+            ],
+            "value": "ZERO-003"
+          },
+          {
+            "key": "qty3",
+            "operation": "cell",
+            "refs": [
+              "虚构台账!B4"
+            ],
+            "value": 0
+          },
+          {
+            "key": "unit3",
+            "operation": "cell",
+            "refs": [
+              "虚构台账!C4"
+            ],
+            "value": "份"
+          }
+        ]
+      },
+      {
+        "template": "合计：{{total}}份。",
+        "bindings": [
+          {
+            "key": "total",
+            "operation": "sum",
+            "refs": [
+              "虚构台账!B2",
+              "虚构台账!B3",
+              "虚构台账!B4"
+            ],
+            "value": 16
+          }
+        ]
+      }
+    ]
+  },
+  "metadata": [
+    {
+      "label": "C-v2",
+      "startedAt": "2026-10-12T06:12:22.105Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 1122,
+        "completion_tokens": 394,
+        "total_tokens": 1516,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1122
+      },
+      "endedAt": "2026-10-12T06:12:24.088Z",
+      "durationMs": 1983.1944169999997
+    }
+  ]
+}

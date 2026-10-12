@@ -1,0 +1,52 @@
+{
+  "id": "baseline-replaced-upload",
+  "mode": "baseline",
+  "kind": "upload-replaced",
+  "run": "run-1",
+  "startedAt": 1791786970226,
+  "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+  "expectedReceipts": 1,
+  "checks": [
+    {
+      "name": "server-receipt-count",
+      "ok": true,
+      "details": {
+        "actual": 1,
+        "expected": 1
+      }
+    },
+    {
+      "name": "selected-original-bytes",
+      "ok": true
+    },
+    {
+      "name": "download-agrees-with-server",
+      "ok": true
+    },
+    {
+      "name": "same-name-wrong-bytes-arrived",
+      "ok": true
+    }
+  ],
+  "actionStart": 1791786970292,
+  "primitiveReturnedAt": 1791786970315,
+  "selection": {
+    "name": "sample.bin",
+    "bytes": 8192,
+    "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+  },
+  "actors": [
+    {
+      "source": "file-change",
+      "at": 1791786970315
+    }
+  ],
+  "serverReceipts": 1,
+  "stored": 1,
+  "download": {
+    "bytes": 8192,
+    "sha256": "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f"
+  },
+  "status": "observed-as-specified",
+  "finishedAt": 1791786970508
+}

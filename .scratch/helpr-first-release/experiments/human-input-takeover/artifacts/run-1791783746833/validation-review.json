@@ -1,0 +1,242 @@
+{
+  "at": "2026-10-12T05:47:47.274Z",
+  "pass": true,
+  "throughSeq": 1024,
+  "automaticAssertions": 20,
+  "humanAssertions": 14,
+  "humanAssertionNames": [
+    "human-view-and-chat-do-not-take-over",
+    "human-click-pending-click-canceled",
+    "human-click-queued-work-rejected",
+    "human-click-B-continued",
+    "human-click-old-reply-rejected-after-resume",
+    "human-ime-pending-click-canceled",
+    "human-ime-queued-work-rejected",
+    "human-ime-B-continued",
+    "human-ime-old-reply-rejected-after-resume",
+    "human-paste-pending-click-canceled",
+    "human-paste-queued-work-rejected",
+    "human-paste-B-continued",
+    "human-paste-old-reply-rejected-after-resume",
+    "manual-content-preserved-after-explicit-continue"
+  ],
+  "humanEvidenceSources": [
+    {
+      "role": "view-chat-click",
+      "sourceRun": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/human-input-takeover/artifacts/run-1791774267215",
+      "throughSeq": 4833,
+      "hashResults": [
+        {
+          "file": "PLAN.md",
+          "pass": true
+        },
+        {
+          "file": "native/input-monitor.mm",
+          "pass": true
+        },
+        {
+          "file": "build.mjs",
+          "pass": true
+        },
+        {
+          "file": "build/metadata.json",
+          "pass": true
+        },
+        {
+          "file": "electron.cjs",
+          "pass": true
+        },
+        {
+          "file": "run.mjs",
+          "pass": true
+        },
+        {
+          "file": "preload.cjs",
+          "pass": true
+        },
+        {
+          "file": "page-preload.cjs",
+          "pass": true
+        },
+        {
+          "file": "fixture.html",
+          "pass": true
+        },
+        {
+          "file": "shell.html",
+          "pass": true
+        },
+        {
+          "file": "chat.html",
+          "pass": true
+        },
+        {
+          "file": "debug/view-switch.mjs",
+          "pass": true
+        },
+        {
+          "file": "debug/button-command.mjs",
+          "pass": true
+        },
+        {
+          "file": "control.mjs",
+          "pass": true
+        },
+        {
+          "file": "input-monitor.node",
+          "pass": true
+        }
+      ],
+      "dispatchAfterStop": []
+    },
+    {
+      "role": "ime",
+      "sourceRun": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/human-input-takeover/artifacts/run-1791783257762",
+      "throughSeq": 1551,
+      "hashResults": [
+        {
+          "file": "PLAN.md",
+          "pass": true
+        },
+        {
+          "file": "native/input-monitor.mm",
+          "pass": true
+        },
+        {
+          "file": "build.mjs",
+          "pass": true
+        },
+        {
+          "file": "build/metadata.json",
+          "pass": true
+        },
+        {
+          "file": "electron.cjs",
+          "pass": true
+        },
+        {
+          "file": "run.mjs",
+          "pass": true
+        },
+        {
+          "file": "preload.cjs",
+          "pass": true
+        },
+        {
+          "file": "page-preload.cjs",
+          "pass": true
+        },
+        {
+          "file": "fixture.html",
+          "pass": true
+        },
+        {
+          "file": "shell.html",
+          "pass": true
+        },
+        {
+          "file": "chat.html",
+          "pass": true
+        },
+        {
+          "file": "debug/view-switch.mjs",
+          "pass": true
+        },
+        {
+          "file": "debug/button-command.mjs",
+          "pass": true
+        },
+        {
+          "file": "control.mjs",
+          "pass": true
+        },
+        {
+          "file": "input-monitor.node",
+          "pass": true
+        }
+      ],
+      "dispatchAfterStop": []
+    },
+    {
+      "role": "paste-final-resume",
+      "sourceRun": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/human-input-takeover/artifacts/run-1791783746833",
+      "throughSeq": 1024,
+      "hashResults": [
+        {
+          "file": "PLAN.md",
+          "pass": true
+        },
+        {
+          "file": "native/input-monitor.mm",
+          "pass": true
+        },
+        {
+          "file": "build.mjs",
+          "pass": true
+        },
+        {
+          "file": "build/metadata.json",
+          "pass": true
+        },
+        {
+          "file": "electron.cjs",
+          "pass": true
+        },
+        {
+          "file": "run.mjs",
+          "pass": true
+        },
+        {
+          "file": "preload.cjs",
+          "pass": true
+        },
+        {
+          "file": "page-preload.cjs",
+          "pass": true
+        },
+        {
+          "file": "fixture.html",
+          "pass": true
+        },
+        {
+          "file": "shell.html",
+          "pass": true
+        },
+        {
+          "file": "chat.html",
+          "pass": true
+        },
+        {
+          "file": "debug/view-switch.mjs",
+          "pass": true
+        },
+        {
+          "file": "debug/button-command.mjs",
+          "pass": true
+        },
+        {
+          "file": "control.mjs",
+          "pass": true
+        },
+        {
+          "file": "input-monitor.node",
+          "pass": true
+        }
+      ],
+      "dispatchAfterStop": []
+    }
+  ],
+  "observeBeforeResume": {
+    "observedSeq": 995,
+    "resumedSeq": 997
+  },
+  "finalPreservedInputSeq": 1013,
+  "newRunUnexpectedHumanErrors": [],
+  "userFeedbackFile": "human-final-feedback.json",
+  "limitations": [
+    "Evidence spans three human runs with explicit references, not one uninterrupted four-step run.",
+    "The IME value was restored during setup of the final run; restoration is not new human input or product persistence evidence.",
+    "Run 13 encountered unknown input ownership after refresh-like events. Arbitrary navigation and native view replacement are not validated.",
+    "Actual sleep/wake recovery, other hosts and other platforms remain unverified."
+  ]
+}

@@ -1,0 +1,850 @@
+{
+  "phase": "learn",
+  "startedAt": "2026-10-11T23:03:09.671Z",
+  "runs": [
+    {
+      "name": "learn",
+      "trace": [
+        {
+          "step": {
+            "action": {
+              "op": "click",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "link",
+                "name": "+Add content"
+              }
+            },
+            "effect": "edit",
+            "before": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "link",
+                  "name": "+Add content"
+                }
+              }
+            ],
+            "after": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Title *"
+                }
+              }
+            ],
+            "note": "进入添加内容页面，以使用日报内容类型新建内容。",
+            "id": "s1"
+          },
+          "result": {
+            "executed": true
+          }
+        },
+        {
+          "step": {
+            "action": {
+              "op": "fill",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "textbox",
+                "name": "Title *"
+              },
+              "value": {
+                "input": "title"
+              }
+            },
+            "effect": "edit",
+            "before": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Title *"
+                }
+              }
+            ],
+            "after": [
+              {
+                "kind": "value",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "textbox",
+                  "name": "Title *"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "title"
+                },
+                "covers": "title"
+              }
+            ],
+            "note": "填写标题输入框",
+            "id": "s2"
+          },
+          "result": {
+            "executed": true
+          }
+        }
+      ],
+      "failures": [
+        {
+          "proposal": {
+            "op": "fill",
+            "target": "n15",
+            "valueInput": "category",
+            "literal": "",
+            "checked": false,
+            "nameInput": "category",
+            "effect": "edit",
+            "reason": "栏目下拉框需要选择任务指定的「Excel 验证」栏目，使用 category 输入值。"
+          },
+          "error": {
+            "code": "name-binding-mismatch",
+            "message": "name-binding-mismatch",
+            "detail": {}
+          }
+        },
+        {
+          "proposal": {
+            "op": "fill",
+            "target": "n15",
+            "valueInput": "category",
+            "literal": "",
+            "checked": false,
+            "nameInput": "",
+            "effect": "edit",
+            "reason": "栏目下拉框需要选择任务指定的「Excel 验证」栏目，使用 category 输入值。"
+          },
+          "step": {
+            "action": {
+              "op": "fill",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "combobox",
+                "name": "栏目 *"
+              },
+              "value": {
+                "input": "category"
+              }
+            },
+            "effect": "edit",
+            "before": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "combobox",
+                  "name": "栏目 *"
+                }
+              }
+            ],
+            "after": [],
+            "note": "栏目下拉框需要选择任务指定的「Excel 验证」栏目，使用 category 输入值。",
+            "id": "s3"
+          },
+          "error": {
+            "code": "Error",
+            "message": "locator.fill: Error: Element is not an <input>, <textarea> or [contenteditable] element\nCall log:\n\u001b[2m  - waiting for getByRole('combobox', { name: '栏目 *', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <select required=\"required\" name=\"field_section\" id=\"edit-field-section\" data-drupal-selector=\"edit-field-section\" class=\"form-select required form-element form-element--type-select\">…</select>\u001b[22m\n\u001b[2m    - fill(\"Excel 验证\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    - waiting for eleme",
+            "executed": false,
+            "executionUncertain": false
+          }
+        },
+        {
+          "proposal": {
+            "op": "select",
+            "target": "n15",
+            "valueInput": "category",
+            "literal": "",
+            "checked": false,
+            "nameInput": "",
+            "effect": "edit",
+            "reason": "栏目为下拉选择控件，使用 select 动作并绑定 category 输入值「Excel 验证」。"
+          },
+          "step": {
+            "action": {
+              "op": "select",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "combobox",
+                "name": "栏目 *"
+              },
+              "value": {
+                "input": "category"
+              }
+            },
+            "effect": "edit",
+            "before": [
+              {
+                "kind": "visible",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "combobox",
+                  "name": "栏目 *"
+                }
+              }
+            ],
+            "after": [
+              {
+                "kind": "value",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "combobox",
+                  "name": "栏目 *"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "category"
+                },
+                "covers": "category"
+              }
+            ],
+            "note": "栏目为下拉选择控件，使用 select 动作并绑定 category 输入值「Excel 验证」。",
+            "id": "s3"
+          },
+          "error": {
+            "code": "condition-unsatisfied",
+            "message": "condition-unsatisfied",
+            "detail": {
+              "evidence": [
+                {
+                  "condition": {
+                    "kind": "value",
+                    "target": {
+                      "frame": "main",
+                      "by": "role",
+                      "role": "combobox",
+                      "name": "栏目 *"
+                    },
+                    "compare": "equals",
+                    "expected": {
+                      "input": "category"
+                    },
+                    "covers": "category"
+                  },
+                  "ok": false,
+                  "actual": "1",
+                  "expected": "Excel 验证"
+                }
+              ]
+            },
+            "executed": true,
+            "executionUncertain": false
+          }
+        }
+      ],
+      "task": {
+        "id": "learn",
+        "origin": "http://home.ts-ali.internal:38081",
+        "entryUrl": "http://home.ts-ali.internal:38081/admin/content",
+        "kind": "create_and_publish",
+        "inputs": {
+          "title": {
+            "type": "string",
+            "value": "第二后台对照 learn drupal"
+          },
+          "body": {
+            "type": "string",
+            "value": "全部内容和附件均为虚构测试素材。样本 learn，核对编号 c3eec5e3cf。保留原始 Excel 文件，不改写其内容。"
+          },
+          "category": {
+            "type": "string",
+            "value": "Excel 验证"
+          },
+          "attachment": {
+            "type": "file",
+            "path": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/second-backend-comparison/artifacts/drupal/learn/learn-drupal.xlsx",
+            "name": "learn-drupal.xlsx",
+            "stem": "learn-drupal",
+            "sha256": "739de3c5f3094e821ba5cfe720b738aafa9e79f894c859835a659402fc3dd693"
+          }
+        },
+        "requiredOutputs": [
+          "title",
+          "body",
+          "category",
+          "attachment"
+        ],
+        "goal": "使用站点已有的日报内容类型新建一篇内容，标题为「第二后台对照 learn drupal」，正文为指定虚构测试文本，栏目选择「Excel 验证」，并将原始 Excel 文件作为可下载附件，立即公开发布。",
+        "constraints": [
+          {
+            "description": "使用站点已有的日报内容类型新建内容",
+            "quote": "使用站点已有的日报内容类型新建一篇内容"
+          },
+          {
+            "description": "立即公开发布",
+            "quote": "立即公开发布"
+          },
+          {
+            "description": "原始 Excel 文件作为可下载附件，不读取或改写 Excel 内容",
+            "quote": "将原始 Excel 文件作为这篇内容的可下载附件，不读取或改写 Excel 内容"
+          },
+          {
+            "description": "只允许本次委托指定的内容和附件操作，不改动其它已有内容、账号或网站设置",
+            "quote": "只允许本次委托指定的内容和附件操作，不改动其它已有内容、账号或网站设置"
+          },
+          {
+            "description": "不增加建议内容",
+            "quote": "不增加建议内容"
+          }
+        ],
+        "sources": {
+          "title": {
+            "quote": "标题是「第二后台对照 learn drupal」",
+            "description": "新建内容的标题"
+          },
+          "body": {
+            "quote": "正文完整内容是「全部内容和附件均为虚构测试素材。样本 learn，核对编号 c3eec5e3cf。保留原始 Excel 文件，不改写其内容。」",
+            "description": "新建内容的正文完整内容"
+          },
+          "category": {
+            "quote": "栏目选择「Excel 验证」",
+            "description": "新建内容选择的栏目"
+          },
+          "attachment": {
+            "attachmentId": "material-1",
+            "description": "作为该内容可下载附件的原始 Excel 文件，不读取或改写其内容"
+          }
+        },
+        "suggestions": [],
+        "request": "【隔离实验授权】这是虚构测试委托，允许在指定测试网站完成本次工作。使用站点已有的日报内容类型新建一篇内容；立即公开发布。标题是「第二后台对照 learn drupal」，正文完整内容是「全部内容和附件均为虚构测试素材。样本 learn，核对编号 c3eec5e3cf。保留原始 Excel 文件，不改写其内容。」，栏目选择「Excel 验证」。使用附带素材，将原始 Excel 文件作为这篇内容的可下载附件，不读取或改写 Excel 内容。只允许本次委托指定的内容和附件操作，不改动其它已有内容、账号或网站设置。上述内容、上传及发布方式均已授权，不增加建议内容。",
+        "authorization": {
+          "source": "explicit-isolated-test-fixture",
+          "requestDigest": "648ae493da765031efd5be4b65b931c6a2964a8accbbe11a38946abf1b3129ad",
+          "inputsDigest": "20ea0c08e78516df692c53409845b0cbfb4bb8c0c7e3b721373c341c35d1952b"
+        }
+      },
+      "status": "failed",
+      "error": {
+        "code": "condition-unsatisfied",
+        "message": "condition-unsatisfied",
+        "detail": {
+          "evidence": [
+            {
+              "condition": {
+                "kind": "value",
+                "target": {
+                  "frame": "main",
+                  "by": "role",
+                  "role": "combobox",
+                  "name": "栏目 *"
+                },
+                "compare": "equals",
+                "expected": {
+                  "input": "category"
+                },
+                "covers": "category"
+              },
+              "ok": false,
+              "actual": "1",
+              "expected": "Excel 验证"
+            }
+          ]
+        },
+        "executed": true,
+        "executionUncertain": false
+      },
+      "lastObservation": {
+        "url": "http://home.ts-ali.internal:38081/node/add/report",
+        "nodes": [
+          {
+            "id": "n1",
+            "frame": "main",
+            "role": "link",
+            "name": "Skip to main content",
+            "tag": "a",
+            "value": "Skip to main content",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "href": "#main-content",
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "link",
+              "name": "Skip to main content"
+            }
+          },
+          {
+            "id": "n2",
+            "frame": "main",
+            "role": "heading",
+            "name": "Breadcrumb",
+            "tag": "h2",
+            "value": "Breadcrumb",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "heading",
+              "name": "Breadcrumb",
+              "level": 2
+            }
+          },
+          {
+            "id": "n3",
+            "frame": "main",
+            "role": "link",
+            "name": "Home",
+            "tag": "a",
+            "value": "Home",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "href": "/",
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "link",
+              "name": "Home"
+            }
+          },
+          {
+            "id": "n4",
+            "frame": "main",
+            "role": "link",
+            "name": "Add content item",
+            "tag": "a",
+            "value": "Add content item",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "href": "/node/add",
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "link",
+              "name": "Add content item"
+            }
+          },
+          {
+            "id": "n5",
+            "frame": "main",
+            "role": "heading",
+            "name": "Create 日报",
+            "tag": "h1",
+            "value": "Create 日报",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "heading",
+              "name": "Create 日报",
+              "level": 1
+            }
+          },
+          {
+            "id": "n6",
+            "frame": "main",
+            "role": "textbox",
+            "name": "Title *",
+            "tag": "input",
+            "type": "text",
+            "value": "第二后台对照 learn drupal",
+            "editable": true,
+            "checked": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "textbox",
+              "name": "Title *"
+            }
+          },
+          {
+            "id": "n7",
+            "frame": "main",
+            "role": "button",
+            "name": "Bold",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Bold"
+            }
+          },
+          {
+            "id": "n8",
+            "frame": "main",
+            "role": "button",
+            "name": "Italic",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Italic"
+            }
+          },
+          {
+            "id": "n9",
+            "frame": "main",
+            "role": "button",
+            "name": "Link",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Link"
+            }
+          },
+          {
+            "id": "n10",
+            "frame": "main",
+            "role": "button",
+            "name": "Block quote",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Block quote"
+            }
+          },
+          {
+            "id": "n11",
+            "frame": "main",
+            "role": "button",
+            "name": "Upload image from computer",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Upload image from computer"
+            }
+          },
+          {
+            "id": "n12",
+            "frame": "main",
+            "role": "button",
+            "name": "Paragraph, Heading",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Paragraph, Heading"
+            }
+          },
+          {
+            "id": "n13",
+            "frame": "main",
+            "role": "button",
+            "name": "Code",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Code"
+            }
+          },
+          {
+            "id": "n14",
+            "frame": "main",
+            "role": "button",
+            "name": "Source",
+            "tag": "button",
+            "type": "button",
+            "value": "",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Source"
+            }
+          },
+          {
+            "id": "n15",
+            "frame": "main",
+            "role": "combobox",
+            "name": "栏目 *",
+            "tag": "select",
+            "value": "1",
+            "editable": true,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "combobox",
+              "name": "栏目 *"
+            }
+          },
+          {
+            "id": "n16",
+            "frame": "main",
+            "role": "button",
+            "name": "附件",
+            "tag": "summary",
+            "value": "附件",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "附件"
+            }
+          },
+          {
+            "id": "n17",
+            "frame": "main",
+            "role": "button",
+            "name": "Add a new file *",
+            "tag": "input",
+            "type": "file",
+            "value": "",
+            "editable": true,
+            "checked": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Add a new file *"
+            }
+          },
+          {
+            "id": "n18",
+            "frame": "main",
+            "role": "textbox",
+            "name": "Revision log message",
+            "tag": "textarea",
+            "value": "",
+            "editable": true,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "textbox",
+              "name": "Revision log message"
+            }
+          },
+          {
+            "id": "n19",
+            "frame": "main",
+            "role": "button",
+            "name": "Save",
+            "tag": "input",
+            "type": "submit",
+            "value": "Save",
+            "editable": true,
+            "checked": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": false,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Save"
+            }
+          },
+          {
+            "id": "n20",
+            "frame": "main",
+            "role": "button",
+            "name": "Preview",
+            "tag": "input",
+            "type": "submit",
+            "value": "Preview",
+            "editable": true,
+            "checked": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": false,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "button",
+              "name": "Preview"
+            }
+          },
+          {
+            "id": "n21",
+            "frame": "main",
+            "role": "text",
+            "name": "Breadcrumb",
+            "tag": "h2",
+            "value": "Breadcrumb",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "text",
+              "name": "Breadcrumb"
+            }
+          },
+          {
+            "id": "n22",
+            "frame": "main",
+            "role": "text",
+            "name": "Create 日报",
+            "tag": "h1",
+            "value": "Create 日报",
+            "editable": false,
+            "disabled": false,
+            "visible": true,
+            "inViewport": true,
+            "download": false,
+            "submit": false,
+            "target": {
+              "frame": "main",
+              "by": "text",
+              "name": "Create 日报"
+            }
+          }
+        ],
+        "aria": [
+          {
+            "frame": "main",
+            "aria": "- link \"Skip to main content\":\n  - /url: \"#main-content\"\n- main:\n  - navigation \"Breadcrumb\":\n    - heading \"Breadcrumb\" [level=2]\n    - list:\n      - listitem:\n        - link \"Home\":\n          - /url: /\n      - listitem:\n        - link \"Add content item\":\n          - /url: /node/add\n  - heading \"Create 日报\" [level=1]\n  - text: Title *\n  - textbox \"Title *\":\n    - /placeholder: \"\"\n    - text: 第二后台对照 learn drupal\n  - text: Body\n  - application \"Rich Text Editor\":\n    - toolbar \"Editor toolbar\":\n      - button \"Bold\"\n      - button \"Italic\"\n      - button \"Link\"\n      - button \"Bulleted List\"\n      - button \"Bulleted List\"\n      - button \"Numbered List\"\n      - button \"Numbered List\"\n      - button \"Block quote\"\n      - button \"Upload image from computer\"\n      - button \"Paragraph, Heading\": Paragraph\n      - button \"Code\"\n      - button \"Source\"\n    - 'textbox \"Rich Text Editor. Editing area: main. Press ⌥0 for help.\"':\n      - paragraph\n  - text: 栏目 *\n  - combobox \"栏目 *\":\n    - option \"- Select a value -\"\n    - option \"Excel 验证\" [selected]\n    - option \"其他\"\n  - group:\n    - button \"附件\" [expanded]\n    - text: Add a new file *\n    - button \"Add a new file *\"\n    - text: \"One file only. 2 MB limit. Allowed types: xlsx.\"\n  - text: \"Last saved: Not saved yet Author: helpr_tester Revision log message\"\n  - textbox \"Revision log message\":\n    - /placeholder: \"\"\n  - text: Briefly describe the changes you have made.\n  - button \"Save\"\n  - button \"Preview\"\n- application:\n  - list\n  - list"
+          }
+        ]
+      }
+    }
+  ],
+  "sourceHashes": {
+    "protocol.mjs": "e0117fd4bebfa8593ad90151a3a64e43c404c13f92d5ce3905a61871968726f9",
+    "runtime.mjs": "8bc7ade144d3bef799fd2e35bdf0d504e13bab6d5cce0f6a1db3033c525b59af",
+    "upload-permit.mjs": "afbd15e9cba7dbf3c71968211124704722ef71539bf60a056b84f7330be9bd62",
+    "run.mjs": "b23cc725664ee2227ec217c11291e82b86132a667d93c87adcfcea0767fe5c22",
+    "fixtures.mjs": "aec5147e1c7addfc1cd9800259ff5a210a93b633855cfc8d3d70e8206125cfe6",
+    "../workflow-reliability/executor.mjs": "1f52ad429617b9b6e01081b75254a52fb30af6e46f5468d2ea1f6d4428582b9c",
+    "../workflow-reliability/contract.mjs": "0293644766d4c920f5a416c20fc8e236b25dc1208225ed52f888e857be6d6f6d",
+    "../runtime-flow-replay/engine.mjs": "46c3cf6959777ca23552b66ed6c754b58f40345f60ad02433a4d0c856f899e7d",
+    "../model-api/client.mjs": "70d88c5b1149792f5549a6cf3c15748d0ea1ca34809c6741e63f0bd9581996ae",
+    "../autonomous-workflow-induction/runtime.mjs": "6c6afcc7fd8bd0f14783b32d8158d6d8c7baf843f32b7451923ab547d193c5a8",
+    "../autonomous-workflow-induction/package-lock.json": "b873118617e889b5720f5a93f03cbe4be98c9dc83ddaf3632043ea1c0b377a00"
+  },
+  "sourceVersion": 1,
+  "endedAt": "2026-10-11T23:03:42.719Z",
+  "calls": 6,
+  "tokens": 16069
+}

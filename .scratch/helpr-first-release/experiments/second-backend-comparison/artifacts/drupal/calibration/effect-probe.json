@@ -1,0 +1,60 @@
+{
+  "actualAction": {
+    "op": "press",
+    "target": {
+      "frame": "main",
+      "by": "role",
+      "role": "button",
+      "name": "Save"
+    },
+    "value": "Enter"
+  },
+  "incorrectProposal": "read",
+  "caught": {
+    "code": "condition-unsatisfied",
+    "message": "condition-unsatisfied",
+    "detail": {
+      "evidence": [
+        {
+          "condition": {
+            "kind": "value",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "textbox",
+              "name": "Title *"
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "title"
+            },
+            "covers": "title"
+          },
+          "ok": false,
+          "actual": "实验注入：尚未满足授权内容",
+          "expected": "第二后台对照 calibration drupal"
+        },
+        {
+          "condition": {
+            "kind": "value",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "textbox",
+              "name": "Rich Text Editor. Editing area: main. Press ⌥0 for help."
+            },
+            "compare": "equals",
+            "expected": {
+              "input": "body"
+            },
+            "covers": "body"
+          },
+          "ok": true,
+          "actual": "全部内容和附件均为虚构测试素材。样本 calibration，核对编号 1ad8c07823。保留原始 Excel 文件，不改写其内容。",
+          "expected": "全部内容和附件均为虚构测试素材。样本 calibration，核对编号 1ad8c07823。保留原始 Excel 文件，不改写其内容。"
+        }
+      ]
+    }
+  },
+  "dispatchPrevented": true
+}

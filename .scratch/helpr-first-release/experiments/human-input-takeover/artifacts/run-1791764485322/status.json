@@ -1,0 +1,239 @@
+{
+  "phaseLabel": "1 / 4 · 查看与对话",
+  "instruction": "移动鼠标、切换“只看 A / 只看 B”；在右下角发送“对话测试”。",
+  "chatHelp": "确认查看、切换和对话未接管网页，再发送“继续”。",
+  "a": "自动运行",
+  "b": "自动运行",
+  "phase": "observe",
+  "mode": "human",
+  "humanStops": {},
+  "checks": [
+    {
+      "seq": 23,
+      "at": "2026-10-12T00:21:26.404Z",
+      "ms": 790.82,
+      "mode": "automatic",
+      "phase": "source-separation",
+      "kind": "assertion",
+      "name": "five-automatic-input-paths-do-not-take-over",
+      "pass": true,
+      "detail": {
+        "nativeCount": 0,
+        "domEvents": 14
+      }
+    },
+    {
+      "seq": 33,
+      "at": "2026-10-12T00:21:26.561Z",
+      "ms": 947.23,
+      "mode": "automatic",
+      "phase": "waiting-click",
+      "kind": "assertion",
+      "name": "native-A-invalidates-only-A-synchronously",
+      "pass": true,
+      "detail": {
+        "event": {
+          "seq": 30,
+          "at": "2026-10-12T00:21:26.560Z",
+          "ms": 946.25,
+          "mode": "automatic",
+          "phase": "waiting-click",
+          "kind": "native-input",
+          "owner": "A",
+          "type": "mouseDown",
+          "receiverClass": "RenderWidgetHostViewCocoa",
+          "x": 100,
+          "y": 170,
+          "timestamp": 249831.58907175003,
+          "eventNumber": 9901,
+          "modifiers": 0,
+          "testInjection": true
+        }
+      }
+    },
+    {
+      "seq": 41,
+      "at": "2026-10-12T00:21:26.717Z",
+      "ms": 1103.69,
+      "mode": "automatic",
+      "phase": "waiting-click",
+      "kind": "assertion",
+      "name": "waiting-click-canceled-before-enable",
+      "pass": true,
+      "detail": {
+        "pendingResult": {
+          "ok": false,
+          "error": "locator.click: Execution stopped or superseded\nCall log:\n\u001b[2m  - waiting for locator('#late')\u001b[22m\n\u001b[2m    - locator resolved to <button disabled id=\"late\">延后自动点击</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is not enabled\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 100ms\u001b[22m\n\u001b[2m  - operation was aborted: Execution stopped or superseded\u001b[22m\n"
+        }
+      }
+    },
+    {
+      "seq": 43,
+      "at": "2026-10-12T00:21:27.262Z",
+      "ms": 1649.04,
+      "mode": "automatic",
+      "phase": "waiting-click",
+      "kind": "assertion",
+      "name": "accepted-request-can-finish-after-stop",
+      "pass": true,
+      "detail": {}
+    },
+    {
+      "seq": 44,
+      "at": "2026-10-12T00:21:27.263Z",
+      "ms": 1649.39,
+      "mode": "automatic",
+      "phase": "waiting-click",
+      "kind": "assertion",
+      "name": "B-continues-during-A-takeover",
+      "pass": true,
+      "detail": {}
+    },
+    {
+      "seq": 55,
+      "at": "2026-10-12T00:21:27.339Z",
+      "ms": 1725.75,
+      "mode": "automatic",
+      "phase": "waiting-click",
+      "kind": "assertion",
+      "name": "old-reply-rejected-after-new-generation",
+      "pass": true,
+      "detail": {}
+    },
+    {
+      "seq": 70,
+      "at": "2026-10-12T00:21:27.454Z",
+      "ms": 1840.84,
+      "mode": "automatic",
+      "phase": "continuous-typing",
+      "kind": "assertion",
+      "name": "native-keyboard-owner-is-A",
+      "pass": true,
+      "detail": {
+        "event": {
+          "seq": 67,
+          "at": "2026-10-12T00:21:27.451Z",
+          "ms": 1837.52,
+          "mode": "automatic",
+          "phase": "continuous-typing",
+          "kind": "native-input",
+          "owner": "A",
+          "type": "keyDown",
+          "receiverClass": "RenderWidgetHostViewCocoa",
+          "x": 0,
+          "y": 912,
+          "timestamp": 249832.48044370834,
+          "eventNumber": 0,
+          "modifiers": 0,
+          "keyCode": 0,
+          "testInjection": true
+        }
+      }
+    },
+    {
+      "seq": 85,
+      "at": "2026-10-12T00:21:27.800Z",
+      "ms": 2186.89,
+      "mode": "automatic",
+      "phase": "continuous-typing",
+      "kind": "assertion",
+      "name": "continuous-input-canceled-with-partial-result",
+      "pass": true,
+      "detail": {
+        "frozen": "12a",
+        "stable": "12a"
+      }
+    },
+    {
+      "seq": 93,
+      "at": "2026-10-12T00:21:27.810Z",
+      "ms": 2196.41,
+      "mode": "automatic",
+      "phase": "overlay-isolation",
+      "kind": "assertion",
+      "name": "native-overlay-and-shell-do-not-stop-tasks",
+      "pass": true,
+      "detail": {
+        "events": [
+          {
+            "seq": 90,
+            "at": "2026-10-12T00:21:27.804Z",
+            "ms": 2190.27,
+            "mode": "automatic",
+            "phase": "overlay-isolation",
+            "kind": "native-input",
+            "owner": "chat",
+            "type": "mouseDown",
+            "receiverClass": "RenderWidgetHostViewCocoa",
+            "x": 1100,
+            "y": 760,
+            "timestamp": 249832.83319383336,
+            "eventNumber": 9901,
+            "modifiers": 0,
+            "testInjection": true
+          },
+          {
+            "seq": 91,
+            "at": "2026-10-12T00:21:27.804Z",
+            "ms": 2190.77,
+            "mode": "automatic",
+            "phase": "overlay-isolation",
+            "kind": "native-input",
+            "owner": "shell",
+            "type": "mouseDown",
+            "receiverClass": "RenderWidgetHostViewCocoa",
+            "x": 400,
+            "y": 30,
+            "timestamp": 249832.83375116668,
+            "eventNumber": 9901,
+            "modifiers": 0,
+            "testInjection": true
+          },
+          {
+            "seq": 92,
+            "at": "2026-10-12T00:21:27.806Z",
+            "ms": 2192.54,
+            "mode": "automatic",
+            "phase": "overlay-isolation",
+            "kind": "native-input",
+            "owner": "chat",
+            "type": "keyDown",
+            "receiverClass": "RenderWidgetHostViewCocoa",
+            "x": 0,
+            "y": 912,
+            "timestamp": 249832.8354844167,
+            "eventNumber": 0,
+            "modifiers": 0,
+            "keyCode": 0,
+            "testInjection": true
+          }
+        ]
+      }
+    },
+    {
+      "seq": 95,
+      "at": "2026-10-12T00:21:27.965Z",
+      "ms": 2351.73,
+      "mode": "automatic",
+      "phase": "overlay-isolation",
+      "kind": "assertion",
+      "name": "host-view-switch-does-not-stop-tasks",
+      "pass": true,
+      "detail": {}
+    }
+  ],
+  "counts": {
+    "A": {
+      "auto": 0,
+      "manual": 0,
+      "late": 0,
+      "accepted": 0
+    },
+    "B": {
+      "auto": 0,
+      "manual": 0,
+      "late": 0,
+      "accepted": 0
+    }
+  }
+}

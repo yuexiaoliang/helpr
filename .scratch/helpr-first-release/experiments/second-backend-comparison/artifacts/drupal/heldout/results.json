@@ -1,0 +1,238 @@
+{
+  "name": "heldout",
+  "trace": [
+    {
+      "id": "s1",
+      "op": "click",
+      "executed": true
+    },
+    {
+      "id": "s2",
+      "op": "fill",
+      "executed": true
+    },
+    {
+      "id": "s3",
+      "op": "fill",
+      "executed": true
+    },
+    {
+      "id": "s4",
+      "op": "select",
+      "executed": true
+    },
+    {
+      "id": "s5",
+      "op": "upload",
+      "executed": true,
+      "pending": "upload-pending.json",
+      "settled": "upload-settled.json",
+      "negative": {
+        "passed": false,
+        "code": "artifact-target-missing",
+        "detail": {}
+      }
+    },
+    {
+      "id": "s6",
+      "op": "press",
+      "executed": true
+    },
+    {
+      "id": "s7",
+      "op": "finish",
+      "resultUrl": "http://home.ts-ali.internal:38081/node/5",
+      "readyReceipt": {
+        "at": "2026-10-11T23:11:24.237Z",
+        "taskDigest": "7e6418e2d71119a2092aeeec010923d488f5cea3a8373940268d6f09001e3f20",
+        "rulesDigest": "2767a471617af344de1a8ec08f3fc43cd2d62c15161de0b106555e40ebe0a236",
+        "evidence": [
+          {
+            "condition": {
+              "kind": "value",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "textbox",
+                "name": "Title *"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "title"
+              },
+              "covers": "title"
+            },
+            "ok": true,
+            "actual": "第二后台对照 heldout drupal",
+            "expected": "第二后台对照 heldout drupal"
+          },
+          {
+            "condition": {
+              "kind": "value",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "textbox",
+                "name": "Rich Text Editor. Editing area: main. Press ⌥0 for help."
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "body"
+              },
+              "covers": "body"
+            },
+            "ok": true,
+            "actual": "全部内容和附件均为虚构测试素材。样本 heldout，核对编号 d796a78d45。保留原始 Excel 文件，不改写其内容。",
+            "expected": "全部内容和附件均为虚构测试素材。样本 heldout，核对编号 d796a78d45。保留原始 Excel 文件，不改写其内容。"
+          },
+          {
+            "condition": {
+              "kind": "selected-label",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "combobox",
+                "name": "栏目 *"
+              },
+              "expected": {
+                "input": "category"
+              },
+              "covers": "category"
+            },
+            "ok": true,
+            "actual": [
+              "Excel 验证"
+            ],
+            "expected": "Excel 验证"
+          },
+          {
+            "condition": {
+              "kind": "artifact",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "link",
+                "name": {
+                  "input": "attachment",
+                  "field": "name"
+                }
+              },
+              "expected": {
+                "input": "attachment",
+                "field": "sha256"
+              },
+              "covers": "attachment"
+            },
+            "ok": true,
+            "actual": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602"
+          }
+        ]
+      }
+    }
+  ],
+  "status": "completed",
+  "candidateHash": "ab465650d164f866e66fe9aef98a456034543420ed8a19708f766d31581b4300",
+  "taskHash": "7e6418e2d71119a2092aeeec010923d488f5cea3a8373940268d6f09001e3f20",
+  "result": {
+    "url": "http://home.ts-ali.internal:38081/node/5",
+    "runtimeEvidence": [
+      {
+        "condition": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "heading",
+            "name": {
+              "input": "title"
+            },
+            "level": 1
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "title"
+          },
+          "covers": "title"
+        },
+        "ok": true,
+        "actual": "第二后台对照 heldout drupal",
+        "expected": "第二后台对照 heldout drupal"
+      },
+      {
+        "condition": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "text",
+            "name": {
+              "input": "body"
+            }
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "body"
+          },
+          "covers": "body"
+        },
+        "ok": true,
+        "actual": "全部内容和附件均为虚构测试素材。样本 heldout，核对编号 d796a78d45。保留原始 Excel 文件，不改写其内容。",
+        "expected": "全部内容和附件均为虚构测试素材。样本 heldout，核对编号 d796a78d45。保留原始 Excel 文件，不改写其内容。"
+      },
+      {
+        "condition": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": {
+              "input": "category"
+            }
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "category"
+          },
+          "covers": "category"
+        },
+        "ok": true,
+        "actual": "Excel 验证",
+        "expected": "Excel 验证"
+      },
+      {
+        "condition": {
+          "kind": "download",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": {
+              "input": "attachment",
+              "field": "name"
+            }
+          },
+          "expected": {
+            "input": "attachment",
+            "field": "sha256"
+          },
+          "covers": "attachment"
+        },
+        "ok": true,
+        "actual": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+        "downloadedName": "heldout-drupal.xlsx"
+      }
+    ],
+    "independent": {
+      "title": "第二后台对照 heldout drupal",
+      "body": "全部内容和附件均为虚构测试素材。样本 heldout，核对编号 d796a78d45。保留原始 Excel 文件，不改写其内容。",
+      "category": "Excel 验证",
+      "categoryUrl": "http://home.ts-ali.internal:38081/taxonomy/term/1",
+      "resultUrl": "http://home.ts-ali.internal:38081/node/5",
+      "downloadSha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+      "sourceSha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+      "anonymous": true,
+      "passed": true
+    }
+  },
+  "modelCallsDuringBrowserReplay": 0
+}

@@ -1,0 +1,35 @@
+{
+  "at": "2026-10-12T05:40:49.199Z",
+  "userFeedback": "我刚刚不小心切出了，重来这一步",
+  "throughSeq": 1550,
+  "phase": "paste",
+  "preservedHumanChecks": [
+    "human-ime-pending-click-canceled",
+    "human-ime-queued-work-rejected",
+    "human-ime-B-continued",
+    "human-ime-old-reply-rejected-after-resume"
+  ],
+  "observed": {
+    "firstPasteTakeover": {
+      "seq": 1436,
+      "type": "mouseDown",
+      "owner": "A"
+    },
+    "unknownInput": {
+      "seq": 1504,
+      "type": "keyDown",
+      "keyCode": 15,
+      "modifiers": 1048584
+    },
+    "stoppedBSeq": 1506,
+    "AX": {
+      "A": "已让出操作",
+      "B": "已让出操作",
+      "ime": "手动接管测试",
+      "paste": "网页粘贴测试 2026",
+      "BDisplayCount": 0
+    }
+  },
+  "conclusion": "This paste sample cannot prove keyboard-first takeover. Unknown ownership then stopped B; existing single-step retry only resumes A. User requests a fresh paste sample. Preserve valid IME checks, reopen from paste, and retain the refresh/ownership limitation without claiming it fixed.",
+  "agentInputBoundary": "Any close-window action after this snapshot is performed by computer use and is not genuine human input."
+}

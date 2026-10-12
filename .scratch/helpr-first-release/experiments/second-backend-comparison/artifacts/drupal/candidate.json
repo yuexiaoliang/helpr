@@ -1,0 +1,455 @@
+{
+  "schema": 1,
+  "createdAt": "2026-10-11T23:08:14.151Z",
+  "source": {
+    "file": "artifacts/drupal/learn-2/results.json",
+    "hash": "8d14926d5bb8a2a46381cbb7298e15e0f2dbb49cd3c326a7c3b7613952277954",
+    "steps": [
+      "s1",
+      "s2",
+      "s3",
+      "s4"
+    ],
+    "stopBeforeFailure": "s5"
+  },
+  "template": {
+    "id": "learn-3",
+    "origin": "http://home.ts-ali.internal:38081",
+    "entryUrl": "http://home.ts-ali.internal:38081/admin/content",
+    "kind": "create_and_publish",
+    "inputs": {
+      "title": {
+        "type": "string",
+        "value": "第二后台对照 learn-3 drupal"
+      },
+      "body": {
+        "type": "string",
+        "value": "全部内容和附件均为虚构测试素材。样本 learn-3，核对编号 1803c0b42c。保留原始 Excel 文件，不改写其内容。"
+      },
+      "category": {
+        "type": "string",
+        "value": "Excel 验证"
+      },
+      "attachment": {
+        "type": "file",
+        "path": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/second-backend-comparison/artifacts/drupal/learn-3/learn-3-drupal.xlsx",
+        "name": "learn-3-drupal.xlsx",
+        "stem": "learn-3-drupal",
+        "sha256": "739de3c5f3094e821ba5cfe720b738aafa9e79f894c859835a659402fc3dd693"
+      }
+    },
+    "requiredOutputs": [
+      "title",
+      "body",
+      "category",
+      "attachment"
+    ],
+    "goal": "使用站点已有的日报内容类型新建一篇内容，标题为「第二后台对照 learn-3 drupal」，正文为指定虚构测试文本，栏目选择「Excel 验证」，并将原始 Excel 文件作为可下载附件，立即公开发布。",
+    "constraints": [
+      {
+        "description": "使用站点已有的日报内容类型新建内容",
+        "quote": "使用站点已有的日报内容类型新建一篇内容"
+      },
+      {
+        "description": "立即公开发布",
+        "quote": "立即公开发布"
+      },
+      {
+        "description": "原始 Excel 文件作为可下载附件，不读取或改写 Excel 内容",
+        "quote": "将原始 Excel 文件作为这篇内容的可下载附件，不读取或改写 Excel 内容"
+      },
+      {
+        "description": "只允许本次委托指定的内容和附件操作，不改动其它已有内容、账号或网站设置",
+        "quote": "只允许本次委托指定的内容和附件操作，不改动其它已有内容、账号或网站设置"
+      },
+      {
+        "description": "不增加建议内容",
+        "quote": "不增加建议内容"
+      }
+    ],
+    "sources": {
+      "title": {
+        "quote": "标题是「第二后台对照 learn-3 drupal」",
+        "description": "新建内容的标题"
+      },
+      "body": {
+        "quote": "正文完整内容是「全部内容和附件均为虚构测试素材。样本 learn-3，核对编号 1803c0b42c。保留原始 Excel 文件，不改写其内容。」",
+        "description": "新建内容的正文完整内容"
+      },
+      "category": {
+        "quote": "栏目选择「Excel 验证」",
+        "description": "新建内容选择的栏目"
+      },
+      "attachment": {
+        "attachmentId": "material-1",
+        "description": "作为该内容可下载附件的原始 Excel 文件，不读取或改写其内容"
+      }
+    },
+    "suggestions": [],
+    "request": "【隔离实验授权】这是虚构测试委托，允许在指定测试网站完成本次工作。使用站点已有的日报内容类型新建一篇内容；立即公开发布。标题是「第二后台对照 learn-3 drupal」，正文完整内容是「全部内容和附件均为虚构测试素材。样本 learn-3，核对编号 1803c0b42c。保留原始 Excel 文件，不改写其内容。」，栏目选择「Excel 验证」。使用附带素材，将原始 Excel 文件作为这篇内容的可下载附件，不读取或改写 Excel 内容。只允许本次委托指定的内容和附件操作，不改动其它已有内容、账号或网站设置。上述内容、上传及发布方式均已授权，不增加建议内容。",
+    "authorization": {
+      "source": "explicit-isolated-test-fixture",
+      "requestDigest": "a325f1a055020552924797a552adf48cc4be4b19510a52244a2b1df865240ad2",
+      "inputsDigest": "3b2cc8d1247cee311be9b147edbe910977f377f852152b44718784fc4ae66b87"
+    }
+  },
+  "entryChecks": [
+    {
+      "kind": "visible",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "link",
+        "name": "+Add content"
+      }
+    }
+  ],
+  "steps": [
+    {
+      "action": {
+        "op": "click",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "+Add content"
+        }
+      },
+      "effect": "edit",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": "+Add content"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "textbox",
+            "name": "Title *"
+          }
+        }
+      ],
+      "note": "进入添加内容页面，以使用日报内容类型新建内容。",
+      "id": "s1"
+    },
+    {
+      "action": {
+        "op": "fill",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "textbox",
+          "name": "Title *"
+        },
+        "value": {
+          "input": "title"
+        }
+      },
+      "effect": "edit",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "textbox",
+            "name": "Title *"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "value",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "textbox",
+            "name": "Title *"
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "title"
+          },
+          "covers": "title"
+        }
+      ],
+      "note": "填写标题输入框",
+      "id": "s2"
+    },
+    {
+      "action": {
+        "op": "fill",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "textbox",
+          "name": "Rich Text Editor. Editing area: main. Press ⌥0 for help."
+        },
+        "value": {
+          "input": "body"
+        }
+      },
+      "effect": "edit",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "textbox",
+            "name": "Rich Text Editor. Editing area: main. Press ⌥0 for help."
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "value",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "textbox",
+            "name": "Rich Text Editor. Editing area: main. Press ⌥0 for help."
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "body"
+          },
+          "covers": "body"
+        }
+      ],
+      "note": "在正文富文本编辑区填入指定正文内容。",
+      "id": "s3"
+    },
+    {
+      "action": {
+        "op": "select",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "combobox",
+          "name": "栏目 *"
+        },
+        "value": {
+          "input": "category"
+        }
+      },
+      "effect": "edit",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "combobox",
+            "name": "栏目 *"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "selected-label",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "combobox",
+            "name": "栏目 *"
+          },
+          "expected": {
+            "input": "category"
+          },
+          "covers": "category"
+        }
+      ],
+      "note": "选择栏目「Excel 验证」",
+      "id": "s4"
+    },
+    {
+      "action": {
+        "op": "upload",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Add a new file *"
+        },
+        "value": {
+          "input": "attachment",
+          "field": "path"
+        }
+      },
+      "effect": "upload",
+      "before": [],
+      "after": [
+        {
+          "kind": "artifact",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": {
+              "input": "attachment",
+              "field": "name"
+            }
+          },
+          "expected": {
+            "input": "attachment",
+            "field": "sha256"
+          },
+          "covers": "attachment"
+        }
+      ],
+      "note": "标题、正文、栏目已就绪，仅缺附件。将原始 Excel 文件上传到“Add a new file *”文件控件作为可下载附件。",
+      "id": "s5"
+    },
+    {
+      "action": {
+        "op": "press",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "button",
+          "name": "Save"
+        },
+        "value": "Enter"
+      },
+      "effect": "commit",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "button",
+            "name": "Save"
+          }
+        }
+      ],
+      "after": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": {
+              "input": "title"
+            }
+          }
+        }
+      ],
+      "note": "Save 按钮在视口外，无法直接点击；所有输入已就绪，尝试用键盘聚焦并提交。实际上先滚动不可用，改用 press 到 Save 控件。",
+      "id": "s6"
+    },
+    {
+      "action": {
+        "op": "finish",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": {
+            "input": "title"
+          }
+        }
+      },
+      "effect": "commit",
+      "before": [
+        {
+          "kind": "visible",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": {
+              "input": "title"
+            }
+          }
+        }
+      ],
+      "after": [],
+      "note": "旧 finish 使用了训练样本名称「第二后台对照 learn-3 drupal」，未通过。本次实际页面 /node/3 上，标题链接为「第二后台对照 calibration drupal」（n9），与本次任务输入 title 相等，因此用 nameInput=title 绑定该动态输入，作为本次公开结果的链接。",
+      "id": "s7"
+    }
+  ],
+  "resultRules": [
+    {
+      "kind": "text",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "heading",
+        "name": {
+          "input": "title"
+        },
+        "level": 1
+      },
+      "compare": "equals",
+      "expected": {
+        "input": "title"
+      },
+      "covers": "title"
+    },
+    {
+      "kind": "text",
+      "target": {
+        "frame": "main",
+        "by": "text",
+        "name": {
+          "input": "body"
+        }
+      },
+      "compare": "equals",
+      "expected": {
+        "input": "body"
+      },
+      "covers": "body"
+    },
+    {
+      "kind": "text",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "link",
+        "name": {
+          "input": "category"
+        }
+      },
+      "compare": "equals",
+      "expected": {
+        "input": "category"
+      },
+      "covers": "category"
+    },
+    {
+      "kind": "download",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "link",
+        "name": {
+          "input": "attachment",
+          "field": "name"
+        }
+      },
+      "expected": {
+        "input": "attachment",
+        "field": "sha256"
+      },
+      "covers": "attachment"
+    }
+  ],
+  "seal": "591064029eef1680878282ee274a39d6356b7e644e29f21f4f5207d8280f842a",
+  "positionCalibration": {
+    "file": "result-position-calibration.json",
+    "at": "2026-10-11T23:09:57.612Z"
+  }
+}

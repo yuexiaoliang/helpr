@@ -1,0 +1,88 @@
+{
+  "url": "http://home.ts-ali.internal:38081/admin/content",
+  "nodes": [
+    {
+      "id": "n1",
+      "frame": "main",
+      "role": "combobox",
+      "name": "Choice",
+      "tag": "select",
+      "value": "1",
+      "editable": false,
+      "options": [
+        {
+          "label": "Visible choice",
+          "value": "1",
+          "selected": true
+        },
+        {
+          "label": "Different choice",
+          "value": "2",
+          "selected": false
+        }
+      ],
+      "selectedLabels": [
+        "Visible choice"
+      ],
+      "disabled": false,
+      "visible": true,
+      "inViewport": true,
+      "download": false,
+      "submit": false,
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "combobox",
+        "name": "Choice"
+      }
+    },
+    {
+      "id": "n2",
+      "frame": "main",
+      "role": "textbox",
+      "name": "Editor: body",
+      "tag": "div",
+      "value": "",
+      "editable": true,
+      "disabled": false,
+      "visible": true,
+      "inViewport": true,
+      "download": false,
+      "submit": false,
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "textbox",
+        "name": "Editor: body"
+      }
+    },
+    {
+      "id": "n3",
+      "frame": "main",
+      "role": "button",
+      "name": "Save",
+      "tag": "input",
+      "type": "submit",
+      "value": "Save",
+      "editable": false,
+      "checked": false,
+      "disabled": false,
+      "visible": true,
+      "inViewport": true,
+      "download": false,
+      "submit": false,
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "button",
+        "name": "Save"
+      }
+    }
+  ],
+  "aria": [
+    {
+      "frame": "main",
+      "aria": "- text: Choice\n- combobox \"Choice\":\n  - option \"Visible choice\" [selected]\n  - option \"Different choice\"\n- 'textbox \"Editor: body\"'\n- button \"Save\""
+    }
+  ]
+}

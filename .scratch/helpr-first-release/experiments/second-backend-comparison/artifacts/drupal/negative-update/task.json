@@ -1,0 +1,101 @@
+{
+  "rejected": true,
+  "reason": "模板为「新建并发布」（create_and_publish），而本次委托要求「修改已存在的日报」并立即公开发布，目标操作（新建 vs 修改已有内容）不相容，因此不适用该模板。",
+  "proposal": {
+    "compatible": false,
+    "reason": "模板为「新建并发布」（create_and_publish），而本次委托要求「修改已存在的日报」并立即公开发布，目标操作（新建 vs 修改已有内容）不相容，因此不适用该模板。",
+    "goalKind": "update_and_publish",
+    "goal": "修改已存在的日报内容（http://home.ts-ali.internal:38081/node/1），标题为「第二后台对照 negative-update drupal」，正文为指定虚构测试文本，栏目选择「Excel 验证」，将原始 Excel 文件作为可下载附件，立即公开发布。",
+    "strings": [
+      {
+        "key": "title",
+        "description": "修改后内容的标题",
+        "value": "第二后台对照 negative-update drupal",
+        "quote": "标题是「第二后台对照 negative-update drupal」"
+      },
+      {
+        "key": "body",
+        "description": "修改后内容的正文完整内容",
+        "value": "全部内容和附件均为虚构测试素材。样本 negative-update，核对编号 7bdee072bb。保留原始 Excel 文件，不改写其内容。",
+        "quote": "正文完整内容是「全部内容和附件均为虚构测试素材。样本 negative-update，核对编号 7bdee072bb。保留原始 Excel 文件，不改写其内容。」"
+      },
+      {
+        "key": "category",
+        "description": "内容选择的栏目",
+        "value": "Excel 验证",
+        "quote": "栏目选择「Excel 验证」"
+      },
+      {
+        "key": "target_url",
+        "description": "目标内容地址",
+        "value": "http://home.ts-ali.internal:38081/node/1",
+        "quote": "目标内容地址为 http://home.ts-ali.internal:38081/node/1"
+      }
+    ],
+    "files": [
+      {
+        "key": "attachment",
+        "description": "作为该内容可下载附件的原始 Excel 文件，不读取或改写其内容",
+        "attachmentId": "material-1"
+      }
+    ],
+    "constraints": [
+      {
+        "description": "修改已存在的日报，而非新建内容",
+        "quote": "修改已存在的日报"
+      },
+      {
+        "description": "立即公开发布",
+        "quote": "立即公开发布"
+      },
+      {
+        "description": "原始 Excel 文件作为可下载附件，不读取或改写 Excel 内容",
+        "quote": "将原始 Excel 文件作为这篇内容的可下载附件，不读取或改写 Excel 内容"
+      },
+      {
+        "description": "只允许本次委托指定的内容和附件操作，不改动其它已有内容、账号或网站设置",
+        "quote": "只允许本次委托指定的内容和附件操作，不改动其它已有内容、账号或网站设置"
+      },
+      {
+        "description": "不增加建议内容",
+        "quote": "不增加建议内容"
+      }
+    ],
+    "inputs": {
+      "title": {
+        "key": "title",
+        "description": "修改后内容的标题",
+        "value": "第二后台对照 negative-update drupal",
+        "quote": "标题是「第二后台对照 negative-update drupal」",
+        "type": "string"
+      },
+      "body": {
+        "key": "body",
+        "description": "修改后内容的正文完整内容",
+        "value": "全部内容和附件均为虚构测试素材。样本 negative-update，核对编号 7bdee072bb。保留原始 Excel 文件，不改写其内容。",
+        "quote": "正文完整内容是「全部内容和附件均为虚构测试素材。样本 negative-update，核对编号 7bdee072bb。保留原始 Excel 文件，不改写其内容。」",
+        "type": "string"
+      },
+      "category": {
+        "key": "category",
+        "description": "内容选择的栏目",
+        "value": "Excel 验证",
+        "quote": "栏目选择「Excel 验证」",
+        "type": "string"
+      },
+      "target_url": {
+        "key": "target_url",
+        "description": "目标内容地址",
+        "value": "http://home.ts-ali.internal:38081/node/1",
+        "quote": "目标内容地址为 http://home.ts-ali.internal:38081/node/1",
+        "type": "string"
+      },
+      "attachment": {
+        "key": "attachment",
+        "description": "作为该内容可下载附件的原始 Excel 文件，不读取或改写其内容",
+        "attachmentId": "material-1",
+        "type": "file"
+      }
+    }
+  }
+}

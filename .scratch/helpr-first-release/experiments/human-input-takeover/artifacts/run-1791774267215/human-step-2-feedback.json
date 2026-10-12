@@ -1,0 +1,91 @@
+{
+  "at": "2026-10-12T03:10:22.859Z",
+  "userFeedback": "A 停了，b 还在自动增加。",
+  "evidence": {
+    "phase": "click",
+    "statuses": {
+      "A": "已让出操作",
+      "B": "自动运行"
+    },
+    "counts": {
+      "A": {
+        "auto": 309,
+        "manual": 1,
+        "late": 0,
+        "accepted": 1
+      },
+      "B": {
+        "auto": 367,
+        "manual": 0,
+        "late": 0,
+        "accepted": 0
+      }
+    },
+    "clickStop": {
+      "task": "A",
+      "generation": 8,
+      "nativeSeq": 2712,
+      "event": {
+        "owner": "A",
+        "type": "mouseDown",
+        "receiverClass": "RenderWidgetHostViewCocoa",
+        "x": 316,
+        "y": 404,
+        "timestamp": 259912.704282416,
+        "eventNumber": 0,
+        "modifiers": 0,
+        "testInjection": false
+      },
+      "counts": {
+        "A": {
+          "auto": 309,
+          "manual": 0,
+          "late": 0,
+          "accepted": 1
+        },
+        "B": {
+          "auto": 309,
+          "manual": 0,
+          "late": 0,
+          "accepted": 0
+        }
+      },
+      "at": "2026-10-12T03:09:27.657Z"
+    },
+    "stopEvents": [
+      {
+        "seq": 2714,
+        "at": "2026-10-12T03:09:27.657Z",
+        "ms": 299839.88,
+        "mode": "human",
+        "phase": "click",
+        "kind": "stop",
+        "task": "A",
+        "generation": 8
+      }
+    ],
+    "nativeOwners": [
+      "A"
+    ],
+    "manualEvents": [
+      {
+        "seq": 2715,
+        "type": "pointerdown",
+        "target": "manualClick",
+        "task": "A"
+      },
+      {
+        "seq": 2729,
+        "type": "keydown",
+        "target": "manualClick",
+        "task": "A"
+      }
+    ],
+    "checks": [
+      {
+        "name": "human-view-and-chat-do-not-take-over",
+        "pass": true
+      }
+    ]
+  }
+}

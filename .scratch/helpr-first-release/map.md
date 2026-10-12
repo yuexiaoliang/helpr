@@ -36,6 +36,10 @@ Status: open
 - [验证可见工作区中的 AI 双页操作归属](issues/06-ai-parallel-binding.md)：两种宿主各取得九项真实模型与逐原语控制证据，页面、弹窗、停止及错误保持归属；完整业务并行与真人接管仍不能由此推定。
 - [验证提交中断后的实际结果判定](issues/08-result-recovery-evidence.md)：四种中断位置取得重新判定与有限续跑证据，同名任务及用户意图保持归属；可能已派发且结果不明时不自动重试。
 - [核对并行执行与用户参与的状态模型](issues/09-participation-state-model.md)：原型明确各任务的参与与控制归属；用户确认停止后明确继续时先核对再续做，已完成不重发。
+- [取得第二后台的流程对照证据](issues/11-second-backend-comparison.md)：Drupal 七步流程、模型位置校准及冻结后保留集通过；两次通用程序修订与全部失败保留，跨站通用性的保证仍有明确范围。
+- [验证人工接管的输入识别与让出操作](issues/12-human-input-takeover.md#answer)：macOS / Electron 已登记视图中的真人点击、中文、粘贴及核对后继续通过；页面变化后的归属缺口保留为选型前置验证。
+- [验证素材、内容预览与发布版本的关联](issues/13-material-preview-binding.md#answer)：两版 Excel、真实模型建议与三次网页发布保持来源和确认归属，旧确认及参数替换被拒绝；取得持久化所需的最小版本关系。
+- [验证网页动作、上传数据与写请求的关联边界](issues/18-action-request-association.md#answer)：完整 HTTP 实体检查能约束受控请求和文件，时间窗口、文件名及同内容一次性许可仍有误关联反例；通用授权保证未成立，范围取舍进入组合选择。
 
 ## Not yet specified
 

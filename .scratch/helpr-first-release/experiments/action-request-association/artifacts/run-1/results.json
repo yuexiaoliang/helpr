@@ -1,0 +1,923 @@
+[
+  {
+    "id": "baseline-same-click",
+    "mode": "baseline",
+    "kind": "same-click",
+    "run": "run-1",
+    "startedAt": 1791786968060,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 2,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 2,
+          "expected": 2
+        }
+      },
+      {
+        "name": "unrelated-write-reached-server",
+        "ok": true
+      },
+      {
+        "name": "same-click-same-synchronous-stack",
+        "ok": true,
+        "details": 2
+      }
+    ],
+    "actionStart": 1791786968352,
+    "primitiveReturnedAt": 1791786968452,
+    "selection": null,
+    "actors": [
+      {
+        "source": "click",
+        "at": 1791786968441
+      }
+    ],
+    "serverReceipts": 2,
+    "stored": 2,
+    "status": "observed-as-specified",
+    "finishedAt": 1791786968633
+  },
+  {
+    "id": "baseline-late",
+    "mode": "baseline",
+    "kind": "late",
+    "run": "run-1",
+    "startedAt": 1791786968634,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 0,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 0,
+          "expected": 0
+        }
+      }
+    ],
+    "actionStart": 1791786968704,
+    "primitiveReturnedAt": 1791786968746,
+    "revokedAt": 1791786968746,
+    "selection": null,
+    "actors": [
+      {
+        "source": "click-schedules-timer",
+        "at": 1791786968744
+      },
+      {
+        "source": "old-action-timer",
+        "at": 1791786969095
+      }
+    ],
+    "serverReceipts": 0,
+    "stored": 0,
+    "status": "observed-as-specified",
+    "finishedAt": 1791786969269
+  },
+  {
+    "id": "baseline-late-next",
+    "mode": "baseline",
+    "kind": "late-next",
+    "run": "run-1",
+    "startedAt": 1791786969270,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 1,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 1,
+          "expected": 1
+        }
+      }
+    ],
+    "actionStart": 1791786969345,
+    "primitiveReturnedAt": 1791786969386,
+    "oldActionEndedAt": 1791786969386,
+    "nextActionStartedAt": 1791786969438,
+    "selection": null,
+    "actors": [
+      {
+        "source": "click-schedules-timer",
+        "at": 1791786969385
+      },
+      {
+        "source": "old-action-timer",
+        "at": 1791786969735
+      }
+    ],
+    "serverReceipts": 1,
+    "stored": 1,
+    "status": "observed-as-specified",
+    "finishedAt": 1791786969913
+  },
+  {
+    "id": "baseline-disk-upload",
+    "mode": "baseline",
+    "kind": "upload-disk",
+    "run": "run-1",
+    "startedAt": 1791786969914,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 1,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 1,
+          "expected": 1
+        }
+      },
+      {
+        "name": "selected-original-bytes",
+        "ok": true
+      },
+      {
+        "name": "download-agrees-with-server",
+        "ok": true
+      },
+      {
+        "name": "original-upload-arrived",
+        "ok": true
+      }
+    ],
+    "actionStart": 1791786969993,
+    "primitiveReturnedAt": 1791786970018,
+    "selection": {
+      "name": "sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    "actors": [
+      {
+        "source": "file-change",
+        "at": 1791786970024
+      }
+    ],
+    "serverReceipts": 1,
+    "stored": 1,
+    "download": {
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    "status": "observed-as-specified",
+    "finishedAt": 1791786970225
+  },
+  {
+    "id": "baseline-replaced-upload",
+    "mode": "baseline",
+    "kind": "upload-replaced",
+    "run": "run-1",
+    "startedAt": 1791786970226,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 1,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 1,
+          "expected": 1
+        }
+      },
+      {
+        "name": "selected-original-bytes",
+        "ok": true
+      },
+      {
+        "name": "download-agrees-with-server",
+        "ok": true
+      },
+      {
+        "name": "same-name-wrong-bytes-arrived",
+        "ok": true
+      }
+    ],
+    "actionStart": 1791786970292,
+    "primitiveReturnedAt": 1791786970315,
+    "selection": {
+      "name": "sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    "actors": [
+      {
+        "source": "file-change",
+        "at": 1791786970315
+      }
+    ],
+    "serverReceipts": 1,
+    "stored": 1,
+    "download": {
+      "bytes": 8192,
+      "sha256": "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f"
+    },
+    "status": "observed-as-specified",
+    "finishedAt": 1791786970508
+  },
+  {
+    "id": "baseline-get",
+    "mode": "baseline",
+    "kind": "get",
+    "run": "run-1",
+    "startedAt": 1791786970509,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 1,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 1,
+          "expected": 1
+        }
+      }
+    ],
+    "actionStart": 1791786970580,
+    "primitiveReturnedAt": 1791786970623,
+    "selection": null,
+    "actors": [
+      {
+        "source": "click",
+        "at": 1791786970620
+      }
+    ],
+    "serverReceipts": 1,
+    "stored": 1,
+    "status": "observed-as-specified",
+    "finishedAt": 1791786970797
+  },
+  {
+    "id": "baseline-redirect",
+    "mode": "baseline",
+    "kind": "redirect",
+    "run": "run-1",
+    "startedAt": 1791786970798,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 2,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 2,
+          "expected": 2
+        }
+      },
+      {
+        "name": "only-initial-hop-routed",
+        "ok": true
+      }
+    ],
+    "actionStart": 1791786970871,
+    "primitiveReturnedAt": 1791786970913,
+    "selection": null,
+    "actors": [
+      {
+        "source": "click",
+        "at": 1791786970910
+      }
+    ],
+    "serverReceipts": 2,
+    "stored": 1,
+    "status": "observed-as-specified",
+    "finishedAt": 1791786971101
+  },
+  {
+    "id": "page-route-service-worker",
+    "mode": "page-route",
+    "kind": "service-worker",
+    "run": "run-1",
+    "startedAt": 1791786971102,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 1,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 1,
+          "expected": 1
+        }
+      },
+      {
+        "name": "page-route-missed-worker-network",
+        "ok": true
+      }
+    ],
+    "actionStart": 1791786971200,
+    "primitiveReturnedAt": 1791786971237,
+    "selection": null,
+    "actors": [
+      {
+        "source": "click-to-service-worker",
+        "at": 1791786971235
+      }
+    ],
+    "serverReceipts": 1,
+    "stored": 1,
+    "status": "observed-as-specified",
+    "finishedAt": 1791786971425
+  },
+  {
+    "id": "context-route-service-worker",
+    "mode": "context-route",
+    "kind": "service-worker",
+    "run": "run-1",
+    "startedAt": 1791786971426,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 0,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 0,
+          "expected": 0
+        }
+      },
+      {
+        "name": "worker-frame-throws",
+        "ok": true
+      }
+    ],
+    "actionStart": 1791786971492,
+    "primitiveReturnedAt": 1791786971545,
+    "selection": null,
+    "actors": [
+      {
+        "source": "click-to-service-worker",
+        "at": 1791786971543
+      }
+    ],
+    "serverReceipts": 0,
+    "stored": 0,
+    "status": "observed-as-specified",
+    "finishedAt": 1791786971717
+  },
+  {
+    "id": "page-route-worker",
+    "mode": "page-route",
+    "kind": "worker",
+    "run": "run-1",
+    "startedAt": 1791786971717,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 0,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 0,
+          "expected": 0
+        }
+      }
+    ],
+    "actionStart": 1791786971779,
+    "primitiveReturnedAt": 1791786971819,
+    "selection": null,
+    "actors": [
+      {
+        "source": "click-to-worker",
+        "at": 1791786971817
+      }
+    ],
+    "serverReceipts": 0,
+    "stored": 0,
+    "status": "observed-as-specified",
+    "finishedAt": 1791786971992
+  },
+  {
+    "id": "strict-same-click",
+    "mode": "strict",
+    "kind": "same-click",
+    "run": "run-1",
+    "startedAt": 1791786971993,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 1,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 1,
+          "expected": 1
+        }
+      },
+      {
+        "name": "only-expected-content-stored",
+        "ok": true
+      }
+    ],
+    "generation": 1,
+    "actionStart": 1791786972060,
+    "primitiveReturnedAt": 1791786972105,
+    "selection": null,
+    "actors": [
+      {
+        "source": "click",
+        "at": 1791786972101
+      }
+    ],
+    "serverReceipts": 1,
+    "stored": 1,
+    "status": "observed-as-specified",
+    "finishedAt": 1791786972277
+  },
+  {
+    "id": "strict-xhr",
+    "mode": "strict",
+    "kind": "xhr",
+    "run": "run-1",
+    "startedAt": 1791786972278,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 1,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 1,
+          "expected": 1
+        }
+      },
+      {
+        "name": "only-expected-content-stored",
+        "ok": true
+      }
+    ],
+    "generation": 1,
+    "actionStart": 1791786972346,
+    "primitiveReturnedAt": 1791786972393,
+    "selection": null,
+    "actors": [
+      {
+        "source": "click",
+        "at": 1791786972386
+      }
+    ],
+    "serverReceipts": 1,
+    "stored": 1,
+    "status": "observed-as-specified",
+    "finishedAt": 1791786972563
+  },
+  {
+    "id": "strict-disk-upload",
+    "mode": "strict",
+    "kind": "upload-disk",
+    "run": "run-1",
+    "startedAt": 1791786972564,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 1,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 1,
+          "expected": 1
+        }
+      },
+      {
+        "name": "selected-original-bytes",
+        "ok": true
+      },
+      {
+        "name": "download-agrees-with-server",
+        "ok": true
+      },
+      {
+        "name": "original-upload-arrived",
+        "ok": true
+      },
+      {
+        "name": "full-entity-agrees",
+        "ok": true
+      }
+    ],
+    "generation": 1,
+    "actionStart": 1791786972622,
+    "primitiveReturnedAt": 1791786972641,
+    "selection": {
+      "name": "sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    "actors": [
+      {
+        "source": "file-change",
+        "at": 1791786972641
+      }
+    ],
+    "serverReceipts": 1,
+    "stored": 1,
+    "download": {
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    "status": "observed-as-specified",
+    "finishedAt": 1791786972818
+  },
+  {
+    "id": "strict-replaced-upload",
+    "mode": "strict",
+    "kind": "upload-replaced",
+    "run": "run-1",
+    "startedAt": 1791786972819,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 0,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 0,
+          "expected": 0
+        }
+      },
+      {
+        "name": "selected-original-bytes",
+        "ok": true
+      }
+    ],
+    "generation": 1,
+    "actionStart": 1791786972888,
+    "primitiveReturnedAt": 1791786972907,
+    "selection": {
+      "name": "sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    "actors": [
+      {
+        "source": "file-change",
+        "at": 1791786972907
+      }
+    ],
+    "serverReceipts": 0,
+    "stored": 0,
+    "status": "observed-as-specified",
+    "finishedAt": 1791786973081
+  },
+  {
+    "id": "strict-late",
+    "mode": "strict",
+    "kind": "late",
+    "run": "run-1",
+    "startedAt": 1791786973082,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 0,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 0,
+          "expected": 0
+        }
+      }
+    ],
+    "generation": 1,
+    "actionStart": 1791786973141,
+    "primitiveReturnedAt": 1791786973192,
+    "revokedAt": 1791786973192,
+    "selection": null,
+    "actors": [
+      {
+        "source": "click-schedules-timer",
+        "at": 1791786973190
+      },
+      {
+        "source": "old-action-timer",
+        "at": 1791786973541
+      }
+    ],
+    "serverReceipts": 0,
+    "stored": 0,
+    "status": "observed-as-specified",
+    "finishedAt": 1791786973718
+  },
+  {
+    "id": "strict-matching-timer",
+    "mode": "strict",
+    "kind": "matching-timer",
+    "run": "run-1",
+    "startedAt": 1791786973719,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 1,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 1,
+          "expected": 1
+        }
+      },
+      {
+        "name": "matching-old-timer-consumed-new-permit",
+        "ok": true
+      }
+    ],
+    "generation": 1,
+    "actionStart": 1791786973848,
+    "timerReceivedBeforeClick": true,
+    "primitiveReturnedAt": 1791786974224,
+    "selection": null,
+    "actors": [
+      {
+        "source": "old-action",
+        "at": 1791786973797
+      },
+      {
+        "source": "old-action-timer",
+        "at": 1791786974150
+      },
+      {
+        "source": "new-click",
+        "at": 1791786974220
+      }
+    ],
+    "serverReceipts": 1,
+    "stored": 1,
+    "status": "observed-as-specified",
+    "finishedAt": 1791786974410
+  },
+  {
+    "id": "strict-frame-form",
+    "mode": "strict",
+    "kind": "form",
+    "run": "run-1",
+    "startedAt": 1791786974412,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 1,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 1,
+          "expected": 1
+        }
+      }
+    ],
+    "generation": 1,
+    "actionStart": 1791786974494,
+    "primitiveReturnedAt": 1791786974568,
+    "selection": null,
+    "actors": [],
+    "serverReceipts": 1,
+    "stored": 1,
+    "status": "observed-as-specified",
+    "finishedAt": 1791786974752
+  },
+  {
+    "id": "strict-redirect",
+    "mode": "strict",
+    "kind": "redirect",
+    "run": "run-1",
+    "startedAt": 1791786974753,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 1,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 1,
+          "expected": 1
+        }
+      },
+      {
+        "name": "redirected-final-target-blocked",
+        "ok": true
+      }
+    ],
+    "generation": 1,
+    "actionStart": 1791786974820,
+    "primitiveReturnedAt": 1791786974863,
+    "selection": null,
+    "actors": [
+      {
+        "source": "click",
+        "at": 1791786974860
+      }
+    ],
+    "serverReceipts": 1,
+    "stored": 0,
+    "status": "observed-as-specified",
+    "finishedAt": 1791786975053
+  },
+  {
+    "id": "strict-get",
+    "mode": "strict",
+    "kind": "get",
+    "run": "run-1",
+    "startedAt": 1791786975055,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 0,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 0,
+          "expected": 0
+        }
+      }
+    ],
+    "generation": 1,
+    "actionStart": 1791786975119,
+    "primitiveReturnedAt": 1791786975173,
+    "selection": null,
+    "actors": [
+      {
+        "source": "click",
+        "at": 1791786975169
+      }
+    ],
+    "serverReceipts": 0,
+    "stored": 0,
+    "status": "observed-as-specified",
+    "finishedAt": 1791786975347
+  },
+  {
+    "id": "strict-worker-unknown",
+    "mode": "strict",
+    "kind": "worker",
+    "run": "run-1",
+    "startedAt": 1791786975348,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 0,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 0,
+          "expected": 0
+        }
+      }
+    ],
+    "actionStart": 1791786975408,
+    "primitiveReturnedAt": 1791786975460,
+    "selection": null,
+    "actors": [
+      {
+        "source": "click-to-worker",
+        "at": 1791786975457
+      }
+    ],
+    "serverReceipts": 0,
+    "stored": 0,
+    "status": "observed-as-specified",
+    "finishedAt": 1791786975630
+  },
+  {
+    "id": "strict-service-worker-unknown",
+    "mode": "strict",
+    "kind": "service-worker",
+    "run": "run-1",
+    "startedAt": 1791786975630,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 0,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 0,
+          "expected": 0
+        }
+      }
+    ],
+    "actionStart": 1791786975689,
+    "primitiveReturnedAt": 1791786975725,
+    "selection": null,
+    "actors": [
+      {
+        "source": "click-to-service-worker",
+        "at": 1791786975723
+      }
+    ],
+    "serverReceipts": 0,
+    "stored": 0,
+    "status": "observed-as-specified",
+    "finishedAt": 1791786975899
+  },
+  {
+    "id": "strict-beacon-late",
+    "mode": "strict",
+    "kind": "beacon",
+    "run": "run-1",
+    "startedAt": 1791786975900,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 0,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 0,
+          "expected": 0
+        }
+      }
+    ],
+    "generation": 1,
+    "actionStart": 1791786975967,
+    "primitiveReturnedAt": 1791786976008,
+    "revokedAt": 1791786976008,
+    "selection": null,
+    "actors": [
+      {
+        "source": "late-beacon",
+        "at": 1791786976357
+      }
+    ],
+    "serverReceipts": 0,
+    "stored": 0,
+    "status": "observed-as-specified",
+    "finishedAt": 1791786976531
+  },
+  {
+    "id": "strict-held-revoke",
+    "mode": "strict",
+    "kind": "held-revoke",
+    "run": "run-1",
+    "startedAt": 1791786976532,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 0,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 0,
+          "expected": 0
+        }
+      },
+      {
+        "name": "held-request-revoked-before-forward",
+        "ok": true
+      }
+    ],
+    "generation": 1,
+    "actionStart": 1791786976592,
+    "primitiveReturnedAt": 1791786976645,
+    "revokedAt": 1791786976645,
+    "selection": null,
+    "actors": [
+      {
+        "source": "click",
+        "at": 1791786976642
+      }
+    ],
+    "serverReceipts": 0,
+    "stored": 0,
+    "status": "observed-as-specified",
+    "finishedAt": 1791786976818
+  },
+  {
+    "id": "strict-forward-stop",
+    "mode": "strict",
+    "kind": "forward-stop",
+    "run": "run-1",
+    "startedAt": 1791786976819,
+    "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+    "expectedReceipts": 1,
+    "checks": [
+      {
+        "name": "server-receipt-count",
+        "ok": true,
+        "details": {
+          "actual": 1,
+          "expected": 1
+        }
+      },
+      {
+        "name": "stop-after-dispatch-cannot-unsend",
+        "ok": true
+      }
+    ],
+    "generation": 1,
+    "actionStart": 1791786976878,
+    "primitiveReturnedAt": 1791786976931,
+    "revokedAt": 1791786976931,
+    "stateAtStop": "dispatched-result-unknown",
+    "selection": null,
+    "actors": [
+      {
+        "source": "click",
+        "at": 1791786976928
+      }
+    ],
+    "serverReceipts": 1,
+    "stored": 1,
+    "status": "observed-as-specified",
+    "finishedAt": 1791786977504
+  }
+]

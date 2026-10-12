@@ -1,0 +1,254 @@
+{
+  "at": "2026-10-12T04:56:19.393Z",
+  "operatorSource": "computer-use",
+  "status": "partial-self-test-complete",
+  "permission": {
+    "userFeedback": "设置过了。",
+    "windowBinding": "succeeded",
+    "fixtureReadSeconds": 1.3135
+  },
+  "automaticChecksPassed": 19,
+  "publicContinue": {
+    "commandSeq": 427,
+    "armedSeq": 437,
+    "axFocusedField": "任务 A / 中文输入法核对",
+    "axStatus": "A：自动执行中（等待网页） B：自动运行"
+  },
+  "keyboard": {
+    "native": {
+      "seq": 458,
+      "at": "2026-10-12T04:52:37.713Z",
+      "ms": 52328.15,
+      "mode": "human",
+      "phase": "ime",
+      "operatorSource": "computer-use",
+      "kind": "native-input",
+      "owner": "A",
+      "type": "keyDown",
+      "receiverClass": "RenderWidgetHostViewCocoa",
+      "x": 1165,
+      "y": 701,
+      "timestamp": 266088.975594958,
+      "eventNumber": 0,
+      "modifiers": 0,
+      "keyCode": 1,
+      "testInjection": false
+    },
+    "stopSeq": 460,
+    "monitorToStopMs": 0.33999999999650754,
+    "axValue": "s",
+    "axStatus": "A：已让出操作 B：自动运行",
+    "BProgressAtStop": 51,
+    "BProgressAtRetry": 128,
+    "pendingClickCanceledSeq": 466,
+    "note": "The initial key also began a composition, but no valid complete Chinese phrase was confirmed."
+  },
+  "pasteIntoImeField": {
+    "native": {
+      "seq": 918,
+      "at": "2026-10-12T04:53:54.360Z",
+      "ms": 128974.87,
+      "mode": "human",
+      "phase": "ime",
+      "operatorSource": "computer-use",
+      "kind": "native-input",
+      "owner": "A",
+      "type": "keyDown",
+      "receiverClass": "RenderWidgetHostViewCocoa",
+      "x": 1165,
+      "y": 701,
+      "timestamp": 266165.618771958,
+      "eventNumber": 0,
+      "modifiers": 1048576,
+      "keyCode": 9,
+      "testInjection": false
+    },
+    "stopSeq": 920,
+    "dom": {
+      "seq": 924,
+      "at": "2026-10-12T04:53:54.374Z",
+      "ms": 128989.48,
+      "mode": "human",
+      "phase": "ime",
+      "operatorSource": "computer-use",
+      "kind": "dom-event",
+      "task": "A",
+      "type": "paste",
+      "target": "ime",
+      "isTrusted": true,
+      "value": "shoudongjieguanceshi"
+    },
+    "observedValueSeq": 927,
+    "axValue": "手动接管测试",
+    "BProgressAtPaste": 131,
+    "BProgressAtContinue": 137,
+    "pendingClickCanceledSeq": 923,
+    "note": "Independent keyboard-first takeover on the already-focused IME field. This is not the dedicated fourth-step paste/resume flow."
+  },
+  "retry": {
+    "samples": [
+      {
+        "seq": 892,
+        "previousStop": {
+          "task": "A",
+          "generation": 9,
+          "nativeSeq": 458,
+          "event": {
+            "owner": "A",
+            "type": "keyDown",
+            "receiverClass": "RenderWidgetHostViewCocoa",
+            "x": 1165,
+            "y": 701,
+            "timestamp": 266088.975594958,
+            "eventNumber": 0,
+            "modifiers": 0,
+            "keyCode": 1,
+            "testInjection": false
+          },
+          "counts": {
+            "A": {
+              "auto": 0,
+              "manual": 0,
+              "late": 0,
+              "accepted": 0
+            },
+            "B": {
+              "auto": 51,
+              "manual": 0,
+              "late": 0,
+              "accepted": 0
+            }
+          },
+          "at": "2026-10-12T04:52:37.713Z"
+        },
+        "current": {
+          "task": "A",
+          "counts": {
+            "auto": 0,
+            "manual": 0,
+            "late": 0,
+            "accepted": 0
+          },
+          "ime": "shoudongjieguanceshi",
+          "paste": "",
+          "typing": "",
+          "url": "http://127.0.0.1:58745/fixture?task=A"
+        }
+      },
+      {
+        "seq": 1113,
+        "previousStop": {
+          "task": "A",
+          "generation": 10,
+          "nativeSeq": 918,
+          "event": {
+            "owner": "A",
+            "type": "keyDown",
+            "receiverClass": "RenderWidgetHostViewCocoa",
+            "x": 1165,
+            "y": 701,
+            "timestamp": 266165.618771958,
+            "eventNumber": 0,
+            "modifiers": 1048576,
+            "keyCode": 9,
+            "testInjection": false
+          },
+          "counts": {
+            "A": {
+              "auto": 0,
+              "manual": 0,
+              "late": 0,
+              "accepted": 0
+            },
+            "B": {
+              "auto": 131,
+              "manual": 0,
+              "late": 0,
+              "accepted": 0
+            }
+          },
+          "at": "2026-10-12T04:53:54.360Z"
+        },
+        "current": {
+          "task": "A",
+          "counts": {
+            "auto": 0,
+            "manual": 0,
+            "late": 0,
+            "accepted": 0
+          },
+          "ime": "手动接管测试",
+          "paste": "",
+          "typing": "",
+          "url": "http://127.0.0.1:58745/fixture?task=A"
+        }
+      },
+      {
+        "seq": 1398,
+        "previousStop": {
+          "task": "A",
+          "generation": 11,
+          "nativeSeq": 1147,
+          "event": {
+            "owner": "A",
+            "type": "keyDown",
+            "receiverClass": "RenderWidgetHostViewCocoa",
+            "x": 1165,
+            "y": 701,
+            "timestamp": 266213.678881125,
+            "eventNumber": 0,
+            "modifiers": 262144,
+            "keyCode": 49,
+            "testInjection": false
+          },
+          "counts": {
+            "A": {
+              "auto": 0,
+              "manual": 0,
+              "late": 0,
+              "accepted": 0
+            },
+            "B": {
+              "auto": 181,
+              "manual": 0,
+              "late": 0,
+              "accepted": 0
+            }
+          },
+          "at": "2026-10-12T04:54:42.416Z"
+        },
+        "current": {
+          "task": "A",
+          "counts": {
+            "auto": 0,
+            "manual": 0,
+            "late": 0,
+            "accepted": 0
+          },
+          "ime": "手动接管测试",
+          "paste": "",
+          "typing": "",
+          "url": "http://127.0.0.1:58745/fixture?task=A"
+        }
+      }
+    ],
+    "finalAXSelectedText": "手动接管测试",
+    "note": "Existing Latin and Chinese text survived public retry and was selected in the refocused field."
+  },
+  "imeGate": {
+    "verificationCommandSeq": 949,
+    "observedValueSeq": 951,
+    "axMessage": "还需要通过中文输入法实际键入“手动接管测试”，当前记录不完整。",
+    "pasteNotAcceptedAsIME": true,
+    "completeIME": false
+  },
+  "toolInputLimitations": [
+    "typeText with Chinese text did not change either the chat field or the IME field. setValue worked for the chat command.",
+    "ASCII typeText and pressKey worked. Trying the input-source shortcut and pinyin plus space did not produce the required Chinese phrase.",
+    "Native paste produced Chinese text and a paste DOM event. No composition events were synthesized or acceptance conditions relaxed."
+  ],
+  "newHumanEvidence": false,
+  "fullFlowPassed": false,
+  "windowClosed": true,
+  "exitCode": 0
+}

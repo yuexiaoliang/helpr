@@ -1,0 +1,238 @@
+{
+  "name": "heldout-collision",
+  "trace": [
+    {
+      "id": "s1",
+      "op": "click",
+      "executed": true
+    },
+    {
+      "id": "s2",
+      "op": "fill",
+      "executed": true
+    },
+    {
+      "id": "s3",
+      "op": "fill",
+      "executed": true
+    },
+    {
+      "id": "s4",
+      "op": "select",
+      "executed": true
+    },
+    {
+      "id": "s5",
+      "op": "upload",
+      "executed": true,
+      "pending": "upload-pending.json",
+      "settled": "upload-settled.json",
+      "negative": {
+        "passed": false,
+        "code": "artifact-target-missing",
+        "detail": {}
+      }
+    },
+    {
+      "id": "s6",
+      "op": "press",
+      "executed": true
+    },
+    {
+      "id": "s7",
+      "op": "finish",
+      "resultUrl": "http://home.ts-ali.internal:38081/node/6",
+      "readyReceipt": {
+        "at": "2026-10-11T23:11:46.587Z",
+        "taskDigest": "572a779d989c86f8d945dd7f9009a3577dcb9f4189a481ea2d8f06e65c01a968",
+        "rulesDigest": "2767a471617af344de1a8ec08f3fc43cd2d62c15161de0b106555e40ebe0a236",
+        "evidence": [
+          {
+            "condition": {
+              "kind": "value",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "textbox",
+                "name": "Title *"
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "title"
+              },
+              "covers": "title"
+            },
+            "ok": true,
+            "actual": "Title",
+            "expected": "Title"
+          },
+          {
+            "condition": {
+              "kind": "value",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "textbox",
+                "name": "Rich Text Editor. Editing area: main. Press ⌥0 for help."
+              },
+              "compare": "equals",
+              "expected": {
+                "input": "body"
+              },
+              "covers": "body"
+            },
+            "ok": true,
+            "actual": "全部内容和附件均为虚构测试素材。样本 heldout-collision，核对编号 32e867c5f8。保留原始 Excel 文件，不改写其内容。",
+            "expected": "全部内容和附件均为虚构测试素材。样本 heldout-collision，核对编号 32e867c5f8。保留原始 Excel 文件，不改写其内容。"
+          },
+          {
+            "condition": {
+              "kind": "selected-label",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "combobox",
+                "name": "栏目 *"
+              },
+              "expected": {
+                "input": "category"
+              },
+              "covers": "category"
+            },
+            "ok": true,
+            "actual": [
+              "Excel 验证"
+            ],
+            "expected": "Excel 验证"
+          },
+          {
+            "condition": {
+              "kind": "artifact",
+              "target": {
+                "frame": "main",
+                "by": "role",
+                "role": "link",
+                "name": {
+                  "input": "attachment",
+                  "field": "name"
+                }
+              },
+              "expected": {
+                "input": "attachment",
+                "field": "sha256"
+              },
+              "covers": "attachment"
+            },
+            "ok": true,
+            "actual": "2920f2e32ead356702ec76f643c4718bca55ab1a4f823aa139354651e754ef9a"
+          }
+        ]
+      }
+    }
+  ],
+  "status": "completed",
+  "candidateHash": "ab465650d164f866e66fe9aef98a456034543420ed8a19708f766d31581b4300",
+  "taskHash": "572a779d989c86f8d945dd7f9009a3577dcb9f4189a481ea2d8f06e65c01a968",
+  "result": {
+    "url": "http://home.ts-ali.internal:38081/node/6",
+    "runtimeEvidence": [
+      {
+        "condition": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "heading",
+            "name": {
+              "input": "title"
+            },
+            "level": 1
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "title"
+          },
+          "covers": "title"
+        },
+        "ok": true,
+        "actual": "Title",
+        "expected": "Title"
+      },
+      {
+        "condition": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "text",
+            "name": {
+              "input": "body"
+            }
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "body"
+          },
+          "covers": "body"
+        },
+        "ok": true,
+        "actual": "全部内容和附件均为虚构测试素材。样本 heldout-collision，核对编号 32e867c5f8。保留原始 Excel 文件，不改写其内容。",
+        "expected": "全部内容和附件均为虚构测试素材。样本 heldout-collision，核对编号 32e867c5f8。保留原始 Excel 文件，不改写其内容。"
+      },
+      {
+        "condition": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": {
+              "input": "category"
+            }
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "category"
+          },
+          "covers": "category"
+        },
+        "ok": true,
+        "actual": "Excel 验证",
+        "expected": "Excel 验证"
+      },
+      {
+        "condition": {
+          "kind": "download",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": {
+              "input": "attachment",
+              "field": "name"
+            }
+          },
+          "expected": {
+            "input": "attachment",
+            "field": "sha256"
+          },
+          "covers": "attachment"
+        },
+        "ok": true,
+        "actual": "2920f2e32ead356702ec76f643c4718bca55ab1a4f823aa139354651e754ef9a",
+        "downloadedName": "heldout-collision-drupal.xlsx"
+      }
+    ],
+    "independent": {
+      "title": "Title",
+      "body": "全部内容和附件均为虚构测试素材。样本 heldout-collision，核对编号 32e867c5f8。保留原始 Excel 文件，不改写其内容。",
+      "category": "Excel 验证",
+      "categoryUrl": "http://home.ts-ali.internal:38081/taxonomy/term/1",
+      "resultUrl": "http://home.ts-ali.internal:38081/node/6",
+      "downloadSha256": "2920f2e32ead356702ec76f643c4718bca55ab1a4f823aa139354651e754ef9a",
+      "sourceSha256": "2920f2e32ead356702ec76f643c4718bca55ab1a4f823aa139354651e754ef9a",
+      "anonymous": true,
+      "passed": true
+    }
+  },
+  "modelCallsDuringBrowserReplay": 0
+}

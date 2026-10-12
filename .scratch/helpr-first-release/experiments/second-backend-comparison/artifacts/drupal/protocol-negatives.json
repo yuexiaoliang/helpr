@@ -1,0 +1,62 @@
+[
+  {
+    "invalid": {
+      "proposal": {}
+    },
+    "status": "rejected",
+    "error": {
+      "code": "schema-extra-field",
+      "message": "schema-extra-field",
+      "detail": {
+        "at": "$",
+        "actual": [
+          "proposal"
+        ]
+      }
+    }
+  },
+  {
+    "invalid": {
+      "compatible": true
+    },
+    "status": "rejected",
+    "error": {
+      "code": "schema-missing-field",
+      "message": "schema-missing-field",
+      "detail": {
+        "at": "$",
+        "expected": [
+          "compatible",
+          "reason",
+          "goalKind",
+          "goal",
+          "strings",
+          "files",
+          "constraints"
+        ]
+      }
+    }
+  },
+  {
+    "invalid": {
+      "compatible": "true"
+    },
+    "status": "rejected",
+    "error": {
+      "code": "schema-missing-field",
+      "message": "schema-missing-field",
+      "detail": {
+        "at": "$",
+        "expected": [
+          "compatible",
+          "reason",
+          "goalKind",
+          "goal",
+          "strings",
+          "files",
+          "constraints"
+        ]
+      }
+    }
+  }
+]

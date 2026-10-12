@@ -1,0 +1,41 @@
+[
+  {
+    "id": 1,
+    "receivedAt": 1791786975111,
+    "method": "GET",
+    "path": "/fixture/strict-get",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "generationAtReceipt": 0,
+    "decision": "forwarded",
+    "resource": true,
+    "forwardedAt": 1791786975111,
+    "responseAt": 1791786975111,
+    "status": 200
+  },
+  {
+    "id": 2,
+    "receivedAt": 1791786975115,
+    "method": "GET",
+    "path": "/client.js?case=strict-get",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "generationAtReceipt": 0,
+    "decision": "forwarded",
+    "resource": true,
+    "forwardedAt": 1791786975115,
+    "responseAt": 1791786975116,
+    "status": 200
+  },
+  {
+    "id": 3,
+    "receivedAt": 1791786975170,
+    "method": "GET",
+    "path": "/sink/strict-get?value=999",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "generationAtReceipt": 1,
+    "decision": "blocked",
+    "reason": "request-mismatch"
+  }
+]

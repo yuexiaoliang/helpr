@@ -1,0 +1,1587 @@
+{
+  "question": "验证网页动作、上传数据与写请求的关联边界",
+  "report": "REPORT.md",
+  "plan": "PLAN.md",
+  "budget": "artifacts/budget.json",
+  "audit": "artifacts/audit.json",
+  "warning": "Observed-as-specified includes reproduced unsafe associations; does not certify authorization.",
+  "cases": [
+    {
+      "name": "baseline-disk-upload",
+      "mode": "baseline",
+      "status": "observed-as-specified",
+      "serverReceipts": 1,
+      "evidence": "artifacts/run-1/baseline-disk-upload"
+    },
+    {
+      "name": "baseline-get",
+      "mode": "baseline",
+      "status": "observed-as-specified",
+      "serverReceipts": 1,
+      "evidence": "artifacts/run-1/baseline-get"
+    },
+    {
+      "name": "baseline-late",
+      "mode": "baseline",
+      "status": "observed-as-specified",
+      "serverReceipts": 0,
+      "evidence": "artifacts/run-1/baseline-late"
+    },
+    {
+      "name": "baseline-late-next",
+      "mode": "baseline",
+      "status": "observed-as-specified",
+      "serverReceipts": 1,
+      "evidence": "artifacts/run-1/baseline-late-next"
+    },
+    {
+      "name": "baseline-redirect",
+      "mode": "baseline",
+      "status": "observed-as-specified",
+      "serverReceipts": 2,
+      "evidence": "artifacts/run-1/baseline-redirect"
+    },
+    {
+      "name": "baseline-replaced-upload",
+      "mode": "baseline",
+      "status": "observed-as-specified",
+      "serverReceipts": 1,
+      "evidence": "artifacts/run-1/baseline-replaced-upload"
+    },
+    {
+      "name": "baseline-same-click",
+      "mode": "baseline",
+      "status": "observed-as-specified",
+      "serverReceipts": 2,
+      "evidence": "artifacts/run-1/baseline-same-click"
+    },
+    {
+      "name": "context-route-service-worker",
+      "mode": "context-route",
+      "status": "observed-as-specified",
+      "serverReceipts": 0,
+      "evidence": "artifacts/run-1/context-route-service-worker"
+    },
+    {
+      "name": "page-route-service-worker",
+      "mode": "page-route",
+      "status": "observed-as-specified",
+      "serverReceipts": 1,
+      "evidence": "artifacts/run-1/page-route-service-worker"
+    },
+    {
+      "name": "page-route-worker",
+      "mode": "page-route",
+      "status": "observed-as-specified",
+      "serverReceipts": 0,
+      "evidence": "artifacts/run-1/page-route-worker"
+    },
+    {
+      "name": "strict-beacon-late",
+      "mode": "strict",
+      "status": "observed-as-specified",
+      "serverReceipts": 0,
+      "evidence": "artifacts/run-1/strict-beacon-late"
+    },
+    {
+      "name": "strict-disk-upload",
+      "mode": "strict",
+      "status": "observed-as-specified",
+      "serverReceipts": 1,
+      "evidence": "artifacts/run-1/strict-disk-upload"
+    },
+    {
+      "name": "strict-forward-stop",
+      "mode": "strict",
+      "status": "observed-as-specified",
+      "serverReceipts": 1,
+      "evidence": "artifacts/run-1/strict-forward-stop"
+    },
+    {
+      "name": "strict-frame-form",
+      "mode": "strict",
+      "status": "observed-as-specified",
+      "serverReceipts": 1,
+      "evidence": "artifacts/run-1/strict-frame-form"
+    },
+    {
+      "name": "strict-get",
+      "mode": "strict",
+      "status": "observed-as-specified",
+      "serverReceipts": 0,
+      "evidence": "artifacts/run-1/strict-get"
+    },
+    {
+      "name": "strict-held-revoke",
+      "mode": "strict",
+      "status": "observed-as-specified",
+      "serverReceipts": 0,
+      "evidence": "artifacts/run-1/strict-held-revoke"
+    },
+    {
+      "name": "strict-late",
+      "mode": "strict",
+      "status": "observed-as-specified",
+      "serverReceipts": 0,
+      "evidence": "artifacts/run-1/strict-late"
+    },
+    {
+      "name": "strict-matching-timer",
+      "mode": "strict",
+      "status": "observed-as-specified",
+      "serverReceipts": 1,
+      "evidence": "artifacts/run-1/strict-matching-timer"
+    },
+    {
+      "name": "strict-redirect",
+      "mode": "strict",
+      "status": "observed-as-specified",
+      "serverReceipts": 1,
+      "evidence": "artifacts/run-1/strict-redirect"
+    },
+    {
+      "name": "strict-replaced-upload",
+      "mode": "strict",
+      "status": "observed-as-specified",
+      "serverReceipts": 0,
+      "evidence": "artifacts/run-1/strict-replaced-upload"
+    },
+    {
+      "name": "strict-same-click",
+      "mode": "strict",
+      "status": "observed-as-specified",
+      "serverReceipts": 1,
+      "evidence": "artifacts/run-1/strict-same-click"
+    },
+    {
+      "name": "strict-service-worker-unknown",
+      "mode": "strict",
+      "status": "observed-as-specified",
+      "serverReceipts": 0,
+      "evidence": "artifacts/run-1/strict-service-worker-unknown"
+    },
+    {
+      "name": "strict-worker-unknown",
+      "mode": "strict",
+      "status": "observed-as-specified",
+      "serverReceipts": 0,
+      "evidence": "artifacts/run-1/strict-worker-unknown"
+    },
+    {
+      "name": "strict-xhr",
+      "mode": "strict",
+      "status": "observed-as-specified",
+      "serverReceipts": 1,
+      "evidence": "artifacts/run-1/strict-xhr"
+    },
+    {
+      "name": "strict-extra-first",
+      "mode": "strict",
+      "status": "observed-as-specified",
+      "serverReceipts": 1,
+      "evidence": "artifacts/run-2/strict-extra-first"
+    }
+  ],
+  "files": [
+    {
+      "path": "PLAN.md",
+      "bytes": 3653,
+      "sha256": "16a3c36c1915f23827cb391ae03c8a3c4c5bd8c3050e8c032d99ce22c35dea86"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2033,
+      "sha256": "481600ca32b8e613327d5accd0a6464413528e25788d43c7d4ba5f2f99bbbd6c"
+    },
+    {
+      "path": "REPORT.md",
+      "bytes": 13059,
+      "sha256": "77214730d48e76317830fe4e598ceef90cc9692e49c5d286288aaa0e90ef50f5"
+    },
+    {
+      "path": "artifacts/audit-initial.json",
+      "bytes": 13914,
+      "sha256": "33b165ddb71f79129ea1e43345abce20befe025a72141e91a134154fac439b35"
+    },
+    {
+      "path": "artifacts/audit-initial.py",
+      "bytes": 9393,
+      "sha256": "29f83018e6e960676a98bba65f09ea7dbca7ab4bee280461ce4e581764676ac9"
+    },
+    {
+      "path": "artifacts/audit.json",
+      "bytes": 14818,
+      "sha256": "7e765d1c5bb234057ede00116c942f17483ea5664b17cd68dbfc0e9e31963f20"
+    },
+    {
+      "path": "artifacts/budget.json",
+      "bytes": 8564,
+      "sha256": "1257303ae3bb664a1dc89f027c68d22a968e97a0e23c033e0543c6bace6e7e95"
+    },
+    {
+      "path": "artifacts/closed-entry-check.json",
+      "bytes": 140,
+      "sha256": "22bde16bd5ddd3d19ea5aa010a36cba996e111269568e9a3a8c384fd87b8a5d5"
+    },
+    {
+      "path": "artifacts/run-1/baseline-disk-upload/browser-requests.json",
+      "bytes": 421,
+      "sha256": "79900e39714e9fe2537e9f60ccdb4dd0ab74caa65960a5af7a4ad10222a11e9e"
+    },
+    {
+      "path": "artifacts/run-1/baseline-disk-upload/cdp.json",
+      "bytes": 784,
+      "sha256": "c921d7e51df211e01ea8ec59d9ca15737d75d9cde8a924f369f9b9a2e3cb438a"
+    },
+    {
+      "path": "artifacts/run-1/baseline-disk-upload/dom-events.json",
+      "bytes": 170,
+      "sha256": "77b6ed9a37ad7c391c7b5bf75ef4a78309845907df471020cf2833a090f024df"
+    },
+    {
+      "path": "artifacts/run-1/baseline-disk-upload/fixture-contract.json",
+      "bytes": 681,
+      "sha256": "c2f705414a005f03ae793b13879e29c6ef9cb1633f0d8f64e950a73e24cd43b8"
+    },
+    {
+      "path": "artifacts/run-1/baseline-disk-upload/result.json",
+      "bytes": 1151,
+      "sha256": "a76c7f156e90c761a9af5a6ce458cbc24b0a0193ffcfa16a474a61701b008ebe"
+    },
+    {
+      "path": "artifacts/run-1/baseline-disk-upload/routes.json",
+      "bytes": 250,
+      "sha256": "f5a666f4f526bc4b253357f7d26ac82832e8935b24b9d7a3b7ddb82c517b0194"
+    },
+    {
+      "path": "artifacts/run-1/baseline-disk-upload/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/baseline-disk-upload/server-body-1.bin",
+      "bytes": 8498,
+      "sha256": "c3ba1fa19445c7ca59ed3c342ff683fb812574a89ed89c891b56c3bf18d22d51"
+    },
+    {
+      "path": "artifacts/run-1/baseline-disk-upload/server-file-1.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/baseline-disk-upload/server.json",
+      "bytes": 841,
+      "sha256": "63dc4d1e0376eb1317974ee7fcbfdca943a95ef5407077bf144f13d41e1b1434"
+    },
+    {
+      "path": "artifacts/run-1/baseline-get/browser-requests.json",
+      "bytes": 257,
+      "sha256": "612ece3b9d8d17341d21bf643bbb5daf20827769c639d95bc7d9e6cebbdd27e8"
+    },
+    {
+      "path": "artifacts/run-1/baseline-get/cdp.json",
+      "bytes": 618,
+      "sha256": "978599129dab350826f8fe12292ea603e69b03dc4e773846ea9b48a4988dee27"
+    },
+    {
+      "path": "artifacts/run-1/baseline-get/dom-events.json",
+      "bytes": 162,
+      "sha256": "ff0e45027d3a9783ea92648afa780adb3d5da1d9d2679fda9b1bb29d0ab44153"
+    },
+    {
+      "path": "artifacts/run-1/baseline-get/fixture-contract.json",
+      "bytes": 397,
+      "sha256": "4a99f0b8b41b3a5ce1c0dd69680fdb988e67af7d418316c1cdfc85b5ba085abc"
+    },
+    {
+      "path": "artifacts/run-1/baseline-get/result.json",
+      "bytes": 664,
+      "sha256": "c0418210bf19fce67251b919c767e23d85ba7afe256867f54fcc6eef95118a14"
+    },
+    {
+      "path": "artifacts/run-1/baseline-get/routes.json",
+      "bytes": 234,
+      "sha256": "94436cb24ed00593c81b34aac3eb9a3282d73a69de4d7bcafd7f839cd9823c80"
+    },
+    {
+      "path": "artifacts/run-1/baseline-get/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/baseline-get/server-body-1.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/run-1/baseline-get/server.json",
+      "bytes": 283,
+      "sha256": "1cb80aa50adc046868f349c367afa6c019f325a723ce16c80da451425d0239ab"
+    },
+    {
+      "path": "artifacts/run-1/baseline-late/browser-requests.json",
+      "bytes": 378,
+      "sha256": "92098d17d40850d9414614d053b23a9e1a6225b9b03586a5ef8daa17dcc074a7"
+    },
+    {
+      "path": "artifacts/run-1/baseline-late/cdp.json",
+      "bytes": 1479,
+      "sha256": "a4606b7d52fccb2a283088c528f079640003ba4502bee0ad41609cbbf331f40b"
+    },
+    {
+      "path": "artifacts/run-1/baseline-late/dom-events.json",
+      "bytes": 163,
+      "sha256": "456ba7abf8d35f72a9135361fbd81545217bccf461ebf9f993b1df10583ca2f2"
+    },
+    {
+      "path": "artifacts/run-1/baseline-late/fixture-contract.json",
+      "bytes": 399,
+      "sha256": "671ad295b902d0fdf2ba4ba79838918f8443f8d09ad1e8192be9adeefc9c4f04"
+    },
+    {
+      "path": "artifacts/run-1/baseline-late/result.json",
+      "bytes": 787,
+      "sha256": "95f0cbb71f56ab8339cd2399cb2ee695ef0c7f34ab47992dc0198d8aefabbad1"
+    },
+    {
+      "path": "artifacts/run-1/baseline-late/routes.json",
+      "bytes": 223,
+      "sha256": "28223c72a42ce6cd3ab0be8831c459ed8b8d6d4f0f8f07363628ae62d8acea9b"
+    },
+    {
+      "path": "artifacts/run-1/baseline-late/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/baseline-late/server.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/baseline-late-next/browser-requests.json",
+      "bytes": 388,
+      "sha256": "57642ba99c90ad2a08ff4396760259b9374969c2b97e8a41fa4e2b85b83d9b68"
+    },
+    {
+      "path": "artifacts/run-1/baseline-late-next/cdp.json",
+      "bytes": 1499,
+      "sha256": "fda95bae69934793f5a83ccfdf63d5d45e900e74cd0ae2de841fb29b176b1fbc"
+    },
+    {
+      "path": "artifacts/run-1/baseline-late-next/dom-events.json",
+      "bytes": 168,
+      "sha256": "3727f5b9dadc6b7e52d92f3ceac4a67b186b26a9d85ec5aea43030dd04c6215b"
+    },
+    {
+      "path": "artifacts/run-1/baseline-late-next/fixture-contract.json",
+      "bytes": 409,
+      "sha256": "c8c952792c32036863063eb5d55df621fc478a482cdae4c965bb1231afd98c0c"
+    },
+    {
+      "path": "artifacts/run-1/baseline-late-next/result.json",
+      "bytes": 844,
+      "sha256": "2ecd7385683aa4f027561596373ba99518fd50d3ac25cbfc38505a35b9b9b463"
+    },
+    {
+      "path": "artifacts/run-1/baseline-late-next/routes.json",
+      "bytes": 239,
+      "sha256": "0eb0c2a56ca17e486af52a25859b25d01e088a5bd3ca87bf3c444644f1ee70b8"
+    },
+    {
+      "path": "artifacts/run-1/baseline-late-next/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/baseline-late-next/server-body-1.bin",
+      "bytes": 60,
+      "sha256": "2fbbf44eb54b343041551e62401f4eccf356fe94c15bb0d62bf55463e9fdad9c"
+    },
+    {
+      "path": "artifacts/run-1/baseline-late-next/server.json",
+      "bytes": 367,
+      "sha256": "e44efc46959ff60bfc0700977bc3c6f5790f1ce767dd0656f0d67e1ebb17a3f5"
+    },
+    {
+      "path": "artifacts/run-1/baseline-redirect/browser-requests.json",
+      "bytes": 848,
+      "sha256": "d249461c5af06a7e2dc9b5d57c9b517a34e3eae98edeb4abbd6b9dc99398bfd3"
+    },
+    {
+      "path": "artifacts/run-1/baseline-redirect/cdp.json",
+      "bytes": 1539,
+      "sha256": "d0aaa7fcde02ac581c9b3548d4e03ad8430a501edd061af3d01d8fc1e5a91074"
+    },
+    {
+      "path": "artifacts/run-1/baseline-redirect/dom-events.json",
+      "bytes": 167,
+      "sha256": "c3d708844a20e11b0520d975d8a6b3d0d2e50f752b4f6049583d116192b25778"
+    },
+    {
+      "path": "artifacts/run-1/baseline-redirect/fixture-contract.json",
+      "bytes": 411,
+      "sha256": "f4bab2832bf03028a153f4684e4d418b1a7a691026c147f0bb9a70d6bbb64051"
+    },
+    {
+      "path": "artifacts/run-1/baseline-redirect/result.json",
+      "bytes": 745,
+      "sha256": "3ebbf1b88290340cdb99b44b5858898fcd795a826050cc375878c32c3ff97dd8"
+    },
+    {
+      "path": "artifacts/run-1/baseline-redirect/routes.json",
+      "bytes": 242,
+      "sha256": "104ba718743b5d6128ed6468c1810e5111e0589d884830de61ef8013c2581b7b"
+    },
+    {
+      "path": "artifacts/run-1/baseline-redirect/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/baseline-redirect/server-body-1.bin",
+      "bytes": 59,
+      "sha256": "0e297fbab4326a3792b77b8c0ac78baedacf2117b246b374793d17e93fead172"
+    },
+    {
+      "path": "artifacts/run-1/baseline-redirect/server-body-2.bin",
+      "bytes": 59,
+      "sha256": "0e297fbab4326a3792b77b8c0ac78baedacf2117b246b374793d17e93fead172"
+    },
+    {
+      "path": "artifacts/run-1/baseline-redirect/server.json",
+      "bytes": 733,
+      "sha256": "333f0abca893b79020f4707189fe06cb6aae9b7f9d39277fb1a3049b41ca8dce"
+    },
+    {
+      "path": "artifacts/run-1/baseline-replaced-upload/browser-requests.json",
+      "bytes": 430,
+      "sha256": "8af46f8ee0ebc552aef42e2f0fd71f02c337d1b23d16f479219f3350d36ccb53"
+    },
+    {
+      "path": "artifacts/run-1/baseline-replaced-upload/cdp.json",
+      "bytes": 793,
+      "sha256": "084e9595920e9baef4d95031c9c7e773c8c6aedfa95c4a9a50fca56b2e6108a6"
+    },
+    {
+      "path": "artifacts/run-1/baseline-replaced-upload/dom-events.json",
+      "bytes": 174,
+      "sha256": "7e667976c1f01f08da32e59b488018801f501de833bdbf119d2f658daad20a6a"
+    },
+    {
+      "path": "artifacts/run-1/baseline-replaced-upload/fixture-contract.json",
+      "bytes": 689,
+      "sha256": "eb1f0986181c28b7fe2aed56df9f6f8aed68f057d663c21195e0177f39f74938"
+    },
+    {
+      "path": "artifacts/run-1/baseline-replaced-upload/result.json",
+      "bytes": 1165,
+      "sha256": "05e0136b817aa7c51dfe9e959f0225afe1c14e92af06410ffdc015bd94ca2898"
+    },
+    {
+      "path": "artifacts/run-1/baseline-replaced-upload/routes.json",
+      "bytes": 254,
+      "sha256": "6fdb26b33eaaa623301e07bf45860138272aae536888232f291a40680df8b033"
+    },
+    {
+      "path": "artifacts/run-1/baseline-replaced-upload/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/baseline-replaced-upload/server-body-1.bin",
+      "bytes": 8505,
+      "sha256": "02eb2f8c69d74b1730706f8d8fe02b5867822d4ca1213f399d20cba1931df8f0"
+    },
+    {
+      "path": "artifacts/run-1/baseline-replaced-upload/server-file-1.bin",
+      "bytes": 8192,
+      "sha256": "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f"
+    },
+    {
+      "path": "artifacts/run-1/baseline-replaced-upload/server.json",
+      "bytes": 845,
+      "sha256": "94731f8086f7cfc4ae531f6044162f8f3d43a5854799fab583f868ebd9caf744"
+    },
+    {
+      "path": "artifacts/run-1/baseline-same-click/browser-requests.json",
+      "bytes": 777,
+      "sha256": "33caf4fe7a9d86ad24b6e70805c5016a2fcae7542eba01aab56923c56bcb1ca8"
+    },
+    {
+      "path": "artifacts/run-1/baseline-same-click/cdp.json",
+      "bytes": 2299,
+      "sha256": "c6de92fa0cb3eb163a584f013848ecf7219e0b3d992a4d54fe890a88b9c469a0"
+    },
+    {
+      "path": "artifacts/run-1/baseline-same-click/dom-events.json",
+      "bytes": 169,
+      "sha256": "e1cd5e9cddae745fcd64ba544cc54396b12fcf5964e6a04610484a4792e464d5"
+    },
+    {
+      "path": "artifacts/run-1/baseline-same-click/fixture-contract.json",
+      "bytes": 411,
+      "sha256": "402a97b0d24becb9a0c6e3b4becb7ddcb9d7d3ba0bc9882e7c1821834fa62876"
+    },
+    {
+      "path": "artifacts/run-1/baseline-same-click/result.json",
+      "bytes": 857,
+      "sha256": "168d4161d1f4f71698891dd9dc6d698c1924bf221620c15d3e17f05920edede3"
+    },
+    {
+      "path": "artifacts/run-1/baseline-same-click/routes.json",
+      "bytes": 477,
+      "sha256": "cc7fee604ff18d29e871c1cd4cd8fe574acaf00267290f54161a16be41c2d28b"
+    },
+    {
+      "path": "artifacts/run-1/baseline-same-click/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/baseline-same-click/server-body-1.bin",
+      "bytes": 61,
+      "sha256": "70db085f7d98f16bde9b94bcc06d503452bcf764a7d2c60a39c45b089b28058b"
+    },
+    {
+      "path": "artifacts/run-1/baseline-same-click/server-body-2.bin",
+      "bytes": 63,
+      "sha256": "c40d9781df67326263c9d6ab228dea1c07279955d8be63faeaed9cb5d9852d5f"
+    },
+    {
+      "path": "artifacts/run-1/baseline-same-click/server.json",
+      "bytes": 737,
+      "sha256": "bf7d91bea65bb2bf45e7fc77e7a1a0fd695f70b0b004c2b0ed1122aff61c0a01"
+    },
+    {
+      "path": "artifacts/run-1/context-route-service-worker/browser-requests.json",
+      "bytes": 409,
+      "sha256": "7612b0db6c71afba8de144ad30509ee452dd9820b4a9e4c128781d73b2cf51a4"
+    },
+    {
+      "path": "artifacts/run-1/context-route-service-worker/cdp.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/context-route-service-worker/dom-events.json",
+      "bytes": 178,
+      "sha256": "ee8f936d4c764fd6876615737291f5daae595ad97ad5ebd0411ede84a74d2424"
+    },
+    {
+      "path": "artifacts/run-1/context-route-service-worker/fixture-contract.json",
+      "bytes": 429,
+      "sha256": "7a1d68770806612a44343da29499c593c3e231999b3a4cd05bd0d93a2dbfc287"
+    },
+    {
+      "path": "artifacts/run-1/context-route-service-worker/result.json",
+      "bytes": 781,
+      "sha256": "535332152eabee1b5e7fa1dcc70c5e9dc00808f6b03d9ff9d88b8165a3d0b7dd"
+    },
+    {
+      "path": "artifacts/run-1/context-route-service-worker/routes.json",
+      "bytes": 243,
+      "sha256": "1dc12741d8c31a5ca7ee6d12c5504105b4e95ee12d84c0fe7a0bdb03ae96f908"
+    },
+    {
+      "path": "artifacts/run-1/context-route-service-worker/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/context-route-service-worker/server.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/environment.json",
+      "bytes": 168,
+      "sha256": "25ac74233645d6b8f2b09f3136c07074dc0b5a5994d95a53732d9903b7481298"
+    },
+    {
+      "path": "artifacts/run-1/page-route-service-worker/browser-requests.json",
+      "bytes": 406,
+      "sha256": "b329a4450702ad45e0888850c3cbb9728b921cce29cacdb7ad7cdf6aeb3c5834"
+    },
+    {
+      "path": "artifacts/run-1/page-route-service-worker/cdp.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/page-route-service-worker/dom-events.json",
+      "bytes": 175,
+      "sha256": "9914f09dbb00b5ad26eed5e90227e7b5b24377375b55a69864342965df9eb805"
+    },
+    {
+      "path": "artifacts/run-1/page-route-service-worker/fixture-contract.json",
+      "bytes": 423,
+      "sha256": "9d4a46ee09b0dd55b01fd5383e0522c42dd37fb7a7dc8c46637b45b7554275ee"
+    },
+    {
+      "path": "artifacts/run-1/page-route-service-worker/result.json",
+      "bytes": 788,
+      "sha256": "27efe359b419e184bdbf2cea422ce915d24c77e30db62c7eaaf1ab76608d1b6d"
+    },
+    {
+      "path": "artifacts/run-1/page-route-service-worker/routes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/page-route-service-worker/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/page-route-service-worker/server-body-1.bin",
+      "bytes": 67,
+      "sha256": "2748a1904bd5f7db509a9fe023aade339d5b28c9efceea47c54a8721ca5bd871"
+    },
+    {
+      "path": "artifacts/run-1/page-route-service-worker/server.json",
+      "bytes": 381,
+      "sha256": "e6f6f8890fa9075a4b7a2a6868c9d32837ee8bf3eb53b9cd59fb77847c4875fb"
+    },
+    {
+      "path": "artifacts/run-1/page-route-worker/browser-requests.json",
+      "bytes": 386,
+      "sha256": "2ef296d561276ff4c3e1645b3202436779f692a83f8e9bce2fe86dbed871eb71"
+    },
+    {
+      "path": "artifacts/run-1/page-route-worker/cdp.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/page-route-worker/dom-events.json",
+      "bytes": 167,
+      "sha256": "152adc4c1ce4e30f7825c56bafca388a432ee755a8a532bd33638ce2c6c5a6bb"
+    },
+    {
+      "path": "artifacts/run-1/page-route-worker/fixture-contract.json",
+      "bytes": 407,
+      "sha256": "87123f0a7d6c6e69d79e4064a00f0d19ca9f512a18ced5927925aa5d3e454996"
+    },
+    {
+      "path": "artifacts/run-1/page-route-worker/result.json",
+      "bytes": 684,
+      "sha256": "f8541e1081c1fe11b881ad3b8bee307c04798dfd08bce03387747451b42b940e"
+    },
+    {
+      "path": "artifacts/run-1/page-route-worker/routes.json",
+      "bytes": 233,
+      "sha256": "0cf56f01a587459f018419506a421eff8a6315390b53e9aa3a67267ba2698f80"
+    },
+    {
+      "path": "artifacts/run-1/page-route-worker/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/page-route-worker/server.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/results.json",
+      "bytes": 21619,
+      "sha256": "3d8f8eb15192f8c93607c4c89989be11b94a795852176c0a265d7850c2507086"
+    },
+    {
+      "path": "artifacts/run-1/source/PLAN.md",
+      "bytes": 3653,
+      "sha256": "16a3c36c1915f23827cb391ae03c8a3c4c5bd8c3050e8c032d99ce22c35dea86"
+    },
+    {
+      "path": "artifacts/run-1/source/fixture.mjs",
+      "bytes": 8514,
+      "sha256": "db58b802beb8945b8e1fb9708896d323b8dbb14e158d3624d8ca9d74612b4c18"
+    },
+    {
+      "path": "artifacts/run-1/source/run.mjs",
+      "bytes": 14715,
+      "sha256": "fb305e4e8f4929bd455d02cb046ca7ba435a08af1166f9cf57e96e6183e8c4b5"
+    },
+    {
+      "path": "artifacts/run-1/source/wire.mjs",
+      "bytes": 6586,
+      "sha256": "f40787a83f251e7074954519dea8dd6fb30414aaa682abffb9a9eb2772327108"
+    },
+    {
+      "path": "artifacts/run-1/source-hashes.json",
+      "bytes": 332,
+      "sha256": "f69855a6662a9b0a9a6911c01819ef025cdbde81649a9541d23ee14a62da4f46"
+    },
+    {
+      "path": "artifacts/run-1/strict-beacon-late/browser-requests.json",
+      "bytes": 260,
+      "sha256": "51ba9cbfec091ffcbd13b63b25940b7ac47a6aa828acb6d53466ccb186462c18"
+    },
+    {
+      "path": "artifacts/run-1/strict-beacon-late/cdp.json",
+      "bytes": 1122,
+      "sha256": "b5fd2eeda3d84503c0ae885a1f4d0d1f7db2908fc5b5237ce5971aefd87156cf"
+    },
+    {
+      "path": "artifacts/run-1/strict-beacon-late/dom-events.json",
+      "bytes": 168,
+      "sha256": "7aa4ae6a679f926bc0c261f7eb7db43a1f40bf1fd86653786d3f23647ecdb1e2"
+    },
+    {
+      "path": "artifacts/run-1/strict-beacon-late/fixture-contract.json",
+      "bytes": 409,
+      "sha256": "a4d9b6240a060a9d57cf615aa14426be7ee7e1ef961502257b36b48d30877167"
+    },
+    {
+      "path": "artifacts/run-1/strict-beacon-late/proxy-3.bin",
+      "bytes": 60,
+      "sha256": "8288ea491d6d1279fe25add4ea54eaad7e52a73e1e6af6c4f2100568593953cb"
+    },
+    {
+      "path": "artifacts/run-1/strict-beacon-late/proxy.json",
+      "bytes": 1084,
+      "sha256": "3f6ce25e3b0f7ff7b1fc7de3fea802a1f7728479255d2d4f0ba6f4ed6f383086"
+    },
+    {
+      "path": "artifacts/run-1/strict-beacon-late/result.json",
+      "bytes": 726,
+      "sha256": "d03b3e8be7135bab0972f78d0fcc1f5d01cd3e4c07c7356dd532d964f11d8a80"
+    },
+    {
+      "path": "artifacts/run-1/strict-beacon-late/routes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-beacon-late/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/strict-beacon-late/server.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-disk-upload/browser-requests.json",
+      "bytes": 260,
+      "sha256": "185a54029259c3b810df90a5b17e1aba9198b79cf3aa62ac00f4a91ee6c55812"
+    },
+    {
+      "path": "artifacts/run-1/strict-disk-upload/cdp.json",
+      "bytes": 780,
+      "sha256": "ae61ab383dda2e814794cc021a266b26afb3b5280b73b90a8f6675a129245b37"
+    },
+    {
+      "path": "artifacts/run-1/strict-disk-upload/dom-events.json",
+      "bytes": 168,
+      "sha256": "22cd21373d44500b990dbfebd043c474e3a23e1cf7e0b3a09436e069ac034528"
+    },
+    {
+      "path": "artifacts/run-1/strict-disk-upload/fixture-contract.json",
+      "bytes": 677,
+      "sha256": "b948178a7a57b44353934c438ce797ab55f338db61dd6367bc2166109d358e05"
+    },
+    {
+      "path": "artifacts/run-1/strict-disk-upload/proxy-3.bin",
+      "bytes": 8496,
+      "sha256": "62592ee972bc040e5c0ee204b1fd91b0266424ae5959fe06969bdfdb69a5b99d"
+    },
+    {
+      "path": "artifacts/run-1/strict-disk-upload/proxy.json",
+      "bytes": 1561,
+      "sha256": "b3741efec2c84f86f107eb0a52265a626e374404c4a3e7192d8377fba9f77f9e"
+    },
+    {
+      "path": "artifacts/run-1/strict-disk-upload/result.json",
+      "bytes": 1232,
+      "sha256": "be7fcdc7f235b36630b5ed3c8d452f1d03bc8f6e5af716959bf42eb70b49dbcd"
+    },
+    {
+      "path": "artifacts/run-1/strict-disk-upload/routes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-disk-upload/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/strict-disk-upload/server-body-1.bin",
+      "bytes": 8496,
+      "sha256": "62592ee972bc040e5c0ee204b1fd91b0266424ae5959fe06969bdfdb69a5b99d"
+    },
+    {
+      "path": "artifacts/run-1/strict-disk-upload/server-file-1.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/strict-disk-upload/server.json",
+      "bytes": 839,
+      "sha256": "35c8512b338423dc5298126f12937369d1c4c9f7353b9e7508bdebd8164eee6b"
+    },
+    {
+      "path": "artifacts/run-1/strict-forward-stop/browser-requests.json",
+      "bytes": 390,
+      "sha256": "462284b3bc8e758a87876978dc471331f5d0212a149d2b7e4fcedc0ed4867651"
+    },
+    {
+      "path": "artifacts/run-1/strict-forward-stop/cdp.json",
+      "bytes": 1152,
+      "sha256": "0e61902ad5b54d0a87bbde82fff9cc5fdcbf539f39804fdd446441c6e492fdf4"
+    },
+    {
+      "path": "artifacts/run-1/strict-forward-stop/dom-events.json",
+      "bytes": 169,
+      "sha256": "f0ee720f314aa865d287a08b297ab59f3ae3a835d0247af4fcff83a2efed9dca"
+    },
+    {
+      "path": "artifacts/run-1/strict-forward-stop/fixture-contract.json",
+      "bytes": 411,
+      "sha256": "3495c344d8d96af271168cc5757126204f5d8c2afb9f5b702414d366c0bc95aa"
+    },
+    {
+      "path": "artifacts/run-1/strict-forward-stop/proxy-3.bin",
+      "bytes": 61,
+      "sha256": "7d9a3a5bdad2e4decb5f8e97d3938e7489f5ff6baabdd9bef965096c9003a125"
+    },
+    {
+      "path": "artifacts/run-1/strict-forward-stop/proxy.json",
+      "bytes": 1212,
+      "sha256": "2216e6df03e7719f6ac934a8bc2754d893587bb0045ab6bc2eaed136571afa18"
+    },
+    {
+      "path": "artifacts/run-1/strict-forward-stop/result.json",
+      "bytes": 854,
+      "sha256": "4a4c70511f3dc2acbba8b98dfe1c3518011ab65ceb8b6328cc104462abadd139"
+    },
+    {
+      "path": "artifacts/run-1/strict-forward-stop/routes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-forward-stop/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/strict-forward-stop/server-body-1.bin",
+      "bytes": 61,
+      "sha256": "7d9a3a5bdad2e4decb5f8e97d3938e7489f5ff6baabdd9bef965096c9003a125"
+    },
+    {
+      "path": "artifacts/run-1/strict-forward-stop/server.json",
+      "bytes": 369,
+      "sha256": "c4a4d1732b4eddff2b76197163c9e76300f56de20aec14544907bd031713c792"
+    },
+    {
+      "path": "artifacts/run-1/strict-frame-form/browser-requests.json",
+      "bytes": 382,
+      "sha256": "11335db966c66310a2a92f3be0fc234368ebcec22511a487b56d8763e53aecb1"
+    },
+    {
+      "path": "artifacts/run-1/strict-frame-form/cdp.json",
+      "bytes": 645,
+      "sha256": "b08cc97573da03f3e85148567d1674e3750f23fb66aa36ea283e5536787fe0f1"
+    },
+    {
+      "path": "artifacts/run-1/strict-frame-form/dom-events.json",
+      "bytes": 324,
+      "sha256": "8890d62018b6cdbf7fcfbb49572214435c4c5f12474be9863924ce2fe6167379"
+    },
+    {
+      "path": "artifacts/run-1/strict-frame-form/fixture-contract.json",
+      "bytes": 424,
+      "sha256": "12e57d2eb12b6e34d818126d09eb78c121d8ab0f6c002e5a9f4c0f2b811772a5"
+    },
+    {
+      "path": "artifacts/run-1/strict-frame-form/proxy-4.bin",
+      "bytes": 30,
+      "sha256": "7c2348d62cdc4ad7450671c8c9a4286ace0d7db22e80d40a5f1afac5096b7378"
+    },
+    {
+      "path": "artifacts/run-1/strict-frame-form/proxy.json",
+      "bytes": 1583,
+      "sha256": "f9208f16dfc9e83357c42a04ee97d24944f03f88f6393ad3583ce59f531d3367"
+    },
+    {
+      "path": "artifacts/run-1/strict-frame-form/result.json",
+      "bytes": 621,
+      "sha256": "f83eb939c8cf929160ed6f7b73a71fd24a72fb3cd4a9ba26033e659b9f5d2033"
+    },
+    {
+      "path": "artifacts/run-1/strict-frame-form/routes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-frame-form/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/strict-frame-form/server-body-1.bin",
+      "bytes": 30,
+      "sha256": "7c2348d62cdc4ad7450671c8c9a4286ace0d7db22e80d40a5f1afac5096b7378"
+    },
+    {
+      "path": "artifacts/run-1/strict-frame-form/server.json",
+      "bytes": 343,
+      "sha256": "9d362fe2555dbb1d85b08f1085e7c668afa0aeac72bbe83148f7ddc6993c829e"
+    },
+    {
+      "path": "artifacts/run-1/strict-get/browser-requests.json",
+      "bytes": 253,
+      "sha256": "e190ecc1d856f6391c1751bb44f6104896b7ec25f7f151376cb4f4328e5a64b2"
+    },
+    {
+      "path": "artifacts/run-1/strict-get/cdp.json",
+      "bytes": 614,
+      "sha256": "bf32c35c3c1354148cae3591363821e53e383e58c2c1c90cfecfe36cf5e15d31"
+    },
+    {
+      "path": "artifacts/run-1/strict-get/dom-events.json",
+      "bytes": 160,
+      "sha256": "4ca7ddc31eb689d8890159524545677f90f7412479c99e430b4c86a681580131"
+    },
+    {
+      "path": "artifacts/run-1/strict-get/fixture-contract.json",
+      "bytes": 393,
+      "sha256": "093c49cf270725eedf1ad81a9c80ad147e1ac9081dccfba1b74dfdffbd5c3d3c"
+    },
+    {
+      "path": "artifacts/run-1/strict-get/proxy.json",
+      "bytes": 1066,
+      "sha256": "7133a7d96718d6289e7028b747d5c22556c696cd8f8dc5b1edb7de60a5575eb2"
+    },
+    {
+      "path": "artifacts/run-1/strict-get/result.json",
+      "bytes": 679,
+      "sha256": "84efaab3e5f9f0fc8e337e3320b7cf87a5f587ab2305a20aa7ac5a7f18d352b6"
+    },
+    {
+      "path": "artifacts/run-1/strict-get/routes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-get/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/strict-get/server.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-held-revoke/browser-requests.json",
+      "bytes": 388,
+      "sha256": "63a2e5ee0e26e969066563d3de4f7737fea2b173e81c8c92487163e66101d8fa"
+    },
+    {
+      "path": "artifacts/run-1/strict-held-revoke/cdp.json",
+      "bytes": 1149,
+      "sha256": "1da531f14068cdb746d9cc5ab12e8d2dbaf7e0afa2f0ed9e38333aef43886f98"
+    },
+    {
+      "path": "artifacts/run-1/strict-held-revoke/dom-events.json",
+      "bytes": 168,
+      "sha256": "722a7930cf9a9c8e5b54df307c96e17d3032eb47d238c79474375544362a0e56"
+    },
+    {
+      "path": "artifacts/run-1/strict-held-revoke/fixture-contract.json",
+      "bytes": 409,
+      "sha256": "50d6b385022acc833a09f01a0590eae555a543dc77a21022621a04074fbdb3e2"
+    },
+    {
+      "path": "artifacts/run-1/strict-held-revoke/proxy-3.bin",
+      "bytes": 60,
+      "sha256": "1f3ea4c2882c0033c4ece800c428fa87f56452bbce4b30b8c3ce2f6aac6ce906"
+    },
+    {
+      "path": "artifacts/run-1/strict-held-revoke/proxy.json",
+      "bytes": 1117,
+      "sha256": "60f17cfcc2349cd48c306ec41b1776bf46b2493635e117df043738da6413e02a"
+    },
+    {
+      "path": "artifacts/run-1/strict-held-revoke/result.json",
+      "bytes": 808,
+      "sha256": "decb9112d058fe22b180596a3d90f7de3983e61ddcf17aa589c24f9f2c6640cc"
+    },
+    {
+      "path": "artifacts/run-1/strict-held-revoke/routes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-held-revoke/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/strict-held-revoke/server.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-late/browser-requests.json",
+      "bytes": 374,
+      "sha256": "c116b08a7bfa7a0d3686272455397b29b8d2b792e547e41939341ed1aae397db"
+    },
+    {
+      "path": "artifacts/run-1/strict-late/cdp.json",
+      "bytes": 1471,
+      "sha256": "6f4b1c841c06ffe14fa7d0e0aa5da618cc7503ede390173f5e2ed906b1f6848b"
+    },
+    {
+      "path": "artifacts/run-1/strict-late/dom-events.json",
+      "bytes": 161,
+      "sha256": "dc5e71ebe46aa708ff471e795cc73f3125fdec69b7b50155e238b4eb3cc5aefa"
+    },
+    {
+      "path": "artifacts/run-1/strict-late/fixture-contract.json",
+      "bytes": 395,
+      "sha256": "6919f8a47e01d50e8ecf5e4d2a4c87eda0afea65c5e208d46dc8f224744145b6"
+    },
+    {
+      "path": "artifacts/run-1/strict-late/proxy-3.bin",
+      "bytes": 53,
+      "sha256": "312077c685f5faafa928887f727c3aa83b84bf5bc50e174562b9898e975e8fe1"
+    },
+    {
+      "path": "artifacts/run-1/strict-late/proxy.json",
+      "bytes": 1063,
+      "sha256": "2e3b50a28a2b33ff6ad266ba028717c97f158145dcd2de061a1a4c8ffac965da"
+    },
+    {
+      "path": "artifacts/run-1/strict-late/result.json",
+      "bytes": 802,
+      "sha256": "8052ae8a73d13fc9ed2bad40d22e4945035388f0aa198ebd679d27813b610f72"
+    },
+    {
+      "path": "artifacts/run-1/strict-late/routes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-late/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/strict-late/server.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-matching-timer/browser-requests.json",
+      "bytes": 785,
+      "sha256": "0fc6269ceaf58fe42aca833bbee5f4fec0fc0f52e321d90da953969c904a2ac4"
+    },
+    {
+      "path": "artifacts/run-1/strict-matching-timer/cdp.json",
+      "bytes": 3236,
+      "sha256": "056e49034c5ae43b55747705ee59513855ecb10539b8aee483cd72cab672a206"
+    },
+    {
+      "path": "artifacts/run-1/strict-matching-timer/dom-events.json",
+      "bytes": 171,
+      "sha256": "a028ddb8634793b90e8e2701408ef9f75036b76e950979fd38f494c4639b1639"
+    },
+    {
+      "path": "artifacts/run-1/strict-matching-timer/fixture-contract.json",
+      "bytes": 415,
+      "sha256": "fe44b5846b40c9a8c9c3ebd4a3c5b4048f887cb838249155ff620d433cc0e5ef"
+    },
+    {
+      "path": "artifacts/run-1/strict-matching-timer/proxy-3.bin",
+      "bytes": 63,
+      "sha256": "42e855b5f31d296bae15e5948e3c0ffdc3438f54d4db26e15cc5d47079281957"
+    },
+    {
+      "path": "artifacts/run-1/strict-matching-timer/proxy-4.bin",
+      "bytes": 63,
+      "sha256": "42e855b5f31d296bae15e5948e3c0ffdc3438f54d4db26e15cc5d47079281957"
+    },
+    {
+      "path": "artifacts/run-1/strict-matching-timer/proxy.json",
+      "bytes": 1530,
+      "sha256": "a8f9972096bbca77b511f94b9b51249e2b88c683eed35f663f0b087dd1618754"
+    },
+    {
+      "path": "artifacts/run-1/strict-matching-timer/result.json",
+      "bytes": 971,
+      "sha256": "14c35cd57915511db113ec306f7f6ffe81c90fd73eaa1f2390cf1d409b7b95e2"
+    },
+    {
+      "path": "artifacts/run-1/strict-matching-timer/routes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-matching-timer/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/strict-matching-timer/server-body-1.bin",
+      "bytes": 63,
+      "sha256": "42e855b5f31d296bae15e5948e3c0ffdc3438f54d4db26e15cc5d47079281957"
+    },
+    {
+      "path": "artifacts/run-1/strict-matching-timer/server.json",
+      "bytes": 373,
+      "sha256": "2ef908bb1c47b94ee5cfc4be43ab3a94cf585f595c4e6a45fa4f956c6450b7c8"
+    },
+    {
+      "path": "artifacts/run-1/strict-redirect/browser-requests.json",
+      "bytes": 838,
+      "sha256": "34ae2525682d499afd41bf30bdebb696fb572265e6333683f464aed1f9b85c5c"
+    },
+    {
+      "path": "artifacts/run-1/strict-redirect/cdp.json",
+      "bytes": 1533,
+      "sha256": "db5e109606261f8d64fd7d1b2b14f692fcc6e7aa18b739373b510231457fa983"
+    },
+    {
+      "path": "artifacts/run-1/strict-redirect/dom-events.json",
+      "bytes": 165,
+      "sha256": "90722ab1e3cd61b85e3337bfefd5bd20e7bb49e8cd06f8efa36892ed80104e4c"
+    },
+    {
+      "path": "artifacts/run-1/strict-redirect/fixture-contract.json",
+      "bytes": 407,
+      "sha256": "cfa93e8c0add7a44e540383ee43f5594cac6793d4fd4e3f4989876943ee31ff5"
+    },
+    {
+      "path": "artifacts/run-1/strict-redirect/proxy-3.bin",
+      "bytes": 57,
+      "sha256": "ca1e6b4de4c3a9634883529422f805f428b4910172e5a9377dc2d9d7aa864d44"
+    },
+    {
+      "path": "artifacts/run-1/strict-redirect/proxy-4.bin",
+      "bytes": 57,
+      "sha256": "ca1e6b4de4c3a9634883529422f805f428b4910172e5a9377dc2d9d7aa864d44"
+    },
+    {
+      "path": "artifacts/run-1/strict-redirect/proxy.json",
+      "bytes": 1504,
+      "sha256": "d4dfdcd9fb21284ce91a3e4c55baa82c8380f4b6f39ea94f53a0bb4ae13ac292"
+    },
+    {
+      "path": "artifacts/run-1/strict-redirect/result.json",
+      "bytes": 768,
+      "sha256": "8ea17baadc52a0a841f70992b1f9391ea9773a6da11b483b0c018f334954170a"
+    },
+    {
+      "path": "artifacts/run-1/strict-redirect/routes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-redirect/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/strict-redirect/server-body-1.bin",
+      "bytes": 57,
+      "sha256": "ca1e6b4de4c3a9634883529422f805f428b4910172e5a9377dc2d9d7aa864d44"
+    },
+    {
+      "path": "artifacts/run-1/strict-redirect/server.json",
+      "bytes": 367,
+      "sha256": "087fa80945f6bcb3da144a4e2d785cc7b577c6157442696d27e144e2b119327f"
+    },
+    {
+      "path": "artifacts/run-1/strict-replaced-upload/browser-requests.json",
+      "bytes": 268,
+      "sha256": "9aedd1a08acef4fe3adaca62ee694639649b39089eec5bc5b83a0aa9e2b481ee"
+    },
+    {
+      "path": "artifacts/run-1/strict-replaced-upload/cdp.json",
+      "bytes": 789,
+      "sha256": "43c878a4558e79ea3f9c4b6ff626e4bfb50037120406fc4cf6442d388599d8a3"
+    },
+    {
+      "path": "artifacts/run-1/strict-replaced-upload/dom-events.json",
+      "bytes": 172,
+      "sha256": "8abfe8800e93693a9151af673fe4916ae5a80d3154283ab212b5dfe462c514c8"
+    },
+    {
+      "path": "artifacts/run-1/strict-replaced-upload/fixture-contract.json",
+      "bytes": 685,
+      "sha256": "58561459454d3653d4ee58dea526540878119fa67ea54d5933f769e0f7ee0ab0"
+    },
+    {
+      "path": "artifacts/run-1/strict-replaced-upload/proxy-3.bin",
+      "bytes": 8503,
+      "sha256": "d2b54b073d9f22e8ab4d7ff2b64e2844f1b391f17f29abbb71a75852a75e6566"
+    },
+    {
+      "path": "artifacts/run-1/strict-replaced-upload/proxy.json",
+      "bytes": 1449,
+      "sha256": "968a4b0aa86aa9340e6d5116022d25850e8026bedf4ac40888861da93dc7a1be"
+    },
+    {
+      "path": "artifacts/run-1/strict-replaced-upload/result.json",
+      "bytes": 907,
+      "sha256": "617cd557c5d49eb9842cb2a5949bce485c9062a1833df1ce9710256053e9f624"
+    },
+    {
+      "path": "artifacts/run-1/strict-replaced-upload/routes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-replaced-upload/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/strict-replaced-upload/server.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-same-click/browser-requests.json",
+      "bytes": 769,
+      "sha256": "369e74416195b8fe9c5bcc44ba649d4801894a4740f51db26426c456790fb339"
+    },
+    {
+      "path": "artifacts/run-1/strict-same-click/cdp.json",
+      "bytes": 2287,
+      "sha256": "53c2cdbc1849029aaee5a33aeff7ea2c2d34ad41457e06c76bcaf2d6c8b0dba2"
+    },
+    {
+      "path": "artifacts/run-1/strict-same-click/dom-events.json",
+      "bytes": 167,
+      "sha256": "0dc21453a3c54d2411cc199ccf1786ec25877d262868e57aef61d5d7fe4faf70"
+    },
+    {
+      "path": "artifacts/run-1/strict-same-click/fixture-contract.json",
+      "bytes": 407,
+      "sha256": "0fad3e64348315dbdf2b1d4f97431a96877e1d3a566efa093193b82bd2daebff"
+    },
+    {
+      "path": "artifacts/run-1/strict-same-click/proxy-3.bin",
+      "bytes": 59,
+      "sha256": "0da6b1cb07bf9452b697e0984224be0b1ebcf4096955a1682010ca861bd7b43b"
+    },
+    {
+      "path": "artifacts/run-1/strict-same-click/proxy-4.bin",
+      "bytes": 61,
+      "sha256": "7e06266e059b31a0a5ccd38b8b6faa0a1d1872fd05f8f13def467f95b96c53c0"
+    },
+    {
+      "path": "artifacts/run-1/strict-same-click/proxy.json",
+      "bytes": 1510,
+      "sha256": "9a368b7f1d7355daef26297f0572206143def7d9dca7dac362593a8cf25db060"
+    },
+    {
+      "path": "artifacts/run-1/strict-same-click/result.json",
+      "bytes": 769,
+      "sha256": "5d7796453fa10b6a090f3cefae178af3929025403656867c6ce9b4448cdfe51a"
+    },
+    {
+      "path": "artifacts/run-1/strict-same-click/routes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-same-click/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/strict-same-click/server-body-1.bin",
+      "bytes": 59,
+      "sha256": "0da6b1cb07bf9452b697e0984224be0b1ebcf4096955a1682010ca861bd7b43b"
+    },
+    {
+      "path": "artifacts/run-1/strict-same-click/server.json",
+      "bytes": 365,
+      "sha256": "97e5340c1419da94a35e1e0e25ba898b12797dad6aca7d1a4e6155f6930ef63f"
+    },
+    {
+      "path": "artifacts/run-1/strict-service-worker-unknown/browser-requests.json",
+      "bytes": 410,
+      "sha256": "b2439fb7063867257eed22803a74e2313af56be9e13e49b2bd469e57a1c124b4"
+    },
+    {
+      "path": "artifacts/run-1/strict-service-worker-unknown/cdp.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-service-worker-unknown/dom-events.json",
+      "bytes": 179,
+      "sha256": "5f1119ee730ca0e8ee0c1d4fa69fe929607a590aaa3e5297f36fc46ae41cef1d"
+    },
+    {
+      "path": "artifacts/run-1/strict-service-worker-unknown/fixture-contract.json",
+      "bytes": 431,
+      "sha256": "c1df11798f92697c1179e09c2f7e652c215b3cafca161f0c4b8d087d80a4a34f"
+    },
+    {
+      "path": "artifacts/run-1/strict-service-worker-unknown/proxy-4.bin",
+      "bytes": 71,
+      "sha256": "2195dde126c3e270210d94d52a4dc02e090bead8d757f1bd98719f75c6bab153"
+    },
+    {
+      "path": "artifacts/run-1/strict-service-worker-unknown/proxy.json",
+      "bytes": 1514,
+      "sha256": "70b562e3af89284bc1024420f49e8f6a1c5bad2a6a760cb8add26a774ebad169"
+    },
+    {
+      "path": "artifacts/run-1/strict-service-worker-unknown/result.json",
+      "bytes": 708,
+      "sha256": "f662d37a87d8a20f7ca3d632ced662cf0305f6b36d38215ef7065666270a064c"
+    },
+    {
+      "path": "artifacts/run-1/strict-service-worker-unknown/routes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-service-worker-unknown/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/strict-service-worker-unknown/server.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-worker-unknown/browser-requests.json",
+      "bytes": 394,
+      "sha256": "5a5710f9d7933e681ec23911cec9bff29588278cf9b68ad8f24a8af28492c5a0"
+    },
+    {
+      "path": "artifacts/run-1/strict-worker-unknown/cdp.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-worker-unknown/dom-events.json",
+      "bytes": 171,
+      "sha256": "d3d98862272cece7d0ce012200edbe7d2f266fdae30f4e7cc748d0940f19e726"
+    },
+    {
+      "path": "artifacts/run-1/strict-worker-unknown/fixture-contract.json",
+      "bytes": 415,
+      "sha256": "9ff360bde100fd526784ecbc0e7bb51b19236bd039e7da37af3f8d2843aed848"
+    },
+    {
+      "path": "artifacts/run-1/strict-worker-unknown/proxy-4.bin",
+      "bytes": 63,
+      "sha256": "8f6ad821dfa7dfec0b44836f9981b1bb902c20640d8f63726024c887b7d9ac37"
+    },
+    {
+      "path": "artifacts/run-1/strict-worker-unknown/proxy.json",
+      "bytes": 1486,
+      "sha256": "1760dafb3af2e64b227b16fe85b73a5b81512cad97012e864127cdc802a985e2"
+    },
+    {
+      "path": "artifacts/run-1/strict-worker-unknown/result.json",
+      "bytes": 684,
+      "sha256": "b21f660ad997e5c3eeaf526a39691e338ee5e37a899d52fff70cdb0ed04cdd2e"
+    },
+    {
+      "path": "artifacts/run-1/strict-worker-unknown/routes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-worker-unknown/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/strict-worker-unknown/server.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-xhr/browser-requests.json",
+      "bytes": 741,
+      "sha256": "444d69ffbd8e478003e9f915608777bfe13c1756c0bd6cff24bf15825dc9a9c2"
+    },
+    {
+      "path": "artifacts/run-1/strict-xhr/cdp.json",
+      "bytes": 2679,
+      "sha256": "4dc62d9fa3f80550392bd149bff3b75695717e46add6ff0ca850df43810db4f9"
+    },
+    {
+      "path": "artifacts/run-1/strict-xhr/dom-events.json",
+      "bytes": 160,
+      "sha256": "77472ad0914fb07a5634f53767da971082aa6f13a85924893d6028ce00473a8a"
+    },
+    {
+      "path": "artifacts/run-1/strict-xhr/fixture-contract.json",
+      "bytes": 393,
+      "sha256": "2998d70eed1fc8fe3033fa8dbb42f7826e1fd4e7d68f200fded9bc0037ec667c"
+    },
+    {
+      "path": "artifacts/run-1/strict-xhr/proxy-3.bin",
+      "bytes": 52,
+      "sha256": "4dbc4ffd87acaf9b70d3118175ef0748a7d1e66c4991de5e72b12df41c9edecf"
+    },
+    {
+      "path": "artifacts/run-1/strict-xhr/proxy-4.bin",
+      "bytes": 54,
+      "sha256": "cb941e3000f5f78f6bcccb9cf5b69ac537319f47cc613fb8e637d32e55c04605"
+    },
+    {
+      "path": "artifacts/run-1/strict-xhr/proxy.json",
+      "bytes": 1475,
+      "sha256": "5506e2b92bd432f1d5ce5c3950f99d8b87934f6be5132df81166b0832143b863"
+    },
+    {
+      "path": "artifacts/run-1/strict-xhr/result.json",
+      "bytes": 755,
+      "sha256": "d2a46bf447f245b5dcc9d2f04645b8160e8345db2a4f6e34fbfd8d9c1c2dcae2"
+    },
+    {
+      "path": "artifacts/run-1/strict-xhr/routes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-1/strict-xhr/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-1/strict-xhr/server-body-1.bin",
+      "bytes": 52,
+      "sha256": "4dbc4ffd87acaf9b70d3118175ef0748a7d1e66c4991de5e72b12df41c9edecf"
+    },
+    {
+      "path": "artifacts/run-1/strict-xhr/server.json",
+      "bytes": 351,
+      "sha256": "0f82360e4e70c7a5bbc66312cf53466236f095718073ea817f7bff0476b79cfe"
+    },
+    {
+      "path": "artifacts/run-2/environment.json",
+      "bytes": 168,
+      "sha256": "20c4b998acc469d27c378678752cd812ebfbb79f8d5d4faa0136b9e5efd6edba"
+    },
+    {
+      "path": "artifacts/run-2/results.json",
+      "bytes": 948,
+      "sha256": "ae19435ea5fcefaa76d9bd5ea865a33a3af04e31d1f7ea97f4df130b06b38701"
+    },
+    {
+      "path": "artifacts/run-2/source/PLAN.md",
+      "bytes": 3653,
+      "sha256": "16a3c36c1915f23827cb391ae03c8a3c4c5bd8c3050e8c032d99ce22c35dea86"
+    },
+    {
+      "path": "artifacts/run-2/source/fixture.mjs",
+      "bytes": 8629,
+      "sha256": "ed41b703eab2c43d1366ff5b5c672948971c57f0204e933cdeaa2113627a3e56"
+    },
+    {
+      "path": "artifacts/run-2/source/run.mjs",
+      "bytes": 15081,
+      "sha256": "f214b2b8451921c3544217589ff3d522f337448016a353092794bab9151bae00"
+    },
+    {
+      "path": "artifacts/run-2/source/wire.mjs",
+      "bytes": 6586,
+      "sha256": "f40787a83f251e7074954519dea8dd6fb30414aaa682abffb9a9eb2772327108"
+    },
+    {
+      "path": "artifacts/run-2/source-hashes.json",
+      "bytes": 332,
+      "sha256": "b9a38a4db2a6412b166ea898070bbb715920308e9f697536455cc53f7f172b12"
+    },
+    {
+      "path": "artifacts/run-2/strict-extra-first/browser-requests.json",
+      "bytes": 773,
+      "sha256": "2e49c3182045114e148821a5ce722f361270f5329396264e5f1d244b873bde17"
+    },
+    {
+      "path": "artifacts/run-2/strict-extra-first/cdp.json",
+      "bytes": 2299,
+      "sha256": "b4839ef3a8f996261aab6cfcd696dd7f50afcb652ee4c64f208fe624db085032"
+    },
+    {
+      "path": "artifacts/run-2/strict-extra-first/dom-events.json",
+      "bytes": 168,
+      "sha256": "3a4ff1636c3fc6589b1a488d895faa791c3cf803df9af37c64b96ba78d7d3a57"
+    },
+    {
+      "path": "artifacts/run-2/strict-extra-first/fixture-contract.json",
+      "bytes": 409,
+      "sha256": "762dfdd06bc06a3588ef81177e3b9d08bcccf78fbf55f2644e23f5d7535e59e0"
+    },
+    {
+      "path": "artifacts/run-2/strict-extra-first/proxy-3.bin",
+      "bytes": 62,
+      "sha256": "04c922dbbdff40d38ce3422a433bba9c55a0674d186b277b07f0345235e30bbd"
+    },
+    {
+      "path": "artifacts/run-2/strict-extra-first/proxy-4.bin",
+      "bytes": 60,
+      "sha256": "de35ba2962cf4c8d631c344540343bd0a98c6f6e07c2f891cb1aa30cee8a0ad9"
+    },
+    {
+      "path": "artifacts/run-2/strict-extra-first/proxy.json",
+      "bytes": 1511,
+      "sha256": "589689c0383b8023601dd0c9618e223a9ee10f43fb52e2322065dbbfab19fb79"
+    },
+    {
+      "path": "artifacts/run-2/strict-extra-first/result.json",
+      "bytes": 862,
+      "sha256": "b2d321c2469e0d62b6c68648a19cd7bce4e9b13f7e32fa4cfb70131aa7137359"
+    },
+    {
+      "path": "artifacts/run-2/strict-extra-first/routes.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/run-2/strict-extra-first/sample.bin",
+      "bytes": 8192,
+      "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+    },
+    {
+      "path": "artifacts/run-2/strict-extra-first/server-body-1.bin",
+      "bytes": 60,
+      "sha256": "de35ba2962cf4c8d631c344540343bd0a98c6f6e07c2f891cb1aa30cee8a0ad9"
+    },
+    {
+      "path": "artifacts/run-2/strict-extra-first/server.json",
+      "bytes": 367,
+      "sha256": "a4e38f53861bc9c08d663fa160e9a343ed3167c5e9bde436447f5fd3b9f6336a"
+    },
+    {
+      "path": "audit.py",
+      "bytes": 9848,
+      "sha256": "b4b68f42892b2a0aee563bc81d742ef6e109a3745acad62926c4d1d54870e742"
+    },
+    {
+      "path": "fixture.mjs",
+      "bytes": 8629,
+      "sha256": "ed41b703eab2c43d1366ff5b5c672948971c57f0204e933cdeaa2113627a3e56"
+    },
+    {
+      "path": "run.mjs",
+      "bytes": 15081,
+      "sha256": "f214b2b8451921c3544217589ff3d522f337448016a353092794bab9151bae00"
+    },
+    {
+      "path": "wire.mjs",
+      "bytes": 6586,
+      "sha256": "f40787a83f251e7074954519dea8dd6fb30414aaa682abffb9a9eb2772327108"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>任务 A 对话</title>
+<style>*{box-sizing:border-box}body{margin:0;padding:14px;background:#fff;color:#163650;border:2px solid #315b7b;border-radius:12px;font:14px/1.45 system-ui;min-height:190px}h2{margin:0 0 7px;font-size:16px}p{font-size:12px;margin:4px 0;color:#506477}form{display:flex;gap:6px;margin:10px 0 8px}input{min-width:0;flex:1;border:1px solid #94aabb;border-radius:5px;padding:8px;font:14px system-ui}button{border:0;border-radius:5px;background:#174d80;color:white;padding:8px 10px;cursor:pointer}#copy{font-size:12px;background:#e5eff7;color:#174d80;padding:5px 8px}#reply{min-height:18px;color:#176b54;font-size:12px}</style>
+<h2>任务 A 的对话</h2><p id="help">先输入“对话测试”，确认 A、B 仍自动运行。</p>
+<form id="form"><input id="message" aria-label="任务 A 对话" placeholder="输入对话测试或继续" autocomplete="off"><button>发送</button></form>
+<button id="copy">复制粘贴样本文字</button><div id="reply"></div>
+<script>
+document.querySelector('#form').onsubmit=async e=>{e.preventDefault();const input=document.querySelector('#message');const result=await window.takeoverLab.command('message',input.value);document.querySelector('#reply').textContent=result.message||'';if(result.accepted)input.value='';};
+document.querySelector('#copy').onclick=async()=>{await window.takeoverLab.command('copy');document.querySelector('#reply').textContent='已复制：网页粘贴测试 2026';};
+window.takeoverLab.onState(s=>{document.querySelector('#help').textContent=s.chatHelp;});
+</script></html>

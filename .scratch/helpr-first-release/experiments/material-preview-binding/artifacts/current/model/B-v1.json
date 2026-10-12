@@ -1,0 +1,138 @@
+{
+  "call": 2,
+  "inputHash": "ae809c91ec627d28b15f5fabbce07830d15120bc4432c41dbfc8ce0001238b3c",
+  "answer": {
+    "role": "assistant",
+    "content": "{\"title\":\"虚构台账样本数量说明\",\"blocks\":[{\"template\":\"全部为虚构测试数据。\",\"bindings\":[]},{\"template\":\"{{id1}}：{{qty1}}{{unit1}}\",\"bindings\":[{\"key\":\"id1\",\"operation\":\"cell\",\"refs\":[\"虚构台账!A2\"],\"value\":\"NORTH-001\"},{\"key\":\"qty1\",\"operation\":\"cell\",\"refs\":[\"虚构台账!B2\"],\"value\":3},{\"key\":\"unit1\",\"operation\":\"cell\",\"refs\":[\"虚构台账!C2\"],\"value\":\"份\"}]},{\"template\":\"{{id2}}：{{qty2}}{{unit2}}\",\"bindings\":[{\"key\":\"id2\",\"operation\":\"cell\",\"refs\":[\"虚构台账!A3\"],\"value\":\"SOUTH-002\"},{\"key\":\"qty2\",\"operation\":\"cell\",\"refs\":[\"虚构台账!B3\"],\"value\":7},{\"key\":\"unit2\",\"operation\":\"cell\",\"refs\":[\"虚构台账!C3\"],\"value\":\"份\"}]},{\"template\":\"{{id3}}：{{qty3}}{{unit3}}\",\"bindings\":[{\"key\":\"id3\",\"operation\":\"cell\",\"refs\":[\"虚构台账!A4\"],\"value\":\"ZERO-003\"},{\"key\":\"qty3\",\"operation\":\"cell\",\"refs\":[\"虚构台账!B4\"],\"value\":0},{\"key\":\"unit3\",\"operation\":\"cell\",\"refs\":[\"虚构台账!C4\"],\"value\":\"份\"}]},{\"template\":\"合计：{{total}}份\",\"bindings\":[{\"key\":\"total\",\"operation\":\"sum\",\"refs\":[\"虚构台账!B2\",\"虚构台账!B3\",\"虚构台账!B4\"],\"value\":10}]}]}"
+  },
+  "proposal": {
+    "title": "虚构台账样本数量说明",
+    "blocks": [
+      {
+        "template": "全部为虚构测试数据。",
+        "bindings": []
+      },
+      {
+        "template": "{{id1}}：{{qty1}}{{unit1}}",
+        "bindings": [
+          {
+            "key": "id1",
+            "operation": "cell",
+            "refs": [
+              "虚构台账!A2"
+            ],
+            "value": "NORTH-001"
+          },
+          {
+            "key": "qty1",
+            "operation": "cell",
+            "refs": [
+              "虚构台账!B2"
+            ],
+            "value": 3
+          },
+          {
+            "key": "unit1",
+            "operation": "cell",
+            "refs": [
+              "虚构台账!C2"
+            ],
+            "value": "份"
+          }
+        ]
+      },
+      {
+        "template": "{{id2}}：{{qty2}}{{unit2}}",
+        "bindings": [
+          {
+            "key": "id2",
+            "operation": "cell",
+            "refs": [
+              "虚构台账!A3"
+            ],
+            "value": "SOUTH-002"
+          },
+          {
+            "key": "qty2",
+            "operation": "cell",
+            "refs": [
+              "虚构台账!B3"
+            ],
+            "value": 7
+          },
+          {
+            "key": "unit2",
+            "operation": "cell",
+            "refs": [
+              "虚构台账!C3"
+            ],
+            "value": "份"
+          }
+        ]
+      },
+      {
+        "template": "{{id3}}：{{qty3}}{{unit3}}",
+        "bindings": [
+          {
+            "key": "id3",
+            "operation": "cell",
+            "refs": [
+              "虚构台账!A4"
+            ],
+            "value": "ZERO-003"
+          },
+          {
+            "key": "qty3",
+            "operation": "cell",
+            "refs": [
+              "虚构台账!B4"
+            ],
+            "value": 0
+          },
+          {
+            "key": "unit3",
+            "operation": "cell",
+            "refs": [
+              "虚构台账!C4"
+            ],
+            "value": "份"
+          }
+        ]
+      },
+      {
+        "template": "合计：{{total}}份",
+        "bindings": [
+          {
+            "key": "total",
+            "operation": "sum",
+            "refs": [
+              "虚构台账!B2",
+              "虚构台账!B3",
+              "虚构台账!B4"
+            ],
+            "value": 10
+          }
+        ]
+      }
+    ]
+  },
+  "metadata": [
+    {
+      "label": "B-v1",
+      "startedAt": "2026-10-12T06:12:18.190Z",
+      "requestedModel": "deepseek-flash",
+      "httpStatus": 200,
+      "servedModel": "deepseek-flash",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 1116,
+        "completion_tokens": 373,
+        "total_tokens": 1489,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1116
+      },
+      "endedAt": "2026-10-12T06:12:19.992Z",
+      "durationMs": 1802.1192919999999
+    }
+  ]
+}

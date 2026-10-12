@@ -1,0 +1,17 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>人工接管实验页</title>
+<style>*{box-sizing:border-box}body{margin:0;padding:24px 28px 70px;background:#f5f7fa;color:#172c45;font:16px/1.5 system-ui}h1{font-size:24px;margin:0 0 4px}.caption{font-size:13px;color:#5b6b7b}.counts{display:flex;gap:12px;margin:20px 0}.count{background:white;border:1px solid #dae2eb;border-radius:12px;padding:14px;flex:1}.count strong{display:block;font-size:30px;color:#1b7661}label{display:block;margin:20px 0 6px;font-weight:650}input{width:100%;font:18px system-ui;border:1px solid #a9b9ca;padding:12px;border-radius:8px}input:focus{outline:3px solid #70cbbb}button{font:15px system-ui;border:1px solid #adbfce;padding:10px 14px;border-radius:8px;background:white;cursor:pointer}button:disabled{color:#8191a0;background:#e8edf2}.note{padding:12px;background:#e6f3ef;border-radius:8px;margin:14px 0}details{margin-top:26px;font-size:12px;color:#657585}#manualClick{background:#174d80;color:white;width:100%;margin-top:10px;font-size:18px;padding:14px}#last{margin:6px 0;min-height:24px}</style>
+<h1 id="title"></h1><div class="caption">本机虚构网页 · 操作和内容分别属于各自任务</div>
+<div class="counts"><div class="count">自动进度<strong id="autoCount">0</strong></div><div class="count">人工点击<strong id="manualCount">0</strong></div></div>
+<div id="last" class="caption">请按窗口上方指引操作。</div>
+<button id="manualClick">点这里，接管任务 A</button>
+<label for="ime">中文输入法核对</label><input id="ime" placeholder="在“中文输入”步骤亲手键入：手动接管测试" autocomplete="off">
+<label for="paste">粘贴核对</label><input id="paste" placeholder="在“粘贴”步骤按 ⌘V" autocomplete="off">
+<div class="note">接管时只让对应任务停下。已有输入应保留，另一任务应继续。</div>
+<div style="margin-top:12px;font-size:12px;color:#657585">自动检查控件（无需操作）<br><button id="autoStep">自动推进</button><button id="late" disabled>延后自动点击</button><button id="accepted">提交延迟结果</button><input id="autoTyping" aria-label="自动输入探针" style="padding:4px;font-size:12px;margin-top:6px"></div>
+<script>
+const task=new URLSearchParams(location.search).get('task');document.querySelector('#title').textContent='任务 '+task;if(task==='B')document.querySelector('#manualClick').textContent='任务 B 的人工点击';
+const counts={auto:0,manual:0,late:0,accepted:0};let lastRequest=Promise.resolve();
+async function commit(kind){const response=await fetch('/commit',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({task,kind})});const result=await response.json();counts[kind]=result.count;document.querySelector('#autoCount').textContent=counts.auto;document.querySelector('#manualCount').textContent=counts.manual;document.querySelector('#last').textContent=kind==='accepted'?'先前已经提交的结果现已返回':'最近完成：'+({auto:'自动推进',manual:'人工点击',late:'延后点击'}[kind]||kind);return result;}
+for(const [id,kind]of [['autoStep','auto'],['manualClick','manual'],['late','late'],['accepted','accepted']])document.querySelector('#'+id).onclick=()=>lastRequest=commit(kind);
+window.lab={snapshot:()=>({task,counts:{...counts},ime:document.querySelector('#ime').value,paste:document.querySelector('#paste').value,typing:document.querySelector('#autoTyping').value,url:location.href}),wait:()=>lastRequest,enableLate:()=>document.querySelector('#late').disabled=false,disableLate:()=>document.querySelector('#late').disabled=true};
+</script></html>

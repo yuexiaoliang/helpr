@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "receivedAt": 1791786972328,
+    "method": "GET",
+    "path": "/fixture/strict-xhr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "generationAtReceipt": 0,
+    "decision": "forwarded",
+    "resource": true,
+    "forwardedAt": 1791786972328,
+    "responseAt": 1791786972329,
+    "status": 200
+  },
+  {
+    "id": 2,
+    "receivedAt": 1791786972333,
+    "method": "GET",
+    "path": "/client.js?case=strict-xhr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "generationAtReceipt": 0,
+    "decision": "forwarded",
+    "resource": true,
+    "forwardedAt": 1791786972333,
+    "responseAt": 1791786972333,
+    "status": 200
+  },
+  {
+    "id": 3,
+    "receivedAt": 1791786972389,
+    "method": "POST",
+    "path": "/sink/strict-xhr",
+    "bytes": 52,
+    "sha256": "4dbc4ffd87acaf9b70d3118175ef0748a7d1e66c4991de5e72b12df41c9edecf",
+    "generationAtReceipt": 1,
+    "contractId": "contract-strict-xhr",
+    "decision": "forwarded",
+    "resource": false,
+    "forwardedAt": 1791786972390,
+    "responseAt": 1791786972392,
+    "status": 200
+  },
+  {
+    "id": 4,
+    "receivedAt": 1791786972392,
+    "method": "POST",
+    "path": "/sink/strict-xhr",
+    "bytes": 54,
+    "sha256": "cb941e3000f5f78f6bcccb9cf5b69ac537319f47cc613fb8e637d32e55c04605",
+    "generationAtReceipt": 1,
+    "decision": "blocked",
+    "reason": "contract-consumed"
+  }
+]

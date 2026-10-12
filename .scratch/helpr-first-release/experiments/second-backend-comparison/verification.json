@@ -1,0 +1,78 @@
+{
+  "at": "2026-10-11T23:16:10.689Z",
+  "passed": true,
+  "calls": 34,
+  "totalTokens": 82783,
+  "phaseCounts": {
+    "probe": {
+      "calls": 0,
+      "tokens": 0
+    },
+    "learn": {
+      "calls": 25,
+      "tokens": 66487
+    },
+    "calibrate": {
+      "calls": 3,
+      "tokens": 5460
+    },
+    "evaluate": {
+      "calls": 6,
+      "tokens": 10836
+    }
+  },
+  "outcomes": {
+    "learn": "failed",
+    "learn-2": "failed",
+    "learn-3": "learned-unvalidated",
+    "calibration": "uncertain",
+    "calibration-2": "completed",
+    "heldout": "completed",
+    "heldout-collision": "completed",
+    "changed-control": "correctly-blocked"
+  },
+  "operations": {
+    "learn": {
+      "uploadActions": 0,
+      "uploads": 0,
+      "writes": 0
+    },
+    "learn-2": {
+      "uploadActions": 2,
+      "uploads": 1,
+      "writes": 0
+    },
+    "learn-3": {
+      "uploadActions": 1,
+      "uploads": 1,
+      "writes": 1
+    },
+    "calibration": {
+      "uploadActions": 1,
+      "uploads": 1,
+      "writes": 1
+    },
+    "calibration-2": {
+      "uploadActions": 1,
+      "uploads": 1,
+      "writes": 1
+    },
+    "heldout": {
+      "uploadActions": 1,
+      "uploads": 1,
+      "writes": 1
+    },
+    "heldout-collision": {
+      "uploadActions": 1,
+      "uploads": 1,
+      "writes": 1
+    },
+    "changed-control": {
+      "uploadActions": 0,
+      "uploads": 0,
+      "writes": 0
+    }
+  },
+  "verifiedFiles": 324,
+  "knownHistoricalDeviation": "learn-2 made two file selections, with only one upload request; its failure is retained"
+}

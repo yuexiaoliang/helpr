@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "receivedAt": 1791786974803,
+    "method": "GET",
+    "path": "/fixture/strict-redirect",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "generationAtReceipt": 0,
+    "decision": "forwarded",
+    "resource": true,
+    "forwardedAt": 1791786974803,
+    "responseAt": 1791786974803,
+    "status": 200
+  },
+  {
+    "id": 2,
+    "receivedAt": 1791786974807,
+    "method": "GET",
+    "path": "/client.js?case=strict-redirect",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "generationAtReceipt": 0,
+    "decision": "forwarded",
+    "resource": true,
+    "forwardedAt": 1791786974807,
+    "responseAt": 1791786974808,
+    "status": 200
+  },
+  {
+    "id": 3,
+    "receivedAt": 1791786974861,
+    "method": "POST",
+    "path": "/redirect/strict-redirect",
+    "bytes": 57,
+    "sha256": "ca1e6b4de4c3a9634883529422f805f428b4910172e5a9377dc2d9d7aa864d44",
+    "generationAtReceipt": 1,
+    "contractId": "contract-strict-redirect",
+    "decision": "forwarded",
+    "resource": false,
+    "forwardedAt": 1791786974861,
+    "responseAt": 1791786974862,
+    "status": 307
+  },
+  {
+    "id": 4,
+    "receivedAt": 1791786974876,
+    "method": "POST",
+    "path": "/sink/strict-redirect",
+    "bytes": 57,
+    "sha256": "ca1e6b4de4c3a9634883529422f805f428b4910172e5a9377dc2d9d7aa864d44",
+    "generationAtReceipt": 1,
+    "decision": "blocked",
+    "reason": "contract-consumed"
+  }
+]

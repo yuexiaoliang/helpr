@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "receivedAt": 1791786976584,
+    "method": "GET",
+    "path": "/fixture/strict-held-revoke",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "generationAtReceipt": 0,
+    "decision": "forwarded",
+    "resource": true,
+    "forwardedAt": 1791786976584,
+    "responseAt": 1791786976585,
+    "status": 200
+  },
+  {
+    "id": 2,
+    "receivedAt": 1791786976588,
+    "method": "GET",
+    "path": "/client.js?case=strict-held-revoke",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "generationAtReceipt": 0,
+    "decision": "forwarded",
+    "resource": true,
+    "forwardedAt": 1791786976589,
+    "responseAt": 1791786976589,
+    "status": 200
+  },
+  {
+    "id": 3,
+    "receivedAt": 1791786976643,
+    "method": "POST",
+    "path": "/sink/strict-held-revoke",
+    "bytes": 60,
+    "sha256": "1f3ea4c2882c0033c4ece800c428fa87f56452bbce4b30b8c3ce2f6aac6ce906",
+    "generationAtReceipt": 1,
+    "heldAt": 1791786976643,
+    "decision": "blocked",
+    "reason": "revoked-before-forward"
+  }
+]

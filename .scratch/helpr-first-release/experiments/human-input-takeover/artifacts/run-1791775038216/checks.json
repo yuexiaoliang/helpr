@@ -1,0 +1,428 @@
+[
+  {
+    "seq": 24,
+    "at": "2026-10-12T03:17:20.009Z",
+    "ms": 1332.91,
+    "mode": "automatic",
+    "phase": "source-separation",
+    "kind": "assertion",
+    "name": "five-automatic-input-paths-do-not-take-over",
+    "pass": true,
+    "detail": {
+      "nativeCount": 0,
+      "domEvents": 14
+    }
+  },
+  {
+    "seq": 33,
+    "at": "2026-10-12T03:17:20.161Z",
+    "ms": 1484.85,
+    "mode": "automatic",
+    "phase": "waiting-click",
+    "kind": "assertion",
+    "name": "native-A-invalidates-only-A-synchronously",
+    "pass": true,
+    "detail": {
+      "event": {
+        "seq": 30,
+        "at": "2026-10-12T03:17:20.159Z",
+        "ms": 1483.36,
+        "mode": "automatic",
+        "phase": "waiting-click",
+        "kind": "native-input",
+        "owner": "A",
+        "type": "mouseDown",
+        "receiverClass": "RenderWidgetHostViewCocoa",
+        "x": 100,
+        "y": 170,
+        "timestamp": 260385.21063670836,
+        "eventNumber": 9901,
+        "modifiers": 0,
+        "testInjection": true
+      }
+    }
+  },
+  {
+    "seq": 42,
+    "at": "2026-10-12T03:17:20.319Z",
+    "ms": 1643.55,
+    "mode": "automatic",
+    "phase": "waiting-click",
+    "kind": "assertion",
+    "name": "waiting-click-canceled-before-enable",
+    "pass": true,
+    "detail": {
+      "pendingResult": {
+        "ok": false,
+        "error": "locator.click: Execution stopped or superseded\nCall log:\n\u001b[2m  - waiting for locator('#late')\u001b[22m\n\u001b[2m    - locator resolved to <button disabled id=\"late\">延后自动点击</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is not enabled\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 100ms\u001b[22m\n\u001b[2m  - operation was aborted: Execution stopped or superseded\u001b[22m\n"
+      }
+    }
+  },
+  {
+    "seq": 44,
+    "at": "2026-10-12T03:17:20.864Z",
+    "ms": 2188.11,
+    "mode": "automatic",
+    "phase": "waiting-click",
+    "kind": "assertion",
+    "name": "accepted-request-can-finish-after-stop",
+    "pass": true,
+    "detail": {}
+  },
+  {
+    "seq": 45,
+    "at": "2026-10-12T03:17:20.864Z",
+    "ms": 2188.37,
+    "mode": "automatic",
+    "phase": "waiting-click",
+    "kind": "assertion",
+    "name": "B-continues-during-A-takeover",
+    "pass": true,
+    "detail": {}
+  },
+  {
+    "seq": 56,
+    "at": "2026-10-12T03:17:20.922Z",
+    "ms": 2246.05,
+    "mode": "automatic",
+    "phase": "waiting-click",
+    "kind": "assertion",
+    "name": "old-reply-rejected-after-new-generation",
+    "pass": true,
+    "detail": {}
+  },
+  {
+    "seq": 71,
+    "at": "2026-10-12T03:17:21.050Z",
+    "ms": 2374.2,
+    "mode": "automatic",
+    "phase": "continuous-typing",
+    "kind": "assertion",
+    "name": "native-keyboard-owner-is-A",
+    "pass": true,
+    "detail": {
+      "event": {
+        "seq": 68,
+        "at": "2026-10-12T03:17:21.048Z",
+        "ms": 2372.07,
+        "mode": "automatic",
+        "phase": "continuous-typing",
+        "kind": "native-input",
+        "owner": "A",
+        "type": "keyDown",
+        "receiverClass": "RenderWidgetHostViewCocoa",
+        "x": 0,
+        "y": 912,
+        "timestamp": 260386.0994501667,
+        "eventNumber": 0,
+        "modifiers": 0,
+        "keyCode": 0,
+        "testInjection": true
+      }
+    }
+  },
+  {
+    "seq": 86,
+    "at": "2026-10-12T03:17:21.368Z",
+    "ms": 2692.5,
+    "mode": "automatic",
+    "phase": "continuous-typing",
+    "kind": "assertion",
+    "name": "continuous-input-canceled-with-partial-result",
+    "pass": true,
+    "detail": {
+      "frozen": "12a",
+      "stable": "12a"
+    }
+  },
+  {
+    "seq": 94,
+    "at": "2026-10-12T03:17:21.377Z",
+    "ms": 2701.4,
+    "mode": "automatic",
+    "phase": "overlay-isolation",
+    "kind": "assertion",
+    "name": "native-overlay-and-shell-do-not-stop-tasks",
+    "pass": true,
+    "detail": {
+      "events": [
+        {
+          "seq": 91,
+          "at": "2026-10-12T03:17:21.370Z",
+          "ms": 2694.62,
+          "mode": "automatic",
+          "phase": "overlay-isolation",
+          "kind": "native-input",
+          "owner": "chat",
+          "type": "mouseDown",
+          "receiverClass": "RenderWidgetHostViewCocoa",
+          "x": 1100,
+          "y": 760,
+          "timestamp": 260386.4220451667,
+          "eventNumber": 9901,
+          "modifiers": 0,
+          "testInjection": true
+        },
+        {
+          "seq": 92,
+          "at": "2026-10-12T03:17:21.372Z",
+          "ms": 2696.27,
+          "mode": "automatic",
+          "phase": "overlay-isolation",
+          "kind": "native-input",
+          "owner": "shell",
+          "type": "mouseDown",
+          "receiverClass": "RenderWidgetHostViewCocoa",
+          "x": 400,
+          "y": 30,
+          "timestamp": 260386.42371741668,
+          "eventNumber": 9901,
+          "modifiers": 0,
+          "testInjection": true
+        },
+        {
+          "seq": 93,
+          "at": "2026-10-12T03:17:21.374Z",
+          "ms": 2697.74,
+          "mode": "automatic",
+          "phase": "overlay-isolation",
+          "kind": "native-input",
+          "owner": "chat",
+          "type": "keyDown",
+          "receiverClass": "RenderWidgetHostViewCocoa",
+          "x": 0,
+          "y": 912,
+          "timestamp": 260386.42517241667,
+          "eventNumber": 0,
+          "modifiers": 0,
+          "keyCode": 0,
+          "testInjection": true
+        }
+      ]
+    }
+  },
+  {
+    "seq": 98,
+    "at": "2026-10-12T03:17:21.442Z",
+    "ms": 2765.82,
+    "mode": "automatic",
+    "phase": "overlay-isolation",
+    "kind": "assertion",
+    "name": "host-button-applies-layout:A",
+    "pass": true,
+    "detail": {
+      "actual": {
+        "A": {
+          "visible": true,
+          "bounds": {
+            "x": 0,
+            "y": 108,
+            "width": 1280,
+            "height": 804
+          }
+        },
+        "B": {
+          "visible": false,
+          "bounds": {
+            "x": 0,
+            "y": 108,
+            "width": 1280,
+            "height": 804
+          }
+        }
+      }
+    }
+  },
+  {
+    "seq": 100,
+    "at": "2026-10-12T03:17:21.473Z",
+    "ms": 2797.21,
+    "mode": "automatic",
+    "phase": "overlay-isolation",
+    "kind": "assertion",
+    "name": "host-button-applies-layout:B",
+    "pass": true,
+    "detail": {
+      "actual": {
+        "A": {
+          "visible": false,
+          "bounds": {
+            "x": 0,
+            "y": 108,
+            "width": 1280,
+            "height": 804
+          }
+        },
+        "B": {
+          "visible": true,
+          "bounds": {
+            "x": 0,
+            "y": 108,
+            "width": 1280,
+            "height": 804
+          }
+        }
+      }
+    }
+  },
+  {
+    "seq": 102,
+    "at": "2026-10-12T03:17:21.507Z",
+    "ms": 2831.63,
+    "mode": "automatic",
+    "phase": "overlay-isolation",
+    "kind": "assertion",
+    "name": "host-button-applies-layout:split",
+    "pass": true,
+    "detail": {
+      "actual": {
+        "A": {
+          "visible": true,
+          "bounds": {
+            "x": 0,
+            "y": 108,
+            "width": 640,
+            "height": 804
+          }
+        },
+        "B": {
+          "visible": true,
+          "bounds": {
+            "x": 640,
+            "y": 108,
+            "width": 640,
+            "height": 804
+          }
+        }
+      }
+    }
+  },
+  {
+    "seq": 103,
+    "at": "2026-10-12T03:17:21.508Z",
+    "ms": 2831.94,
+    "mode": "automatic",
+    "phase": "overlay-isolation",
+    "kind": "assertion",
+    "name": "host-view-switch-does-not-stop-tasks",
+    "pass": true,
+    "detail": {}
+  },
+  {
+    "seq": 128,
+    "at": "2026-10-12T03:17:22.194Z",
+    "ms": 3517.85,
+    "mode": "automatic",
+    "phase": "reload-ownership",
+    "kind": "assertion",
+    "name": "reload-A-click-stops-only-A",
+    "pass": true,
+    "detail": {
+      "event": {
+        "seq": 125,
+        "at": "2026-10-12T03:17:22.193Z",
+        "ms": 3516.68,
+        "mode": "automatic",
+        "phase": "reload-ownership",
+        "kind": "native-input",
+        "owner": "A",
+        "type": "mouseDown",
+        "receiverClass": "RenderWidgetHostViewCocoa",
+        "x": 100,
+        "y": 170,
+        "timestamp": 260387.24410562502,
+        "eventNumber": 9901,
+        "modifiers": 0,
+        "testInjection": true
+      }
+    }
+  },
+  {
+    "seq": 139,
+    "at": "2026-10-12T03:17:22.225Z",
+    "ms": 3549.01,
+    "mode": "automatic",
+    "phase": "reload-ownership",
+    "kind": "assertion",
+    "name": "reload-A-key-stops-only-A",
+    "pass": true,
+    "detail": {
+      "event": {
+        "seq": 136,
+        "at": "2026-10-12T03:17:22.223Z",
+        "ms": 3547.14,
+        "mode": "automatic",
+        "phase": "reload-ownership",
+        "kind": "native-input",
+        "owner": "A",
+        "type": "keyDown",
+        "receiverClass": "RenderWidgetHostViewCocoa",
+        "x": 0,
+        "y": 912,
+        "timestamp": 260387.2745885,
+        "eventNumber": 0,
+        "modifiers": 0,
+        "keyCode": 0,
+        "testInjection": true
+      }
+    }
+  },
+  {
+    "seq": 154,
+    "at": "2026-10-12T03:17:22.244Z",
+    "ms": 3568.64,
+    "mode": "automatic",
+    "phase": "reload-ownership",
+    "kind": "assertion",
+    "name": "reload-B-click-stops-only-B",
+    "pass": true,
+    "detail": {
+      "event": {
+        "seq": 151,
+        "at": "2026-10-12T03:17:22.243Z",
+        "ms": 3567.36,
+        "mode": "automatic",
+        "phase": "reload-ownership",
+        "kind": "native-input",
+        "owner": "B",
+        "type": "mouseDown",
+        "receiverClass": "RenderWidgetHostViewCocoa",
+        "x": 740,
+        "y": 170,
+        "timestamp": 260387.29479120835,
+        "eventNumber": 9901,
+        "modifiers": 0,
+        "testInjection": true
+      }
+    }
+  },
+  {
+    "seq": 168,
+    "at": "2026-10-12T03:17:22.348Z",
+    "ms": 3671.93,
+    "mode": "automatic",
+    "phase": "reload-ownership",
+    "kind": "assertion",
+    "name": "reload-and-view-switch-preserve-A-ownership",
+    "pass": true,
+    "detail": {
+      "event": {
+        "seq": 165,
+        "at": "2026-10-12T03:17:22.341Z",
+        "ms": 3664.73,
+        "mode": "automatic",
+        "phase": "reload-ownership",
+        "kind": "native-input",
+        "owner": "A",
+        "type": "mouseDown",
+        "receiverClass": "RenderWidgetHostViewCocoa",
+        "x": 100,
+        "y": 170,
+        "timestamp": 260387.39216641668,
+        "eventNumber": 9901,
+        "modifiers": 0,
+        "testInjection": true
+      }
+    }
+  }
+]

@@ -55,7 +55,7 @@
 
 用户可自行配置模型服务，配置方式参考现有 AI agent。测试阶段先使用用户提供的 DeepSeek `deepseek-flash`；这不限定正式产品只能使用该提供方或模型。
 
-`home` 只提供测试网站。现有 WordPress 实例已完成真实网页上传、发布、下载一致性验证，见 [测试记录](../testing/validation-backend.md)；第二套后台尚待选择和部署。
+`home` 只提供测试网站。WordPress 与独立 Drupal 实例均已完成环境的真实网页上传、发布和下载一致性核对，见 [WordPress 测试记录](../testing/validation-backend.md)与 [Drupal 测试记录](../testing/second-validation-backend.md)。测试后台就绪不代表产品能力已通过验收。
 
 以下属于后续工程工作：验证可见网页的承载与控制、人工输入识别、停止与恢复；设计流程表示、参数化、持久化与更新、实际结果核对、素材处理记录和执行调度。候选工具调研与调度建议尚未构成最终技术选型。
 

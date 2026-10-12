@@ -1,0 +1,172 @@
+{
+  "at": "2026-10-11T23:09:57.612Z",
+  "method": "bounded model position proposal + existing nameInput binding and action assembler",
+  "sourceHash": "42bfa0a9166a57deb450b6ea9a375fc5dafbc7ea748562d3f71e7199b27b1dca",
+  "oldSeal": "c1de7352457b3f9cfa65204c64959a6bb830983227617a02bb9f28077a6c0e64",
+  "proposal": {
+    "target": "n9",
+    "nameInput": "title",
+    "reason": "旧 finish 使用了训练样本名称「第二后台对照 learn-3 drupal」，未通过。本次实际页面 /node/3 上，标题链接为「第二后台对照 calibration drupal」（n9），与本次任务输入 title 相等，因此用 nameInput=title 绑定该动态输入，作为本次公开结果的链接。"
+  },
+  "oldFinish": {
+    "action": {
+      "op": "finish",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "link",
+        "name": "第二后台对照 learn-3 drupal"
+      }
+    },
+    "effect": "commit",
+    "before": [
+      {
+        "kind": "visible",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": "第二后台对照 learn-3 drupal"
+        }
+      }
+    ],
+    "after": [],
+    "note": "内容已保存并公开发布，页面显示标题「第二后台对照 learn-3 drupal」、正文、栏目「Excel 验证」及附件 learn-3-drupal.xlsx，公开链接为 /node/2。",
+    "id": "s7"
+  },
+  "replacement": {
+    "action": {
+      "op": "finish",
+      "target": {
+        "frame": "main",
+        "by": "role",
+        "role": "link",
+        "name": {
+          "input": "title"
+        }
+      }
+    },
+    "effect": "commit",
+    "before": [
+      {
+        "kind": "visible",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "link",
+          "name": {
+            "input": "title"
+          }
+        }
+      }
+    ],
+    "after": [],
+    "note": "旧 finish 使用了训练样本名称「第二后台对照 learn-3 drupal」，未通过。本次实际页面 /node/3 上，标题链接为「第二后台对照 calibration drupal」（n9），与本次任务输入 title 相等，因此用 nameInput=title 绑定该动态输入，作为本次公开结果的链接。",
+    "id": "s7"
+  },
+  "observations": [
+    "calibration/results.json"
+  ],
+  "recoveredReadOnlyResult": {
+    "url": "http://home.ts-ali.internal:38081/node/3",
+    "runtimeEvidence": [
+      {
+        "condition": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "heading",
+            "name": {
+              "input": "title"
+            },
+            "level": 1
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "title"
+          },
+          "covers": "title"
+        },
+        "ok": true,
+        "actual": "第二后台对照 calibration drupal",
+        "expected": "第二后台对照 calibration drupal"
+      },
+      {
+        "condition": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "text",
+            "name": {
+              "input": "body"
+            }
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "body"
+          },
+          "covers": "body"
+        },
+        "ok": true,
+        "actual": "全部内容和附件均为虚构测试素材。样本 calibration，核对编号 1ad8c07823。保留原始 Excel 文件，不改写其内容。",
+        "expected": "全部内容和附件均为虚构测试素材。样本 calibration，核对编号 1ad8c07823。保留原始 Excel 文件，不改写其内容。"
+      },
+      {
+        "condition": {
+          "kind": "text",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": {
+              "input": "category"
+            }
+          },
+          "compare": "equals",
+          "expected": {
+            "input": "category"
+          },
+          "covers": "category"
+        },
+        "ok": true,
+        "actual": "Excel 验证",
+        "expected": "Excel 验证"
+      },
+      {
+        "condition": {
+          "kind": "download",
+          "target": {
+            "frame": "main",
+            "by": "role",
+            "role": "link",
+            "name": {
+              "input": "attachment",
+              "field": "name"
+            }
+          },
+          "expected": {
+            "input": "attachment",
+            "field": "sha256"
+          },
+          "covers": "attachment"
+        },
+        "ok": true,
+        "actual": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+        "downloadedName": "calibration-drupal.xlsx"
+      }
+    ],
+    "independent": {
+      "title": "第二后台对照 calibration drupal",
+      "body": "全部内容和附件均为虚构测试素材。样本 calibration，核对编号 1ad8c07823。保留原始 Excel 文件，不改写其内容。",
+      "category": "Excel 验证",
+      "categoryUrl": "http://home.ts-ali.internal:38081/taxonomy/term/1",
+      "resultUrl": "http://home.ts-ali.internal:38081/node/3",
+      "downloadSha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+      "sourceSha256": "fb4b33f9c551bd7effddd8fd32ccb9e50dc5161dd2e86acfd0742cbb6f390602",
+      "anonymous": true,
+      "passed": true
+    }
+  },
+  "newSeal": "591064029eef1680878282ee274a39d6356b7e644e29f21f4f5207d8280f842a"
+}

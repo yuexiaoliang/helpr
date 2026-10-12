@@ -1,0 +1,52 @@
+{
+  "id": "baseline-disk-upload",
+  "mode": "baseline",
+  "kind": "upload-disk",
+  "run": "run-1",
+  "startedAt": 1791786969914,
+  "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+  "expectedReceipts": 1,
+  "checks": [
+    {
+      "name": "server-receipt-count",
+      "ok": true,
+      "details": {
+        "actual": 1,
+        "expected": 1
+      }
+    },
+    {
+      "name": "selected-original-bytes",
+      "ok": true
+    },
+    {
+      "name": "download-agrees-with-server",
+      "ok": true
+    },
+    {
+      "name": "original-upload-arrived",
+      "ok": true
+    }
+  ],
+  "actionStart": 1791786969993,
+  "primitiveReturnedAt": 1791786970018,
+  "selection": {
+    "name": "sample.bin",
+    "bytes": 8192,
+    "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+  },
+  "actors": [
+    {
+      "source": "file-change",
+      "at": 1791786970024
+    }
+  ],
+  "serverReceipts": 1,
+  "stored": 1,
+  "download": {
+    "bytes": 8192,
+    "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+  },
+  "status": "observed-as-specified",
+  "finishedAt": 1791786970225
+}

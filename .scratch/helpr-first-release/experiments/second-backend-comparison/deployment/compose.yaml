@@ -1,0 +1,12 @@
+name: helpr-validation-drupal
+services:
+  drupal:
+    image: drupal:11.4.8-php8.4-apache-trixie
+    ports:
+      - "100.122.250.142:38081:80"
+    volumes:
+      - sites:/var/www/html/sites
+      - ./private:/run/helpr-private:ro
+    restart: unless-stopped
+volumes:
+  sites:

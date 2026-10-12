@@ -1,0 +1,54 @@
+[
+  {
+    "id": 1,
+    "receivedAt": 1791786972870,
+    "method": "GET",
+    "path": "/fixture/strict-replaced-upload",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "generationAtReceipt": 0,
+    "decision": "forwarded",
+    "resource": true,
+    "forwardedAt": 1791786972870,
+    "responseAt": 1791786972871,
+    "status": 200
+  },
+  {
+    "id": 2,
+    "receivedAt": 1791786972874,
+    "method": "GET",
+    "path": "/client.js?case=strict-replaced-upload",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "generationAtReceipt": 0,
+    "decision": "forwarded",
+    "resource": true,
+    "forwardedAt": 1791786972874,
+    "responseAt": 1791786972875,
+    "status": 200
+  },
+  {
+    "id": 3,
+    "receivedAt": 1791786972908,
+    "method": "POST",
+    "path": "/sink/strict-replaced-upload",
+    "bytes": 8503,
+    "sha256": "d2b54b073d9f22e8ab4d7ff2b64e2844f1b391f17f29abbb71a75852a75e6566",
+    "generationAtReceipt": 1,
+    "parts": [
+      {
+        "name": "case",
+        "bytes": 22,
+        "sha256": "99772ec3ac911f889fd23413fc050257036d9b87611d854860afe8d85fd5c1b7"
+      },
+      {
+        "name": "file",
+        "filename": "sample.bin",
+        "bytes": 8192,
+        "sha256": "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f"
+      }
+    ],
+    "decision": "blocked",
+    "reason": "multipart-mismatch"
+  }
+]

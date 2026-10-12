@@ -1,0 +1,46 @@
+{
+  "id": "strict-matching-timer",
+  "mode": "strict",
+  "kind": "matching-timer",
+  "run": "run-1",
+  "startedAt": 1791786973719,
+  "sourceVersion": "82ce036562405daac0f399fb06becca09a1c955023b34f44b159522dcc950e5b",
+  "expectedReceipts": 1,
+  "checks": [
+    {
+      "name": "server-receipt-count",
+      "ok": true,
+      "details": {
+        "actual": 1,
+        "expected": 1
+      }
+    },
+    {
+      "name": "matching-old-timer-consumed-new-permit",
+      "ok": true
+    }
+  ],
+  "generation": 1,
+  "actionStart": 1791786973848,
+  "timerReceivedBeforeClick": true,
+  "primitiveReturnedAt": 1791786974224,
+  "selection": null,
+  "actors": [
+    {
+      "source": "old-action",
+      "at": 1791786973797
+    },
+    {
+      "source": "old-action-timer",
+      "at": 1791786974150
+    },
+    {
+      "source": "new-click",
+      "at": 1791786974220
+    }
+  ],
+  "serverReceipts": 1,
+  "stored": 1,
+  "status": "observed-as-specified",
+  "finishedAt": 1791786974410
+}

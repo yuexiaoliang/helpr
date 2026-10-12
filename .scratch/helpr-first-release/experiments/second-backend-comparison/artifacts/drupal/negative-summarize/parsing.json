@@ -1,0 +1,53 @@
+{
+  "compatible": false,
+  "reason": "模板要求将原始 Excel 文件作为可下载附件且不读取或改写其内容，而本次委托要求读取 Excel 数据生成正文摘要且不提供原文件下载链接，素材处理方式与附件用途均不相容；同时标题也不一致（模板为「第二后台对照 learn-3 drupal」，委托为「第二后台对照 negative-summarize drupal」）。",
+  "goalKind": "create_and_publish",
+  "goal": "使用站点已有的日报内容类型新建一篇内容，标题为「第二后台对照 negative-summarize drupal」，正文根据附件 Excel 数据生成摘要，栏目选择「Excel 验证」，立即公开发布，不提供原文件下载链接。",
+  "strings": [
+    {
+      "key": "title",
+      "description": "新建内容的标题",
+      "value": "第二后台对照 negative-summarize drupal",
+      "quote": "标题是「第二后台对照 negative-summarize drupal」"
+    },
+    {
+      "key": "category",
+      "description": "新建内容选择的栏目",
+      "value": "Excel 验证",
+      "quote": "栏目选择「Excel 验证」"
+    }
+  ],
+  "files": [
+    {
+      "key": "material",
+      "description": "用于读取数据生成正文摘要的 Excel 素材，不作为可下载附件提供",
+      "attachmentId": "material-1"
+    }
+  ],
+  "constraints": [
+    {
+      "description": "使用站点已有的日报内容类型新建内容",
+      "quote": "使用站点已有的日报内容类型新建一篇内容"
+    },
+    {
+      "description": "立即公开发布",
+      "quote": "立即公开发布"
+    },
+    {
+      "description": "正文根据附件数据生成摘要",
+      "quote": "正文根据附件数据生成摘要"
+    },
+    {
+      "description": "读取 Excel 数据生成正文摘要，不要提供原文件下载链接",
+      "quote": "读取 Excel 数据生成正文摘要，不要提供原文件下载链接"
+    },
+    {
+      "description": "只允许本次委托指定的内容和附件操作，不改动其它已有内容、账号或网站设置",
+      "quote": "只允许本次委托指定的内容和附件操作，不改动其它已有内容、账号或网站设置"
+    },
+    {
+      "description": "不增加建议内容",
+      "quote": "不增加建议内容"
+    }
+  ]
+}

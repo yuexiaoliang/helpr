@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "receivedAt": 1791786972605,
+    "method": "GET",
+    "path": "/fixture/strict-disk-upload",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "generationAtReceipt": 0,
+    "decision": "forwarded",
+    "resource": true,
+    "forwardedAt": 1791786972605,
+    "responseAt": 1791786972605,
+    "status": 200
+  },
+  {
+    "id": 2,
+    "receivedAt": 1791786972609,
+    "method": "GET",
+    "path": "/client.js?case=strict-disk-upload",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "generationAtReceipt": 0,
+    "decision": "forwarded",
+    "resource": true,
+    "forwardedAt": 1791786972609,
+    "responseAt": 1791786972609,
+    "status": 200
+  },
+  {
+    "id": 3,
+    "receivedAt": 1791786972642,
+    "method": "POST",
+    "path": "/sink/strict-disk-upload",
+    "bytes": 8496,
+    "sha256": "62592ee972bc040e5c0ee204b1fd91b0266424ae5959fe06969bdfdb69a5b99d",
+    "generationAtReceipt": 1,
+    "parts": [
+      {
+        "name": "case",
+        "bytes": 18,
+        "sha256": "422db890f3ea3dcf29e0827c2f49df4ad38013094e47fa150ded68e118ffc306"
+      },
+      {
+        "name": "file",
+        "filename": "sample.bin",
+        "bytes": 8192,
+        "sha256": "4c523fce4c9f80e7983de670c104a621701987861ceffa6238eca6563d26db16"
+      }
+    ],
+    "contractId": "contract-strict-disk-upload",
+    "decision": "forwarded",
+    "resource": false,
+    "forwardedAt": 1791786972643,
+    "responseAt": 1791786972644,
+    "status": 200
+  }
+]

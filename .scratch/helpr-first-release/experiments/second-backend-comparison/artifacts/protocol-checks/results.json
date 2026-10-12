@@ -1,0 +1,54 @@
+{
+  "passed": true,
+  "checks": [
+    "quoted ARIA name visible",
+    "SELECT is not fillable",
+    "submit input is not fillable",
+    "selected label succeeds despite different internal value",
+    "changed selected label rejected",
+    "no server writes"
+  ],
+  "positive": [
+    {
+      "condition": {
+        "kind": "selected-label",
+        "target": {
+          "frame": "main",
+          "by": "role",
+          "role": "combobox",
+          "name": "Choice"
+        },
+        "expected": "Visible choice"
+      },
+      "ok": true,
+      "actual": [
+        "Visible choice"
+      ],
+      "expected": "Visible choice"
+    }
+  ],
+  "negative": {
+    "code": "condition-unsatisfied",
+    "detail": {
+      "evidence": [
+        {
+          "condition": {
+            "kind": "selected-label",
+            "target": {
+              "frame": "main",
+              "by": "role",
+              "role": "combobox",
+              "name": "Choice"
+            },
+            "expected": "Visible choice"
+          },
+          "ok": false,
+          "actual": [
+            "Different choice"
+          ],
+          "expected": "Visible choice"
+        }
+      ]
+    }
+  }
+}
