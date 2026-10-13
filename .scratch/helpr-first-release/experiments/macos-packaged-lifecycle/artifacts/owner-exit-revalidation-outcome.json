@@ -1,0 +1,121 @@
+{
+  "at": "2026-10-13T03:27:32.150055+00:00",
+  "status": "failed-and-stopped",
+  "build": "build-8",
+  "run": 16,
+  "automaticRoundMs": 64082,
+  "ownerKillAt": 1791861868770,
+  "hostExitEvents": [
+    {
+      "at": 1791861868780,
+      "kind": "host-ipc-disconnected",
+      "diagnostic": "[DEBUG-owner-exit-20261013]",
+      "ownerPid": 41705,
+      "parentPid": 1,
+      "connected": false,
+      "closing": false,
+      "millisecondsAfterOwnerKill": 10
+    },
+    {
+      "at": 1791861868781,
+      "kind": "host-close-requested",
+      "diagnostic": "[DEBUG-owner-exit-20261013]",
+      "ownerPid": 41705,
+      "parentPid": 1,
+      "connected": false,
+      "closing": true,
+      "reason": "owner-disconnected",
+      "millisecondsAfterOwnerKill": 11
+    },
+    {
+      "at": 1791861868781,
+      "kind": "host-before-quit",
+      "diagnostic": "[DEBUG-owner-exit-20261013]",
+      "ownerPid": 41705,
+      "parentPid": 1,
+      "connected": false,
+      "closing": true,
+      "millisecondsAfterOwnerKill": 11
+    },
+    {
+      "at": 1791861868794,
+      "kind": "host-quit-complete",
+      "diagnostic": "[DEBUG-owner-exit-20261013]",
+      "ownerPid": 41705,
+      "parentPid": 1,
+      "connected": false,
+      "closing": true,
+      "millisecondsAfterOwnerKill": 24
+    }
+  ],
+  "actualProcessCleanup": {
+    "pass": false,
+    "observedAfterMs": 3617,
+    "survivorCount": 4,
+    "survivors": [
+      {
+        "pid": 41737,
+        "parent": 1,
+        "role": "host"
+      },
+      {
+        "pid": 41738,
+        "parent": 41737,
+        "role": "gpu"
+      },
+      {
+        "pid": 41739,
+        "parent": 41737,
+        "role": "network"
+      },
+      {
+        "pid": 41741,
+        "parent": 41737,
+        "role": "renderer"
+      }
+    ],
+    "cleanupFaultCount": 1,
+    "cleanupRequiredSIGKILL": false,
+    "remainingInstalledProcesses": []
+  },
+  "nativeStackCaptured": false,
+  "observedConclusion": "IPC disconnect reached the host; the shutdown branch and Electron quit event ran. Four OS processes still survived. The exact native shutdown blocker is not identified. The event named host-quit-complete does not prove process exit.",
+  "inferenceLimit": "The proposed native-quit-before-IPC ordering was not observed in this sample; source replays cannot substitute for native process lifecycle evidence.",
+  "taskRecords": [
+    {
+      "id": "A",
+      "intent": "running",
+      "phase": "uncertain",
+      "counter": 109,
+      "generation": 60,
+      "goal": 164
+    },
+    {
+      "id": "B",
+      "intent": "waiting",
+      "phase": "uncertain",
+      "counter": 150,
+      "generation": 23,
+      "goal": 153
+    }
+  ],
+  "databaseIntegrity": "ok",
+  "independentWebsiteFilesUnchanged": {
+    "website.json": true,
+    "website-events.jsonl": true
+  },
+  "coldReopenAfterCrash": "not-run: stop condition applied immediately after failed cleanup assertion",
+  "businessSnapshot": "/Users/yuexiaoliang/Library/Application Support/helpr Lifecycle Lab/owner-exit-build-8-final",
+  "counts": {
+    "builds": 8,
+    "installs": 6,
+    "starts": 16,
+    "faults": 14,
+    "humanRounds": 3,
+    "http": 403,
+    "modelCalls": 0,
+    "remoteWrites": 0
+  },
+  "currentSourceMatchesFrozenBuild8": true,
+  "nextEvidenceNeeded": "A bounded original-runtime reproduction that samples the exact surviving host native stacks before cleanup, with no additional candidate build until the blocked shutdown path is identified."
+}

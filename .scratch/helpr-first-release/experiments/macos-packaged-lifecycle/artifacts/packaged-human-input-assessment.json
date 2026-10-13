@@ -1,0 +1,33 @@
+{
+  "at": "2026-10-13T02:08:00.202341+00:00",
+  "userReport": "点击了最后一步“核对并继续 A”后需要看到什么？我操作完了，你自己看看对不对",
+  "run": 12,
+  "firstNativeInput": {
+    "at": 1791857040013,
+    "owner": "A",
+    "type": "mouseDown",
+    "testInjection": false
+  },
+  "A_beforeTakeover": 43,
+  "A_effectsWhileTakenOver": 0,
+  "B_effectsWhileATakenOver": 15,
+  "B_counterDuringTakeover": [
+    39,
+    53
+  ],
+  "A_afterExplicitResume": 44,
+  "website": {
+    "A": {
+      "counter": 44,
+      "text": "手动接管测试",
+      "paste": ""
+    },
+    "B": {
+      "counter": 90,
+      "text": "",
+      "paste": ""
+    }
+  },
+  "pass": true,
+  "scope": "Actual human click followed by Chinese keyboard entry. Proves A ownership, isolated pause, B progress, explicit resume and retained text; does not separately prove keyboard-only takeover or paste in this packaged build."
+}

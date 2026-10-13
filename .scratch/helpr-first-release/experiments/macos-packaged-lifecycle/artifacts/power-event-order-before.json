@@ -1,0 +1,35 @@
+{
+  "scope": "source replay; not packaged or real OS revalidation",
+  "source": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/macos-packaged-lifecycle/src/controller.mjs",
+  "sha256": "86f8f79a2d491d64d1c741811604377036e90b17f3b6ff8a25dbeac1588627b7",
+  "checks": [
+    {
+      "name": "actual sleep → lock → resume remains blocked until unlock",
+      "pass": false,
+      "error": "new action dispatched while lock-screen still applies\n\n1 !== 0\n"
+    },
+    {
+      "name": "unlock before resume also remains blocked until both clear",
+      "pass": false,
+      "error": "Expected values to be strictly equal:\n\n1 !== 0\n"
+    },
+    {
+      "name": "new lock during asynchronous reconciliation invalidates its completion",
+      "pass": false,
+      "error": "old check released a newer lock\n\n1 !== 0\n"
+    },
+    {
+      "name": "rapid re-lock and unlock waits for a fresh reconciliation",
+      "pass": true
+    },
+    {
+      "name": "failed wake reconciliation remains blocked until a later successful check",
+      "pass": true
+    },
+    {
+      "name": "duplicate wake notifications do not start concurrent checks",
+      "pass": false,
+      "error": "Expected values to be strictly equal:\n\n4 !== 2\n"
+    }
+  ]
+}

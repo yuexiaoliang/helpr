@@ -1,0 +1,54 @@
+{
+  "certificateSha1": "0A64F07EFA1ADDFF417EC018E622D71D539B8DE4",
+  "keychain": "private/lab-signing.keychain-db",
+  "kind": "new self-signed experiment certificate",
+  "systemTrustChanged": false,
+  "existingPrivateKeysReadOrExported": false,
+  "blocked": "Signing requires a usable identity; no trust workaround applied.",
+  "at": "2026-10-12T12:30:46.080467+00:00",
+  "searchListRestored": true,
+  "commands": [
+    {
+      "program": "security",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "program": "security",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "program": "security",
+      "exit": 0,
+      "stdout": "1 identity imported.\n",
+      "stderr": ""
+    },
+    {
+      "program": "openssl",
+      "exit": 0,
+      "stdout": "SHA1 Fingerprint=0A:64:F0:7E:FA:1A:DD:FF:41:7E:C0:18:E6:22:D7:1D:53:9B:8D:E4\n",
+      "stderr": ""
+    },
+    {
+      "program": "security",
+      "exit": 0,
+      "stdout": "\nPolicy: Code Signing\n  Matching identities\n  1) 0A64F07EFA1ADDFF417EC018E622D71D539B8DE4 \"helpr Lifecycle Lab 20261012\" (CSSMERR_TP_NOT_TRUSTED)\n     1 identities found\n\n  Valid identities only\n     0 valid identities found\n",
+      "stderr": ""
+    },
+    {
+      "program": "clang",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "program": "codesign",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: The specified item could not be found in the keychain.\n"
+    }
+  ]
+}

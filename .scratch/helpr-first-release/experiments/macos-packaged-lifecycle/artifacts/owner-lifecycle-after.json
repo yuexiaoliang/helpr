@@ -1,0 +1,39 @@
+{
+  "scope": "whole host source with native quit/parent order replayed; Electron effects replaced; real packaged verification still required",
+  "source": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/macos-packaged-lifecycle/src/host.cjs",
+  "sha256": "29dc2da3bb7ec89bfb5294b1871d726d929ec9cc2243d947ff624a4ca2cec67f",
+  "checks": [
+    {
+      "name": "native quit after owner death must not wait for IPC disconnect",
+      "pass": true
+    },
+    {
+      "name": "closed control channel with unchanged parent also permits native quit",
+      "pass": true
+    },
+    {
+      "name": "missing native and IPC notifications still closes on changed parent",
+      "pass": true
+    },
+    {
+      "name": "live owner gets save request and views remain until acknowledgement",
+      "pass": true
+    },
+    {
+      "name": "live owner polling does not interpret idle or waiting as failure",
+      "pass": true
+    },
+    {
+      "name": "already orphaned at initialization creates no window",
+      "pass": true
+    },
+    {
+      "name": "owner death during page load cannot create a late view or ready",
+      "pass": true
+    },
+    {
+      "name": "IPC close followed by late close message cleans resources only once",
+      "pass": true
+    }
+  ]
+}

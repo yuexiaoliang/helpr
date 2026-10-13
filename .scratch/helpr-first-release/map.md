@@ -47,6 +47,7 @@ Status: open
 - [验证持久记录与执行资格的中断一致性](issues/22-durable-record-consistency.md#answer)：本机中断与并发记录取得受控证据，容量遗漏和启动锁争用经反例修订；已派发效果与未落盘意图仍保留明确限制，真实网页和交付验证继续。
 - [验证浏览器控制连接与宿主隔离](issues/24-private-browser-control.md#answer)：私有 pipe 与受管进程转接取得 43 项限定证据，补齐消息顺序及自有视图退出；无裸调试端口，未覆盖协议和真实网站仍须继续核对。
 - [验证恢复核对依据的自动形成](issues/23-autonomous-recovery-evidence.md#answer)：真实模型与执行形成恢复依据，冻结后新进程可核对草稿及丢失回执的结果；无稳定关联或提交不确定时仍不重发，完整组合与打包继续验证。
+- [验证 macOS 自用应用的封装、更新与运行恢复](issues/25-macos-packaged-lifecycle.md#answer)：独立实验包取得更新、备份、真人接管及生命周期的限定证据，休眠与退出失败经实包复验修正；正式发布条件、升级凭据与完整组合的缺口进入验收安排。
 
 ## Not yet specified
 

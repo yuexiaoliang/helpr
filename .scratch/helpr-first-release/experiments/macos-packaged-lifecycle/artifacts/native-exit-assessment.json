@@ -1,0 +1,79 @@
+{
+  "at": "2026-10-13T03:39:01.081790+00:00",
+  "status": "diagnostic-exception-identified; fixed source not packaged",
+  "build": "build-8",
+  "run": 17,
+  "observations": [
+    {
+      "millisecondsAfterKill": 333,
+      "survivors": 4
+    },
+    {
+      "millisecondsAfterKill": 3533,
+      "survivors": 4
+    },
+    {
+      "millisecondsAfterKill": 15034,
+      "survivors": 0
+    },
+    {
+      "millisecondsAfterKill": 30034,
+      "survivors": 0
+    }
+  ],
+  "sample": {
+    "mainThread": "artifacts/native-exit-main-thread.txt",
+    "sha256": "c76291bfcff76d4fc67fe8181ba4465175e0b005a8f9a7dadaa5160bf68f5742",
+    "observedWait": "NSAlert runModal -> NSApplication runModalForWindow",
+    "fullRawIgnored": true
+  },
+  "userScreenshot": "artifacts/native-exit-error-dialog.png",
+  "exactError": "TypeError: Cannot read properties of undefined (reading 'isDestroyed') at host.cjs:57:103",
+  "cause": "The diagnostic will-quit listener queried webContents on a WebContentsView whose native contents had already been destroyed. Electron showed an uncaught exception dialog while quitting.",
+  "rootCauseScope": "Confirmed for the build-8 diagnostic dialog. Older build-7 failures lack this line and are not retrospectively explained by it.",
+  "userDismissal": {
+    "reply": "点过“好”",
+    "meaning": "User acknowledged the uncaught-exception dialog; process disappearance is human-assisted."
+  },
+  "automaticCleanupVerdict": "not passed: user clicked 好 on the exception dialog before process disappearance",
+  "sourceCorrection": "Remove object inspection from will-quit, retaining only the event marker. Regression invalidates webContents on close.",
+  "regression": {
+    "before": "artifacts/owner-destroyed-view-before.json",
+    "after": "artifacts/owner-destroyed-view-after.json",
+    "afterPassed": 9
+  },
+  "tasks": [
+    {
+      "id": "A",
+      "intent": "running",
+      "phase": "uncertain",
+      "counter": 109,
+      "generation": 61,
+      "goal": 164
+    },
+    {
+      "id": "B",
+      "intent": "waiting",
+      "phase": "uncertain",
+      "counter": 150,
+      "generation": 24,
+      "goal": 153
+    }
+  ],
+  "databaseIntegrity": "ok",
+  "independentWebsiteUnchanged": {
+    "website.json": true,
+    "website-events.jsonl": true
+  },
+  "remainingInstalledProcesses": [],
+  "counts": {
+    "builds": 8,
+    "installs": 6,
+    "starts": 17,
+    "faults": 15,
+    "http": 405,
+    "humanRounds": 3,
+    "modelCalls": 0,
+    "remoteWrites": 0
+  }
+}

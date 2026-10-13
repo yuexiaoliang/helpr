@@ -1,0 +1,27 @@
+{
+  "independentAppStarted": true,
+  "stableSignedBundle": true,
+  "nativeLoaded": true,
+  "playwrightTasksConnected": [
+    "A",
+    "B"
+  ],
+  "effectsVerified": 0,
+  "errors": [
+    {
+      "at": 1791809127239,
+      "kind": "effect-uncertain",
+      "task": "A",
+      "message": "locator.click: Timeout 6000ms exceeded.\nCall log:\n  - waiting for getByRole('button', { name: '自动推进', exact: true })\n    - locator resolved to <button id=\"advance\">自动推进</button>\n  - attempting click action\n    - waiting for element to be visible, enabled and stable\n"
+    },
+    {
+      "at": 1791809127251,
+      "kind": "effect-uncertain",
+      "task": "B",
+      "message": "locator.click: Timeout 6000ms exceeded.\nCall log:\n  - waiting for getByRole('button', { name: '自动推进', exact: true })\n    - locator resolved to <button id=\"advance\">自动推进</button>\n  - attempting click action\n    - waiting for element to be visible, enabled and stable\n"
+    }
+  ],
+  "computerUse": "native app inspection timed out; no tool input performed",
+  "packagedFlag": false,
+  "passed": false
+}

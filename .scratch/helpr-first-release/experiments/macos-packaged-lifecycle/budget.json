@@ -1,0 +1,147 @@
+{
+  "builds": 9,
+  "installs": 7,
+  "modelCalls": 0,
+  "remoteWrites": 0,
+  "liveStartedAt": 1791809113438,
+  "deadline": 1791864460365,
+  "faults": 16,
+  "userWaits": [
+    {
+      "since": "2026-10-12T12:51:18.813834+00:00",
+      "reason": "Check and dismiss any leftover signing authorization dialog; confirm desktop usability. Trust change request was withdrawn.",
+      "until": "2026-10-12T14:01:19.098918+00:00",
+      "elapsedMs": 4200285,
+      "reply": "已取消旧弹窗，桌面正常",
+      "supersededTrustApproval": "No action: request withdrawn; signing works without trust change"
+    },
+    {
+      "since": "2026-10-12T14:31:56.107714+00:00",
+      "reason": "Same-app Safe Storage authorization after actual signed update; dispatch remains closed",
+      "until": "2026-10-12T21:25:19.176296+00:00",
+      "elapsedMs": 24803069,
+      "reply": "已允许"
+    },
+    {
+      "since": "2026-10-12T21:29:32.299862+00:00",
+      "reason": "Fresh same-app Safe Storage authorization after run 08 timed out; run 09 stays in maintenance with no webpage dispatch",
+      "until": "2026-10-12T22:38:33.018049+00:00",
+      "elapsedMs": 4140718,
+      "reply": "好了"
+    },
+    {
+      "since": "2026-10-12T22:42:57.606849+00:00",
+      "reason": "Packaged human input round 1: user starts A, clicks its own page, enters Chinese text, then explicitly resumes; B starts only after first A continue",
+      "until": "2026-10-13T02:01:07.648961+00:00",
+      "elapsedMs": 11890042,
+      "reply": "我没看到窗口",
+      "outcome": "No human input observed; app exited at its 90-minute runtime cap. Reopen same installed build and rearm the same first human round."
+    },
+    {
+      "since": "2026-10-13T02:03:01.152918+00:00",
+      "reason": "Same unperformed first human input round rearmed after runtime-cap exit; existing app reopened as run 12 and reports visible/focused",
+      "until": "2026-10-13T02:08:00.203144+00:00",
+      "elapsedMs": 299050,
+      "reply": "点击了最后一步“核对并继续 A”后需要看到什么？我操作完了，你自己看看对不对",
+      "outcome": "Human input round 1 passed with native and independent website evidence"
+    },
+    {
+      "since": "2026-10-13T02:10:42.237683+00:00",
+      "reason": "Human round 2, lock/unlock phase: A stopped, B given bounded virtual work; user performs real OS lock, no synthetic event",
+      "until": "2026-10-13T02:16:44.612895+00:00",
+      "elapsedMs": 362375,
+      "reply": "已解锁",
+      "outcome": "Real lock/unlock observed; A stopped and text retained. B had completed before lock, so active-task recovery is not established by this sample."
+    },
+    {
+      "since": "2026-10-13T02:19:06.044907+00:00",
+      "reason": "Human round 2, real sleep/wake phase. A remains stopped with 60 pending steps until user presses Continue A; B waits for participation.",
+      "until": "2026-10-13T02:20:24.747000+00:00",
+      "elapsedMs": 78702,
+      "reply": "已唤醒",
+      "waitAccounting": "Conservative cutoff at observed unlock; analysis after unlock remains inside automatic runtime budget.",
+      "outcome": "Real sleep, lock, resume and unlock observed. A advanced once after resume but before unlock; failure preserved."
+    },
+    {
+      "since": "2026-10-13T02:39:19.013231+00:00",
+      "reason": "Review one additional build, one controlled installation and one real sleep/wake round for the two prepared lifecycle fixes. No experimental app is running; limits remain unchanged until a reply.",
+      "proposal": "LIFECYCLE-REVALIDATION.md",
+      "until": "2026-10-13T02:45:13+00:00",
+      "elapsedMs": 353986,
+      "reply": "按方案增加这一次复验（推荐）",
+      "outcome": "Approved exactly one additional build, one controlled installation and one real sleep/wake human round. All other limits unchanged.",
+      "waitAccounting": "Cutoff at first clock observation of the received reply; subsequent preparation counts as automatic time."
+    },
+    {
+      "since": "2026-10-13T02:51:22.531255+00:00",
+      "reason": "Approved human round 3: build-7 real sleep/wake. A stopped at 104, goal 164, until human Continue. B waiting and uncertain at 150. Host visible and focused.",
+      "watcher": "watch-sleep-fixed.mjs",
+      "run": "14",
+      "until": "2026-10-13T02:52:21.759000+00:00",
+      "elapsedMs": 59227,
+      "reply": "已唤醒",
+      "waitAccounting": "Conservative cutoff at observed unlock; analysis after unlock remains automatic time.",
+      "outcome": "No new input while sleep or lock applied. A was in dispatched phase at suspend and remains uncertain; B waits and remains uncertain; Chinese text retained."
+    }
+  ],
+  "humanRounds": 3,
+  "limits": {
+    "builds": 9,
+    "installs": 7,
+    "humanRounds": 3,
+    "starts": 19,
+    "faults": 17,
+    "httpRequests": 1000,
+    "automaticMinutes": 125,
+    "modelCalls": 0,
+    "remoteWrites": 0
+  },
+  "lifecycleRevision": {
+    "approvedAt": "2026-10-13T02:46:06.012086+00:00",
+    "proposal": "LIFECYCLE-REVALIDATION.md",
+    "reply": "按方案增加这一次复验（推荐）"
+  },
+  "revalidationOutcome": {
+    "at": "2026-10-13T02:58:29.911830+00:00",
+    "status": "stopped-after-owner-cleanup-failure",
+    "artifact": "artifacts/lifecycle-revalidation-outcome.json",
+    "experimentAppRunning": false
+  },
+  "ownerExitRevision": {
+    "status": "failed-and-stopped",
+    "proposal": "OWNER-EXIT-REVALIDATION.md",
+    "approvedAt": "2026-10-13T03:23:29.674424+00:00",
+    "activatedAt": "2026-10-13T03:23:29.674424+00:00",
+    "reply": "按方案完成这一轮自动复验（推荐）",
+    "roundAutomaticLimitMs": 900000,
+    "previousDeadline": 1791860700892,
+    "previousRemainingMsNotReused": 190033,
+    "finishedAt": "2026-10-13T03:24:33.756Z",
+    "evidence": "artifacts/owner-reopen-v2.jsonl"
+  },
+  "nativeExitDiagnosis": {
+    "status": "captured-and-stopped",
+    "scope": "NATIVE-EXIT-DIAGNOSIS.md",
+    "authorization": "User replied 继续 to the stated next step of collecting native exit evidence. One original-build reproduction only.",
+    "activatedAt": "2026-10-13T03:35:28.375545+00:00",
+    "previousDeadline": 1791862709674,
+    "oldRemainingMsNotReused": 835917,
+    "roundAutomaticLimitMs": 300000,
+    "finishedAt": "2026-10-13T03:36:01.683Z",
+    "evidence": "artifacts/native-exit-diagnosis.jsonl"
+  },
+  "ownerExitRepair": {
+    "status": "passed-and-stopped",
+    "proposal": "OWNER-EXIT-REPAIR.md",
+    "approvedAt": "2026-10-13T03:52:40.365730+00:00",
+    "activatedAt": "2026-10-13T03:52:40.365730+00:00",
+    "reply": "安装修正并完成核对（推荐）",
+    "roundAutomaticLimitMs": 900000,
+    "previousDeadline": 1791862828375,
+    "previousRemainingMsNotReused": 266688,
+    "finishedAt": "2026-10-13T03:54:00.814Z",
+    "evidence": "artifacts/owner-reopen-v3.jsonl"
+  },
+  "automaticStoppedAt": "2026-10-13T03:54:00.814Z",
+  "automaticRemainingMsAtStop": 819551
+}

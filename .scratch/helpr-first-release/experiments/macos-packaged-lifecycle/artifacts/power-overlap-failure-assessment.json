@@ -1,0 +1,94 @@
+{
+  "sourceRun": "runs/12",
+  "sleepAt": 1791858006742,
+  "resumeAt": 1791858023029,
+  "unlockAt": 1791858024747,
+  "controllerEvidence": [
+    {
+      "at": 1791858006742,
+      "kind": "power",
+      "event": "suspend"
+    },
+    {
+      "at": 1791858006967,
+      "kind": "power",
+      "event": "lock-screen"
+    },
+    {
+      "at": 1791858023029,
+      "kind": "power",
+      "event": "resume"
+    },
+    {
+      "at": 1791858023582,
+      "kind": "reopened-and-verified",
+      "task": "B",
+      "observed": {
+        "counter": 150,
+        "text": "",
+        "paste": ""
+      },
+      "stillUncertain": false
+    },
+    {
+      "at": 1791858023595,
+      "kind": "reopened-and-verified",
+      "task": "A",
+      "observed": {
+        "counter": 56,
+        "text": "手动接管测试",
+        "paste": ""
+      },
+      "stillUncertain": false
+    },
+    {
+      "at": 1791858024260,
+      "kind": "command",
+      "client": "A-172",
+      "task": "A",
+      "method": "Input.dispatchMouseEvent",
+      "sessionId": "98E550F7DED511D21876B9E7AFEA3F65"
+    },
+    {
+      "at": 1791858024260,
+      "kind": "command",
+      "client": "A-172",
+      "task": "A",
+      "method": "Input.dispatchMouseEvent",
+      "sessionId": "98E550F7DED511D21876B9E7AFEA3F65"
+    },
+    {
+      "at": 1791858024261,
+      "kind": "command",
+      "client": "A-172",
+      "task": "A",
+      "method": "Input.dispatchMouseEvent",
+      "sessionId": "98E550F7DED511D21876B9E7AFEA3F65"
+    },
+    {
+      "at": 1791858024565,
+      "kind": "effect-verified",
+      "task": "A",
+      "counter": 57
+    },
+    {
+      "at": 1791858024747,
+      "kind": "power",
+      "event": "unlock-screen"
+    }
+  ],
+  "websiteEvidence": [
+    {
+      "at": 1791858024271,
+      "kind": "accepted",
+      "task": "A"
+    },
+    {
+      "at": 1791858024524,
+      "kind": "completed",
+      "task": "A",
+      "counter": 57
+    }
+  ],
+  "verdict": "failed: browser input and A effect after resume before unlock"
+}

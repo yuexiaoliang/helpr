@@ -1,0 +1,23 @@
+{
+  "scope": "host source with Electron effects replaced; not actual process cleanup",
+  "source": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/macos-packaged-lifecycle/src/host.cjs",
+  "sha256": "771e7d51cda3f1607dd4ce964f26430e4e852575a998c74f13a32616997d74c8",
+  "checks": [
+    {
+      "name": "owner disconnect closes all live owned views and native monitor",
+      "pass": true
+    },
+    {
+      "name": "owner disconnect before ready cannot later create a window",
+      "pass": true
+    },
+    {
+      "name": "normal close still closes all live owned views",
+      "pass": true
+    },
+    {
+      "name": "owner disconnect during page initialization prevents late views and ready",
+      "pass": true
+    }
+  ]
+}

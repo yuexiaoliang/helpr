@@ -1,0 +1,240 @@
+{
+  "at": "2026-10-13T03:56:26.776911+00:00",
+  "status": "passed-and-stopped",
+  "scope": "One approved packaged repair round; does not mean all delivery requirements are verified.",
+  "build": "build-9",
+  "version": "0.0.2",
+  "runs": [
+    18,
+    19
+  ],
+  "changedAppSources": [
+    "host.cjs"
+  ],
+  "installedSourcesMatched": 13,
+  "hostSha256": "5c9a45c8d2776063441517553bfa03b26882cb06cc8a7134d18b0767dc673c94",
+  "sameDesignatedRequirement": true,
+  "signatureVerified": true,
+  "keychainSearchListRestored": true,
+  "systemTrustChanged": false,
+  "gatekeeperAccepted": false,
+  "roundElapsedMs": 80448,
+  "ownerExit": {
+    "ownedProcessCount": 12,
+    "observedGoneWithinMs": 186,
+    "survivors": [],
+    "cleanupSignalsUsed": false,
+    "humanAcknowledgementRequired": false
+  },
+  "checks": [
+    {
+      "at": 1791863636668,
+      "check": "real-owner-death-cleans-all-owned-processes",
+      "pass": true,
+      "elapsedMs": 186,
+      "survivors": [],
+      "lifecycle": [
+        {
+          "at": 1791863628754,
+          "kind": "host-owner-bound",
+          "diagnostic": "[DEBUG-owner-exit-20261013]",
+          "ownerPid": 44958,
+          "parentPid": 44958,
+          "connected": true,
+          "closing": false
+        },
+        {
+          "at": 1791863636493,
+          "kind": "host-ipc-disconnected",
+          "diagnostic": "[DEBUG-owner-exit-20261013]",
+          "ownerPid": 44958,
+          "parentPid": 1,
+          "connected": false,
+          "closing": false
+        },
+        {
+          "at": 1791863636493,
+          "kind": "host-close-requested",
+          "diagnostic": "[DEBUG-owner-exit-20261013]",
+          "ownerPid": 44958,
+          "parentPid": 1,
+          "connected": false,
+          "closing": true,
+          "reason": "owner-disconnected"
+        },
+        {
+          "at": 1791863636493,
+          "kind": "host-before-quit",
+          "diagnostic": "[DEBUG-owner-exit-20261013]",
+          "ownerPid": 44958,
+          "parentPid": 1,
+          "connected": false,
+          "closing": true
+        },
+        {
+          "at": 1791863636511,
+          "kind": "host-will-quit",
+          "diagnostic": "[DEBUG-owner-exit-20261013]",
+          "ownerPid": 44958,
+          "parentPid": 1,
+          "connected": false,
+          "closing": true
+        },
+        {
+          "at": 1791863636511,
+          "kind": "host-quit-complete",
+          "diagnostic": "[DEBUG-owner-exit-20261013]",
+          "ownerPid": 44958,
+          "parentPid": 1,
+          "connected": false,
+          "closing": true
+        }
+      ]
+    },
+    {
+      "at": 1791863640373,
+      "check": "reopen-preserves-two-unknowns-and-waiting-without-repeat",
+      "pass": true,
+      "tasks": [
+        {
+          "id": "A",
+          "intent": "running",
+          "phase": "uncertain",
+          "counter": 109,
+          "generation": 63,
+          "goal": 164
+        },
+        {
+          "id": "B",
+          "intent": "waiting",
+          "phase": "uncertain",
+          "counter": 150,
+          "generation": 26,
+          "goal": 153
+        }
+      ],
+      "website": {
+        "A": {
+          "counter": 109,
+          "text": "手动接管测试",
+          "paste": ""
+        },
+        "B": {
+          "counter": 150,
+          "text": "",
+          "paste": ""
+        }
+      }
+    },
+    {
+      "at": 1791863640768,
+      "check": "normal-quit-still-saves-before-closing-all-owned-processes",
+      "pass": true,
+      "tasks": [
+        {
+          "id": "A",
+          "intent": "running",
+          "phase": "uncertain",
+          "counter": 109,
+          "generation": 63,
+          "goal": 164
+        },
+        {
+          "id": "B",
+          "intent": "waiting",
+          "phase": "uncertain",
+          "counter": 150,
+          "generation": 26,
+          "goal": 153
+        }
+      ],
+      "order": {
+        "dispatchClosed": 1791863640458,
+        "saved": 1791863640471,
+        "requested": 1791863640472,
+        "done": 1791863640589
+      }
+    },
+    {
+      "at": 1791863640777,
+      "check": "closed-business-snapshot-preserved",
+      "pass": true,
+      "destination": "/Users/yuexiaoliang/Library/Application Support/helpr Lifecycle Lab/owner-exit-build-9-final",
+      "excludes": [
+        "profile",
+        "model-sample.encrypted"
+      ]
+    }
+  ],
+  "taskRowsAfter": [
+    {
+      "id": "A",
+      "intent": "running",
+      "phase": "uncertain",
+      "counter": 109,
+      "generation": 63,
+      "goal": 164
+    },
+    {
+      "id": "B",
+      "intent": "waiting",
+      "phase": "uncertain",
+      "counter": 150,
+      "generation": 26,
+      "goal": 153
+    }
+  ],
+  "databaseIntegrity": "ok",
+  "independentWebsite": {
+    "website.json": {
+      "sha256": "9efc611dc271871a718d5ce1954b34150f5c7e60f83a9439079def1492ec8e71",
+      "matchesBefore": true,
+      "matchesFinal": true
+    },
+    "website-events.jsonl": {
+      "sha256": "d06da53e207078602935ea3192f0a5622b6ac39f4434e9651d956aa4a8bd5414",
+      "matchesBefore": true,
+      "matchesFinal": true
+    }
+  },
+  "remainingInstalledProcesses": [],
+  "counts": {
+    "builds": 9,
+    "installs": 7,
+    "starts": 19,
+    "faults": 16,
+    "humanRounds": 3,
+    "httpRequests": 409,
+    "modelCalls": 0,
+    "remoteWrites": 0
+  },
+  "limits": {
+    "builds": 9,
+    "installs": 7,
+    "humanRounds": 3,
+    "starts": 19,
+    "faults": 17,
+    "httpRequests": 1000,
+    "automaticMinutes": 125,
+    "modelCalls": 0,
+    "remoteWrites": 0
+  },
+  "evidence": [
+    "artifacts/owner-reopen-v3.jsonl",
+    "artifacts/run-18/events.jsonl",
+    "artifacts/run-18/host-events.jsonl",
+    "artifacts/run-19/events.jsonl",
+    "artifacts/run-19/host-events.jsonl"
+  ],
+  "closedBackups": [
+    "/Users/yuexiaoliang/Library/Application Support/helpr Lifecycle Lab/owner-exit-build-9-before",
+    "/Users/yuexiaoliang/Library/Application Support/helpr Lifecycle Lab/owner-exit-build-9-final"
+  ],
+  "limitations": [
+    "This run used two existing uncertain tasks; no new in-flight business work was induced.",
+    "Older failures are retained; this run does not retrospectively prove their unique cause.",
+    "Cross-version login persistence and prompt-free Keychain access remain unproved.",
+    "Formal signing/release source and full product acceptance remain separate work."
+  ],
+  "diagnosticCode": "Retained only inside this explicitly throwaway experiment and frozen source evidence; not product code. No code changes after the verified build."
+}

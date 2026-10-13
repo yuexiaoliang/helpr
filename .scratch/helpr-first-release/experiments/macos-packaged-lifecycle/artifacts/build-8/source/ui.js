@@ -1,0 +1,3 @@
+for(const button of document.querySelectorAll('button'))button.onclick=()=>window.lab.send({kind:button.dataset.kind,...(button.dataset.task?{task:button.dataset.task}:{})}).catch(e=>document.querySelector('#notice').textContent=e.message);
+window.lab.onStatus(s=>{document.querySelector('#version').textContent=s.version;for(const task of s.tasks){const label={running:'自动运行',stopped:'已停止',takeover:'已让出操作','unknown-input':'输入归属待核对'}[task.intent]||task.intent;document.getElementById(task.id).textContent=`${task.id}：${s.suspended?'系统恢复待核对':task.phase==='uncertain'?'上次操作结果仍待核对':label}（${task.counter}）`;}});
+window.lab.onNotice(s=>document.querySelector('#notice').textContent=s);

@@ -16,6 +16,10 @@ try {
     execFileSync(process.execPath, ['--check', file], { cwd: root, stdio: 'pipe' });
   }
   console.log(`语法检查通过：${files.length} 个源码文件（排除历史快照）。`);
+  // 生命周期源码回放不启动应用，不消耗实包验证额度。
+  for (const script of ['verify-power-event-order.mjs', 'verify-owner-lifecycle.mjs']) {
+    execFileSync(process.execPath, [experiment + 'macos-packaged-lifecycle/' + script], { cwd: root, stdio: 'inherit' });
+  }
   execFileSync(process.execPath, ['--test', experiment + 'model-api/client.test.mjs', experiment + 'ai-parallel-binding/control.test.mjs', experiment + 'result-recovery/record.test.mjs'], { cwd: root, stdio: 'inherit' });
   execFileSync(process.execPath, [experiment + 'ai-parallel-binding/verify.mjs', '--check'], { cwd: root, stdio: 'inherit' });
 } catch (error) {
