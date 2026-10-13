@@ -1,0 +1,127 @@
+{
+  "at": "2026-10-13T06:36:14.416225+00:00",
+  "itemService": "helpr Lifecycle Lab Safe Storage",
+  "passwordDataRequested": false,
+  "mutations": [],
+  "interactionDisabledInProbe": true,
+  "findStatus": 0,
+  "acls": [
+    {
+      "index": 0,
+      "authorizationTags": [
+        "ACLAuthorizationEncrypt"
+      ],
+      "contentsStatus": 0,
+      "trustedApplications": [],
+      "promptSelector": 0,
+      "applicationListIsNull": true
+    },
+    {
+      "index": 1,
+      "authorizationTags": [
+        "ACLAuthorizationDecrypt",
+        "ACLAuthorizationDerive",
+        "ACLAuthorizationExportClear",
+        "ACLAuthorizationExportWrapped",
+        "ACLAuthorizationMAC",
+        "ACLAuthorizationSign"
+      ],
+      "contentsStatus": 0,
+      "trustedApplications": [
+        {
+          "requirementStatus": 0,
+          "validations": [
+            {
+              "path": "installed/helpr Lifecycle Lab.app",
+              "status": 0
+            },
+            {
+              "path": "installed/before-update-ff21adb0-cbb2-42aa-9a50-61cd7ff67946.app",
+              "status": 0
+            }
+          ],
+          "requirementTextStatus": 0,
+          "requirement": "identifier \"local.helpr.lifecycle-lab\" and certificate leaf = H\"0a64f07efa1addff417ec018e622d71d539b8de4\""
+        }
+      ],
+      "promptSelector": 0,
+      "applicationListIsNull": false
+    },
+    {
+      "index": 2,
+      "authorizationTags": [
+        "ACLAuthorizationIntegrity"
+      ],
+      "contentsStatus": 0,
+      "trustedApplications": [],
+      "promptSelector": 0,
+      "applicationListIsNull": true
+    },
+    {
+      "index": 3,
+      "authorizationTags": [
+        "ACLAuthorizationPartitionID"
+      ],
+      "contentsStatus": 0,
+      "trustedApplications": [],
+      "promptSelector": 0,
+      "applicationListIsNull": true,
+      "partitionMetadata": {
+        "Partitions": [
+          "cdhash:aa098ad3890fbf1cbf20579cdbc140d549e630f4",
+          "cdhash:d82a8d0a259b89d32abba7268a30ae075edde4e1",
+          "cdhash:b81b65c8d3c0d7f01eb43338a6b3e78dc06d3556",
+          "cdhash:0a6e661e06e5a458f90d304e7ffd5b8946e8e744",
+          "cdhash:f86451a3265127642021b654c2ac21945f331797",
+          "cdhash:d2a67431121653160c9408df435cdd146828f09b"
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "authorizationTags": [
+        "ACLAuthorizationChangeACL"
+      ],
+      "contentsStatus": 0,
+      "trustedApplications": [],
+      "promptSelector": 0,
+      "applicationListIsNull": false
+    }
+  ],
+  "candidateSignatures": [
+    {
+      "path": "installed/helpr Lifecycle Lab.app",
+      "exit": 0,
+      "Identifier": [
+        "local.helpr.lifecycle-lab"
+      ],
+      "CDHash": [
+        "d2a67431121653160c9408df435cdd146828f09b"
+      ],
+      "Authority": [
+        "helpr Lifecycle Lab 20261012"
+      ],
+      "TeamIdentifier": [
+        "not set"
+      ]
+    },
+    {
+      "path": "installed/before-update-ff21adb0-cbb2-42aa-9a50-61cd7ff67946.app",
+      "exit": 0,
+      "Identifier": [
+        "local.helpr.lifecycle-lab"
+      ],
+      "CDHash": [
+        "d82a8d0a259b89d32abba7268a30ae075edde4e1"
+      ],
+      "Authority": [
+        "helpr Lifecycle Lab 20261012"
+      ],
+      "TeamIdentifier": [
+        "not set"
+      ]
+    }
+  ],
+  "accessStatus": 0,
+  "aclStatus": 0
+}

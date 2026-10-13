@@ -1,0 +1,134 @@
+{
+  "at": "2026-10-13T06:43:05.697709+00:00",
+  "sourceSha256": "234012717c35bdb3b4c8e9ba148a4f0f9101cf3663cf97f9ed46408422c98521",
+  "limits": {
+    "compiles": 2,
+    "signs": 2,
+    "probeRuns": 4,
+    "seconds": 900
+  },
+  "used": {
+    "compiles": 2,
+    "signs": 2,
+    "probeRuns": 4
+  },
+  "electronStarts": 0,
+  "modelCalls": 0,
+  "remoteWrites": 0,
+  "systemTrustChanged": false,
+  "records": [
+    {
+      "program": "clang",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "program": "codesign",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/unattended-update-credentials/build/probe-v1: replacing existing signature\n"
+    },
+    {
+      "program": "codesign",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "program": "codesign",
+      "exit": 0,
+      "stdout": "designated => identifier \"local.helpr.update-credential-probe\" and certificate leaf = H\"0a64f07efa1addff417ec018e622d71d539b8de4\"\n",
+      "stderr": "Executable=/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/unattended-update-credentials/build/probe-v1\nIdentifier=local.helpr.update-credential-probe\nFormat=Mach-O thin (arm64)\nCodeDirectory v=20400 size=476 flags=0x0(none) hashes=9+2 location=embedded\nVersionPlatform=1\nVersionMin=917504\nVersionSDK=983552\nHash type=sha256 size=32\nCandidateCDHash sha256=2c449cba089480944c43202d9deb8f54bc7cecad\nCandidateCDHashFull sha256=2c449cba089480944c43202d9deb8f54bc7cecadbe2a11779db6f9651c8ffd77\nHash choices=sha256\nCMSDigest=2c449cba089480944c43202d9deb8f54bc7cecadbe2a11779db6f9651c8ffd77\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=16384\nExecutable Segment flags=0x1\nPage size=4096\nCDHash=2c449cba089480944c43202d9deb8f54bc7cecad\nSignature size=1701\nAuthority=helpr Lifecycle Lab 20261012\nSigned Time=Oct 13, 2026 at 14:43:06\nInfo.plist=not bound\nTeamIdentifier=not set\nSealed Resources=none\n"
+    },
+    {
+      "program": "clang",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "program": "codesign",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/unattended-update-credentials/build/probe-v2: replacing existing signature\n"
+    },
+    {
+      "program": "codesign",
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "program": "codesign",
+      "exit": 0,
+      "stdout": "designated => identifier \"local.helpr.update-credential-probe\" and certificate leaf = H\"0a64f07efa1addff417ec018e622d71d539b8de4\"\n",
+      "stderr": "Executable=/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/unattended-update-credentials/build/probe-v2\nIdentifier=local.helpr.update-credential-probe\nFormat=Mach-O thin (arm64)\nCodeDirectory v=20400 size=476 flags=0x0(none) hashes=9+2 location=embedded\nVersionPlatform=1\nVersionMin=917504\nVersionSDK=983552\nHash type=sha256 size=32\nCandidateCDHash sha256=9256d6e6907a23f5c0aada867503b4045aab584a\nCandidateCDHashFull sha256=9256d6e6907a23f5c0aada867503b4045aab584af852e28c19bf77892082f3ff\nHash choices=sha256\nCMSDigest=9256d6e6907a23f5c0aada867503b4045aab584af852e28c19bf77892082f3ff\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=16384\nExecutable Segment flags=0x1\nPage size=4096\nCDHash=9256d6e6907a23f5c0aada867503b4045aab584a\nSignature size=1701\nAuthority=helpr Lifecycle Lab 20261012\nSigned Time=Oct 13, 2026 at 14:43:06\nInfo.plist=not bound\nTeamIdentifier=not set\nSealed Resources=none\n"
+    },
+    {
+      "program": "credential-probe",
+      "exit": 0,
+      "stdout": "{\"variant\":1,\"operation\":\"create-read\",\"status\":0,\"matches\":true,\"interactionAllowed\":false}\n",
+      "stderr": ""
+    },
+    {
+      "program": "credential-probe",
+      "exit": 9,
+      "stdout": "{\"variant\":2,\"operation\":\"read\",\"status\":-25293,\"matches\":false,\"interactionAllowed\":false}\n",
+      "stderr": ""
+    },
+    {
+      "program": "credential-probe",
+      "exit": 0,
+      "stdout": "{\"variant\":1,\"operation\":\"delete\",\"status\":0}\n",
+      "stderr": ""
+    },
+    {
+      "program": "credential-probe",
+      "exit": 0,
+      "stdout": "{\"variant\":1,\"operation\":\"absent\",\"status\":-25300,\"absent\":true}\n",
+      "stderr": ""
+    }
+  ],
+  "signatures": [
+    {
+      "variant": 1,
+      "cdhash": "2c449cba089480944c43202d9deb8f54bc7cecad",
+      "requirement": "identifier \"local.helpr.update-credential-probe\" and certificate leaf = H\"0a64f07efa1addff417ec018e622d71d539b8de4\"",
+      "teamIdentifier": "not set"
+    },
+    {
+      "variant": 2,
+      "cdhash": "9256d6e6907a23f5c0aada867503b4045aab584a",
+      "requirement": "identifier \"local.helpr.update-credential-probe\" and certificate leaf = H\"0a64f07efa1addff417ec018e622d71d539b8de4\"",
+      "teamIdentifier": "not set"
+    }
+  ],
+  "elapsedSeconds": 2.351,
+  "sameRequirement": true,
+  "differentCodeHashes": true,
+  "originalRead": {
+    "variant": 1,
+    "operation": "create-read",
+    "status": 0,
+    "matches": true,
+    "interactionAllowed": false
+  },
+  "updatedRead": {
+    "variant": 2,
+    "operation": "read",
+    "status": -25293,
+    "matches": false,
+    "interactionAllowed": false
+  },
+  "updatedReadWithoutAuthorization": false,
+  "blockedAfterCodeChange": true,
+  "requirementVerdict": "fail",
+  "searchListRestored": true,
+  "cleanup": {
+    "variant": 1,
+    "operation": "delete",
+    "status": 0
+  },
+  "absentAfterCleanup": true
+}

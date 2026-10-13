@@ -1,7 +1,7 @@
 # helpr 首版技术决策地图
 
 Label: wayfinder:map
-Status: open
+Status: resolved
 
 ## Destination
 
@@ -43,11 +43,12 @@ Status: open
 - [验证页面变化后的输入归属与继续](issues/19-page-lifecycle-input-ownership.md#answer)：刷新失配已复现定位，受控生命周期中的重新绑定与核对后继续通过；未知归属仍暂停两项，升级兼容及真实休眠恢复未获保证。
 - [确定浏览器承载与流程执行组合](issues/07-browser-runtime-decision.md#answer)：首版采用 macOS / Electron、Playwright 与统一受控的结构化流程执行；用户接受未知输入时暂停两项及网站隐含写入的明确保证范围。
 - [确定执行记录、流程更新与定时恢复的约定](issues/10-durable-execution-contract.md#answer)：统一保存本机关联记录，按约定、目标和素材版本记处理事实；恢复先核对、旧工作不重复领取，并发流程候选不互相覆盖，持久一致性与自动恢复依据另行验证。
-- [确定本机交付、权限与更新约定](issues/20-local-delivery-and-updates.md#answer)：当前 Mac 自用、关窗口继续、遵循休眠、本机保留与备份；自动检测、默认手动安装及可选空闲自动更新，控制隔离和打包更新另行验证。
+- [确定本机交付、权限与更新约定](issues/20-local-delivery-and-updates.md#answer)：当前 Mac 自用、关窗口继续、遵循休眠、本机保留与备份；按最新范围自动检查新版并提醒，由用户手动下载和安装，实际升级仍须验收。
 - [验证持久记录与执行资格的中断一致性](issues/22-durable-record-consistency.md#answer)：本机中断与并发记录取得受控证据，容量遗漏和启动锁争用经反例修订；已派发效果与未落盘意图仍保留明确限制，真实网页和交付验证继续。
 - [验证浏览器控制连接与宿主隔离](issues/24-private-browser-control.md#answer)：私有 pipe 与受管进程转接取得 43 项限定证据，补齐消息顺序及自有视图退出；无裸调试端口，未覆盖协议和真实网站仍须继续核对。
 - [验证恢复核对依据的自动形成](issues/23-autonomous-recovery-evidence.md#answer)：真实模型与执行形成恢复依据，冻结后新进程可核对草稿及丢失回执的结果；无稳定关联或提交不确定时仍不重发，完整组合与打包继续验证。
 - [验证 macOS 自用应用的封装、更新与运行恢复](issues/25-macos-packaged-lifecycle.md#answer)：独立实验包取得更新、备份、真人接管及生命周期的限定证据，休眠与退出失败经实包复验修正；正式发布条件、升级凭据与完整组合的缺口进入验收安排。
+- [确定首版组合验证与验收安排](issues/21-integrated-validation-and-acceptance.md#answer)：同一产品分阶段贯通，五项场景各两次并完成并行、恢复、真人核对及手动升级；安排已按自动安装延后的范围修订，可进入实现规格。
 
 ## Not yet specified
 
@@ -60,6 +61,13 @@ Status: open
 - 承诺微信公众号、小红书等具体平台已受支持；支持范围以相应真实网页验证为准。
 - 为选定后台或 Excel 任务编写产品专用业务实现，或默认沿用 flowpolit 的技术架构。
 - 在本轮首版交付 Windows、Linux 等其它平台；用户已选择先支持 macOS，其它平台取得同等证据后另行支持。
-- 首版同时覆盖其它 Mac 环境或正式向他人分发：当前先交付本人这台 Apple Silicon / macOS 14.8.3 的 Mac，扩大范围另行取得条件与证据；自用应用的自动检测及可选空闲更新仍在首版范围，见[本机交付约定](issues/20-local-delivery-and-updates.md#answer)。
+- 首版同时覆盖其它 Mac 环境或正式向他人分发：先完成当前 Mac 的自用版本，正式签名和公证安排在首次对外测试或发布前；自用应用的版本检查、提醒与手动下载安装仍在首版范围，见[本机交付约定](issues/20-local-delivery-and-updates.md#answer)。
+- [验证自动更新后无需再次系统授权的凭据延续](issues/26-unattended-update-credential-continuity.md#answer)：用户将自动下载安装（含空闲更新）推迟到产品盈利后，按范围变更关闭并保留失败证据；Xcode／免费签名方案搁置，未来另立工作。
 - 默认自动到期删除历史或自动将备份上传云端：首版采用本机保留、用户主动清理与本机备份，见[本机交付约定](issues/20-local-delivery-and-updates.md#answer)。
 - 构建能在发送前证明并隔离任意网站全部隐含写入的通用系统；已确认首版按委托约束 helpr 自身操作并核对结果，发现异常仍须停止后续自动动作和核对，详见[确定浏览器承载与流程执行组合](issues/07-browser-runtime-decision.md#answer)。
+
+## Comments
+
+2026-10-13，自动安装按用户新选择移出首版，最后一个前置事项按范围变更关闭；当前没有 open／claimed 子事项或未归入事项的问题。地图完成，可交给 `/to-spec` 编写实现规格；完成的是技术决策路径，完整产品和手动升级等交付能力仍须实现、组合验证与验收。
+
+2026-10-13，已据本地图和最新范围编写[首版实现规格](spec.md)，状态为 `ready-for-agent`。规格沿用三组公开入口检查、五项业务各两次及组合验收要求；下一步拆分纵向实现事项。技术实验和规划的完成状态不变，产品尚待实现与验收。

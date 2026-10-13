@@ -59,11 +59,13 @@
 
 首版先交付本人当前 Apple Silicon / macOS 14.8.3 的 Mac，提供可独立打开的本机应用，要求电脑开机、helpr 保持运行。其它 Mac 环境、正式对外分发及 Windows 等平台取得相应条件与证据后再支持。先使用用户已有的模型 API，在设置中配置服务地址、模型和凭据；任务对话无需选择模型，并保留更换服务的能力。具体接口在接入时核对。
 
+已确认先完成自用版本，首次对外测试或发布前再办理正式 Developer ID 签名和公证、验证安装与凭据延续。正式签名安排在对外使用前；自动下载安装仍留到产品盈利后。具体投入与维护约定见[本机交付约定](../../.scratch/helpr-first-release/issues/20-local-delivery-and-updates.md#answer)。
+
 关闭主窗口只收起应用，任务和计划继续运行，可从菜单栏返回；明确退出或 ⌘Q 才结束程序，先停止派发并保存，下次打开按原意图和实际结果核对恢复。首版遵循系统休眠设置，休眠中不承诺按时执行，唤醒后依每项计划已有的错过时间规则处理。
 
 任务历史、素材版本和必要证据默认本机保留，由用户主动清理已结束工作；保留未完成工作所需数据，空间不足时提示并暂停依赖保存的自动工作。提供本机备份，排除模型密钥与网站登录状态，不自动上传云端；恢复旧备份先暂停并核对实际结果，再由用户决定继续哪些任务或计划。
 
-自动检测更新并提醒，默认手动安装，可开启“空闲时自动更新”。等待用户参与不算空闲；自动安装必须能安全关闭现场、避开即将到来的定时工作，先保存并备份。检测不提前下载或安排替换，更新后先检查并按原意图核对恢复。使用约定和待验证条件见[确定本机交付、权限与更新约定](../../.scratch/helpr-first-release/issues/20-local-delivery-and-updates.md#answer)。
+自动检查新版并提醒，由用户手动下载、安装。检测不下载或安排替换；手动安装前处理不能安全关闭的现场，停止新派发、保存并备份，再退出应用。更新后检查资料、原凭据、仍有效的网站登录与控制能力，按原意图核对恢复。2026-10-13，用户将自动下载安装（含空闲更新）推迟到产品盈利后，不再以无人参与更新和零新增系统授权作为首版门槛。使用约定和待验证条件见[确定本机交付、权限与更新约定](../../.scratch/helpr-first-release/issues/20-local-delivery-and-updates.md#answer)。
 
 用户可自行配置模型服务，配置方式参考现有 AI agent。测试阶段先使用用户提供的 DeepSeek `deepseek-flash`；这不限定正式产品只能使用该提供方或模型。
 
@@ -71,6 +73,8 @@
 
 技术路线已选定为 Electron 真实网页与独立任务对话、Playwright 网页操作，以及 helpr 自有的统一执行和结构化运行时流程机制。首次探索、复用与修复都经过同一检查与停止入口，Stagehand 暂不进入首版关键执行路径；详见 [ADR-0003](../adr/0003-electron-controlled-execution.md)与[选型结论](../../.scratch/helpr-first-release/issues/07-browser-runtime-decision.md#answer)。
 
-持久化方案已选择本机 SQLite 统一关联记录与独立素材版本，恢复先核对实际结果，已接受的有效确认不会因重启丢弃，并发修复保留各自成果；见[确定执行记录、流程更新与定时恢复的约定](../../.scratch/helpr-first-release/issues/10-durable-execution-contract.md#answer)和 [ADR-0004](../adr/0004-local-durable-records.md)。[持久记录的中断与并发验证](../../.scratch/helpr-first-release/issues/22-durable-record-consistency.md#answer)与[私有控制连接验证](../../.scratch/helpr-first-release/issues/24-private-browser-control.md#answer)已取得本机受控证据；恢复依据自动形成也已取得[限定证据](../../.scratch/helpr-first-release/issues/23-autonomous-recovery-evidence.md#answer)；后续验证应用打包更新，再确定组合验收安排。独立技术实验已取得有限证据，完整产品能力仍须实现并验收。
+持久化方案已选择本机 SQLite 统一关联记录与独立素材版本，恢复先核对实际结果，已接受的有效确认不会因重启丢弃，并发修复保留各自成果；见[确定执行记录、流程更新与定时恢复的约定](../../.scratch/helpr-first-release/issues/10-durable-execution-contract.md#answer)和 [ADR-0004](../adr/0004-local-durable-records.md)。[持久记录的中断与并发验证](../../.scratch/helpr-first-release/issues/22-durable-record-consistency.md#answer)、[私有控制连接验证](../../.scratch/helpr-first-release/issues/24-private-browser-control.md#answer)、[恢复依据自动形成](../../.scratch/helpr-first-release/issues/23-autonomous-recovery-evidence.md#answer)及[本机封装](../../.scratch/helpr-first-release/issues/25-macos-packaged-lifecycle.md#answer)已取得限定证据；[组合验收安排](../../.scratch/helpr-first-release/issues/21-integrated-validation-and-acceptance.md#answer)已确定，可据此编写实现规格。完整产品能力仍须实现并验收。
+
+2026-10-13，已完成[首版实现规格](../../.scratch/helpr-first-release/spec.md)，沿用上述共识与最新更新范围，状态为 `ready-for-agent`。后续据此拆分实现事项，再逐步完成同一产品的贯通与验收。
 
 旧版 flowpolit 只用于参考已核实的功能和界面，本轮需求与架构独立确定。后续沿技术决策地图补足影响规格的约定与证据，再形成实现规格和分阶段任务。

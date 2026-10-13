@@ -123,6 +123,8 @@
 
 2026-10-12，用户先确认首版平台为 macOS，随后在[本机交付约定](../../.scratch/helpr-first-release/issues/20-local-delivery-and-updates.md#answer)中确定：首批交付本人当前 Apple Silicon / macOS 14.8.3 的 Mac，提供可独立打开的本机应用。其它 Mac 环境及正式向他人分发的安装包，取得相应条件与证据后再安排；不由当前机器推定所有 Mac 已支持。Windows 等平台在取得同等运行与人工接管证据后再支持。
 
+2026-10-13，用户确认签名投入顺序：先完成本人能持续使用的版本，在首次对外测试或发布前办理正式 Developer ID 签名和公证，并验证真实安装、系统功能及原数据、凭据和有效登录的延续。当前不购买会员或重启签名实验；正式签名安排在对外使用前，自动下载安装另按盈利后规划，二者不绑定。成本与维护依据见[本机交付约定](../../.scratch/helpr-first-release/issues/20-local-delivery-and-updates.md#answer)。
+
 2026-10-12，用户在[确定本机交付、权限与更新约定](../../.scratch/helpr-first-release/issues/20-local-delivery-and-updates.md#answer)中确认：关闭主窗口只收起应用，保留菜单栏入口，任务和定时计划继续运行；明确退出或按 ⌘Q 才结束程序。退出先停止派发并保存，下次打开按原有意图和实际结果核对恢复，不等于把每项任务都改为用户明确停止。单个任务标签页仍沿用自己的关闭规则。
 
 首版遵循 Mac 原有休眠设置，不自动阻止休眠，也不承诺休眠期间按时执行。唤醒后先核对任务，再按各计划已有的补做、跳过或询问规则处理；运行条件须向用户明确显示。
@@ -137,11 +139,13 @@
 
 ### 更新方式
 
-自动检测并提醒，默认由用户手动安装，同时提供“空闲时自动更新”开关。开启后，只有没有进行中的任务、没有待确认或人工接管现场，且距下一次定时工作有足够间隔时，才自动备份并安装。等待用户参与不算空闲，未确认的提交结果和无法安全关闭的现场也不能被忽略；一直没有合适时机时提醒用户手动安排。
+2026-10-13，用户将自动下载安装（含空闲时自动更新）移出首版，留到产品盈利后另行规划。首版保留自动检查新版和提醒，由用户手动下载、安装；不提供空闲自动更新开关。
 
-检测只查询版本信息，不提前下载或登记待安装包。更新前阻止新派发、重新核对条件并可靠保存和备份；更新后检查资料与控制能力，再按原意图核对恢复。不相容或检查失败时保留资料并说明原因，不盲目恢复执行，也不把替换应用等同于数据可以安全回退。
+检测只查询版本信息并提供可信下载入口，不下载或登记待安装包。手动安装前阻止新派发、处理不能安全关闭的现场并可靠保存和备份，再退出应用；更新后检查资料、原凭据、仍有效的网站登录与控制能力，再按原意图核对恢复。不相容或检查失败时保留资料并说明原因，不盲目恢复执行，也不把替换应用等同于数据可以安全回退。
 
-自用范围不取消更新能力。签名身份、可信更新来源、凭据延续、打包后原生输入识别及真实休眠恢复须在[封装与运行验证](../../.scratch/helpr-first-release/issues/25-macos-packaged-lifecycle.md)中取得证据。模型凭据保护、网站会话、素材范围及远程网页与宿主的边界按[交付约定](../../.scratch/helpr-first-release/issues/20-local-delivery-and-updates.md#answer)落实；实验工具的屏幕录制／辅助功能权限不直接成为产品必须申请的权限。
+本机安装、手动升级的凭据与登录保留、打包后原生输入识别及真实休眠恢复仍需在实际产品中验收；已有[封装与运行验证](../../.scratch/helpr-first-release/issues/25-macos-packaged-lifecycle.md)只提供限定证据。模型凭据保护、网站会话、素材范围及远程网页与宿主的边界按[交付约定](../../.scratch/helpr-first-release/issues/20-local-delivery-and-updates.md#answer)落实；实验工具的屏幕录制／辅助功能权限不直接成为产品必须申请的权限。
+
+同日较早确认的“自动更新后无需再次系统授权”随自动安装一起移出首版门槛；[相应验证事项](../../.scratch/helpr-first-release/issues/26-unattended-update-credential-continuity.md#answer)按范围变更关闭，不代表验证通过。已有授权提示及跨升级登录证据缺口保留，手动更新也不能以丢失原密钥或仍有效登录作为通过。为无人参与更新准备的 Xcode／Personal Team 验证搁置；不以购买开发者会员或取得该证书阻塞实现规格。此变更不改变凭据保护要求或当前自用交付范围。
 
 2026-10-12，[控制连接与宿主隔离](../../.scratch/helpr-first-release/issues/24-private-browser-control.md#answer)已在当前 Mac 取得 43 项限定运行证据：使用私有连接和受管进程转接，检查每项操作的资格与页面归属；停止 A 后 B 继续，控制拥有者异常退出时关闭自有网页与工作者。没有开放裸调试端口，未覆盖能力仍拒绝。此结果不等于真实网站、共享登录、原生接管或打包组合已经通过。
 
@@ -207,6 +211,10 @@ helpr 或电脑意外退出后，重新启动时恢复任务记录。对中断�
 
 2026-10-12，用户已选择首版技术组合：Electron 承载真实网页与独立任务对话，Playwright 操作网页，helpr 统一检查、停止、学习与复用；模型提议经过同一执行入口，Stagehand 暂不进入首版关键执行路径。理由和代价见 [ADR-0003](../adr/0003-electron-controlled-execution.md)，具体约定和保证范围见[选型结论](../../.scratch/helpr-first-release/issues/07-browser-runtime-decision.md#answer)。
 
-流程保存与版本采用、实际结果记录、素材处理和调度恢复已形成[协议](../../.scratch/helpr-first-release/issues/10-durable-execution-contract.md#answer)，存储取舍见 [ADR-0004](../adr/0004-local-durable-records.md)。[本机交付、权限与更新约定](../../.scratch/helpr-first-release/issues/20-local-delivery-and-updates.md#answer)已确定；持久一致性、私有控制连接及恢复依据自动形成已取得上述限定证据，打包更新继续专项验证，最终组合验收安排继续沿地图确定。技术路线与协议已选定，产品能力仍须实现并验收。
+流程保存与版本采用、实际结果记录、素材处理和调度恢复已形成[协议](../../.scratch/helpr-first-release/issues/10-durable-execution-contract.md#answer)，存储取舍见 [ADR-0004](../adr/0004-local-durable-records.md)。[本机交付、权限与更新约定](../../.scratch/helpr-first-release/issues/20-local-delivery-and-updates.md#answer)已确定；持久一致性、私有控制连接、恢复依据自动形成及[本机封装](../../.scratch/helpr-first-release/issues/25-macos-packaged-lifecycle.md#answer)均取得限定证据，不能相加视为完整产品已通过。技术路线与协议已选定，产品能力仍须实现并验收。
+
+2026-10-13，[组合验证与验收安排](../../.scratch/helpr-first-release/issues/21-integrated-validation-and-acceptance.md#answer)已确认：同一产品组合分阶段贯通，五项业务场景各两次独立通过，并完成并行、变化修复、恢复及本机交付检查；真人核对预计集中两轮，每轮先由 agent 核对现场就绪。每批运行固定具体预算、停止条件并保留全部失败。自动安装移出首版后，[技术决策地图](../../.scratch/helpr-first-release/map.md)已可交给实现规格；手动升级及完整产品仍须实现并验收。
 
 共同阻碍解除后的具体积压安排，由 AI 结合任务与用户已有约定判断；需要新的取舍时再与用户确定，不要求本轮为未来所有任务预先选定同一处理方式。
+
+2026-10-13，已将当前共识、技术决定和验收安排整理为[首版实现规格](../../.scratch/helpr-first-release/spec.md)，状态为 `ready-for-agent`，下一步拆分实现事项。规格保留当前 Mac 自用、自动检查新版与手动安装，正式签名安排在首次对外测试或发布前，自动下载安装留到盈利后；没有把尚未取得的完整产品证据计作通过。
