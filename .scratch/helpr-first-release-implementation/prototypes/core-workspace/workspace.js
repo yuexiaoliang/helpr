@@ -12,12 +12,12 @@ const symbols = {
   archive:'M2 4h14v3H2ZM4 7v9h10V7M7 10h4', settings:'M3 5h12M3 13h12M6 3v4m6 4v4',
   clock:'M9 4v5l3 2M9 1a8 8 0 1 0 0 16A8 8 0 1 0 9 1', replay:'M3 7a6 6 0 1 1 0 5M3 2v5h5',
   minus:'M4 9h10', grow:'M3 7V3h4m4 0h4v4M15 11v4h-4M7 15H3v-4', leaf:'M3 13C0 5 7 2 15 3c0 8-4 12-10 10m-2 3 8-10',
-  arrow:'M3 9h12m-5-5 5 5-5 5', bell:'M5 13H3l2-3V6a4 4 0 0 1 8 0v4l2 3H5m2 3h4',
+  arrow:'M3 9h12m-5-5 5 5-5 5', bell:'M5 13H3l2-3V6a4 4 0 0 1 8 0v4l2 3H5m2 3h4', down:'m4 7 5 5 5-5',
 };
 const icon = name => `<svg viewBox="0 0 18 18" aria-hidden="true"><path d="${symbols[name] || symbols.file}"/></svg>`;
 const logo = () => `<div class="logo"><span class="logo-mark">${icon('leaf')}</span>helpr<span class="wordmark-dot">.</span></div>`;
 const names = {A:'标签工作台', B:'任务侧栏', C:'双页并排'};
-const descriptions = {A:'顶部切换任务，右下角交流，网页空间最大。',B:'左侧始终看见两项进度，对话靠近任务导航。',C:'同时查看两个网页，两项任务各有对话入口。'};
+const descriptions = {A:'顶部切换任务，悬停标签查看进度卡，右下角交流。',B:'左侧始终看见两项进度，对话靠近任务导航。',C:'同时查看两个网页，两项任务各有对话入口。'};
 const defaultGoal = '把《十月经营周报.xlsx》分别发布到 WordPress 的「经营周报」和 Drupal 的「内部资料」，保留原文件供下载。';
 const steps = ['读取素材','上传附件','准备发布','核对结果'];
 function makeTasks() {
@@ -39,7 +39,7 @@ function initialize() {
 }
 initialize();
 const task = id => state.tasks[id];
-const phase = t => Math.min(3,Math.floor(t.progress/26));
+const phase = t => Math.min(3,Math.floor(t.progress/25));
 const statusName = t => ({ready:'等待委托',running:'正在执行',manual:'已让出操作',checking:'正在核对',done:'已完成',stopped:'已停止'}[t.status]);
 const statusHTML = t => `<span class="status state-${t.status}"><i class="dot"></i>${statusName(t)}</span>`;
 const siteIcon = t => `<span class="site-icon ${t.id==='B'?'drupal':''}">${t.id==='A'?'W':'d'}</span>`;
@@ -63,9 +63,10 @@ function header({brand=true}={}) {
   </header>`;
 }
 function taskTab(t) {
-  return `<div class="task-tab ${state.active===t.id?'selected':''}">
+  return `<div class="task-tab ${state.active===t.id?'selected':''}" data-preview-tab="${t.id}">
     ${siteIcon(t)}<button class="select-task" ${action('select',t.id)} aria-label="查看任务 ${t.id}：${t.short}" aria-pressed="${state.active===t.id}">
     <div class="task-name">${t.short}</div><small data-status="${t.id}">${statusHTML(t)}</small></button>
+    <button class="icon-btn preview-task" ${action('preview-toggle',t.id)} aria-label="查看任务 ${t.id} 进度" aria-haspopup="dialog" aria-expanded="false" aria-controls="task-preview-card" title="查看进度 · 点击固定，Esc 收起">${icon('down')}</button>
     <button class="icon-btn close-task" ${action('close-task',t.id)} aria-label="关闭任务 ${t.id}">${icon('close')}</button>
   </div>`;
 }
@@ -81,7 +82,61 @@ function sidebarTask(t) {
   </section>`;
 }
 function stepList(t) {
-  return steps.map((s,i)=>`<div class="${i===phase(t)&&t.status!=='ready'?'current':''}"><span class="step-circle"></span>${s}${t.progress>(i+1)*25?' · 已完成':''}</div>`).join('');
+  return steps.map((s,i)=>`<div class="${t.progress>=(i+1)*25?'complete':i===phase(t)&&t.status!=='ready'?'current':''}"><span class="step-circle"></span>${s}${t.progress>=(i+1)*25?' · 已完成':''}</div>`).join('');
+}
+// A keeps tabs as navigation. The progress card only observes the same task state.
+const taskPreview={id:null,pinned:false,openTimer:null,closeTimer:null};
+function syncPreviewTrigger() {
+  $$('.preview-task').forEach(el=>{
+    const open=el.dataset.task===taskPreview.id;
+    el.setAttribute('aria-expanded',String(open));
+    el.classList.toggle('preview-pinned',open&&taskPreview.pinned);
+  });
+}
+function closePreview(restoreFocus=false) {
+  clearTimeout(taskPreview.openTimer);clearTimeout(taskPreview.closeTimer);
+  const trigger=$('[data-action="preview-toggle"][data-task="'+taskPreview.id+'"]');
+  taskPreview.id=null;taskPreview.pinned=false;
+  $('#task-preview-layer').innerHTML='';
+  syncPreviewTrigger();
+  if(restoreFocus)trigger?.focus();
+}
+function positionPreview() {
+  const card=$('#task-preview-card'),anchor=$('[data-preview-tab="'+taskPreview.id+'"]');
+  if(!card||!anchor)return;
+  const box=anchor.getBoundingClientRect();
+  card.style.left=Math.max(8,Math.min(box.left,innerWidth-card.offsetWidth-8))+'px';
+  card.style.top=Math.max(8,box.bottom+8)+'px';
+  card.style.maxHeight=Math.max(160,innerHeight-box.bottom-24)+'px';
+}
+function showPreview(id,pinned=false) {
+  clearTimeout(taskPreview.openTimer);clearTimeout(taskPreview.closeTimer);
+  if(state.variant!=='A'||state.modal||task(id).hidden||task(id).closed)return;
+  if(taskPreview.id===id){taskPreview.pinned=pinned||taskPreview.pinned;syncPreviewTrigger();return;}
+  const t=task(id);
+  taskPreview.id=id;taskPreview.pinned=pinned;
+  $('#task-preview-layer').innerHTML=`<section id="task-preview-card" class="task-preview" role="dialog" aria-labelledby="preview-title" data-preview-card="${id}">
+    <header class="preview-header">${siteIcon(t)}<div class="spacer"><h2 id="preview-title">${t.short}</h2><span>${t.site} · ${t.category}</span></div><button class="icon-btn" ${action('preview-close')} aria-label="收起进度卡片">${icon('close')}</button></header>
+    <div class="preview-progress"><div class="preview-status"><span data-status="${id}">${statusHTML(t)}</span><span data-percent="${id}">${t.progress}%</span></div>
+      <div class="progress-track"><div class="progress-fill" data-progress="${id}" style="width:${t.progress}%"></div></div>
+      <div class="step-list" data-steps="${id}">${stepList(t)}</div>
+    </div>
+    <div class="preview-update"><span>最近动态</span><p data-preview-update="${id}">${escapeHTML(t.messages.at(-1).text)}</p></div>
+    <footer><span data-caption="${id}">${taskInfo(t)}</span><button class="preview-open" ${action('select',id)}>查看任务 ${id} ${icon('arrow')}</button></footer>
+  </section>`;
+  positionPreview();syncPreviewTrigger();
+}
+function queuePreview(id) {
+  if(taskPreview.pinned)return;
+  clearTimeout(taskPreview.openTimer);clearTimeout(taskPreview.closeTimer);
+  taskPreview.openTimer=setTimeout(()=>showPreview(id),280);
+}
+function queuePreviewClose() {
+  clearTimeout(taskPreview.openTimer);clearTimeout(taskPreview.closeTimer);
+  if(taskPreview.pinned)return;
+  taskPreview.closeTimer=setTimeout(()=>{
+    if(!document.activeElement?.closest('.task-preview'))closePreview();
+  },180);
 }
 function siteMenu(t) {
   return `<nav class="site-menu" aria-label="模拟网站导航">
@@ -160,6 +215,7 @@ function VariantC() {
       ${t.hidden||t.closed?`<div class="closed-pane">${icon('archive')}<span>${t.closed?'已归入历史':'任务已收起'}</span><button class="secondary" ${action('reopen',t.id)}>重新查看</button></div>`:frame(t)}</div>`).join('')}</div></div>`;
 }
 function render() {
+  closePreview();
   const ts=visibleTasks();
   if(ts.length&&!ts.some(t=>t.id===state.active)) state.active=ts[0].id;
   document.body.dataset.variant=state.variant;
@@ -205,6 +261,7 @@ function update() {
 function refreshMessages(t) {
   $$('[data-feed="'+t.id+'"]').forEach(el=>{el.innerHTML=chatMessages(t);el.scrollTop=el.scrollHeight;});
   $$('[data-peek="'+t.id+'"]').forEach(el=>el.textContent=t.messages.at(-1).text);
+  $$('[data-preview-update="'+t.id+'"]').forEach(el=>el.textContent=t.messages.at(-1).text);
 }
 function message(t,text,role='assistant') { t.messages.push({role,text});refreshMessages(t); }
 let toastTimer;
@@ -268,6 +325,7 @@ function tick() {
 
 let previousFocus;
 function openModal(name,title,content,footer='') {
+  closePreview();
   previousFocus=document.activeElement;state.modal=name;
   $('#overlay').innerHTML=`<div class="modal-backdrop" data-backdrop><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><header class="modal-header"><h2 id="modal-title">${title}</h2><span class="spacer"></span><button class="icon-btn" ${action('dismiss')} aria-label="关闭弹窗">${icon('close')}</button></header>${content}${footer}</section></div>`;
   requestAnimationFrame(()=>($('.modal textarea')||$('.modal button'))?.focus());
@@ -305,6 +363,7 @@ function result(id,preview=false) {
     `<div class="modal-footer"><button class="primary" ${action('dismiss')}>返回工作区</button></div>`);
 }
 function closeTask(id,anchor) {
+  closePreview();
   const t=task(id);
   if(['ready','done','stopped'].includes(t.status)){t.closed=true;render();toast('已关闭标签页，可从活动与历史重新查看。');return;}
   state.modal='close';previousFocus=anchor;
@@ -323,6 +382,7 @@ function help() {
       <li>对应任务会显示「已让出操作」，另一项继续。</li><li>在这项任务的对话中发送「继续」，或点「核对并继续」。</li>
       <li>点顶部「快进到结果」，再分别查看两项结果。</li>
     </ol><p>底部 A / B / C 随时切换，同一轮任务、输入和对话会保留。键盘 ← → 也能切换，输入文字时不会抢按键。</p>
+    <p>A 方案：悬停顶部标签，可查看这项任务的进度、步骤和最近动态，不切换网页。移入卡片可继续阅读；点击标签或卡片里的「查看任务」才切换。标签上的小箭头可固定打开卡片，Esc 或点击外部收起。键盘聚焦标签后按 ↓ 也可打开。</p>
     <p>任务 A 会在发布前留出时间，等你体验接管。需要重来时，点顶部重置图标。刷新页面会重置模拟任务，保留所选方案。</p>
     <p>这里只比较界面。网页、进度和回复都是模拟，不验证真实浏览器接管或发布能力。</p>`);
 }
@@ -342,6 +402,12 @@ function send(id) {
 const handlers = {
   delegate:()=>delegation(), activity:()=>activity(), help:()=>help(), dismiss:()=>dismiss(),
   select:id=>{state.active=id;render();},
+  'preview-toggle':(id,el,event)=>{
+    if(taskPreview.id===id&&taskPreview.pinned){closePreview();return;}
+    showPreview(id,true);
+    if(event.detail===0)$('#task-preview-card .preview-open')?.focus();
+  },
+  'preview-close':()=>closePreview(true),
   previous:()=>cycle(-1), next:()=>cycle(1),
   variant:(_,el)=>changeVariant(el.dataset.variant),
   reset:()=>{dismiss();initialize();render();toast('已重置，三种方案使用同一组示例任务。');},
@@ -360,14 +426,38 @@ const handlers = {
 };
 document.addEventListener('click',event=>{
   const el=event.target.closest('[data-action]');
-  if(el){handlers[el.dataset.action]?.(el.dataset.task,el);return;}
+  if(el){handlers[el.dataset.action]?.(el.dataset.task,el,event);return;}
   if(event.target.matches('[data-backdrop]'))dismiss();
 });
 document.addEventListener('pointerdown',event=>{
+  if(!event.target.closest('[data-preview-tab],.task-preview'))closePreview();
   if($('.close-popover')&&!event.target.closest('.close-popover')&&!event.target.closest('[data-action="close-task"]'))dismiss();
   const web=event.target.closest('[data-web]');
   if(web&&event.button===0)takeover(web.dataset.web);
 });
+document.addEventListener('pointerover',event=>{
+  if(event.pointerType==='touch')return;
+  const tab=event.target.closest('[data-preview-tab]');
+  if(tab&&!tab.contains(event.relatedTarget))queuePreview(tab.dataset.previewTab);
+  if(event.target.closest('.task-preview'))clearTimeout(taskPreview.closeTimer);
+});
+document.addEventListener('pointerout',event=>{
+  if(event.pointerType==='touch')return;
+  const source=event.target.closest('[data-preview-tab],.task-preview');
+  if(!source||source.contains(event.relatedTarget))return;
+  const next=event.relatedTarget;
+  if(next?.closest?.('.task-preview')||next?.closest?.('[data-preview-tab]')?.dataset.previewTab===taskPreview.id)return;
+  queuePreviewClose();
+});
+document.addEventListener('focusout',event=>{
+  if(!event.target.closest('.task-preview'))return;
+  requestAnimationFrame(()=>{
+    const next=document.activeElement;
+    if(!next?.closest('.task-preview')&&!next?.closest('[data-preview-tab]'))closePreview();
+  });
+});
+window.addEventListener('resize',positionPreview);
+window.addEventListener('scroll',positionPreview);
 document.addEventListener('input',event=>{
   const el=event.target;
   if(el.dataset.draft)task(el.dataset.draft).draft=el.value;
@@ -387,7 +477,15 @@ document.addEventListener('submit',event=>{
 });
 document.addEventListener('keydown',event=>{
   if(event.isComposing)return;
-  if(event.key==='Escape'){dismiss();return;}
+  if(event.key==='Escape'){
+    if(taskPreview.id){event.preventDefault();closePreview(!!event.target.closest('.task-preview'));return;}
+    dismiss();return;
+  }
+  const previewTab=event.target.closest('[data-preview-tab]');
+  if(event.key==='ArrowDown'&&previewTab&&!state.modal){
+    event.preventDefault();showPreview(previewTab.dataset.previewTab,true);
+    $('#task-preview-card .preview-open')?.focus();return;
+  }
   if(event.target.dataset?.draft&&event.key==='Enter'&&!event.shiftKey){event.preventDefault();send(event.target.dataset.draft);return;}
   const modal=$('.modal');
   if(modal&&event.key==='Tab'){
