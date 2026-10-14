@@ -398,13 +398,101 @@ button:disabled { filter:none; }
   .prototype-controls .scene-label { width:100%; }
   .closed-summary { grid-template-columns:1fr; max-width:240px; }
 }
+
+/* v2: one browser-like tab row; notifications and prototype controls never resize the webpage. */
+body { height:100dvh; display:flex; flex-direction:column; overflow:hidden; }
+.prototype-intro { height:34px; min-height:34px; padding:0 15px; gap:16px; font-size:10px; }
+.prototype-intro strong { font-size:11px; }
+.prototype-intro>span { color:#8a9487; }
+#app { position:relative; flex:1; min-height:0; height:auto; margin:0 10px; border-radius:11px; }
+.app-header { height:54px; min-height:54px; padding:0 10px 0 14px; gap:12px; background:#edf1eb; border-bottom:1px solid #dce3d9; }
+.app-header .logo { font-size:20px; gap:6px; flex:none; margin:0 9px 0 0; }
+.app-header .logo-mark { width:24px; height:24px; border-width:1.6px; }
+.app-header .wordmark-dot { display:none; }
+.app-header .task-tabs { flex:1; min-width:0; min-height:0; height:54px; align-items:stretch; margin:0; padding:0; gap:4px; background:none; border:0; overflow-x:auto; scrollbar-width:none; }
+.task-tabs::-webkit-scrollbar { display:none; }
+.task-tab { flex:0 1 242px; min-width:150px; width:242px; max-width:242px; height:46px; margin-top:8px; padding:0 7px 0 10px; gap:7px; }
+.task-tab .site-icon { display:grid; width:23px; height:23px; font-size:16px; }
+.task-tab .select-task { overflow:hidden; padding:2px 0; }
+.task-tab .task-name { display:block; width:100%; max-width:none; font-size:11px; }
+.task-tab small { margin-top:2px; }
+.task-tab .status { font-size:9px; }
+.task-tab .icon-btn { width:20px; height:25px; }
+.new-tab { align-self:center; flex:none; width:30px; margin:5px 1px 0; }
+.header-tools { flex:none; display:flex; align-items:center; gap:7px; }
+.header-tools .activity-btn { padding:5px 7px; border:0; gap:5px; }
+.header-tools .activity-btn svg { width:16px; }
+.record-indicator { display:grid; place-items:center; color:#87a087; width:21px; }
+.record-indicator svg { width:15px; }
+.record-indicator.pending { color:#b17c32; }
+.frame { min-height:0; height:auto; }
+.browser-bar { height:34px; min-height:34px; gap:8px; padding:0 12px; }
+.address { flex:1; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-size:11px; }
+.floating-notices { position:absolute; z-index:22; right:14px; top:99px; width:min(357px,calc(100% - 28px)); display:grid; gap:8px; pointer-events:none; }
+.app-notice { pointer-events:auto; padding:11px 12px; gap:10px; border:1px solid #ead9b5; border-radius:10px; box-shadow:0 7px 25px #263e2620; background:#fff9eb; }
+.app-notice.recovered { background:#f6fbf3; border:1px solid #d5e3cd; }
+.app-notice strong { font-size:12px; }
+.app-notice .notice-copy small { font-size:10px; }
+.app-notice .secondary { padding:5px 8px; }
+.floating-chat { width:340px; right:14px; bottom:14px; max-height:calc(100% - 50px); display:flex; flex-direction:column; }
+.chat-header { min-height:49px; height:49px; flex:none; }
+.chat-heading { min-width:0; flex:1; }
+.chat-heading strong { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:11px; }
+.chat-mode { flex:none; }
+.chat-feed { max-height:245px; flex:0 1 auto; min-height:55px; }
+.chat-footnote,.chat-compose { flex:none; }
+.site-choices { display:flex; flex-wrap:wrap; gap:7px; margin:12px 0 5px; }
+.site-choices button { border:1px solid #cbdccd; background:#f4f8f1; padding:8px 10px; border-radius:7px; font-size:11px; text-align:left; color:#385f44; }
+.site-choices small { display:block; color:#839080; font-size:9px; margin-top:2px; }
+.site-choices .reject-site { background:white; border-color:#e1e5db; color:#7b8376; }
+.intent-surface { flex:1; min-height:0; overflow:auto; padding:55px 390px 70px 45px; background:#fafbf8; display:flex; align-items:center; justify-content:center; }
+.intent-copy { max-width:460px; margin:auto; }
+.intent-symbol { width:44px; height:44px; display:grid; place-items:center; border:1px solid #dce5d4; background:#f1f6ec; border-radius:13px; color:#688660; }
+.intent-copy h2 { font-size:26px; font-weight:550; letter-spacing:-.7px; margin:20px 0 12px; }
+.intent-copy p { color:#81907c; font-size:12px; line-height:1.9; }
+.intent-copy blockquote { font-size:13px; color:#60725b; border-left:2px solid #cfdcc7; margin:27px 0 0; padding:3px 0 3px 15px; line-height:1.8; overflow-wrap:anywhere; }
+.sr-only { position:absolute!important; width:1px!important; height:1px!important; padding:0!important; margin:-1px!important; overflow:hidden!important; clip:rect(0,0,0,0); white-space:nowrap; }
+.new-fields #new-goal { min-height:120px; font-size:15px; padding:15px; }
+.prototype-controls { position:relative; height:42px; min-height:42px; width:100%; max-width:none; padding:0 15px; margin:0; }
+.lab-compact { height:42px; display:flex; align-items:center; gap:10px; font-size:11px; color:#7e8d76; }
+.lab-compact strong { font-size:11px; color:#57734d; font-weight:500; white-space:nowrap; }
+.lab-mini-label { font-size:9px; padding:1px 5px; border:1px solid #cdd8c6; border-radius:4px; color:#78906e; }
+.lab-instruction { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-size:10px; }
+.lab-toggle { flex:none; display:flex; align-items:center; gap:6px; font-size:11px; padding:5px 8px; border:1px solid #d4ddce; border-radius:6px; background:#f7f9f2; }
+.lab-toggle svg { width:13px; height:13px; }
+.lab-panel { position:fixed; right:13px; bottom:48px; z-index:35; width:min(570px,calc(100vw - 26px)); max-height:65dvh; overflow:auto; padding:17px; border:1px solid #d4dfce; background:#fafcf6; border-radius:12px; box-shadow:0 8px 32px #1e38262c; }
+.lab-panel-heading { display:flex; align-items:center; justify-content:space-between; font-size:13px; }
+.lab-panel>p { font-size:11px; color:#86917d; margin:5px 0 15px; }
+.lab-recovery { display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin-top:15px; }
+.lab-recovery a { font-size:10px; margin-left:auto; }
+#toast { top:100px; max-width:min(500px,90vw); }
+.start-screen { min-height:0; }
+@media(max-width:850px){
+  .app-header { gap:7px; padding-left:10px; } .app-header .logo { font-size:17px; margin-right:3px; } .app-header .logo-mark { display:none; }
+  .task-tab { min-width:140px; flex-basis:225px; padding-left:8px; } .header-tools { gap:4px; } .record-indicator { display:none; }
+  .floating-chat { width:315px; } .chat-feed { max-height:205px; }
+  .intent-surface { padding:35px 350px 55px 25px; } .intent-copy h2 { font-size:22px; }
+  .prototype-controls { padding:0 12px; } .lab-instruction { max-width:calc(100vw - 300px); }
+  .login-surface,.error-surface { padding:24px 350px 80px 23px; }
+  .login-card { width:300px; max-width:none; padding:21px; margin:0; }
+}
+@media(max-width:640px){
+  .prototype-intro { height:31px; min-height:31px; padding:0 10px; gap:8px; } .prototype-intro>span { font-size:9px; } .prototype-intro strong { font-size:10px; }
+  .app-header .logo { font-size:0; gap:0; margin-right:0; } .app-header .logo-mark { display:grid; }
+  .task-tab { flex-basis:175px; min-width:140px; } .task-tab .site-icon { display:none; }
+  .header-tools .activity-btn { display:flex; } .header-tools .activity-count { display:none; }
+  .intent-surface { align-items:flex-start; padding:26px 24px 380px; } .intent-copy { margin:0; }
+  .floating-chat { width:calc(100% - 24px); right:12px; max-height:60%; } .chat-feed { max-height:155px; }
+  .login-surface,.error-surface { padding:24px 20px 380px; } .login-card { width:min(300px,100%); }
+  .lab-instruction { display:none; } .prototype-controls { height:40px; min-height:40px; }
+  #app { min-height:0; height:auto; } .frame { min-height:0; }
+}
+@media(max-height:740px){.chat-feed{max-height:145px;} .intent-surface{padding-top:25px;} .start-screen{padding:15px;} .start-capabilities{margin-top:20px;} }
+
 </style>
 </head>
 <body>
-<div class="prototype-intro">
-  <span class="lab-label">第 01 项 · 基础工作区 v1</span>
-  <div><strong>从第一次打开，到下次回来，是否顺手？</strong><p>沿用 A 布局，体验建任务、网页登录、退出重开和失败处理。网页、登录、保存与重开均为本页模拟。</p></div>
-</div>
+<div class="prototype-intro"><strong>只说目标，把空间留给网页。</strong><span>工作区 v2 · AI、网页与保存均为模拟</span></div>
 <main id="app" aria-label="helpr 基础工作区"></main>
 <aside id="lab" class="prototype-controls" aria-label="原型体验控制"></aside>
 <div id="task-preview-layer"></div>
@@ -412,123 +500,152 @@ button:disabled { filter:none; }
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script id="prototype-model">
-// PROTOTYPE ONLY. Pure transitions; "saved", browser sessions and website data all remain in memory.
+// PROTOTYPE ONLY. These fixed examples illustrate AI decisions; no model or website is contacted.
 const Foundation = (() => {
-  const clone = value => structuredClone(value);
-  const examples = [
-    {goal:'准备发布十月经营周报',url:'https://beishan.example/wp-admin/'},
-    {goal:'整理团队内部资料',url:'https://team.beishan.example/admin/'},
+  const clone=value=>structuredClone(value);
+  const sites=[
+    {key:'wordpress',name:'北山官网',site:'WordPress',url:'https://beishan.example/wp-admin/',origin:'https://beishan.example'},
+    {key:'drupal',name:'团队资料库',site:'Drupal',url:'https://team.beishan.example/admin/',origin:'https://team.beishan.example'},
   ];
-  const initial = () => ({
-    app:'open',tasks:[],active:null,nextId:1,sessions:{},pages:{},websiteDrafts:{},
-    saved:{tasks:[],active:null,nextId:1},save:'saved',protection:'available',
-    faults:{network:null,credentials:false,storage:false},reopened:false,
-    feedback:'',events:['已打开空工作区，AI 尚未配置。'],
-  });
-  function record(s,text) { s.events=[...s.events.slice(-19),text];s.feedback=text; }
-  function checkpoint(s) {
+  const examples=[
+    {label:'只说网站名称',goal:'把十月经营周报发布到北山官网'},
+    {label:'没说发到哪里',goal:'帮我发布十月经营周报'},
+    {label:'网址有个笔误',goal:'把十月经营周报发到 https://beishna.example'},
+    {label:'第二项任务',goal:'把这份内部资料整理到团队资料库'},
+  ];
+  const initial=()=>({app:'open',tasks:[],active:null,nextId:1,sessions:{},pages:{},websiteDrafts:{},
+    saved:{tasks:[],active:null,nextId:1},save:'saved',protection:'available',ai:true,
+    faults:{network:null,credentials:false,storage:false},reopened:false,feedback:'',
+    events:['已打开空工作区；本轮使用预置的 AI 分析演示。']});
+  function record(s,text){s.events=[...s.events.slice(-19),text];s.feedback=text;}
+  function checkpoint(s){
     if(s.faults.storage){s.save='pending';return false;}
     s.saved=clone({tasks:s.tasks,active:s.active,nextId:s.nextId});s.save='saved';return true;
   }
-  const task = (s,id) => s.tasks.find(t=>t.id===id);
-  const websiteDirty = (s,id) => {
-    const page=s.pages[id],saved=s.websiteDrafts[id];
-    return !!page&&(page.title!==saved.title||page.body!==saved.body);
-  };
-  const pageFor = (s,t) => ({...clone(s.websiteDrafts[t.id]),error:s.faults.network===t.id});
-  function transition(before,event) {
-    const s=clone(before), t=task(s,event.id);
+  const task=(s,id)=>s.tasks.find(t=>t.id===id);
+  const websiteDirty=(s,id)=>!!s.pages[id]&&(s.pages[id].title!==s.websiteDrafts[id].title||s.pages[id].body!==s.websiteDrafts[id].body);
+  const pageFor=(s,t)=>({...clone(s.websiteDrafts[t.id]),error:s.faults.network===t.id});
+  function openSite(s,t,key,reason){
+    const site=sites.find(x=>x.key===key);if(!site)return;
+    Object.assign(t,{url:site.url,origin:site.origin,site:site.site,kind:key,analysis:'ready',candidates:[]});
+    if(!s.websiteDrafts[t.id])s.websiteDrafts[t.id]={title:key==='drupal'?'十月经营周报 · 内部资料':'十月经营周报',body:'本周经营数据已整理完毕。请在这里补充要发布的内容。'};
+    s.pages[t.id]=pageFor(s,t);
+    t.messages.push({role:'assistant',text:reason+' 我先打开网页；需要登录时，请直接在网页中完成。'});
+    checkpoint(s);record(s,'任务 '+t.label+' 已确定网站：'+site.name+'。');
+  }
+  // Intentionally bounded fixture, not a reusable URL resolver or a substitute for a real model.
+  function understand(text){
+    if(/beishna\.example|beishan\.exmaple/i.test(text))return {kind:'correct',keys:['wordpress'],text:'你写的地址可能有个拼写错误。之前使用的北山官网是 beishan.example；你指的是这个网站吗？'};
+    const hosts=[...text.matchAll(/(?:https?:\/\/)?([a-z0-9-]+(?:\.[a-z0-9-]+)+)/gi)].map(x=>x[1].toLowerCase());
+    if(hosts.some(h=>!sites.some(x=>new URL(x.url).hostname===h)))return {kind:'clarify',keys:sites.map(x=>x.key),text:'这个地址暂时无法确认。你想使用哪个网站？可以告诉我网站名称或补充线索，不需要重新填写一张表单。'};
+    const positive=text.replace(/(?:不是|不要发到|不发到|别发到)\s*(?:北山官网|北山|团队资料库|团队|WordPress|Drupal)/gi,'');
+    const wp=/北山|官网|wordpress/i.test(positive)||hosts.includes('beishan.example');
+    const dr=/团队|内部|资料库|drupal/i.test(positive)||hosts.includes('team.beishan.example');
+    if(wp!==dr)return {kind:'ready',key:wp?'wordpress':'drupal'};
+    return {kind:'clarify',keys:sites.map(x=>x.key),text:'要发布到哪个网站？我看到你之前使用过北山官网和团队资料库。可以直接选一个，也可以告诉我网站名称或用途。'};
+  }
+  function beginAnalysis(s,t,input){
+    t.analysisInput=input;t.analysis=s.ai?'pending':'no-model';
+    t.messages.push({role:'assistant',text:s.ai?'我来理解这个目标，并核对应该打开哪个网站。':'目标已保留。AI 尚未配置，配置后再分析网站；不会猜测地址。'});
+    checkpoint(s);
+  }
+  function transition(before,event){
+    const s=clone(before),t=task(s,event.id);
     if(s.app==='closed'&&!['OPEN','RESTORE_CONDITIONS'].includes(event.type))return s;
-    switch(event.type) {
-      case 'CREATE': {
-        if(s.faults.storage){record(s,'新任务尚未创建，输入保留；恢复保存后可重试。');break;}
-        const url=new URL(event.url);
-        const id='task-'+s.nextId++,label=String.fromCharCode(64+s.tasks.length+1);
-        const kind=url.hostname.startsWith('team.')?'drupal':url.hostname==='beishan.example'?'wordpress':'generic';
-        const site=kind==='drupal'?'Drupal':kind==='wordpress'?'WordPress':url.hostname;
-        const next={id,label,goal:event.goal,url:url.href,origin:url.origin,site,kind,hidden:false,minimized:false,draft:'',
-          messages:[{role:'user',text:event.goal},{role:'system',text:'这项任务已建立。你可以先在网页中登录并手动处理；AI 尚未配置，对话会保存在这里。'}]};
-        s.tasks.push(next);s.active=id;
-        s.websiteDrafts[id]={title:kind==='drupal'?'十月经营周报 · 内部资料':'十月经营周报',body:'本周经营数据已整理完毕。请在这里补充要发布的内容。'};
-        s.pages[id]=pageFor(s,next);checkpoint(s);
-        record(s,'已创建任务 '+label+'，网页与对话独立保留。');break;
+    switch(event.type){
+      case 'CREATE':{
+        if(s.faults.storage){record(s,'目标仍在输入框中，恢复保存后再创建任务。');break;}
+        const id='task-'+s.nextId++,label=String.fromCharCode(65+s.tasks.length);
+        const next={id,label,goal:event.goal,url:'',origin:'',site:'待确定网站',kind:'generic',analysis:'pending',candidates:[],
+          hidden:false,minimized:false,draft:'',messages:[{role:'user',text:event.goal}]};
+        s.tasks.push(next);s.active=id;beginAnalysis(s,next,event.goal);record(s,'已保存任务 '+label+' 的目标。');break;
       }
-      case 'SELECT': if(t){t.hidden=false;s.active=t.id;checkpoint(s);} break;
-      case 'HIDE': if(t){t.hidden=true;if(s.active===t.id)s.active=s.tasks.find(x=>!x.hidden)?.id||null;checkpoint(s);record(s,'任务 '+t.label+' 已收起，原记录保留。');} break;
-      case 'MINIMIZE': if(t){t.minimized=!t.minimized;checkpoint(s);} break;
-      case 'CHAT_DRAFT': if(t){t.draft=event.value;checkpoint(s);} break;
+      case 'ANALYZE':{
+        if(!t||t.analysis!=='pending')break;
+        if(!s.ai){t.analysis='no-model';checkpoint(s);break;}
+        if(s.faults.storage){t.analysis='paused';record(s,'先恢复任务记录保存，再继续分析。');break;}
+        const answer=understand(t.analysisInput);
+        if(answer.kind==='ready'){
+          const site=sites.find(x=>x.key===answer.key);
+          openSite(s,t,answer.key,'根据目标和之前使用的网站，我确定是'+site.name+'（'+new URL(site.url).hostname+'）。');
+        }else{
+          t.analysis=answer.kind;t.candidates=answer.keys;t.messages.push({role:'assistant',text:answer.text});
+          checkpoint(s);record(s,'任务 '+t.label+' 正在等你补充网站信息。');
+        }break;
+      }
+      case 'CHOOSE_SITE':
+        if(t&&['clarify','correct'].includes(t.analysis)&&!s.faults.storage){
+          const site=sites.find(x=>x.key===event.key);if(!site)break;
+          t.messages.push({role:'user',text:t.analysis==='correct'?'是，使用'+site.name:'发到'+site.name});
+          openSite(s,t,event.key,'已按你的回答确定为'+site.name+'（'+new URL(site.url).hostname+'）。');
+        }break;
+      case 'REJECT_SITE':
+        if(t){t.analysis='clarify';t.candidates=[];t.messages.push({role:'user',text:'不是这个网站'},{role:'assistant',text:'好的，我先保留目标，不打开这个候选网站。请告诉我网站名称或补充线索。'});checkpoint(s);}break;
+      case 'RESUME_ANALYSIS':if(t&&!s.faults.storage){beginAnalysis(s,t,t.analysisInput||t.goal);}break;
+      case 'ENABLE_AI':
+        s.ai=true;for(const x of s.tasks)if(x.analysis==='no-model')beginAnalysis(s,x,x.analysisInput||x.goal);
+        record(s,'已启用模拟 AI，不涉及模型设置或真实调用。');break;
+      case 'SELECT':if(t){t.hidden=false;s.active=t.id;checkpoint(s);}break;
+      case 'HIDE':if(t){t.hidden=true;if(s.active===t.id)s.active=s.tasks.find(x=>!x.hidden)?.id||null;checkpoint(s);record(s,'任务 '+t.label+' 已收起，原记录保留。');}break;
+      case 'MINIMIZE':if(t){t.minimized=!t.minimized;checkpoint(s);}break;
+      case 'CHAT_DRAFT':if(t){t.draft=event.value;checkpoint(s);}break;
       case 'SEND':
         if(t&&t.draft.trim()){
-          t.messages.push({role:'user',text:t.draft.trim()});t.draft='';
-          record(s,checkpoint(s)?'消息已保存到任务 '+t.label+'；尚未开始自动执行。':'消息仍在任务 '+t.label+' 的窗口中，尚未保存。');
+          const text=t.draft.trim();t.messages.push({role:'user',text});t.draft='';
+          if(!s.faults.storage&&['pending','clarify','correct','paused','no-model'].includes(t.analysis)){
+            if(t.analysis==='correct'&&/^(是|是的|对|好的|没错|就是这个|是，使用北山官网|使用北山官网)[。！!\s]*$/.test(text))openSite(s,t,t.candidates[0],'已采用你确认的网站。');
+            else beginAnalysis(s,t,text);
+          }
+          record(s,checkpoint(s)?'消息已保存到任务 '+t.label+'。':'新消息保留在任务 '+t.label+' 的窗口中，尚未保存。');
         }break;
-      case 'LOGIN':
-        if(t&&s.protection==='available'&&!s.pages[t.id].error){
-          s.sessions[t.origin]=true;record(s,t.site+' 的演示登录已建立；同一网站的任务共用这一登录。');
-        }break;
-      case 'LOGOUT':
-        if(t){s.sessions[t.origin]=false;record(s,t.site+' 已退出网站账号；其它网站的登录不变。');}break;
-      case 'WEB_INPUT':
-        if(t&&s.sessions[t.origin]&&s.protection==='available'&&!s.pages[t.id].error)s.pages[t.id][event.field]=event.value;
-        break;
-      case 'SAVE_WEB':
-        if(t&&s.sessions[t.origin]&&s.protection==='available'&&!s.pages[t.id].error){
-          const p=s.pages[t.id];s.websiteDrafts[t.id]={title:p.title,body:p.body};
-          record(s,'任务 '+t.label+' 的草稿已保存到模拟网站；未发布。');
-        }break;
+      case 'LOGIN':if(t&&t.url&&s.protection==='available'&&!s.pages[t.id]?.error){s.sessions[t.origin]=true;record(s,t.site+' 演示登录已建立；同一网站的任务共用登录。');}break;
+      case 'LOGOUT':if(t&&t.url){s.sessions[t.origin]=false;record(s,t.site+' 已退出账号，其它网站的登录不变。');}break;
+      case 'WEB_INPUT':if(t&&s.pages[t.id]&&s.sessions[t.origin]&&s.protection==='available'&&!s.pages[t.id].error)s.pages[t.id][event.field]=event.value;break;
+      case 'SAVE_WEB':if(t&&s.pages[t.id]&&s.sessions[t.origin]&&s.protection==='available'&&!s.pages[t.id].error){
+        const p=s.pages[t.id];s.websiteDrafts[t.id]={title:p.title,body:p.body};record(s,'任务 '+t.label+' 的草稿已保存到模拟网站，尚未发布。');}break;
       case 'FAULT':
-        if(event.kind==='network'&&t){s.faults.network=t.id;s.pages[t.id].error=true;record(s,'演示：任务 '+t.label+' 的网站暂时无法连接。');}
-        if(event.kind==='credentials'){s.faults.credentials=true;s.protection='blocked';record(s,'演示：登录保护读取失败，暂不打开依赖该信息的网页。');}
+        if(event.kind==='network'&&s.pages[event.id]){s.faults.network=t.id;s.pages[t.id].error=true;record(s,'演示：任务 '+t.label+' 的网页暂时无法连接。');}
+        if(event.kind==='credentials'){s.faults.credentials=true;s.protection='blocked';record(s,'演示：登录信息暂不可读取。');}
         if(event.kind==='storage'){s.faults.storage=true;s.save='unavailable';record(s,'演示：本机记录暂时无法保存。');}
-        if(event.kind==='expired'&&t){s.sessions[t.origin]=false;record(s,'演示：'+t.site+' 的登录已过期；任务与对话保留。');}
-        break;
-      case 'RESTORE_CONDITIONS':
-        s.faults={network:null,credentials:false,storage:false};
-        record(s,'模拟条件已恢复。回到工作区点击对应的重试，核对后恢复。');break;
-      case 'RETRY_PAGE':
-        if(t){
-          if(s.protection!=='available'){record(s,'请先恢复登录信息的读取。');break;}
-          s.pages[t.id].error=s.faults.network===t.id;
-          record(s,s.pages[t.id].error?'仍无法连接，保留当前任务；可以先查看另一项。':'网页已重新打开，已有任务与对话保持不变。');
-        }break;
-      case 'RETRY_CREDENTIALS':
-        s.protection=s.faults.credentials?'blocked':'available';
-        record(s,s.protection==='blocked'?'仍无法读取登录信息，请完成系统授权后重试。':'登录信息已重新核对；有效会话保留，没有启动自动执行。');break;
-      case 'RETRY_SAVE':
-        record(s,checkpoint(s)?'未保存的改动已写入本机记录。':'仍无法保存，请保持窗口打开；新内容仍保留在窗口中。');break;
+        if(event.kind==='expired'&&t){s.sessions[t.origin]=false;record(s,'演示：'+t.site+' 的登录过期，任务与对话仍在。');}break;
+      case 'RESTORE_CONDITIONS':s.faults={network:null,credentials:false,storage:false};record(s,'模拟条件已恢复，请回工作区重试。');break;
+      case 'RETRY_PAGE':if(t&&s.pages[t.id]){
+        if(s.protection!=='available'){record(s,'请先恢复登录信息的读取。');break;}
+        s.pages[t.id].error=s.faults.network===t.id;record(s,s.pages[t.id].error?'仍无法连接，原任务已保留。':'网页已重新打开，任务与对话保持不变。');}break;
+      case 'RETRY_CREDENTIALS':s.protection=s.faults.credentials?'blocked':'available';record(s,s.protection==='blocked'?'仍无法读取登录信息，请完成系统授权后重试。':'登录信息已核对，有效会话保留。');break;
+      case 'RETRY_SAVE':record(s,checkpoint(s)?'窗口中的新内容已保存。':'仍无法保存，请保持窗口打开。');break;
       case 'QUIT':
-        if(!checkpoint(s)){record(s,'还有记录无法保存，已保留工作区，暂不退出。');break;}
-        s.app='closed';s.pages={};
-        record(s,'已保存任务与对话并模拟退出。未保存到网站的编辑不在恢复记录中。');break;
+        if(!checkpoint(s)){record(s,'仍有记录无法保存，暂不退出。');break;}
+        s.app='closed';s.pages={};record(s,'任务与对话已保存，已模拟退出。');break;
       case 'OPEN':
         s.tasks=clone(s.saved.tasks);s.active=s.saved.active;s.nextId=s.saved.nextId;
-        s.pages=Object.fromEntries(s.tasks.map(x=>[x.id,pageFor(s,x)]));
+        s.pages=Object.fromEntries(s.tasks.filter(x=>x.url).map(x=>[x.id,pageFor(s,x)]));
+        for(const x of s.tasks)if(x.analysis==='pending')x.analysis='paused';
         s.app='open';s.reopened=true;s.protection=s.faults.credentials?'blocked':'available';
-        record(s,'已重新打开 '+s.tasks.length+' 项原任务，未创建重复任务，未启动自动执行。');break;
-      case 'ACK_REOPEN': s.reopened=false;break;
+        checkpoint(s);record(s,'已找回 '+s.tasks.length+' 项原任务和对话，未启动网页执行。');break;
+      case 'ACK_REOPEN':s.reopened=false;break;
     }
     return s;
   }
-  function scenario(name) {
+  function scenario(name){
     let s=initial();
     if(name==='first')return s;
-    for(const sample of examples){s=transition(s,{type:'CREATE',...sample});s=transition(s,{type:'LOGIN',id:s.active});}
-    s=transition(s,{type:'SELECT',id:'task-1'});
-    for(const [id,text] of [['task-1','先核对标题，确认后再处理。'],['task-2','这份只供团队内部查看。']]){
-      s=transition(s,{type:'CHAT_DRAFT',id,value:text});s=transition(s,{type:'SEND',id});
+    if(['ambiguous','typo','no-model'].includes(name)){
+      if(name==='no-model')s.ai=false;
+      s=transition(s,{type:'CREATE',goal:examples[name==='typo'?2:1].goal});
+      return transition(s,{type:'ANALYZE',id:s.active});
     }
-    s=transition(s,{type:'WEB_INPUT',id:'task-1',field:'title',value:'十月经营周报 · 已保存草稿'});
-    s=transition(s,{type:'SAVE_WEB',id:'task-1'});
+    for(const i of [0,3]){s=transition(s,{type:'CREATE',goal:examples[i].goal});s=transition(s,{type:'ANALYZE',id:s.active});s=transition(s,{type:'LOGIN',id:s.active});}
+    s=transition(s,{type:'SELECT',id:'task-1'});
+    for(const [id,text] of [['task-1','先核对标题，确认后再处理。'],['task-2','这份只供团队内部查看。']]){s=transition(s,{type:'CHAT_DRAFT',id,value:text});s=transition(s,{type:'SEND',id});}
+    s=transition(s,{type:'WEB_INPUT',id:'task-1',field:'title',value:'十月经营周报 · 已保存草稿'});s=transition(s,{type:'SAVE_WEB',id:'task-1'});
     if(name==='reopen')return transition(s,{type:'QUIT'});
     if(name==='expired'){s=transition(s,{type:'FAULT',kind:'expired',id:'task-1'});s=transition(s,{type:'QUIT'});return transition(s,{type:'OPEN'});}
     if(['network','credentials','storage'].includes(name))s=transition(s,{type:'FAULT',kind:name,id:'task-1'});
-    if(name==='storage'){
-      s=transition(s,{type:'CHAT_DRAFT',id:'task-1',value:'这条新要求还没有保存，请保留。'});
-      s=transition(s,{type:'SEND',id:'task-1'});
-    }
+    if(name==='storage'){s=transition(s,{type:'CHAT_DRAFT',id:'task-1',value:'这条新要求还没有保存，请保留。'});s=transition(s,{type:'SEND',id:'task-1'});}
     return s;
   }
-  return {initial,transition,scenario,task,websiteDirty,examples};
+  return {initial,transition,scenario,task,websiteDirty,examples,sites};
 })();
 </script>
 
@@ -542,13 +659,19 @@ const icon=name=>`<svg viewBox="0 0 18 18" aria-hidden="true"><path d="${paths[n
 const act=(name,id='')=>`data-action="${name}"${id?` data-task="${id}"`:''}`;
 const logo=()=>`<div class="logo"><span class="logo-mark">${icon('leaf')}</span>helpr<span class="wordmark-dot">.</span></div>`;
 let model=Foundation.initial(), scene='first',modal=null,modalTask=null,previousFocus=null;
-let newDraft={goal:'',url:''},formError='',toastTimer;
+let newDraft={goal:''},formError='',toastTimer,recoveryTimer,labOpen=false;
+const analysisTimers=new Map();
 const preview={id:null,openTimer:null,closeTimer:null,keyboard:false};
 const task=id=>Foundation.task(model,id);
 const current=()=>task(model.active);
 const siteIcon=t=>`<span class="site-icon ${t.kind==='drupal'?'drupal':''}">${t.kind==='wordpress'?'W':t.kind==='drupal'?'d':icon('globe')}</span>`;
 const isRecorded=t=>model.saved.tasks.some(x=>x.id===t.id)&&model.save==='saved';
 function status(t) {
+  if(t.analysis==='pending')return ['正在分析目标','checking'];
+  if(t.analysis==='correct')return ['等待核对网站','manual'];
+  if(t.analysis==='clarify')return ['待补充网站','manual'];
+  if(t.analysis==='no-model')return ['等待配置 AI','ready'];
+  if(t.analysis==='paused')return ['等待继续分析','ready'];
   if(model.protection==='blocked')return ['等待授权','manual'];
   if(model.pages[t.id]?.error)return ['网页打不开','manual'];
   if(!model.sessions[t.origin])return ['等待网页登录','ready'];
@@ -565,12 +688,8 @@ function toast(text) {
   toastTimer=setTimeout(()=>$('#toast').classList.remove('visible'),3500);
 }
 function header() {
-  return `<header class="app-header">${logo()}<span class="workspace-name">我的工作区</span><span class="spacer"></span>
-    <span class="model-badge"><i></i>AI 未配置 · 可手动使用</span>
-    <span class="record-status" data-save-indicator>${icon(model.save==='saved'?'check':'info')}${model.save==='saved'?'任务记录已保存':'记录尚未保存'}</span>
-    <button class="activity-btn" ${act('tasks')}>${icon('grid')} 任务 <span class="activity-count">${model.tasks.length}</span></button>
-    <button class="primary" ${act('new')}>${icon('plus')} 新建任务</button>
-    <button class="icon-btn app-exit" ${act('quit')} aria-label="退出 helpr" title="退出 helpr">${icon('exit')}</button>
+  return `<header class="app-header">${logo()}<nav class="task-tabs" aria-label="任务标签页">${model.tasks.filter(t=>!t.hidden).map(taskTab).join('')}<button class="icon-btn new-tab" ${act('new')} aria-label="新建任务" title="新建任务">${icon('plus')}</button></nav>
+    <div class="header-tools"><span class="record-indicator ${model.save==='saved'?'':'pending'}" title="${model.save==='saved'?'任务与对话已保存':'有新内容尚未保存'}" aria-label="${model.save==='saved'?'任务与对话已保存':'有新内容尚未保存'}">${icon(model.save==='saved'?'check':'info')}</span><button class="activity-btn" ${act('tasks')} title="查看全部任务" aria-label="查看全部 ${model.tasks.length} 项任务">${icon('grid')}<span class="activity-count">${model.tasks.length}</span></button><button class="icon-btn" ${act('quit')} aria-label="退出 helpr" title="退出 helpr">${icon('exit')}</button></div>
   </header>`;
 }
 function taskTab(t) {
@@ -580,19 +699,24 @@ function taskTab(t) {
 }
 function notices() {
   let html='';
-  if(model.save!=='saved')html+=`<div class="app-notice" role="status"><span>${icon('info')}</span><div class="notice-copy"><strong>暂时无法保存新的改动</strong><small>新内容还在这个窗口中。请保持 helpr 打开，恢复保存后再退出。</small></div><button class="secondary" ${act('retry-save')}>重试保存</button></div>`;
-  if(model.reopened)html+=`<div class="app-notice recovered"><span>${icon('check')}</span><div class="notice-copy"><strong>已找回 ${model.tasks.length} 项原任务和对话</strong><small>网站会重新打开；仍有效的登录会继续使用。没有启动自动执行。</small></div><button class="icon-btn" ${act('ack-reopen')} aria-label="收起恢复提示">${icon('close')}</button></div>`;
-  return html;
+  if(model.save!=='saved')html+=`<div class="app-notice" role="status"><span>${icon('info')}</span><div class="notice-copy"><strong>新改动暂未保存</strong><small>内容仍在窗口中，请保持 helpr 打开。</small></div><button class="secondary" ${act('retry-save')}>重试</button></div>`;
+  if(model.reopened)html+=`<div id="recovery-notice" class="app-notice recovered" role="status"><span>${icon('check')}</span><div class="notice-copy"><strong>已找回 ${model.tasks.length} 项任务和对话</strong><small>有效登录已保留，尚未自动执行。</small></div><button class="icon-btn" ${act('ack-reopen')} aria-label="收起恢复提示">${icon('close')}</button></div>`;
+  return `<aside class="floating-notices" aria-label="工作区提示">${html}</aside>`;
 }
 function empty() {
   const any=model.tasks.length>0;
   return `<section class="start-screen"><div class="start-content"><div class="start-symbol">${icon(any?'archive':'globe')}</div><span class="eyebrow">${any?'随时回来，接着处理':'你的网页工作，从这里开始'}</span><h1>${any?'任务已收起，记录还在':'一个任务，一处专注的工作区'}</h1>
-    <p>${any?'从任务列表重新打开，就能回到原来的网页与对话。':'先打开网站、完成登录，记下你想做的事。每项任务都有自己的网页和对话，配置 AI 后再交给 helpr 执行。'}</p>
+    <p>${any?'从任务列表重新打开，就能回到原来的网页与对话。':'说说你想完成什么。helpr 会分析目标、寻找对应网站；需要补充时，就在这项任务里问你。'}</p>
     <button class="primary" ${act(any?'tasks':'new')}>${icon(any?'grid':'plus')} ${any?'查看已有任务':'创建第一个任务'}</button>
     <div class="start-capabilities"><span>${icon('globe')} 网页始终可见</span><span>${icon('chat')} 对话归属各自任务</span><span>${icon('archive')} 下次打开，找回记录</span></div>
   </div></section>`;
 }
 function website(t) {
+  if(!t.url){
+    const messages={pending:['正在理解你的目标','核对目标和之前使用的网站，确定下一步。'],clarify:['还需要一点网站信息','请在右下角对话中补充，目标和已有内容都已保留。'],correct:['核对一下目标网站','AI 找到了可能的正确地址，请在对话里确认。'], 'no-model':['目标已记下','AI 尚未配置，配置后才能分析网站。'],paused:['目标与对话仍在','上次分析尚未完成，可以继续核对目标网站。']};
+    const [title,detail]=messages[t.analysis]||messages.clarify;
+    return `<div class="intent-surface"><div class="intent-copy"><div class="intent-symbol">${icon('globe')}</div><h2>${title}</h2><p>${detail}</p>${t.analysis==='paused'?`<button class="secondary" ${act('resume-analysis',t.id)}>继续分析</button>`:''}<blockquote>${esc(t.goal)}</blockquote></div></div>`;
+  }
   const p=model.pages[t.id];
   if(model.protection==='blocked')return `<div class="error-surface"><section class="error-card"><div class="error-symbol">${icon('lock')}</div><h2>登录信息暂不可用</h2><p>暂时无法读取受保护的登录信息。你的任务和对话仍在；相关网页会先保持暂停，等待系统授权恢复。</p><button class="primary" ${act('retry-credentials')}>重新检查登录信息</button><p class="inline-feedback" data-retry-feedback></p><p class="tiny">此处演示授权失败后的处理。不会弹出真实系统授权窗口，也无需输入密码。</p></section></div>`;
   if(p.error)return `<div class="error-surface"><section class="error-card"><div class="error-symbol">${icon('globe')}</div><h2>暂时打不开这个网页</h2><p>${esc(new URL(t.url).hostname)} 现在没有响应。任务和对话已保留，你可以稍后重试，也可以先切换到另一项任务。</p><button class="primary" ${act('retry-page',t.id)}>${icon('replay')} 重新打开网页</button><p class="inline-feedback" data-retry-feedback></p></section></div>`;
@@ -616,14 +740,17 @@ function website(t) {
 }
 function chat(t) {
   if(t.minimized)return `<button class="chat-bubble" ${act('minimize',t.id)} aria-label="展开任务 ${t.label} 对话">${icon('chat')} ${esc(t.goal)}</button>`;
-  return `<section class="floating-chat" aria-label="任务 ${t.label} 的独立对话"><header class="chat-header"><span class="chat-avatar">${t.label}</span><div><strong>${esc(t.goal)}</strong><div class="tiny">此处内容只属于任务 ${t.label}</div></div><span class="spacer"></span><button class="icon-btn" ${act('minimize',t.id)} aria-label="最小化任务 ${t.label} 对话">${icon('minus')}</button></header>
-    <div class="chat-mode">${icon('info')} AI 未配置 · 当前只记录要求</div>
-    <div class="chat-feed" data-feed>${t.messages.map(m=>`<div class="message ${m.role}">${esc(m.text)}</div>`).join('')}</div>
-    <div class="chat-footnote ${model.save==='saved'?'':'pending'}" data-chat-save>${model.save==='saved'?'任务与对话已保存':'新内容仍在窗口中，等待恢复保存'}</div>
-    <form class="chat-compose" data-send="${t.id}"><textarea rows="1" data-chat-draft="${t.id}" aria-label="给任务 ${t.label} 记下要求" placeholder="先记下要求，配置 AI 后再执行">${esc(t.draft)}</textarea><button class="send-btn" aria-label="保存到任务 ${t.label} 对话">${icon('send')}</button></form></section>`;
+  let choices='';
+  if(['clarify','correct'].includes(t.analysis))choices=`<div class="site-choices">${t.candidates.map(key=>{const site=Foundation.sites.find(x=>x.key===key);return `<button ${act('choose-site',t.id)} data-site="${key}" ${model.faults.storage?'disabled':''}>${t.analysis==='correct'?'是，使用':''}${site.name}<small>${new URL(site.url).hostname}</small></button>`;}).join('')}${t.analysis==='correct'?`<button class="reject-site" ${act('reject-site',t.id)}>不是这个网站</button>`:''}</div>`;
+  const mode=t.analysis==='pending'?'正在分析目标':!model.ai?'AI 未配置 · 目标已保留':t.analysis==='ready'?'网站已确定 · 可在网页中操作':'需要你补充一点信息';
+  return `<section class="floating-chat" aria-label="任务 ${t.label} 的独立对话"><header class="chat-header"><span class="chat-avatar">${t.label}</span><div class="chat-heading"><strong title="${esc(t.goal)}">${esc(t.goal)}</strong><div class="tiny">独立对话</div></div><button class="icon-btn" ${act('minimize',t.id)} aria-label="最小化任务 ${t.label} 对话">${icon('minus')}</button></header>
+    <div class="chat-mode">${icon('info')} ${mode}<span class="spacer"></span><span>AI 模拟</span></div>
+    <div class="chat-feed" data-feed>${t.messages.map(m=>`<div class="message ${m.role}">${esc(m.text)}</div>`).join('')}${choices}</div>
+    <div class="chat-footnote ${model.save==='saved'?'':'pending'}" data-chat-save>${model.save==='saved'?'对话已保存':'新内容仍在窗口中，等待恢复保存'}</div>
+    <form class="chat-compose" data-send="${t.id}"><textarea rows="1" data-chat-draft="${t.id}" aria-label="给任务 ${t.label} 发送消息" placeholder="${['clarify','correct'].includes(t.analysis)?'告诉我网站名称，或补充线索…':'说说你的要求…'}">${esc(t.draft)}</textarea><button class="send-btn" aria-label="发送到任务 ${t.label}">${icon('send')}</button></form></section>`;
 }
 function frame(t) {
-  return `<section class="frame" data-frame="${t.id}"><div class="browser-bar"><button class="icon-btn" ${act('retry-page',t.id)} aria-label="重新打开任务 ${t.label} 网页">${icon('replay')}</button><span class="address">${icon('lock')} ${esc(t.url)}</span><span class="site-tag">模拟网页</span></div>${website(t)}${chat(t)}</section>`;
+  return `<section class="frame" data-frame="${t.id}"><div class="browser-bar"><button class="icon-btn" ${act('retry-page',t.id)} ${t.url?'':'disabled'} aria-label="重新打开任务 ${t.label} 网页">${icon('replay')}</button><span class="address">${icon(t.url?'lock':'globe')} ${esc(t.url||'根据目标确定网站…')}</span><span class="site-tag">模拟网页</span></div>${website(t)}${chat(t)}</section>`;
 }
 function closed() {
   return `<section class="start-screen"><div class="start-content"><div class="start-symbol">${icon('archive')}</div><span class="eyebrow">模拟退出已完成</span><h1>工作区已收好，下次回来接着看</h1><p>任务和对话已保留。重新打开时核对网站登录，读取网站已经保存的草稿。</p>
@@ -631,36 +758,48 @@ function closed() {
     <button class="primary" ${act('open')}>${icon('replay')} 重新打开 helpr</button><p style="margin-top:18px;font-size:11px">只在本页模拟退出重开，未关闭浏览器或运行真实应用。</p>
   </div></section>`;
 }
+function scheduleAnalysis(){
+  if(model.app==='open')for(const t of model.tasks){
+    if(t.analysis!=='pending'||analysisTimers.has(t.id))continue;
+    analysisTimers.set(t.id,setTimeout(()=>{analysisTimers.delete(t.id);dispatch({type:'ANALYZE',id:t.id});},800));
+  }
+  if(model.reopened&&!recoveryTimer)recoveryTimer=setTimeout(()=>{
+    recoveryTimer=null;model=Foundation.transition(model,{type:'ACK_REOPEN'});$('#recovery-notice')?.remove();renderLab();
+  },5500);
+}
+function clearPending(){for(const timer of analysisTimers.values())clearTimeout(timer);analysisTimers.clear();clearTimeout(recoveryTimer);recoveryTimer=null;}
 function render() {
+  const focus=document.activeElement,focusId=focus?.dataset.chatDraft,field=focus?.dataset.webField,start=focus?.selectionStart,end=focus?.selectionEnd;
   hidePreview();
-  $('#app').innerHTML=model.app==='closed'?closed():header()+notices()+
-    (model.tasks.length?`<nav class="task-tabs" aria-label="任务标签页">${model.tasks.filter(t=>!t.hidden).map(taskTab).join('')}<button class="icon-btn" style="align-self:center" ${act('new')} aria-label="新建任务标签页">${icon('plus')}</button></nav>`:'')+
-    (current()&&!current().hidden?frame(current()):empty());
+  $('#app').innerHTML=model.app==='closed'?closed():header()+notices()+(current()&&!current().hidden?frame(current()):empty());
   renderLab();renderModal();const feed=$('[data-feed]');if(feed)feed.scrollTop=feed.scrollHeight;
+  if(!modal){const next=focusId?$('[data-chat-draft="'+focusId+'"]'):field?$('[data-web-field="'+field+'"]'):null;if(next){next.focus();if(start!==null&&start!==undefined)next.setSelectionRange(start,end);}}
+  scheduleAnalysis();
 }
-const scenes={first:'从头体验',reopen:'退出后重开',network:'网页打不开',credentials:'登录保护失败',storage:'保存失败',expired:'登录过期'};
-function guide() {
-  if(model.faults.network||model.faults.credentials||model.faults.storage)return ['问题场景','先在工作区重试；再点下方“恢复模拟条件”，回到工作区重试。'];
-  if(model.save!=='saved'||model.protection==='blocked'||model.tasks.some(t=>model.pages[t.id]?.error))return ['条件已恢复','在工作区点对应的“重试”，观察是否保留原任务和输入。'];
-  if(model.app==='closed')return ['重新打开','点击“重新打开 helpr”，核对任务、对话和网站保存的草稿。'];
-  if(model.reopened)return ['核对恢复','两项任务分别切换看看；登录过期的网页需要再次登录。'];
-  if(!model.tasks.length)return ['创建任务','点击“创建第一个任务”，可使用表单里的 WordPress 示例。'];
-  if(model.tasks.some(t=>!model.sessions[t.origin]))return ['在网页登录','点击网页中的“登录（模拟）”。另一项任务保持自己的登录状态。'];
-  if(model.tasks.length===1)return ['再开一项','点击顶部“新建任务”，使用 Drupal 示例，体验独立网页和对话。'];
-  return ['退出再回来','记下要求，修改并保存网站草稿，然后点右上角“退出 helpr”。'];
+const scenes={first:'从头体验',ambiguous:'没说网站',typo:'网址写错',reopen:'退出后重开',network:'网页打不开',credentials:'登录保护失败',storage:'保存失败',expired:'登录过期','no-model':'AI 未配置'};
+function guide(){
+  if(model.faults.network||model.faults.credentials||model.faults.storage)return ['问题场景','可先重试，再到“原型场景”恢复模拟条件。'];
+  if(model.save!=='saved'||model.protection==='blocked'||model.tasks.some(t=>model.pages[t.id]?.error))return ['条件已恢复','在工作区重试，查看是否保留原任务。'];
+  if(model.app==='closed')return ['重新打开','点击“重新打开 helpr”查看原任务。'];
+  if(!model.tasks.length)return ['开始体验','点击顶部 ＋ 或“创建第一个任务”，只写目标即可。'];
+  const t=current();
+  if(t?.analysis==='pending')return ['AI 分析演示','无需另填网址，稍后在该任务中显示判断。'];
+  if(['clarify','correct'].includes(t?.analysis))return ['补充信息','在任务对话中回答或选择网站，仍是同一项任务。'];
+  if(t?.analysis==='no-model')return ['目标已保留','可在“原型场景”启用模拟 AI，继续体验。'];
+  if(t?.url&&!model.sessions[t.origin])return ['在网页登录','直接点击网页的“登录（模拟）”，无需真实账号。'];
+  return ['自由体验','顶部 ＋ 新建任务；也可保存草稿、退出重开。'];
 }
-function renderLab() {
+function renderLab(){
   const [title,detail]=guide(),wasOpen=$('.state-details')?.open;
   const failure=Object.values(model.faults).some(Boolean);
-  $('#lab').innerHTML=`<div class="guide-line"><span class="step-no">${icon('arrow')}</span><strong>${title}</strong><span>${detail}</span></div>
-    <nav class="scene-bar" aria-label="体验场景"><span class="scene-label">原型场景</span>${Object.entries(scenes).map(([id,name])=>`<button class="scene-btn" data-action="scene" data-scene="${id}" aria-pressed="${scene===id}">${name}</button>`).join('')}<span class="spacer"></span><button class="scene-btn restore" ${act('restore')} ${failure?'':'disabled'}>恢复模拟条件</button></nav>
-    <div class="prototype-footnote"><span>切换场景会重置模拟任务。所有数据只在本页内存中，刷新会从头开始。</span><a href="./index.html?variant=A">返回 A / B / C 布局比较</a></div>
-    <details class="state-details" ${wasOpen?'open':''}><summary>查看本次演示记录 · ${model.tasks.length} 项任务 · ${model.app==='open'?'窗口打开':'已模拟退出'} · ${model.save==='saved'?'记录已保存':'记录未保存'}</summary>
-    <table><thead><tr><th>任务（固定身份）</th><th>网站</th><th>登录</th><th>对话要求</th><th>记录</th></tr></thead><tbody>${model.tasks.map(t=>`<tr><td>${t.label} · ${t.id}</td><td>${esc(new URL(t.url).hostname)}</td><td>${model.sessions[t.origin]?'仍有效':'需要登录'}</td><td>${t.messages.filter(m=>m.role==='user').length} 条</td><td>${isRecorded(t)?'已保存':'窗口内暂存'}</td></tr>`).join('')||'<tr><td colspan="5">尚未创建任务</td></tr>'}</tbody></table>
-    <ul class="trace-list">${model.events.slice(-7).map(text=>`<li>· ${esc(text)}</li>`).join('')}</ul></details>`;
+  $('#lab').innerHTML=`<div class="lab-compact"><span class="lab-mini-label">原型</span><strong>${title}</strong><span class="lab-instruction">${detail}</span><span class="spacer"></span><button class="lab-toggle" ${act('lab-toggle')} aria-expanded="${labOpen}" aria-controls="lab-panel">${icon('grid')} 原型场景</button></div>
+    <section id="lab-panel" class="lab-panel" ${labOpen?'':'hidden'} aria-label="原型场景与记录"><div class="lab-panel-heading"><strong>切换体验场景</strong><button class="icon-btn" ${act('lab-toggle')} aria-label="收起原型场景">${icon('close')}</button></div><p>场景切换会重置演示。AI 使用预置示例和两个曾用网站的线索；所有数据仅在本页内存中。</p>
+    <nav class="scene-bar" aria-label="体验场景">${Object.entries(scenes).map(([id,name])=>`<button class="scene-btn" data-action="scene" data-scene="${id}" aria-pressed="${scene===id}">${name}</button>`).join('')}</nav>
+    <div class="lab-recovery"><button class="scene-btn restore" ${act('restore')} ${failure?'':'disabled'}>恢复模拟条件</button>${!model.ai?`<button class="scene-btn" ${act('enable-ai')}>启用模拟 AI</button>`:''}<a href="./index.html?variant=A">A / B / C 布局比较</a></div>
+    <details class="state-details" ${wasOpen?'open':''}><summary>演示记录 · ${model.tasks.length} 项任务 · ${model.save==='saved'?'记录已保存':'记录未保存'}</summary><table><thead><tr><th>任务身份</th><th>网站</th><th>状态</th><th>对话</th></tr></thead><tbody>${model.tasks.map(t=>`<tr><td>${t.label} · ${t.id}</td><td>${esc(t.url?new URL(t.url).hostname:'待确定')}</td><td>${status(t)[0]}</td><td>${t.messages.filter(m=>m.role==='user').length} 条要求</td></tr>`).join('')||'<tr><td colspan="4">尚未创建任务</td></tr>'}</tbody></table><ul class="trace-list">${model.events.slice(-7).map(text=>`<li>· ${esc(text)}</li>`).join('')}</ul></details></section>`;
 }
 function modalContent() {
-  if(modal==='new')return {title:'创建一项网页任务',body:`<p>先说明要做的事，再打开对应网站。AI 尚未配置，你可以先登录和手动准备。</p><form data-create class="new-fields"><label for="new-goal">这次想做什么？</label><textarea id="new-goal" maxlength="160" placeholder="例如：准备发布这周的经营周报">${esc(newDraft.goal)}</textarea><label for="new-url">网站地址</label><input id="new-url" type="url" placeholder="https://..." value="${esc(newDraft.url)}" required><div class="example-options"><span>填入演示内容</span><button type="button" data-action="example" data-example="0">WordPress 示例</button><button type="button" data-action="example" data-example="1">Drupal 示例</button></div><p class="tiny">原型中所有地址都只显示本地模拟网站，不访问外部服务。</p><div class="form-error" role="status">${esc(formError)}</div><div class="modal-footer"><button type="button" class="secondary" ${act('dismiss')}>暂不创建</button><button type="submit" class="primary">创建并打开网站 ${icon('arrow')}</button></div></form>`};
+  if(modal==='new')return {title:'这次想完成什么？',body:`<p>直接描述目标。helpr 会分析该用哪个网站，缺少信息时在任务中问你。</p><form data-create class="new-fields"><label class="sr-only" for="new-goal">任务目标</label><textarea id="new-goal" maxlength="600" placeholder="例如：把十月经营周报发布到北山官网">${esc(newDraft.goal)}</textarea><div class="example-options"><span>试一试</span>${Foundation.examples.map((x,i)=>`<button type="button" data-action="example" data-example="${i}">${x.label}</button>`).join('')}</div><p class="tiny">这一轮演示 AI 如何分析目标，不调用真实模型，也不访问外部网站。</p><div class="form-error" role="status">${esc(formError)}</div><div class="modal-footer"><button type="button" class="secondary" ${act('dismiss')}>取消</button><button type="submit" class="primary">${model.ai?'开始任务':'保存目标'} ${icon('arrow')}</button></div></form>`};
   if(modal==='tasks')return {title:'我的任务',body:`<p>重新查看只恢复展示，不启动自动执行。</p>${model.tasks.map(t=>`<div class="activity-row">${siteIcon(t)}<div class="spacer"><strong class="task-name">${esc(t.goal)}</strong><div>${statusHTML(t)} <span class="tiny muted">· ${t.hidden?'已收起':'在工作区'}</span></div></div><button class="secondary" ${act('select',t.id)}>查看任务 ${t.label}</button></div>`).join('')||'<p>还没有任务，创建后会保留在这里。</p>'}`};
   if(modal==='close-task')return {title:'收起这项任务？',body:`<p>这项任务尚未自动执行。收起标签后，网页和对话仍保留在“任务”入口，随时可以回来查看。</p><div class="modal-footer"><button class="secondary" ${act('dismiss')}>返回</button><button class="primary" ${act('hide',modalTask)}>收起任务</button></div>`};
   if(modal==='quit'){
@@ -691,10 +830,10 @@ function showPreview(id,keyboard=false) {
   const t=task(id);if(!t||modal||model.app!=='open')return;
   if(preview.id===id){preview.keyboard=keyboard||preview.keyboard;return;}
   preview.id=id;preview.keyboard=keyboard;
-  const ready=model.protection==='available'&&!model.pages[t.id]?.error;
-  const rows=[[isRecorded(t),'任务与对话已保存'],[ready,'网页已打开'],[ready&&model.sessions[t.origin],'网站已登录']];
+  const ready=!!t.url&&model.protection==='available'&&!model.pages[t.id]?.error;
+  const rows=[[isRecorded(t),'目标与对话已保存'],[!!t.url,'目标网站已确定'],[ready,'网页已打开'],[ready&&model.sessions[t.origin],'网站已登录']];
   $('#task-preview-layer').innerHTML=`<section id="task-preview-card" class="task-preview" role="dialog" tabindex="-1" aria-labelledby="preview-title"><header class="preview-header">${siteIcon(t)}<div class="spacer"><h2 id="preview-title">${esc(t.goal)}</h2><span>${esc(t.site)} · 任务 ${t.label}</span></div><button class="icon-btn" ${act('preview-close')} aria-label="收起进度卡片">${icon('close')}</button></header>
-    <div class="preview-progress"><div class="preview-status">${statusHTML(t)}<span>网页准备情况</span></div><div class="progress-track"><div class="progress-fill" style="width:${rows.filter(r=>r[0]).length/3*100}%"></div></div><div class="step-list">${rows.map(([ok,label])=>`<div class="${ok?'complete':''}"><span class="step-circle"></span>${label}${ok?'':' · 待处理'}</div>`).join('')}</div></div>
+    <div class="preview-progress"><div class="preview-status">${statusHTML(t)}<span>网页准备情况</span></div><div class="progress-track"><div class="progress-fill" style="width:${rows.filter(r=>r[0]).length/rows.length*100}%"></div></div><div class="step-list">${rows.map(([ok,label])=>`<div class="${ok?'complete':''}"><span class="step-circle"></span>${label}${ok?'':' · 待处理'}</div>`).join('')}</div></div>
     <div class="preview-update"><span>最近一条要求</span><p>${esc(t.messages.filter(m=>m.role==='user').at(-1)?.text||t.goal)}</p></div></section>`;
   positionPreview();$$('[data-preview-tab] .select-task').forEach(el=>el.setAttribute('aria-expanded',String(el.dataset.task===id)));
 }
@@ -726,12 +865,17 @@ const handlers={
   'retry-page':id=>retry('RETRY_PAGE',id),
   'retry-credentials':()=>retry('RETRY_CREDENTIALS'),
   'retry-save':()=>retry('RETRY_SAVE'),
-  'ack-reopen':()=>dispatch({type:'ACK_REOPEN'}),
+  'ack-reopen':()=>{clearTimeout(recoveryTimer);recoveryTimer=null;dispatch({type:'ACK_REOPEN'});},
+  'choose-site':(id,el)=>dispatch({type:'CHOOSE_SITE',id,key:el.dataset.site}),
+  'reject-site':id=>dispatch({type:'REJECT_SITE',id}),
+  'resume-analysis':id=>dispatch({type:'RESUME_ANALYSIS',id}),
+  'lab-toggle':()=>{labOpen=!labOpen;renderLab();},
+  'enable-ai':()=>{labOpen=false;dispatch({type:'ENABLE_AI'});},
   quit:()=>openModal('quit'),
-  'confirm-quit':()=>{dismiss();dispatch({type:'QUIT'});},
+  'confirm-quit':()=>{dismiss();clearPending();dispatch({type:'QUIT'});},
   open:()=>dispatch({type:'OPEN'}),
-  scene:(_,el)=>{dismiss();newDraft={goal:'',url:''};scene=el.dataset.scene;model=Foundation.scenario(scene);render();},
-  restore:()=>dispatch({type:'RESTORE_CONDITIONS'},{announce:true}),
+  scene:(_,el)=>{dismiss();clearPending();newDraft={goal:''};labOpen=false;scene=el.dataset.scene;model=Foundation.scenario(scene);render();},
+  restore:()=>{labOpen=false;dispatch({type:'RESTORE_CONDITIONS'},{announce:true});},
   'preview-close':()=>hidePreview(true),
 };
 document.addEventListener('click',event=>{
@@ -760,7 +904,6 @@ document.addEventListener('focusout',event=>{
 document.addEventListener('input',event=>{
   const el=event.target;
   if(el.id==='new-goal')newDraft.goal=el.value;
-  if(el.id==='new-url')newDraft.url=el.value;
   if(el.dataset.chatDraft){
     dispatch({type:'CHAT_DRAFT',id:el.dataset.chatDraft,value:el.value},{repaint:false});
     $('[data-chat-save]').textContent=model.save==='saved'?'输入草稿已保存':'输入仍在本窗口中，尚未保存';
@@ -775,11 +918,10 @@ document.addEventListener('input',event=>{
 document.addEventListener('submit',event=>{
   event.preventDefault();
   if(event.target.matches('[data-create]')){
-    const goal=newDraft.goal.trim(),url=newDraft.url.trim();
-    let validURL;try{validURL=new URL(url);}catch{}
-    if(!goal||!validURL||!['http:','https:'].includes(validURL.protocol)){formError='请写下任务目标，并填写完整的 http 或 https 网站地址。';renderModal();return;}
-    if(model.faults.storage){formError='目前无法保存新任务。输入已保留，请恢复保存后再次创建。';renderModal();return;}
-    dismiss();dispatch({type:'CREATE',goal,url:validURL.href},{announce:true});newDraft={goal:'',url:''};
+    const goal=newDraft.goal.trim();
+    if(!goal){formError='请写下你想完成的目标。';renderModal();return;}
+    if(model.faults.storage){formError='目前无法保存新任务。目标已保留，请恢复保存后再次创建。';renderModal();return;}
+    dismiss();dispatch({type:'CREATE',goal});newDraft={goal:''};
   }
   if(event.target.dataset.login)dispatch({type:'LOGIN',id:event.target.dataset.login},{announce:true});
   if(event.target.dataset.send){
@@ -789,7 +931,7 @@ document.addEventListener('submit',event=>{
 });
 document.addEventListener('keydown',event=>{
   if(event.isComposing)return;
-  if(event.key==='Escape'){if(preview.id)hidePreview(!!event.target.closest('.task-preview'));else dismiss();return;}
+  if(event.key==='Escape'){if(preview.id)hidePreview(!!event.target.closest('.task-preview'));else if(labOpen){labOpen=false;renderLab();}else dismiss();return;}
   if(event.key==='ArrowDown'&&event.target.matches('.task-tab .select-task')&&!modal){
     event.preventDefault();showPreview(event.target.dataset.task,true);$('#task-preview-card')?.focus();return;
   }
