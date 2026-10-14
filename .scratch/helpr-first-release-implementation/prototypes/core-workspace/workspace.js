@@ -12,7 +12,7 @@ const symbols = {
   archive:'M2 4h14v3H2ZM4 7v9h10V7M7 10h4', settings:'M3 5h12M3 13h12M6 3v4m6 4v4',
   clock:'M9 4v5l3 2M9 1a8 8 0 1 0 0 16A8 8 0 1 0 9 1', replay:'M3 7a6 6 0 1 1 0 5M3 2v5h5',
   minus:'M4 9h10', grow:'M3 7V3h4m4 0h4v4M15 11v4h-4M7 15H3v-4', leaf:'M3 13C0 5 7 2 15 3c0 8-4 12-10 10m-2 3 8-10',
-  arrow:'M3 9h12m-5-5 5 5-5 5', bell:'M5 13H3l2-3V6a4 4 0 0 1 8 0v4l2 3H5m2 3h4', down:'m4 7 5 5 5-5',
+  arrow:'M3 9h12m-5-5 5 5-5 5', bell:'M5 13H3l2-3V6a4 4 0 0 1 8 0v4l2 3H5m2 3h4',
 };
 const icon = name => `<svg viewBox="0 0 18 18" aria-hidden="true"><path d="${symbols[name] || symbols.file}"/></svg>`;
 const logo = () => `<div class="logo"><span class="logo-mark">${icon('leaf')}</span>helpr<span class="wordmark-dot">.</span></div>`;
@@ -64,9 +64,8 @@ function header({brand=true}={}) {
 }
 function taskTab(t) {
   return `<div class="task-tab ${state.active===t.id?'selected':''}" data-preview-tab="${t.id}">
-    ${siteIcon(t)}<button class="select-task" ${action('select',t.id)} aria-label="查看任务 ${t.id}：${t.short}" aria-pressed="${state.active===t.id}">
+    ${siteIcon(t)}<button class="select-task" ${action('select',t.id)} aria-label="查看任务 ${t.id}：${t.short}" aria-pressed="${state.active===t.id}" aria-expanded="false" aria-controls="task-preview-card" aria-keyshortcuts="ArrowDown" aria-description="按 Enter 切换任务，按下方向键查看进度">
     <div class="task-name">${t.short}</div><small data-status="${t.id}">${statusHTML(t)}</small></button>
-    <button class="icon-btn preview-task" ${action('preview-toggle',t.id)} aria-label="查看任务 ${t.id} 进度" aria-haspopup="dialog" aria-expanded="false" aria-controls="task-preview-card" title="查看进度 · 点击固定，Esc 收起">${icon('down')}</button>
     <button class="icon-btn close-task" ${action('close-task',t.id)} aria-label="关闭任务 ${t.id}">${icon('close')}</button>
   </div>`;
 }
@@ -87,15 +86,14 @@ function stepList(t) {
 // A keeps tabs as navigation. The progress card only observes the same task state.
 const taskPreview={id:null,pinned:false,openTimer:null,closeTimer:null};
 function syncPreviewTrigger() {
-  $$('.preview-task').forEach(el=>{
+  $$('[data-preview-tab] .select-task').forEach(el=>{
     const open=el.dataset.task===taskPreview.id;
     el.setAttribute('aria-expanded',String(open));
-    el.classList.toggle('preview-pinned',open&&taskPreview.pinned);
   });
 }
 function closePreview(restoreFocus=false) {
   clearTimeout(taskPreview.openTimer);clearTimeout(taskPreview.closeTimer);
-  const trigger=$('[data-action="preview-toggle"][data-task="'+taskPreview.id+'"]');
+  const trigger=$('[data-preview-tab="'+taskPreview.id+'"] .select-task');
   taskPreview.id=null;taskPreview.pinned=false;
   $('#task-preview-layer').innerHTML='';
   syncPreviewTrigger();
@@ -115,14 +113,13 @@ function showPreview(id,pinned=false) {
   if(taskPreview.id===id){taskPreview.pinned=pinned||taskPreview.pinned;syncPreviewTrigger();return;}
   const t=task(id);
   taskPreview.id=id;taskPreview.pinned=pinned;
-  $('#task-preview-layer').innerHTML=`<section id="task-preview-card" class="task-preview" role="dialog" aria-labelledby="preview-title" data-preview-card="${id}">
+  $('#task-preview-layer').innerHTML=`<section id="task-preview-card" class="task-preview" role="dialog" aria-labelledby="preview-title" tabindex="-1" data-preview-card="${id}">
     <header class="preview-header">${siteIcon(t)}<div class="spacer"><h2 id="preview-title">${t.short}</h2><span>${t.site} · ${t.category}</span></div><button class="icon-btn" ${action('preview-close')} aria-label="收起进度卡片">${icon('close')}</button></header>
     <div class="preview-progress"><div class="preview-status"><span data-status="${id}">${statusHTML(t)}</span><span data-percent="${id}">${t.progress}%</span></div>
       <div class="progress-track"><div class="progress-fill" data-progress="${id}" style="width:${t.progress}%"></div></div>
       <div class="step-list" data-steps="${id}">${stepList(t)}</div>
     </div>
     <div class="preview-update"><span>最近动态</span><p data-preview-update="${id}">${escapeHTML(t.messages.at(-1).text)}</p></div>
-    <footer><span data-caption="${id}">${taskInfo(t)}</span><button class="preview-open" ${action('select',id)}>查看任务 ${id} ${icon('arrow')}</button></footer>
   </section>`;
   positionPreview();syncPreviewTrigger();
 }
@@ -382,7 +379,7 @@ function help() {
       <li>对应任务会显示「已让出操作」，另一项继续。</li><li>在这项任务的对话中发送「继续」，或点「核对并继续」。</li>
       <li>点顶部「快进到结果」，再分别查看两项结果。</li>
     </ol><p>底部 A / B / C 随时切换，同一轮任务、输入和对话会保留。键盘 ← → 也能切换，输入文字时不会抢按键。</p>
-    <p>A 方案：悬停顶部标签，可查看这项任务的进度、步骤和最近动态，不切换网页。移入卡片可继续阅读；点击标签或卡片里的「查看任务」才切换。标签上的小箭头可固定打开卡片，Esc 或点击外部收起。键盘聚焦标签后按 ↓ 也可打开。</p>
+    <p>A 方案：悬停顶部标签，可查看这项任务的进度、步骤和最近动态，不切换网页。移入卡片可继续阅读，离开后收起；点击标签才切换任务。键盘聚焦标签后按 ↓ 可查看进度，Esc 收起并返回标签。</p>
     <p>任务 A 会在发布前留出时间，等你体验接管。需要重来时，点顶部重置图标。刷新页面会重置模拟任务，保留所选方案。</p>
     <p>这里只比较界面。网页、进度和回复都是模拟，不验证真实浏览器接管或发布能力。</p>`);
 }
@@ -402,11 +399,6 @@ function send(id) {
 const handlers = {
   delegate:()=>delegation(), activity:()=>activity(), help:()=>help(), dismiss:()=>dismiss(),
   select:id=>{state.active=id;render();},
-  'preview-toggle':(id,el,event)=>{
-    if(taskPreview.id===id&&taskPreview.pinned){closePreview();return;}
-    showPreview(id,true);
-    if(event.detail===0)$('#task-preview-card .preview-open')?.focus();
-  },
   'preview-close':()=>closePreview(true),
   previous:()=>cycle(-1), next:()=>cycle(1),
   variant:(_,el)=>changeVariant(el.dataset.variant),
@@ -482,9 +474,9 @@ document.addEventListener('keydown',event=>{
     dismiss();return;
   }
   const previewTab=event.target.closest('[data-preview-tab]');
-  if(event.key==='ArrowDown'&&previewTab&&!state.modal){
+  if(event.key==='ArrowDown'&&previewTab&&event.target.matches('.select-task')&&!state.modal){
     event.preventDefault();showPreview(previewTab.dataset.previewTab,true);
-    $('#task-preview-card .preview-open')?.focus();return;
+    $('#task-preview-card')?.focus();return;
   }
   if(event.target.dataset?.draft&&event.key==='Enter'&&!event.shiftKey){event.preventDefault();send(event.target.dataset.draft);return;}
   const modal=$('.modal');

@@ -45,9 +45,6 @@ svg { width:18px; height:18px; vertical-align:middle; flex:none; stroke:currentC
 .task-name { font-size:13px; font-weight:560; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .task-tab small { display:flex; align-items:center; gap:5px; margin-top:3px; }
 .task-tab .icon-btn { width:24px; height:27px; flex:none; color:#89958c; }
-.task-tab .preview-task { margin-right:-4px; }
-.preview-task[aria-expanded="true"] { color:var(--green); background:#e6ede4; }
-.preview-task[aria-expanded="true"] svg { transform:rotate(180deg); }
 .task-preview { position:fixed; z-index:20; width:min(310px,calc(100vw - 16px)); overflow:auto; background:#fff; border:1px solid #d5dfd3; border-radius:12px; box-shadow:0 12px 34px #22372a22,0 3px 8px #22372a0b; }
 .preview-header { display:flex; gap:10px; align-items:center; padding:16px 15px 13px; }
 .preview-header h2 { margin:0 0 3px; font-size:14px; font-weight:600; }
@@ -65,10 +62,6 @@ svg { width:18px; height:18px; vertical-align:middle; flex:none; stroke:currentC
 .preview-update { margin:0 12px 11px; padding:10px 11px; border-radius:7px; background:#f4f6f0; }
 .preview-update>span { font-size:10px; color:#879180; }
 .preview-update p { margin:4px 0 0; font-size:12px; line-height:1.65; color:#60715d; overflow-wrap:anywhere; max-height:5em; overflow:auto; }
-.task-preview footer { display:flex; align-items:center; gap:10px; padding:10px 14px; border-top:1px solid #e9eee5; }
-.task-preview footer>span { flex:1; min-width:0; font-size:10px; color:#8a9585; }
-.preview-open { padding:4px 0; font-size:12px; font-weight:550; color:var(--green); white-space:nowrap; display:flex; gap:5px; align-items:center; }
-.preview-open svg { width:15px; }
 .site-icon { width:28px; height:28px; display:grid; place-items:center; border-radius:7px; flex:none; font-weight:650; font-family:Georgia,serif; font-size:18px; background:#e5edf4; color:#456079; }
 .site-icon.drupal { color:#347494; background:#e5f0f1; }
 .status { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:450; color:#798279; white-space:nowrap; }
