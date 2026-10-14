@@ -4,6 +4,7 @@ Status: ready-for-agent
 Blocked by: 18
 Spec: [首版实现规格](../../helpr-first-release/spec.md)
 Index: [实现事项总览](../README.md)
+Engineering: [共同工程约定](../README.md#工程实现与验证约定) · [已确认选型](../engineering-stack-proposal.md)
 User stories: 13、37–39、43、46
 
 **What to build:** 用户明确约定以后按某套要求发布，产品复述并记住范围；符合条件的新内容可自动处理，用户可修改或撤销。相同素材是否已处理按约定、目标、版本和工作期次分别判断。

@@ -4,6 +4,7 @@ Status: ready-for-agent
 Blocked by: 15
 Spec: [首版实现规格](../../helpr-first-release/spec.md)
 Index: [实现事项总览](../README.md)
+Engineering: [共同工程约定](../README.md#工程实现与验证约定) · [已确认选型](../engineering-stack-proposal.md)
 User stories: 7–10、14、18
 
 **What to build:** 同一 helpr 产品在另一套结构不同的真实后台完成附件任务，并能更换输入使用运行时形成的新做法。

@@ -224,3 +224,5 @@ helpr 或电脑意外退出后，重新启动时恢复任务记录。对中断�
 共同阻碍解除后的具体积压安排，由 AI 结合任务与用户已有约定判断；需要新的取舍时再与用户确定，不要求本轮为未来所有任务预先选定同一处理方式。
 
 2026-10-13，已将当前共识、技术决定和验收安排整理为[首版实现规格](../../.scratch/helpr-first-release/spec.md)，状态为 `ready-for-agent`，下一步拆分实现事项。规格保留当前 Mac 自用、自动检查新版与手动安装，正式签名安排在首次对外测试或发布前，自动下载安装留到盈利后；没有把尚未取得的完整产品证据计作通过。
+
+2026-10-14，23 项实现事项已发布，用户已确认并提交[工程技术栈方案](../../.scratch/helpr-first-release-implementation/engineering-stack-proposal.md)及 [ADR-0005](../adr/0005-record-process-and-state-transitions.md)。按本次请求，首版规格及[相关事项](../../.scratch/helpr-first-release-implementation/README.md#工程实现与验证约定)同步语言与界面、XState、独立记录进程、数据库、模型、通信、构建及检查要求；沿用原产品范围、三组测试入口和逐功能原型确认。当前代码实现仍暂停，兼容版本及性能门槛依实际组合验证确定，本轮文档更新没有启动新验证。

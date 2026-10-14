@@ -4,6 +4,7 @@ Status: ready-for-agent
 Blocked by: 14, 15, 16
 Spec: [首版实现规格](../../helpr-first-release/spec.md)
 Index: [实现事项总览](../README.md)
+Engineering: [共同工程约定](../README.md#工程实现与验证约定) · [已确认选型](../engineering-stack-proposal.md)
 User stories: 15、25、33、48
 
 **What to build:** 网页变化后产品重新观察，在原约定内修复、核对、保存新做法并告知；冷启动可复用修复版，两项任务同时修复同一旧流程也不会丢掉彼此成果。
@@ -13,6 +14,8 @@ User stories: 15、25、33、48
 基于实际学得流程、真实恢复规则和资源协调完成变化修复。不能通过降低成功条件、改目标或重复未知提交来使修复通过。
 
 前置事项：[14 提交中断后的真实网站结果核对](14-recover-real-publication-outcomes.md)；[15 换输入与冷启动流程复用](15-parameterized-and-cold-workflow-reuse.md)；[16 共享登录与同一目标的执行协调](16-shared-login-and-target-coordination.md)。
+
+两项修复共享唯一记录权威，通过独立记录进程的预期版本和事务采用候选；各自保留运行时流程数据及证据，XState 不成为另一份流程存储。Drizzle 类型检查不代替原子采用，回执丢失或过期回执仍按公开幂等契约与当前资格核对。
 
 ## Acceptance criteria
 

@@ -4,6 +4,7 @@ Status: ready-for-agent
 Blocked by: 12
 Spec: [首版实现规格](../../helpr-first-release/spec.md)
 Index: [实现事项总览](../README.md)
+Engineering: [共同工程约定](../README.md#工程实现与验证约定) · [已确认选型](../engineering-stack-proposal.md)
 User stories: 7–8、17、48、53
 
 **What to build:** 从自然语言委托贯通 WordPress 附件发布，用户得到正确栏目下可下载的真实结果；系统从实际执行保存完整、可验证的运行时流程。
@@ -13,6 +14,8 @@ User stories: 7–8、17、48、53
 扩展 12 的准备到最终提交、独立结果核对及流程形成。产品自主组织学习，不能把既有实验中维护者校准的流程当作正式首次探索；不同输入复用由 15 验证。
 
 前置事项：[12 固定素材版本并准备真实上传](12-material-version-and-upload-preparation.md)。
+
+XState 管理通用任务生命周期，学得的网站步骤仍保存为运行时流程数据；AI SDK 只提出候选动作，经统一资格与派发入口执行。流程、结果及采用事实由独立记录进程提交，不因采用成熟状态库或 SDK 引入网站专用状态图、预置业务步骤或自主执行旁路。
 
 ## Acceptance criteria
 

@@ -4,6 +4,7 @@ Status: ready-for-agent
 Blocked by: 02
 Spec: [首版实现规格](../../helpr-first-release/spec.md)
 Index: [实现事项总览](../README.md)
+Engineering: [共同工程约定](../README.md#工程实现与验证约定) · [已确认选型](../engineering-stack-proposal.md)
 User stories: 62
 
 **What to build:** 应用自动检查可信来源的版本信息，发现适合当前 Mac 的新版时提醒并提供手动下载入口；来源不可用或信息不适用时明确反馈。

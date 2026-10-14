@@ -4,6 +4,7 @@ Status: ready-for-agent
 Blocked by: 06, 10
 Spec: [首版实现规格](../../helpr-first-release/spec.md)
 Index: [实现事项总览](../README.md)
+Engineering: [共同工程约定](../README.md#工程实现与验证约定) · [已确认选型](../engineering-stack-proposal.md)
 User stories: 5–6、25、42、52–53
 
 **What to build:** 用户用自然语言指定素材范围与目标，产品选定 Excel 固定版本，在真实后台自主完成上传和草稿准备；缺素材或选择不清时请求参与。

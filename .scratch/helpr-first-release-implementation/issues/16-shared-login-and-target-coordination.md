@@ -4,6 +4,7 @@ Status: ready-for-agent
 Blocked by: 13
 Spec: [首版实现规格](../../helpr-first-release/spec.md)
 Index: [实现事项总览](../README.md)
+Engineering: [共同工程约定](../README.md#工程实现与验证约定) · [已确认选型](../engineering-stack-proposal.md)
 User stories: 3、35–36、45、51
 
 **What to build:** 共享登录失效或账号改变时，相关任务等待并复用处理入口，无关任务继续；可能改同一网站目标的两项工作得到协调，不会互相覆盖。
