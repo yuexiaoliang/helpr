@@ -1,0 +1,251 @@
+import Database from 'better-sqlite3';
+import { drizzle } from 'drizzle-orm/better-sqlite3';
+import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
+import { eq, asc, sql } from 'drizzle-orm';
+import { createMachine, transition } from 'xstate';
+import { mkdirSync, chmodSync } from 'node:fs';
+import { randomUUID, createHash } from 'node:crypto';
+import path from 'node:path';
+import {
+  recordCommandSchema,
+  snapshotSchema,
+  type Task,
+  type WorkspaceSnapshot,
+} from '../shared/contracts';
+import { explicitWebsite, websiteURL } from '../shared/url-policy';
+import * as schema from './schema';
+
+// 本项只有手动网页状态；计算转换不启动 actor、invocation 或网页动作。
+const lifecycle = createMachine({
+  id: 'workspace-task',
+  initial: 'no-page',
+  on: { LOAD: '.loading', READY: '.manual', FAIL: '.error' },
+  states: { 'no-page': {}, loading: {}, manual: {}, error: {} },
+});
+function pagePhase(
+  phase: Task['phase'],
+  event: 'LOAD' | 'READY' | 'FAIL',
+): Task['phase'] {
+  const [next] = transition(
+    lifecycle,
+    lifecycle.resolveState({ value: phase, context: {} }),
+    { type: event },
+  );
+  return snapshotSchema.shape.tasks.element.shape.phase.parse(next.value);
+}
+
+/** 记录拥有者的公开入口。仅在独立受管进程使用，提交成功后才返回投影。 */
+export class WorkspaceRecords {
+  private readonly sqlite: Database.Database;
+  private readonly db: ReturnType<typeof drizzle<typeof schema>>;
+  constructor(folder: string, migrations: string) {
+    mkdirSync(folder, { recursive: true, mode: 0o700 });
+    this.sqlite = new Database(path.join(folder, 'workspace.sqlite'));
+    try {
+      chmodSync(path.join(folder, 'workspace.sqlite'), 0o600);
+      this.sqlite.pragma('foreign_keys = ON');
+      this.sqlite.pragma('journal_mode = DELETE');
+      this.sqlite.pragma('synchronous = EXTRA');
+      this.sqlite.pragma('fullfsync = ON');
+      this.sqlite.pragma('busy_timeout = 3000');
+      this.db = drizzle(this.sqlite, { schema });
+      migrate(this.db, { migrationsFolder: migrations });
+      this.db
+        .insert(schema.workspace)
+        .values({ id: 1, active: null, revision: 0, schemaVersion: 1 })
+        .onConflictDoNothing()
+        .run();
+      if (this.db.select().from(schema.workspace).get()?.schemaVersion !== 1)
+        throw new Error('DATA_VERSION_UNSUPPORTED');
+    } catch (error) {
+      this.sqlite.close();
+      throw error;
+    }
+  }
+  snapshot(): WorkspaceSnapshot {
+    const meta = this.db.select().from(schema.workspace).get();
+    const items = this.db
+      .select()
+      .from(schema.tasks)
+      .orderBy(sql`rowid`)
+      .all();
+    return snapshotSchema.parse({
+      revision: meta?.revision,
+      active: meta?.active,
+      tasks: items.map((task) => ({
+        ...task,
+        messages: this.db
+          .select({ role: schema.messages.role, text: schema.messages.text })
+          .from(schema.messages)
+          .where(eq(schema.messages.taskId, task.id))
+          .orderBy(asc(schema.messages.id))
+          .all(),
+      })),
+    });
+  }
+  lookupRequest(input: unknown): {
+    applied: boolean;
+    state: WorkspaceSnapshot;
+  } {
+    const command = recordCommandSchema.parse(input);
+    const canonical = Object.fromEntries(
+      Object.entries(command).sort(([a], [b]) => a.localeCompare(b)),
+    );
+    const hash = createHash('sha256')
+      .update(JSON.stringify(canonical))
+      .digest('hex');
+    const previous = this.db
+      .select()
+      .from(schema.requests)
+      .where(eq(schema.requests.id, command.requestId))
+      .get();
+    if (previous && previous.hash !== hash)
+      throw new Error('REQUEST_CONTENT_CONFLICT');
+    return { applied: Boolean(previous), state: this.snapshot() };
+  }
+  execute(input: unknown): { taskId: string; state: WorkspaceSnapshot } {
+    const command = recordCommandSchema.parse(input);
+    const canonical = Object.fromEntries(
+      Object.entries(command).sort(([a], [b]) => a.localeCompare(b)),
+    );
+    const hash = createHash('sha256')
+      .update(JSON.stringify(canonical))
+      .digest('hex');
+    return this.db.transaction(
+      (tx) => {
+        const previous = tx
+          .select()
+          .from(schema.requests)
+          .where(eq(schema.requests.id, command.requestId))
+          .get();
+        if (previous) {
+          if (previous.hash !== hash)
+            throw new Error('REQUEST_CONTENT_CONFLICT');
+          return { taskId: previous.taskId, state: this.snapshot() };
+        }
+        let taskId: string;
+        if (command.kind === 'create') {
+          taskId = randomUUID();
+          const url = explicitWebsite(command.goal);
+          tx.insert(schema.tasks)
+            .values({
+              id: taskId,
+              goal: command.goal,
+              created: Date.now(),
+              url,
+              draft: '',
+              hidden: false,
+              minimized: false,
+              phase: url ? pagePhase('no-page', 'LOAD') : 'no-page',
+              error: '',
+              version: 1,
+            })
+            .run();
+          tx.insert(schema.messages)
+            .values([
+              { taskId, role: 'user', text: command.goal },
+              {
+                taskId,
+                role: 'system',
+                text: '目标已保存。当前可手动使用网页；AI 理解与自动执行尚未接入。可以在地址栏打开网站。',
+              },
+            ])
+            .run();
+          tx.update(schema.workspace)
+            .set({ active: taskId })
+            .where(eq(schema.workspace.id, 1))
+            .run();
+        } else {
+          taskId = command.taskId;
+          const task = tx
+            .select()
+            .from(schema.tasks)
+            .where(eq(schema.tasks.id, taskId))
+            .get();
+          if (!task) throw new Error('TASK_NOT_FOUND');
+          if (
+            command.expectedVersion !== undefined &&
+            command.expectedVersion !== task.version
+          )
+            throw new Error('RECORD_VERSION_CONFLICT');
+          const update: Partial<typeof schema.tasks.$inferInsert> = {
+            version: task.version + 1,
+          };
+          switch (command.kind) {
+            case 'message':
+              tx.insert(schema.messages)
+                .values({ taskId, role: 'user', text: command.text })
+                .run();
+              update.draft = '';
+              break;
+            case 'draft':
+              update.draft = command.text;
+              break;
+            case 'navigate':
+              update.url = websiteURL(command.url);
+              update.phase = pagePhase(task.phase as Task['phase'], 'LOAD');
+              update.error = '';
+              break;
+            case 'page':
+              update.url = websiteURL(command.url);
+              update.phase = pagePhase(
+                task.phase as Task['phase'],
+                command.phase === 'loading'
+                  ? 'LOAD'
+                  : command.phase === 'manual'
+                    ? 'READY'
+                    : 'FAIL',
+              );
+              update.error = command.error;
+              break;
+            case 'select':
+              update.hidden = false;
+              tx.update(schema.workspace)
+                .set({ active: taskId })
+                .where(eq(schema.workspace.id, 1))
+                .run();
+              break;
+            case 'hide-task': {
+              update.hidden = true;
+              const meta = tx.select().from(schema.workspace).get();
+              if (meta?.active === taskId)
+                tx.update(schema.workspace)
+                  .set({
+                    active:
+                      tx
+                        .select()
+                        .from(schema.tasks)
+                        .where(eq(schema.tasks.hidden, false))
+                        .all()
+                        .find((t) => t.id !== taskId)?.id ?? null,
+                  })
+                  .where(eq(schema.workspace.id, 1))
+                  .run();
+              break;
+            }
+            case 'minimize':
+              update.minimized = !task.minimized;
+              break;
+          }
+          tx.update(schema.tasks)
+            .set(update)
+            .where(eq(schema.tasks.id, taskId))
+            .run();
+        }
+        const meta = tx.select().from(schema.workspace).get();
+        tx.update(schema.workspace)
+          .set({ revision: (meta?.revision ?? 0) + 1 })
+          .where(eq(schema.workspace.id, 1))
+          .run();
+        tx.insert(schema.requests)
+          .values({ id: command.requestId, hash, taskId })
+          .run();
+        return { taskId, state: this.snapshot() };
+      },
+      { behavior: 'immediate' },
+    );
+  }
+  close(): void {
+    this.sqlite.close();
+  }
+}

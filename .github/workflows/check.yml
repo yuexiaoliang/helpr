@@ -10,20 +10,27 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '24'
-      - name: Syntax, local client tests, and saved evidence
-        run: npm run check
-      # prepare.mjs 是真实实验的准备入口；安装测试依赖时跳过生命周期脚本。
-      - name: Install locked browser test dependencies
+          node-version-file: .node-version
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+      - name: Install the frozen product graph
+        run: pnpm install --frozen-lockfile
+      - name: Compile the explicit process entries
+        run: pnpm compile
+      - name: Product and saved experiment checks
+        run: pnpm check
+      # 旧实验单独保留 npm 锁文件，不与正式产品共用依赖图。
+      - name: Install locked browser experiment dependencies
         working-directory: .scratch/helpr-first-release/experiments/runtime-flow-replay
         run: npm ci --ignore-scripts
       - name: Install Chromium for local fixtures
         working-directory: .scratch/helpr-first-release/experiments/runtime-flow-replay
         run: npx --no-install playwright install --with-deps chromium
       - name: Replay regression tests
-        run: npm run test:browser
+        run: pnpm test:browser
