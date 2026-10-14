@@ -8,6 +8,20 @@ import { createRequire } from 'node:module';
 import { spend, validationRoot } from './workspace-budget.mjs';
 import { fixture } from './workspace-fixture.mjs';
 
+// 可见工作区验收须先确认系统现场；锁屏或受保护输入不消耗应用额度。
+let registry;
+try {
+  registry = execFileSync('/usr/sbin/ioreg', ['-l', '-w', '0'], {
+    encoding: 'utf8', timeout: 8000, maxBuffer: 16 * 1024 * 1024,
+  });
+} catch { throw Error('MAC_SESSION_UNAVAILABLE'); }
+if (/"CGSSessionScreenIsLocked"\s*=\s*Yes/.test(registry)) throw Error('MAC_SCREEN_LOCKED');
+if ([...registry.matchAll(/"kCGSSessionSecureInputPID"\s*=\s*(\d+)/g)].some((match) => Number(match[1]) > 0)) throw Error('MAC_PROTECTED_INPUT_ACTIVE');
+if (process.argv.includes('--preflight')) {
+  console.log('本机现场预检未发现锁屏或受保护输入；尚未启动应用。');
+  process.exit(0);
+}
+
 // 正常运行最后产物；继承通道只调用实际工作区的受限命令，没有调试端口。
 const built = path.resolve('dist/packages/mac-arm64/helpr.app');
 const installed = path.join(os.homedir(), 'Applications/helpr.app');
@@ -19,7 +33,7 @@ if (install) {
   fs.mkdirSync(path.dirname(installed), { recursive: true });
   execFileSync('/usr/bin/ditto', [built, installed]);
 }
-const appPath = install ? installed : built;
+const appPath = install || process.argv.includes('--installed') ? installed : built;
 const exe = path.join(appPath, 'Contents/MacOS/helpr');
 const out = path.join(validationRoot, `run-${Date.now()}`);
 fs.mkdirSync(out, { recursive: true });
@@ -193,6 +207,7 @@ try {
     () =>
       website.receipts.some((r) => r.kind === 'probe' && r.task === 'A') &&
       website.receipts.some((r) => r.kind === 'probe' && r.task === 'B'),
+    10 * 60 * 1000,
   );
   check('两个真实页面都到达独立网站，网页没有 Node 或宿主对话桥', () => {
     const probes = website.receipts.filter((r) => r.kind === 'probe');

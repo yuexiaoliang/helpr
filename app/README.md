@@ -40,8 +40,13 @@ Pino／pino-roll 每个角色独占诊断文件，仅保存限定事件、错误
 
 ```sh
 node scripts/validate-startup.mjs
+pnpm validate:workspace --preflight
 pnpm validate:workspace --install --interactive --fault
 ```
+
+已在核对中安装过且身份一致时，使用 `--installed` 选择现有安装，不再次消耗安装或覆盖应用。
+
+可见工作区验收在扣减额度前检查 Mac 锁屏及受保护输入；未就绪时保留现场并停止。`--preflight` 只读系统条件，不启动或安装应用。未发现锁屏不代表界面和中文输入已经验收通过。
 
 这不是可以无限重复的日常检查。脚本先记累计次数，再正常启动最终应用；验证资料必须在固定 OS 临时根 `helpr-workspace-validation-<uid>` 内，拒绝指向正式资料的符号链接。安装脚本拒绝覆盖已存在的应用；替换本轮自己的候选前须结束其自有进程并保留构建身份。网页夹具只在本机提供虚构会话；不使用模型或远程业务写入。最终浏览器和数据库资料、构建包及日志均忽略，只提交脱敏结论。
 
