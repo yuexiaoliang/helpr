@@ -7,6 +7,8 @@ const allowed = new Map([
   ['/foundation.html', ['foundation.html', 'text/html; charset=utf-8']],
   ['/workspace.css', ['workspace.css', 'text/css; charset=utf-8']],
   ['/workspace.js', ['workspace.js', 'text/javascript; charset=utf-8']],
+  ...['plus', 'x', 'squares-four', 'sign-out', 'globe', 'warning-circle', 'wordpress', 'drupal']
+    .map(name => [`/assets/${name}.svg`, [`assets/${name}.svg`, 'image/svg+xml']]),
 ]);
 const server = createServer(async (req, res) => {
   const file = allowed.get(new URL(req.url, 'http://127.0.0.1').pathname);

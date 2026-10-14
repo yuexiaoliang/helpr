@@ -489,10 +489,70 @@ body { height:100dvh; display:flex; flex-direction:column; overflow:hidden; }
 }
 @media(max-height:740px){.chat-feed{max-height:145px;} .intent-surface{padding-top:25px;} .start-screen{padding:15px;} .start-capabilities{margin-top:20px;} }
 
+/* v3: selected option 4. The white tab joins the webpage; spacing replaces dividers. */
+.app-header { height:52px; min-height:52px; padding:0 35px; gap:35px; background:#eff5f2; border:0; }
+.app-header .logo { display:block; margin:0; font-size:26px; line-height:1; font-weight:700; letter-spacing:-1.25px; color:#127655; }
+.tab-area { display:flex; align-items:stretch; flex:1; min-width:0; height:100%; }
+.app-header .task-tabs { flex:0 1 auto; height:100%; padding:0 16px; gap:16px; overflow-x:auto; overflow-y:hidden; }
+.task-tab { flex:0 1 262px; width:262px; max-width:262px; min-width:208px; height:42px; margin-top:10px; padding:0 20px; gap:17px; border:0; border-radius:18px 18px 0 0; background:transparent; scroll-margin-inline:16px; }
+.task-tab:not(.selected):hover { background:#e6eee9; }
+.task-tab.selected { z-index:2; background:#fff; border:0; }
+.task-tab.selected::before,.task-tab.selected::after { content:""; position:absolute; width:16px; height:16px; bottom:0; top:auto; background:transparent; pointer-events:none; }
+.task-tab.selected::before { left:-16px; right:auto; border-bottom-right-radius:16px; box-shadow:6px 6px 0 6px #fff; }
+.task-tab.selected::after { right:-16px; left:auto; border-bottom-left-radius:16px; box-shadow:-6px 6px 0 6px #fff; }
+.tab-site-icon { width:19px; height:19px; flex:none; display:block; }
+.tab-site-icon.drupal { filter:invert(30%) sepia(52%) saturate(1234%) hue-rotate(162deg) brightness(87%) contrast(92%); }
+.task-tab .select-task { display:flex; flex-direction:row; align-items:center; justify-content:flex-start; gap:17px; overflow:hidden; padding:0; }
+.task-tab .task-name { flex:1; width:auto; font-size:13px; line-height:20px; font-weight:400; color:#202b26; letter-spacing:0; }
+.task-tab small { flex:none; margin:0; }
+.task-tab .status { font-size:12px; font-weight:400; }
+.task-tab .state-done { color:#197a56; }
+.task-tab .icon-btn { z-index:1; width:20px; height:26px; color:#8d959e; }
+.header-icon { display:inline-block; flex:none; width:20px; height:20px; background:currentColor; mask:var(--icon) center / contain no-repeat; -webkit-mask:var(--icon) center / contain no-repeat; }
+.task-tab .icon-btn .header-icon { width:15px; height:15px; }
+.tab-area .new-tab { width:32px; height:32px; align-self:center; margin:4px 0 0 2px; color:#187453; }
+.new-tab .header-icon { width:24px; height:24px; }
+.header-tools { gap:49px; }
+.header-tools .activity-btn { gap:10px; padding:6px 0; font-size:16px; white-space:nowrap; color:#182d22; }
+.header-tools .activity-count { display:inline; padding:0; background:none; font-size:13px; font-weight:500; color:#17744f; }
+.header-tools .activity-btn .header-icon { width:24px; height:24px; }
+.header-tools>.icon-btn { width:28px; color:#18362a; }
+.header-tools>.icon-btn .header-icon { width:23px; height:23px; }
+.record-indicator { display:none; }
+.record-indicator.pending { display:grid; }
+.browser-bar { background:#fff; border-top:0; }
+@media(max-width:1050px){
+  .app-header { padding:0 18px 0 22px; gap:17px; }
+  .header-tools { gap:18px; }
+  .app-header .task-tabs { gap:10px; padding:0 12px; }
+  .task-tab { min-width:200px; padding:0 13px; gap:10px; }
+  .task-tab .select-task { gap:10px; }
+  .tab-area .new-tab { margin-left:6px; }
+}
+@media(max-width:850px){
+  .app-header { padding:0 13px; gap:10px; }
+  .app-header .logo { font-size:22px; }
+  .header-tools { gap:10px; }
+  .header-tools .activity-btn { font-size:13px; gap:6px; }
+  .task-tab { min-width:185px; }
+  .task-tab .task-name { font-size:12px; }
+  .task-tab .status { font-size:11px; }
+}
+@media(max-width:640px){
+  .app-header .logo { font-size:20px; }
+  .header-tools { gap:5px; }
+  .header-tools .activity-label { display:none; }
+  .header-tools .activity-count { display:inline; }
+  .app-header .task-tabs { padding:0 10px; }
+  .task-tab { min-width:190px; }
+  .tab-area .new-tab { margin-left:3px; width:27px; }
+}
+.task-tab.needs-attention { min-width:240px; }
+
 </style>
 </head>
 <body>
-<div class="prototype-intro"><strong>只说目标，把空间留给网页。</strong><span>工作区 v2 · AI、网页与保存均为模拟</span></div>
+<div class="prototype-intro"><strong>只说目标，把空间留给网页。</strong><span>工作区 v3 · AI、网页与保存均为模拟</span></div>
 <main id="app" aria-label="helpr 基础工作区"></main>
 <aside id="lab" class="prototype-controls" aria-label="原型体验控制"></aside>
 <div id="task-preview-layer"></div>
@@ -656,8 +716,9 @@ const $=(s,root=document)=>root.querySelector(s), $$=(s,root=document)=>[...root
 const esc=v=>String(v).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const paths={plus:'M9 3v12M3 9h12',close:'m4 4 10 10M14 4 4 14',check:'m3 9 4 4 8-8',leaf:'M3 13C0 5 7 2 15 3c0 8-4 12-10 10m-2 3 8-10',lock:'M5 8V5a4 4 0 0 1 8 0v3M3 8h12v8H3Z',globe:'M1 9h16M9 1a8 8 0 1 0 0 16A8 8 0 0 0 9 1Zm0 0c-4 4-4 12 0 16 4-4 4-12 0-16Z',chat:'M3 3h12v9H7l-4 3V3Z',file:'M4 2h7l3 3v11H4V2Zm6 0v4h4M7 10h4M7 13h4',grid:'M2 2h5v5H2ZM11 2h5v5h-5ZM2 11h5v5H2ZM11 11h5v5h-5Z',replay:'M3 7a6 6 0 1 1 0 5M3 2v5h5',minus:'M4 9h10',send:'M9 14V3m-5 5 5-5 5 5',arrow:'M3 9h12m-5-5 5 5-5 5',exit:'M8 3H3v12h5M8 9h9m-4-4 4 4-4 4',info:'M9 8v5M9 5v.1M9 1a8 8 0 1 0 0 16A8 8 0 0 0 9 1',archive:'M2 4h14v3H2ZM4 7v9h10V7M7 10h4'};
 const icon=name=>`<svg viewBox="0 0 18 18" aria-hidden="true"><path d="${paths[name]||paths.file}"/></svg>`;
+const headerIcon=name=>`<span class="header-icon" style="--icon:url('assets/${name}.svg')" aria-hidden="true"></span>`;
 const act=(name,id='')=>`data-action="${name}"${id?` data-task="${id}"`:''}`;
-const logo=()=>`<div class="logo"><span class="logo-mark">${icon('leaf')}</span>helpr<span class="wordmark-dot">.</span></div>`;
+const logo=()=>`<div class="logo">helpr</div>`;
 let model=Foundation.initial(), scene='first',modal=null,modalTask=null,previousFocus=null;
 let newDraft={goal:''},formError='',toastTimer,recoveryTimer,labOpen=false;
 const analysisTimers=new Map();
@@ -688,14 +749,18 @@ function toast(text) {
   toastTimer=setTimeout(()=>$('#toast').classList.remove('visible'),3500);
 }
 function header() {
-  return `<header class="app-header">${logo()}<nav class="task-tabs" aria-label="任务标签页">${model.tasks.filter(t=>!t.hidden).map(taskTab).join('')}<button class="icon-btn new-tab" ${act('new')} aria-label="新建任务" title="新建任务">${icon('plus')}</button></nav>
-    <div class="header-tools"><span class="record-indicator ${model.save==='saved'?'':'pending'}" title="${model.save==='saved'?'任务与对话已保存':'有新内容尚未保存'}" aria-label="${model.save==='saved'?'任务与对话已保存':'有新内容尚未保存'}">${icon(model.save==='saved'?'check':'info')}</span><button class="activity-btn" ${act('tasks')} title="查看全部任务" aria-label="查看全部 ${model.tasks.length} 项任务">${icon('grid')}<span class="activity-count">${model.tasks.length}</span></button><button class="icon-btn" ${act('quit')} aria-label="退出 helpr" title="退出 helpr">${icon('exit')}</button></div>
+  return `<header class="app-header">${logo()}<div class="tab-area"><nav class="task-tabs" aria-label="任务标签页">${model.tasks.filter(t=>!t.hidden).map(taskTab).join('')}</nav><button class="icon-btn new-tab" ${act('new')} aria-label="新建任务" title="新建任务">${headerIcon('plus')}</button></div>
+    <div class="header-tools"><span class="record-indicator ${model.save==='saved'?'':'pending'}" title="${model.save==='saved'?'任务与对话已保存':'有新内容尚未保存'}" aria-label="${model.save==='saved'?'任务与对话已保存':'有新内容尚未保存'}">${headerIcon('warning-circle')}</span><button class="activity-btn" ${act('tasks')} title="查看全部任务" aria-label="查看全部 ${model.tasks.length} 项任务">${headerIcon('squares-four')}<span class="activity-label">任务</span><span class="activity-count">${model.tasks.length}</span></button><button class="icon-btn" ${act('quit')} aria-label="退出 helpr" title="退出 helpr">${headerIcon('sign-out')}</button></div>
   </header>`;
 }
 function taskTab(t) {
-  return `<div class="task-tab ${model.active===t.id?'selected':''}" data-preview-tab="${t.id}">${siteIcon(t)}
-    <button class="select-task" ${act('select',t.id)} aria-label="查看任务 ${t.label}：${esc(t.goal)}" aria-pressed="${model.active===t.id}" aria-expanded="false" aria-controls="task-preview-card" aria-keyshortcuts="ArrowDown" aria-description="按 Enter 切换任务，按下方向键查看进度"><span class="task-name">${esc(t.goal)}</span><small>${statusHTML(t)}</small></button>
-    <button class="icon-btn" ${act('close-task',t.id)} aria-label="关闭任务 ${t.label}">${icon('close')}</button></div>`;
+  // Display-only fixture titles. Keep the original delegation and task identity intact.
+  const titles={'把十月经营周报发布到北山官网':'发布十月经营周报','把这份内部资料整理到团队资料库':'整理团队内部资料'};
+  const [state,tone]=status(t),label=state==='可手动操作'?'就绪':state;
+  const site=['wordpress','drupal'].includes(t.kind)?t.kind:'globe';
+  return `<div class="task-tab ${model.active===t.id?'selected':''} ${tone==='done'?'':'needs-attention'}" data-preview-tab="${t.id}"><img class="tab-site-icon ${site}" src="assets/${site}.svg" alt="">
+    <button class="select-task" ${act('select',t.id)} aria-label="查看任务 ${t.label}：${esc(t.goal)}；${state}" aria-pressed="${model.active===t.id}" aria-expanded="false" aria-controls="task-preview-card" aria-keyshortcuts="ArrowDown" aria-description="按 Enter 切换任务，按下方向键查看进度"><span class="task-name" title="${esc(t.goal)}">${esc(titles[t.goal]||t.goal)}</span><small><span class="status state-${tone}">${label}</span></small></button>
+    <button class="icon-btn" ${act('close-task',t.id)} aria-label="关闭任务 ${t.label}">${headerIcon('x')}</button></div>`;
 }
 function notices() {
   let html='';
@@ -772,6 +837,7 @@ function render() {
   const focus=document.activeElement,focusId=focus?.dataset.chatDraft,field=focus?.dataset.webField,start=focus?.selectionStart,end=focus?.selectionEnd;
   hidePreview();
   $('#app').innerHTML=model.app==='closed'?closed():header()+notices()+(current()&&!current().hidden?frame(current()):empty());
+  revealActiveTab();
   renderLab();renderModal();const feed=$('[data-feed]');if(feed)feed.scrollTop=feed.scrollHeight;
   if(!modal){const next=focusId?$('[data-chat-draft="'+focusId+'"]'):field?$('[data-web-field="'+field+'"]'):null;if(next){next.focus();if(start!==null&&start!==undefined)next.setSelectionRange(start,end);}}
   scheduleAnalysis();
@@ -944,7 +1010,9 @@ document.addEventListener('keydown',event=>{
     else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
   }
 });
-window.addEventListener('resize',positionPreview);
+function revealActiveTab(){ $('.task-tab.selected')?.scrollIntoView({block:'nearest',inline:'nearest'}); }
+window.addEventListener('resize',()=>{revealActiveTab();positionPreview();});
+document.addEventListener('scroll',event=>{if(event.target.matches?.('.task-tabs'))hidePreview();},true);
 window.addEventListener('scroll',positionPreview);
 render();
 </script>
