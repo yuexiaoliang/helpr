@@ -252,6 +252,10 @@ try {
   await waitFor(
     async () => (await client.request({ kind: 'snapshot' })).active === a,
   );
+  fs.writeFileSync(
+    path.join(out, 'workspace-before-interaction.png'),
+    Buffer.from(await client.request({ kind: 'capture' }), 'base64'),
+  );
   if (process.argv.includes('--interactive')) {
     console.log('交互核对就绪：' + out + '/continue');
     await waitFor(
@@ -342,6 +346,7 @@ try {
   lastPids = ownedPids(client.child.pid);
   if (process.argv.includes('--fault')) {
     const baseline = await client.request({ kind: 'snapshot' });
+    if (process.argv.includes('--blocked-host')) process.kill(client.ready.hostPid, 'SIGSTOP');
     spend('faults');
     client.child.kill('SIGKILL');
     await waitFor(() => lastPids.every((pid) => !alive(pid)));

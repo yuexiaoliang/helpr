@@ -49,6 +49,7 @@ try {
       extraResources: [
         { from: 'app/records/migrations', to: 'migrations' },
         { from: 'dist/native/process-path', to: 'process-path' },
+        { from: 'dist/native/watch-owner', to: 'watch-owner' },
         { from: 'app/renderer/assets/PHOSPHOR-LICENSE.txt', to: 'licenses/PHOSPHOR-LICENSE.txt' },
       ],
       asar: true,

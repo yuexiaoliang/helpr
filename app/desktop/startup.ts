@@ -43,6 +43,7 @@ export function resolveStartup(input: {
   production: string;
   env: NodeJS.ProcessEnv;
   probe: string;
+  watcher: string;
 }): { role: 'controller' | 'host'; root: string; validation: boolean } {
   const switches = [
     ...input.argv
@@ -78,7 +79,14 @@ export function resolveStartup(input: {
         env: {},
         maxBuffer: 8192,
       }).trim();
-      if (realpathSync(owner) !== realpathSync(input.executable))
+      if (realpathSync(owner) !== realpathSync(input.watcher))
+        throw new Error();
+      const controller = execFileSync(
+        input.probe,
+        ['--parent-of', String(input.parentPid)],
+        { encoding: 'utf8', timeout: 2000, env: {}, maxBuffer: 8192 },
+      ).trim();
+      if (realpathSync(controller) !== realpathSync(input.executable))
         throw new Error();
     } catch {
       throw new Error('HOST_OWNER_REQUIRED');

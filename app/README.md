@@ -14,7 +14,7 @@ pnpm check
 pnpm dev
 ```
 
-pnpm 原生构建许可保存在 `pnpm-workspace.yaml`。Electron 二进制单独准备；没有全局展开依赖。`compile` 先构建 macOS 只读进程映像检查器，再编译控制、网页宿主、记录、观察工作者、独立 CJS preload 与 React 静态界面。当前 Mac 需要已有的 Command Line Tools；用户打开打包应用无需这些开发工具。Linux CI 只编译和测试可运行的记录、契约及 UI，不抵算 macOS 原生和安装验收。
+pnpm 原生构建许可保存在 `pnpm-workspace.yaml`。Electron 二进制单独准备；没有全局展开依赖。`compile` 先构建 macOS 只读进程映像检查器和原生退出监督，再编译控制、网页宿主、记录、观察工作者、独立 CJS preload 与 React 静态界面。当前 Mac 需要已有的 Command Line Tools；用户打开打包应用无需这些开发工具。Linux CI 只编译和测试可运行的记录、契约及 UI，不抵算 macOS 原生和安装验收。
 
 ```sh
 pnpm build:mac
@@ -26,7 +26,9 @@ pnpm build:mac
 
 正式资料固定在 `~/Library/Application Support/helpr`，独立于安装包；SQLite、浏览器持久会话及诊断分别存放。业务记录只有独立记录进程写入，使用 Zod 契约、XState 纯转换、Drizzle 和 `better-sqlite3`。关键命令采用请求身份、版本检查和事务；回执不明时保留原命令，取消只读核对，避免制造另一份任务。保存未完成或结果未明时阻止退出。
 
-长期控制进程持有私有调试 pipe；每次观察通过独立受管工作者和限定能力转接，只允许所属页面的读取。没有 TCP 调试监听或任意脚本执行入口。启动时拒绝单／双横线的裸调试参数，macOS `proc_pidpath` 核对宿主实际父映像；宿主无法仅凭外部 IPC 或参数取得角色。
+长期控制进程持有私有调试 pipe；每次观察通过独立受管工作者和限定能力转接，只允许所属页面的读取。没有 TCP 调试监听或任意脚本执行入口。启动时拒绝单／双横线的裸调试参数；macOS `proc_pidpath` 核对宿主的原生监督父进程及监督的控制父进程映像，宿主无法仅凭外部 IPC 或参数取得角色。
+
+控制进程先启动独立进程组中的原生监督，再由监督创建网页宿主。监督核对控制拥有者的真实身份和启动时间；拥有者退出、通道准备失败或宿主退出时结束自己的整组进程，清理不依赖网页 JavaScript 响应。私有 pipe 与继承 IPC 仅交给宿主，监督不会保留这些连接。系统授权迟到时也必须遵循这项退出保证。
 
 真实网页没有 preload，禁用 Node、webview 和任意宿主接口，启用 sandbox、context isolation 与 web security。宿主对话使用独立受信视图，校验发送方、主 frame 和角色。同一网站的持久登录在任务间共享，任务身份、对话和草稿独立；这不证明后续同一业务目标的写入协调已经实现。Cookie 保护从新资料区启用，不能推定整个浏览器目录都加密。
 
@@ -45,6 +47,8 @@ pnpm validate:workspace --install --interactive --fault
 ```
 
 已在核对中安装过且身份一致时，使用 `--installed` 选择现有安装，不再次消耗安装或覆盖应用。
+
+`validate-owner-exit.mjs --early` 验证宿主执行 JavaScript 前的退出；`validate-workspace.mjs --fault --blocked-host` 验证宿主响应被暂停后的退出与记录重开。两者都在既定启动和故障额度内运行，独立核对实际进程；不能以退出消息代替清理证据。
 
 可见工作区验收在扣减额度前检查 Mac 锁屏及受保护输入；未就绪时保留现场并停止。`--preflight` 只读系统条件，不启动或安装应用。未发现锁屏不代表界面和中文输入已经验收通过。
 

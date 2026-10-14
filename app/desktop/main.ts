@@ -20,6 +20,9 @@ try {
     probe: app.isPackaged
       ? path.join(process.resourcesPath, 'process-path')
       : path.resolve('dist/native/process-path'),
+    watcher: app.isPackaged
+      ? path.join(process.resourcesPath, 'watch-owner')
+      : path.resolve('dist/native/watch-owner'),
   });
   const host = role === 'host';
   app.setPath('userData', host ? path.join(root, 'browser') : root);

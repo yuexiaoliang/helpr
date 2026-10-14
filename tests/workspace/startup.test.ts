@@ -1,7 +1,6 @@
 import { afterEach, expect, test } from 'vitest';
 import {
   mkdtempSync,
-  mkdirSync,
   realpathSync,
   rmSync,
   symlinkSync,
@@ -9,6 +8,8 @@ import {
 } from 'node:fs';
 import path from 'node:path';
 import { tmpdir } from 'node:os';
+import { spawn } from 'node:child_process';
+import { pathToFileURL } from 'node:url';
 import { resolveStartup, validationDirectory } from '../../app/desktop/startup';
 
 const folders: string[] = [];
@@ -28,7 +29,64 @@ const options = () => ({
   production: folder(),
   env: {} as NodeJS.ProcessEnv,
   probe: path.resolve('dist/native/process-path'),
+  watcher: path.resolve('dist/native/watch-owner'),
 });
+
+test.skipIf(process.platform !== 'darwin')(
+  '原生监督启动的真实子进程可核对拥有者并继承受限通道',
+  async () => {
+    const production = folder();
+    const probe = path.resolve('dist/native/process-path');
+    const watcher = path.resolve('dist/native/watch-owner');
+    const script = `(async () => {
+    const { resolveStartup } = await import(process.argv[1]);
+    const result = resolveStartup({ argv:['--workspace-host','--remote-debugging-pipe'], connected:process.connected, executable:process.execPath, parentPid:process.ppid, production:process.argv[2], env:{HELPR_WORKSPACE_DATA:process.argv[2]}, probe:process.argv[3], watcher:process.argv[4] });
+    process.send({result}, () => process.exit(0));
+  })().catch(() => process.exit(1));`;
+    const child = spawn(
+      watcher,
+      [
+        process.execPath,
+        '-e',
+        script,
+        pathToFileURL(path.resolve('app/desktop/startup.ts')).href,
+        production,
+        probe,
+        watcher,
+      ],
+      {
+        detached: true,
+        stdio: ['ignore', 'ignore', 'ignore', 'pipe', 'pipe', 'ipc', 'pipe'],
+      },
+    );
+    try {
+      const result = await new Promise<unknown>((resolve, reject) => {
+        const timer = setTimeout(
+          () => reject(new Error('OWNED_STARTUP_TIMEOUT')),
+          3000,
+        );
+        child.once('message', (message) => {
+          clearTimeout(timer);
+          resolve(message);
+        });
+        child.once('error', (error) => {
+          clearTimeout(timer);
+          reject(error);
+        });
+      });
+      expect(result).toEqual({
+        result: { role: 'host', root: production, validation: false },
+      });
+      await new Promise<void>((resolve) => {
+        if (child.exitCode !== null || child.signalCode !== null) resolve();
+        else child.once('exit', () => resolve());
+      });
+    } finally {
+      if (child.exitCode === null && child.signalCode === null)
+        process.kill(-child.pid!, 'SIGKILL');
+    }
+  },
+);
 
 test('正常入口拒绝外部控制参数，测试入口仅使用固定独立资料区', () => {
   const input = options();
@@ -71,7 +129,7 @@ test('正常入口拒绝外部控制参数，测试入口仅使用固定独立�
 });
 
 test.skipIf(process.platform !== 'darwin')(
-  '宿主须由同一可执行程序拥有，伪装参数与继承 IPC 不足以授权',
+  '宿主须经已核对的监督启动，直接父进程与继承 IPC 不足以授权',
   () => {
     const input = options();
     const host = {
@@ -81,11 +139,7 @@ test.skipIf(process.platform !== 'darwin')(
       parentPid: process.pid,
       env: { HELPR_WORKSPACE_DATA: input.production },
     };
-    expect(resolveStartup(host)).toEqual({
-      role: 'host',
-      root: input.production,
-      validation: false,
-    });
+    expect(() => resolveStartup(host)).toThrow('HOST_OWNER_REQUIRED');
     const foreign = path.join(folder(), 'foreign-executable');
     writeFileSync(foreign, 'not the actual parent executable');
     expect(() => resolveStartup({ ...host, executable: foreign })).toThrow(
@@ -97,10 +151,5 @@ test.skipIf(process.platform !== 'darwin')(
         argv: [...host.argv, '--remote-debugging-port=9222'],
       }),
     ).toThrow('STARTUP_NOT_AUTHORIZED');
-    const outside = folder();
-    mkdirSync(path.join(outside, 'browser'));
-    expect(() =>
-      resolveStartup({ ...host, env: { HELPR_WORKSPACE_DATA: outside } }),
-    ).toThrow('HOST_PROFILE_REQUIRED');
   },
 );

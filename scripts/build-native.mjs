@@ -4,6 +4,8 @@ import { execFileSync } from 'node:child_process';
 if (process.platform === 'darwin') {
   if (process.arch !== 'arm64') throw Error('MAC_ARM64_REQUIRED');
   fs.mkdirSync('dist/native', { recursive: true });
-  execFileSync('/usr/bin/xcrun', ['clang', '-arch', 'arm64', '-mmacosx-version-min=14.0', '-Wall', '-Wextra', '-Werror', 'app/native/process-path.c', '-o', 'dist/native/process-path'], { stdio: 'inherit' });
-  execFileSync('/usr/bin/codesign', ['--sign', '-', '--force', 'dist/native/process-path'], { stdio: 'pipe' });
+  for (const name of ['process-path', 'watch-owner']) {
+    execFileSync('/usr/bin/xcrun', ['clang', '-arch', 'arm64', '-mmacosx-version-min=14.0', '-Wall', '-Wextra', '-Werror', `app/native/${name}.c`, '-o', `dist/native/${name}`], { stdio: 'inherit' });
+    execFileSync('/usr/bin/codesign', ['--sign', '-', '--force', `dist/native/${name}`], { stdio: 'pipe' });
+  }
 }

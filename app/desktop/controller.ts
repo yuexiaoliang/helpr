@@ -72,9 +72,33 @@ export async function startController(
     '--remote-debugging-pipe',
     '--site-per-process',
   ];
-  const host = spawn(process.execPath, args, {
-    env: { ...env, HELPR_WORKSPACE_DATA: folder },
-    stdio: ['ignore', 'ignore', 'ignore', 'pipe', 'pipe', 'ipc'],
+  const watcher = app.isPackaged
+    ? path.join(process.resourcesPath, 'watch-owner')
+    : path.resolve('dist/native/watch-owner');
+  const host = spawn(
+    watcher,
+    [
+      ...(validation && process.env.HELPR_VALIDATION_PAUSE_START === '1'
+        ? ['--pause-before-exec']
+        : []),
+      process.execPath,
+      ...args,
+    ],
+    {
+      env: { ...env, HELPR_WORKSPACE_DATA: folder },
+      detached: true,
+      stdio: ['ignore', 'ignore', 'ignore', 'pipe', 'pipe', 'ipc', 'pipe'],
+    },
+  );
+  let childPidText = '';
+  host.stdio.at(6)?.on('data', (data: Buffer) => {
+    childPidText += data.toString();
+    if (/^\d+\n$/.test(childPidText) && validation)
+      process.send?.({
+        launching: true,
+        hostPid: Number(childPidText.trim()),
+        launcherPid: host.pid,
+      });
   });
   const broker = new ObservationBroker(host);
   const hostClient = new ProcessClient({
@@ -269,7 +293,7 @@ export async function startController(
     }
     if (host.connected) host.send({ close: true });
     await new Promise<void>((resolve) => {
-      if (host.exitCode !== null) return resolve();
+      if (host.exitCode !== null || host.signalCode !== null) return resolve();
       const timer = setTimeout(() => {
         host.kill('SIGTERM');
         resolve();
@@ -321,7 +345,10 @@ export async function startController(
   });
   host.on('message', (input: unknown) => {
     const ready = z
-      .object({ ready: z.record(z.string(), z.unknown()) })
+      .object({
+        ready: z.record(z.string(), z.unknown()),
+        hostPid: z.number().int().positive(),
+      })
       .safeParse(input);
     if (!ready.success) return;
     publish();
@@ -330,7 +357,7 @@ export async function startController(
       process.send?.({
         ready: true,
         controllerPid: process.pid,
-        hostPid: host.pid,
+        hostPid: ready.data.hostPid,
         recordsPid: records.pid,
         versions: ready.data.ready,
       });

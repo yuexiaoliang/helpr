@@ -42,6 +42,9 @@ const startup = resolveStartup({
   probe: app.isPackaged
     ? path.join(process.resourcesPath, 'process-path')
     : path.resolve('dist/native/process-path'),
+  watcher: app.isPackaged
+    ? path.join(process.resourcesPath, 'watch-owner')
+    : path.resolve('dist/native/watch-owner'),
 });
 if (startup.role !== 'host') throw new Error('HOST_OWNER_REQUIRED');
 
@@ -442,111 +445,118 @@ app.on('before-quit', (event) => {
   }
   log.close();
 });
-void app.whenReady().then(async () => {
-  const local = session.fromPartition('helpr-ui'),
-    remote = session.fromPartition('persist:helpr-web');
-  local.protocol.handle('helpr', async (request) => {
-    const url = new URL(request.url);
-    if (
-      url.hostname !== 'workspace' ||
-      !/^\/(?:index\.html|assets\/[A-Za-z0-9_-]+\.(?:js|css|svg))$/.test(
-        url.pathname,
+void app
+  .whenReady()
+  .then(async () => {
+    const local = session.fromPartition('helpr-ui'),
+      remote = session.fromPartition('persist:helpr-web');
+    local.protocol.handle('helpr', async (request) => {
+      const url = new URL(request.url);
+      if (
+        url.hostname !== 'workspace' ||
+        !/^\/(?:index\.html|assets\/[A-Za-z0-9_-]+\.(?:js|css|svg))$/.test(
+          url.pathname,
+        )
       )
-    )
-      return new Response('Not found', { status: 404 });
-    const mime = url.pathname.endsWith('.html')
-      ? 'text/html'
-      : url.pathname.endsWith('.js')
-        ? 'application/javascript'
-        : url.pathname.endsWith('.css')
-          ? 'text/css'
-          : 'image/svg+xml';
-    try {
-      return new Response(
-        await readFile(path.join(renderer, url.pathname.slice(1))),
-        { headers: { 'Content-Type': mime + '; charset=utf-8' } },
-      );
-    } catch {
-      return new Response('Not found', { status: 404 });
-    }
-  });
-  for (const s of [local, remote]) {
-    s.setPermissionRequestHandler((_wc, _permission, callback) => {
-      callback(false);
-      emit({ notice: '网站请求的系统权限未开放；已有任务与对话仍保留。' });
+        return new Response('Not found', { status: 404 });
+      const mime = url.pathname.endsWith('.html')
+        ? 'text/html'
+        : url.pathname.endsWith('.js')
+          ? 'application/javascript'
+          : url.pathname.endsWith('.css')
+            ? 'text/css'
+            : 'image/svg+xml';
+      try {
+        return new Response(
+          await readFile(path.join(renderer, url.pathname.slice(1))),
+          { headers: { 'Content-Type': mime + '; charset=utf-8' } },
+        );
+      } catch {
+        return new Response('Not found', { status: 404 });
+      }
     });
-    s.setPermissionCheckHandler(() => false);
-  }
-  remote.on('will-download', (event) => {
-    event.preventDefault();
-    emit({ notice: '当前工作区尚未接入下载保存。可以继续查看网页。' });
-  });
-  win = new BrowserWindow({
-    width: 1280,
-    height: 880,
-    minWidth: 800,
-    minHeight: 600,
-    title: 'helpr',
-    show: false,
-    titleBarStyle: 'hiddenInset',
-    trafficLightPosition: { x: 12, y: 18 },
-    backgroundColor: '#ffffff',
-    webPreferences: { ...prefs, session: local, preload },
-  });
-  const painted = new Promise<void>((resolve) =>
-    win.once('ready-to-show', () => resolve()),
-  );
-  const chromeLoaded = loadUI(win.webContents, 'chrome');
-  overlay = new WebContentsView({
-    webPreferences: { ...prefs, session: local, preload },
-  });
-  win.contentView.addChildView(overlay);
-  const panelLoaded = loadUI(overlay.webContents, 'panel');
-  overlay.setVisible(false);
-  toast = new WebContentsView({
-    webPreferences: { ...prefs, session: local, preload },
-  });
-  toast.setBackgroundColor('#00000000');
-  win.contentView.addChildView(toast);
-  const toastLoaded = loadUI(toast.webContents, 'toast');
-  toast.setVisible(false);
-  win.on('resize', layout);
-  win.on('close', (event) => {
-    if (!closing) {
-      event.preventDefault();
-      win.hide();
+    for (const s of [local, remote]) {
+      s.setPermissionRequestHandler((_wc, _permission, callback) => {
+        callback(false);
+        emit({ notice: '网站请求的系统权限未开放；已有任务与对话仍保留。' });
+      });
+      s.setPermissionCheckHandler(() => false);
     }
-  });
-  Menu.setApplicationMenu(
-    Menu.buildFromTemplate([
-      {
-        label: 'helpr',
-        submenu: [
-          {
-            label: '收起 helpr',
-            accelerator: 'Command+W',
-            click: () => win.hide(),
-          },
-          {
-            label: '退出 helpr',
-            accelerator: 'Command+Q',
-            click: () => {
-              void perform({ kind: 'panel', panel: 'quit' });
+    remote.on('will-download', (event) => {
+      event.preventDefault();
+      emit({ notice: '当前工作区尚未接入下载保存。可以继续查看网页。' });
+    });
+    win = new BrowserWindow({
+      width: 1280,
+      height: 880,
+      minWidth: 800,
+      minHeight: 600,
+      title: 'helpr',
+      show: false,
+      titleBarStyle: 'hiddenInset',
+      trafficLightPosition: { x: 12, y: 18 },
+      backgroundColor: '#ffffff',
+      webPreferences: { ...prefs, session: local, preload },
+    });
+    const painted = new Promise<void>((resolve) =>
+      win.once('ready-to-show', () => resolve()),
+    );
+    const chromeLoaded = loadUI(win.webContents, 'chrome');
+    overlay = new WebContentsView({
+      webPreferences: { ...prefs, session: local, preload },
+    });
+    win.contentView.addChildView(overlay);
+    const panelLoaded = loadUI(overlay.webContents, 'panel');
+    overlay.setVisible(false);
+    toast = new WebContentsView({
+      webPreferences: { ...prefs, session: local, preload },
+    });
+    toast.setBackgroundColor('#00000000');
+    win.contentView.addChildView(toast);
+    const toastLoaded = loadUI(toast.webContents, 'toast');
+    toast.setVisible(false);
+    win.on('resize', layout);
+    win.on('close', (event) => {
+      if (!closing) {
+        event.preventDefault();
+        win.hide();
+      }
+    });
+    Menu.setApplicationMenu(
+      Menu.buildFromTemplate([
+        {
+          label: 'helpr',
+          submenu: [
+            {
+              label: '收起 helpr',
+              accelerator: 'Command+W',
+              click: () => win.hide(),
             },
-          },
-        ],
+            {
+              label: '退出 helpr',
+              accelerator: 'Command+Q',
+              click: () => {
+                void perform({ kind: 'panel', panel: 'quit' });
+              },
+            },
+          ],
+        },
+        { role: 'editMenu' },
+      ]),
+    );
+    await Promise.all([chromeLoaded, panelLoaded, toastLoaded, painted]);
+    win.show();
+    notify({
+      hostPid: process.pid,
+      ready: {
+        electron: process.versions.electron,
+        node: process.versions.node,
+        chrome: process.versions.chrome,
       },
-      { role: 'editMenu' },
-    ]),
-  );
-  await Promise.all([chromeLoaded, panelLoaded, toastLoaded, painted]);
-  win.show();
-  notify({
-    ready: {
-      electron: process.versions.electron,
-      node: process.versions.node,
-      chrome: process.versions.chrome,
-    },
+    });
+    log.event('ready');
+  })
+  .catch(() => {
+    closing = true;
+    app.exit(1);
   });
-  log.event('ready');
-});

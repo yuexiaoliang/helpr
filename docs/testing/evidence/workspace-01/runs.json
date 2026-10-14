@@ -112,6 +112,33 @@
         "version": "1"
       },
       "prepared": true
+    },
+    {
+      "build": 6,
+      "started": "2026-10-14T21:49:09.788Z",
+      "toolchain": {
+        "node": "v24.18.0",
+        "pnpm": "11.7.0"
+      },
+      "appId": "local.helpr.desktop",
+      "signature": "ad-hoc, current Mac self-use only",
+      "hashes": {
+        "Contents/MacOS/helpr": "4309b6bc9b679733d5c35db748f75a0d645f3ead18d6067078ffbb678ad67d70",
+        "Contents/Resources/app.asar": "c6c967193fd7e47f8fbf10b8d10b32f3f85be26e8aa2b0d34ca1ad424811747b"
+      },
+      "fuses": {
+        "0": 48,
+        "1": 49,
+        "2": 48,
+        "3": 48,
+        "4": 49,
+        "5": 49,
+        "6": 48,
+        "7": 48,
+        "8": 49,
+        "version": "1"
+      },
+      "prepared": true
     }
   ],
   "runs": [
@@ -264,6 +291,25 @@
           }
         }
       ]
+    },
+    {
+      "batch": "run-1791988818811",
+      "started": "2026-10-14T14:40:18.819Z",
+      "checks": [],
+      "samples": [
+        {
+          "kind": "startup",
+          "ms": 1497,
+          "versions": {
+            "electron": "44.7.2",
+            "node": "24.21.0",
+            "chrome": "152.0.7977.149"
+          }
+        }
+      ],
+      "passed": false,
+      "error": "VALIDATION_TIMEOUT",
+      "ms": 611660
     }
   ],
   "startupDenials": {
@@ -289,18 +335,18 @@
   },
   "budget": {
     "limits": {
-      "builds": 5,
-      "installs": 2,
-      "starts": 9,
-      "faults": 1,
-      "cleanups": 2
+      "builds": 6,
+      "installs": 3,
+      "starts": 13,
+      "faults": 3,
+      "cleanups": 6
     },
     "used": {
-      "builds": 5,
-      "installs": 2,
-      "starts": 7,
-      "faults": 0,
-      "cleanups": 2
+      "builds": 6,
+      "installs": 3,
+      "starts": 11,
+      "faults": 2,
+      "cleanups": 5
     },
     "modelCalls": 0,
     "remoteWrites": 0,
@@ -315,6 +361,17 @@
         "starts": "+3",
         "cleanups": "+1",
         "reason": "收尾入口审查：父映像来源与验证资料守卫；旧失败不抵算"
+      },
+      {
+        "starts": "+1",
+        "cleanups": "+1",
+        "reason": "已解锁且现场预检通过，按已准备方案完成build5原定三次正向启动；旧失败继续累计"
+      },
+      {
+        "reason": "授权迟到后发现宿主残留；空工作区反例及独立退出监督修正，按具体方案保留原计数"
+      },
+      {
+        "reason": "审查要求覆盖宿主JS开始前的退出窗口，追加1启动和1故障；不追加构建或业务调用"
       }
     ]
   },
@@ -329,5 +386,70 @@
   "cleanup2": {
     "ownedExecutablePrefixAbsent": true,
     "systemSecurityAgentNotTouched": true
+  },
+  "ownerExit": {
+    "orphanAfterLateAuthorization": {
+      "controllerAlreadyGone": true,
+      "remainingOwnProcesses": 10,
+      "newRendererProcessesAfterAuthorization": 3,
+      "cleanup3Passed": false,
+      "cleanup4OnlyOwnProcesses": true
+    },
+    "before": {
+      "started": "2026-10-14T21:31:50.337Z",
+      "case": "controller exits while host cannot process callbacks",
+      "pids": [
+        91629,
+        91632,
+        91633,
+        91635,
+        91636,
+        91643,
+        91644,
+        91646,
+        91647,
+        91648
+      ],
+      "remaining": [
+        91636,
+        91643,
+        91644,
+        91646,
+        91647,
+        91648
+      ],
+      "passed": false,
+      "error": "OWNED_HOST_REMAINS",
+      "cleaned": true,
+      "build": 5,
+      "start": 9,
+      "fault": 1,
+      "cleanup": 5
+    },
+    "early": {
+      "started": "2026-10-14T21:50:20.876Z",
+      "case": "controller exits before host JavaScript starts",
+      "pids": [
+        720,
+        722,
+        723,
+        724,
+        725,
+        726
+      ],
+      "remaining": [],
+      "passed": true,
+      "build": 6,
+      "start": 10,
+      "fault": 2
+    }
+  },
+  "installation3": {
+    "installed": "/Users/yuexiaoliang/Applications/helpr.app",
+    "previousArchive": "498f6cb3abdf842c50d09f0c5fb885ce4dc2f6949aa98c7c40a601c68aa933f6",
+    "installedArchive": "c6c967193fd7e47f8fbf10b8d10b32f3f85be26e8aa2b0d34ca1ad424811747b",
+    "previousCandidatePreserved": true,
+    "signatureVerified": true,
+    "date": "2026-10-14T21:50:13.755Z"
   }
 }
