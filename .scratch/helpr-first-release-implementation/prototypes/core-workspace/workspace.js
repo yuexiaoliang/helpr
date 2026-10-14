@@ -236,7 +236,7 @@ function renderGuide() {
   if(Object.values(state.tasks).some(t=>t.status==='stopped')){no=3;title='任务已停止';detail='重新查看保持停止，明确继续后才核对并恢复。';}
   if(allDone){no=5;title='结果已就绪';detail='分别查看两项结果，也可以切换方案比较布局。';}
   const button=!state.started?`<button class="primary" ${action('delegate')}>开始演示 ${icon('arrow')}</button>`:state.didResume&&!allDone?`<button class="text-btn" ${action('advance')}>快进到结果 ${icon('right')}</button>`:'';
-  $('#lab-guide').innerHTML=`<div class="lab-guide"><span class="lab-label">界面原型 · 模拟数据</span><div class="guide-copy"><span class="step-no">${no}</span><span class="guide-title">${title}</span><span class="guide-detail">${detail}</span></div><span class="spacer"></span>${button}<button class="text-btn" ${action('help')}>使用说明</button><button class="icon-btn" ${action('reset')} aria-label="重置演示" title="重置演示">${icon('replay')}</button></div>`;
+  $('#lab-guide').innerHTML=`<div class="lab-guide"><span class="lab-label">界面原型 · 模拟数据</span><div class="guide-copy"><span class="step-no">${no}</span><span class="guide-title">${title}</span><span class="guide-detail">${detail}</span></div><span class="spacer"></span>${button}<a class="text-btn" href="./foundation.html">基础工作区完整体验</a><button class="text-btn" ${action('help')}>使用说明</button><button class="icon-btn" ${action('reset')} aria-label="重置演示" title="重置演示">${icon('replay')}</button></div>`;
 }
 function update() {
   for(const t of Object.values(state.tasks)) {

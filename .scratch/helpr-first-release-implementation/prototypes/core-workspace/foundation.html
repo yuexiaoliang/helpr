@@ -1,0 +1,810 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>helpr · 基础工作区完整原型</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%232b594b'/%3E%3Ctext x='12' y='29' font-size='30' fill='white'%3Eh%3C/text%3E%3C/svg%3E">
+<style>
+/* PROTOTYPE. Three deliberately different layouts share only visual tokens and task content. */
+* { box-sizing: border-box; }
+[hidden] { display:none!important; }
+:root { --ink:#23352e; --muted:#78817b; --line:#e3e7e0; --green:#2b594b; --soft:#edf3ee; --amber:#a26b27; --paper:#fff; --background:#eeeee9; }
+body { margin:0; color:var(--ink); background:var(--background); font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif; }
+button,input,textarea,select { font:inherit; }
+button { cursor:pointer; border:0; background:none; color:inherit; }
+button:disabled { cursor:default; opacity:.5; }
+button:not(:disabled):hover { filter:brightness(.95); }
+button:focus-visible, input:focus-visible,textarea:focus-visible { outline:2px solid #638c79; outline-offset:3px; }
+input,textarea { color:var(--ink); }
+textarea { resize:none; }
+svg { width:18px; height:18px; vertical-align:middle; flex:none; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.icon-btn { width:30px; height:30px; display:inline-grid; place-items:center; border-radius:7px; }
+.icon-btn:hover { background:#edf0eb; }
+.primary { display:inline-flex; align-items:center; justify-content:center; gap:7px; padding:9px 15px; border-radius:8px; background:var(--green); color:white; font-weight:550; }
+.secondary { padding:8px 12px; border:1px solid var(--line); background:white; border-radius:7px; }
+.text-btn { color:var(--green); padding:5px 7px; font-size:12px; }
+.muted { color:var(--muted); }
+.tiny { font-size:11px; }
+.flex { display:flex; align-items:center; gap:9px; }
+.spacer { flex:1; }
+.logo { font-size:23px; font-weight:750; letter-spacing:-1.2px; display:flex; align-items:center; gap:9px; }
+.logo-mark { width:27px; height:27px; border:2px solid var(--green); border-radius:9px 9px 9px 2px; display:grid; place-items:center; }
+.logo-mark svg { width:18px; height:18px; }
+.wordmark-dot { color:#8cac95; }
+.lab-guide { min-height:52px; padding:10px 23px; display:flex; align-items:center; gap:18px; font-size:12px; }
+.lab-label { color:#69736c; white-space:nowrap; border-right:1px solid #d0d6cd; padding-right:18px; letter-spacing:.4px; }
+.guide-copy { display:flex; align-items:center; gap:10px; min-width:0; }
+.step-no { width:21px; height:21px; display:grid; place-items:center; border-radius:50%; background:#dce5da; color:var(--green); font-size:11px; font-weight:650; flex:none; }
+.guide-title { font-weight:600; white-space:nowrap; }
+.guide-detail { color:#70786f; }
+.lab-guide .primary { font-size:12px; padding:6px 12px; }
+#app { margin:0 16px; height:calc(100dvh - 150px); min-height:590px; background:#fff; border:1px solid #d8ded5; border-radius:13px; overflow:hidden; box-shadow:0 6px 22px #273b2810; }
+.app-header { height:58px; display:flex; gap:16px; align-items:center; padding:0 22px; background:#fcfdfb; border-bottom:1px solid var(--line); }
+.app-header .workspace-name { color:#8a918a; font-size:12px; padding-left:18px; border-left:1px solid var(--line); }
+.global-status { display:flex; gap:6px; align-items:center; font-size:12px; color:var(--muted); }
+.activity-btn { display:flex; align-items:center; gap:7px; font-size:12px; padding:8px 10px; border-radius:7px; border:1px solid var(--line); }
+.activity-count { padding:0 5px; font-size:11px; font-weight:600; background:var(--soft); border-radius:4px; }
+.task-tabs { height:67px; display:flex; align-items:stretch; padding:0 12px; border-bottom:1px solid var(--line); background:#f5f7f2; gap:5px; }
+.task-tab { position:relative; width:270px; border:1px solid transparent; border-bottom:0; border-radius:9px 9px 0 0; margin-top:8px; padding:0 7px 0 13px; display:flex; align-items:center; gap:7px; }
+.task-tab.selected { background:white; border-color:var(--line); }
+.task-tab.selected:after { content:""; position:absolute; bottom:-1px; height:2px; background:white; left:0; right:0; }
+.task-tab .select-task { text-align:left; flex:1; min-width:0; padding:4px 0; }
+.task-name { font-size:13px; font-weight:560; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.task-tab small { display:flex; align-items:center; gap:5px; margin-top:3px; }
+.task-tab .icon-btn { width:24px; height:27px; flex:none; color:#89958c; }
+.task-preview { position:fixed; z-index:20; width:min(310px,calc(100vw - 16px)); overflow:auto; background:#fff; border:1px solid #d5dfd3; border-radius:12px; box-shadow:0 12px 34px #22372a22,0 3px 8px #22372a0b; }
+.preview-header { display:flex; gap:10px; align-items:center; padding:16px 15px 13px; }
+.preview-header h2 { margin:0 0 3px; font-size:14px; font-weight:600; }
+.preview-header .spacer>span { font-size:11px; color:var(--muted); }
+.preview-header .icon-btn { align-self:flex-start; color:#89968b; }
+.preview-progress { padding:0 17px; }
+.preview-status { display:flex; align-items:center; justify-content:space-between; font-size:11px; color:#718674; margin:0 0 9px; }
+.task-preview .progress-track { height:4px; }
+.task-preview .step-list { margin:13px 0 16px; font-size:12px; color:#909a8c; }
+.task-preview .step-list div { gap:9px; margin:9px 0; }
+.task-preview .step-circle { width:6px; height:6px; }
+.step-list .complete { color:#73886e; }
+.step-list .complete .step-circle { background:currentColor; }
+.task-preview .step-list .current { color:var(--green); }
+.preview-update { margin:0 12px 11px; padding:10px 11px; border-radius:7px; background:#f4f6f0; }
+.preview-update>span { font-size:10px; color:#879180; }
+.preview-update p { margin:4px 0 0; font-size:12px; line-height:1.65; color:#60715d; overflow-wrap:anywhere; max-height:5em; overflow:auto; }
+.site-icon { width:28px; height:28px; display:grid; place-items:center; border-radius:7px; flex:none; font-weight:650; font-family:Georgia,serif; font-size:18px; background:#e5edf4; color:#456079; }
+.site-icon.drupal { color:#347494; background:#e5f0f1; }
+.status { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:450; color:#798279; white-space:nowrap; }
+.status .dot { width:5px; height:5px; border-radius:100%; background:currentColor; }
+.state-running,.state-checking { color:#4f8063; }
+.state-manual { color:var(--amber); }
+.state-stopped { color:#927765; }
+.state-done { color:var(--green); }
+.state-running .dot { animation:breathe 2s ease-in-out infinite; }
+@keyframes breathe { 50% { opacity:.35; } }
+.frame { position:relative; min-width:0; min-height:0; height:calc(100% - 125px); display:flex; flex-direction:column; background:#f7f8f7; }
+.browser-bar { height:37px; flex:none; border-bottom:1px solid #e5e9e6; display:flex; align-items:center; gap:10px; padding:0 14px; background:#fff; color:#9aa09a; font-size:11px; }
+.address { color:#718078; display:flex; align-items:center; gap:7px; }
+.address svg { width:13px; height:13px; }
+.site-tag { border:1px solid #e4e8e1; border-radius:4px; padding:1px 5px; color:#8a9488; font-size:10px; }
+.page-space { position:relative; flex:1; display:flex; overflow:auto; min-height:0; }
+.site-menu { width:155px; padding:21px 13px; flex:none; color:#c1c7ca; background:#282f34; }
+.site-brand { font-size:12px; color:white; display:flex; align-items:center; gap:9px; padding:0 5px 24px; }
+.wp-logo { border:1px solid #c5ccce; border-radius:50%; font:19px Georgia,serif; width:26px; height:26px; display:grid; place-items:center; }
+.site-menu .menu-item { padding:9px 10px; margin:2px 0; border-radius:5px; display:flex; align-items:center; gap:10px; font-size:12px; }
+.site-menu .menu-item.selected { color:#fff; background:#41647a; }
+.site-menu .menu-item svg { width:15px; height:15px; opacity:.8; }
+.site-content { flex:1; min-width:0; padding:22px 30px 160px; }
+.page-header { display:flex; align-items:center; gap:14px; margin-bottom:24px; }
+.breadcrumb { color:#939b96; font-size:11px; }
+.page-header h2 { margin:4px 0 0; font-size:20px; font-weight:600; color:#36423e; letter-spacing:-.6px; }
+.website-btn { background:white; border:1px solid #d7dedb; border-radius:5px; color:#496959; padding:7px 11px; font-size:11px; }
+.web-columns { display:flex; gap:21px; align-items:flex-start; }
+.editor-sheet { flex:1; min-width:0; max-width:790px; padding:28px 28px 32px; border:1px solid #e0e5e2; border-radius:5px; background:white; box-shadow:0 2px 3px #16261b03; }
+.editor-kicker { display:flex; justify-content:space-between; gap:5px; color:#929a94; font-size:10px; margin-bottom:16px; }
+.web-title { font-size:28px; font-weight:620; letter-spacing:-1px; width:100%; border:0; border-bottom:1px solid #edf0eb; background:transparent; padding:5px 0 16px; outline:none; }
+.web-title:focus { border-color:#84a18d; }
+.editor-summary { color:#819087; font-size:12px; margin:17px 0; }
+.web-body { width:100%; min-height:74px; border:1px solid transparent; background:#fcfdfb; border-radius:5px; padding:10px; font-size:13px; line-height:1.9; }
+.file-card { display:flex; gap:13px; align-items:center; padding:14px; border:1px solid #e0e8e0; border-radius:7px; margin:18px 0; }
+.excel-icon { width:33px; height:41px; background:#edf4ed; border:1px solid #d5e4d5; border-radius:4px; font-size:14px; color:#477a54; display:grid; place-items:center; font-weight:650; }
+.file-name { font-size:12px; font-weight:550; margin-bottom:3px; }
+.file-meta { font-size:10px; color:#8c958c; }
+.file-status { font-size:10px; color:#678570; margin-left:auto; white-space:nowrap; }
+.post-meta { display:flex; align-items:center; gap:8px; font-size:11px; color:#919b91; margin-top:22px; border-top:1px solid #edf0eb; padding-top:15px; }
+.mini-check { width:16px; height:16px; background:#edf4ee; border-radius:50%; display:grid; place-items:center; color:#629570; }
+.mini-check svg { width:10px; height:10px; }
+.site-details { width:170px; flex:none; border:1px solid #e1e7e0; border-radius:5px; background:white; font-size:11px; color:#8b958e; }
+.site-details h3 { font-size:12px; font-weight:550; color:#516155; margin:0; padding:13px; border-bottom:1px solid #e9eee6; }
+.detail-row { padding:11px 13px; display:flex; justify-content:space-between; gap:5px; }
+.detail-row strong { font-size:11px; color:#56685b; font-weight:450; }
+.takeover-line { position:absolute; top:37px; left:0; right:0; padding:6px 16px; font-size:11px; background:#fcf1d9; color:#946625; z-index:2; display:flex; gap:8px; align-items:center; border-bottom:1px solid #efdfb9; }
+.takeover-line:not([hidden]) + .page-space { padding-top:28px; }
+.drupal-page .site-content { background:#fafbfc; }
+.drupal-page .site-menu { background:#263e4b; }
+.drupal-page .site-menu .selected { background:#3f6376; }
+.drupal-page .editor-sheet { border-top:3px solid #6b93aa; }
+.web-field-label { display:block; font-size:11px; font-weight:600; margin:15px 0 6px; color:#5a6d79; }
+.drupal-page .web-title { font-size:21px; border:1px solid #dce3e6; padding:9px; border-radius:4px; letter-spacing:0; }
+.drupal-page .web-body { border-color:#dce3e6; background:white; min-height:120px; }
+.floating-chat { position:absolute; z-index:4; right:20px; bottom:18px; width:342px; border:1px solid #d2dcd2; border-radius:13px; background:#fff; box-shadow:0 8px 26px #253d3021,0 2px 6px #243b3010; overflow:hidden; }
+.chat-header { height:47px; display:flex; align-items:center; gap:9px; padding:0 13px; border-bottom:1px solid #edf0ea; background:#fcfdfb; }
+.chat-avatar { display:grid; place-items:center; width:25px; height:25px; background:#e7eee5; color:var(--green); border-radius:8px; font-size:12px; font-weight:650; }
+.chat-header strong { font-size:12px; font-weight:600; }
+.chat-header .tiny { color:#8b958d; font-size:10px; }
+.chat-feed { max-height:144px; overflow:auto; padding:13px 14px 7px; }
+.message { font-size:12px; line-height:1.8; margin-bottom:9px; white-space:pre-wrap; overflow-wrap:anywhere; }
+.message.user { background:#f0f3ee; padding:8px 10px; border-radius:9px 9px 2px 9px; margin-left:22px; color:#5a6c60; }
+.message.assistant { color:#55645b; padding-right:6px; }
+.message small { display:block; color:#9aa497; font-size:10px; margin-bottom:2px; }
+.chat-progress { padding:4px 14px 10px; }
+.progress-caption { display:flex; justify-content:space-between; font-size:10px; color:#8d978d; margin-bottom:5px; }
+.progress-track { height:3px; border-radius:3px; background:#edf0e9; overflow:hidden; }
+.progress-fill { height:100%; background:#76977c; transition:width .4s; }
+.chat-actions { display:flex; align-items:center; gap:6px; padding:1px 13px 9px; }
+.chat-actions .primary { font-size:11px; padding:6px 11px; border-radius:6px; }
+.chat-actions .text-btn { font-size:11px; }
+.chat-compose { border-top:1px solid #edf0e8; padding:10px 11px; display:flex; align-items:flex-end; gap:6px; background:#fff; }
+.chat-compose textarea { width:100%; min-height:31px; max-height:76px; border:0; background:transparent; font-size:12px; line-height:1.7; padding:5px 3px; }
+.chat-compose textarea::placeholder { color:#a0a99e; }
+.send-btn { width:27px; height:27px; background:var(--green); border-radius:7px; color:white; display:grid; place-items:center; flex:none; margin-bottom:3px; }
+.send-btn svg { width:15px; height:15px; }
+.chat-peek { margin:0; padding:9px 13px; font-size:11px; color:#748172; background:#fdfefb; }
+.chat-peek button { width:100%; text-align:left; }
+.chat-bubble { position:absolute; bottom:20px; right:22px; display:flex; align-items:center; gap:9px; padding:10px 15px; border:1px solid #d1ddd2; box-shadow:0 4px 16px #2c49361a; background:white; border-radius:24px; z-index:4; font-size:12px; }
+.chat-bubble .dot { width:6px; height:6px; border-radius:50%; background:#648c6a; }
+.variant-b { height:100%; display:grid; grid-template-columns:228px minmax(0,1fr); }
+.task-sidebar { overflow-y:auto; background:#f2f4ec; border-right:1px solid #dfe5d9; display:flex; flex-direction:column; min-height:0; padding:19px 15px; }
+.sidebar-heading { display:flex; justify-content:space-between; align-items:center; margin:30px 7px 10px; font-size:11px; color:#8b9685; }
+.sidebar-task { border:1px solid transparent; border-radius:10px; padding:12px; margin:3px 0 7px; position:relative; }
+.sidebar-task.selected { background:#fff; border-color:#dce5d9; box-shadow:0 2px 5px #34472705; }
+.sidebar-task .select-task { width:100%; text-align:left; padding:0; }
+.sidebar-task .task-name { margin:8px 0 6px; }
+.sidebar-task .close-task { position:absolute; top:8px; right:8px; color:#9ba395; }
+.sidebar-task .status { margin:3px 0 9px; }
+.sidebar-task .step-list { margin:9px 0 1px; padding-top:9px; border-top:1px solid #edf1e8; font-size:10px; color:#a0aa98; }
+.step-list div { display:flex; align-items:center; gap:6px; margin:5px 0; }
+.step-list .current { color:var(--green); font-weight:550; }
+.step-list .step-circle { width:5px; height:5px; border-radius:50%; border:1px solid currentColor; }
+.sidebar-footer { margin-top:auto; padding:18px 4px 0; font-size:10px; color:#919c88; border-top:1px solid #dfe5d9; }
+.sidebar-footer .activity-btn { width:100%; background:#fbfcf8; margin-bottom:12px; justify-content:center; }
+.sidebar-main { min-width:0; display:flex; flex-direction:column; }
+.sidebar-main .app-header { height:57px; }
+.sidebar-main .frame { height:calc(100% - 57px); }
+.variant-b .floating-chat { right:auto; left:22px; bottom:20px; width:355px; }
+.variant-b .chat-bubble { right:auto; left:22px; }
+.variant-b .site-menu { width:54px; padding:19px 8px; }
+.variant-b .site-brand { justify-content:center; padding:0 0 20px; }
+.variant-b .site-brand span:last-child,.variant-b .menu-label { display:none; }
+.variant-b .menu-item { padding:10px; }
+.variant-b .site-content { padding:22px 26px 170px; }
+.variant-b .site-details { width:178px; }
+.variant-b .editor-sheet { max-width:none; }
+.variant-c { height:100%; display:flex; flex-direction:column; }
+.parallel-overview { display:flex; align-items:center; gap:15px; padding:11px 22px; border-bottom:1px solid var(--line); background:#f8faf5; font-size:11px; color:#84927f; }
+.parallel-overview strong { color:#56724f; font-weight:550; }
+.variant-c .app-header .global-status { display:none; }
+.parallel-grid { display:grid; grid-template-columns:1fr 1fr; flex:1; min-height:0; }
+.parallel-pane { min-width:0; min-height:0; border-right:1px solid #dce3d8; display:flex; flex-direction:column; }
+.parallel-pane:last-child { border:0; }
+.pane-heading { flex:none; padding:11px 15px; height:56px; display:flex; align-items:center; gap:9px; background:#fff; }
+.pane-heading.active { box-shadow:inset 0 3px #729073; }
+.pane-heading .task-name { font-size:12px; }
+.parallel-pane .frame { height:auto; flex:1; }
+.variant-c .site-menu,.variant-c .site-details { display:none; }
+.variant-c .site-content { padding:18px 23px 220px; }
+.variant-c .page-header { margin-bottom:18px; }
+.variant-c .page-header h2 { font-size:17px; }
+.variant-c .editor-sheet { padding:22px; }
+.variant-c .web-title { font-size:23px; }
+.variant-c .drupal-page .web-title { font-size:18px; }
+.variant-c .floating-chat { left:14px; right:14px; width:auto; bottom:14px; }
+.variant-c .floating-chat.compact .chat-feed { display:none; }
+.variant-c .floating-chat.compact .chat-progress { padding-top:9px; }
+.variant-c .floating-chat.compact .chat-peek { display:block; }
+.variant-c .chat-feed { max-height:116px; }
+.variant-c .chat-header { height:39px; }
+.variant-c .chat-compose { padding:7px 11px; }
+.variant-c .chat-actions { padding-bottom:7px; }
+.variant-c .progress-track { height:2px; }
+.variant-c .chat-bubble { bottom:16px; right:16px; }
+.closed-pane { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#8d9a89; gap:12px; background:#f9fbf6; font-size:12px; }
+.closed-pane svg { width:30px; height:30px; stroke-width:1; }
+.scheme-dock { position:fixed; left:50%; transform:translateX(-50%); bottom:15px; z-index:15; display:flex; align-items:center; gap:5px; padding:7px; background:#293b32; color:#b9c8bb; border:1px solid #46574a; border-radius:13px; box-shadow:0 5px 18px #25382a26; }
+.scheme-dock .arrow { width:31px; height:35px; color:#b7c6b9; display:grid; place-items:center; border-radius:8px; }
+.scheme-dock button { flex:none; }
+.scheme-choice { min-width:128px; padding:6px 12px; border-radius:7px; font-size:11px; text-align:left; }
+.scheme-choice strong { margin-right:6px; font-size:12px; }
+.scheme-choice[aria-pressed="true"] { background:#eaf0e5; color:#2e4837; }
+.scheme-dock .arrow:hover { background:#3a4d3f; }
+.dock-hint { position:fixed; bottom:72px; left:50%; transform:translateX(-50%); font-size:10px; color:#8b9388; white-space:nowrap; }
+.modal-backdrop { position:fixed; inset:0; z-index:30; background:#172a2240; backdrop-filter:blur(3px); display:flex; align-items:center; justify-content:center; padding:24px; }
+.modal { width:min(590px,100%); max-height:85dvh; overflow:auto; padding:28px; border-radius:17px; border:1px solid #dde5d9; background:#fff; box-shadow:0 22px 80px #1b30232b; }
+.modal-header { display:flex; gap:12px; align-items:center; margin-bottom:21px; }
+.modal-header h2 { margin:0; font-size:20px; font-weight:650; letter-spacing:-.5px; }
+.modal p { color:#7b887b; font-size:12px; line-height:1.9; }
+.delegation-input { display:block; width:100%; min-height:128px; padding:16px; margin:20px 0; border:1px solid #cbdac8; border-radius:10px; background:#fbfcf8; font-size:14px; line-height:1.9; }
+.example-task { display:flex; gap:11px; padding:12px 0; border-top:1px solid #edf0e8; align-items:center; }
+.example-task small { color:#8c998b; font-size:11px; }
+.modal-footer { margin-top:23px; display:flex; align-items:center; gap:12px; justify-content:flex-end; }
+.modal-footer .muted { font-size:11px; margin-right:auto; }
+.result-hero { padding:18px 20px; background:#f1f6ee; border-radius:10px; margin-bottom:22px; }
+.result-hero h3 { margin:8px 0 5px; font-size:21px; letter-spacing:-.5px; }
+.result-row { padding:12px 0; border-bottom:1px solid #edf0e8; display:flex; justify-content:space-between; gap:15px; font-size:12px; }
+.result-row span { color:#86917f; }
+.result-row strong { font-weight:500; text-align:right; }
+.result-body { padding:16px; background:#fafbf8; border-radius:8px; font-size:12px; line-height:1.9; white-space:pre-wrap; }
+.close-popover { position:fixed; z-index:25; width:285px; background:white; border:1px solid #d5dfd1; border-radius:11px; box-shadow:0 12px 40px #263b2825; padding:17px; }
+.close-popover strong { font-size:13px; }
+.close-popover p { font-size:11px; color:#85927e; line-height:1.8; }
+.close-popover .flex { margin-top:13px; justify-content:space-between; }
+.close-popover .secondary { font-size:11px; }
+.close-popover .stop-btn { color:#9e6e50; font-size:11px; }
+.activity-row { display:flex; gap:12px; padding:16px 0; border-bottom:1px solid #e5ebe1; align-items:center; }
+.activity-row .task-name { margin-bottom:4px; }
+.help-list { padding:0 0 0 20px; font-size:13px; color:#64765d; line-height:2.1; }
+#toast { position:fixed; z-index:50; top:64px; left:50%; transform:translate(-50%,-8px); padding:10px 17px; border-radius:9px; background:#2d4436; color:#edf4e9; font-size:12px; box-shadow:0 5px 20px #243b2625; opacity:0; pointer-events:none; transition:.2s; max-width:80vw; }
+#toast.visible { opacity:1; transform:translate(-50%,0); }
+.empty-stage { flex:1; display:grid; place-content:center; gap:15px; text-align:center; background:#f8faf5; height:100%; color:#829077; }
+.empty-stage h2 { color:#52664a; font-size:20px; margin:0; }
+@media(min-width:1600px) { .floating-chat { width:375px; } .chat-feed { max-height:185px; } .site-content { padding:28px 45px 160px; } .editor-sheet { padding:35px; } }
+@media(max-width:1150px) { .site-details { display:none; } .variant-b .site-details { display:none; } .variant-b { grid-template-columns:202px minmax(0,1fr); } .site-menu { width:116px; } .site-content { padding:20px 22px 170px; } .editor-sheet { padding:22px; } .guide-detail { display:none; } .global-status { display:none; } .variant-c .site-content { padding:15px 15px 210px; } .variant-c .editor-sheet { padding:17px; } }
+@media(max-width:850px) { #app { margin:0 8px; } .app-header { padding:0 14px; } .workspace-name { display:none; } .site-menu { width:50px; padding:18px 7px; } .site-brand span:last-child,.menu-label { display:none; } .site-menu .menu-item { padding:10px; } .site-brand { padding:0 0 20px; } .lab-guide { padding:10px 13px; gap:9px; } .lab-label { padding-right:9px; } .lab-guide .text-btn { font-size:11px; } .scheme-choice { min-width:108px; } .variant-b { grid-template-columns:174px minmax(0,1fr); } .task-sidebar { padding:18px 10px; } .sidebar-task { padding:10px; } .variant-b .floating-chat { width:calc(100% - 32px); max-width:350px; left:16px; } .parallel-grid { overflow:auto; display:flex; flex-direction:column; } .parallel-pane { height:560px; min-height:560px; flex:0 0 560px; border-right:0; border-bottom:1px solid #dce3d8; } .parallel-pane .frame { min-height:0; } }
+@media(max-width:560px) { .lab-label { display:none; } .lab-guide { min-height:48px; } .guide-copy { gap:6px; } .guide-title { max-width:190px; overflow:hidden; text-overflow:ellipsis; } #app { height:calc(100dvh - 134px); min-height:580px; } .app-header .logo { font-size:20px; } .app-header .primary { font-size:11px; padding:8px 10px; } .activity-btn { padding:7px; } .task-tab { width:50%; padding-left:8px; } .task-name { font-size:11px; } .task-tab .site-icon { display:none; } .site-content { padding:18px 14px 230px; } .floating-chat { width:calc(100% - 26px); right:13px; bottom:13px; } .web-title { font-size:21px; } .variant-b { grid-template-columns:120px minmax(0,1fr); } .task-sidebar .logo-mark { display:none; } .sidebar-task .task-name { white-space:normal; } .sidebar-task .close-task { top:7px; right:4px; } .sidebar-main .app-header { gap:4px; padding:0 9px; } .sidebar-main .site-menu { display:none; } .variant-b .editor-sheet { padding:12px; } .sidebar-task .step-list { display:none; } .sidebar-footer .activity-btn { font-size:10px; } .scheme-choice { min-width:81px; padding:6px 7px; font-size:10px; } .scheme-dock { padding:5px; gap:2px; bottom:11px; } .scheme-dock .arrow { width:24px; } .dock-hint { bottom:65px; font-size:9px; } .modal { padding:21px; } }
+@media(prefers-reduced-motion:reduce) { *,*:before,*:after { animation:none!important; transition:none!important; } }
+@media(max-height:760px) { #app { min-height:0; height:calc(100dvh - 137px); } .chat-feed { max-height:86px; } .scheme-dock { bottom:10px; } .dock-hint { bottom:66px; } .floating-chat { bottom:12px; } .variant-b .floating-chat { bottom:12px; } .chat-peek { max-height:53px; overflow:auto; } }
+
+body { background:#eeeee9; }
+a { color:var(--green); text-underline-offset:3px; }
+button:disabled { filter:none; }
+#app { height:calc(100dvh - 222px); min-height:550px; display:flex; flex-direction:column; }
+.app-header,.task-tabs { flex:none; }
+.frame { height:auto; flex:1; overflow:hidden; }
+.prototype-intro { display:flex; align-items:center; gap:18px; padding:14px 23px 12px; }
+.prototype-intro strong { font-size:12px; font-weight:600; }
+.prototype-intro p { margin:2px 0 0; font-size:11px; color:#808a80; }
+.prototype-intro .lab-label { font-size:11px; }
+.model-badge { display:inline-flex; align-items:center; gap:6px; font-size:11px; color:#829080; white-space:nowrap; }
+.model-badge i { width:6px; height:6px; border-radius:50%; background:#b6bfb0; }
+.task-tabs { overflow-x:auto; min-height:67px; }
+.task-tab { flex:0 0 250px; width:250px; }
+.task-tab .task-name { max-width:178px; }
+.task-tab .select-task { align-self:stretch; display:flex; flex-direction:column; justify-content:center; }
+.record-status { display:flex; align-items:center; gap:6px; color:#869181; font-size:11px; white-space:nowrap; }
+.record-status svg { width:14px; height:14px; }
+.app-header .app-exit { margin-left:-7px; color:#7b887c; }
+.app-notice { flex:none; padding:9px 21px; display:flex; align-items:center; gap:12px; font-size:12px; background:#fdf2de; color:#906222; border-bottom:1px solid #ead9b5; }
+.app-notice.recovered { background:#eef5ec; color:#567450; border-color:#dce7d7; }
+.app-notice strong { font-weight:600; }
+.app-notice .notice-copy { flex:1; }
+.app-notice .notice-copy small { display:block; margin-top:2px; font-size:10px; opacity:.85; }
+.app-notice button { flex:none; font-size:11px; }
+.start-screen { flex:1; display:flex; align-items:center; justify-content:center; background:#fafbf7; padding:32px; overflow:auto; }
+.start-content { width:650px; text-align:center; }
+.start-symbol { margin:0 auto 21px; width:56px; height:56px; border:1px solid #d4e0cf; background:#edf3e8; display:grid; place-items:center; border-radius:18px; color:#547a50; }
+.start-symbol svg { width:25px; height:25px; }
+.start-content .eyebrow { color:#84947c; font-size:11px; letter-spacing:1px; }
+.start-content h1 { font-size:30px; letter-spacing:-1px; font-weight:620; margin:12px 0 13px; }
+.start-content>p { max-width:440px; margin:0 auto 25px; color:#7c8878; font-size:13px; line-height:1.95; }
+.start-content .primary { padding:11px 19px; }
+.start-capabilities { display:flex; gap:25px; justify-content:center; margin:39px 0 0; padding:20px 0 0; border-top:1px solid #e4eade; color:#84907e; font-size:11px; }
+.start-capabilities span { display:flex; gap:7px; align-items:center; }
+.start-capabilities svg { width:15px; }
+.closed-summary { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; max-width:480px; margin:22px auto; }
+.closed-summary div { background:white; border:1px solid #e1e8db; border-radius:9px; padding:15px 10px; font-size:11px; color:#889080; }
+.closed-summary strong { font-size:21px; color:var(--green); display:block; }
+.site-tag { margin-left:auto; }
+.browser-bar .address { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; min-width:0; flex:1; display:block; }
+.browser-bar .icon-btn { width:24px; height:24px; }
+.website-btn { padding:7px 11px; border:1px solid #d7e1dc; border-radius:5px; background:#fff; color:#4a685b; font-size:11px; display:inline-flex; gap:6px; align-items:center; }
+.website-btn.solid { background:#315f82; border-color:#315f82; color:white; }
+.site-content { padding:25px 30px 280px; }
+.site-content .page-header { display:flex; gap:15px; align-items:center; margin-bottom:24px; }
+.site-content h2 { margin:5px 0 0; font-size:20px; }
+.site-account { display:flex; align-items:center; justify-content:space-between; padding:0 0 16px; font-size:10px; color:#89988d; }
+.site-account button { font-size:10px; color:#688775; }
+.site-details { height:fit-content; }
+.web-columns { display:flex; gap:20px; align-items:flex-start; }
+.editor-sheet { flex:1; min-width:0; max-width:800px; }
+.editor-sheet .web-body { min-height:125px; }
+.draft-state { font-size:10px; color:#809078; }
+.draft-state.dirty { color:#a67a39; }
+.login-surface { flex:1; overflow:auto; background:#f5f7f5; padding:36px 370px 290px 30px; }
+.login-card { width:330px; max-width:100%; margin:0 auto; padding:26px; background:white; border:1px solid #dce4df; border-radius:9px; box-shadow:0 5px 15px #233b2c06; }
+.login-card .site-icon { margin-bottom:16px; width:39px; height:39px; font-size:24px; }
+.login-card h2 { font-size:21px; font-weight:600; margin:0 0 8px; }
+.login-card p { color:#89948d; font-size:12px; margin:0 0 23px; }
+.login-card label { display:block; font-size:11px; color:#6b7c72; margin:14px 0 6px; }
+.login-card input { width:100%; border:1px solid #dde5df; border-radius:5px; padding:9px 10px; font-size:12px; background:#f9fbf8; color:#829283; }
+.login-card .website-btn { width:100%; justify-content:center; margin-top:22px; padding:10px; }
+.login-caption { margin:14px 0 0!important; font-size:10px!important; line-height:1.7; }
+.error-surface { flex:1; overflow:auto; padding:36px 370px 300px 34px; background:#fafbf8; }
+.error-card { max-width:490px; min-width:280px; margin:25px auto; }
+.error-symbol { width:44px; height:44px; display:grid; place-items:center; color:#a27a3e; border:1px solid #eadfc9; border-radius:13px; background:#fcf6ea; }
+.error-card h2 { margin:18px 0 12px; font-size:24px; font-weight:580; letter-spacing:-.5px; }
+.error-card p { font-size:12px; color:#899180; line-height:1.9; margin:0 0 19px; }
+.error-card .inline-feedback { margin:13px 0; color:#9c753e; }
+.floating-chat { width:326px; right:18px; bottom:16px; }
+.chat-header { height:51px; }
+.chat-feed { max-height:160px; }
+.chat-mode { display:flex; align-items:center; gap:6px; padding:7px 13px; font-size:10px; color:#87947e; background:#f6f8f2; border-bottom:1px solid #e9eee3; }
+.chat-mode svg { width:12px; height:12px; }
+.message.system { color:#82907c; font-size:11px; padding-left:10px; border-left:2px solid #dfe7d7; }
+.chat-footnote { color:#8b9584; font-size:10px; padding:0 14px 8px; }
+.chat-footnote.pending { color:#ad7733; }
+.chat-compose textarea { min-height:37px; }
+.task-preview .preview-status { font-size:10px; }
+.task-preview .step-list .failed { color:#a47738; }
+.task-preview .step-list .complete { color:#608259; }
+.task-preview .preview-update p { max-height:5em; }
+.prototype-controls { padding:13px 24px 9px; max-width:1500px; margin:0 auto; }
+.guide-line { display:flex; gap:10px; align-items:center; min-height:29px; margin-bottom:10px; font-size:12px; color:#77856f; }
+.guide-line strong { color:#435d3e; font-weight:600; }
+.guide-line .step-no { font-size:10px; }
+.scene-bar { display:flex; flex-wrap:wrap; align-items:center; gap:6px; }
+.scene-label { color:#929a8d; font-size:10px; margin-right:6px; }
+.scene-btn { padding:6px 10px; font-size:11px; border:1px solid #d9e0d3; border-radius:7px; color:#718169; background:#f7f9f3; }
+.scene-btn[aria-pressed="true"] { background:#304d3a; border-color:#304d3a; color:#edf4e8; }
+.scene-btn.restore { border-color:#b39d79; color:#8f6d38; background:#fff8e9; }
+.prototype-footnote { display:flex; justify-content:space-between; gap:20px; margin-top:8px; color:#969e90; font-size:10px; }
+.prototype-footnote a { color:#75856b; }
+.state-details { border-top:1px solid #dbe1d4; padding:10px 0; margin-top:10px; font-size:11px; color:#7e8b75; }
+.state-details summary { cursor:pointer; }
+.state-details table { border-collapse:collapse; width:100%; margin:12px 0; text-align:left; background:#fafbf7; }
+.state-details th,.state-details td { padding:8px 12px; border-bottom:1px solid #e1e7da; font-weight:400; }
+.state-details th { color:#506b47; }
+.trace-list { padding:0; list-style:none; line-height:2; font-size:10px; }
+.new-fields label { font-size:12px; color:#63795c; display:block; margin:19px 0 7px; }
+.new-fields input,.new-fields textarea { display:block; width:100%; border:1px solid #d4dfd0; border-radius:8px; background:#fafcf7; padding:11px 13px; line-height:1.75; font-size:13px; }
+.new-fields textarea { min-height:84px; }
+.form-error { font-size:12px; color:#a37538; margin-top:12px; }
+.example-options { display:flex; gap:7px; margin:13px 0 0; align-items:center; flex-wrap:wrap; }
+.example-options span { color:#9aa48e; font-size:10px; }
+.example-options button { padding:4px 9px; font-size:10px; border:1px solid #e1e7da; border-radius:5px; color:#7d8e72; }
+.exit-list { margin:18px 0; display:grid; gap:8px; }
+.exit-list div { display:flex; gap:9px; align-items:center; font-size:12px; color:#62795c; }
+.exit-list svg { width:14px; }
+.dialog-warning { color:#9b7134!important; padding:12px; border-radius:8px; background:#fff7e6; }
+@media(max-width:1150px) { .login-surface,.error-surface { padding-right:345px; padding-left:25px; } .site-content { padding:22px 23px 280px; } .app-header .record-status { display:none; } .start-content h1 { font-size:27px; } }
+@media(max-width:850px) {
+  #app { min-height:550px; height:calc(100dvh - 252px); }
+  .prototype-intro { padding:12px 15px; gap:10px; } .prototype-intro p { max-width:500px; }
+  .prototype-intro .lab-label { display:none; }
+  .app-header { gap:9px; padding:0 13px; } .app-header .logo { font-size:21px; }
+  .task-tab { flex-basis:225px; width:225px; }
+  .model-badge { font-size:10px; }
+  .login-surface,.error-surface { padding:24px 18px 310px; }
+  .login-card,.error-card { margin-left:8px; margin-top:0; }
+  .floating-chat { width:295px; }
+  .chat-feed { max-height:115px; }
+  .site-content { padding:18px 18px 300px; }
+  .prototype-controls { padding:10px 15px; }
+  .guide-line { font-size:11px; align-items:flex-start; }
+  .prototype-footnote { flex-wrap:wrap; gap:5px; }
+  .start-capabilities { gap:16px; }
+}
+@media(max-width:560px) {
+  #app { min-height:630px; height:auto; } .frame { min-height:520px; }
+  .app-header .workspace-name,.model-badge,.app-header .activity-btn { display:none; }
+  .app-header { gap:8px; } .app-header .logo { margin-right:auto; }
+  .task-tab { flex-basis:190px; } .task-tab .site-icon { display:grid; }
+  .task-name { font-size:12px; }
+  .start-screen { min-height:500px; padding:28px 20px; }
+  .start-content h1 { font-size:24px; }
+  .start-capabilities { flex-direction:column; align-items:center; gap:11px; margin-top:28px; }
+  .app-notice { padding:9px 12px; flex-wrap:wrap; }
+  .app-notice .notice-copy { min-width:210px; }
+  .floating-chat { right:11px; width:calc(100% - 22px); }
+  .login-surface,.error-surface { max-height:650px; }
+  .prototype-controls .scene-label { width:100%; }
+  .closed-summary { grid-template-columns:1fr; max-width:240px; }
+}
+</style>
+</head>
+<body>
+<div class="prototype-intro">
+  <span class="lab-label">第 01 项 · 基础工作区 v1</span>
+  <div><strong>从第一次打开，到下次回来，是否顺手？</strong><p>沿用 A 布局，体验建任务、网页登录、退出重开和失败处理。网页、登录、保存与重开均为本页模拟。</p></div>
+</div>
+<main id="app" aria-label="helpr 基础工作区"></main>
+<aside id="lab" class="prototype-controls" aria-label="原型体验控制"></aside>
+<div id="task-preview-layer"></div>
+<div id="overlay"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script id="prototype-model">
+// PROTOTYPE ONLY. Pure transitions; "saved", browser sessions and website data all remain in memory.
+const Foundation = (() => {
+  const clone = value => structuredClone(value);
+  const examples = [
+    {goal:'准备发布十月经营周报',url:'https://beishan.example/wp-admin/'},
+    {goal:'整理团队内部资料',url:'https://team.beishan.example/admin/'},
+  ];
+  const initial = () => ({
+    app:'open',tasks:[],active:null,nextId:1,sessions:{},pages:{},websiteDrafts:{},
+    saved:{tasks:[],active:null,nextId:1},save:'saved',protection:'available',
+    faults:{network:null,credentials:false,storage:false},reopened:false,
+    feedback:'',events:['已打开空工作区，AI 尚未配置。'],
+  });
+  function record(s,text) { s.events=[...s.events.slice(-19),text];s.feedback=text; }
+  function checkpoint(s) {
+    if(s.faults.storage){s.save='pending';return false;}
+    s.saved=clone({tasks:s.tasks,active:s.active,nextId:s.nextId});s.save='saved';return true;
+  }
+  const task = (s,id) => s.tasks.find(t=>t.id===id);
+  const websiteDirty = (s,id) => {
+    const page=s.pages[id],saved=s.websiteDrafts[id];
+    return !!page&&(page.title!==saved.title||page.body!==saved.body);
+  };
+  const pageFor = (s,t) => ({...clone(s.websiteDrafts[t.id]),error:s.faults.network===t.id});
+  function transition(before,event) {
+    const s=clone(before), t=task(s,event.id);
+    if(s.app==='closed'&&!['OPEN','RESTORE_CONDITIONS'].includes(event.type))return s;
+    switch(event.type) {
+      case 'CREATE': {
+        if(s.faults.storage){record(s,'新任务尚未创建，输入保留；恢复保存后可重试。');break;}
+        const url=new URL(event.url);
+        const id='task-'+s.nextId++,label=String.fromCharCode(64+s.tasks.length+1);
+        const kind=url.hostname.startsWith('team.')?'drupal':url.hostname==='beishan.example'?'wordpress':'generic';
+        const site=kind==='drupal'?'Drupal':kind==='wordpress'?'WordPress':url.hostname;
+        const next={id,label,goal:event.goal,url:url.href,origin:url.origin,site,kind,hidden:false,minimized:false,draft:'',
+          messages:[{role:'user',text:event.goal},{role:'system',text:'这项任务已建立。你可以先在网页中登录并手动处理；AI 尚未配置，对话会保存在这里。'}]};
+        s.tasks.push(next);s.active=id;
+        s.websiteDrafts[id]={title:kind==='drupal'?'十月经营周报 · 内部资料':'十月经营周报',body:'本周经营数据已整理完毕。请在这里补充要发布的内容。'};
+        s.pages[id]=pageFor(s,next);checkpoint(s);
+        record(s,'已创建任务 '+label+'，网页与对话独立保留。');break;
+      }
+      case 'SELECT': if(t){t.hidden=false;s.active=t.id;checkpoint(s);} break;
+      case 'HIDE': if(t){t.hidden=true;if(s.active===t.id)s.active=s.tasks.find(x=>!x.hidden)?.id||null;checkpoint(s);record(s,'任务 '+t.label+' 已收起，原记录保留。');} break;
+      case 'MINIMIZE': if(t){t.minimized=!t.minimized;checkpoint(s);} break;
+      case 'CHAT_DRAFT': if(t){t.draft=event.value;checkpoint(s);} break;
+      case 'SEND':
+        if(t&&t.draft.trim()){
+          t.messages.push({role:'user',text:t.draft.trim()});t.draft='';
+          record(s,checkpoint(s)?'消息已保存到任务 '+t.label+'；尚未开始自动执行。':'消息仍在任务 '+t.label+' 的窗口中，尚未保存。');
+        }break;
+      case 'LOGIN':
+        if(t&&s.protection==='available'&&!s.pages[t.id].error){
+          s.sessions[t.origin]=true;record(s,t.site+' 的演示登录已建立；同一网站的任务共用这一登录。');
+        }break;
+      case 'LOGOUT':
+        if(t){s.sessions[t.origin]=false;record(s,t.site+' 已退出网站账号；其它网站的登录不变。');}break;
+      case 'WEB_INPUT':
+        if(t&&s.sessions[t.origin]&&s.protection==='available'&&!s.pages[t.id].error)s.pages[t.id][event.field]=event.value;
+        break;
+      case 'SAVE_WEB':
+        if(t&&s.sessions[t.origin]&&s.protection==='available'&&!s.pages[t.id].error){
+          const p=s.pages[t.id];s.websiteDrafts[t.id]={title:p.title,body:p.body};
+          record(s,'任务 '+t.label+' 的草稿已保存到模拟网站；未发布。');
+        }break;
+      case 'FAULT':
+        if(event.kind==='network'&&t){s.faults.network=t.id;s.pages[t.id].error=true;record(s,'演示：任务 '+t.label+' 的网站暂时无法连接。');}
+        if(event.kind==='credentials'){s.faults.credentials=true;s.protection='blocked';record(s,'演示：登录保护读取失败，暂不打开依赖该信息的网页。');}
+        if(event.kind==='storage'){s.faults.storage=true;s.save='unavailable';record(s,'演示：本机记录暂时无法保存。');}
+        if(event.kind==='expired'&&t){s.sessions[t.origin]=false;record(s,'演示：'+t.site+' 的登录已过期；任务与对话保留。');}
+        break;
+      case 'RESTORE_CONDITIONS':
+        s.faults={network:null,credentials:false,storage:false};
+        record(s,'模拟条件已恢复。回到工作区点击对应的重试，核对后恢复。');break;
+      case 'RETRY_PAGE':
+        if(t){
+          if(s.protection!=='available'){record(s,'请先恢复登录信息的读取。');break;}
+          s.pages[t.id].error=s.faults.network===t.id;
+          record(s,s.pages[t.id].error?'仍无法连接，保留当前任务；可以先查看另一项。':'网页已重新打开，已有任务与对话保持不变。');
+        }break;
+      case 'RETRY_CREDENTIALS':
+        s.protection=s.faults.credentials?'blocked':'available';
+        record(s,s.protection==='blocked'?'仍无法读取登录信息，请完成系统授权后重试。':'登录信息已重新核对；有效会话保留，没有启动自动执行。');break;
+      case 'RETRY_SAVE':
+        record(s,checkpoint(s)?'未保存的改动已写入本机记录。':'仍无法保存，请保持窗口打开；新内容仍保留在窗口中。');break;
+      case 'QUIT':
+        if(!checkpoint(s)){record(s,'还有记录无法保存，已保留工作区，暂不退出。');break;}
+        s.app='closed';s.pages={};
+        record(s,'已保存任务与对话并模拟退出。未保存到网站的编辑不在恢复记录中。');break;
+      case 'OPEN':
+        s.tasks=clone(s.saved.tasks);s.active=s.saved.active;s.nextId=s.saved.nextId;
+        s.pages=Object.fromEntries(s.tasks.map(x=>[x.id,pageFor(s,x)]));
+        s.app='open';s.reopened=true;s.protection=s.faults.credentials?'blocked':'available';
+        record(s,'已重新打开 '+s.tasks.length+' 项原任务，未创建重复任务，未启动自动执行。');break;
+      case 'ACK_REOPEN': s.reopened=false;break;
+    }
+    return s;
+  }
+  function scenario(name) {
+    let s=initial();
+    if(name==='first')return s;
+    for(const sample of examples){s=transition(s,{type:'CREATE',...sample});s=transition(s,{type:'LOGIN',id:s.active});}
+    s=transition(s,{type:'SELECT',id:'task-1'});
+    for(const [id,text] of [['task-1','先核对标题，确认后再处理。'],['task-2','这份只供团队内部查看。']]){
+      s=transition(s,{type:'CHAT_DRAFT',id,value:text});s=transition(s,{type:'SEND',id});
+    }
+    s=transition(s,{type:'WEB_INPUT',id:'task-1',field:'title',value:'十月经营周报 · 已保存草稿'});
+    s=transition(s,{type:'SAVE_WEB',id:'task-1'});
+    if(name==='reopen')return transition(s,{type:'QUIT'});
+    if(name==='expired'){s=transition(s,{type:'FAULT',kind:'expired',id:'task-1'});s=transition(s,{type:'QUIT'});return transition(s,{type:'OPEN'});}
+    if(['network','credentials','storage'].includes(name))s=transition(s,{type:'FAULT',kind:name,id:'task-1'});
+    if(name==='storage'){
+      s=transition(s,{type:'CHAT_DRAFT',id:'task-1',value:'这条新要求还没有保存，请保留。'});
+      s=transition(s,{type:'SEND',id:'task-1'});
+    }
+    return s;
+  }
+  return {initial,transition,scenario,task,websiteDirty,examples};
+})();
+</script>
+
+<script>
+// Throwaway presentation. No model calls, network requests, real credentials or persistent storage.
+'use strict';
+const $=(s,root=document)=>root.querySelector(s), $$=(s,root=document)=>[...root.querySelectorAll(s)];
+const esc=v=>String(v).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+const paths={plus:'M9 3v12M3 9h12',close:'m4 4 10 10M14 4 4 14',check:'m3 9 4 4 8-8',leaf:'M3 13C0 5 7 2 15 3c0 8-4 12-10 10m-2 3 8-10',lock:'M5 8V5a4 4 0 0 1 8 0v3M3 8h12v8H3Z',globe:'M1 9h16M9 1a8 8 0 1 0 0 16A8 8 0 0 0 9 1Zm0 0c-4 4-4 12 0 16 4-4 4-12 0-16Z',chat:'M3 3h12v9H7l-4 3V3Z',file:'M4 2h7l3 3v11H4V2Zm6 0v4h4M7 10h4M7 13h4',grid:'M2 2h5v5H2ZM11 2h5v5h-5ZM2 11h5v5H2ZM11 11h5v5h-5Z',replay:'M3 7a6 6 0 1 1 0 5M3 2v5h5',minus:'M4 9h10',send:'M9 14V3m-5 5 5-5 5 5',arrow:'M3 9h12m-5-5 5 5-5 5',exit:'M8 3H3v12h5M8 9h9m-4-4 4 4-4 4',info:'M9 8v5M9 5v.1M9 1a8 8 0 1 0 0 16A8 8 0 0 0 9 1',archive:'M2 4h14v3H2ZM4 7v9h10V7M7 10h4'};
+const icon=name=>`<svg viewBox="0 0 18 18" aria-hidden="true"><path d="${paths[name]||paths.file}"/></svg>`;
+const act=(name,id='')=>`data-action="${name}"${id?` data-task="${id}"`:''}`;
+const logo=()=>`<div class="logo"><span class="logo-mark">${icon('leaf')}</span>helpr<span class="wordmark-dot">.</span></div>`;
+let model=Foundation.initial(), scene='first',modal=null,modalTask=null,previousFocus=null;
+let newDraft={goal:'',url:''},formError='',toastTimer;
+const preview={id:null,openTimer:null,closeTimer:null,keyboard:false};
+const task=id=>Foundation.task(model,id);
+const current=()=>task(model.active);
+const siteIcon=t=>`<span class="site-icon ${t.kind==='drupal'?'drupal':''}">${t.kind==='wordpress'?'W':t.kind==='drupal'?'d':icon('globe')}</span>`;
+const isRecorded=t=>model.saved.tasks.some(x=>x.id===t.id)&&model.save==='saved';
+function status(t) {
+  if(model.protection==='blocked')return ['等待授权','manual'];
+  if(model.pages[t.id]?.error)return ['网页打不开','manual'];
+  if(!model.sessions[t.origin])return ['等待网页登录','ready'];
+  return ['可手动操作','done'];
+}
+const statusHTML=t=>`<span class="status state-${status(t)[1]}"><i class="dot"></i>${status(t)[0]}</span>`;
+function dispatch(event,{repaint=true,announce=false}={}) {
+  model=Foundation.transition(model,event);
+  if(repaint)render();else renderLab();
+  if(announce&&model.feedback)toast(model.feedback);
+}
+function toast(text) {
+  clearTimeout(toastTimer);$('#toast').textContent=text;$('#toast').classList.add('visible');
+  toastTimer=setTimeout(()=>$('#toast').classList.remove('visible'),3500);
+}
+function header() {
+  return `<header class="app-header">${logo()}<span class="workspace-name">我的工作区</span><span class="spacer"></span>
+    <span class="model-badge"><i></i>AI 未配置 · 可手动使用</span>
+    <span class="record-status" data-save-indicator>${icon(model.save==='saved'?'check':'info')}${model.save==='saved'?'任务记录已保存':'记录尚未保存'}</span>
+    <button class="activity-btn" ${act('tasks')}>${icon('grid')} 任务 <span class="activity-count">${model.tasks.length}</span></button>
+    <button class="primary" ${act('new')}>${icon('plus')} 新建任务</button>
+    <button class="icon-btn app-exit" ${act('quit')} aria-label="退出 helpr" title="退出 helpr">${icon('exit')}</button>
+  </header>`;
+}
+function taskTab(t) {
+  return `<div class="task-tab ${model.active===t.id?'selected':''}" data-preview-tab="${t.id}">${siteIcon(t)}
+    <button class="select-task" ${act('select',t.id)} aria-label="查看任务 ${t.label}：${esc(t.goal)}" aria-pressed="${model.active===t.id}" aria-expanded="false" aria-controls="task-preview-card" aria-keyshortcuts="ArrowDown" aria-description="按 Enter 切换任务，按下方向键查看进度"><span class="task-name">${esc(t.goal)}</span><small>${statusHTML(t)}</small></button>
+    <button class="icon-btn" ${act('close-task',t.id)} aria-label="关闭任务 ${t.label}">${icon('close')}</button></div>`;
+}
+function notices() {
+  let html='';
+  if(model.save!=='saved')html+=`<div class="app-notice" role="status"><span>${icon('info')}</span><div class="notice-copy"><strong>暂时无法保存新的改动</strong><small>新内容还在这个窗口中。请保持 helpr 打开，恢复保存后再退出。</small></div><button class="secondary" ${act('retry-save')}>重试保存</button></div>`;
+  if(model.reopened)html+=`<div class="app-notice recovered"><span>${icon('check')}</span><div class="notice-copy"><strong>已找回 ${model.tasks.length} 项原任务和对话</strong><small>网站会重新打开；仍有效的登录会继续使用。没有启动自动执行。</small></div><button class="icon-btn" ${act('ack-reopen')} aria-label="收起恢复提示">${icon('close')}</button></div>`;
+  return html;
+}
+function empty() {
+  const any=model.tasks.length>0;
+  return `<section class="start-screen"><div class="start-content"><div class="start-symbol">${icon(any?'archive':'globe')}</div><span class="eyebrow">${any?'随时回来，接着处理':'你的网页工作，从这里开始'}</span><h1>${any?'任务已收起，记录还在':'一个任务，一处专注的工作区'}</h1>
+    <p>${any?'从任务列表重新打开，就能回到原来的网页与对话。':'先打开网站、完成登录，记下你想做的事。每项任务都有自己的网页和对话，配置 AI 后再交给 helpr 执行。'}</p>
+    <button class="primary" ${act(any?'tasks':'new')}>${icon(any?'grid':'plus')} ${any?'查看已有任务':'创建第一个任务'}</button>
+    <div class="start-capabilities"><span>${icon('globe')} 网页始终可见</span><span>${icon('chat')} 对话归属各自任务</span><span>${icon('archive')} 下次打开，找回记录</span></div>
+  </div></section>`;
+}
+function website(t) {
+  const p=model.pages[t.id];
+  if(model.protection==='blocked')return `<div class="error-surface"><section class="error-card"><div class="error-symbol">${icon('lock')}</div><h2>登录信息暂不可用</h2><p>暂时无法读取受保护的登录信息。你的任务和对话仍在；相关网页会先保持暂停，等待系统授权恢复。</p><button class="primary" ${act('retry-credentials')}>重新检查登录信息</button><p class="inline-feedback" data-retry-feedback></p><p class="tiny">此处演示授权失败后的处理。不会弹出真实系统授权窗口，也无需输入密码。</p></section></div>`;
+  if(p.error)return `<div class="error-surface"><section class="error-card"><div class="error-symbol">${icon('globe')}</div><h2>暂时打不开这个网页</h2><p>${esc(new URL(t.url).hostname)} 现在没有响应。任务和对话已保留，你可以稍后重试，也可以先切换到另一项任务。</p><button class="primary" ${act('retry-page',t.id)}>${icon('replay')} 重新打开网页</button><p class="inline-feedback" data-retry-feedback></p></section></div>`;
+  if(!model.sessions[t.origin])return `<div class="login-surface"><form class="login-card" data-login="${t.id}">${siteIcon(t)}<h2>登录${t.kind==='drupal'?'团队资料库':'北山工作室'}</h2><p>${t.site} · 在网页中完成登录</p>
+    <label for="demo-user-${t.id}">用户名</label><input id="demo-user-${t.id}" value="demo@beishan.example" readonly aria-label="演示用户名">
+    <label for="demo-password-${t.id}">密码</label><input id="demo-password-${t.id}" value="prototype-only" type="password" readonly aria-label="演示密码">
+    <button type="submit" class="website-btn solid">登录（模拟） ${icon('arrow')}</button>
+    <p class="login-caption">演示账号已填好，无需输入真实密码。登录发生在网站中，对话浮窗不收集账号密码。</p>
+  </form></div>`;
+  return `<div class="page-space ${t.kind==='drupal'?'drupal-page':''}" data-web="${t.id}">
+    <nav class="site-menu" aria-label="模拟网站导航"><div class="site-brand"><span class="wp-logo">${t.kind==='drupal'?'d':'W'}</span><span>北山工作室</span></div><div class="menu-item">${icon('grid')}<span class="menu-label">概览</span></div><div class="menu-item selected">${icon('file')}<span class="menu-label">${t.kind==='drupal'?'内容':'文章'}</span></div><div class="menu-item">${icon('archive')}<span class="menu-label">媒体库</span></div></nav>
+    <div class="site-content"><div class="site-account"><span>演示账号 · 已登录 ${esc(new URL(t.url).hostname)}</span><button ${act('logout',t.id)}>退出网站登录</button></div>
+      <div class="page-header"><div><div class="breadcrumb">${t.kind==='drupal'?'内容管理 / 基本页面':'文章 / 编辑文章'}</div><h2>${t.kind==='drupal'?'编辑内部资料':'编辑文章'}</h2></div><span class="spacer"></span><button class="website-btn" ${act('save-web',t.id)}>${icon('check')} 保存网站草稿</button></div>
+      <div class="web-columns"><article class="editor-sheet"><div class="editor-kicker"><span>${t.kind==='drupal'?'TEAM KNOWLEDGE · 资料库':'北山工作室 · 经营记录'}</span><span class="draft-state" data-web-save="${t.id}">${Foundation.websiteDirty(model,t.id)?'网页有未保存的修改':'草稿已在网站保存'}</span></div>
+        <input class="web-title" data-web-field="title" data-task="${t.id}" aria-label="任务 ${t.label} 网页标题" value="${esc(p.title)}" autocomplete="off">
+        <p class="editor-summary">草稿 · 尚未发布</p><textarea class="web-body" data-web-field="body" data-task="${t.id}" aria-label="任务 ${t.label} 网页正文">${esc(p.body)}</textarea>
+        <div class="post-meta">${icon('info')} 网页内容由网站保存；helpr 的对话记录单独保留。</div></article>
+        <aside class="site-details"><h3>${t.kind==='drupal'?'页面信息':'文章设置'}</h3><div class="detail-row"><span>状态</span><strong>草稿</strong></div><div class="detail-row"><span>栏目</span><strong>${t.kind==='drupal'?'内部资料':'经营周报'}</strong></div></aside>
+      </div>
+    </div></div>`;
+}
+function chat(t) {
+  if(t.minimized)return `<button class="chat-bubble" ${act('minimize',t.id)} aria-label="展开任务 ${t.label} 对话">${icon('chat')} ${esc(t.goal)}</button>`;
+  return `<section class="floating-chat" aria-label="任务 ${t.label} 的独立对话"><header class="chat-header"><span class="chat-avatar">${t.label}</span><div><strong>${esc(t.goal)}</strong><div class="tiny">此处内容只属于任务 ${t.label}</div></div><span class="spacer"></span><button class="icon-btn" ${act('minimize',t.id)} aria-label="最小化任务 ${t.label} 对话">${icon('minus')}</button></header>
+    <div class="chat-mode">${icon('info')} AI 未配置 · 当前只记录要求</div>
+    <div class="chat-feed" data-feed>${t.messages.map(m=>`<div class="message ${m.role}">${esc(m.text)}</div>`).join('')}</div>
+    <div class="chat-footnote ${model.save==='saved'?'':'pending'}" data-chat-save>${model.save==='saved'?'任务与对话已保存':'新内容仍在窗口中，等待恢复保存'}</div>
+    <form class="chat-compose" data-send="${t.id}"><textarea rows="1" data-chat-draft="${t.id}" aria-label="给任务 ${t.label} 记下要求" placeholder="先记下要求，配置 AI 后再执行">${esc(t.draft)}</textarea><button class="send-btn" aria-label="保存到任务 ${t.label} 对话">${icon('send')}</button></form></section>`;
+}
+function frame(t) {
+  return `<section class="frame" data-frame="${t.id}"><div class="browser-bar"><button class="icon-btn" ${act('retry-page',t.id)} aria-label="重新打开任务 ${t.label} 网页">${icon('replay')}</button><span class="address">${icon('lock')} ${esc(t.url)}</span><span class="site-tag">模拟网页</span></div>${website(t)}${chat(t)}</section>`;
+}
+function closed() {
+  return `<section class="start-screen"><div class="start-content"><div class="start-symbol">${icon('archive')}</div><span class="eyebrow">模拟退出已完成</span><h1>工作区已收好，下次回来接着看</h1><p>任务和对话已保留。重新打开时核对网站登录，读取网站已经保存的草稿。</p>
+    <div class="closed-summary"><div><strong>${model.saved.tasks.length}</strong>原任务</div><div><strong>${model.saved.tasks.reduce((n,t)=>n+t.messages.filter(m=>m.role==='user').length,0)}</strong>已保存的要求</div><div><strong>${Object.values(model.sessions).filter(Boolean).length}</strong>有效网站登录</div></div>
+    <button class="primary" ${act('open')}>${icon('replay')} 重新打开 helpr</button><p style="margin-top:18px;font-size:11px">只在本页模拟退出重开，未关闭浏览器或运行真实应用。</p>
+  </div></section>`;
+}
+function render() {
+  hidePreview();
+  $('#app').innerHTML=model.app==='closed'?closed():header()+notices()+
+    (model.tasks.length?`<nav class="task-tabs" aria-label="任务标签页">${model.tasks.filter(t=>!t.hidden).map(taskTab).join('')}<button class="icon-btn" style="align-self:center" ${act('new')} aria-label="新建任务标签页">${icon('plus')}</button></nav>`:'')+
+    (current()&&!current().hidden?frame(current()):empty());
+  renderLab();renderModal();const feed=$('[data-feed]');if(feed)feed.scrollTop=feed.scrollHeight;
+}
+const scenes={first:'从头体验',reopen:'退出后重开',network:'网页打不开',credentials:'登录保护失败',storage:'保存失败',expired:'登录过期'};
+function guide() {
+  if(model.faults.network||model.faults.credentials||model.faults.storage)return ['问题场景','先在工作区重试；再点下方“恢复模拟条件”，回到工作区重试。'];
+  if(model.save!=='saved'||model.protection==='blocked'||model.tasks.some(t=>model.pages[t.id]?.error))return ['条件已恢复','在工作区点对应的“重试”，观察是否保留原任务和输入。'];
+  if(model.app==='closed')return ['重新打开','点击“重新打开 helpr”，核对任务、对话和网站保存的草稿。'];
+  if(model.reopened)return ['核对恢复','两项任务分别切换看看；登录过期的网页需要再次登录。'];
+  if(!model.tasks.length)return ['创建任务','点击“创建第一个任务”，可使用表单里的 WordPress 示例。'];
+  if(model.tasks.some(t=>!model.sessions[t.origin]))return ['在网页登录','点击网页中的“登录（模拟）”。另一项任务保持自己的登录状态。'];
+  if(model.tasks.length===1)return ['再开一项','点击顶部“新建任务”，使用 Drupal 示例，体验独立网页和对话。'];
+  return ['退出再回来','记下要求，修改并保存网站草稿，然后点右上角“退出 helpr”。'];
+}
+function renderLab() {
+  const [title,detail]=guide(),wasOpen=$('.state-details')?.open;
+  const failure=Object.values(model.faults).some(Boolean);
+  $('#lab').innerHTML=`<div class="guide-line"><span class="step-no">${icon('arrow')}</span><strong>${title}</strong><span>${detail}</span></div>
+    <nav class="scene-bar" aria-label="体验场景"><span class="scene-label">原型场景</span>${Object.entries(scenes).map(([id,name])=>`<button class="scene-btn" data-action="scene" data-scene="${id}" aria-pressed="${scene===id}">${name}</button>`).join('')}<span class="spacer"></span><button class="scene-btn restore" ${act('restore')} ${failure?'':'disabled'}>恢复模拟条件</button></nav>
+    <div class="prototype-footnote"><span>切换场景会重置模拟任务。所有数据只在本页内存中，刷新会从头开始。</span><a href="./index.html?variant=A">返回 A / B / C 布局比较</a></div>
+    <details class="state-details" ${wasOpen?'open':''}><summary>查看本次演示记录 · ${model.tasks.length} 项任务 · ${model.app==='open'?'窗口打开':'已模拟退出'} · ${model.save==='saved'?'记录已保存':'记录未保存'}</summary>
+    <table><thead><tr><th>任务（固定身份）</th><th>网站</th><th>登录</th><th>对话要求</th><th>记录</th></tr></thead><tbody>${model.tasks.map(t=>`<tr><td>${t.label} · ${t.id}</td><td>${esc(new URL(t.url).hostname)}</td><td>${model.sessions[t.origin]?'仍有效':'需要登录'}</td><td>${t.messages.filter(m=>m.role==='user').length} 条</td><td>${isRecorded(t)?'已保存':'窗口内暂存'}</td></tr>`).join('')||'<tr><td colspan="5">尚未创建任务</td></tr>'}</tbody></table>
+    <ul class="trace-list">${model.events.slice(-7).map(text=>`<li>· ${esc(text)}</li>`).join('')}</ul></details>`;
+}
+function modalContent() {
+  if(modal==='new')return {title:'创建一项网页任务',body:`<p>先说明要做的事，再打开对应网站。AI 尚未配置，你可以先登录和手动准备。</p><form data-create class="new-fields"><label for="new-goal">这次想做什么？</label><textarea id="new-goal" maxlength="160" placeholder="例如：准备发布这周的经营周报">${esc(newDraft.goal)}</textarea><label for="new-url">网站地址</label><input id="new-url" type="url" placeholder="https://..." value="${esc(newDraft.url)}" required><div class="example-options"><span>填入演示内容</span><button type="button" data-action="example" data-example="0">WordPress 示例</button><button type="button" data-action="example" data-example="1">Drupal 示例</button></div><p class="tiny">原型中所有地址都只显示本地模拟网站，不访问外部服务。</p><div class="form-error" role="status">${esc(formError)}</div><div class="modal-footer"><button type="button" class="secondary" ${act('dismiss')}>暂不创建</button><button type="submit" class="primary">创建并打开网站 ${icon('arrow')}</button></div></form>`};
+  if(modal==='tasks')return {title:'我的任务',body:`<p>重新查看只恢复展示，不启动自动执行。</p>${model.tasks.map(t=>`<div class="activity-row">${siteIcon(t)}<div class="spacer"><strong class="task-name">${esc(t.goal)}</strong><div>${statusHTML(t)} <span class="tiny muted">· ${t.hidden?'已收起':'在工作区'}</span></div></div><button class="secondary" ${act('select',t.id)}>查看任务 ${t.label}</button></div>`).join('')||'<p>还没有任务，创建后会保留在这里。</p>'}`};
+  if(modal==='close-task')return {title:'收起这项任务？',body:`<p>这项任务尚未自动执行。收起标签后，网页和对话仍保留在“任务”入口，随时可以回来查看。</p><div class="modal-footer"><button class="secondary" ${act('dismiss')}>返回</button><button class="primary" ${act('hide',modalTask)}>收起任务</button></div>`};
+  if(modal==='quit'){
+    const dirty=model.tasks.filter(t=>Foundation.websiteDirty(model,t.id));
+    const failed=model.save!=='saved'||model.faults.storage;
+    return {title:failed?'暂时还不能可靠保存':dirty.length?'网页中还有未保存的编辑':'退出 helpr',body:`<div class="exit-list"><div>${icon(failed?'info':'check')}${failed?'任务与对话有新内容尚未保存':'任务和对话已保存'}</div><div>${icon('lock')}仍有效的网站登录将在下次打开时核对</div></div>
+      ${failed?'<p class="dialog-warning">请先恢复记录保存。当前窗口中的内容会保留，退出可能丢失尚未保存的要求。</p>':dirty.length?`<p class="dialog-warning">${dirty.map(t=>'任务 '+t.label).join('、')} 的草稿尚未保存到网站。先回网页保存；如果现在退出，这些网页编辑将丢失。</p>`:'<p>结束本次应用运行。下次打开时找回原任务，重新打开网页；不会自动开始执行。</p>'}
+      <div class="modal-footer"><button class="secondary" ${act('dismiss')}>${failed?'保留工作区':dirty.length?'返回网页保存':'暂不退出'}</button>${failed?`<button class="primary" ${act('retry-save')}>重试保存</button>`:`<button class="primary" ${act('confirm-quit')}>${dirty.length?'放弃网页编辑并退出':'保存记录并退出'}</button>`}</div>`};
+  }
+  return null;
+}
+function openModal(name,id=null) { hidePreview();previousFocus=document.activeElement;modal=name;modalTask=id;renderModal(); }
+function renderModal() {
+  const content=modalContent();
+  $('#overlay').innerHTML=content?`<div class="modal-backdrop" data-backdrop><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><header class="modal-header"><h2 id="modal-title">${content.title}</h2><span class="spacer"></span><button class="icon-btn" ${act('dismiss')} aria-label="关闭弹窗">${icon('close')}</button></header>${content.body}</section></div>`:'';
+  if(content)requestAnimationFrame(()=>($('.modal textarea')||$('.modal button'))?.focus());
+}
+function dismiss() { modal=null;modalTask=null;$('#overlay').innerHTML='';if(previousFocus?.isConnected)previousFocus.focus(); }
+function hidePreview(restore=false) {
+  clearTimeout(preview.openTimer);clearTimeout(preview.closeTimer);
+  const button=$('[data-preview-tab="'+preview.id+'"] .select-task');
+  preview.id=null;preview.keyboard=false;$('#task-preview-layer').innerHTML='';
+  $$('[data-preview-tab] .select-task').forEach(el=>el.setAttribute('aria-expanded','false'));
+  if(restore)button?.focus();
+}
+function showPreview(id,keyboard=false) {
+  clearTimeout(preview.openTimer);clearTimeout(preview.closeTimer);
+  const t=task(id);if(!t||modal||model.app!=='open')return;
+  if(preview.id===id){preview.keyboard=keyboard||preview.keyboard;return;}
+  preview.id=id;preview.keyboard=keyboard;
+  const ready=model.protection==='available'&&!model.pages[t.id]?.error;
+  const rows=[[isRecorded(t),'任务与对话已保存'],[ready,'网页已打开'],[ready&&model.sessions[t.origin],'网站已登录']];
+  $('#task-preview-layer').innerHTML=`<section id="task-preview-card" class="task-preview" role="dialog" tabindex="-1" aria-labelledby="preview-title"><header class="preview-header">${siteIcon(t)}<div class="spacer"><h2 id="preview-title">${esc(t.goal)}</h2><span>${esc(t.site)} · 任务 ${t.label}</span></div><button class="icon-btn" ${act('preview-close')} aria-label="收起进度卡片">${icon('close')}</button></header>
+    <div class="preview-progress"><div class="preview-status">${statusHTML(t)}<span>网页准备情况</span></div><div class="progress-track"><div class="progress-fill" style="width:${rows.filter(r=>r[0]).length/3*100}%"></div></div><div class="step-list">${rows.map(([ok,label])=>`<div class="${ok?'complete':''}"><span class="step-circle"></span>${label}${ok?'':' · 待处理'}</div>`).join('')}</div></div>
+    <div class="preview-update"><span>最近一条要求</span><p>${esc(t.messages.filter(m=>m.role==='user').at(-1)?.text||t.goal)}</p></div></section>`;
+  positionPreview();$$('[data-preview-tab] .select-task').forEach(el=>el.setAttribute('aria-expanded',String(el.dataset.task===id)));
+}
+function positionPreview() {
+  const card=$('#task-preview-card'),anchor=$('[data-preview-tab="'+preview.id+'"]');if(!card||!anchor)return;
+  const box=anchor.getBoundingClientRect();card.style.left=Math.max(8,Math.min(box.left,innerWidth-card.offsetWidth-8))+'px';
+  card.style.top=Math.max(8,box.bottom+8)+'px';card.style.maxHeight=Math.max(160,innerHeight-box.bottom-24)+'px';
+}
+function laterClose() {
+  clearTimeout(preview.openTimer);clearTimeout(preview.closeTimer);if(preview.keyboard)return;
+  preview.closeTimer=setTimeout(()=>{if(!document.activeElement.closest('.task-preview'))hidePreview();},180);
+}
+function retry(type,id) {
+  dispatch({type,id});
+  const feedback=$('[data-retry-feedback]');if(feedback)feedback.textContent=model.feedback;
+  else toast(model.feedback);
+}
+const handlers={
+  new:()=>{formError='';openModal('new');},
+  example:(_,el)=>{newDraft={...Foundation.examples[Number(el.dataset.example)]};formError='';renderModal();},
+  dismiss:()=>dismiss(),
+  select:id=>{dismiss();dispatch({type:'SELECT',id});},
+  tasks:()=>openModal('tasks'),
+  'close-task':id=>openModal('close-task',id),
+  hide:id=>{dismiss();dispatch({type:'HIDE',id},{announce:true});},
+  minimize:id=>dispatch({type:'MINIMIZE',id}),
+  logout:id=>dispatch({type:'LOGOUT',id},{announce:true}),
+  'save-web':id=>dispatch({type:'SAVE_WEB',id},{announce:true}),
+  'retry-page':id=>retry('RETRY_PAGE',id),
+  'retry-credentials':()=>retry('RETRY_CREDENTIALS'),
+  'retry-save':()=>retry('RETRY_SAVE'),
+  'ack-reopen':()=>dispatch({type:'ACK_REOPEN'}),
+  quit:()=>openModal('quit'),
+  'confirm-quit':()=>{dismiss();dispatch({type:'QUIT'});},
+  open:()=>dispatch({type:'OPEN'}),
+  scene:(_,el)=>{dismiss();newDraft={goal:'',url:''};scene=el.dataset.scene;model=Foundation.scenario(scene);render();},
+  restore:()=>dispatch({type:'RESTORE_CONDITIONS'},{announce:true}),
+  'preview-close':()=>hidePreview(true),
+};
+document.addEventListener('click',event=>{
+  const target=event.target.closest('[data-action]');
+  if(target){handlers[target.dataset.action]?.(target.dataset.task,target);return;}
+  if(event.target.matches('[data-backdrop]'))dismiss();
+});
+document.addEventListener('pointerdown',event=>{if(!event.target.closest('[data-preview-tab],.task-preview'))hidePreview();});
+document.addEventListener('pointerover',event=>{
+  if(event.pointerType==='touch')return;
+  const tab=event.target.closest('[data-preview-tab]');
+  if(tab&&!tab.contains(event.relatedTarget)&&!preview.keyboard){
+    clearTimeout(preview.openTimer);clearTimeout(preview.closeTimer);preview.openTimer=setTimeout(()=>showPreview(tab.dataset.previewTab),280);
+  }
+  if(event.target.closest('.task-preview'))clearTimeout(preview.closeTimer);
+});
+document.addEventListener('pointerout',event=>{
+  const source=event.target.closest('[data-preview-tab],.task-preview');
+  if(!source||source.contains(event.relatedTarget))return;
+  if(event.relatedTarget?.closest?.('.task-preview')||event.relatedTarget?.closest?.('[data-preview-tab]')?.dataset.previewTab===preview.id)return;
+  laterClose();
+});
+document.addEventListener('focusout',event=>{
+  if(event.target.closest('.task-preview'))requestAnimationFrame(()=>{if(!document.activeElement.closest('.task-preview,[data-preview-tab]'))hidePreview();});
+});
+document.addEventListener('input',event=>{
+  const el=event.target;
+  if(el.id==='new-goal')newDraft.goal=el.value;
+  if(el.id==='new-url')newDraft.url=el.value;
+  if(el.dataset.chatDraft){
+    dispatch({type:'CHAT_DRAFT',id:el.dataset.chatDraft,value:el.value},{repaint:false});
+    $('[data-chat-save]').textContent=model.save==='saved'?'输入草稿已保存':'输入仍在本窗口中，尚未保存';
+    $('[data-chat-save]').classList.toggle('pending',model.save!=='saved');
+  }
+  if(el.dataset.webField){
+    dispatch({type:'WEB_INPUT',id:el.dataset.task,field:el.dataset.webField,value:el.value},{repaint:false});
+    const label=$('[data-web-save="'+el.dataset.task+'"]'),dirty=Foundation.websiteDirty(model,el.dataset.task);
+    label.textContent=dirty?'网页有未保存的修改':'草稿已在网站保存';label.classList.toggle('dirty',dirty);
+  }
+});
+document.addEventListener('submit',event=>{
+  event.preventDefault();
+  if(event.target.matches('[data-create]')){
+    const goal=newDraft.goal.trim(),url=newDraft.url.trim();
+    let validURL;try{validURL=new URL(url);}catch{}
+    if(!goal||!validURL||!['http:','https:'].includes(validURL.protocol)){formError='请写下任务目标，并填写完整的 http 或 https 网站地址。';renderModal();return;}
+    if(model.faults.storage){formError='目前无法保存新任务。输入已保留，请恢复保存后再次创建。';renderModal();return;}
+    dismiss();dispatch({type:'CREATE',goal,url:validURL.href},{announce:true});newDraft={goal:'',url:''};
+  }
+  if(event.target.dataset.login)dispatch({type:'LOGIN',id:event.target.dataset.login},{announce:true});
+  if(event.target.dataset.send){
+    const id=event.target.dataset.send;dispatch({type:'SEND',id});
+    $('[data-chat-draft="'+id+'"]')?.focus();
+  }
+});
+document.addEventListener('keydown',event=>{
+  if(event.isComposing)return;
+  if(event.key==='Escape'){if(preview.id)hidePreview(!!event.target.closest('.task-preview'));else dismiss();return;}
+  if(event.key==='ArrowDown'&&event.target.matches('.task-tab .select-task')&&!modal){
+    event.preventDefault();showPreview(event.target.dataset.task,true);$('#task-preview-card')?.focus();return;
+  }
+  if(event.key==='Enter'&&!event.shiftKey&&event.target.dataset.chatDraft){
+    event.preventDefault();const id=event.target.dataset.chatDraft;dispatch({type:'SEND',id});$('[data-chat-draft="'+id+'"]')?.focus();return;
+  }
+  if(event.key==='Tab'&&modal){
+    const items=$$('button,input,textarea,a[href]', $('.modal')).filter(el=>!el.disabled),first=items[0],last=items.at(-1);
+    if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+    else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+  }
+});
+window.addEventListener('resize',positionPreview);
+window.addEventListener('scroll',positionPreview);
+render();
+</script>
+</body>
+</html>
