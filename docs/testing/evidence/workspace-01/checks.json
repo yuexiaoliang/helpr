@@ -102,7 +102,7 @@
     "oldNativeFailureConfirmed": true,
     "candidate12NativeFailureConfirmed": true,
     "packagedGreenVerified": true,
-    "blocker": "tested focus path passed; candidate remains uninstalled, native window button visibility unresolved and installed first/cold reopen pending",
+    "blocker": "candidate13 controlled focus path passed in35; candidate14 native window controls separately passed in37; combined installed first/normal-cold-reopen pending",
     "evidence": "focus-green-35.json",
     "priorEvidence": [
       "focus-repair.json",
@@ -118,10 +118,11 @@
     "installedBuild": 11,
     "sourceChecksPassed": true,
     "initialNativeButtonVisibilityPassed": true,
-    "redCloseHideAndDockReturnPassed": false,
-    "normalQuitPassed": false,
-    "wholeRoundPassed": false,
-    "evidence": "window-controls-36.json",
-    "blocker": "3-minute watchdog ended candidate before successful hide/Dock-return/normal-quit evidence; no extra attempts or install"
+    "redCloseHideAndDockReturnPassed": true,
+    "normalQuitPassed": true,
+    "wholeRoundPassed": true,
+    "evidence": "window-controls-37.json",
+    "priorFailedEvidence": "window-controls-36.json",
+    "blocker": "candidate remains uninstalled; installed first/normal-cold-reopen and combined focus behavior pending; not full issue01 acceptance"
   }
 }

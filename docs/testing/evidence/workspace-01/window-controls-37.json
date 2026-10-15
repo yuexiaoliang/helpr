@@ -1,0 +1,94 @@
+{
+  "recorded": "2026-10-15T07:28:01.025066+00:00",
+  "scope": "candidate14 start37: human native red-close hide and actual Dock return with original content, followed by normal UI quit; no installation or cold-session claim",
+  "build": 14,
+  "start": 37,
+  "installed": false,
+  "archiveSHA256": "1183c995157ef00c10fcc6ce892b30b4badcc64aed818d4d456ec8b7a9c30c2d",
+  "sourceChangeThisRound": false,
+  "candidateIdentityMatchedBeforeStartup": true,
+  "sourceChecks": {
+    "priorEvidence": "window-controls-36.json",
+    "rerunThisRound": false,
+    "reason": "same build14; only validation arrangement and evidence changed"
+  },
+  "foregroundInterval": {
+    "userGrant": "现在可以，开始核对",
+    "start": "2026-10-15T07:19:46.177Z",
+    "end": "2026-10-15T07:26:12.935Z",
+    "elapsedSeconds": 386.758,
+    "limitSeconds": 480,
+    "deadlineExpired": false,
+    "userToldDesktopAvailableAfterExit": true
+  },
+  "humanHandoff": {
+    "started": "2026-10-15T07:21:11.583599+00:00",
+    "maximumWaitSeconds": 180,
+    "earlyHandoffWithAtLeastFourMinutesRemaining": true,
+    "agentNativeActionsSuspendedUntilReply": true,
+    "userAnswer": "收起、返回、内容都正确",
+    "replyTimestampPreciselyMeasured": false,
+    "withinHumanWaitLimit": true,
+    "source": "user personally completed the requested consecutive native-red-close and actual-Dock steps; agent did not send show commands during handoff"
+  },
+  "savedRecordsBaselineMatched": true,
+  "nativeControls": {
+    "activeWindowScreenshotBeforeHandoffShowsRedYellowGreen": true,
+    "humanObservedHideAfterNativeRedClose": true,
+    "humanClickedActualHelprDockIcon": true,
+    "humanObservedReturnedWindow": true,
+    "humanConfirmedOriginalTwoTasksAndAMessage": true,
+    "cuaAfterReturnShowsOriginalTwoTaskNamesAndAMessage": true,
+    "cuaAfterReturnShowsOriginalIndependentDrafts": true,
+    "activeWindowScreenshotAfterReturnShowsRedYellowGreen": true,
+    "inactiveScreenshotScope": "faint controls observed after user returned to Codex; fresh activated-window capture showed red/yellow/green, not counted as a new hidden-controls regression",
+    "hideAndDockReturnPassed": true
+  },
+  "normalQuit": {
+    "actualUIConfirmation": true,
+    "transientStaleElementRejected": true,
+    "recovery": "refreshed AX, opened quit confirmation again and clicked its freshly observed confirm button; no restart",
+    "code": 0,
+    "signal": null,
+    "observedProcessCount": 15,
+    "remainingObservedProcessCount": 0,
+    "recoveryHarnessPassed": true,
+    "nativeExitCode": 0,
+    "nativeExitSignal": 0
+  },
+  "wholeNativeRoundPassed": true,
+  "diagnosticServerEnded": true,
+  "remainingOwnedCandidateOrInstalledProcesses": 0,
+  "priorFailedRoundPreserved": "window-controls-36.json",
+  "priorFocusGreenScope": "focus-green-35.json remains build13/start35 only; no build14 focus gate was run in37",
+  "newBuilds": 0,
+  "newInstallations": 0,
+  "newFaultInjection": 0,
+  "cleanupConsumed": 0,
+  "extraStartsAfter37": 0,
+  "currentInstalledBuild": 11,
+  "installation": 8,
+  "installedArchiveSHA256": "c106f18d35307e96a7dcef711e8d7596fc4874f83afd3cd84ab4727e22625dce",
+  "installedHashUnchanged": true,
+  "newModelCalls": 0,
+  "remoteBusinessWrites": 0,
+  "budget": {
+    "used": {
+      "builds": 14,
+      "installs": 8,
+      "starts": 37,
+      "faults": 4,
+      "cleanups": 12
+    },
+    "limits": {
+      "builds": 14,
+      "installs": 10,
+      "starts": 37,
+      "faults": 4,
+      "cleanups": 13
+    }
+  },
+  "batchStopped": true,
+  "overallProductAcceptance": false,
+  "nextVerification": "prepare a separate bounded installation and installed first/normal-cold-reopen validation, including combined focus and window behavior; obtain a fresh foreground interval before native actions"
+}

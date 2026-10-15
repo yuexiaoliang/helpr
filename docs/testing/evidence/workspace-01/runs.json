@@ -791,14 +791,14 @@
     "limits": {
       "builds": 14,
       "installs": 10,
-      "starts": 36,
+      "starts": 37,
       "faults": 4,
-      "cleanups": 12
+      "cleanups": 13
     },
     "used": {
       "builds": 14,
       "installs": 8,
-      "starts": 36,
+      "starts": 37,
       "faults": 4,
       "cleanups": 12
     },
@@ -890,6 +890,11 @@
       {
         "builds": "+1",
         "reason": "用户继续事项01；保留35焦点通过与按钮不可见红例。同版官方原生setter可重绘并显示容器，单变量在非全屏show恢复按钮可见，构建14，后台先准备，最多原有启动36一轮3分钟，等待明确让出桌面才运行；不安装，不追加其它额度。"
+      },
+      {
+        "starts": "+1",
+        "cleanups": "+1 necessary reserve",
+        "reason": "用户继续，复用同一候选14；36按钮可见但3分钟中止使人工Dock未完成。新安排仅37一次、整轮8分钟，在窗口就绪且有完整3分钟反馈余量时立即交付连贯人工两步，等明确前台可用才运行；不构建安装、无模型/业务写入，失败或超时保存停止。"
       }
     ]
   },
@@ -1644,11 +1649,27 @@
   "pendingCandidate14": {
     "build": 14,
     "installed": false,
-    "evidence": "window-controls-36.json",
+    "evidence": "window-controls-37.json",
     "nativeTrafficLightVisibilityPassed": true,
-    "nativeRedCloseHideAndDockReturnPassed": false,
-    "normalQuitPassed": false,
-    "roundAbortedAtDeadline": true,
-    "allObservedProcessesEndedAfterCleanup": true
+    "nativeRedCloseHideAndDockReturnPassed": true,
+    "normalQuitPassed": true,
+    "latestWholeRoundPassed": true,
+    "latestRoundAbortedAtDeadline": false,
+    "allObservedProcessesEndedNormally": true,
+    "priorFailedRound": {
+      "evidence": "window-controls-36.json",
+      "roundAbortedAtDeadline": true,
+      "cleanup": 12
+    },
+    "combinedInstalledFirstAndColdReopenPassed": false,
+    "overallProductAcceptance": false
+  },
+  "windowControls37": {
+    "evidence": "window-controls-37.json",
+    "build": 14,
+    "start": 37,
+    "passed": true,
+    "installed": false,
+    "normalQuit": true
   }
 }
