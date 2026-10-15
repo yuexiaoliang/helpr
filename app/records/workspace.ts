@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
-import { eq, asc, sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { createMachine, transition } from 'xstate';
 import { mkdirSync, chmodSync } from 'node:fs';
 import { randomUUID, createHash } from 'node:crypto';
@@ -14,6 +14,7 @@ import {
 } from '../shared/contracts';
 import { explicitWebsite, websiteURL } from '../shared/url-policy';
 import * as schema from './schema';
+import { ModelRecords } from './model';
 
 // 本项只有手动网页状态；计算转换不启动 actor、invocation 或网页动作。
 const lifecycle = createMachine({
@@ -36,6 +37,7 @@ function pagePhase(
 
 /** 记录拥有者的公开入口。仅在独立受管进程使用，提交成功后才返回投影。 */
 export class WorkspaceRecords {
+  private readonly models: ModelRecords;
   private readonly sqlite: Database.Database;
   private readonly db: ReturnType<typeof drizzle<typeof schema>>;
   constructor(folder: string, migrations: string) {
@@ -49,14 +51,39 @@ export class WorkspaceRecords {
       this.sqlite.pragma('fullfsync = ON');
       this.sqlite.pragma('busy_timeout = 3000');
       this.db = drizzle(this.sqlite, { schema });
+      const legacy = this.sqlite
+        .prepare(
+          "SELECT name FROM sqlite_master WHERE type='table' AND name='workspace'",
+        )
+        .get();
+      const models = this.sqlite
+        .prepare(
+          "SELECT name FROM sqlite_master WHERE type='table' AND name='model_settings'",
+        )
+        .get();
+      if (legacy && !models) {
+        const backup = path.join(
+          folder,
+          'workspace-before-model-02-' + randomUUID() + '.sqlite',
+        );
+        this.sqlite.prepare('VACUUM INTO ?').run(backup);
+        chmodSync(backup, 0o600);
+      }
       migrate(this.db, { migrationsFolder: migrations });
       this.db
         .insert(schema.workspace)
         .values({ id: 1, active: null, revision: 0, schemaVersion: 1 })
         .onConflictDoNothing()
         .run();
-      if (this.db.select().from(schema.workspace).get()?.schemaVersion !== 1)
+      const version = this.db
+        .select()
+        .from(schema.workspace)
+        .get()?.schemaVersion;
+      if (version !== 1 && version !== 2)
         throw new Error('DATA_VERSION_UNSUPPORTED');
+      if (version === 1)
+        this.db.update(schema.workspace).set({ schemaVersion: 2 }).run();
+      this.models = new ModelRecords(this.db);
     } catch (error) {
       this.sqlite.close();
       throw error;
@@ -72,16 +99,18 @@ export class WorkspaceRecords {
     return snapshotSchema.parse({
       revision: meta?.revision,
       active: meta?.active,
+      modelSettings: this.models.settings(),
       tasks: items.map((task) => ({
         ...task,
-        messages: this.db
-          .select({ role: schema.messages.role, text: schema.messages.text })
-          .from(schema.messages)
-          .where(eq(schema.messages.taskId, task.id))
-          .orderBy(asc(schema.messages.id))
-          .all(),
+        messages: this.models.messages(task.id),
       })),
     });
+  }
+  model(
+    input: unknown,
+  ): Record<string, unknown> & { state: WorkspaceSnapshot } {
+    const result = this.models.execute(input);
+    return { ...result, state: this.snapshot() };
   }
   lookupRequest(input: unknown): {
     applied: boolean;
@@ -147,7 +176,7 @@ export class WorkspaceRecords {
               {
                 taskId,
                 role: 'system',
-                text: '目标已保存。当前可手动使用网页；AI 理解与自动执行尚未接入。可以在地址栏打开网站。',
+                text: '目标已保存。先打开网站，再在这项任务中询问网页内容；当前不会自动执行网页操作。',
               },
             ])
             .run();

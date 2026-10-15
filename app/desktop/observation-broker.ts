@@ -25,6 +25,7 @@ export type Qualification = {
 };
 export class ObservationBroker {
   private sequence = 0;
+  private closed = false;
   private buffer = '';
   private readonly pending = new Map<
     number,
@@ -107,6 +108,7 @@ export class ObservationBroker {
     params: Record<string, unknown> = {},
     sessionId?: string,
   ): Promise<Record<string, unknown>> {
+    if (this.closed) return Promise.reject(new Error('CONTROL_DISCONNECTED'));
     const id = ++this.sequence;
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
@@ -166,12 +168,13 @@ export class ObservationBroker {
   async close(client: Qualification): Promise<void> {
     client.revoked = true;
     this.clients.delete(client);
-    if (client.sessionId)
+    if (client.sessionId && !this.closed)
       await this.send('Target.detachFromTarget', {
         sessionId: client.sessionId,
       }).catch(() => {});
   }
   dispose(): void {
+    this.closed = true;
     for (const c of this.clients) c.revoked = true;
     for (const p of this.pending.values()) {
       clearTimeout(p.timer);

@@ -18,6 +18,7 @@ export const messages = sqliteTable('messages', {
     .notNull()
     .references(() => tasks.id),
   role: text('role').notNull(),
+  callId: text('model_call_id'),
   text: text('text').notNull(),
 });
 export const requests = sqliteTable('requests', {
@@ -32,4 +33,38 @@ export const workspace = sqliteTable('workspace', {
   active: text('active').references(() => tasks.id),
   revision: integer('revision').notNull(),
   schemaVersion: integer('schema_version').notNull(),
+});
+
+export const modelSettings = sqliteTable('model_settings', {
+  version: integer('version').primaryKey({ autoIncrement: true }),
+  requestId: text('request_id').notNull().unique(),
+  hash: text('hash').notNull(),
+  endpoint: text('endpoint').notNull(),
+  model: text('model').notNull(),
+  ciphertext: text('ciphertext').notNull(),
+});
+export const modelCalls = sqliteTable('model_calls', {
+  id: text('id').primaryKey(),
+  taskId: text('task_id')
+    .notNull()
+    .references(() => tasks.id),
+  hash: text('hash').notNull(),
+  configurationVersion: integer('configuration_version')
+    .notNull()
+    .references(() => modelSettings.version),
+  model: text('model').notNull(),
+  phase: text('phase').notNull(),
+  source: text('source', { mode: 'json' }),
+  output: text('output').notNull().default(''),
+  error: text('error'),
+  pageChanged: integer('page_changed', { mode: 'boolean' })
+    .notNull()
+    .default(false),
+  dispatched: integer('dispatched', { mode: 'boolean' })
+    .notNull()
+    .default(false),
+  reservedTokens: integer('reserved_tokens').notNull().default(0),
+  inputTokens: integer('input_tokens'),
+  outputTokens: integer('output_tokens'),
+  totalTokens: integer('total_tokens'),
 });

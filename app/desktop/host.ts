@@ -396,14 +396,25 @@ ipcMain.handle('workspace-request', (event, input: unknown) => {
     !['snapshot', 'dismiss-notice'].includes(command.kind)
   )
     throw new Error('HOST_REQUEST_DENIED');
-  if (binding.role === 'chat' && command.kind !== 'snapshot') {
+  if (
+    binding.role === 'chat' &&
+    command.kind !== 'snapshot' &&
+    !(command.kind === 'panel' && command.panel === 'settings')
+  ) {
     if (
-      !['draft', 'message', 'minimize'].includes(command.kind) ||
+      !['draft', 'message', 'minimize', 'model-cancel'].includes(
+        command.kind,
+      ) ||
       !('taskId' in command) ||
       command.taskId !== binding.taskId
     )
       throw new Error('TASK_NOT_OWNED');
   }
+  if (
+    ['model-save', 'model-test'].includes(command.kind) &&
+    binding.role !== 'panel'
+  )
+    throw new Error('HOST_REQUEST_DENIED');
   if (command.kind === 'snapshot') return state;
   return controller.request(command);
 });

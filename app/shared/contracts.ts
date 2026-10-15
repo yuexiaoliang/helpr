@@ -1,5 +1,10 @@
 import { z } from 'zod';
 import { websiteURL } from './url-policy';
+import {
+  modelCallSchema,
+  modelSettingsSchema,
+  modelUICommandSchema,
+} from './model';
 
 export const startupFailureCodeSchema = z.enum([
   'STARTUP_NOT_AUTHORIZED',
@@ -94,7 +99,11 @@ export const taskSchema = z.strictObject({
   error: z.string(),
   version: z.number().int(),
   messages: z.array(
-    z.strictObject({ role: z.enum(['user', 'system']), text: z.string() }),
+    z.strictObject({
+      role: z.enum(['user', 'system', 'assistant']),
+      text: z.string(),
+      call: modelCallSchema.optional(),
+    }),
   ),
 });
 export type Task = z.infer<typeof taskSchema>;
@@ -102,17 +111,27 @@ export const snapshotSchema = z.strictObject({
   revision: z.number().int(),
   active: id.nullable(),
   tasks: z.array(taskSchema),
+  modelSettings: modelSettingsSchema.nullable().optional(),
 });
 export type WorkspaceSnapshot = z.infer<typeof snapshotSchema>;
 export const panelSchema = z.strictObject({
   kind: z.literal('panel'),
-  panel: z.enum(['none', 'new', 'tasks', 'quit', 'preview', 'close-task']),
+  panel: z.enum([
+    'none',
+    'new',
+    'tasks',
+    'quit',
+    'preview',
+    'close-task',
+    'settings',
+  ]),
   taskId: id.optional(),
   x: z.number().min(0).max(10000).optional(),
   focus: z.boolean().optional(),
   delayed: z.boolean().optional(),
 });
 export const uiCommandSchema = z.union([
+  modelUICommandSchema,
   recordCommandSchema.refine((command) => command.kind !== 'page'),
   z.strictObject({ kind: z.literal('snapshot') }),
   z.strictObject({ kind: z.literal('quit') }),

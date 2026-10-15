@@ -1,4 +1,11 @@
-import { app, utilityProcess, Menu, Tray, nativeImage } from 'electron';
+import {
+  app,
+  utilityProcess,
+  Menu,
+  Tray,
+  nativeImage,
+  safeStorage,
+} from 'electron';
 import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
@@ -16,6 +23,8 @@ import { diagnostics } from '../shared/diagnostics';
 import { WorkspaceSession } from './workspace-session';
 import { ObservationBroker } from './observation-broker';
 import { runtimeImages } from './startup';
+import { ModelService } from './model-service';
+import { pageObservation } from './page-observation';
 
 export async function startController(
   folder: string,
@@ -138,12 +147,69 @@ export async function startController(
     state,
     (command) => recordClient.request(command),
     (next) => {
-      state = next;
-      publish();
+      if (next.revision >= state.revision) {
+        state = next;
+        publish();
+      }
     },
   );
+  const models = new ModelService({
+    records: (command) => recordClient.request({ kind: 'model', command }),
+    current: () => state,
+    publish: (next) => {
+      if (next.revision >= state.revision) {
+        state = next;
+        publish();
+      }
+    },
+    protection: {
+      protect: async (key) => {
+        if (
+          process.platform !== 'darwin' ||
+          !(await safeStorage.isAsyncEncryptionAvailable())
+        )
+          throw new Error('MODEL_CREDENTIAL_UNAVAILABLE');
+        return (await safeStorage.encryptStringAsync(key)).toString('base64');
+      },
+      reveal: async (ciphertext) => {
+        if (
+          process.platform !== 'darwin' ||
+          !(await safeStorage.isAsyncEncryptionAvailable())
+        )
+          throw new Error('MODEL_CREDENTIAL_UNAVAILABLE');
+        return (
+          await safeStorage.decryptStringAsync(
+            Buffer.from(ciphertext, 'base64'),
+          )
+        ).result;
+      },
+    },
+    observe: async (taskId, signal) => {
+      if (signal.aborted) throw new Error('MODEL_CANCELLED');
+      const qualification = broker.client(taskId);
+      try {
+        const read = (method: string) =>
+          broker.observe(qualification, {
+            taskId,
+            token: qualification.token,
+            method,
+          });
+        const [frame, tree] = await Promise.all([
+          read('Page.getFrameTree'),
+          read('Accessibility.getFullAXTree'),
+        ]);
+        if (signal.aborted) throw new Error('MODEL_CANCELLED');
+        return pageObservation(frame, tree, qualification.generation);
+      } catch {
+        throw new Error('MODEL_PAGE_UNAVAILABLE');
+      } finally {
+        await broker.close(qualification);
+      }
+    },
+  });
   records.once('exit', () => {
     recordsAvailable = false;
+    models.disable();
     if (!quitting && host.connected)
       host.send({
         notice:
@@ -154,9 +220,15 @@ export async function startController(
     const command = uiCommandSchema.parse(input);
     if (quitting) throw new Error('APPLICATION_EXITING');
     if (command.kind === 'snapshot') return state;
+    if (command.kind === 'model-save') return models.configure(command);
+    if (command.kind === 'model-cancel')
+      return models.cancel(command.taskId, command.callId);
+    if (command.kind === 'model-test') return models.testConnection(command);
+    if (command.kind === 'message') return { state: await models.ask(command) };
     if (command.kind === 'quit') {
       if (!recordsAvailable || !workspace.canExit())
         throw new Error('UNSAVED_CHANGES');
+      await models.stopAll();
       await quit();
       return null;
     }
@@ -237,6 +309,7 @@ export async function startController(
         });
   });
   host.once('exit', () => {
+    models.disable();
     broker.dispose();
     workers.forEach((worker) => worker.kill());
     if (!quitting) {

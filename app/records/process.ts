@@ -31,13 +31,17 @@ function handle(input: unknown): void {
     const value =
       kind === 'snapshot'
         ? records.snapshot()
-        : kind === 'lookup'
-          ? records.lookupRequest(
+        : kind === 'model'
+          ? records.model(
               z.object({ command: z.unknown() }).parse(command).command,
             )
-          : kind === 'close'
-            ? null
-            : records.execute(command);
+          : kind === 'lookup'
+            ? records.lookupRequest(
+                z.object({ command: z.unknown() }).parse(command).command,
+              )
+            : kind === 'close'
+              ? null
+              : records.execute(command);
     send({ id, value });
     log.event('command');
     if (kind === 'close') {

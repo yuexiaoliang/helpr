@@ -13,7 +13,9 @@ import {
   Button,
 } from 'react-aria-components';
 import type { Task, UICommand } from '../shared/contracts';
-import { WorkspaceStore } from './store';
+import { WorkspaceStore, modelErrorLabel } from './store';
+import { ModelSettings } from './ModelSettings';
+import { activeModelCall } from '../shared/model';
 import styles from './Workspace.module.css';
 import plus from './assets/plus.svg';
 import close from './assets/x.svg';
@@ -21,13 +23,20 @@ import tasksIcon from './assets/squares-four.svg';
 import exit from './assets/sign-out.svg';
 import globe from './assets/globe.svg';
 
-const phaseLabel = (task: Task) =>
-  ({
+const phaseLabel = (task: Task) => {
+  const call = task.messages.at(-1)?.call;
+  if (call && activeModelCall(call)) return '正在理解';
+  if (call?.phase === 'complete') return '已回复';
+  if (call?.phase === 'cancelled') return '回复已停止';
+  if (call?.phase === 'error' || call?.phase === 'interrupted')
+    return '需要查看';
+  return {
     'no-page': '等待打开网页',
     loading: '正在打开',
     manual: '可手动操作',
     error: '需要查看',
-  })[task.phase];
+  }[task.phase];
+};
 function Icon({ src }: { src: string }) {
   return <img src={src} alt="" className={styles.icon} />;
 }
@@ -87,6 +96,12 @@ export function App({
           <Icon src={plus} />
         </button>
         <div className={styles.tools}>
+          <button
+            onClick={() => send({ kind: 'panel', panel: 'settings' })}
+            aria-label="模型设置"
+          >
+            ⚙<span>模型设置</span>
+          </button>
           <button
             onClick={() => send({ kind: 'panel', panel: 'tasks' })}
             aria-label="查看全部任务"
@@ -275,6 +290,9 @@ function AddressBar({ task, store }: { task: Task; store: WorkspaceStore }) {
 function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
   const view = useSyncExternalStore(store.subscribe, store.get);
   const [text, setText] = useState(task.draft);
+  const call = task.messages.findLast((message) => message.call)?.call;
+  const streaming = call && activeModelCall(call);
+  const configured = Boolean(view.state.modelSettings);
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
   const composing = useRef(false);
@@ -291,7 +309,8 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
       .catch(() => setFailed(true));
   };
   async function sendMessage() {
-    if (!text.trim() || busy || composing.current) return;
+    if (!text.trim() || busy || composing.current || streaming || !configured)
+      return;
     setBusy(true);
     const value = text;
     const id =
@@ -322,7 +341,13 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
         <span className={styles.avatar}>{task.goal.slice(0, 1)}</span>
         <div>
           <strong title={task.goal}>{task.goal}</strong>
-          <small>独立对话 · {phaseLabel(task)}</small>
+          <small>
+            {streaming
+              ? `本次：${call.model}${call.configurationVersion !== view.state.modelSettings?.version ? ' · 下次：' + view.state.modelSettings?.model : ''}`
+              : view.state.modelSettings
+                ? `${view.state.modelSettings.model} · 只读网页理解`
+                : '尚未配置模型'}
+          </small>
         </div>
         <button
           aria-label={task.minimized ? '展开对话' : '收起对话'}
@@ -351,13 +376,58 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
                     : styles.systemMessage
                 }
               >
-                {message.text}
+                {message.text ||
+                  (message.call && activeModelCall(message.call)
+                    ? '正在读取这项任务的页面…'
+                    : message.call?.phase === 'cancelled'
+                      ? '本次已停止，尚未生成内容。'
+                      : '')}
+                {message.call?.error && (
+                  <div className={styles.notice}>
+                    {modelErrorLabel(message.call.error)}
+                  </div>
+                )}
+                {message.call?.source && (
+                  <small className={styles.pageSource}>
+                    依据：{message.call.source.title || message.call.source.url}
+                    <br />
+                    {new Date(
+                      message.call.source.observedAt,
+                    ).toLocaleTimeString()}{' '}
+                    · {message.call.model}
+                    {message.call.source.truncated ? ' · 页面观察已截断' : ''}
+                    {message.call.pageChanged ||
+                    task.url !== message.call.source.url
+                      ? ' · 网页已变化或尚未重新核对，此回复依据先前页面'
+                      : ''}
+                    <br />
+                    {message.call.totalTokens !== null
+                      ? `用量：${message.call.inputTokens} 输入 / ${message.call.outputTokens} 输出`
+                      : message.call.dispatched
+                        ? '实际消耗未知'
+                        : '尚未发送到模型服务'}
+                  </small>
+                )}
               </div>
             ))}
           </div>
           {view.notice && (
             <div className={styles.notice} role="status">
               {view.notice}
+            </div>
+          )}
+          {!configured && (
+            <div className={styles.notice}>
+              先配置模型，再一起看看这个网页。
+              <button
+                onClick={() => {
+                  void store
+                    .perform({ kind: 'panel', panel: 'settings' })
+                    .catch(() => {});
+                }}
+              >
+                配置模型
+              </button>
             </div>
           )}
           <form
@@ -369,7 +439,9 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
           >
             <textarea
               aria-label="给这项任务的要求"
-              placeholder="给这项任务补充要求…"
+              placeholder={
+                configured ? '询问当前网页…' : '可以先写下问题，配置后再发送'
+              }
               value={text}
               maxLength={20000}
               onCompositionStart={() => {
@@ -405,12 +477,29 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
                   重试保存
                 </button>
               )}
-              <button
-                className={styles.primary}
-                disabled={busy || !text.trim()}
-              >
-                发送
-              </button>
+              {streaming ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    void store
+                      .perform({
+                        kind: 'model-cancel',
+                        taskId: task.id,
+                        callId: call.id,
+                      })
+                      .catch(() => {});
+                  }}
+                >
+                  停止回复
+                </button>
+              ) : (
+                <button
+                  className={styles.primary}
+                  disabled={busy || !text.trim() || !configured}
+                >
+                  发送
+                </button>
+              )}
             </div>
           </form>
         </>
@@ -490,11 +579,13 @@ function Panel({ store }: { store: WorkspaceStore }) {
       <Modal className={styles.modal}>
         <Dialog
           aria-label={
-            view.panel.panel === 'new'
-              ? '新建任务'
-              : view.panel.panel === 'tasks'
-                ? '全部任务'
-                : '退出 helpr'
+            view.panel.panel === 'settings'
+              ? '模型设置'
+              : view.panel.panel === 'new'
+                ? '新建任务'
+                : view.panel.panel === 'tasks'
+                  ? '全部任务'
+                  : '退出 helpr'
           }
         >
           <button
@@ -505,7 +596,9 @@ function Panel({ store }: { store: WorkspaceStore }) {
           >
             ×
           </button>
-          {view.panel.panel === 'new' ? (
+          {view.panel.panel === 'settings' ? (
+            <ModelSettings store={store} saved={view.state.modelSettings} />
+          ) : view.panel.panel === 'new' ? (
             <NewTask store={store} close={closePanel} />
           ) : view.panel.panel === 'tasks' ? (
             <>
