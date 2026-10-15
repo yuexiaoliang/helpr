@@ -1,0 +1,54 @@
+{
+  "recorded": "2026-10-15T06:31:10.138161+00:00",
+  "source": "explicit user reply after focus-candidate-13 validation",
+  "answer": "我一直在电脑上工作，不确定是否影响过 CUA",
+  "interpretation": "shared desktop was in use during the validation period; exact input timing and causal contribution unknown",
+  "affectedEvidence": [
+    "focus-red-33.json",
+    "focus-candidate-13.json"
+  ],
+  "historicalObservationsRetained": true,
+  "notInferred": [
+    "user caused any particular focus change",
+    "candidate is fixed",
+    "all prior failures invalid",
+    "Computer Use service is broken again"
+  ],
+  "backgroundReadOnlyPreparation": {
+    "candidate13MatchesAllManifestHashes": true,
+    "installedOrCandidateOwnedProcesses": 0,
+    "noApplicationStarted": true
+  },
+  "nextNativeValidation": {
+    "condition": "user explicitly provides a short interval without their mouse/keyboard input or app switching",
+    "durationMinutes": 3,
+    "build": 13,
+    "candidateStart": 35,
+    "newBuilds": 0,
+    "newInstallations": 0,
+    "maximumStarts": 1,
+    "maximumNecessaryCleanup": 1,
+    "cumulativeLimitsUnchanged": true,
+    "checks": [
+      "stable task selection then Down opens and focuses card",
+      "one controlled owned page completion",
+      "full AX focus observation plus actual Esc return and next Tab",
+      "own window native close button visibility observation",
+      "normal UI exit and independent observed-process cleanup"
+    ],
+    "stopOn": [
+      "user state change notification",
+      "missing precondition or unreported focus",
+      "native regression",
+      "system authorization or protected input",
+      "tool failure",
+      "3-minute deadline"
+    ],
+    "noCandidateInstallationInThisRound": true,
+    "foregroundAvailabilityConfirmed": false
+  },
+  "newModelCalls": 0,
+  "remoteBusinessWrites": 0,
+  "productSourceChangedThisTurn": false,
+  "overallProductAcceptance": false
+}
