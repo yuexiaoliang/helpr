@@ -791,14 +791,14 @@
     "limits": {
       "builds": 14,
       "installs": 10,
-      "starts": 37,
+      "starts": 40,
       "faults": 4,
       "cleanups": 13
     },
     "used": {
       "builds": 14,
       "installs": 8,
-      "starts": 37,
+      "starts": 38,
       "faults": 4,
       "cleanups": 12
     },
@@ -895,6 +895,10 @@
         "starts": "+1",
         "cleanups": "+1 necessary reserve",
         "reason": "用户继续，复用同一候选14；36按钮可见但3分钟中止使人工Dock未完成。新安排仅37一次、整轮8分钟，在窗口就绪且有完整3分钟反馈余量时立即交付连贯人工两步，等明确前台可用才运行；不构建安装、无模型/业务写入，失败或超时保存停止。"
+      },
+      {
+        "starts": "+3",
+        "reason": "用户明确按已提交安装核对方案推进并让出电脑；38候选焦点通过才安装9，39/40同安装首次和冷重开，整体20分钟；其余上限不变，模型及远程业务0。"
       }
     ]
   },
@@ -1649,11 +1653,11 @@
   "pendingCandidate14": {
     "build": 14,
     "installed": false,
-    "evidence": "window-controls-37.json",
+    "evidence": "focus-red-38.json",
     "nativeTrafficLightVisibilityPassed": true,
     "nativeRedCloseHideAndDockReturnPassed": true,
     "normalQuitPassed": true,
-    "latestWholeRoundPassed": true,
+    "latestWholeRoundPassed": false,
     "latestRoundAbortedAtDeadline": false,
     "allObservedProcessesEndedNormally": true,
     "priorFailedRound": {
@@ -1662,7 +1666,12 @@
       "cleanup": 12
     },
     "combinedInstalledFirstAndColdReopenPassed": false,
-    "overallProductAcceptance": false
+    "overallProductAcceptance": false,
+    "priorWindowControlsPassedEvidence": "window-controls-37.json",
+    "latestEvidence": "focus-red-38.json",
+    "nativeFocusCorrectionVerified": false,
+    "nativeFocusFailureStart": 38,
+    "installationBlockedByNativeFocusFailure": true
   },
   "windowControls37": {
     "evidence": "window-controls-37.json",
@@ -1671,5 +1680,14 @@
     "passed": true,
     "installed": false,
     "normalQuit": true
+  },
+  "focusRepair38": {
+    "evidence": "focus-red-38.json",
+    "build": 14,
+    "start": 38,
+    "nativePathPassed": false,
+    "normalQuit": true,
+    "installed": false,
+    "batchStopped": true
   }
 }

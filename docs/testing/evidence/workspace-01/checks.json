@@ -102,7 +102,7 @@
     "oldNativeFailureConfirmed": true,
     "candidate12NativeFailureConfirmed": true,
     "packagedGreenVerified": true,
-    "blocker": "candidate13 controlled focus path passed in35; candidate14 native window controls separately passed in37; combined installed first/normal-cold-reopen pending",
+    "blocker": "candidate14 start38 failed required native path: after owned A response release card absent and focus on A tab; not installed, batch stopped; candidate13 start35 limited pass retained",
     "evidence": "focus-green-35.json",
     "priorEvidence": [
       "focus-repair.json",
@@ -111,7 +111,10 @@
       "focus-candidate-13.json"
     ],
     "foregroundConditions": "foreground-conditions.json",
-    "packagedGreenScope": "candidate13 start35: one gated A page completion retains card focus in full AX, Esc returns A, next Tab reaches A close"
+    "packagedGreenScope": "candidate13 start35: one gated A page completion retains card focus in full AX, Esc returns A, next Tab reaches A close",
+    "currentCandidateBuild": 14,
+    "currentCandidateNativePathPassed": false,
+    "latestEvidence": "focus-red-38.json"
   },
   "pendingWindowControls": {
     "candidateBuild": 14,
@@ -123,6 +126,6 @@
     "wholeRoundPassed": true,
     "evidence": "window-controls-37.json",
     "priorFailedEvidence": "window-controls-36.json",
-    "blocker": "candidate remains uninstalled; installed first/normal-cold-reopen and combined focus behavior pending; not full issue01 acceptance"
+    "blocker": "candidate14 window controls passed in37; pre-install focus failed in38, so no installation or installed first/cold reopen; batch stopped"
   }
 }

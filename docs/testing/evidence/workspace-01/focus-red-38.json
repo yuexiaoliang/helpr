@@ -1,0 +1,116 @@
+{
+  "recorded": "2026-10-15T07:51:25.232133+00:00",
+  "scope": "candidate14 start38 pre-install native focus check failed; records recovery and normal UI quit passed separately; installation39/40 not run",
+  "build": 14,
+  "start": 38,
+  "installed": false,
+  "archiveSHA256": "1183c995157ef00c10fcc6ce892b30b4badcc64aed818d4d456ec8b7a9c30c2d",
+  "foregroundInterval": {
+    "userGrant": "按方案推进，现在可以让出电脑",
+    "start": "2026-10-15T07:47:28.750Z",
+    "end": "2026-10-15T07:49:16.062Z",
+    "elapsedSeconds": 107.312,
+    "phaseLimitSeconds": 240,
+    "totalLimitSeconds": 1200,
+    "deadlineExpired": false,
+    "userToldDesktopAvailableAfterExit": true
+  },
+  "originalRecordsBaselineMatched": true,
+  "nativeFocus": {
+    "activeWindowScreenshotShowsRedYellowGreen": true,
+    "stableATabSelectedBeforeDown": true,
+    "fullAXBeforeRelease": "focused task card container",
+    "ownedAResponseReleased": true,
+    "releasedResponseCount": 1,
+    "fullAXAfterRelease": "task card absent; focused task A tab",
+    "error": "CANDIDATE38_CARD_FOCUS_LOST",
+    "nativePathPassed": false,
+    "escapeAndTabAfterReceiptRun": false,
+    "scope": "after-release observation establishes a failed required path; exact closing trigger and timing versus page completion not captured",
+    "userStateChangeRejectionObserved": false,
+    "notEquivalentToOldWebsiteFocusFailure": true
+  },
+  "ownedGate": {
+    "scope": "owned local focus completion gate; not authentication",
+    "receipts": [
+      {
+        "kind": "waiting",
+        "task": "A",
+        "at": "2026-10-15T07:47:31.585Z"
+      },
+      {
+        "kind": "waiting",
+        "task": "B",
+        "at": "2026-10-15T07:47:31.587Z"
+      },
+      {
+        "kind": "completed",
+        "task": "A",
+        "at": "2026-10-15T07:48:22.757Z"
+      },
+      {
+        "kind": "release",
+        "task": "A",
+        "count": 1,
+        "at": "2026-10-15T07:48:22.757Z"
+      }
+    ]
+  },
+  "normalQuit": {
+    "actualUIConfirmation": true,
+    "code": 0,
+    "signal": null,
+    "observedProcessCount": 15,
+    "remainingObservedProcessCount": 0,
+    "nativeExitCode": 0,
+    "nativeExitSignal": 0
+  },
+  "harness": {
+    "recordsRecoveryAndNormalQuitPassed": true,
+    "phaseWrapperCode": 0,
+    "phaseWrapperHarnessCode": 0,
+    "scope": "wrapper/harness cover recovery, elapsed bounds and normal exit; native focus is separate and failed; neither permits install without nativeFocusPassed"
+  },
+  "wholeNativeRoundPassed": false,
+  "installationBlockedByFailedNativePrerequisite": true,
+  "candidateNativeResultFilePassed": false,
+  "newBuilds": 0,
+  "newInstallations": 0,
+  "newFaultInjection": 0,
+  "cleanupConsumed": 0,
+  "starts39And40Run": false,
+  "extraStartsAfter38": 0,
+  "currentInstalledBuild": 11,
+  "installation": 8,
+  "installedAllManifestHashesUnchanged": true,
+  "installedArchiveSHA256": "c106f18d35307e96a7dcef711e8d7596fc4874f83afd3cd84ab4727e22625dce",
+  "diagnosticServerEnded": true,
+  "remainingOwnedCandidateOrInstalledProcesses": 0,
+  "sourceChangeThisRound": false,
+  "newModelCalls": 0,
+  "remoteBusinessWrites": 0,
+  "budget": {
+    "used": {
+      "builds": 14,
+      "installs": 8,
+      "starts": 38,
+      "faults": 4,
+      "cleanups": 12
+    },
+    "limits": {
+      "builds": 14,
+      "installs": 10,
+      "starts": 40,
+      "faults": 4,
+      "cleanups": 13
+    }
+  },
+  "priorEvidencePreserved": [
+    "focus-green-35.json",
+    "window-controls-36.json",
+    "window-controls-37.json"
+  ],
+  "batchStopped": true,
+  "overallProductAcceptance": false,
+  "nextStep": "read-only comparison of hover and keyboard panel closing; precise event cause requires new bounded diagnostic batch, no repeated candidate attempt in this batch"
+}
