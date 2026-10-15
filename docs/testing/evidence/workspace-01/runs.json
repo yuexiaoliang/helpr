@@ -329,6 +329,264 @@
       "passed": false,
       "error": "VALIDATION_TIMEOUT",
       "ms": 601268
+    },
+    {
+      "batch": "run-1792026568504",
+      "started": "2026-10-15T01:09:28.512Z",
+      "checks": [
+        {
+          "name": "两个真实页面都到达独立网站，网页没有 Node 或宿主对话桥",
+          "passed": true
+        },
+        {
+          "name": "受管工作者仅取得自己的页面",
+          "passed": true
+        },
+        {
+          "name": "TASK_NOT_OWNED",
+          "passed": true
+        },
+        {
+          "name": "OBSERVATION_NOT_AUTHORIZED",
+          "passed": true
+        },
+        {
+          "name": "OBSERVATION_CAPABILITY_DENIED",
+          "passed": true
+        },
+        {
+          "name": "OBSERVATION_CAPABILITY_DENIED",
+          "passed": true
+        }
+      ],
+      "samples": [
+        {
+          "kind": "startup",
+          "ms": 1801,
+          "versions": {
+            "electron": "44.7.2",
+            "node": "24.21.0",
+            "chrome": "152.0.7977.149"
+          }
+        }
+      ],
+      "passed": false,
+      "error": "VALIDATION_TIMEOUT",
+      "ms": 608422
+    },
+    {
+      "batch": "run-1792027386384",
+      "started": "2026-10-15T01:23:06.388Z",
+      "checks": [
+        {
+          "name": "两个真实页面都到达独立网站，网页没有 Node 或宿主对话桥",
+          "passed": true
+        },
+        {
+          "name": "受管工作者仅取得自己的页面",
+          "passed": true
+        },
+        {
+          "name": "TASK_NOT_OWNED",
+          "passed": true
+        },
+        {
+          "name": "OBSERVATION_NOT_AUTHORIZED",
+          "passed": true
+        },
+        {
+          "name": "OBSERVATION_CAPABILITY_DENIED",
+          "passed": true
+        },
+        {
+          "name": "OBSERVATION_CAPABILITY_DENIED",
+          "passed": true
+        },
+        {
+          "name": "私有 pipe 开启且没有调试端口，系统 Cookie 加密可用",
+          "passed": true
+        },
+        {
+          "name": "独立客户端检查自有进程没有 TCP 控制监听",
+          "passed": true
+        },
+        {
+          "name": "正常退出后独立核对所有已见自有进程结束",
+          "passed": true
+        },
+        {
+          "name": "实际 Cookie 文件没有明文会话，持久 Cookie 使用加密字段",
+          "passed": true
+        },
+        {
+          "name": "冷重开保留两项身份、独立对话、草稿与当前标签",
+          "passed": true
+        },
+        {
+          "name": "冷重开后网站独立核对原虚构会话仍有效",
+          "passed": true
+        },
+        {
+          "name": "控制拥有者意外退出后，自有网页和记录进程实际结束",
+          "passed": true
+        },
+        {
+          "name": "意外退出后仍保留原任务和对话",
+          "passed": true
+        }
+      ],
+      "samples": [
+        {
+          "kind": "startup",
+          "ms": 1632,
+          "versions": {
+            "electron": "44.7.2",
+            "node": "24.21.0",
+            "chrome": "152.0.7977.149"
+          }
+        },
+        {
+          "kind": "two-pages",
+          "metrics": [
+            {
+              "pid": 18777,
+              "type": "Browser",
+              "memory": 171312
+            },
+            {
+              "pid": 18782,
+              "type": "GPU",
+              "memory": 87872
+            },
+            {
+              "pid": 18783,
+              "type": "Utility",
+              "memory": 42784
+            },
+            {
+              "pid": 18784,
+              "type": "Tab",
+              "memory": 99712
+            },
+            {
+              "pid": 18785,
+              "type": "Tab",
+              "memory": 82320
+            },
+            {
+              "pid": 18786,
+              "type": "Tab",
+              "memory": 85920
+            },
+            {
+              "pid": 18789,
+              "type": "Tab",
+              "memory": 87312
+            },
+            {
+              "pid": 18788,
+              "type": "Tab",
+              "memory": 94912
+            },
+            {
+              "pid": 18791,
+              "type": "Tab",
+              "memory": 73888
+            },
+            {
+              "pid": 18790,
+              "type": "Tab",
+              "memory": 91856
+            }
+          ]
+        },
+        {
+          "kind": "startup",
+          "ms": 956,
+          "versions": {
+            "electron": "44.7.2",
+            "node": "24.21.0",
+            "chrome": "152.0.7977.149"
+          }
+        },
+        {
+          "kind": "startup",
+          "ms": 928,
+          "versions": {
+            "electron": "44.7.2",
+            "node": "24.21.0",
+            "chrome": "152.0.7977.149"
+          }
+        }
+      ],
+      "fixture": [
+        {
+          "kind": "page",
+          "task": "A",
+          "authenticated": false
+        },
+        {
+          "kind": "page",
+          "task": "B",
+          "authenticated": false
+        },
+        {
+          "kind": "probe",
+          "task": "A",
+          "node": "undefined",
+          "require": "undefined",
+          "bridge": "undefined"
+        },
+        {
+          "kind": "probe",
+          "task": "B",
+          "node": "undefined",
+          "require": "undefined",
+          "bridge": "undefined"
+        },
+        {
+          "kind": "login",
+          "task": "A"
+        },
+        {
+          "kind": "page",
+          "task": "A",
+          "authenticated": true
+        },
+        {
+          "kind": "probe",
+          "task": "A",
+          "node": "undefined",
+          "require": "undefined",
+          "bridge": "undefined"
+        },
+        {
+          "kind": "page",
+          "task": "B",
+          "authenticated": true
+        },
+        {
+          "kind": "page",
+          "task": "A",
+          "authenticated": true
+        },
+        {
+          "kind": "probe",
+          "task": "A",
+          "node": "undefined",
+          "require": "undefined",
+          "bridge": "undefined"
+        },
+        {
+          "kind": "probe",
+          "task": "B",
+          "node": "undefined",
+          "require": "undefined",
+          "bridge": "undefined"
+        }
+      ],
+      "passed": true,
+      "ms": 38510
     }
   ],
   "startupDenials": {
@@ -356,16 +614,16 @@
     "limits": {
       "builds": 6,
       "installs": 3,
-      "starts": 14,
+      "starts": 15,
       "faults": 3,
-      "cleanups": 7
+      "cleanups": 8
     },
     "used": {
       "builds": 6,
       "installs": 3,
-      "starts": 12,
-      "faults": 2,
-      "cleanups": 6
+      "starts": 15,
+      "faults": 3,
+      "cleanups": 7
     },
     "modelCalls": 0,
     "remoteWrites": 0,
@@ -396,6 +654,11 @@
         "starts": "+1",
         "cleanups": "+1",
         "reason": "用户确认已授权现有build6；保留超时11，以同一安装完成原定首次、冷重开和故障恢复，不重复替换；再次授权阻塞则停止"
+      },
+      {
+        "starts": "+1",
+        "cleanups": "+1",
+        "reason": "用户要求CUA自测；原人工等待超时保留，当前同包三次自动核对内短暂尝试CUA，不再跨回合等待；不构建安装"
       }
     ]
   },
@@ -480,5 +743,46 @@
     "date": "2026-10-15T01:09:11.935Z",
     "remainingOwnProcesses": [],
     "allOwnInstalledProcessesAbsent": true
+  },
+  "cleanup7": {
+    "recorded": "2026-10-15T01:22:47.236Z",
+    "allOwnInstalledProcessesAbsent": true,
+    "remaining": []
+  },
+  "humanVisibility": {
+    "recorded": "2026-10-15T01:16:57.178Z",
+    "source": "explicit user report",
+    "question": "task A website, fixture login link, web input, and independent bottom-right chat visible",
+    "answer": "都可以看到",
+    "websiteAndChatVisible": true,
+    "windowCaptureNotFullWindowEvidence": true,
+    "manualLoginAndChineseInput": "pending"
+  },
+  "cuaAttempt": {
+    "recorded": "2026-10-15T01:23:41.544Z",
+    "target": "/Users/yuexiaoliang/Applications/helpr.app",
+    "operation": "cua.getApp",
+    "result": "Computer Use server error -10005: timeoutReached",
+    "bindingAvailable": false,
+    "clicksPerformed": 0,
+    "inputsPerformed": 0,
+    "manualLoginOrImePassed": false
+  },
+  "finalCandidate": {
+    "build": 6,
+    "installation": 3,
+    "archiveSHA256": "c6c967193fd7e47f8fbf10b8d10b32f3f85be26e8aa2b0d34ca1ad424811747b",
+    "allOwnInstalledProcessesAbsent": true,
+    "automatedRoundPassed": true,
+    "automatedStarts": [
+      13,
+      14,
+      15
+    ],
+    "blockedHostFault": 3,
+    "manualLogin": false,
+    "nativeIme": false,
+    "cuaInput": false,
+    "overallProductAcceptance": false
   }
 }
