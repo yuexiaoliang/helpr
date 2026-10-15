@@ -186,7 +186,7 @@ function bindPage(task: Task): void {
   const remote = session.fromPartition('persist:helpr-web');
   const local = session.fromPartition('helpr-ui');
   const view = new WebContentsView({
-    webPreferences: { ...prefs, session: remote },
+    webPreferences: { ...prefs, session: remote, focusOnNavigation: false },
   });
   const chat = new WebContentsView({
     webPreferences: { ...prefs, session: local, preload },

@@ -1,0 +1,75 @@
+{
+  "scope": "candidate12 start33 focus regression after user restarted Computer Use; no install",
+  "toolRecovery": {
+    "userReported": "重启好了",
+    "finderBinding": true,
+    "finderKeyboardOpenedWindow": true,
+    "finderCloseAfterFreshState": true,
+    "firstCloseRejectedBecauseUserChangedState": true,
+    "desktopScreenshot": "all white; not meaningful image verification",
+    "personalFinderContentsSavedToRepository": false
+  },
+  "build": 12,
+  "start": 33,
+  "archiveSHA256": "6c8fa206c5a227d85316200dc6c4611184dfbbab2b7d9caf94ce60583da23bc9",
+  "baselineMatched": true,
+  "nativeFocus": {
+    "build": 12,
+    "start": 33,
+    "beforePageRelease": "task card container",
+    "afterPageReceipt": "website HTML content",
+    "error": "CARD_FOCUS_LOST_ON_PAGE_RECEIPT",
+    "passed": false,
+    "source": "actual CUA AX and independently controlled owned HTTP completion",
+    "nativeCloseButtonScreenshot": "not visibly present at upper left; AX button exists; no location correction applied",
+    "candidateInstalled": false,
+    "subsequentTrials": "not attempted after failure"
+  },
+  "ownedGate": {
+    "scope": "owned local focus completion gate; not authentication",
+    "receipts": [
+      {
+        "kind": "waiting",
+        "task": "A",
+        "at": "2026-10-15T06:09:55.767Z"
+      },
+      {
+        "kind": "waiting",
+        "task": "B",
+        "at": "2026-10-15T06:09:55.769Z"
+      },
+      {
+        "kind": "completed",
+        "task": "A",
+        "at": "2026-10-15T06:11:07.615Z"
+      },
+      {
+        "kind": "release",
+        "task": "A",
+        "count": 1,
+        "at": "2026-10-15T06:11:07.615Z"
+      }
+    ]
+  },
+  "normalQuit": {
+    "code": 0,
+    "signal": null,
+    "observedProcessCount": 15,
+    "remainingObservedProcessCount": 0,
+    "recoveryHarnessPassed": true,
+    "focusRegressionPassed": false
+  },
+  "diagnosticServerEnded": true,
+  "installed": false,
+  "currentInstalledBuild": 11,
+  "newModelCalls": 0,
+  "remoteBusinessWrites": 0,
+  "overallProductAcceptance": false,
+  "newMechanism": {
+    "source": "https://github.com/electron/electron/blob/v44.7.2/shell/browser/api/electron_api_web_contents.cc#L2351",
+    "officialDocumentation": "https://www.electronjs.org/docs/latest/api/structures/web-preferences",
+    "localTypesConfirmDefault": true,
+    "finding": "focusOnNavigation defaults true; ReadyToCommitNavigation calls SetInitialFocus unless disabled",
+    "status": "source-backed hypothesis; requires candidate13 native green"
+  }
+}

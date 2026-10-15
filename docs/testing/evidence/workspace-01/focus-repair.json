@@ -143,8 +143,8 @@
       "at": "2026-10-15T04:18:45.850Z"
     },
     "focusGreenVerified": false,
-    "windowGeometry": "not acquired; no CUA window binding or inspect result",
-    "normalQuit": "not passed; explicit abort and cleanup10",
+    "windowGeometry": "not acquired in start31; subsequently read in start32, see cua-timeout-32.json",
+    "normalQuit": "passed start33; starts31/32 aborted remain failed",
     "diagnosticPageRequests": [],
     "start32Resume": {
       "evidence": "cua-timeout-32.json",
@@ -154,6 +154,13 @@
       "normalQuitPassed": false,
       "error": "CUA_UI_ROUND_ABORTED",
       "cleaned": true
+    },
+    "start33NativeFailure": {
+      "evidence": "focus-red-33.json",
+      "nativeCuaBinding": true,
+      "focusGreenVerified": false,
+      "normalQuitPassed": true,
+      "installed": false
     }
   },
   "currentInstalledBuild": 11,
@@ -177,8 +184,14 @@
     "at": "2026-10-15T05:37:16.628Z"
   },
   "currentToolBlocker": {
-    "evidence": "cua-timeout-32.json",
-    "finderAlsoTimedOutAfterJsReset": true,
-    "exactCauseUnproven": true
+    "historicalEvidence": "cua-timeout-32.json",
+    "status": "user restarted service; Finder and candidate12 CUA binding/actions worked at start33; not proof of exact prior root cause"
+  },
+  "candidate13": {
+    "build": 13,
+    "installed": false,
+    "evidence": "focus-candidate-13.json",
+    "nativeGreenVerified": false,
+    "status": "normal exit0; first gated Esc and Tab passed, immediate AX focus unreported; second card disappeared with user-state interference unresolved"
   }
 }

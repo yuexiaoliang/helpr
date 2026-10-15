@@ -256,6 +256,36 @@
         "version": "1"
       },
       "prepared": true
+    },
+    {
+      "build": 13,
+      "started": "2026-10-15T06:15:20.638Z",
+      "toolchain": {
+        "node": "v24.18.0",
+        "pnpm": "11.7.0"
+      },
+      "appId": "local.helpr.desktop",
+      "signature": "ad-hoc, current Mac self-use only",
+      "hashes": {
+        "Contents/MacOS/helpr": "5836de7db69130b138bcd50489f016abfde24aa77eb1a3b348d62f12c094b027",
+        "Contents/Resources/app.asar": "bd9ff23fb1045961c2d5c81f932541a9f9f8070bc185ac908f116b8b242ab664",
+        "Contents/Resources/watch-owner": "34cf9f047e9d67809f4fa19360fe74748e36aa07cbdf3b3348b51084bc80a1bf",
+        "Contents/Frameworks/helpr Workspace.app/Contents/MacOS/helpr Workspace Helper": "f4d899c290f650dd7ef71b099a790fb093a3512d6c3c2a8f400436afa89a1a7e",
+        "Contents/Frameworks/helpr Workspace.app/Contents/Info.plist": "56156e0af8816858a3b28b1ce09650538e24509931830cb1a2f65c013d940d98"
+      },
+      "fuses": {
+        "0": 48,
+        "1": 49,
+        "2": 48,
+        "3": 48,
+        "4": 49,
+        "5": 49,
+        "6": 48,
+        "7": 48,
+        "8": 49,
+        "version": "1"
+      },
+      "prepared": true
     }
   ],
   "runs": [
@@ -729,16 +759,16 @@
   },
   "budget": {
     "limits": {
-      "builds": 12,
+      "builds": 13,
       "installs": 10,
-      "starts": 34,
+      "starts": 36,
       "faults": 4,
-      "cleanups": 11
+      "cleanups": 12
     },
     "used": {
-      "builds": 12,
+      "builds": 13,
       "installs": 8,
-      "starts": 32,
+      "starts": 34,
       "faults": 4,
       "cleanups": 11
     },
@@ -816,6 +846,16 @@
         "starts": "+1 to allow candidate plus installed first/cold reopen",
         "cleanups": "+1 bounded reserve",
         "reason": "用户确认所见项目为helpr/helpr safe storage，现场预检恢复；复用build12至多启动32/33/34，候选通过才安装，允许就绪现场单次人工授权等待10分钟，整批30分钟，授权后仍受阻或焦点失败则保存停止；不构建、不调用模型或远程业务"
+      },
+      {
+        "starts": "+1; preserve starts33/34 for candidate and installed first, reserve35 for normal cold reopen",
+        "cleanups": "+1 bounded reserve",
+        "reason": "用户重启Computer Use后，Finder实际窗口/快捷键/关闭已响应；同一build12候选33门控焦点复验，通过才安装9并启动34/35；不构建，保留原失败与计数，30分钟，系统授权最多等待10分钟；任一修后焦点/工具/退出失败即停止，不改系统权限或信任。"
+      },
+      {
+        "builds": "+1",
+        "starts": "+1",
+        "reason": "候选12/33在实际门控仍失败且已正常退出，原批结束；新核对同版官方ReadyToCommitNavigation明确focusOnNavigation默认true并SetInitialFocus，单独关闭真实网页此设置，build13及34候选绿例后才35/36安装复验；不再重做候选12，不额外清理、故障、模型或业务写入。"
       }
     ]
   },
@@ -1522,8 +1562,9 @@
     },
     "deepStrictSignatureVerified": true,
     "evidence": "focus-repair.json",
-    "cuaWindowBinding": "start31 timeout then protected input; start32 tool timeout with preflight clear, Finder control also timed out; see cua-timeout-32.json",
-    "focusCorrectionVerified": false
+    "cuaWindowBinding": "passed start33 after user restarted service; prior31/32 failures retained",
+    "focusCorrectionVerified": false,
+    "status": "rejected after actual native focus failure start33; retained in ignored diagnostic folder"
   },
   "focusRepair30_31": {
     "evidence": "focus-repair.json",
@@ -1533,6 +1574,20 @@
     "evidence": "cua-timeout-32.json",
     "greenVerified": false,
     "installed": false,
+    "batchStopped": true
+  },
+  "focusRepair33": {
+    "evidence": "focus-red-33.json",
+    "greenVerified": false,
+    "normalQuit": true,
+    "installed": false
+  },
+  "pendingCandidate13": {
+    "build": 13,
+    "installed": false,
+    "evidence": "focus-candidate-13.json",
+    "cuaWindowBinding": true,
+    "focusCorrectionVerified": false,
     "batchStopped": true
   }
 }

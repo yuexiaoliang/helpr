@@ -1,0 +1,144 @@
+{
+  "recorded": "2026-10-15T06:23:32.475398+00:00",
+  "scope": "issue01 single-variable navigation focus candidate; actual native green unverified",
+  "build": 13,
+  "start": 34,
+  "installed": false,
+  "archiveSHA256": "bd9ff23fb1045961c2d5c81f932541a9f9f8070bc185ac908f116b8b242ab664",
+  "sourceChange": "only remote WebContentsView creation sets focusOnNavigation:false",
+  "sourceChecks": {
+    "pnpmCheckPassed": true,
+    "testFiles": 5,
+    "tests": 12,
+    "syntaxFiles": 187,
+    "typecheck": true,
+    "lint": true,
+    "format": true,
+    "newRealModelCalls": 0,
+    "legacyEvidenceReadOnly": true
+  },
+  "sourceReview": {
+    "fixedPoint": "d4ff07d",
+    "standardsOpen": 0,
+    "specOpen": 0,
+    "actualNativeEvidenceSeparate": true
+  },
+  "package": {
+    "prepared": true,
+    "hashes": {
+      "Contents/MacOS/helpr": "5836de7db69130b138bcd50489f016abfde24aa77eb1a3b348d62f12c094b027",
+      "Contents/Resources/app.asar": "bd9ff23fb1045961c2d5c81f932541a9f9f8070bc185ac908f116b8b242ab664",
+      "Contents/Resources/watch-owner": "34cf9f047e9d67809f4fa19360fe74748e36aa07cbdf3b3348b51084bc80a1bf",
+      "Contents/Frameworks/helpr Workspace.app/Contents/MacOS/helpr Workspace Helper": "f4d899c290f650dd7ef71b099a790fb093a3512d6c3c2a8f400436afa89a1a7e",
+      "Contents/Frameworks/helpr Workspace.app/Contents/Info.plist": "56156e0af8816858a3b28b1ce09650538e24509931830cb1a2f65c013d940d98"
+    },
+    "completeInternalLayoutValidation": true,
+    "deepStrictSignatureVerified": true
+  },
+  "nativeFocus": {
+    "build": 13,
+    "start": 34,
+    "sourceChange": "remote WebContentsView focusOnNavigation:false",
+    "firstImmediateOpen": "card absent; no release; precondition not met",
+    "stableOpen": "CUA explicitly reported focused task card",
+    "firstCompletion": {
+      "postFullAxFocus": "not reported",
+      "initialRegexVerdict": "raised on absent focus line; not proof of product regression",
+      "escapeClosesCardAndReturnsToOriginalATab": true,
+      "nextTabIsACloseButton": true
+    },
+    "secondCompletion": {
+      "before": "focused task card",
+      "post": "card absent; no focus reported",
+      "inconclusive": true
+    },
+    "userStateInterference": "CUA user-changed-state action rejection during second setup; human clarification pending",
+    "keyboardDeliveryScope": "first completion Esc and next Tab passed; strict immediate focus retention not proven",
+    "normalExit": "actual UI confirmation exit0",
+    "passed": false,
+    "verdict": "native green not established; candidate not installed",
+    "extraCandidateRetries": 0
+  },
+  "ownedGate": {
+    "scope": "owned local focus completion gate; not authentication",
+    "receipts": [
+      {
+        "kind": "waiting",
+        "task": "A",
+        "at": "2026-10-15T06:16:59.922Z"
+      },
+      {
+        "kind": "waiting",
+        "task": "B",
+        "at": "2026-10-15T06:16:59.958Z"
+      },
+      {
+        "kind": "completed",
+        "task": "A",
+        "at": "2026-10-15T06:18:07.632Z"
+      },
+      {
+        "kind": "release",
+        "task": "A",
+        "count": 1,
+        "at": "2026-10-15T06:18:07.632Z"
+      },
+      {
+        "kind": "hold",
+        "at": "2026-10-15T06:19:35.070Z"
+      },
+      {
+        "kind": "waiting",
+        "task": "A",
+        "at": "2026-10-15T06:19:42.838Z"
+      },
+      {
+        "kind": "completed",
+        "task": "A",
+        "at": "2026-10-15T06:20:26.707Z"
+      },
+      {
+        "kind": "release",
+        "task": "A",
+        "count": 1,
+        "at": "2026-10-15T06:20:26.707Z"
+      }
+    ]
+  },
+  "normalQuit": {
+    "code": 0,
+    "signal": null,
+    "observedProcessCount": 15,
+    "remainingObservedProcessCount": 0,
+    "recoveryHarnessPassed": true,
+    "focusRegressionPassed": false
+  },
+  "focusGreenVerified": false,
+  "normalColdReopenPassed": false,
+  "candidate12RetainedInIgnoredDiagnosticFolder": true,
+  "batchStopped": true,
+  "starts35And36NotAttempted": true,
+  "installation9NotAttempted": true,
+  "currentInstalledBuild": 11,
+  "installation": 8,
+  "diagnosticServerEnded": true,
+  "newModelCalls": 0,
+  "remoteBusinessWrites": 0,
+  "overallProductAcceptance": false,
+  "budget": {
+    "used": {
+      "builds": 13,
+      "installs": 8,
+      "starts": 34,
+      "faults": 4,
+      "cleanups": 11
+    },
+    "limits": {
+      "builds": 13,
+      "installs": 10,
+      "starts": 36,
+      "faults": 4,
+      "cleanups": 12
+    }
+  }
+}
