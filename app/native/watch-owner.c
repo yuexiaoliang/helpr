@@ -50,14 +50,18 @@ int main(int argc, char **argv) {
         _exit(1);
     }
     if (dprintf(6, "%d\n", child) < 0) stopping = 1;
-    close(3); close(4); close(5); close(6);
+    close(3); close(4); close(5);
     const struct timespec pause = { .tv_sec = 0, .tv_nsec = 100000000 };
     for (;;) {
+        int status = 0;
+        const int child_exited = waitpid(child, &status, WNOHANG) == child;
+        if (child_exited)
+            dprintf(6, "exit:%d:%d\n", WIFEXITED(status) ? WEXITSTATUS(status) : -1, WIFSIGNALED(status) ? WTERMSIG(status) : 0);
         if (stopping || getppid() != owner_pid ||
             !info(owner_pid, &current) || current.pbi_uid != owner.pbi_uid ||
             current.pbi_start_tvsec != owner.pbi_start_tvsec ||
             current.pbi_start_tvusec != owner.pbi_start_tvusec ||
-            waitpid(child, NULL, WNOHANG) == child) {
+            child_exited) {
             kill(-group, SIGKILL);
             return 0;
         }

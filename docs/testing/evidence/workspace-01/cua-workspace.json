@@ -1,0 +1,226 @@
+{
+  "recorded": "2026-10-15T03:35:21.172Z",
+  "build": 11,
+  "installation": 8,
+  "source": "CUA native app AX, screenshots, keyboard/click/paste; actual record snapshots and independent local website receipts",
+  "batches": [
+    {
+      "batch": "ui-1792034462707",
+      "started": "2026-10-15T03:21:02.707Z",
+      "build": 11,
+      "scope": "candidate empty workspace CUA smoke; not full UI acceptance",
+      "attemptedStarts": [
+        {
+          "start": 25,
+          "at": "2026-10-15T03:21:02.711Z"
+        }
+      ],
+      "readyStarts": [
+        {
+          "start": 25,
+          "versions": {
+            "electron": "44.7.2",
+            "node": "24.21.0",
+            "chrome": "152.0.7977.149"
+          }
+        }
+      ],
+      "exits": [
+        {
+          "code": 0,
+          "signal": null,
+          "observedProcessCount": 11
+        }
+      ],
+      "startupFailures": [],
+      "nativeExits": [
+        {
+          "exitCode": 0,
+          "signal": 0
+        }
+      ],
+      "checks": [
+        {
+          "name": "候选空工作区经真实 UI 正常退出，全部已见自有进程结束；不抵算完整 UI 验收",
+          "passed": true
+        }
+      ],
+      "website": [],
+      "passed": true,
+      "remainingObservedPids": 0
+    },
+    {
+      "batch": "ui-1792034582175",
+      "started": "2026-10-15T03:23:02.182Z",
+      "build": 11,
+      "scope": "CUA workspace interaction",
+      "attemptedStarts": [
+        {
+          "start": 26,
+          "at": "2026-10-15T03:23:02.183Z"
+        }
+      ],
+      "readyStarts": [
+        {
+          "start": 26,
+          "versions": {
+            "electron": "44.7.2",
+            "node": "24.21.0",
+            "chrome": "152.0.7977.149"
+          }
+        }
+      ],
+      "exits": [
+        {
+          "code": null,
+          "signal": "SIGKILL",
+          "observedProcessCount": 15
+        }
+      ],
+      "startupFailures": [],
+      "nativeExits": [],
+      "checks": [],
+      "website": [
+        {
+          "kind": "page",
+          "task": "A",
+          "authenticated": false
+        },
+        {
+          "kind": "probe",
+          "task": "A",
+          "node": "undefined",
+          "require": "undefined",
+          "bridge": "undefined"
+        },
+        {
+          "kind": "login",
+          "task": "A"
+        },
+        {
+          "kind": "page",
+          "task": "A",
+          "authenticated": true
+        },
+        {
+          "kind": "probe",
+          "task": "A",
+          "node": "undefined",
+          "require": "undefined",
+          "bridge": "undefined"
+        },
+        {
+          "kind": "page",
+          "task": "B",
+          "authenticated": true
+        },
+        {
+          "kind": "probe",
+          "task": "B",
+          "node": "undefined",
+          "require": "undefined",
+          "bridge": "undefined"
+        }
+      ],
+      "passed": false,
+      "error": "APPLICATION_EXITING",
+      "remainingObservedPids": 0
+    },
+    {
+      "batch": "ui-1792035051169",
+      "started": "2026-10-15T03:30:51.169Z",
+      "build": 11,
+      "scope": "saved records recovery after harness interruption; no website session claim",
+      "attemptedStarts": [
+        {
+          "start": 27,
+          "at": "2026-10-15T03:30:51.171Z"
+        }
+      ],
+      "readyStarts": [
+        {
+          "start": 27,
+          "versions": {
+            "electron": "44.7.2",
+            "node": "24.21.0",
+            "chrome": "152.0.7977.149"
+          }
+        }
+      ],
+      "exits": [
+        {
+          "code": 0,
+          "signal": null,
+          "observedProcessCount": 14
+        }
+      ],
+      "startupFailures": [],
+      "nativeExits": [
+        {
+          "exitCode": 0,
+          "signal": 0
+        }
+      ],
+      "checks": [
+        {
+          "name": "上轮 CUA 创建的原任务、对话、草稿、标签在脚本清理后恢复；不抵算正常冷重开或网站会话",
+          "passed": true
+        },
+        {
+          "name": "恢复轮经真实 UI 正常退出，已见自有进程全部结束",
+          "passed": true
+        }
+      ],
+      "website": [],
+      "passed": true,
+      "remainingObservedPids": 0
+    }
+  ],
+  "observations": {
+    "candidate25": {
+      "windowReadAndDrawn": true,
+      "emptyWorkspace": true,
+      "uiQuitConfirmed": true
+    },
+    "installed26": {
+      "goalOnlyCreation": 2,
+      "realWebpages": 2,
+      "cuaClickedFakeLoginA": true,
+      "websiteConfirmedFakeLogin": true,
+      "sameSiteSessionShared": true,
+      "independentMessagesAndDrafts": true,
+      "websiteAInputDidNotAffectB": true,
+      "chatCollapseRestore": true,
+      "taskHideAndRestore": true,
+      "narrowWindow": {
+        "width": 800,
+        "height": 700,
+        "websiteAndChatVisible": true
+      },
+      "keyboardCard": {
+        "downOpens": true,
+        "escapeCloses": true,
+        "focusReturn": "not confirmed; immediate AX reported chrome HTML root"
+      },
+      "normalQuit": "not passed: harness treated APPLICATION_EXITING as a failure and killed the controller"
+    },
+    "recovery27": {
+      "originalSnapshotValidated": true,
+      "allTaskFactsAndActiveMatchedBeforeInteraction": true,
+      "bothTaskMessagesAndDraftsSeenViaCUA": true,
+      "uiQuitExitCode": 0,
+      "allObservedProcessesEnded": true,
+      "websiteService": "not running; webpage load errors expected; no session claim"
+    }
+  },
+  "limits": {
+    "overallAcceptance": false,
+    "nativeChineseIme": false,
+    "unicodeToolTyping": "native typeText did not insert Chinese; clipboard paste used and verified, not IME evidence",
+    "normalColdReopenWithOriginalSession": false,
+    "dockClickAndColdLaunch": false,
+    "oldProductionCredentialContinuity": false
+  },
+  "modelCalls": 0,
+  "remoteBusinessWrites": 0
+}

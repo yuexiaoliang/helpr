@@ -86,6 +86,7 @@ try {
     ['--verify', '--deep', '--strict', appPath],
     { stdio: 'pipe' },
   );
+  execFileSync(process.execPath, ['scripts/validate-host-package.mjs', appPath], { stdio: 'inherit' });
   for (const file of [
     'Contents/MacOS/helpr',
     'Contents/Resources/app.asar',

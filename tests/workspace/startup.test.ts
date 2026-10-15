@@ -39,6 +39,44 @@ const options = () => ({
 });
 
 test.skipIf(process.platform !== 'darwin')(
+  '宿主在JS初始化前退出时，原生监督保留实际退出码',
+  async () => {
+    const child = spawn(
+      path.resolve('dist/native/watch-owner'),
+      [process.execPath, '-e', 'process.exit(64)'],
+      {
+        detached: true,
+        stdio: ['ignore', 'ignore', 'ignore', 'pipe', 'pipe', 'ipc', 'pipe'],
+      },
+    );
+    let receipt = '';
+    child.stdio.at(6)?.on('data', (data: Buffer) => {
+      receipt += data.toString();
+    });
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const timer = setTimeout(
+          () => reject(new Error('NATIVE_EXIT_RECEIPT_TIMEOUT')),
+          3000,
+        );
+        child.once('error', (error) => {
+          clearTimeout(timer);
+          reject(error);
+        });
+        child.once('close', () => {
+          clearTimeout(timer);
+          resolve();
+        });
+      });
+      expect(receipt.split('\n')).toContain('exit:64:0');
+    } finally {
+      if (child.exitCode === null && child.signalCode === null)
+        process.kill(-child.pid!, 'SIGKILL');
+    }
+  },
+);
+
+test.skipIf(process.platform !== 'darwin')(
   '安装布局中的独立宿主映像须由同包控制者经原生监督启动',
   async () => {
     const bundle = path.join(folder(), 'helpr.app');

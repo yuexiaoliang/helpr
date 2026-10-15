@@ -3,11 +3,11 @@
   "productCheck": {
     "passed": true,
     "testFiles": 5,
-    "tests": 11,
+    "tests": 12,
     "typecheck": true,
     "lint": true,
     "format": true,
-    "legacySyntaxFiles": 186
+    "legacySyntaxFiles": 187
   },
   "browserRegression": {
     "passed": true,
@@ -58,11 +58,27 @@
   },
   "windowIdentityCorrection": {
     "sourceChecked": true,
-    "build": 9,
-    "installation": 6,
+    "build": 11,
+    "installation": 8,
     "signaturesAndHashesPassed": true,
-    "cuaWindowBinding": "pending",
-    "normalLaunch": "pending: screen locked",
+    "cuaWindowBinding": "passed candidate25 and installed26/27",
+    "normalLaunch": "passed",
+    "fullColdReopenWithWebsiteSession": "pending: run26 harness interrupted quit; run27 records-only recovery",
     "overallProductAcceptance": false
+  },
+  "nativeExitDiagnostic": {
+    "redThenGreen": true,
+    "realNativeSupervision": true,
+    "expectedExitCode": 64,
+    "receivedExitCode": 64
+  },
+  "cuaWorkspace": {
+    "evidence": "cua-workspace.json",
+    "scopedInteractionsPassed": true,
+    "overallAcceptance": false
+  },
+  "recoveryBaselineGuard": {
+    "missingSnapshotRejectedBeforeStartupAndBudget": true,
+    "run27OriginalSnapshotValid": true
   }
 }

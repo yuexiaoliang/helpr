@@ -1,6 +1,7 @@
 import pino from 'pino';
 import path from 'node:path';
 import { mkdirSync } from 'node:fs';
+import type { StartupStage } from './contracts';
 
 export function diagnostics(
   folder: string,
@@ -33,15 +34,28 @@ export function diagnostics(
   return {
     event(
       event: 'ready' | 'command' | 'failure' | 'exit' | 'page',
-      fields: { taskId?: string; code?: string; durationMs?: number } = {},
+      fields: {
+        taskId?: string;
+        code?: string;
+        durationMs?: number;
+        stage?: StartupStage;
+        exitCode?: number;
+        signal?: number;
+      } = {},
     ) {
       logger.info({
         event,
         taskId: fields.taskId,
         code: fields.code,
         durationMs: fields.durationMs,
+        stage: fields.stage,
+        exitCode: fields.exitCode,
+        signal: fields.signal,
       });
     },
-    close: () => transport.end(),
+    close: (onClosed?: () => void) => {
+      if (onClosed) transport.once('close', onClosed);
+      transport.end();
+    },
   };
 }

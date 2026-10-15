@@ -10,6 +10,7 @@ import {
   rpcRequestSchema,
   errorCode,
   type WorkspaceSnapshot,
+  startupFailureSchema,
 } from '../shared/contracts';
 import { diagnostics } from '../shared/diagnostics';
 import { WorkspaceSession } from './workspace-session';
@@ -91,15 +92,34 @@ export async function startController(
       stdio: ['ignore', 'ignore', 'ignore', 'pipe', 'pipe', 'ipc', 'pipe'],
     },
   );
-  let childPidText = '';
+  let launcherText = '';
   host.stdio.at(6)?.on('data', (data: Buffer) => {
-    childPidText += data.toString();
-    if (/^\d+\n$/.test(childPidText) && validation)
-      process.send?.({
-        launching: true,
-        hostPid: Number(childPidText.trim()),
-        launcherPid: host.pid,
-      });
+    launcherText = (launcherText + data.toString()).slice(-256);
+    let end: number;
+    while ((end = launcherText.indexOf('\n')) >= 0) {
+      const line = launcherText.slice(0, end);
+      launcherText = launcherText.slice(end + 1);
+      if (/^\d+$/.test(line) && validation)
+        process.send?.({
+          launching: true,
+          hostPid: Number(line),
+          launcherPid: host.pid,
+        });
+      const status = /^exit:(-1|\d{1,3}):(\d{1,3})$/.exec(line);
+      if (status) {
+        const exitCode = Number(status[1]),
+          signal = Number(status[2]);
+        if (exitCode <= 255 && signal <= 255) {
+          if (!quitting)
+            log.event('failure', {
+              code: 'HOST_PROCESS_EXITED',
+              exitCode,
+              signal,
+            });
+          if (validation) process.send?.({ nativeExit: { exitCode, signal } });
+        }
+      }
+    }
   });
   const broker = new ObservationBroker(host);
   const hostClient = new ProcessClient({
@@ -167,6 +187,12 @@ export async function startController(
     }),
   });
   host.on('message', (input: unknown) => {
+    const startupFailure = startupFailureSchema.safeParse(input);
+    if (startupFailure.success) {
+      log.event('failure', startupFailure.data.startupFailure);
+      if (validation) process.send?.(startupFailure.data);
+      return;
+    }
     const reg = registration.safeParse(input);
     if (
       reg.success &&
@@ -215,8 +241,26 @@ export async function startController(
     workers.forEach((worker) => worker.kill());
     if (!quitting) {
       records.kill();
-      log.close();
-      app.exit(1);
+      let finished = false;
+      const finish = () => {
+        if (finished) return;
+        finished = true;
+        clearTimeout(timer);
+        app.exit(1);
+      };
+      // exit 不能证明 fd6/IPC 已排空；收尾总共最多等 100ms。
+      const timer = setTimeout(finish, 100);
+      host.once('close', () =>
+        log.close(() => {
+          try {
+            if (validation && process.connected && process.send)
+              process.send({ hostExited: true }, finish);
+            else finish();
+          } catch {
+            finish();
+          }
+        }),
+      );
     }
   });
   async function observe(

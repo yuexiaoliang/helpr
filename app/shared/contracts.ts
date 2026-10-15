@@ -1,6 +1,37 @@
 import { z } from 'zod';
 import { websiteURL } from './url-policy';
 
+export const startupFailureCodeSchema = z.enum([
+  'STARTUP_NOT_AUTHORIZED',
+  'APPLICATION_IMAGE_REQUIRED',
+  'HOST_OWNER_REQUIRED',
+  'HOST_PROFILE_REQUIRED',
+  'VALIDATION_PROFILE_REQUIRED',
+  'RECORDS_UNAVAILABLE',
+  'ENOENT',
+  'EACCES',
+  'MODULE_NOT_FOUND',
+  'ERR_REQUIRE_ESM',
+  'ERR_REQUIRE_ASYNC_MODULE',
+  'STARTUP_FAILED',
+]);
+export const startupFailureSchema = z.strictObject({
+  startupFailure: z.strictObject({
+    stage: z.enum([
+      'image',
+      'ownership',
+      'application',
+      'host-module',
+      'controller-init',
+      'reopen',
+    ]),
+    code: startupFailureCodeSchema,
+  }),
+});
+export type StartupStage = z.infer<
+  typeof startupFailureSchema
+>['startupFailure']['stage'];
+
 const id = z.string().min(1).max(100);
 const website = z
   .string()
