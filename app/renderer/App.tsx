@@ -399,7 +399,7 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
                     {message.call.pageChanged ||
                     task.url !== message.call.source.url
                       ? ' · 网页已变化或尚未重新核对，此回复依据先前页面'
-                      : ''}
+                      : ' · 仅依据当时页面，后续变化未持续核对'}
                     <br />
                     {message.call.totalTokens !== null
                       ? `用量：${message.call.inputTokens} 输入 / ${message.call.outputTokens} 输出`

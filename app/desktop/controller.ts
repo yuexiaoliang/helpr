@@ -194,10 +194,9 @@ export async function startController(
             token: qualification.token,
             method,
           });
-        const [frame, tree] = await Promise.all([
-          read('Page.getFrameTree'),
-          read('Accessibility.getFullAXTree'),
-        ]);
+        // 首次观察会建立这份资格独占的会话，先完成连接再读取第二项。
+        const frame = await read('Page.getFrameTree');
+        const tree = await read('Accessibility.getFullAXTree');
         if (signal.aborted) throw new Error('MODEL_CANCELLED');
         return pageObservation(frame, tree, qualification.generation);
       } catch {
