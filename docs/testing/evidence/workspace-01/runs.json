@@ -139,6 +139,33 @@
         "version": "1"
       },
       "prepared": true
+    },
+    {
+      "build": 7,
+      "started": "2026-10-15T01:32:11.752Z",
+      "toolchain": {
+        "node": "v24.18.0",
+        "pnpm": "11.7.0"
+      },
+      "appId": "local.helpr.desktop",
+      "signature": "ad-hoc, current Mac self-use only",
+      "hashes": {
+        "Contents/MacOS/helpr": "ad2f6ce6c55afb3cf8560eff88d142bb7eee8081da69870a13faa2e6cb18a60a",
+        "Contents/Resources/app.asar": "006a8bbc6e5a67c861354918358b6ea76b1a75d712885b0fb360ca430c9caee3"
+      },
+      "fuses": {
+        "0": 48,
+        "1": 49,
+        "2": 48,
+        "3": 48,
+        "4": 49,
+        "5": 49,
+        "6": 48,
+        "7": 48,
+        "8": 49,
+        "version": "1"
+      },
+      "prepared": true
     }
   ],
   "runs": [
@@ -612,16 +639,16 @@
   },
   "budget": {
     "limits": {
-      "builds": 6,
-      "installs": 3,
-      "starts": 15,
+      "builds": 7,
+      "installs": 4,
+      "starts": 18,
       "faults": 3,
       "cleanups": 8
     },
     "used": {
-      "builds": 6,
-      "installs": 3,
-      "starts": 15,
+      "builds": 7,
+      "installs": 4,
+      "starts": 18,
       "faults": 3,
       "cleanups": 7
     },
@@ -659,6 +686,12 @@
         "starts": "+1",
         "cleanups": "+1",
         "reason": "用户要求CUA自测；原人工等待超时保留，当前同包三次自动核对内短暂尝试CUA，不再跨回合等待；不构建安装"
+      },
+      {
+        "builds": "+1",
+        "installs": "+1",
+        "starts": "+3",
+        "reason": "用户报告双Dock图标；空工作区只读OS角色反例、修后与冷重开，不登录网页或调用模型"
       }
     ]
   },
@@ -769,6 +802,97 @@
     "manualLoginOrImePassed": false
   },
   "finalCandidate": {
+    "build": 7,
+    "installation": 4,
+    "archiveSHA256": "006a8bbc6e5a67c861354918358b6ea76b1a75d712885b0fb360ca430c9caee3",
+    "dockRolesPassed": true,
+    "dockColdReopenPassed": true,
+    "allOwnInstalledProcessesAbsent": true,
+    "priorBroadWorkspaceEvidenceBuild": 6,
+    "cuaOrHumanDockClicks": false,
+    "dockReturnAndFocus": false,
+    "overallProductAcceptance": false
+  },
+  "installation4": {
+    "installed": "/Users/yuexiaoliang/Applications/helpr.app",
+    "previousArchive": "c6c967193fd7e47f8fbf10b8d10b32f3f85be26e8aa2b0d34ca1ad424811747b",
+    "installedArchive": "006a8bbc6e5a67c861354918358b6ea76b1a75d712885b0fb360ca430c9caee3",
+    "previousCandidatePreserved": true,
+    "signatureVerified": true,
+    "date": "2026-10-15T01:33:07.690Z"
+  },
+  "dockCorrection": [
+    {
+      "started": "2026-10-15T01:30:14.028Z",
+      "start": 16,
+      "source": "read-only NSRunningApplication activationPolicy; not CUA or Dock clicking",
+      "roles": [
+        {
+          "pid": 20682,
+          "role": "controller",
+          "activationPolicy": 0
+        },
+        {
+          "pid": 20687,
+          "role": "host",
+          "activationPolicy": 0
+        }
+      ],
+      "regularApplications": 2,
+      "passed": false,
+      "error": "TWO_DOCK_APPLICATIONS",
+      "normalQuitAndAllObservedProcessesEnded": true,
+      "noObservedProcessesRemain": true,
+      "build": 6
+    },
+    {
+      "started": "2026-10-15T01:33:23.810Z",
+      "start": 17,
+      "source": "read-only NSRunningApplication activationPolicy; not CUA or Dock clicking",
+      "roles": [
+        {
+          "pid": 28831,
+          "role": "controller",
+          "activationPolicy": 1
+        },
+        {
+          "pid": 28839,
+          "role": "host",
+          "activationPolicy": 0
+        }
+      ],
+      "regularApplications": 1,
+      "passed": true,
+      "normalQuitAndAllObservedProcessesEnded": true,
+      "noObservedProcessesRemain": true,
+      "build": 7
+    },
+    {
+      "started": "2026-10-15T01:34:15.685Z",
+      "start": 18,
+      "reopened": true,
+      "source": "read-only NSRunningApplication activationPolicy; not CUA or Dock clicking",
+      "roles": [
+        {
+          "pid": 28997,
+          "role": "controller",
+          "activationPolicy": 1
+        },
+        {
+          "pid": 29003,
+          "role": "host",
+          "activationPolicy": 0
+        }
+      ],
+      "regularApplications": 1,
+      "passed": true,
+      "normalQuitAndAllObservedProcessesEnded": true,
+      "noObservedProcessesRemain": true,
+      "build": 7,
+      "sameProfileAsStart": 17
+    }
+  ],
+  "previousWorkspaceCandidate6": {
     "build": 6,
     "installation": 3,
     "archiveSHA256": "c6c967193fd7e47f8fbf10b8d10b32f3f85be26e8aa2b0d34ca1ad424811747b",

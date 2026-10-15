@@ -25,6 +25,7 @@ try {
       : path.resolve('dist/native/watch-owner'),
   });
   const host = role === 'host';
+  app.setActivationPolicy(host ? 'regular' : 'accessory');
   app.setPath('userData', host ? path.join(root, 'browser') : root);
   app.enableSandbox();
   if (host) {

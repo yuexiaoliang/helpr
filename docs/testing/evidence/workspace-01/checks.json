@@ -7,7 +7,7 @@
     "typecheck": true,
     "lint": true,
     "format": true,
-    "legacySyntaxFiles": 183
+    "legacySyntaxFiles": 184
   },
   "browserRegression": {
     "passed": true,
@@ -40,5 +40,19 @@
   "nativeOwnerAncestry": {
     "passed": true,
     "scope": "real native launcher and kernel process ancestry; installed app separately validated"
+  },
+  "dockCorrection": {
+    "build": 7,
+    "redStart": 16,
+    "greenStarts": [
+      17,
+      18
+    ],
+    "independentSystemRolesPassed": true,
+    "onlyHostIsRegular": true,
+    "sameEmptyProfileColdReopen": true,
+    "normalQuitAndAllObservedProcessesEnded": true,
+    "dockClickReturnAndFocus": "pending",
+    "manualInput": "pending"
   }
 }

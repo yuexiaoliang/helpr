@@ -546,6 +546,10 @@ void app
     );
     await Promise.all([chromeLoaded, panelLoaded, toastLoaded, painted]);
     win.show();
+    app.on('activate', () => {
+      win.show();
+      win.focus();
+    });
     notify({
       hostPid: process.pid,
       ready: {
