@@ -5,6 +5,7 @@ const allowed = new Map([
   ['/', ['index.html', 'text/html; charset=utf-8']],
   ['/index.html', ['index.html', 'text/html; charset=utf-8']],
   ['/foundation.html', ['foundation.html', 'text/html; charset=utf-8']],
+  ['/execution-prototype.html', ['execution-prototype.html', 'text/html; charset=utf-8']],
   ['/model-understanding-prototype.html', ['model-understanding-prototype.html', 'text/html; charset=utf-8']],
   ['/workspace.css', ['workspace.css', 'text/css; charset=utf-8']],
   ['/workspace.js', ['workspace.js', 'text/javascript; charset=utf-8']],
