@@ -2,6 +2,32 @@ import { mkdirSync, realpathSync } from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 
+/** 安装包内只有窗口宿主使用独立的应用身份；开发入口仍共用运行时。 */
+export function runtimeImages(executable: string, packaged: boolean) {
+  if (!packaged)
+    return {
+      controller: executable,
+      host: executable,
+      resources: path.resolve('dist/native'),
+    };
+  const hostSuffix =
+    '/Contents/Frameworks/helpr Workspace.app/Contents/MacOS/helpr Workspace Helper';
+  const controllerSuffix = '/Contents/MacOS/helpr';
+  const suffix = executable.endsWith(hostSuffix)
+    ? hostSuffix
+    : controllerSuffix;
+  if (!executable.endsWith(suffix))
+    throw new Error('APPLICATION_IMAGE_REQUIRED');
+  const bundle = executable.slice(0, -suffix.length);
+  if (path.extname(bundle) !== '.app')
+    throw new Error('APPLICATION_IMAGE_REQUIRED');
+  return {
+    controller: bundle + controllerSuffix,
+    host: bundle + hostSuffix,
+    resources: path.join(bundle, 'Contents/Resources'),
+  };
+}
+
 export const debuggingSwitches = [
   'remote-debugging-port',
   'remote-debugging-address',
@@ -39,12 +65,18 @@ export function resolveStartup(input: {
   runtimeSwitches?: string[];
   connected: boolean;
   executable: string;
+  controllerExecutable?: string;
+  hostExecutable?: string;
   parentPid: number;
   production: string;
   env: NodeJS.ProcessEnv;
   probe: string;
   watcher: string;
-}): { role: 'controller' | 'host'; root: string; validation: boolean } {
+}): {
+  role: 'controller' | 'host' | 'reopen';
+  root: string;
+  validation: boolean;
+} {
   const switches = [
     ...input.argv
       .filter((arg) => arg.startsWith('-'))
@@ -62,6 +94,23 @@ export function resolveStartup(input: {
     switches.some((arg) => arg?.startsWith('inspect'))
   )
     throw new Error('STARTUP_NOT_AUTHORIZED');
+  const controller = input.controllerExecutable ?? input.executable;
+  const hostImage = input.hostExecutable ?? input.executable;
+  const actual = realpathSync(input.executable);
+  if (
+    !host &&
+    !validation &&
+    !input.connected &&
+    actual === realpathSync(hostImage) &&
+    actual !== realpathSync(controller)
+  )
+    return {
+      role: 'reopen',
+      root: path.resolve(input.production),
+      validation: false,
+    };
+  if (actual !== realpathSync(host ? hostImage : controller))
+    throw new Error('APPLICATION_IMAGE_REQUIRED');
   if (host) {
     if (
       !input.connected ||
@@ -86,7 +135,10 @@ export function resolveStartup(input: {
         ['--parent-of', String(input.parentPid)],
         { encoding: 'utf8', timeout: 2000, env: {}, maxBuffer: 8192 },
       ).trim();
-      if (realpathSync(controller) !== realpathSync(input.executable))
+      if (
+        realpathSync(controller) !==
+        realpathSync(input.controllerExecutable ?? input.executable)
+      )
         throw new Error();
     } catch {
       throw new Error('HOST_OWNER_REQUIRED');

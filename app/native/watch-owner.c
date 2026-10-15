@@ -13,7 +13,7 @@ static void stop(int signal_number) { (void)signal_number; stopping = 1; }
 static int info(pid_t pid, struct proc_bsdinfo *out) {
     return proc_pidinfo(pid, PROC_PIDTBSDINFO, 0, out, sizeof(*out)) == sizeof(*out);
 }
-/* 先建立独立监督，再创建宿主。目标只能是实际控制父进程的同一映像。 */
+/* 先建立独立监督，再创建宿主。安装目标只能是同包的固定宿主映像。 */
 int main(int argc, char **argv) {
     const pid_t owner_pid = getppid(), group = getpgrp();
     if (owner_pid <= 1 || group != getpid()) return 1;
@@ -25,7 +25,17 @@ int main(int argc, char **argv) {
     char owner_file[PROC_PIDPATHINFO_MAXSIZE], target_file[PROC_PIDPATHINFO_MAXSIZE];
     if (!info(owner_pid, &owner) || owner.pbi_uid != getuid() ||
         proc_pidpath(owner_pid, owner_file, sizeof(owner_file)) <= 0 ||
-        !realpath(argv[target_index], target_file) || strcmp(owner_file, target_file) != 0) return 1;
+        !realpath(argv[target_index], target_file)) return 1;
+    if (strcmp(owner_file, target_file) != 0) {
+        const char *suffix = "/Contents/MacOS/helpr";
+        const size_t owner_length = strlen(owner_file), suffix_length = strlen(suffix);
+        char expected[PROC_PIDPATHINFO_MAXSIZE], resolved[PROC_PIDPATHINFO_MAXSIZE];
+        if (owner_length <= suffix_length ||
+            strcmp(owner_file + owner_length - suffix_length, suffix) != 0) return 1;
+        const int length = snprintf(expected, sizeof(expected), "%.*s/Contents/Frameworks/helpr Workspace.app/Contents/MacOS/helpr Workspace Helper", (int)(owner_length - suffix_length), owner_file);
+        if (length < 0 || (size_t)length >= sizeof(expected) ||
+            !realpath(expected, resolved) || strcmp(target_file, resolved) != 0) return 1;
+    }
     signal(SIGTERM, stop);
     signal(SIGINT, stop);
     signal(SIGHUP, stop);

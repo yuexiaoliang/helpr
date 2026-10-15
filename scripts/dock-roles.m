@@ -10,7 +10,7 @@
 int main(int argc, char **argv) {
     @autoreleasepool {
         if (argc != 4) return 1;
-        NSString *expected = [[NSString stringWithUTF8String:argv[1]] stringByResolvingSymlinksInPath];
+        NSString *bundle = [[NSString stringWithUTF8String:argv[1]] stringByResolvingSymlinksInPath];
         NSMutableArray *roles = [NSMutableArray array];
         for (int i = 2; i < 4; i++) {
             char *end;
@@ -19,8 +19,9 @@ int main(int argc, char **argv) {
             struct proc_bsdinfo info;
             if (proc_pidinfo((int)pid, PROC_PIDTBSDINFO, 0, &info, sizeof(info)) != sizeof(info) || info.pbi_uid != getuid()) return 1;
             NSRunningApplication *app = [NSRunningApplication runningApplicationWithProcessIdentifier:(pid_t)pid];
+            NSString *expected = i == 2 ? bundle : [bundle stringByAppendingPathComponent:@"Contents/Frameworks/helpr Workspace.app"];
             if (!app || ![[app.bundleURL.path stringByResolvingSymlinksInPath] isEqualToString:expected]) return 1;
-            [roles addObject:@{ @"role": i == 2 ? @"controller" : @"host", @"pid": @(pid), @"activationPolicy": @(app.activationPolicy) }];
+            [roles addObject:@{ @"role": i == 2 ? @"controller" : @"host", @"pid": @(pid), @"bundleIdentifier": app.bundleIdentifier ?: @"", @"activationPolicy": @(app.activationPolicy) }];
         }
         NSData *data = [NSJSONSerialization dataWithJSONObject:roles options:0 error:NULL];
         if (!data) return 1;

@@ -3,11 +3,11 @@
   "productCheck": {
     "passed": true,
     "testFiles": 5,
-    "tests": 9,
+    "tests": 11,
     "typecheck": true,
     "lint": true,
     "format": true,
-    "legacySyntaxFiles": 184
+    "legacySyntaxFiles": 186
   },
   "browserRegression": {
     "passed": true,
@@ -39,7 +39,8 @@
   "compile": true,
   "nativeOwnerAncestry": {
     "passed": true,
-    "scope": "real native launcher and kernel process ancestry; installed app separately validated"
+    "scope": "real native launcher and kernel process ancestry; installed app separately validated",
+    "distinctImages": true
   },
   "dockCorrection": {
     "build": 7,
@@ -54,5 +55,14 @@
     "normalQuitAndAllObservedProcessesEnded": true,
     "dockClickReturnAndFocus": "pending",
     "manualInput": "pending"
+  },
+  "windowIdentityCorrection": {
+    "sourceChecked": true,
+    "build": 9,
+    "installation": 6,
+    "signaturesAndHashesPassed": true,
+    "cuaWindowBinding": "pending",
+    "normalLaunch": "pending: screen locked",
+    "overallProductAcceptance": false
   }
 }

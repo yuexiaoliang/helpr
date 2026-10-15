@@ -1,0 +1,65 @@
+{
+  "recorded": "2026-10-15T02:42:48.193Z",
+  "scope": "issue01 internal application identity correction; no model or remote business writes",
+  "baseline": {
+    "build": 7,
+    "installation": 4,
+    "previousCandidatePreserved": true
+  },
+  "bindingFailure": {
+    "build": 7,
+    "start": 19,
+    "productUIActions": 0,
+    "toolError": "-10005 timeoutReached",
+    "finderAXAndScreenshotPassed": true,
+    "processSampleObservation": "controller handled accessibilityWindowsAttribute; host main thread idle",
+    "cleaned": true
+  },
+  "candidate8": {
+    "installation": 5,
+    "start20": {
+      "case": "owner exit before host exec",
+      "passed": true,
+      "remainingPids": 0
+    },
+    "start21": {
+      "passed": false,
+      "error": "APPLICATION_EXITED",
+      "ready": false,
+      "remainingPids": 0
+    },
+    "start22": {
+      "build": 8,
+      "start": 22,
+      "case": "native helper entry rejects browser role before JavaScript",
+      "status": 64,
+      "stderr": "This is a helper executable and cannot be launched directly; it requires a --type argument from the browser process.",
+      "modelCalls": 0,
+      "remoteWrites": 0
+    }
+  },
+  "candidate9": {
+    "installation": 6,
+    "hashes": {
+      "Contents/MacOS/helpr": "9a61679e755c9d6e4b661abf5d50fd83f0a1b158c153f045fb44a4a7a4a18782",
+      "Contents/Resources/app.asar": "2ec7b491b344718adca8b64f48b70d8e6fea44c313f233ee2020ec8c2bd8001d",
+      "Contents/Resources/watch-owner": "38b49e158bd3a6a397dfb3effb00ab49622b4a9ba0cbe199c094c0b1b0aba9cc",
+      "Contents/Frameworks/helpr Workspace.app/Contents/MacOS/helpr Workspace Helper": "8b661179676a889af5ce54c117a95dd5ce30e488fef2a563bd7cb4115433795f",
+      "Contents/Frameworks/helpr Workspace.app/Contents/Info.plist": "5a951ad582575328b89b272ee89d4e41f6f11675b74a754f6038cc53f9981bac"
+    },
+    "deepStrictSignatureVerified": true,
+    "packaging": "full browser entry; checked fixed relative framework RPATH; shared ASAR and framework; distinct internal bundle identifier",
+    "sourceReview": {
+      "standardsOpenFindings": 0,
+      "specFixedFindings": 1,
+      "specOpenFindings": 0
+    },
+    "preflight": {
+      "screenLocked": true,
+      "applicationStarted": false
+    },
+    "uiAcceptance": false
+  },
+  "newModelCalls": 0,
+  "remoteBusinessWrites": 0
+}

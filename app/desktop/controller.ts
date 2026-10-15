@@ -14,6 +14,7 @@ import {
 import { diagnostics } from '../shared/diagnostics';
 import { WorkspaceSession } from './workspace-session';
 import { ObservationBroker } from './observation-broker';
+import { runtimeImages } from './startup';
 
 export async function startController(
   folder: string,
@@ -81,7 +82,7 @@ export async function startController(
       ...(validation && process.env.HELPR_VALIDATION_PAUSE_START === '1'
         ? ['--pause-before-exec']
         : []),
-      process.execPath,
+      runtimeImages(process.execPath, app.isPackaged).host,
       ...args,
     ],
     {

@@ -10,6 +10,7 @@ import {
   FuseV1Options as F,
 } from '@electron/fuses';
 import { spend, validationRoot } from './workspace-budget.mjs';
+import { packageWorkspaceHost } from './package-workspace-host.mjs';
 
 if (process.platform !== 'darwin' || process.arch !== 'arm64')
   throw Error('MAC_ARM64_REQUIRED');
@@ -75,6 +76,7 @@ try {
           [F.GrantFileProtocolExtraPrivileges]: false,
         });
         manifest.fuses = await getCurrentFuseWire(appPath);
+        packageWorkspaceHost(appPath);
       },
     },
   });
@@ -84,7 +86,13 @@ try {
     ['--verify', '--deep', '--strict', appPath],
     { stdio: 'pipe' },
   );
-  for (const file of ['Contents/MacOS/helpr', 'Contents/Resources/app.asar'])
+  for (const file of [
+    'Contents/MacOS/helpr',
+    'Contents/Resources/app.asar',
+    'Contents/Resources/watch-owner',
+    'Contents/Frameworks/helpr Workspace.app/Contents/MacOS/helpr Workspace Helper',
+    'Contents/Frameworks/helpr Workspace.app/Contents/Info.plist',
+  ])
     manifest.hashes[file] = createHash('sha256')
       .update(fs.readFileSync(path.join(appPath, file)))
       .digest('hex');

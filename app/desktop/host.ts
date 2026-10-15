@@ -27,8 +27,9 @@ import {
 } from '../shared/contracts';
 import { websiteURL } from '../shared/url-policy';
 import { diagnostics } from '../shared/diagnostics';
-import { resolveStartup, debuggingSwitches } from './startup';
+import { resolveStartup, debuggingSwitches, runtimeImages } from './startup';
 
+const images = runtimeImages(process.execPath, app.isPackaged);
 const startup = resolveStartup({
   argv: process.argv,
   runtimeSwitches: debuggingSwitches.filter((name) =>
@@ -36,15 +37,13 @@ const startup = resolveStartup({
   ),
   connected: Boolean(process.connected),
   executable: process.execPath,
+  controllerExecutable: images.controller,
+  hostExecutable: images.host,
   parentPid: process.ppid,
   production: path.join(app.getPath('appData'), 'helpr'),
   env: process.env,
-  probe: app.isPackaged
-    ? path.join(process.resourcesPath, 'process-path')
-    : path.resolve('dist/native/process-path'),
-  watcher: app.isPackaged
-    ? path.join(process.resourcesPath, 'watch-owner')
-    : path.resolve('dist/native/watch-owner'),
+  probe: path.join(images.resources, 'process-path'),
+  watcher: path.join(images.resources, 'watch-owner'),
 });
 if (startup.role !== 'host') throw new Error('HOST_OWNER_REQUIRED');
 

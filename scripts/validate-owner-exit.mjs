@@ -19,9 +19,9 @@ function descendants(root) {
   while (added) { added = false; for (const [pid, parent] of rows) if (pids.has(parent) && !pids.has(pid)) { pids.add(pid); added = true; } }
   return [...pids];
 }
-spend('starts');
+const budget = spend('starts');
 const child = spawn(path.join(appPath, 'Contents/MacOS/helpr'), ['--workspace-validation'], { env: { ...env, HELPR_VALIDATION_DATA: data, ...(early ? { HELPR_VALIDATION_PAUSE_START: '1' } : {}) }, stdio: ['ignore', 'ignore', 'ignore', 'ipc'] });
-const result = { started: new Date().toISOString(), case: early ? 'controller exits before host JavaScript starts' : 'controller exits while host cannot process callbacks', pids: [] };
+const result = { started: new Date().toISOString(), start: budget.used.starts, case: early ? 'controller exits before host JavaScript starts' : 'controller exits while host cannot process callbacks', pids: [] };
 try {
   const ready = await new Promise((resolve, reject) => {
     const timer = setTimeout(() => reject(Error('APPLICATION_NOT_READY')), 10000);
@@ -47,6 +47,6 @@ finally {
     while (Date.now() < end && left.some(alive)) await new Promise(resolve => setTimeout(resolve, 50));
     result.cleaned = left.every(pid => !alive(pid));
   }
-  fs.writeFileSync(path.join(validationRoot, early ? 'blocked-owner-startup.json' : 'blocked-owner-exit.json'), JSON.stringify(result, null, 2) + '\n');
+  fs.writeFileSync(path.join(validationRoot, `${early ? 'blocked-owner-startup' : 'blocked-owner-exit'}-${result.start}.json`), JSON.stringify(result, null, 2) + '\n');
   console.log(JSON.stringify({ passed: result.passed, error: result.error, remaining: result.remaining, cleaned: result.cleaned }));
 }

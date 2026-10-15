@@ -5,12 +5,18 @@ import {
   rmSync,
   symlinkSync,
   writeFileSync,
+  copyFileSync,
+  mkdirSync,
 } from 'node:fs';
 import path from 'node:path';
 import { tmpdir } from 'node:os';
 import { spawn } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
-import { resolveStartup, validationDirectory } from '../../app/desktop/startup';
+import {
+  resolveStartup,
+  runtimeImages,
+  validationDirectory,
+} from '../../app/desktop/startup';
 
 const folders: string[] = [];
 afterEach(() =>
@@ -31,6 +37,71 @@ const options = () => ({
   probe: path.resolve('dist/native/process-path'),
   watcher: path.resolve('dist/native/watch-owner'),
 });
+
+test.skipIf(process.platform !== 'darwin')(
+  '安装布局中的独立宿主映像须由同包控制者经原生监督启动',
+  async () => {
+    const bundle = path.join(folder(), 'helpr.app');
+    const controller = path.join(bundle, 'Contents/MacOS/helpr');
+    const host = path.join(
+      bundle,
+      'Contents/Frameworks/helpr Workspace.app/Contents/MacOS/helpr Workspace Helper',
+    );
+    for (const file of [controller, host]) {
+      mkdirSync(path.dirname(file), { recursive: true });
+      copyFileSync(process.execPath, file);
+    }
+    const production = folder();
+    const hostScript = `(async () => {
+      const { resolveStartup } = await import(process.argv[1]);
+      const result = resolveStartup({ argv:['--workspace-host','--remote-debugging-pipe'], connected:process.connected, executable:process.execPath, controllerExecutable:process.argv[5], hostExecutable:process.execPath, parentPid:process.ppid, production:process.argv[2], env:{HELPR_WORKSPACE_DATA:process.argv[2]}, probe:process.argv[3], watcher:process.argv[4] });
+      process.send({result}, () => process.exit(0));
+    })().catch(() => process.exit(1));`;
+    const controllerScript = `
+      const {spawn} = require('node:child_process');
+      const child = spawn(process.argv[1], [process.argv[2], '-e', process.argv[3], ...process.argv.slice(4)], {detached:true,stdio:['ignore','ignore','ignore','pipe','pipe','ipc','pipe']});
+      child.on('message', m => process.send(m));
+      child.once('exit', code => process.exit(code ?? 1));
+    `;
+    const child = spawn(
+      controller,
+      [
+        '-e',
+        controllerScript,
+        path.resolve('dist/native/watch-owner'),
+        host,
+        hostScript,
+        pathToFileURL(path.resolve('app/desktop/startup.ts')).href,
+        production,
+        path.resolve('dist/native/process-path'),
+        path.resolve('dist/native/watch-owner'),
+        controller,
+      ],
+      { stdio: ['ignore', 'ignore', 'ignore', 'ipc'] },
+    );
+    const result = await new Promise<unknown>((resolve, reject) => {
+      const timer = setTimeout(() => {
+        child.kill('SIGKILL');
+        reject(new Error('DISTINCT_HOST_STARTUP_TIMEOUT'));
+      }, 5000);
+      child.once('message', (message) => {
+        clearTimeout(timer);
+        resolve(message);
+      });
+      child.once('exit', () => {
+        clearTimeout(timer);
+        reject(new Error('DISTINCT_HOST_NOT_STARTED'));
+      });
+    });
+    expect(result).toEqual({
+      result: { role: 'host', root: production, validation: false },
+    });
+    await new Promise<void>((resolve) => {
+      if (child.exitCode !== null || child.signalCode !== null) resolve();
+      else child.once('exit', () => resolve());
+    });
+  },
+);
 
 test.skipIf(process.platform !== 'darwin')(
   '原生监督启动的真实子进程可核对拥有者并继承受限通道',
@@ -126,6 +197,42 @@ test('正常入口拒绝外部控制参数，测试入口仅使用固定独立�
   expect(() =>
     resolveStartup({ ...validation, env: { HELPR_VALIDATION_DATA: alias } }),
   ).toThrow('VALIDATION_PROFILE_REQUIRED');
+});
+
+test('宿主普通打开只转交外层入口，不能冒用控制者或继承任意通道', () => {
+  const bundle = path.join(folder(), '我的 helpr.app');
+  const controller = path.join(bundle, 'Contents/MacOS/helpr');
+  const host = path.join(
+    bundle,
+    'Contents/Frameworks/helpr Workspace.app/Contents/MacOS/helpr Workspace Helper',
+  );
+  for (const file of [controller, host]) {
+    mkdirSync(path.dirname(file), { recursive: true });
+    writeFileSync(file, 'test image');
+  }
+  const images = runtimeImages(controller, true);
+  expect(runtimeImages(host, true)).toEqual(images);
+  const input = {
+    ...options(),
+    controllerExecutable: images.controller,
+    hostExecutable: images.host,
+  };
+  expect(resolveStartup({ ...input, executable: host })).toEqual({
+    role: 'reopen',
+    root: input.production,
+    validation: false,
+  });
+  expect(() =>
+    resolveStartup({ ...input, executable: host, connected: true }),
+  ).toThrow('APPLICATION_IMAGE_REQUIRED');
+  expect(() =>
+    resolveStartup({
+      ...input,
+      executable: controller,
+      argv: ['--workspace-host', '--remote-debugging-pipe'],
+      connected: true,
+    }),
+  ).toThrow('APPLICATION_IMAGE_REQUIRED');
 });
 
 test.skipIf(process.platform !== 'darwin')(

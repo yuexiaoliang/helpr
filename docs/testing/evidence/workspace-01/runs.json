@@ -639,18 +639,18 @@
   },
   "budget": {
     "limits": {
-      "builds": 7,
-      "installs": 4,
-      "starts": 18,
-      "faults": 3,
-      "cleanups": 8
+      "builds": 9,
+      "installs": 6,
+      "starts": 24,
+      "faults": 4,
+      "cleanups": 10
     },
     "used": {
-      "builds": 7,
-      "installs": 4,
-      "starts": 18,
-      "faults": 3,
-      "cleanups": 7
+      "builds": 9,
+      "installs": 6,
+      "starts": 22,
+      "faults": 4,
+      "cleanups": 8
     },
     "modelCalls": 0,
     "remoteWrites": 0,
@@ -692,6 +692,16 @@
         "installs": "+1",
         "starts": "+3",
         "reason": "用户报告双Dock图标；空工作区只读OS角色反例、修后与冷重开，不登录网页或调用模型"
+      },
+      {
+        "starts": "+2",
+        "reason": "CUA恢复后用户要求回到工作；同一build7真实UI走查及同资料冷重开，无构建安装模型或远程写入"
+      },
+      {
+        "reason": "CUA 空工作区复现绑定后台控制者；独立内部宿主身份修正，1构建1安装3启动1故障2必要清理；保留启动19及全部原失败，不改信任、不开放端口"
+      },
+      {
+        "reason": "build8启动21失败；22最小原生入口明确EX_USAGE64，官方同版本源码证实helper stub拒绝browser；改用完整入口并核对固定RPATH，追加1构建1安装2启动，再失败回退build7，不增加故障/清理或真实业务"
       }
     ]
   },
@@ -802,15 +812,19 @@
     "manualLoginOrImePassed": false
   },
   "finalCandidate": {
-    "build": 7,
-    "installation": 4,
-    "archiveSHA256": "006a8bbc6e5a67c861354918358b6ea76b1a75d712885b0fb360ca430c9caee3",
-    "dockRolesPassed": true,
-    "dockColdReopenPassed": true,
-    "allOwnInstalledProcessesAbsent": true,
+    "build": 9,
+    "installation": 6,
+    "hashes": {
+      "Contents/MacOS/helpr": "9a61679e755c9d6e4b661abf5d50fd83f0a1b158c153f045fb44a4a7a4a18782",
+      "Contents/Resources/app.asar": "2ec7b491b344718adca8b64f48b70d8e6fea44c313f233ee2020ec8c2bd8001d",
+      "Contents/Resources/watch-owner": "38b49e158bd3a6a397dfb3effb00ab49622b4a9ba0cbe199c094c0b1b0aba9cc",
+      "Contents/Frameworks/helpr Workspace.app/Contents/MacOS/helpr Workspace Helper": "8b661179676a889af5ce54c117a95dd5ce30e488fef2a563bd7cb4115433795f",
+      "Contents/Frameworks/helpr Workspace.app/Contents/Info.plist": "5a951ad582575328b89b272ee89d4e41f6f11675b74a754f6038cc53f9981bac"
+    },
+    "deepStrictSignatureVerified": true,
+    "applicationStarted": false,
+    "preflight": "screen locked; no startup consumed",
     "priorBroadWorkspaceEvidenceBuild": 6,
-    "cuaOrHumanDockClicks": false,
-    "dockReturnAndFocus": false,
     "overallProductAcceptance": false
   },
   "installation4": {
@@ -908,5 +922,104 @@
     "nativeIme": false,
     "cuaInput": false,
     "overallProductAcceptance": false
+  },
+  "previousCandidate7": {
+    "build": 7,
+    "installation": 4,
+    "archiveSHA256": "006a8bbc6e5a67c861354918358b6ea76b1a75d712885b0fb360ca430c9caee3",
+    "dockRolesPassed": true,
+    "dockColdReopenPassed": true,
+    "allOwnInstalledProcessesAbsent": true,
+    "priorBroadWorkspaceEvidenceBuild": 6,
+    "cuaOrHumanDockClicks": false,
+    "dockReturnAndFocus": false,
+    "overallProductAcceptance": false
+  },
+  "windowIdentityCorrection": {
+    "recorded": "2026-10-15T02:42:48.193Z",
+    "scope": "issue01 internal application identity correction; no model or remote business writes",
+    "baseline": {
+      "build": 7,
+      "installation": 4,
+      "previousCandidatePreserved": true
+    },
+    "bindingFailure": {
+      "build": 7,
+      "start": 19,
+      "productUIActions": 0,
+      "toolError": "-10005 timeoutReached",
+      "finderAXAndScreenshotPassed": true,
+      "processSampleObservation": "controller handled accessibilityWindowsAttribute; host main thread idle",
+      "cleaned": true
+    },
+    "candidate8": {
+      "installation": 5,
+      "start20": {
+        "case": "owner exit before host exec",
+        "passed": true,
+        "remainingPids": 0
+      },
+      "start21": {
+        "passed": false,
+        "error": "APPLICATION_EXITED",
+        "ready": false,
+        "remainingPids": 0
+      },
+      "start22": {
+        "build": 8,
+        "start": 22,
+        "case": "native helper entry rejects browser role before JavaScript",
+        "status": 64,
+        "stderr": "This is a helper executable and cannot be launched directly; it requires a --type argument from the browser process.",
+        "modelCalls": 0,
+        "remoteWrites": 0
+      }
+    },
+    "candidate9": {
+      "installation": 6,
+      "hashes": {
+        "Contents/MacOS/helpr": "9a61679e755c9d6e4b661abf5d50fd83f0a1b158c153f045fb44a4a7a4a18782",
+        "Contents/Resources/app.asar": "2ec7b491b344718adca8b64f48b70d8e6fea44c313f233ee2020ec8c2bd8001d",
+        "Contents/Resources/watch-owner": "38b49e158bd3a6a397dfb3effb00ab49622b4a9ba0cbe199c094c0b1b0aba9cc",
+        "Contents/Frameworks/helpr Workspace.app/Contents/MacOS/helpr Workspace Helper": "8b661179676a889af5ce54c117a95dd5ce30e488fef2a563bd7cb4115433795f",
+        "Contents/Frameworks/helpr Workspace.app/Contents/Info.plist": "5a951ad582575328b89b272ee89d4e41f6f11675b74a754f6038cc53f9981bac"
+      },
+      "deepStrictSignatureVerified": true,
+      "packaging": "full browser entry; checked fixed relative framework RPATH; shared ASAR and framework; distinct internal bundle identifier",
+      "sourceReview": {
+        "standardsOpenFindings": 0,
+        "specFixedFindings": 1,
+        "specOpenFindings": 0
+      },
+      "preflight": {
+        "screenLocked": true,
+        "applicationStarted": false
+      },
+      "uiAcceptance": false
+    },
+    "newModelCalls": 0,
+    "remoteBusinessWrites": 0
+  },
+  "installation5": {
+    "build": 8,
+    "install": 5,
+    "oldHash": "006a8bbc6e5a67c861354918358b6ea76b1a75d712885b0fb360ca430c9caee3",
+    "archiveSHA256": "2ec7b491b344718adca8b64f48b70d8e6fea44c313f233ee2020ec8c2bd8001d",
+    "backupPreserved": true,
+    "deepStrictSignatureVerified": true,
+    "hostIdentifier": "local.helpr.desktop.workspace"
+  },
+  "installation6": {
+    "build": 9,
+    "install": 6,
+    "hashes": {
+      "Contents/MacOS/helpr": "9a61679e755c9d6e4b661abf5d50fd83f0a1b158c153f045fb44a4a7a4a18782",
+      "Contents/Resources/app.asar": "2ec7b491b344718adca8b64f48b70d8e6fea44c313f233ee2020ec8c2bd8001d",
+      "Contents/Resources/watch-owner": "38b49e158bd3a6a397dfb3effb00ab49622b4a9ba0cbe199c094c0b1b0aba9cc",
+      "Contents/Frameworks/helpr Workspace.app/Contents/MacOS/helpr Workspace Helper": "8b661179676a889af5ce54c117a95dd5ce30e488fef2a563bd7cb4115433795f",
+      "Contents/Frameworks/helpr Workspace.app/Contents/Info.plist": "5a951ad582575328b89b272ee89d4e41f6f11675b74a754f6038cc53f9981bac"
+    },
+    "backupPreserved": true,
+    "deepStrictSignatureVerified": true
   }
 }
