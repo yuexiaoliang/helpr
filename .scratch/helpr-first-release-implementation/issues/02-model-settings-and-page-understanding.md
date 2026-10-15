@@ -20,7 +20,7 @@ User stories: 1、2、4、16、64
 ## 原型确认
 
 - 状态：待确认。
-- 原型：[模型配置与网页理解](http://127.0.0.1:4317/model-understanding-prototype.html)，版本 `model-understanding-v1`。来源分支 `codex/core-workspace-prototype`，提交 `e185300`；[原型说明](/Users/yuexiaoliang/.codex/worktrees/core-workspace-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/core-workspace/model-understanding-prototype.md)，自包含 HTML 可直接打开。
+- 原型：[模型配置与网页理解](http://127.0.0.1:4317/model-understanding-prototype.html)，版本 `model-understanding-v1`。来源分支 `codex/core-workspace-prototype`，提交 `a722b68`；[原型说明](/Users/yuexiaoliang/.codex/worktrees/core-workspace-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/core-workspace/model-understanding-prototype.md)，自包含 HTML 可直接打开。
 - 覆盖范围：全局服务协议、地址、模型及演示凭据的配置与模拟连接；所属任务的页面问答、独立草稿与逐段回复；逐任务停止回复与未知消耗；更换服务只影响后续请求；凭据、连接、超时、格式、能力、保护不可用及上限提示；回复页面依据与网页变化提示。沿用已确认的紧凑标签栏、网页主工作区与独立对话，不重做整体布局。
 - 确认记录：2026-10-15 用户要求“推进 02 模型配置与网页理解的原型”。这是制作原型的授权，尚未取得对本版本及上述范围的正式实现确认。
 - 模拟边界：网页、回复、连接、保护、保存与用量都是内存演示；不接真实服务，不接收真实密钥，不写产品数据。真实协议、Keychain、持久预算、受控观察及理解质量仍待实现和验证。本轮不进入 03 网页操作；“停止回复”不扩展为整项任务停止或原生接管。
@@ -55,3 +55,5 @@ User stories: 1、2、4、16、64
 2026-10-13，用户批准“按这 23 项发布正式事项”后发布。尚未开始实现；完成时在此记录实现提交、验证结果、证据入口及影响后续事项的限制。
 
 2026-10-15，按用户明确请求制作 `model-understanding-v1`，保存在独立原型分支，当前分支仅记录来源与待确认范围。沿用已选工作区，用首次配置、双任务、服务更换、失败重发、网页变化五个可操作场景体验行为。仅做原型语法与主要交互走查，没有增加安装包启动、安装、真人测试、模型或远程写入；原型没有测试套件，也不充当真实产品验收。等待用户体验反馈与明确确认后再开始对应正式代码。
+
+2026-10-15，原型已做简短语法和浏览器走查，覆盖配置保存、独立双请求与 A 取消/B 完成、失败不自动重发、服务切换和旧页面依据提示；查看桌面与窄窗口布局。代码审阅初次 Standards 1 项、Spec 2 项：首次场景未重置、本次模型标识及已取消空回复的历史状态。修正于 `6f5e526`、`a722b68`，定向复核后两轴遗留均为 0；没有扩大为正式产品验收或运行整个安装验证。最终原型来源为 `a722b68`，仍待用户确认。
