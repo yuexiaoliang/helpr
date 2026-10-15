@@ -1,5 +1,7 @@
 # 01 候选 14 安装与正常冷重开核对
 
+当前决定：2026-10-15，用户以 39／40 的手动测试明确验收任务卡片交互通过，不再要求重新完成卡片自动测试才能安装。下文保留此前有界运行方案及结果；38–40 已运行，不能重放此计划。后续安装与正常重开使用新的安排，卡片验收以[用户决定](evidence/workspace-01/card-interaction-acceptance.json)为依据。
+
 ## 目的与范围
 
 继续事项 01 已确认的 `foundation-v2`／`foundation-v3` 基础工作区，不新增产品行为。候选 14 的原生红按钮、真实 Dock 返回和内容保留已由[启动 37](evidence/workspace-01/window-controls-37.json)验证；候选 13 的[启动 35](evidence/workspace-01/focus-green-35.json)通过原生焦点门控，但不能据此称候选 14 已通过同一路径。安装仍为 build 11，有已知焦点缺陷。
