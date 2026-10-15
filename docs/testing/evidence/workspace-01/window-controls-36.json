@@ -1,0 +1,109 @@
+{
+  "recorded": "2026-10-15T07:06:37.381051+00:00",
+  "scope": "candidate14 startup native traffic-light visibility; red-close and Dock-return not passed; no install",
+  "build": 14,
+  "start": 36,
+  "installed": false,
+  "archiveSHA256": "1183c995157ef00c10fcc6ce892b30b4badcc64aed818d4d456ec8b7a9c30c2d",
+  "sourceChange": "on BrowserWindow show, setWindowButtonVisibility(true) only if not fullscreen; no CSS, coordinates or close/quit changes",
+  "sourceChecks": {
+    "pnpmCheckPassed": true,
+    "testFiles": 5,
+    "tests": 12,
+    "syntaxFiles": 187,
+    "typecheck": true,
+    "lint": true,
+    "format": true,
+    "legacyEvidenceReadOnly": true,
+    "newRealModelCalls": 0
+  },
+  "sourceReview": {
+    "fixedPoint": "4f10302",
+    "standardsOpen": 0,
+    "specOpen": 0,
+    "runtimeEvidenceSeparate": true
+  },
+  "package": {
+    "prepared": true,
+    "hashes": {
+      "Contents/MacOS/helpr": "ad421b826c112ab01ea1613e52bef0ea9157c5fda189b5aaed37265a23ca34e5",
+      "Contents/Resources/app.asar": "1183c995157ef00c10fcc6ce892b30b4badcc64aed818d4d456ec8b7a9c30c2d",
+      "Contents/Resources/watch-owner": "34cf9f047e9d67809f4fa19360fe74748e36aa07cbdf3b3348b51084bc80a1bf",
+      "Contents/Frameworks/helpr Workspace.app/Contents/MacOS/helpr Workspace Helper": "770c3c8ffaa03a5d169f1214284c6ab363ef9b53fd87dae07a6ac926c8966a4f",
+      "Contents/Frameworks/helpr Workspace.app/Contents/Info.plist": "76ad0d6ed10de27fc407bc92a7dc646002667c9964f782da879beb1b4a259768"
+    },
+    "standardCompleteInternalLayout": true,
+    "helpers": 4,
+    "sameArchiveAndFuses": true,
+    "deepStrictSignatureVerified": true
+  },
+  "foregroundInterval": {
+    "userGrant": "现在可以，开始核对",
+    "start": "2026-10-15T07:00:28.062Z",
+    "end": "2026-10-15T07:03:28.493Z",
+    "limitSeconds": 180,
+    "elapsedSeconds": 180.431,
+    "deadlineExpired": true,
+    "userStateChangeRejectionsObserved": 0,
+    "userToldDesktopAvailableAfterCleanup": true
+  },
+  "recordsBaselineMatched": true,
+  "nativeControls": {
+    "startupScreenshotShowsRedYellowGreen": true,
+    "axCloseFullscreenMinimizePresent": true,
+    "visibilityPathPassed": true,
+    "axCloseClickAttempted": true,
+    "axAfterFirstClickStillShowsWindow": true,
+    "coordinateClickAttempted": true,
+    "coordinateUnitsNotIndependentlyVerified": true,
+    "axAfterCoordinateStillShowsWindow": true,
+    "finalAxCloseClickBeforeUserRequestAttempted": true,
+    "hideTransitionIndependentlyProven": false,
+    "dockReturnProven": false,
+    "humanAnswer": "应用已经不在了",
+    "humanObservationTimingVersusDeadline": "not established",
+    "conclusion": "visibility recovered in own-window screenshots; do not infer red-close quit/crash, successful hide or Dock return"
+  },
+  "watchdog": {
+    "expired": true,
+    "action": "wrote abort to existing bounded harness command file",
+    "harnessError": "CUA_UI_ROUND_ABORTED",
+    "cleanup": 12,
+    "exitCode": null,
+    "signal": "SIGKILL",
+    "observedProcessCount": 15,
+    "remainingObservedProcessCount": 0
+  },
+  "normalQuitPassed": false,
+  "wholeNativeRoundPassed": false,
+  "diagnosticServerEnded": true,
+  "candidate13FocusGreenPreserved": true,
+  "priorFocusGreenScope": "build13 start35 only; not relabeled as build14 focus regression",
+  "currentInstalledBuild": 11,
+  "installation": 8,
+  "installedHashUnchanged": true,
+  "newModelCalls": 0,
+  "remoteBusinessWrites": 0,
+  "newFaultInjection": 0,
+  "budget": {
+    "used": {
+      "builds": 14,
+      "installs": 8,
+      "starts": 36,
+      "faults": 4,
+      "cleanups": 12
+    },
+    "limits": {
+      "builds": 14,
+      "installs": 10,
+      "starts": 36,
+      "faults": 4,
+      "cleanups": 12
+    }
+  },
+  "batchStopped": true,
+  "extraStartsAfter36": 0,
+  "newInstallations": 0,
+  "overallProductAcceptance": false,
+  "nextVerification": "separate bounded foreground batch needed for real red-close hide, actual Dock return and normal quit; prepare concrete handoff and deadline before starting, no observer-driven show as Dock substitute"
+}

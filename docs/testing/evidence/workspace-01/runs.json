@@ -286,6 +286,36 @@
         "version": "1"
       },
       "prepared": true
+    },
+    {
+      "build": 14,
+      "started": "2026-10-15T06:58:59.526Z",
+      "toolchain": {
+        "node": "v24.18.0",
+        "pnpm": "11.7.0"
+      },
+      "appId": "local.helpr.desktop",
+      "signature": "ad-hoc, current Mac self-use only",
+      "hashes": {
+        "Contents/MacOS/helpr": "ad421b826c112ab01ea1613e52bef0ea9157c5fda189b5aaed37265a23ca34e5",
+        "Contents/Resources/app.asar": "1183c995157ef00c10fcc6ce892b30b4badcc64aed818d4d456ec8b7a9c30c2d",
+        "Contents/Resources/watch-owner": "34cf9f047e9d67809f4fa19360fe74748e36aa07cbdf3b3348b51084bc80a1bf",
+        "Contents/Frameworks/helpr Workspace.app/Contents/MacOS/helpr Workspace Helper": "770c3c8ffaa03a5d169f1214284c6ab363ef9b53fd87dae07a6ac926c8966a4f",
+        "Contents/Frameworks/helpr Workspace.app/Contents/Info.plist": "76ad0d6ed10de27fc407bc92a7dc646002667c9964f782da879beb1b4a259768"
+      },
+      "fuses": {
+        "0": 48,
+        "1": 49,
+        "2": 48,
+        "3": 48,
+        "4": 49,
+        "5": 49,
+        "6": 48,
+        "7": 48,
+        "8": 49,
+        "version": "1"
+      },
+      "prepared": true
     }
   ],
   "runs": [
@@ -759,18 +789,18 @@
   },
   "budget": {
     "limits": {
-      "builds": 13,
+      "builds": 14,
       "installs": 10,
       "starts": 36,
       "faults": 4,
       "cleanups": 12
     },
     "used": {
-      "builds": 13,
+      "builds": 14,
       "installs": 8,
-      "starts": 35,
+      "starts": 36,
       "faults": 4,
-      "cleanups": 11
+      "cleanups": 12
     },
     "modelCalls": 0,
     "remoteWrites": 0,
@@ -856,6 +886,10 @@
         "builds": "+1",
         "starts": "+1",
         "reason": "候选12/33在实际门控仍失败且已正常退出，原批结束；新核对同版官方ReadyToCommitNavigation明确focusOnNavigation默认true并SetInitialFocus，单独关闭真实网页此设置，build13及34候选绿例后才35/36安装复验；不再重做候选12，不额外清理、故障、模型或业务写入。"
+      },
+      {
+        "builds": "+1",
+        "reason": "用户继续事项01；保留35焦点通过与按钮不可见红例。同版官方原生setter可重绘并显示容器，单变量在非全屏show恢复按钮可见，构建14，后台先准备，最多原有启动36一轮3分钟，等待明确让出桌面才运行；不安装，不追加其它额度。"
       }
     ]
   },
@@ -1606,5 +1640,15 @@
     "focusPathPassed": true,
     "normalQuit": true,
     "installed": false
+  },
+  "pendingCandidate14": {
+    "build": 14,
+    "installed": false,
+    "evidence": "window-controls-36.json",
+    "nativeTrafficLightVisibilityPassed": true,
+    "nativeRedCloseHideAndDockReturnPassed": false,
+    "normalQuitPassed": false,
+    "roundAbortedAtDeadline": true,
+    "allObservedProcessesEndedAfterCleanup": true
   }
 }

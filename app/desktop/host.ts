@@ -527,6 +527,9 @@ void app
     const toastLoaded = loadUI(toast.webContents, 'toast');
     toast.setVisible(false);
     win.on('resize', layout);
+    win.on('show', () => {
+      if (!win.isFullScreen()) win.setWindowButtonVisibility(true);
+    });
     win.on('close', (event) => {
       if (!closing) {
         event.preventDefault();
