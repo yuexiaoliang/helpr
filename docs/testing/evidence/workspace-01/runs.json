@@ -310,6 +310,25 @@
       "passed": false,
       "error": "VALIDATION_TIMEOUT",
       "ms": 611660
+    },
+    {
+      "batch": "run-1792014630573",
+      "started": "2026-10-14T21:50:30.578Z",
+      "checks": [],
+      "samples": [
+        {
+          "kind": "startup",
+          "ms": 1015,
+          "versions": {
+            "electron": "44.7.2",
+            "node": "24.21.0",
+            "chrome": "152.0.7977.149"
+          }
+        }
+      ],
+      "passed": false,
+      "error": "VALIDATION_TIMEOUT",
+      "ms": 601268
     }
   ],
   "startupDenials": {
@@ -337,16 +356,16 @@
     "limits": {
       "builds": 6,
       "installs": 3,
-      "starts": 13,
+      "starts": 14,
       "faults": 3,
-      "cleanups": 6
+      "cleanups": 7
     },
     "used": {
       "builds": 6,
       "installs": 3,
-      "starts": 11,
+      "starts": 12,
       "faults": 2,
-      "cleanups": 5
+      "cleanups": 6
     },
     "modelCalls": 0,
     "remoteWrites": 0,
@@ -372,6 +391,11 @@
       },
       {
         "reason": "审查要求覆盖宿主JS开始前的退出窗口，追加1启动和1故障；不追加构建或业务调用"
+      },
+      {
+        "starts": "+1",
+        "cleanups": "+1",
+        "reason": "用户确认已授权现有build6；保留超时11，以同一安装完成原定首次、冷重开和故障恢复，不重复替换；再次授权阻塞则停止"
       }
     ]
   },
@@ -451,5 +475,10 @@
     "previousCandidatePreserved": true,
     "signatureVerified": true,
     "date": "2026-10-14T21:50:13.755Z"
+  },
+  "cleanup6": {
+    "date": "2026-10-15T01:09:11.935Z",
+    "remainingOwnProcesses": [],
+    "allOwnInstalledProcessesAbsent": true
   }
 }
