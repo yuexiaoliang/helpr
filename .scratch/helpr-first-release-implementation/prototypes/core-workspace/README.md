@@ -1,6 +1,6 @@
 # helpr 核心工作区原型
 
-新增：[02 模型配置与网页理解原型](model-understanding-prototype.md)，版本 `model-understanding-v1`，待确认。沿用当前工作区外观，以五个模拟场景检查设置和问答行为。
+新增：[02 模型配置与网页理解原型](model-understanding-prototype.md)，版本 `model-understanding-v1`，2026-10-15 用户回复“可以”，已确认。沿用当前工作区外观，以五个模拟场景检查设置和问答行为。
 
 状态：当前为 `foundation-v3`，在已确认的 `foundation-v2` 交互与布局（`c9a7a98`）上，采用用户选定的第 4 款标签栏并移除小竖线。继续保留 A 的顶部标签、B 式悬停卡片、单目标创建与独立对话。B／C 留作历史比较，尚未进入正式实现。
 
