@@ -1,0 +1,89 @@
+{
+  "date": "2026-10-15",
+  "source": "20eead6",
+  "build": 15,
+  "archiveSHA256": "3869b2288823f1262581bcd5aa55a1e2d4290c74bfc615aa2d2c211d83a8f9a6",
+  "outcome": "minimal-trial-passed",
+  "scope": "独立候选、新验证资料、两张真实本机合成网页、真实模型与macOS保护；不是完整事项或安装升级验收",
+  "counts": {
+    "newBuilds": 1,
+    "newStarts": 1,
+    "newInstalls": 0,
+    "textRequests": 2,
+    "connectionChecks": 0,
+    "faults": 0,
+    "cleanups": 0,
+    "remoteBusinessWrites": 0
+  },
+  "credential": {
+    "macOSProtectedSave": true,
+    "originalKeyAbsentFromPublicSnapshotAndMainDatabase": true,
+    "protectedReadUsedByRealRequests": true,
+    "coldReopenChecked": false
+  },
+  "calls": [
+    {
+      "task": "A",
+      "callId": "4aff3d6d-3e78-4c6c-9c2f-cde5994fc031",
+      "phase": "complete",
+      "configurationVersion": 1,
+      "model": "deepseek-flash",
+      "sourceTitle": "任务 A · 云杉项目",
+      "sourcePath": "/a",
+      "sourceGeneration": 2,
+      "pageChanged": false,
+      "expected": {
+        "name": "云杉项目",
+        "code": "03E1DA4E",
+        "owner": "林雨",
+        "count": 7
+      },
+      "answer": "核对码：03E1DA4E  \n负责人：林雨  \n待办数：7 项",
+      "usage": {
+        "inputTokens": 506,
+        "outputTokens": 91,
+        "totalTokens": 597
+      },
+      "sent": true
+    },
+    {
+      "task": "B",
+      "callId": "69b6652b-9178-4627-883f-4e3b4517977f",
+      "phase": "complete",
+      "configurationVersion": 1,
+      "model": "deepseek-flash",
+      "sourceTitle": "任务 B · 海棠项目",
+      "sourcePath": "/b",
+      "sourceGeneration": 1,
+      "pageChanged": false,
+      "expected": {
+        "name": "海棠项目",
+        "code": "70985434",
+        "owner": "周宁",
+        "count": 12
+      },
+      "answer": "根据页面观察：\n\n- **本页核对码**：70985434  \n- **负责人**：周宁  \n- **本期待办数**：12 项",
+      "usage": {
+        "inputTokens": 465,
+        "outputTokens": 142,
+        "totalTokens": 607
+      },
+      "sent": true
+    }
+  ],
+  "userConfirmation": {
+    "at": "2026-10-15T10:43:06.927Z",
+    "statement": "B 回答正确，切回 A 也保留",
+    "scope": "任务B真实UI提问与回答、A回复保留"
+  },
+  "limitations": [
+    "A由继承验证通道调用同一个正式业务入口，B由用户在界面发送；不计作手填模型设置验收",
+    "本轮未验证同时请求、真实服务取消、服务切换或冷重开",
+    "窗口自身截图仅有外壳，CUA原生读取超时；真实网页与回复可见性依据用户本轮反馈"
+  ],
+  "priorPreparation": {
+    "captureTimeoutDuringLockedSession": true,
+    "preserved": true
+  },
+  "window": "保持当前窗口，由用户决定结束；无自动追加请求或倒计时关闭"
+}
