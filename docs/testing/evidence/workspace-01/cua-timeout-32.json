@@ -1,0 +1,132 @@
+{
+  "recorded": "2026-10-15T05:50:12.684525+00:00",
+  "scope": "issue01 candidate12 start32; bounded native verification aborted, no product acceptance",
+  "userReportedSystemDialog": {
+    "application": "helpr",
+    "item": "helpr safe storage",
+    "authorizationGranted": "not reported"
+  },
+  "candidate": {
+    "build": 12,
+    "start": 32,
+    "installed": false,
+    "archiveSHA256": "6c8fa206c5a227d85316200dc6c4611184dfbbab2b7d9caf94ce60583da23bc9",
+    "ready": true,
+    "savedRecordsBaselineMatched": true,
+    "baselineScope": "saved records recovery after harness interruption; no website session claim",
+    "tool": {
+      "operation": "cua.getApp(candidate internal host)",
+      "error": "Sky Computer Use request timed out",
+      "wallTimeSeconds": 120.3596,
+      "appObjectAcquired": false
+    },
+    "preflightBeforeAndAfter": "unlocked and no protected input",
+    "fixedReadOnlyInspection": {
+      "encryptionAvailable": true,
+      "window": {
+        "bounds": {
+          "x": 80,
+          "y": 25,
+          "width": 1280,
+          "height": 825
+        },
+        "contentBounds": {
+          "x": 80,
+          "y": 25,
+          "width": 1280,
+          "height": 825
+        },
+        "workArea": {
+          "x": 0,
+          "y": 25,
+          "width": 1440,
+          "height": 825
+        },
+        "fullScreen": false,
+        "buttonPosition": {
+          "x": 12,
+          "y": 18
+        }
+      },
+      "switches": {
+        "port": false,
+        "pipe": true,
+        "inspect": false
+      },
+      "scope": "existing fixed inspect command; no arbitrary evaluation or UI action"
+    },
+    "geometryInterpretation": "own window was not fullscreen and its bounds were inside workArea; native close button visibility remains unverified",
+    "diagnosticPage": {
+      "scope": "owned local focus completion gate; no authentication test",
+      "receipts": [
+        {
+          "kind": "waiting",
+          "task": "A",
+          "at": "2026-10-15T05:38:29.323Z"
+        },
+        {
+          "kind": "waiting",
+          "task": "B",
+          "at": "2026-10-15T05:38:29.326Z"
+        }
+      ]
+    },
+    "diagnosticPageScope": "separately managed owned HTTP gate; both requests arrived but no release; no visual, authentication or focus success",
+    "focusCorrectionVerified": false,
+    "normalQuitPassed": false,
+    "exit": {
+      "code": null,
+      "signal": "SIGKILL",
+      "observedProcessCount": 15
+    },
+    "error": "CUA_UI_ROUND_ABORTED",
+    "passed": false,
+    "cleanup": 11,
+    "remainingObservedProcesses": 0
+  },
+  "independentControlAfterCleanup": {
+    "operation": "cua.getApp(com.apple.finder) immediately after CUA JS session reset",
+    "requestedTimeoutSeconds": 20,
+    "wallTimeSeconds": 120.3246,
+    "error": "Sky Computer Use request timed out",
+    "appObjectAcquired": false,
+    "helprRunning": false,
+    "productStartupConsumed": false,
+    "conclusion": "native tool timeout also affects Finder independently of helpr; exact service cause unproven",
+    "readOnlyServiceSample": "main runloop and waits observed; not a proven root cause",
+    "serviceOrSecurityProcessesTerminated": false,
+    "systemPermissionsChanged": false
+  },
+  "afterCleanup": {
+    "diagnosticServerEnded": true,
+    "installedOrCandidateOwnedProcesses": 0,
+    "currentInstalledBuild": 11,
+    "installation": 8,
+    "archiveSHA256": "c106f18d35307e96a7dcef711e8d7596fc4874f83afd3cd84ab4727e22625dce",
+    "deepStrictSignatureVerified": true
+  },
+  "budget": {
+    "limits": {
+      "builds": 12,
+      "installs": 10,
+      "starts": 34,
+      "faults": 4,
+      "cleanups": 11
+    },
+    "used": {
+      "builds": 12,
+      "installs": 8,
+      "starts": 32,
+      "faults": 4,
+      "cleanups": 11
+    },
+    "stoppedAtStart": 32,
+    "starts33And34NotAttempted": true,
+    "newInstallations": 0,
+    "newBuilds": 0
+  },
+  "nextStep": "restore Computer Use service, first verify Finder without starting helpr, then prepare bounded candidate verification; no more native retries in this batch",
+  "newModelCalls": 0,
+  "remoteBusinessWrites": 0,
+  "overallProductAcceptance": false
+}

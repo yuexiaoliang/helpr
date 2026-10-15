@@ -731,16 +731,16 @@
     "limits": {
       "builds": 12,
       "installs": 10,
-      "starts": 33,
+      "starts": 34,
       "faults": 4,
-      "cleanups": 10
+      "cleanups": 11
     },
     "used": {
       "builds": 12,
       "installs": 8,
-      "starts": 31,
+      "starts": 32,
       "faults": 4,
-      "cleanups": 10
+      "cleanups": 11
     },
     "modelCalls": 0,
     "remoteWrites": 0,
@@ -811,6 +811,11 @@
         "installs": "+1 new and +1 rollback reserve",
         "starts": "+4",
         "reason": "28/29已结束；同一授权事项卡片快速选择后焦点原生红例、单变量修正、候选绿例后才安装及登录冷重开；原用量/失败保留，模型及远程写入0，修后失败/授权/工具传输阻碍则停止"
+      },
+      {
+        "starts": "+1 to allow candidate plus installed first/cold reopen",
+        "cleanups": "+1 bounded reserve",
+        "reason": "用户确认所见项目为helpr/helpr safe storage，现场预检恢复；复用build12至多启动32/33/34，候选通过才安装，允许就绪现场单次人工授权等待10分钟，整批30分钟，授权后仍受阻或焦点失败则保存停止；不构建、不调用模型或远程业务"
       }
     ]
   },
@@ -1517,11 +1522,17 @@
     },
     "deepStrictSignatureVerified": true,
     "evidence": "focus-repair.json",
-    "cuaWindowBinding": "blocked: timeout and protected input; dialog contents not read",
+    "cuaWindowBinding": "start31 timeout then protected input; start32 tool timeout with preflight clear, Finder control also timed out; see cua-timeout-32.json",
     "focusCorrectionVerified": false
   },
   "focusRepair30_31": {
     "evidence": "focus-repair.json",
     "greenVerified": false
+  },
+  "focusRepair32": {
+    "evidence": "cua-timeout-32.json",
+    "greenVerified": false,
+    "installed": false,
+    "batchStopped": true
   }
 }

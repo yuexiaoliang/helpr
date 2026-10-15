@@ -101,7 +101,9 @@
     "sourceChecksPassed": true,
     "oldNativeFailureConfirmed": true,
     "packagedGreenVerified": false,
-    "blocker": "CUA timeout then protected input observed; not a proven product regression",
-    "evidence": "focus-repair.json"
+    "blocker": "start31 protected input observed after timeout; start32 preflight clear but CUA request timed out, independently reproduced on Finder after JS reset",
+    "evidence": "focus-repair.json",
+    "resumeEvidence": "cua-timeout-32.json",
+    "windowGeometry": "candidate12 start32 within work area, not fullscreen; button visibility unverified"
   }
 }
