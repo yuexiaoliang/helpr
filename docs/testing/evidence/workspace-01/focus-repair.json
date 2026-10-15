@@ -1,0 +1,162 @@
+{
+  "recorded": "2026-10-15T04:20:01.405Z",
+  "scope": "issue01 native focus repair candidate; actual packaged correction unverified",
+  "oldBuild11": {
+    "start30": {
+      "batch": "ui-1792037397749",
+      "build": 11,
+      "scope": "saved records recovery after harness interruption; no website session claim",
+      "attemptedStarts": [
+        {
+          "start": 30,
+          "at": "2026-10-15T04:09:57.751Z"
+        }
+      ],
+      "readyStarts": [
+        30
+      ],
+      "exits": [
+        {
+          "code": 0,
+          "signal": null,
+          "observedProcessCount": 15
+        }
+      ],
+      "checks": [
+        {
+          "name": "上轮 CUA 创建的原任务、对话、草稿、标签在脚本清理后恢复；不抵算正常冷重开或网站会话",
+          "passed": true
+        },
+        {
+          "name": "恢复轮经真实 UI 正常退出，已见自有进程全部结束",
+          "passed": true
+        }
+      ],
+      "passed": true,
+      "remainingObservedPids": 0,
+      "recoveryHarnessOnly": true,
+      "focusResult": {
+        "build": 11,
+        "start": 30,
+        "rapidSelectPasteTrial": {
+          "firstPassed": true,
+          "secondFailed": "CARD_NOT_FOCUSED_BEFORE_RELEASE",
+          "secondActual": "window container",
+          "gateIsolationInconclusive": true
+        },
+        "controlledPageReceipt": {
+          "beforeRelease": "task card",
+          "afterRelease": "website document",
+          "error": "CARD_FOCUS_LOST_ON_PAGE_RECEIPT",
+          "passed": false
+        },
+        "escapeAfterStableOpen": {
+          "returnedToHiddenBChat": true,
+          "passed": false
+        },
+        "source": "actual CUA AX and a separately controlled owned HTTP response; not jsdom",
+        "externalPageProbe": true
+      },
+      "externalDiagnosticPage": {
+        "scope": "owned local diagnostic page; independent of recovery harness fixture",
+        "receipts": [
+          {
+            "kind": "waiting",
+            "task": "A",
+            "at": "2026-10-15T04:11:59.022Z"
+          },
+          {
+            "kind": "release",
+            "count": 1,
+            "at": "2026-10-15T04:12:11.300Z"
+          },
+          {
+            "kind": "waiting",
+            "task": "A",
+            "at": "2026-10-15T04:12:53.564Z"
+          },
+          {
+            "kind": "release",
+            "count": 1,
+            "at": "2026-10-15T04:13:06.660Z"
+          }
+        ]
+      }
+    }
+  },
+  "candidate12": {
+    "build": 12,
+    "installed": false,
+    "offlinePackageValidation": true,
+    "sourceCheck": {
+      "testFiles": 5,
+      "tests": 12,
+      "typecheck": true,
+      "lint": true,
+      "format": true,
+      "syntaxFiles": 187
+    },
+    "sourceReview": {
+      "standardsOpen": 0,
+      "specOpen": 0
+    },
+    "start31": {
+      "batch": "ui-1792037826564",
+      "build": 12,
+      "scope": "saved records recovery after harness interruption; no website session claim",
+      "attemptedStarts": [
+        {
+          "start": 31,
+          "at": "2026-10-15T04:17:06.566Z"
+        }
+      ],
+      "readyStarts": [
+        31
+      ],
+      "exits": [
+        {
+          "code": null,
+          "signal": "SIGKILL",
+          "observedProcessCount": 12
+        }
+      ],
+      "checks": [
+        {
+          "name": "上轮 CUA 创建的原任务、对话、草稿、标签在脚本清理后恢复；不抵算正常冷重开或网站会话",
+          "passed": true
+        }
+      ],
+      "passed": false,
+      "error": "CUA_UI_ROUND_ABORTED",
+      "remainingObservedPids": 0
+    },
+    "blocker": {
+      "build": 12,
+      "start": 31,
+      "toolError": "-10005 timeoutReached",
+      "preflightBeforeLaunch": "unlocked and no protected input",
+      "subsequentPreflight": "MAC_PROTECTED_INPUT_ACTIVE",
+      "newSystemAuthorizationProcessObserved": true,
+      "dialogContents": "not read",
+      "focusFixVerification": false,
+      "installedBuildStill": 11,
+      "at": "2026-10-15T04:18:45.850Z"
+    },
+    "focusGreenVerified": false,
+    "windowGeometry": "not acquired; no CUA window binding or inspect result",
+    "normalQuit": "not passed; explicit abort and cleanup10",
+    "diagnosticPageRequests": []
+  },
+  "currentInstalledBuild": 11,
+  "currentInstallationCount": 8,
+  "diagnosticServerEnded": true,
+  "newModelCalls": 0,
+  "remoteBusinessWrites": 0,
+  "overallProductAcceptance": false,
+  "afterCleanupSystemPreflight": {
+    "result": "MAC_SCREEN_LOCKED",
+    "at": "2026-10-15T04:23:55.088Z",
+    "protectedInputCheck": "not reached because lock guard failed first",
+    "scope": "later observation; not proof of the earlier timeout cause"
+  }
+}

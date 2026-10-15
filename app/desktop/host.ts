@@ -9,6 +9,7 @@ import {
   protocol,
   webContents,
   dialog,
+  screen,
   type WebContents,
 } from 'electron';
 import path from 'node:path';
@@ -272,12 +273,17 @@ function bindPage(task: Task): void {
     });
 }
 function reconcile(): void {
-  for (const task of state.tasks) if (!pages.has(task.id)) bindPage(task);
-  // 新网页与对话加入后，把面板放回最上层。
-  win.contentView.removeChildView(overlay);
-  win.contentView.addChildView(overlay);
-  win.contentView.removeChildView(toast);
-  win.contentView.addChildView(toast);
+  let added = false;
+  for (const task of state.tasks)
+    if (!pages.has(task.id)) {
+      bindPage(task);
+      added = true;
+    }
+  // 仅新视图改变层级；普通记录回执不能移除正在接收键盘的原生浮层。
+  if (added) {
+    win.contentView.addChildView(overlay);
+    win.contentView.addChildView(toast);
+  }
   layout();
   emit({ state });
 }
@@ -300,15 +306,14 @@ async function perform(input: unknown): Promise<unknown> {
     const next = panelSchema.parse(input);
     clearTimeout(panelTimer);
     const apply = () => {
+      const overlayHadFocus =
+        webContents.getFocusedWebContents() === overlay.webContents;
       panel = next;
       layout();
       emit({ panel });
       if (panel.panel !== 'none' && (panel.focus || panel.panel !== 'preview'))
         overlay.webContents.focus();
-      else if (
-        panel.panel === 'none' &&
-        webContents.getFocusedWebContents() === overlay.webContents
-      )
+      else if (panel.panel === 'none' && overlayHadFocus)
         win.webContents.focus();
     };
     if (next.panel === 'none' && next.delayed)
@@ -361,6 +366,13 @@ async function perform(input: unknown): Promise<unknown> {
         bounds: p.view.getBounds(),
       })),
       encryptionAvailable: safeStorage.isEncryptionAvailable(),
+      window: {
+        bounds: win.getBounds(),
+        contentBounds: win.getContentBounds(),
+        workArea: screen.getDisplayMatching(win.getBounds()).workArea,
+        fullScreen: win.isFullScreen(),
+        buttonPosition: win.getWindowButtonPosition(),
+      },
       switches: {
         port: app.commandLine.hasSwitch('remote-debugging-port'),
         pipe: app.commandLine.hasSwitch('remote-debugging-pipe'),

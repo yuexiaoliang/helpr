@@ -226,6 +226,36 @@
         "version": "1"
       },
       "prepared": true
+    },
+    {
+      "build": 12,
+      "started": "2026-10-15T04:16:02.725Z",
+      "toolchain": {
+        "node": "v24.18.0",
+        "pnpm": "11.7.0"
+      },
+      "appId": "local.helpr.desktop",
+      "signature": "ad-hoc, current Mac self-use only",
+      "hashes": {
+        "Contents/MacOS/helpr": "188cb51e9f098ce41f948e44b40877f042a82fe3d9cd925f0f7e535071001e05",
+        "Contents/Resources/app.asar": "6c8fa206c5a227d85316200dc6c4611184dfbbab2b7d9caf94ce60583da23bc9",
+        "Contents/Resources/watch-owner": "34cf9f047e9d67809f4fa19360fe74748e36aa07cbdf3b3348b51084bc80a1bf",
+        "Contents/Frameworks/helpr Workspace.app/Contents/MacOS/helpr Workspace Helper": "b2e787f862c320c1ec17ba9b55ba2bc686ffb785839dac8429ecb873032e8447",
+        "Contents/Frameworks/helpr Workspace.app/Contents/Info.plist": "3e5086eff3fdca1d9ea787f5b3f982513ea47d73c5de586db0cc049ea45de001"
+      },
+      "fuses": {
+        "0": 48,
+        "1": 49,
+        "2": 48,
+        "3": 48,
+        "4": 49,
+        "5": 49,
+        "6": 48,
+        "7": 48,
+        "8": 49,
+        "version": "1"
+      },
+      "prepared": true
     }
   ],
   "runs": [
@@ -699,18 +729,18 @@
   },
   "budget": {
     "limits": {
-      "builds": 11,
-      "installs": 9,
-      "starts": 27,
+      "builds": 12,
+      "installs": 10,
+      "starts": 33,
       "faults": 4,
       "cleanups": 10
     },
     "used": {
-      "builds": 11,
+      "builds": 12,
       "installs": 8,
-      "starts": 27,
+      "starts": 31,
       "faults": 4,
-      "cleanups": 9
+      "cleanups": 10
     },
     "modelCalls": 0,
     "remoteWrites": 0,
@@ -771,6 +801,16 @@
       },
       {
         "reason": "诊断24及独立崩溃报告/本机二进制静态检查确认helper路径失败；标准完整宿主布局，先离线检查再候选空工作区/CUA，通过才安装+冷重开。最多1构建3启动1安装及必要回退；保留全部原计数，模型/远程写入0，再失败停止"
+      },
+      {
+        "starts": "+2",
+        "reason": "用户在1224261后要求继续；同一build11两次真实CUA首次/正常冷重开核对，保留夹具预期会话；不构建/安装/故障，原计数不清零，至多30分钟，系统授权/产品/工具阻碍则保存停止"
+      },
+      {
+        "builds": "+1",
+        "installs": "+1 new and +1 rollback reserve",
+        "starts": "+4",
+        "reason": "28/29已结束；同一授权事项卡片快速选择后焦点原生红例、单变量修正、候选绿例后才安装及登录冷重开；原用量/失败保留，模型及远程写入0，修后失败/授权/工具传输阻碍则停止"
       }
     ]
   },
@@ -896,9 +936,9 @@
     "overallProductAcceptance": false,
     "priorBroadWorkspaceEvidenceBuild": 6,
     "limitedCurrentEvidence": "cua-workspace.json",
-    "nativeChineseIme": false,
-    "originalSessionColdReopen": "pending",
-    "dockClickReturnAndColdLaunch": "pending"
+    "nativeChineseIme": true,
+    "originalSessionColdReopen": "passed build11 starts28/29 with independent original session expectation",
+    "dockClickReturnAndColdLaunch": "return after Command+W passed by human; cold Dock launch pending"
   },
   "installation4": {
     "installed": "/Users/yuexiaoliang/Applications/helpr.app",
@@ -1458,5 +1498,30 @@
     "priorBuild7Preserved": true,
     "userDataChanged": false,
     "at": "2026-10-15T03:22:47.099Z"
+  },
+  "coldSession28_29": {
+    "evidence": "cold-session.json",
+    "build": 11,
+    "harnessPassed": true,
+    "overallProductAcceptance": false
+  },
+  "pendingCandidate12": {
+    "build": 12,
+    "installed": false,
+    "hashes": {
+      "Contents/MacOS/helpr": "188cb51e9f098ce41f948e44b40877f042a82fe3d9cd925f0f7e535071001e05",
+      "Contents/Resources/app.asar": "6c8fa206c5a227d85316200dc6c4611184dfbbab2b7d9caf94ce60583da23bc9",
+      "Contents/Resources/watch-owner": "34cf9f047e9d67809f4fa19360fe74748e36aa07cbdf3b3348b51084bc80a1bf",
+      "Contents/Frameworks/helpr Workspace.app/Contents/MacOS/helpr Workspace Helper": "b2e787f862c320c1ec17ba9b55ba2bc686ffb785839dac8429ecb873032e8447",
+      "Contents/Frameworks/helpr Workspace.app/Contents/Info.plist": "3e5086eff3fdca1d9ea787f5b3f982513ea47d73c5de586db0cc049ea45de001"
+    },
+    "deepStrictSignatureVerified": true,
+    "evidence": "focus-repair.json",
+    "cuaWindowBinding": "blocked: timeout and protected input; dialog contents not read",
+    "focusCorrectionVerified": false
+  },
+  "focusRepair30_31": {
+    "evidence": "focus-repair.json",
+    "greenVerified": false
   }
 }

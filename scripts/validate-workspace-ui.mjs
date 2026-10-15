@@ -132,6 +132,7 @@ try {
       fs.unlinkSync(commandFile);
       if (command.kind === 'restart') {
         assert.notEqual(child.exitCode, null, '先经真实 UI 退出');
+        assert.equal(child.exitCode, 0, '冷重开前必须正常退出');
         assert(observed.every(pid => !alive(pid)), '仍有自有进程');
         restoreReceiptOffset = website.receipts.length;
         quitAcknowledgedAt = undefined;

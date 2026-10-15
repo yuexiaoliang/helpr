@@ -1,0 +1,229 @@
+{
+  "batch": "ui-1792036447997",
+  "build": 11,
+  "installation": 8,
+  "scope": "same installed package actual CUA login and normal cold reopen; partial UI acceptance",
+  "started": "2026-10-15T03:54:08.004Z",
+  "attemptedStarts": [
+    {
+      "start": 28,
+      "at": "2026-10-15T03:54:08.008Z"
+    },
+    {
+      "start": 29,
+      "at": "2026-10-15T04:04:19.301Z"
+    }
+  ],
+  "readyStarts": [
+    28,
+    29
+  ],
+  "exits": [
+    {
+      "code": 0,
+      "signal": null,
+      "observedProcessCount": 15
+    },
+    {
+      "code": 0,
+      "signal": null,
+      "observedProcessCount": 15
+    }
+  ],
+  "checks": [
+    {
+      "name": "CUA 创建和输入的原任务、对话、草稿、标签在冷重开后保留",
+      "passed": true
+    },
+    {
+      "name": "CUA 点击本机虚构登录后，冷重开由网站独立确认会话有效",
+      "passed": true
+    },
+    {
+      "name": "界面明确退出后独立核对全部已见自有进程结束",
+      "passed": true
+    }
+  ],
+  "website": [
+    {
+      "kind": "page",
+      "task": "A",
+      "authenticated": false
+    },
+    {
+      "kind": "probe",
+      "task": "A",
+      "node": "undefined",
+      "require": "undefined",
+      "bridge": "undefined"
+    },
+    {
+      "kind": "login",
+      "task": "A"
+    },
+    {
+      "kind": "page",
+      "task": "A",
+      "authenticated": true
+    },
+    {
+      "kind": "probe",
+      "task": "A",
+      "node": "undefined",
+      "require": "undefined",
+      "bridge": "undefined"
+    },
+    {
+      "kind": "page",
+      "task": "B",
+      "authenticated": true
+    },
+    {
+      "kind": "probe",
+      "task": "B",
+      "node": "undefined",
+      "require": "undefined",
+      "bridge": "undefined"
+    },
+    {
+      "kind": "page",
+      "task": "A",
+      "authenticated": true
+    },
+    {
+      "kind": "page",
+      "task": "B",
+      "authenticated": true
+    },
+    {
+      "kind": "probe",
+      "task": "B",
+      "node": "undefined",
+      "require": "undefined",
+      "bridge": "undefined"
+    },
+    {
+      "kind": "probe",
+      "task": "A",
+      "node": "undefined",
+      "require": "undefined",
+      "bridge": "undefined"
+    }
+  ],
+  "harnessPassed": true,
+  "remainingObservedPids": 0,
+  "nativeChineseIme": {
+    "start": 28,
+    "report": "没有误发送，中文完整，点击发送后出现在 A",
+    "source": "user report of native Chinese IME; independently read public task snapshot and CUA AX",
+    "recordedOnceInA": true,
+    "absentInB": true,
+    "bDraftUnchanged": true,
+    "at": "2026-10-15T04:01:01.717Z"
+  },
+  "dockReturn": {
+    "start": 28,
+    "redCloseButton": "user could not find; visual location unresolved",
+    "method": "user pressed Command+W then clicked actual Dock icon helpr",
+    "report": "窗口返回，两项任务和中文消息都保留",
+    "originalWindowAndTaskFactsConfirmedViaCUA": true,
+    "notColdLaunch": true,
+    "at": "2026-10-15T04:04:18.981Z"
+  },
+  "systemRoles": [
+    {
+      "bundleIdentifier": "local.helpr.desktop",
+      "activationPolicy": 1,
+      "role": "controller"
+    },
+    {
+      "bundleIdentifier": "local.helpr.desktop.workspace",
+      "activationPolicy": 0,
+      "role": "host"
+    }
+  ],
+  "rolesProbeHistory": {
+    "firstExistingProbe": {
+      "status": 1,
+      "result": "no role data; not a product pass"
+    },
+    "currentSourceProbe": {
+      "status": 0,
+      "source": "scripts/dock-roles.m"
+    }
+  },
+  "resources": {
+    "scope": "host metrics only, workingSetSize in KiB; not total application or frozen performance threshold",
+    "processes": [
+      {
+        "type": "Browser",
+        "memory": 151968
+      },
+      {
+        "type": "GPU",
+        "memory": 71648
+      },
+      {
+        "type": "Utility",
+        "memory": 41472
+      },
+      {
+        "type": "Tab",
+        "memory": 103792
+      },
+      {
+        "type": "Tab",
+        "memory": 98112
+      },
+      {
+        "type": "Tab",
+        "memory": 82816
+      },
+      {
+        "type": "Tab",
+        "memory": 84912
+      },
+      {
+        "type": "Tab",
+        "memory": 108448
+      },
+      {
+        "type": "Tab",
+        "memory": 77856
+      },
+      {
+        "type": "Tab",
+        "memory": 95456
+      }
+    ]
+  },
+  "cookieEncryptionAvailable": true,
+  "controlSwitches": {
+    "port": false,
+    "pipe": true,
+    "inspect": false
+  },
+  "focus": {
+    "rapidSelectThenDown": {
+      "passed": false,
+      "cardShown": true,
+      "focus": "window container",
+      "escapeClosed": false,
+      "tabAfterEscape": "selected task label"
+    },
+    "stableSelectedTask": {
+      "passed": true,
+      "downFocus": "task card",
+      "escapeFocus": "original task B label",
+      "nextTab": "B close tab button"
+    }
+  },
+  "limits": {
+    "overallAcceptance": false,
+    "nativeCloseButtonVisibility": "user could not find; not located or fixed yet",
+    "coldDockLaunch": false,
+    "oldProductionCredentials": false
+  },
+  "newModelCalls": 0,
+  "remoteBusinessWrites": 0
+}
