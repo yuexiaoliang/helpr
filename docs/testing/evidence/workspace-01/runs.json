@@ -768,7 +768,7 @@
     "used": {
       "builds": 13,
       "installs": 8,
-      "starts": 34,
+      "starts": 35,
       "faults": 4,
       "cleanups": 11
     },
@@ -1587,13 +1587,24 @@
     "installed": false,
     "evidence": "focus-candidate-13.json",
     "cuaWindowBinding": true,
-    "focusCorrectionVerified": false,
-    "batchStopped": true
+    "focusCorrectionVerified": true,
+    "batchStopped": true,
+    "focusCorrectionScope": "start35 single owned page completion and Esc/Tab native return only",
+    "latestEvidence": "focus-green-35.json",
+    "status": "still uninstalled; native window buttons not visible; installed first/cold reopen pending"
   },
   "foregroundConditions": {
     "evidence": "foreground-conditions.json",
     "newAppStarts": 0,
     "candidate13Uninstalled": true,
-    "nextNativeValidationAwaitingForegroundInterval": true
+    "nextNativeValidationAwaitingForegroundInterval": false,
+    "subsequentCompletedStart": 35,
+    "completedEvidence": "focus-green-35.json"
+  },
+  "focusRepair35": {
+    "evidence": "focus-green-35.json",
+    "focusPathPassed": true,
+    "normalQuit": true,
+    "installed": false
   }
 }

@@ -1,0 +1,102 @@
+{
+  "scope": "build13 candidate, start35: single owned page completion with full native AX focus and Esc/Tab return; not full issue01 acceptance",
+  "build": 13,
+  "start": 35,
+  "archiveSHA256": "bd9ff23fb1045961c2d5c81f932541a9f9f8070bc185ac908f116b8b242ab664",
+  "installed": false,
+  "foregroundInterval": {
+    "userGrant": "可以占用电脑了了",
+    "start": "2026-10-15T06:42:02.101Z",
+    "end": "2026-10-15T06:44:07.280Z",
+    "elapsedSeconds": 125.179,
+    "limitSeconds": 180,
+    "deadlineExpired": false,
+    "userStateChangeRejectionsObserved": 0,
+    "userToldDesktopAvailableAfterExit": true
+  },
+  "savedRecordsBaselineMatched": true,
+  "nativeFocus": {
+    "build": 13,
+    "start": 35,
+    "foregroundInterval": "explicit user grant; no user-state-change rejection observed",
+    "beforePageRelease": "focused task card container (full AX)",
+    "afterPageReceipt": "focused task card container (full AX)",
+    "cardRetained": true,
+    "escapeClosesCardAndReturnsToOriginalATab": true,
+    "nextTabIsACloseButton": true,
+    "nativeFocusPathPassed": true,
+    "nativeCloseButtons": "not visible in own-window CUA screenshot; AX close/fullscreen/minimize entries present; visibility unresolved",
+    "source": "actual CUA full AX, actual key presses and owned HTTP gate",
+    "candidateInstalled": false,
+    "normalUIExitCode": 0
+  },
+  "ownedGate": {
+    "scope": "owned local focus completion gate; not authentication",
+    "receipts": [
+      {
+        "kind": "waiting",
+        "task": "A",
+        "at": "2026-10-15T06:42:04.929Z"
+      },
+      {
+        "kind": "waiting",
+        "task": "B",
+        "at": "2026-10-15T06:42:04.940Z"
+      },
+      {
+        "kind": "completed",
+        "task": "A",
+        "at": "2026-10-15T06:42:57.481Z"
+      },
+      {
+        "kind": "release",
+        "task": "A",
+        "count": 1,
+        "at": "2026-10-15T06:42:57.481Z"
+      }
+    ]
+  },
+  "normalQuit": {
+    "actualUIConfirmation": true,
+    "code": 0,
+    "signal": null,
+    "observedProcessCount": 15,
+    "remainingObservedProcessCount": 0,
+    "recoveryHarnessPassed": true
+  },
+  "focusPathPassed": true,
+  "closeButtonVisibility": {
+    "passed": false,
+    "scope": "own-window CUA screenshot after next Tab; upper-left native traffic lights not visible, AX close/fullscreen/minimize entries present",
+    "nativeCloseClicked": false
+  },
+  "diagnosticServerEnded": true,
+  "newBuilds": 0,
+  "newInstallations": 0,
+  "extraStartsAfter35": 0,
+  "cleanupConsumed": 0,
+  "currentInstalledBuild": 11,
+  "installation": 8,
+  "installedArchiveSHA256": "c106f18d35307e96a7dcef711e8d7596fc4874f83afd3cd84ab4727e22625dce",
+  "installedHashUnchanged": true,
+  "newModelCalls": 0,
+  "remoteBusinessWrites": 0,
+  "budget": {
+    "used": {
+      "builds": 13,
+      "installs": 8,
+      "starts": 35,
+      "faults": 4,
+      "cleanups": 11
+    },
+    "limits": {
+      "builds": 13,
+      "installs": 10,
+      "starts": 36,
+      "faults": 4,
+      "cleanups": 12
+    }
+  },
+  "limits": "one controlled native path only; no installed first/cold reopen, new login continuity, native red-close interaction, arbitrary website autofocus or sustained-running claim",
+  "overallProductAcceptance": false
+}

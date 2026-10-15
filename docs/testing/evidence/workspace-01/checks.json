@@ -101,14 +101,16 @@
     "sourceChecksPassed": true,
     "oldNativeFailureConfirmed": true,
     "candidate12NativeFailureConfirmed": true,
-    "packagedGreenVerified": false,
-    "blocker": "user reports working on shared desktop during validation; exact overlap unknown. Native green requires a controlled short foreground interval; candidate13 remains uninstalled",
-    "evidence": "focus-candidate-13.json",
+    "packagedGreenVerified": true,
+    "blocker": "tested focus path passed; candidate remains uninstalled, native window button visibility unresolved and installed first/cold reopen pending",
+    "evidence": "focus-green-35.json",
     "priorEvidence": [
       "focus-repair.json",
       "cua-timeout-32.json",
-      "focus-red-33.json"
+      "focus-red-33.json",
+      "focus-candidate-13.json"
     ],
-    "foregroundConditions": "foreground-conditions.json"
+    "foregroundConditions": "foreground-conditions.json",
+    "packagedGreenScope": "candidate13 start35: one gated A page completion retains card focus in full AX, Esc returns A, next Tab reaches A close"
   }
 }

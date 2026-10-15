@@ -191,8 +191,15 @@
     "build": 13,
     "installed": false,
     "evidence": "focus-candidate-13.json",
-    "nativeGreenVerified": false,
-    "status": "normal exit0; first gated Esc and Tab passed, immediate AX focus unreported; second card disappeared with user-state interference unresolved"
+    "nativeGreenVerified": true,
+    "status": "tested focus path passed start35; candidate still uninstalled; native window button visibility unresolved",
+    "start35": {
+      "evidence": "focus-green-35.json",
+      "nativeFocusPathPassed": true,
+      "normalQuitPassed": true,
+      "installed": false
+    },
+    "nativeGreenScope": "single owned A page completion retains full AX card focus; Esc returns A and next Tab reaches A close button, start35 only"
   },
   "foregroundConditions": "foreground-conditions.json"
 }
