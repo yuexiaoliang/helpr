@@ -1,0 +1,132 @@
+{
+  "recorded": "2026-10-15T08:35:25.498480+00:00",
+  "status": "manual_observation_passed_session_ended_with_harness_error",
+  "scope": "same candidate14, only resume manual page-completion step; user controls end of visible test window",
+  "build": 14,
+  "start": 40,
+  "installed": false,
+  "archiveSHA256": "1183c995157ef00c10fcc6ce892b30b4badcc64aed818d4d456ec8b7a9c30c2d",
+  "originalRecordsBaselineMatched": true,
+  "sourceChange": false,
+  "newBuilds": 0,
+  "newInstallations": 0,
+  "automaticClose": false,
+  "automaticKillOnObservationError": false,
+  "endCondition": "user explicitly says end test or quits app",
+  "agentNativeActionsSuspendedDuringHandoff": true,
+  "pageCompletionHumanResult": {
+    "answer": "网页出现并再等 5 秒，卡片仍在",
+    "visualCardRetainedFiveSecondsAfterPageCompletion": true,
+    "independentOwnedHTTPResponseCompleted": true,
+    "responseDelaySeconds": 20.005,
+    "nativeAXFocusVerified": false,
+    "escapeTabReturnTested": false,
+    "scope": "single human path visual retention only; does not resolve native failure in38"
+  },
+  "windowOpenAtRecording": false,
+  "normalQuitVerified": false,
+  "newModelCalls": 0,
+  "remoteBusinessWrites": 0,
+  "budget": {
+    "used": {
+      "builds": 14,
+      "installs": 8,
+      "starts": 40,
+      "faults": 4,
+      "cleanups": 13
+    },
+    "limits": {
+      "builds": 14,
+      "installs": 10,
+      "starts": 40,
+      "faults": 4,
+      "cleanups": 13
+    }
+  },
+  "priorStage1Evidence": "manual-card-39.json",
+  "priorFailurePreserved": "focus-red-38.json",
+  "overallProductAcceptance": false,
+  "ownedGate": {
+    "scope": "owned local focus completion gate; not authentication",
+    "receipts": [
+      {
+        "kind": "waiting",
+        "task": "A",
+        "at": "2026-10-15T08:21:23.463Z"
+      },
+      {
+        "kind": "waiting",
+        "task": "B",
+        "at": "2026-10-15T08:21:23.505Z"
+      },
+      {
+        "kind": "waiting",
+        "task": "A",
+        "at": "2026-10-15T08:23:39.890Z"
+      },
+      {
+        "kind": "human-stage2-delay-started",
+        "task": "A",
+        "delayMs": 20000,
+        "at": "2026-10-15T08:23:39.891Z"
+      },
+      {
+        "kind": "completed",
+        "task": "A",
+        "at": "2026-10-15T08:23:59.896Z"
+      },
+      {
+        "kind": "human-stage2-released",
+        "task": "A",
+        "at": "2026-10-15T08:23:59.897Z"
+      }
+    ]
+  },
+  "endRequestedByUser": "结束测试并关闭窗口",
+  "exitToolFailure": {
+    "operation": "get fresh native AX after explicit user end",
+    "error": "Sky Computer Use request timed out",
+    "durationSecondsApprox": 120,
+    "nativeQuitEvidenceObtained": false,
+    "followup": "user asked to perform Command+Q and existing quit confirmation; no forced termination"
+  },
+  "windowWasKeptUntilExplicitUserEnd": true,
+  "endUserReport": "已退出",
+  "exit": {
+    "userCommandQAndConfirmationReported": true,
+    "userAnswer": "已退出",
+    "remainingKnownMainProcesses": 0,
+    "knownMainRoles": [
+      "controller",
+      "host",
+      "records"
+    ],
+    "remainingOwnedCandidateOrInstalledProcesses": 0,
+    "diagnosticServerEnded": true,
+    "processExitCode": "unknown; harness lost close receipt",
+    "agentForceTermination": false,
+    "cleanupConsumed": 0
+  },
+  "harness": {
+    "code": 1,
+    "error": "ERR_IPC_CHANNEL_CLOSED",
+    "context": "read-only snapshot request raced with user quit; child.send emitted an unhandled error before close receipt/result file persisted",
+    "resultFileProduced": false,
+    "normalExitCodeVerified": false,
+    "userObservationInvalidated": false
+  },
+  "session": {
+    "started": "2026-10-15T08:21:20.861Z",
+    "ended": "2026-10-15T08:32:15.731Z",
+    "elapsedSeconds": 654.87,
+    "automaticClose": false,
+    "endWasRequestedByUser": true,
+    "scope": "includes setup, human work, desktop-tool timeout and user-assisted quit; not performance sample"
+  },
+  "batchStopped": true,
+  "resolvesPriorFailure": false,
+  "nextStep": "preserve both human observations and native38 failure; compare pointer/keyboard event order and repair harness closed-channel handling before next bounded run",
+  "installedAllManifestHashesUnchanged": true,
+  "currentInstalledBuild": 11,
+  "installation": 8
+}

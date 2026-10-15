@@ -798,9 +798,9 @@
     "used": {
       "builds": 14,
       "installs": 8,
-      "starts": 38,
+      "starts": 40,
       "faults": 4,
-      "cleanups": 12
+      "cleanups": 13
     },
     "modelCalls": 0,
     "remoteWrites": 0,
@@ -899,6 +899,12 @@
       {
         "starts": "+3",
         "reason": "用户明确按已提交安装核对方案推进并让出电脑；38候选焦点通过才安装9，39/40同安装首次和冷重开，整体20分钟；其余上限不变，模型及远程业务0。"
+      },
+      {
+        "reason": "用户要求亲自手动测试；新人工诊断轮复用候选14，仅使用现有启动39一次及必要清理13，阶段1检查键盘卡片静态保持，正常才阶段2检查受控页面完成；12分钟兜底，不安装构建，无模型/远程写入，旧批停止与失败保留。原上限不变。"
+      },
+      {
+        "reason": "用户第二步回报窗口已被关闭；纠正人工安排，仅使用剩余启动40复用候选14补第二步，不设自动关闭窗口或超时强杀，等待用户明确结束；不增加计数上限、不构建安装、无模型/远程写入，异常只保存观察并保留用户窗口。"
       }
     ]
   },
@@ -1671,7 +1677,8 @@
     "latestEvidence": "focus-red-38.json",
     "nativeFocusCorrectionVerified": false,
     "nativeFocusFailureStart": 38,
-    "installationBlockedByNativeFocusFailure": true
+    "installationBlockedByNativeFocusFailure": true,
+    "latestManualEvidence": "manual-card-39.json"
   },
   "windowControls37": {
     "evidence": "window-controls-37.json",
@@ -1689,5 +1696,33 @@
     "normalQuit": true,
     "installed": false,
     "batchStopped": true
+  },
+  "manualCard39": {
+    "evidence": "manual-card-39.json",
+    "build": 14,
+    "start": 39,
+    "stage1HumanReportPassed": true,
+    "pageCompletionStep": "incomplete; user later reported timed-out window already closed",
+    "normalQuit": false,
+    "cleanup": 13,
+    "installed": false,
+    "batchStopped": true
+  },
+  "manualCard40": {
+    "evidence": "manual-card-40.json",
+    "build": 14,
+    "start": 40,
+    "status": "manual_observation_passed_session_ended_with_harness_error",
+    "automaticClose": false,
+    "installed": false,
+    "windowOpenAtRecording": false,
+    "overallProductAcceptance": false,
+    "humanVisualRetentionAfterPageCompletion": true,
+    "nativeAXFocusVerified": false,
+    "batchStopped": true,
+    "harnessPassed": false,
+    "userQuitReportedAndProcessesEnded": true,
+    "normalExitCodeVerified": false,
+    "cleanupConsumed": 0
   }
 }

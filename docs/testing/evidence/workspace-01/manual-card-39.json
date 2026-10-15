@@ -1,0 +1,102 @@
+{
+  "recorded": "2026-10-15T08:18:26.277350+00:00",
+  "scope": "build14 candidate start39, user manually observes keyboard card retention before page response; page-completion step incomplete, not native focus verification",
+  "build": 14,
+  "start": 39,
+  "installed": false,
+  "archiveSHA256": "1183c995157ef00c10fcc6ce892b30b4badcc64aed818d4d456ec8b7a9c30c2d",
+  "userRequest": "我来手动测试吧，你说需要怎么测试和我说",
+  "foregroundInterval": {
+    "start": "2026-10-15T08:04:40.088Z",
+    "end": "2026-10-15T08:16:40.426Z",
+    "elapsedSeconds": 720.338,
+    "limitSeconds": 720,
+    "deadlineExpired": true,
+    "userWarnedBeforeDeadline": true,
+    "userToldRoundEndedAndDesktopAvailable": true
+  },
+  "originalRecordsBaselineMatched": true,
+  "manualStage1": {
+    "answer": "按 ↓ 后卡片出现，5 秒后仍在",
+    "source": "human report after personally clicking A, moving pointer away and pressing Down; agent sent no native actions or activating observations during handoff",
+    "cardShown": true,
+    "cardRetainedFiveSeconds": true,
+    "pageResponsesCompleted": 0,
+    "nativeAXFocusClaim": false,
+    "scope": "visual card retention before response only; no page-completion result"
+  },
+  "manualStage2": {
+    "instructionsDelivered": true,
+    "armed": true,
+    "responseDelayMsIfNextARequestArrives": 20000,
+    "newARequestReceived": false,
+    "pageResponseCompleted": false,
+    "userReplyReceived": true,
+    "verdict": "incomplete; user later reported window already closed by harness deadline",
+    "scope": "no new HTTP request observed; late user reply confirms closed window, not page-completion behavior or whether user clicked",
+    "answerReceivedAfterRoundClosed": "helpr 已经被关闭了",
+    "userReplyReceivedBeforeDeadline": false
+  },
+  "ownedGate": {
+    "scope": "owned local focus completion gate; not authentication",
+    "receipts": [
+      {
+        "kind": "waiting",
+        "task": "A",
+        "at": "2026-10-15T08:04:42.918Z"
+      },
+      {
+        "kind": "waiting",
+        "task": "B",
+        "at": "2026-10-15T08:04:42.923Z"
+      }
+    ]
+  },
+  "harness": {
+    "passed": false,
+    "error": "CUA_UI_ROUND_ABORTED",
+    "phaseCode": 1,
+    "harnessCode": 1,
+    "exitCode": null,
+    "signal": "SIGKILL",
+    "normalQuitPassed": false,
+    "cleanup": 13,
+    "observedProcessCount": 15,
+    "remainingObservedProcessCount": 0
+  },
+  "diagnosticServerEnded": true,
+  "remainingOwnedProcesses": 0,
+  "newBuilds": 0,
+  "newInstallations": 0,
+  "newFaultInjection": 0,
+  "cleanupConsumed": 1,
+  "starts40Run": false,
+  "currentInstalledBuild": 11,
+  "installation": 8,
+  "installedAllManifestHashesUnchanged": true,
+  "sourceChangedThisRound": false,
+  "newModelCalls": 0,
+  "remoteBusinessWrites": 0,
+  "budget": {
+    "used": {
+      "builds": 14,
+      "installs": 8,
+      "starts": 39,
+      "faults": 4,
+      "cleanups": 13
+    },
+    "limits": {
+      "builds": 14,
+      "installs": 10,
+      "starts": 40,
+      "faults": 4,
+      "cleanups": 13
+    }
+  },
+  "priorNativeFailurePreserved": "focus-red-38.json",
+  "priorNativeFailureResolved": false,
+  "wholeRoundOutcome": "incomplete; bounded harness aborted at deadline after second-step request/reply not observed",
+  "batchStopped": true,
+  "overallProductAcceptance": false,
+  "nextStep": "manual40 prepared using remaining start; no automatic close, await user completion of stage2"
+}
