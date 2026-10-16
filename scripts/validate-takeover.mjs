@@ -25,13 +25,22 @@ if (carryName !== undefined) {
   const priorRoot = path.join(validationRoot, carryName);
   const prior = JSON.parse(fs.readFileSync(path.join(priorRoot, 'result.json')));
   assert(prior.finished && prior.archive === manifest.hashes['Contents/Resources/app.asar'], 'CARRY_CANDIDATE_NOT_FINISHED');
-  const priorIds = JSON.parse(fs.readFileSync(path.join(priorRoot, 'ids.json')));
+  const normalExit = prior.exitCode === 0 && Array.isArray(prior.survivors) && prior.survivors.length === 0;
+  const checkedCleanup = typeof prior.postCleanup?.checkedAt === 'string' && Array.isArray(prior.postCleanup.survivors) && prior.postCleanup.survivors.length === 0;
+  assert(normalExit || checkedCleanup, 'CARRY_CANDIDATE_NOT_STOPPED');
+  // 缺少发送前预留的旧记录不能凭成功返回的 ID 数推定没有回执不明的创建。
+  assert(Number.isSafeInteger(prior.taskAttempts) && prior.taskAttempts >= 0, 'CARRY_TASK_ATTEMPTS_REQUIRED');
   carry = { round: carryName, counts: {} };
   for (const kind of Object.keys(maximum)) {
-    const used = (prior.carry?.counts[kind] ?? 0) + (kind === 'tasks' ? Object.keys(priorIds).length : prior[kind].length);
+    const used = (prior.carry?.counts[kind] ?? 0) + (kind === 'tasks' ? prior.taskAttempts : prior[kind].length);
     assert(Number.isSafeInteger(used) && used >= 0 && used <= maximum[kind], 'INVALID_CARRY_COUNTS');
     carry.counts[kind] = used;
   }
+}
+if (process.argv.includes('--check-carry')) {
+  assert(carry, 'CARRY_ROUND_REQUIRED');
+  console.log(JSON.stringify(carry));
+  process.exit(0);
 }
 execFileSync(process.execPath, ['scripts/validate-workspace.mjs', '--preflight'], { stdio: 'pipe' });
 fs.mkdirSync(out, { mode: 0o700 });
@@ -46,7 +55,7 @@ const evidence = {
   scope: 'packaged local fixtures; tool input is not real IME/paste acceptance',
   started: new Date().toISOString(), carry,
   limits: { minutes: 20, ...Object.fromEntries(Object.entries(maximum).map(([kind, total]) => [kind, total - (carry?.counts[kind] ?? 0)])) },
-  realModelCalls: 0, remoteWrites: 0, effects: [], inputs: [], models: [], checkpoints: [], checks: [],
+  realModelCalls: 0, remoteWrites: 0, taskAttempts: 0, effects: [], inputs: [], models: [], checkpoints: [], checks: [],
 };
 const write = (file, value) => {
   const target = path.join(out, file), temporary = target + '.tmp';
@@ -232,9 +241,10 @@ poll = setInterval(async () => {
     if (job.kind === 'pair') {
       assert(Array.isArray(job.names) && job.names.length === 2 && job.names.every((n) => /^[A-Z]$/.test(n) && !ids[n]), 'NEW_PAIR_REQUIRED');
       assert(job.names[0] !== job.names[1] && [0, 1].includes(job.holdAt ?? 0), 'INVALID_PAIR');
-      assert(Object.keys(ids).length + 2 <= evidence.limits.tasks, 'TASK_LIMIT');
+      assert(evidence.taskAttempts + 2 <= evidence.limits.tasks, 'TASK_LIMIT');
       for (const [index, name] of job.names.entries()) {
         holds.set(name, index === 0 ? (job.holdAt ?? 0) : 0);
+        evidence.taskAttempts++; save();
         const created = await request({ kind: 'create', requestId: randomUUID(), goal: `04 ${name}，完成本页两次自动推进，保留人工文字 ${base}/page/${name}` });
         ids[name] = created.taskId;
         write('ids.json', ids);
