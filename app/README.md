@@ -24,6 +24,8 @@ pnpm build:mac
 
 保留正在运行的候选时，可使用 `node scripts/build-mac.mjs --candidate=<名称>` 输出到独立的 `dist/candidates/<名称>`；同样计入构建额度和签名核对，不覆盖已有包。
 
+定向核对原生输入准备可用 `node scripts/validate-workspace.mjs --candidate=<名称> --input-preparation`：在新验证资料中创建本机网页，通过公开开始和停止入口后正常退出，只消耗一次既定启动；没有模型配置，不发送模型请求。候选选择不能与安装选项混用。此模式不代替实际接管或真人验收，见 [04 输入准备修正](../docs/testing/evidence/takeover-04/INPUT-PREPARATION.md)。
+
 ## 资料与运行职责
 
 正式资料固定在 `~/Library/Application Support/helpr`，独立于安装包；SQLite、浏览器持久会话及诊断分别存放。业务记录只有独立记录进程写入，使用 Zod 契约、XState 纯转换、Drizzle 和 `better-sqlite3`。关键命令采用请求身份、版本检查和事务；回执不明时保留原命令，取消只读核对，避免制造另一份任务。保存未完成或结果未明时阻止退出。
