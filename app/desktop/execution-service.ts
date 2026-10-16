@@ -226,7 +226,6 @@ export class ExecutionService {
           : '正在保存最新要求，先前执行已失效。',
       );
     try {
-      if (command.intent === 'start') this.ports.input?.block(command.taskId);
       const inputEpoch =
         command.intent !== 'stop'
           ? await this.ports.input?.prepare(command.taskId)
@@ -241,6 +240,16 @@ export class ExecutionService {
         this.available = true;
       else if (task?.execution?.intent !== 'stopped')
         throw Error('RECORDS_UNAVAILABLE');
+      // 已接受的开始请求重送只返回回执，不改变正在执行或刚被原生撤销的资格。
+      if (command.intent === 'start' && result.created !== true) {
+        if (
+          this.ports.input &&
+          (inputEpoch === undefined ||
+            !this.ports.input.valid(command.taskId, inputEpoch))
+        )
+          await this.suspend(command.taskId, 'ownership-unknown', randomUUID());
+        return this.decorate(this.ports.current());
+      }
       if (task?.execution?.intent === 'stopped')
         this.blocked.set(task.id, {
           saved: true,

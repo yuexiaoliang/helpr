@@ -1,10 +1,32 @@
-import { afterEach, expect, test } from 'vitest';
+import { afterAll, afterEach, expect, test } from 'vitest';
 import { chmodSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { WorkspaceRecords } from '../../app/records/workspace';
+import { InputGate } from '../../app/desktop/input-gate';
 
 const folders: string[] = [];
+let nativeFixture: { gate: InputGate; folder: string } | undefined;
+function nativeGate() {
+  // 原生模块每进程拥有一个临时门，测试中的任务仍由独立身份隔离。
+  if (!nativeFixture) {
+    const folder = mkdtempSync(path.join(tmpdir(), 'helpr-execution-gate-'));
+    nativeFixture = {
+      folder,
+      gate: new InputGate(
+        path.resolve('dist/native/input-bridge.node'),
+        path.join(folder, 'gate'),
+        true,
+      ),
+    };
+  }
+  nativeFixture.gate.available(true);
+  return nativeFixture.gate;
+}
+afterAll(() => {
+  if (nativeFixture)
+    rmSync(nativeFixture.folder, { recursive: true, force: true });
+});
 afterEach(() =>
   folders.splice(0).forEach((p) => rmSync(p, { recursive: true, force: true })),
 );
@@ -270,7 +292,7 @@ test('公开委托保存后由通用动作产生独立效果，核对完成后�
   }
 });
 
-async function parallelFixture() {
+async function parallelFixture(inputGate?: InputGate) {
   const { ExecutionService } =
     await import('../../app/desktop/execution-service');
   const { createServer } = await import('node:http');
@@ -312,7 +334,18 @@ async function parallelFixture() {
     }).state;
   }
   let holdAck: ((command: unknown) => Promise<void>) | undefined;
+  let holdObservation: (() => Promise<void>) | undefined;
   const service = new ExecutionService({
+    input: inputGate
+      ? {
+          prepare: (id) => Promise.resolve(inputGate.state(id).epoch),
+          block: (id) => inputGate.block(id),
+          allow: (id, epoch) => inputGate.allow(id, epoch),
+          epoch: (id) => inputGate.state(id).epoch,
+          valid: (id, epoch) => inputGate.valid(id, epoch),
+          permit: (id, epoch, send) => inputGate.permit(id, epoch, send),
+        }
+      : undefined,
     records: async (c) => {
       const result = records.execution(c);
       await holdAck?.(c);
@@ -323,6 +356,7 @@ async function parallelFixture() {
       if (next.revision >= state.revision) state = next;
     },
     observe: async (taskId) => {
+      await holdObservation?.();
       const name = Object.keys(tasks).find((k) => tasks[k] === taskId)!;
       const url = `${base}/${name}`,
         text = await (await fetch(url)).text();
@@ -383,6 +417,9 @@ async function parallelFixture() {
     setAckGate: (gate: typeof holdAck) => {
       holdAck = gate;
     },
+    setObservationGate: (gate: typeof holdObservation) => {
+      holdObservation = gate;
+    },
     release: (name: string) => {
       const finish = held.get(name);
       held.delete(name);
@@ -397,6 +434,88 @@ async function parallelFixture() {
     },
   };
 }
+
+test.skipIf(process.platform !== 'darwin')(
+  '重送同一开始请求保留当前执行资格，仍能完成且只产生一次网页效果',
+  async () => {
+    const gate = nativeGate();
+    const f = await parallelFixture(gate);
+    let observing = false;
+    let release: () => void = () => {};
+    const held = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    f.setObservationGate(async () => {
+      observing = true;
+      await held;
+    });
+    const start = {
+      kind: 'execution-intent' as const,
+      requestId: 'retry-start-a',
+      taskId: f.tasks.A!,
+      intent: 'start' as const,
+    };
+    try {
+      await f.service.intent(start);
+      await expect.poll(() => observing).toBe(true);
+      await f.service.intent(start);
+      release();
+      await expect.poll(() => f.received).toEqual(['A']);
+      f.release('A');
+      await f.service.settled();
+      expect(f.received).toEqual(['A']);
+      expect(
+        f.get().tasks.find((t) => t.id === f.tasks.A)?.execution?.phase,
+      ).toBe('complete');
+    } finally {
+      release();
+      await f.close();
+    }
+  },
+);
+
+test.skipIf(process.platform !== 'darwin')(
+  '开始已保存但回执丢失，重送转为明确待核对，继续后只产生一次效果',
+  async () => {
+    const gate = nativeGate();
+    const f = await parallelFixture(gate);
+    const start = {
+      kind: 'execution-intent' as const,
+      requestId: 'lost-start-a',
+      taskId: f.tasks.A!,
+      intent: 'start' as const,
+    };
+    f.setAckGate((command) =>
+      (command as { kind: string }).kind === 'intent'
+        ? Promise.reject(Error('RECORD_ACK_LOST'))
+        : Promise.resolve(),
+    );
+    try {
+      await expect(f.service.intent(start)).rejects.toThrow('RECORD_ACK_LOST');
+      f.setAckGate(undefined);
+      await f.service.intent(start);
+      await f.service.settled();
+      expect(f.received).toEqual([]);
+      expect(
+        f.get().tasks.find((t) => t.id === f.tasks.A)?.execution,
+      ).toMatchObject({ phase: 'paused', pauseReason: 'ownership-unknown' });
+      await f.service.intent({
+        ...start,
+        requestId: 'continue-a',
+        intent: 'continue',
+      });
+      await expect.poll(() => f.received).toEqual(['A']);
+      f.release('A');
+      await f.service.settled();
+      expect(f.received).toEqual(['A']);
+      expect(
+        f.get().tasks.find((t) => t.id === f.tasks.A)?.execution?.phase,
+      ).toBe('complete');
+    } finally {
+      await f.close();
+    }
+  },
+);
 
 test('网页接管立即阻断本项，保存回执迟到不妨碍B，明确继续先核对已有效果', async () => {
   const f = await parallelFixture();

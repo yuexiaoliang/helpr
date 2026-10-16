@@ -138,6 +138,14 @@ function suspend(taskId: string | null, reason: ExecutionPauseReason) {
     },
   });
 }
+function editFocused(command: 'undo' | 'redo' | 'cut' | 'paste' | 'selectAll') {
+  const target = webContents.getFocusedWebContents();
+  const owner = inputGate.focused();
+  const task = [...pages].find(([, page]) => page.view.webContents === target);
+  if (task && owner === 'web:' + task[0]) suspend(task[0], 'takeover');
+  else if (task || !owner.startsWith('ui:')) suspend(null, 'ownership-unknown');
+  target?.[command]();
+}
 function nativeBindings() {
   if (!nativeInstalled || !win || win.isDestroyed()) return;
   const [width = 800, height = 600] = win.getContentSize();
@@ -419,7 +427,22 @@ function bindPage(task: Task): void {
           });
           layout();
           if (details.disposition === 'background-tab')
-            void popup.webContents.loadURL(details.url).catch(() => {});
+            void popup.webContents
+              .loadURL(details.url, {
+                httpReferrer: details.referrer,
+                ...(details.postBody
+                  ? {
+                      postData: details.postBody.data,
+                      extraHeaders:
+                        'Content-Type: ' +
+                        details.postBody.contentType +
+                        (details.postBody.boundary
+                          ? '; boundary=' + details.postBody.boundary
+                          : ''),
+                    }
+                  : {}),
+              })
+              .catch(() => {});
           return popup.webContents;
         },
       };
@@ -774,25 +797,33 @@ void app
         {
           label: '编辑',
           submenu: [
-            { role: 'undo' },
-            { role: 'redo' },
+            {
+              label: '撤销',
+              accelerator: 'Command+Z',
+              click: () => editFocused('undo'),
+            },
+            {
+              label: '重做',
+              accelerator: 'Command+Shift+Z',
+              click: () => editFocused('redo'),
+            },
             { type: 'separator' },
-            { role: 'cut' },
+            {
+              label: '剪切',
+              accelerator: 'Command+X',
+              click: () => editFocused('cut'),
+            },
             { role: 'copy' },
             {
               label: '粘贴',
               accelerator: 'Command+V',
-              click: () => {
-                const target = webContents.getFocusedWebContents();
-                const owner = inputGate.focused();
-                if (owner.startsWith('web:'))
-                  suspend(owner.slice(4), 'takeover');
-                else if (!owner.startsWith('ui:'))
-                  suspend(null, 'ownership-unknown');
-                target?.paste();
-              },
+              click: () => editFocused('paste'),
             },
-            { role: 'selectAll' },
+            {
+              label: '全选',
+              accelerator: 'Command+A',
+              click: () => editFocused('selectAll'),
+            },
           ],
         },
       ]),
