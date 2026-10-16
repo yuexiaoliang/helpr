@@ -1,0 +1,527 @@
+{
+  "date": "2026-10-16",
+  "candidate": {
+    "build": 22,
+    "archive": "664757c9524cab5373b944265a66b18c36c8b86708a7e35c2a00c4a406744a0f",
+    "versions": {
+      "electron": "44.7.2",
+      "node": "24.21.0",
+      "chrome": "152.0.7977.149"
+    }
+  },
+  "scope": "controlled local websites/model replies; desktop-tool input, not real IME or human paste acceptance",
+  "rounds": [
+    {
+      "name": "takeover-04-native-05",
+      "start": 56,
+      "started": "2026-10-16T14:53:11.583Z",
+      "validationStarted": "2026-10-16T14:53:13.661Z",
+      "finished": "2026-10-16T14:58:37.861Z",
+      "counts": {
+        "models": 23,
+        "effects": 12,
+        "inputs": 58
+      },
+      "checks": [
+        {
+          "name": "AB-click-isolation-A-phase",
+          "passed": true
+        },
+        {
+          "name": "AB-click-isolation-B-phase",
+          "passed": true
+        },
+        {
+          "name": "AB-click-isolation-A-effects",
+          "passed": true
+        },
+        {
+          "name": "AB-click-isolation-B-effects",
+          "passed": true
+        },
+        {
+          "name": "AB-click-isolation-A-reason",
+          "passed": true
+        },
+        {
+          "name": "AB-explicit-continue-A-phase",
+          "passed": true
+        },
+        {
+          "name": "AB-explicit-continue-B-phase",
+          "passed": true
+        },
+        {
+          "name": "AB-explicit-continue-A-effects",
+          "passed": true
+        },
+        {
+          "name": "AB-explicit-continue-B-effects",
+          "passed": true
+        },
+        {
+          "name": "KL-keyboard-isolation-K-phase",
+          "passed": true
+        },
+        {
+          "name": "KL-keyboard-isolation-L-phase",
+          "passed": true
+        },
+        {
+          "name": "KL-keyboard-isolation-K-effects",
+          "passed": true
+        },
+        {
+          "name": "KL-keyboard-isolation-L-effects",
+          "passed": true
+        },
+        {
+          "name": "KL-keyboard-isolation-K-reason",
+          "passed": true
+        },
+        {
+          "name": "KL-keyboard-explicit-continue-K-phase",
+          "passed": true
+        },
+        {
+          "name": "KL-keyboard-explicit-continue-L-phase",
+          "passed": true
+        },
+        {
+          "name": "KL-keyboard-explicit-continue-K-effects",
+          "passed": true
+        },
+        {
+          "name": "KL-keyboard-explicit-continue-L-effects",
+          "passed": true
+        },
+        {
+          "name": "PQ-tool-paste-isolation-P-phase",
+          "passed": true
+        },
+        {
+          "name": "PQ-tool-paste-isolation-Q-phase",
+          "passed": true
+        },
+        {
+          "name": "PQ-tool-paste-isolation-P-effects",
+          "passed": true
+        },
+        {
+          "name": "PQ-tool-paste-isolation-Q-effects",
+          "passed": true
+        },
+        {
+          "name": "PQ-tool-paste-isolation-P-reason",
+          "passed": true
+        },
+        {
+          "name": "PQ-tool-paste-explicit-continue-P-phase",
+          "passed": true
+        },
+        {
+          "name": "PQ-tool-paste-explicit-continue-Q-phase",
+          "passed": true
+        },
+        {
+          "name": "PQ-tool-paste-explicit-continue-P-effects",
+          "passed": true
+        },
+        {
+          "name": "PQ-tool-paste-explicit-continue-Q-effects",
+          "passed": true
+        },
+        {
+          "name": "normal-exit-and-no-owned-survivors",
+          "passed": true
+        }
+      ],
+      "effects": [
+        {
+          "task": "A",
+          "count": 1
+        },
+        {
+          "task": "B",
+          "count": 1
+        },
+        {
+          "task": "B",
+          "count": 2
+        },
+        {
+          "task": "A",
+          "count": 2
+        },
+        {
+          "task": "L",
+          "count": 1
+        },
+        {
+          "task": "L",
+          "count": 2
+        },
+        {
+          "task": "K",
+          "count": 1
+        },
+        {
+          "task": "K",
+          "count": 2
+        },
+        {
+          "task": "Q",
+          "count": 1
+        },
+        {
+          "task": "Q",
+          "count": 2
+        },
+        {
+          "task": "P",
+          "count": 1
+        },
+        {
+          "task": "P",
+          "count": 2
+        }
+      ],
+      "firstInputByTask": {
+        "A": {
+          "kind": "mousedown",
+          "target": "manual",
+          "trusted": true,
+          "gates": {
+            "A": {
+              "epoch": 5,
+              "available": true,
+              "blocked": true
+            },
+            "B": {
+              "epoch": 3,
+              "available": true,
+              "blocked": false
+            }
+          }
+        },
+        "K": {
+          "kind": "keydown",
+          "target": "INPUT",
+          "trusted": true,
+          "gates": {
+            "A": {
+              "epoch": 33,
+              "available": true,
+              "blocked": false
+            },
+            "B": {
+              "epoch": 3,
+              "available": true,
+              "blocked": false
+            },
+            "K": {
+              "epoch": 7,
+              "available": true,
+              "blocked": true
+            },
+            "L": {
+              "epoch": 3,
+              "available": true,
+              "blocked": false
+            }
+          }
+        },
+        "P": {
+          "kind": "paste",
+          "target": "INPUT",
+          "trusted": true,
+          "gates": {
+            "A": {
+              "epoch": 33,
+              "available": true,
+              "blocked": false
+            },
+            "B": {
+              "epoch": 3,
+              "available": true,
+              "blocked": false
+            },
+            "K": {
+              "epoch": 8,
+              "available": true,
+              "blocked": false
+            },
+            "L": {
+              "epoch": 3,
+              "available": true,
+              "blocked": false
+            },
+            "P": {
+              "epoch": 8,
+              "available": true,
+              "blocked": true
+            },
+            "Q": {
+              "epoch": 3,
+              "available": true,
+              "blocked": false
+            }
+          }
+        }
+      },
+      "cancelledOldModelRequests": [
+        {
+          "task": "A",
+          "observedCount": 1,
+          "connectionClosed": true
+        },
+        {
+          "task": "K",
+          "observedCount": 0,
+          "connectionClosed": true
+        },
+        {
+          "task": "P",
+          "observedCount": 0,
+          "connectionClosed": true
+        }
+      ],
+      "controlFailure": "INVALID_REQUEST",
+      "normalExit": true,
+      "cleanup": null,
+      "remainingCandidateProcesses": []
+    },
+    {
+      "name": "takeover-04-native-06",
+      "start": 57,
+      "started": "2026-10-16T15:00:39.676Z",
+      "validationStarted": "2026-10-16T15:00:41.864Z",
+      "finished": "2026-10-16T15:09:30.286Z",
+      "carry": {
+        "round": "takeover-04-native-05",
+        "counts": {
+          "effects": 12,
+          "inputs": 58,
+          "models": 23,
+          "tasks": 8
+        }
+      },
+      "counts": {
+        "models": 11,
+        "effects": 6,
+        "inputs": 11
+      },
+      "checks": [
+        {
+          "name": "RS-page-reload-no-auto-resume-R-phase",
+          "passed": true
+        },
+        {
+          "name": "RS-page-reload-no-auto-resume-S-phase",
+          "passed": true
+        },
+        {
+          "name": "RS-page-reload-no-auto-resume-R-effects",
+          "passed": true
+        },
+        {
+          "name": "RS-page-reload-no-auto-resume-S-effects",
+          "passed": true
+        },
+        {
+          "name": "RS-page-reload-no-auto-resume-R-reason",
+          "passed": true
+        },
+        {
+          "name": "RS-page-explicit-continue-R-phase",
+          "passed": true
+        },
+        {
+          "name": "RS-page-explicit-continue-S-phase",
+          "passed": true
+        },
+        {
+          "name": "RS-page-explicit-continue-R-effects",
+          "passed": true
+        },
+        {
+          "name": "RS-page-explicit-continue-S-effects",
+          "passed": true
+        },
+        {
+          "name": "FG-frame-change-isolation-F-phase",
+          "passed": true
+        },
+        {
+          "name": "FG-frame-change-isolation-G-phase",
+          "passed": true
+        },
+        {
+          "name": "FG-frame-change-isolation-F-effects",
+          "passed": true
+        },
+        {
+          "name": "FG-frame-change-isolation-G-effects",
+          "passed": true
+        },
+        {
+          "name": "FG-frame-change-isolation-F-reason",
+          "passed": true
+        },
+        {
+          "name": "FG-frame-input-owner-F-phase",
+          "passed": true
+        },
+        {
+          "name": "FG-frame-input-owner-G-phase",
+          "passed": true
+        },
+        {
+          "name": "FG-frame-input-owner-F-effects",
+          "passed": true
+        },
+        {
+          "name": "FG-frame-input-owner-G-effects",
+          "passed": true
+        },
+        {
+          "name": "FG-frame-input-owner-F-reason",
+          "passed": true
+        },
+        {
+          "name": "FG-popup-does-not-resume-F-phase",
+          "passed": true
+        },
+        {
+          "name": "FG-popup-does-not-resume-G-phase",
+          "passed": true
+        },
+        {
+          "name": "FG-popup-does-not-resume-F-effects",
+          "passed": true
+        },
+        {
+          "name": "FG-popup-does-not-resume-G-effects",
+          "passed": true
+        },
+        {
+          "name": "FG-popup-does-not-resume-F-reason",
+          "passed": true
+        },
+        {
+          "name": "FG-popup-input-owner-F-phase",
+          "passed": true
+        },
+        {
+          "name": "FG-popup-input-owner-G-phase",
+          "passed": true
+        },
+        {
+          "name": "FG-popup-input-owner-F-effects",
+          "passed": true
+        },
+        {
+          "name": "FG-popup-input-owner-G-effects",
+          "passed": true
+        },
+        {
+          "name": "FG-popup-input-owner-F-reason",
+          "passed": true
+        },
+        {
+          "name": "FG-popup-closed-no-auto-resume-F-phase",
+          "passed": true
+        },
+        {
+          "name": "FG-popup-closed-no-auto-resume-G-phase",
+          "passed": true
+        },
+        {
+          "name": "FG-popup-closed-no-auto-resume-F-effects",
+          "passed": true
+        },
+        {
+          "name": "FG-popup-closed-no-auto-resume-G-effects",
+          "passed": true
+        },
+        {
+          "name": "FG-popup-closed-no-auto-resume-F-reason",
+          "passed": true
+        }
+      ],
+      "effects": [
+        {
+          "task": "S",
+          "count": 1
+        },
+        {
+          "task": "S",
+          "count": 2
+        },
+        {
+          "task": "R",
+          "count": 1
+        },
+        {
+          "task": "R",
+          "count": 2
+        },
+        {
+          "task": "G",
+          "count": 1
+        },
+        {
+          "task": "G",
+          "count": 2
+        }
+      ],
+      "firstInputByTask": {},
+      "cancelledOldModelRequests": [
+        {
+          "task": "R",
+          "observedCount": 0,
+          "connectionClosed": true
+        },
+        {
+          "task": "F",
+          "observedCount": 0,
+          "connectionClosed": true
+        }
+      ],
+      "controlFailure": "RECORDS_UNAVAILABLE",
+      "normalExit": false,
+      "cleanup": {
+        "signals": [
+          "SIGTERM",
+          "SIGKILL"
+        ],
+        "at": "2026-10-16T15:10:55.098Z"
+      },
+      "remainingCandidateProcesses": []
+    }
+  ],
+  "totals": {
+    "controlledModelRequests": 34,
+    "localAdvances": 18,
+    "inputAndProbeReceipts": 69,
+    "createdTasks": 12,
+    "realModelRequests": 0,
+    "remoteBusinessWrites": 0
+  },
+  "recordLock": {
+    "durationMs": 2501,
+    "continueResult": "RECORDS_UNAVAILABLE",
+    "continueResultAfterLockMs": 103,
+    "keyboardReceiptAfterLockMs": 10484,
+    "keyboardDuringLock": false,
+    "effectsAfterLock": 0,
+    "plannedOverlapProved": false
+  },
+  "remaining": [
+    "native-first-receiver causal trace and controlled IPC/slow-save overlap",
+    "unknown ownership with another task already stopped",
+    "non-takeover read/chat/focus cases while both tasks are active",
+    "view rebuild/control-loss combinations",
+    "real Chinese IME and human Command+V in issue 06"
+  ]
+}

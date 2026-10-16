@@ -17,6 +17,22 @@ const manifest = JSON.parse(fs.readFileSync(path.join(validationRoot, 'build-22.
 assert(manifest.prepared && manifest.app === built, 'CANDIDATE_NOT_READY');
 for (const [file, hash] of Object.entries(manifest.hashes))
   assert.equal(createHash('sha256').update(fs.readFileSync(path.join(built, file))).digest('hex'), hash);
+const maximum = { effects: 24, inputs: 160, models: 64, tasks: 12 };
+const carryName = process.argv.find((arg) => arg.startsWith('--carry='))?.slice(8);
+let carry;
+if (carryName !== undefined) {
+  assert(/^[a-z0-9-]{1,40}$/.test(carryName) && carryName !== round, 'INVALID_CARRY_ROUND');
+  const priorRoot = path.join(validationRoot, carryName);
+  const prior = JSON.parse(fs.readFileSync(path.join(priorRoot, 'result.json')));
+  assert(prior.finished && prior.archive === manifest.hashes['Contents/Resources/app.asar'], 'CARRY_CANDIDATE_NOT_FINISHED');
+  const priorIds = JSON.parse(fs.readFileSync(path.join(priorRoot, 'ids.json')));
+  carry = { round: carryName, counts: {} };
+  for (const kind of Object.keys(maximum)) {
+    const used = (prior.carry?.counts[kind] ?? 0) + (kind === 'tasks' ? Object.keys(priorIds).length : prior[kind].length);
+    assert(Number.isSafeInteger(used) && used >= 0 && used <= maximum[kind], 'INVALID_CARRY_COUNTS');
+    carry.counts[kind] = used;
+  }
+}
 execFileSync(process.execPath, ['scripts/validate-workspace.mjs', '--preflight'], { stdio: 'pipe' });
 fs.mkdirSync(out, { mode: 0o700 });
 const profileRoot = `/private/tmp/helpr-workspace-validation-${process.getuid()}`;
@@ -28,10 +44,15 @@ const profile = fs.mkdtempSync(profileRoot + '/takeover04-');
 const evidence = {
   build: 22, archive: manifest.hashes['Contents/Resources/app.asar'],
   scope: 'packaged local fixtures; tool input is not real IME/paste acceptance',
-  started: new Date().toISOString(), limits: { minutes: 20, effects: 24, inputs: 160, models: 64, tasks: 12 },
+  started: new Date().toISOString(), carry,
+  limits: { minutes: 20, ...Object.fromEntries(Object.entries(maximum).map(([kind, total]) => [kind, total - (carry?.counts[kind] ?? 0)])) },
   realModelCalls: 0, remoteWrites: 0, effects: [], inputs: [], models: [], checkpoints: [], checks: [],
 };
-const write = (file, value) => fs.writeFileSync(path.join(out, file), JSON.stringify(value, null, 2) + '\n', { mode: 0o600 });
+const write = (file, value) => {
+  const target = path.join(out, file), temporary = target + '.tmp';
+  fs.writeFileSync(temporary, JSON.stringify(value, null, 2) + '\n', { mode: 0o600 });
+  fs.renameSync(temporary, target);
+};
 const save = () => write('result.json', evidence);
 const ids = {}, held = [], holds = new Map(), pending = new Map(), pids = new Set();
 let gate, child, sequence = 0, busy = false, expired = false, poll, finishing;
@@ -64,7 +85,8 @@ function alive(pid) { try { process.kill(pid, 0); return true; } catch { return 
 function request(command, ms = 15000) {
   return new Promise((resolve, reject) => {
     if (!child?.connected) { reject(Error('APPLICATION_EXITED')); return; }
-    const id = ++sequence, timer = setTimeout(() => { pending.delete(id); reject(Error('REQUEST_TIMEOUT')); }, ms);
+    const id = ++sequence;
+    const timer = ms === null ? undefined : setTimeout(() => { pending.delete(id); reject(Error('REQUEST_TIMEOUT')); }, ms);
     pending.set(id, { resolve, reject, timer });
     child.send({ id, command });
   });
@@ -161,7 +183,7 @@ child.on('message', (m) => {
   const entry = pending.get(m.id);
   if (entry) { clearTimeout(entry.timer); pending.delete(m.id); m.error ? entry.reject(Error(m.error)) : entry.resolve(m.value); }
 });
-const deadline = setTimeout(() => { expired = true; evidence.failure = 'ROUND_TIME_LIMIT'; save(); void finish(); }, evidence.limits.minutes * 60000);
+let deadline;
 function finish() {
   finishing ??= closeRound();
   return finishing;
@@ -191,12 +213,14 @@ try {
   assert.equal(files.length, 1);
   gate = createRequire(import.meta.url)(path.join(built, 'Contents/Resources/input-bridge.node'));
   gate.open(path.join(profile, files[0]), false);
-  // 系统授权由本人完成；保留十分钟响应窗口，避免用户回复时原进程已经被关闭。
-  // 全轮仍受上面的二十分钟总截止约束，不因授权等待重置。
+  // 系统授权是交给本人处理的准备阶段，不用自动测试截止提前关掉等待中的窗口。
+  // 此阶段不创建网站任务、不调用模型；自动核对的二十分钟在准备完成后才开始。
   evidence.phase = 'saving-local-model-configuration'; save();
   console.log('SAVING_LOCAL_MODEL_CONFIGURATION ' + out);
-  await request({ kind: 'model-save', requestId: randomUUID(), expectedVersion: 0, protocol: 'chat-completions', endpoint: base + '/v1', model: 'controlled-local-04', apiKey: 'local-fixture-not-a-secret' }, 600000);
-  evidence.phase = 'ready'; save(); console.log('READY ' + out);
+  await request({ kind: 'model-save', requestId: randomUUID(), expectedVersion: 0, protocol: 'chat-completions', endpoint: base + '/v1', model: 'controlled-local-04', apiKey: 'local-fixture-not-a-secret' }, null);
+  evidence.phase = 'ready'; evidence.validationStarted = new Date().toISOString(); save();
+  deadline = setTimeout(() => { expired = true; evidence.failure = 'ROUND_TIME_LIMIT'; save(); void finish(); }, evidence.limits.minutes * 60000);
+  console.log('READY ' + out);
 } catch (error) { evidence.failure = error.message; save(); await finish(); throw error; }
 const allowed = new Set(['select', 'hide-task', 'minimize', 'execution-intent', 'snapshot', 'inspect', 'observe', 'show', 'panel', 'draft', 'reload']);
 poll = setInterval(async () => {
@@ -213,6 +237,7 @@ poll = setInterval(async () => {
         holds.set(name, index === 0 ? (job.holdAt ?? 0) : 0);
         const created = await request({ kind: 'create', requestId: randomUUID(), goal: `04 ${name}，完成本页两次自动推进，保留人工文字 ${base}/page/${name}` });
         ids[name] = created.taskId;
+        write('ids.json', ids);
       }
       await waitFor(async () => { const state = await snapshot(); return job.names.every((name) => state.tasks.find((t) => t.id === ids[name])?.phase === 'manual'); });
       await request({ kind: 'select', requestId: randomUUID(), taskId: ids[job.names[0]] });
