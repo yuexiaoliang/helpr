@@ -57,7 +57,16 @@ export function pageObservation(
     if (node.ignored || excluded.has(node.nodeId)) continue;
     const name = typeof node.name?.value === 'string' ? node.name.value : '';
     const value = typeof node.value?.value === 'string' ? node.value.value : '';
-    const line = [name, value].filter(Boolean).join('：').trim();
+    const role = typeof node.role?.value === 'string' ? node.role.value : '';
+    const flags = (node.properties ?? [])
+      .filter((p) =>
+        ['checked', 'selected', 'expanded', 'disabled'].includes(p.name),
+      )
+      .map((p) => `${p.name}=${String(p.value.value)}`);
+    const content = [name, value].filter(Boolean).join('：').trim();
+    const line = content
+      ? `[${role}] ${content}${flags.length ? ' (' + flags.join(', ') + ')' : ''}`
+      : '';
     if (line && line !== lines.at(-1)) lines.push(line);
   }
   const full = lines.join('\n'),

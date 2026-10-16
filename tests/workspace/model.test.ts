@@ -31,7 +31,8 @@ async function backend(
     | 'echo'
     | 'auth'
     | 'redirect'
-    | 'stream-error' = 'normal',
+    | 'stream-error'
+    | 'planning' = 'normal',
   redirectTo = '',
 ) {
   const received: { body: string; authorization: string | undefined }[] = [];
@@ -72,9 +73,20 @@ async function backend(
               index: 0,
               delta: {
                 content:
-                  mode === 'echo'
-                    ? '不应显示 test-secret-only'
-                    : '页面中的营收为 34.8 万元。',
+                  mode === 'planning'
+                    ? JSON.stringify({
+                        decision: 'act',
+                        summary: '核对草稿内容。',
+                        evidence: ['状态：草稿'],
+                        previous: null,
+                        action: {
+                          kind: 'click',
+                          target: { role: 'button', name: '核对', exact: true },
+                        },
+                      })
+                    : mode === 'echo'
+                      ? '不应显示 test-secret-only'
+                      : '页面中的营收为 34.8 万元。',
               },
               finish_reason: null,
             },
@@ -664,6 +676,43 @@ test('凭据访问仍在等待时可以停止，迟到授权不会发出旧请�
     });
   } finally {
     resolveKey('test-secret-only');
+    await f.service.stopAll();
+    f.records.close();
+  }
+});
+
+test('执行提议仍经过实际SDK计数入口，界面只展示摘要，不泄露原始动作结构', async () => {
+  const server = await backend('planning'),
+    f = fixture();
+  try {
+    const taskId = f.create('A');
+    await f.service.configure({
+      kind: 'model-save',
+      requestId: 'settings',
+      expectedVersion: 0,
+      protocol: 'chat-completions',
+      endpoint: server.endpoint,
+      model: 'test-chat',
+      apiKey: 'test-secret-only',
+    });
+    const observation = await f.observe(taskId);
+    const step = await f.service.propose({
+      taskId,
+      runId: 'run',
+      goal: '核对草稿',
+      observation,
+      pending: null,
+      history: [],
+      signal: new AbortController().signal,
+    });
+    expect(step).toMatchObject({
+      decision: 'act',
+      action: { kind: 'click', target: { name: '核对' } },
+    });
+    expect(server.received).toHaveLength(1);
+    expect(f.get().tasks[0]?.messages.at(-1)?.text).toBe('核对草稿内容。');
+    expect(JSON.stringify(f.get())).not.toContain('"decision"');
+  } finally {
     await f.service.stopAll();
     f.records.close();
   }

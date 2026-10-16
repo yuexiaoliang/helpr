@@ -1,6 +1,11 @@
 import { z } from 'zod';
 import { websiteURL } from './url-policy';
 import {
+  executionSchema,
+  executionIntentSchema,
+  executionControlSchema,
+} from './execution';
+import {
   modelCallSchema,
   modelSettingsSchema,
   modelUICommandSchema,
@@ -96,6 +101,8 @@ export const taskSchema = z.strictObject({
   hidden: z.boolean(),
   minimized: z.boolean(),
   phase: z.enum(['no-page', 'loading', 'manual', 'error']),
+  execution: executionSchema.nullable().optional(),
+  executionControl: executionControlSchema.optional(),
   error: z.string(),
   version: z.number().int(),
   messages: z.array(
@@ -132,6 +139,7 @@ export const panelSchema = z.strictObject({
 });
 export const uiCommandSchema = z.union([
   modelUICommandSchema,
+  executionIntentSchema,
   recordCommandSchema.refine((command) => command.kind !== 'page'),
   z.strictObject({ kind: z.literal('snapshot') }),
   z.strictObject({ kind: z.literal('quit') }),

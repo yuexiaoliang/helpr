@@ -15,6 +15,7 @@ import {
 import { explicitWebsite, websiteURL } from '../shared/url-policy';
 import * as schema from './schema';
 import { ModelRecords } from './model';
+import { ExecutionRecords } from './execution';
 
 // 本项只有手动网页状态；计算转换不启动 actor、invocation 或网页动作。
 const lifecycle = createMachine({
@@ -38,6 +39,7 @@ function pagePhase(
 /** 记录拥有者的公开入口。仅在独立受管进程使用，提交成功后才返回投影。 */
 export class WorkspaceRecords {
   private readonly models: ModelRecords;
+  private readonly executions: ExecutionRecords;
   private readonly sqlite: Database.Database;
   private readonly db: ReturnType<typeof drizzle<typeof schema>>;
   constructor(folder: string, migrations: string) {
@@ -61,10 +63,15 @@ export class WorkspaceRecords {
           "SELECT name FROM sqlite_master WHERE type='table' AND name='model_settings'",
         )
         .get();
-      if (legacy && !models) {
+      const executions = this.sqlite
+        .prepare(
+          "SELECT name FROM sqlite_master WHERE type='table' AND name='task_executions'",
+        )
+        .get();
+      if (legacy && (!models || !executions)) {
         const backup = path.join(
           folder,
-          'workspace-before-model-02-' + randomUUID() + '.sqlite',
+          'workspace-before-execution-03-' + randomUUID() + '.sqlite',
         );
         this.sqlite.prepare('VACUUM INTO ?').run(backup);
         chmodSync(backup, 0o600);
@@ -79,11 +86,12 @@ export class WorkspaceRecords {
         .select()
         .from(schema.workspace)
         .get()?.schemaVersion;
-      if (version !== 1 && version !== 2)
+      if (version !== 1 && version !== 2 && version !== 3)
         throw new Error('DATA_VERSION_UNSUPPORTED');
-      if (version === 1)
-        this.db.update(schema.workspace).set({ schemaVersion: 2 }).run();
+      if (version !== 3)
+        this.db.update(schema.workspace).set({ schemaVersion: 3 }).run();
       this.models = new ModelRecords(this.db);
+      this.executions = new ExecutionRecords(this.db);
     } catch (error) {
       this.sqlite.close();
       throw error;
@@ -103,6 +111,7 @@ export class WorkspaceRecords {
       tasks: items.map((task) => ({
         ...task,
         messages: this.models.messages(task.id),
+        execution: this.executions.get(task.id),
       })),
     });
   }
@@ -111,6 +120,11 @@ export class WorkspaceRecords {
   ): Record<string, unknown> & { state: WorkspaceSnapshot } {
     const result = this.models.execute(input);
     return { ...result, state: this.snapshot() };
+  }
+  execution(
+    input: unknown,
+  ): Record<string, unknown> & { state: WorkspaceSnapshot } {
+    return { ...this.executions.execute(input), state: this.snapshot() };
   }
   lookupRequest(input: unknown): {
     applied: boolean;
@@ -176,7 +190,7 @@ export class WorkspaceRecords {
               {
                 taskId,
                 role: 'system',
-                text: '目标已保存。先打开网站，再在这项任务中询问网页内容；当前不会自动执行网页操作。',
+                text: '目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。',
               },
             ])
             .run();

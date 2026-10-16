@@ -68,3 +68,17 @@ export const modelCalls = sqliteTable('model_calls', {
   outputTokens: integer('output_tokens'),
   totalTokens: integer('total_tokens'),
 });
+
+export const executions = sqliteTable('task_executions', {
+  taskId: text('task_id')
+    .primaryKey()
+    .references(() => tasks.id),
+  body: text('body', { mode: 'json' }).notNull(),
+});
+export const executionRequests = sqliteTable('execution_requests', {
+  id: text('id').primaryKey(),
+  hash: text('hash').notNull(),
+  taskId: text('task_id')
+    .notNull()
+    .references(() => tasks.id),
+});

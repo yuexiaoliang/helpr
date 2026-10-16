@@ -125,3 +125,82 @@ test('危险地址、旧版本与实际保存失败均保留已有资料，恢�
   ).toBe('准备重试的草稿');
   await records.close();
 });
+
+test('执行停止与请求身份跨记录进程保留，旧派发不能在重开后消费', async () => {
+  const dir = folder();
+  let records = await open(dir);
+  const { taskId } = (await records.client.request({
+    kind: 'create',
+    requestId: 'create',
+    goal: '核对 https://example.com/list',
+  })) as { taskId: string };
+  await records.client.request({
+    kind: 'page',
+    requestId: 'ready',
+    taskId,
+    url: 'https://example.com/list',
+    phase: 'manual',
+  });
+  const execution = (command: unknown) =>
+    records.client.request({ kind: 'execution', command });
+  await execution({
+    kind: 'intent',
+    requestId: 'start',
+    taskId,
+    intent: 'start',
+  });
+  await execution({ kind: 'claim', taskId, runId: 'old' });
+  await execution({
+    kind: 'reserve',
+    taskId,
+    runId: 'old',
+    id: 'action',
+    summary: '核对第一项',
+    action: { kind: 'click', target: { role: 'button', name: '核对第一项' } },
+    source: {
+      url: 'https://example.com/list',
+      title: '清单',
+      text: '核对第一项',
+      fingerprint: 'one',
+      generation: 1,
+      observedAt: 1,
+      truncated: false,
+    },
+    binding: { targetId: 'page-a', generation: 1 },
+  });
+  const stop = {
+    kind: 'intent',
+    requestId: 'stop',
+    taskId,
+    intent: 'stop',
+    expectedVersion: 2,
+  };
+  await execution(stop);
+  await records.close();
+  records = await open(dir);
+  expect(await execution(stop)).toMatchObject({ created: false });
+  await expect(execution({ ...stop, intent: 'continue' })).rejects.toThrow(
+    'REQUEST_CONTENT_CONFLICT',
+  );
+  expect(
+    await execution({ kind: 'dispatch', taskId, runId: 'old', id: 'action' }),
+  ).toMatchObject({ permitted: false });
+  const state = snapshotSchema.parse(
+    await records.client.request({ kind: 'snapshot' }),
+  );
+  expect(state.tasks[0]?.execution).toMatchObject({
+    intent: 'stopped',
+    phase: 'stopped',
+    actions: [{ status: 'cancelled' }],
+  });
+  await expect(
+    execution({
+      kind: 'intent',
+      requestId: 'stale',
+      taskId,
+      intent: 'continue',
+      expectedVersion: 2,
+    }),
+  ).rejects.toThrow('RECORD_VERSION_CONFLICT');
+  await records.close();
+});

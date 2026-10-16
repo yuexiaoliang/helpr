@@ -402,9 +402,13 @@ ipcMain.handle('workspace-request', (event, input: unknown) => {
     !(command.kind === 'panel' && command.panel === 'settings')
   ) {
     if (
-      !['draft', 'message', 'minimize', 'model-cancel'].includes(
-        command.kind,
-      ) ||
+      ![
+        'draft',
+        'message',
+        'minimize',
+        'model-cancel',
+        'execution-intent',
+      ].includes(command.kind) ||
       !('taskId' in command) ||
       command.taskId !== binding.taskId
     )

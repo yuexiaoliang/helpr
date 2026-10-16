@@ -26,6 +26,7 @@ const commandSchema = z.discriminatedUnion('kind', [
   }),
   z.strictObject({
     kind: z.literal('begin'),
+    purpose: z.literal('execution').optional(),
     id: key,
     taskId: key,
     text: z.string().trim().min(1).max(20000),
@@ -204,6 +205,7 @@ export class ModelRecords {
                 command.taskId,
                 command.text,
                 command.expectedVersion ?? null,
+                ...(command.purpose ? [command.purpose] : []),
               ]),
             )
             .digest('hex');
@@ -257,7 +259,15 @@ export class ModelRecords {
           this.db
             .insert(schema.messages)
             .values([
-              { taskId: command.taskId, role: 'user', text: command.text },
+              ...(command.purpose
+                ? []
+                : [
+                    {
+                      taskId: command.taskId,
+                      role: 'user',
+                      text: command.text,
+                    },
+                  ]),
               {
                 taskId: command.taskId,
                 role: 'assistant',
@@ -268,7 +278,10 @@ export class ModelRecords {
             .run();
           this.db
             .update(schema.tasks)
-            .set({ draft: '', version: task.version + 1 })
+            .set({
+              ...(command.purpose ? {} : { draft: '' }),
+              version: task.version + 1,
+            })
             .where(eq(schema.tasks.id, task.id))
             .run();
           this.bump();

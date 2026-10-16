@@ -16,6 +16,7 @@ import type { Task, UICommand } from '../shared/contracts';
 import { WorkspaceStore, modelErrorLabel } from './store';
 import { ModelSettings } from './ModelSettings';
 import { activeModelCall } from '../shared/model';
+import type { ExecutionIntent } from '../shared/execution';
 import styles from './Workspace.module.css';
 import plus from './assets/plus.svg';
 import close from './assets/x.svg';
@@ -24,6 +25,23 @@ import exit from './assets/sign-out.svg';
 import globe from './assets/globe.svg';
 
 const phaseLabel = (task: Task) => {
+  if (task.executionControl?.blocked)
+    return task.executionControl.stopSaved ? '已停止' : '执行已暂停 · 需查看';
+  if (task.execution) {
+    if (task.execution.phase === 'queued' && task.phase === 'loading')
+      return '正在打开网页';
+    if (task.execution.phase === 'queued' && !task.url) return '等待网站地址';
+    return {
+      queued: '排队中',
+      checking: '先核对再继续',
+      running: '正在执行',
+      stopped: '已停止',
+      unknown: '结果待核对',
+      paused: '已暂停',
+      complete: '已完成',
+      failed: '需要查看',
+    }[task.execution.phase];
+  }
   const call = task.messages.at(-1)?.call;
   if (call && activeModelCall(call)) return '正在理解';
   if (call?.phase === 'complete') return '已回复';
@@ -124,7 +142,9 @@ export function App({
         <div className={styles.empty}>
           <span>从一个目标开始</span>
           <h1>把网页工作交给 helpr</h1>
-          <p>先创建任务，打开网站并手动使用。每项任务有自己的对话和记录。</p>
+          <p>
+            先创建任务并打开网站，再在所属对话中开始执行。每项任务有自己的对话和记录。
+          </p>
           <button
             className={styles.primary}
             onClick={() => send({ kind: 'panel', panel: 'new' })}
@@ -283,7 +303,7 @@ function AddressBar({ task, store }: { task: Task; store: WorkspaceStore }) {
         placeholder="输入网站地址"
       />
       <button>打开</button>
-      <span>手动工作区</span>
+      <span>{task.execution ? phaseLabel(task) : '手动工作区'}</span>
     </form>
   );
 }
@@ -295,6 +315,34 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
   const configured = Boolean(view.state.modelSettings);
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const controlPending = useRef<ExecutionIntent | null>(null);
+  async function control(intent: ExecutionIntent['intent']) {
+    const command =
+      controlPending.current?.intent === intent
+        ? controlPending.current
+        : {
+            kind: 'execution-intent' as const,
+            requestId: requestId(),
+            taskId: task.id,
+            intent,
+            ...(intent === 'stop'
+              ? {}
+              : { expectedVersion: task.execution?.version }),
+          };
+    controlPending.current = command;
+    try {
+      await store.perform(command);
+      if (controlPending.current === command) controlPending.current = null;
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        ['RECORD_VERSION_CONFLICT', 'EXECUTION_STOPPED'].includes(error.message)
+      )
+        controlPending.current = null;
+      /* 保存失败保持同一请求，停止仍可重试。 */
+    }
+  }
   const composing = useRef(false);
   const pending = useRef<{ text: string; id: string } | null>(null);
   const saveDraft = (value: string) => {
@@ -309,7 +357,16 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
       .catch(() => setFailed(true));
   };
   async function sendMessage() {
-    if (!text.trim() || busy || composing.current || streaming || !configured)
+    const immediate = /^(停止|停下|暂停|继续|查看结果)[。！!]?$/u.test(
+      text.trim(),
+    );
+    if (
+      !text.trim() ||
+      busy ||
+      composing.current ||
+      (streaming && !immediate) ||
+      (!configured && !immediate)
+    )
       return;
     setBusy(true);
     const value = text;
@@ -323,6 +380,7 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
         requestId: id,
         text: value,
       });
+      if (/^查看结果[。！!]?$/u.test(value.trim())) setShowResults(true);
       setText((current) => (current === value ? '' : current));
       pending.current = null;
       setFailed(false);
@@ -345,10 +403,25 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
             {streaming
               ? `本次：${call.model}${call.configurationVersion !== view.state.modelSettings?.version ? ' · 下次：' + view.state.modelSettings?.model : ''}`
               : view.state.modelSettings
-                ? `${view.state.modelSettings.model} · 只读网页理解`
+                ? `${view.state.modelSettings.model} · ${task.execution ? '网页执行与核对' : '网页理解'}`
                 : '尚未配置模型'}
           </small>
         </div>
+        {task.execution && (
+          <button
+            type="button"
+            aria-label="停止本任务"
+            disabled={
+              task.execution.intent === 'stopped' &&
+              task.executionControl?.stopSaved !== false
+            }
+            onClick={() => {
+              void control('stop');
+            }}
+          >
+            停止
+          </button>
+        )}
         <button
           aria-label={task.minimized ? '展开对话' : '收起对话'}
           onClick={() => {
@@ -366,6 +439,14 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
       </header>
       {!task.minimized && (
         <>
+          {task.execution && (
+            <div className={styles.executionStatus} role="status">
+              <strong>{phaseLabel(task)}</strong>
+              <span>
+                {task.executionControl?.message ?? task.execution.summary}
+              </span>
+            </div>
+          )}
           <div className={styles.feed} aria-label="对话记录">
             {task.messages.map((message, i) => (
               <div
@@ -410,6 +491,75 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
                 )}
               </div>
             ))}
+          </div>
+          {showResults && task.execution && (
+            <section
+              className={styles.executionResults}
+              aria-label="任务已记录结果"
+            >
+              <strong>{task.execution.goal}</strong>
+              <p>
+                已核对{' '}
+                {
+                  task.execution.actions.filter((a) => a.status === 'confirmed')
+                    .length
+                }{' '}
+                步 · 共送出{' '}
+                {
+                  task.execution.actions.filter(
+                    (a) => !['reserved', 'cancelled'].includes(a.status),
+                  ).length
+                }{' '}
+                次操作
+              </p>
+              <ol>
+                {task.execution.actions.map((a) => (
+                  <li key={a.id}>
+                    {a.summary}
+                    <small>
+                      {a.status === 'confirmed'
+                        ? '结果已核对'
+                        : a.status === 'cancelled'
+                          ? '派发前已取消'
+                          : '结果待核对'}{' '}
+                      · {(a.resultSource ?? a.source).title}
+                    </small>
+                    {a.evidence.length > 0 && (
+                      <small>{a.evidence.join('；')}</small>
+                    )}
+                  </li>
+                ))}
+              </ol>
+              {!task.execution.actions.length && <p>尚未发送网页操作。</p>}
+              {task.execution.result?.goalVersion ===
+                task.execution.goalVersion && (
+                <p>{task.execution.result.evidence.join('；')}</p>
+              )}
+            </section>
+          )}
+          <div className={styles.executionActions}>
+            <button
+              type="button"
+              disabled={
+                !configured ||
+                (!task.executionControl?.blocked &&
+                  ['queued', 'checking', 'running'].includes(
+                    task.execution?.phase ?? '',
+                  ))
+              }
+              onClick={() => {
+                void control(task.execution ? 'continue' : 'start');
+              }}
+            >
+              {task.execution ? '继续' : '开始执行'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowResults((v) => !v)}
+              disabled={!task.execution}
+            >
+              {showResults ? '收起结果' : '查看结果'}
+            </button>
           </div>
           {view.notice && (
             <div className={styles.notice} role="status">
@@ -495,7 +645,14 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
               ) : (
                 <button
                   className={styles.primary}
-                  disabled={busy || !text.trim() || !configured}
+                  disabled={
+                    busy ||
+                    !text.trim() ||
+                    (!configured &&
+                      !/^(停止|停下|暂停|继续|查看结果)[。！!]?$/u.test(
+                        text.trim(),
+                      ))
+                  }
                 >
                   发送
                 </button>

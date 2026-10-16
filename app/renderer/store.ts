@@ -7,6 +7,11 @@ import {
 } from '../shared/contracts';
 
 const labels: Record<string, string> = {
+  EXECUTION_STOPPED: '这项任务已停止。明确继续后会先核对，再处理剩余工作。',
+  EXECUTION_RESULT_UNKNOWN: '先前操作的结果仍待核对，暂不发送后续操作。',
+  EXECUTION_LIMIT: '本轮执行已达上限，已暂停并保留已有结果。',
+  EXECUTION_PAGE_CHANGED: '网页已变化，已暂停；继续时先核对当前页面。',
+  EXECUTION_EVIDENCE_MISSING: '当前页面不能支持所需结果，已暂停后续操作。',
   MODEL_NOT_CONFIGURED: '请先配置模型服务。问题和网页仍保留。',
   MODEL_AUTHENTICATION: '模型凭据未通过认证，请到模型设置核对后重新发送。',
   MODEL_CONNECTION: '暂时连接不上模型服务。网页与消息保留，不会自动重发。',

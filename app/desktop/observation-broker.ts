@@ -41,6 +41,7 @@ export class ObservationBroker {
   >();
   private readonly clients = new Set<Qualification>();
   private readonly input: Writable;
+  private readonly listeners = new Set<(message: unknown) => void>();
   constructor(host: ChildProcess) {
     this.input = host.stdio[3] as Writable;
     const output = host.stdio[4] as Readable;
@@ -57,7 +58,10 @@ export class ObservationBroker {
         this.buffer = this.buffer.slice(end + 1);
         if (!raw) continue;
         try {
-          const message = replySchema.safeParse(JSON.parse(raw));
+          const decoded: unknown = JSON.parse(raw);
+          if (typeof decoded === 'object' && decoded && 'method' in decoded)
+            for (const listener of this.listeners) listener(decoded);
+          const message = replySchema.safeParse(decoded);
           if (!message.success) continue;
           const p = this.pending.get(message.data.id);
           if (p) {
@@ -93,6 +97,21 @@ export class ObservationBroker {
     };
     this.clients.add(client);
     return client;
+  }
+  owns(client: Qualification): boolean {
+    return this.valid(client, client.token);
+  }
+  onEvent(listener: (message: unknown) => void): () => void {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
+  }
+  /** 仅控制拥有者使用；不向网页或UI暴露原始协议入口。 */
+  protocol(
+    method: string,
+    params: Record<string, unknown> = {},
+    sessionId?: string,
+  ) {
+    return this.send(method, params, sessionId);
   }
   private valid(client: Qualification, token: string): boolean {
     const current = this.targets.get(client.taskId);

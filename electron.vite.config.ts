@@ -12,6 +12,7 @@ export default defineConfig({
           host: path.resolve('app/desktop/host.ts'),
           records: path.resolve('app/records/process.ts'),
           observer: path.resolve('app/desktop/observer.ts'),
+          executor: path.resolve('app/desktop/executor.ts'),
         },
         output: {
           format: 'cjs',
