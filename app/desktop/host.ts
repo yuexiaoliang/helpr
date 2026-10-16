@@ -14,6 +14,7 @@ import {
 } from 'electron';
 import path from 'node:path';
 import { readFile } from 'node:fs/promises';
+import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { ProcessClient } from '../shared/rpc';
 import {
@@ -29,6 +30,8 @@ import {
 import { websiteURL } from '../shared/url-policy';
 import { diagnostics } from '../shared/diagnostics';
 import { resolveStartup, debuggingSwitches, runtimeImages } from './startup';
+import { InputGate } from './input-gate';
+import type { ExecutionPauseReason } from '../shared/execution';
 
 const images = runtimeImages(process.execPath, app.isPackaged);
 const startup = resolveStartup({
@@ -60,6 +63,20 @@ protocol.registerSchemesAsPrivileged([
   },
 ]);
 const folder = startup.root;
+const inputGateFile = process.env.HELPR_INPUT_GATE;
+const inputGate = new InputGate(
+  app.isPackaged
+    ? path.join(process.resourcesPath, 'input-bridge.node')
+    : path.resolve('dist/native/input-bridge.node'),
+  inputGateFile && path.dirname(inputGateFile) === folder
+    ? inputGateFile
+    : path.join(folder, '.unavailable-input-gate'),
+  false,
+);
+let nativeInstalled = false;
+let nativeAvailable = false;
+let taggedTask: string | null = null;
+let suspensionSerial = 0;
 process.umask(0o077);
 const log = diagnostics(folder, 'host');
 const notify = (message: object) => {
@@ -89,7 +106,13 @@ const trusted = new Map<
 >();
 const pages = new Map<
   string,
-  { view: WebContentsView; generation: number; chat: WebContentsView }
+  {
+    view: WebContentsView;
+    generation: number;
+    chat: WebContentsView;
+    stack: WebContentsView[];
+    rebuild: () => void;
+  }
 >();
 const prefs = {
   sandbox: true,
@@ -104,6 +127,69 @@ const prefs = {
 };
 const renderer = path.join(__dirname, '../renderer');
 const preload = path.join(__dirname, '../preload/preload.cjs');
+function suspend(taskId: string | null, reason: ExecutionPauseReason) {
+  inputGate.block(taskId ?? '*');
+  notify({
+    suspension: {
+      taskId,
+      reason,
+      requestId: randomUUID(),
+      serial: ++suspensionSerial,
+    },
+  });
+}
+function nativeBindings() {
+  if (!nativeInstalled || !win || win.isDestroyed()) return;
+  const [width = 800, height = 600] = win.getContentSize();
+  try {
+    const fullPanel = panel.panel !== 'none' && panel.panel !== 'preview';
+    if (!fullPanel)
+      inputGate.bind(
+        'ui:chrome',
+        { x: 0, y: 0, width, height },
+        { x: 100, y: 28 },
+      );
+    if (taggedTask && taggedTask !== state.active) {
+      inputGate.unbind('web:' + taggedTask);
+      inputGate.unbind('ui:chat:' + taggedTask);
+      taggedTask = null;
+    }
+    const page = state.active ? pages.get(state.active) : undefined;
+    if (page && !fullPanel) {
+      if (page.view.getVisible())
+        inputGate.bind('web:' + state.active, page.view.getBounds(), {
+          x: 30,
+          y: 120,
+        });
+      const chat = page.chat.getBounds();
+      inputGate.bind('ui:chat:' + state.active, chat, {
+        x: chat.x + 20,
+        y: chat.y + 20,
+      });
+      taggedTask = state.active;
+    }
+    if (panel.panel !== 'none') {
+      const bounds = overlay.getBounds();
+      inputGate.bind('ui:panel', bounds, {
+        x: bounds.x + 20,
+        y: bounds.y + 20,
+      });
+    }
+    if (toast.getVisible()) {
+      const bounds = toast.getBounds();
+      inputGate.bind('ui:toast', bounds, {
+        x: bounds.x + 20,
+        y: bounds.y + 20,
+      });
+    }
+    inputGate.available(true);
+    nativeAvailable = true;
+  } catch {
+    if (nativeAvailable) suspend(null, 'native-unavailable');
+    inputGate.available(false);
+    nativeAvailable = false;
+  }
+}
 function emit(event: WorkspaceEvent): void {
   if (event.notice && toast) {
     clearTimeout(noticeTimer);
@@ -116,6 +202,7 @@ function emit(event: WorkspaceEvent): void {
       height: 74,
     });
     noticeTimer = setTimeout(() => toast.setVisible(false), 5500);
+    nativeBindings();
   }
   for (const { contents } of trusted.values())
     if (!contents.isDestroyed()) contents.send('workspace-event', event);
@@ -167,6 +254,7 @@ function layout(): void {
       height: 260,
     });
   else overlay.setBounds({ x: 0, y: 0, width, height });
+  nativeBindings();
 }
 function pageState(
   taskId: string,
@@ -191,81 +279,182 @@ function bindPage(task: Task): void {
   const chat = new WebContentsView({
     webPreferences: { ...prefs, session: local, preload },
   });
-  const page = { view, chat, generation: 0 };
+  const page = {
+    view,
+    chat,
+    generation: 0,
+    stack: [] as WebContentsView[],
+    rebuild: () => {},
+  };
   pages.set(task.id, page);
   win.contentView.addChildView(view);
   win.contentView.addChildView(chat);
   void loadUI(chat.webContents, 'chat', task.id).catch(() =>
     emit({ notice: '对话暂未打开。你的记录仍保留，请重新打开 helpr 后重试。' }),
   );
-  const wc = view.webContents;
-  const register = () =>
-    notify({
-      registration: {
-        taskId: task.id,
-        targetId: wc.getOrCreateDevToolsTargetId(),
-        generation: page.generation,
-      },
-    });
-  wc.on('did-start-navigation', (_event, _url, _inPlace, main) => {
-    if (main) {
-      page.generation++;
-      register();
-    }
-  });
-  wc.on('did-navigate', () => pageState(task.id, 'manual'));
-  wc.on('did-navigate-in-page', (_event, _url, main) => {
-    if (main) pageState(task.id, 'manual');
-  });
-  wc.on('did-fail-load', (_event, code, _description, url, main) => {
-    if (main && code !== -3) {
+  const watch = (view: WebContentsView) => {
+    const wc = view.webContents;
+    const register = () =>
+      page.view === view &&
       notify({
-        page: {
+        registration: {
           taskId: task.id,
-          url,
-          phase: 'error',
-          error: 'PAGE_LOAD_FAILED',
+          targetId: wc.getOrCreateDevToolsTargetId(),
+          generation: page.generation,
         },
       });
-      emit({
-        notice:
-          '网页暂未打开。可以检查地址后在地址栏重新打开；任务与对话仍保留。',
+    wc.on('did-start-navigation', (_event, _url, _inPlace, main) => {
+      if (page.view === view) {
+        suspend(task.id, 'page-change');
+        page.generation++;
+        register();
+        if (main) pageState(task.id, 'loading');
+      }
+    });
+    wc.on('did-navigate', () => {
+      if (page.view === view) {
+        pageState(task.id, 'manual');
+        nativeBindings();
+      }
+    });
+    wc.on('did-navigate-in-page', (_event, _url, main) => {
+      if (main && page.view === view) pageState(task.id, 'manual');
+    });
+    wc.on('did-fail-load', (_event, code, _description, url, main) => {
+      if (main && code !== -3 && page.view === view) {
+        notify({
+          page: {
+            taskId: task.id,
+            url,
+            phase: 'error',
+            error: 'PAGE_LOAD_FAILED',
+          },
+        });
+        emit({
+          notice:
+            '网页暂未打开。可以检查地址后在地址栏重新打开；任务与对话仍保留。',
+        });
+      }
+    });
+    const guard = (event: { preventDefault: () => void }, url: string) => {
+      try {
+        websiteURL(url);
+      } catch {
+        event.preventDefault();
+        emit({
+          notice: '这个地址无法在网页工作区打开。请使用网站的 HTTPS 地址。',
+        });
+      }
+    };
+    wc.on('will-frame-navigate', (event) => guard(event, event.url));
+    wc.on('will-redirect', (event, url) => guard(event, url));
+    wc.on('will-attach-webview', (event) => event.preventDefault());
+    wc.on('render-process-gone', () => {
+      if (page.view === view) suspend(task.id, 'page-change');
+    });
+    wc.on('destroyed', () => {
+      if (page.view === view && !closing) suspend(task.id, 'page-change');
+    });
+    wc.setWindowOpenHandler((details) => {
+      try {
+        websiteURL(details.url);
+      } catch {
+        suspend(task.id, 'page-change');
+        emit({
+          notice: '这个弹窗地址暂不能打开，已保留原网页与文字并暂停本任务。',
+        });
+        return { action: 'deny' };
+      }
+      if (page.view !== view || page.stack.length >= 4) {
+        suspend(task.id, 'page-change');
+        return { action: 'deny' };
+      }
+      return {
+        action: 'allow',
+        overrideBrowserWindowOptions: {
+          webPreferences: {
+            ...prefs,
+            session: remote,
+            focusOnNavigation: false,
+          },
+        },
+        createWindow: (options) => {
+          suspend(task.id, 'page-change');
+          page.generation++;
+          inputGate.unbind('web:' + task.id);
+          const popup = new WebContentsView({
+            ...options,
+            webPreferences: {
+              ...options.webPreferences,
+              ...prefs,
+              session: remote,
+              focusOnNavigation: false,
+            },
+          });
+          page.stack.push(view);
+          view.setVisible(false);
+          page.view = popup;
+          win.contentView.addChildView(popup);
+          win.contentView.addChildView(chat);
+          win.contentView.addChildView(overlay);
+          win.contentView.addChildView(toast);
+          watch(popup);
+          popup.webContents.once('destroyed', () => {
+            if (page.view !== popup || closing) return;
+            suspend(task.id, 'page-change');
+            page.generation++;
+            const parent = page.stack.pop();
+            if (parent && !parent.webContents.isDestroyed()) {
+              page.view = parent;
+              notify({
+                registration: {
+                  taskId: task.id,
+                  targetId: parent.webContents.getOrCreateDevToolsTargetId(),
+                  generation: page.generation,
+                },
+              });
+              layout();
+              pageState(task.id, 'manual');
+            }
+          });
+          layout();
+          if (details.disposition === 'background-tab')
+            void popup.webContents.loadURL(details.url).catch(() => {});
+          return popup.webContents;
+        },
+      };
+    });
+    wc.on('will-prevent-unload', (event) => {
+      const result = dialog.showMessageBoxSync(win, {
+        type: 'warning',
+        buttons: ['保留网页', '放弃网页编辑'],
+        defaultId: 0,
+        cancelId: 0,
+        message: '网页有尚未保存的内容',
+        detail: '保存到网站后再退出，可以保留这些网页编辑。',
       });
-    }
-  });
-  const guard = (event: { preventDefault: () => void }, url: string) => {
-    try {
-      websiteURL(url);
-    } catch {
-      event.preventDefault();
-      emit({
-        notice: '这个地址无法在网页工作区打开。请使用网站的 HTTPS 地址。',
-      });
-    }
+      if (result === 1) event.preventDefault();
+    });
+    register();
   };
-  wc.on('will-frame-navigate', (event) => guard(event, event.url));
-  wc.on('will-redirect', (event, url) => guard(event, url));
-  wc.on('will-attach-webview', (event) => event.preventDefault());
-  wc.setWindowOpenHandler(() => {
-    emit({
-      notice: '网站希望另开窗口。当前版本请在此标签中手动打开目标网站。',
+  watch(view);
+  page.rebuild = () => {
+    suspend(task.id, 'page-change');
+    page.generation++;
+    inputGate.unbind('web:' + task.id);
+    win.contentView.removeChildView(page.view);
+    page.view = new WebContentsView({
+      webPreferences: { ...prefs, session: remote, focusOnNavigation: false },
     });
-    return { action: 'deny' };
-  });
-  wc.on('will-prevent-unload', (event) => {
-    const result = dialog.showMessageBoxSync(win, {
-      type: 'warning',
-      buttons: ['保留网页', '放弃网页编辑'],
-      defaultId: 0,
-      cancelId: 0,
-      message: '网页有尚未保存的内容',
-      detail: '保存到网站后再退出，可以保留这些网页编辑。',
-    });
-    if (result === 1) event.preventDefault();
-  });
-  register();
+    win.contentView.addChildView(page.view);
+    win.contentView.addChildView(chat);
+    win.contentView.addChildView(overlay);
+    win.contentView.addChildView(toast);
+    watch(page.view);
+    layout();
+  };
   if (task.url && safeStorage.isEncryptionAvailable())
-    void wc.loadURL(websiteURL(task.url)).catch(() => {});
+    void view.webContents.loadURL(websiteURL(task.url)).catch(() => {});
   else if (task.url)
     emit({
       notice:
@@ -293,6 +482,16 @@ async function perform(input: unknown): Promise<unknown> {
     win.show();
     win.focus();
     return null;
+  }
+  if (command.kind === 'verify-input') {
+    const { taskId } = z.object({ taskId: z.string() }).parse(input);
+    nativeBindings();
+    const page = pages.get(taskId);
+    if (!page || page.view.webContents.isDestroyed() || !nativeAvailable)
+      throw Error('NATIVE_INPUT_UNAVAILABLE');
+    const ticket = inputGate.state(taskId);
+    if (!ticket.available) throw Error('NATIVE_INPUT_UNAVAILABLE');
+    return { epoch: ticket.epoch };
   }
   if (command.kind === 'dismiss-notice') {
     toast.setVisible(false);
@@ -330,6 +529,7 @@ async function perform(input: unknown): Promise<unknown> {
     if (!page || !task || !safeStorage.isEncryptionAvailable())
       throw new Error('PAGE_NOT_AVAILABLE');
     try {
+      if (page.view.webContents.isDestroyed()) page.rebuild();
       await page.view.webContents.loadURL(websiteURL(job.url ?? task.url));
     } catch {
       throw new Error('PAGE_LOAD_FAILED');
@@ -464,9 +664,10 @@ app.on('before-quit', (event) => {
     void controller.request({ kind: 'panel', panel: 'quit' }).catch(() => {});
     return;
   }
-  for (const { view, chat } of pages.values()) {
-    if (!view.webContents.isDestroyed())
-      view.webContents.close({ waitForBeforeUnload: false });
+  for (const { view, chat, stack } of pages.values()) {
+    for (const owned of [...stack, view])
+      if (!owned.webContents.isDestroyed())
+        owned.webContents.close({ waitForBeforeUnload: false });
     if (!chat.webContents.isDestroyed()) chat.webContents.close();
   }
   log.close();
@@ -570,11 +771,60 @@ void app
             },
           ],
         },
-        { role: 'editMenu' },
+        {
+          label: '编辑',
+          submenu: [
+            { role: 'undo' },
+            { role: 'redo' },
+            { type: 'separator' },
+            { role: 'cut' },
+            { role: 'copy' },
+            {
+              label: '粘贴',
+              accelerator: 'Command+V',
+              click: () => {
+                const target = webContents.getFocusedWebContents();
+                const owner = inputGate.focused();
+                if (owner.startsWith('web:'))
+                  suspend(owner.slice(4), 'takeover');
+                else if (!owner.startsWith('ui:'))
+                  suspend(null, 'ownership-unknown');
+                target?.paste();
+              },
+            },
+            { role: 'selectAll' },
+          ],
+        },
       ]),
     );
     await Promise.all([chromeLoaded, panelLoaded, toastLoaded, painted]);
     win.show();
+    try {
+      inputGate.install(win.getNativeWindowHandle(), (event) => {
+        const taskId = event.owner.startsWith('web:')
+          ? event.owner.slice(4)
+          : null;
+        if (!taskId || pages.has(taskId)) {
+          notify({
+            suspension: {
+              taskId,
+              reason: taskId ? 'takeover' : 'ownership-unknown',
+              requestId: randomUUID(),
+              serial: ++suspensionSerial,
+            },
+          });
+        }
+      });
+      nativeInstalled = true;
+      nativeBindings();
+    } catch {
+      inputGate.available(false);
+      suspend(null, 'native-unavailable');
+      emit({
+        notice:
+          '本机输入识别暂不可用，自动操作已暂停。网页与对话仍可使用，无需关闭系统安全设置。',
+      });
+    }
     app.on('activate', () => {
       win.show();
       win.focus();

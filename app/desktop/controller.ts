@@ -8,6 +8,7 @@ import {
 } from 'electron';
 import { spawn } from 'node:child_process';
 import path from 'node:path';
+import { unlinkSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { ProcessClient } from '../shared/rpc';
@@ -28,6 +29,8 @@ import { pageObservation } from './page-observation';
 import { ExecutionService, type BoundObservation } from './execution-service';
 import { ExecutionProtocol } from './execution-protocol';
 import { WebExecutor } from './web-executor';
+import { InputGate } from './input-gate';
+import { executionPauseReasonSchema } from '../shared/execution';
 
 export async function startController(
   folder: string,
@@ -80,6 +83,14 @@ export async function startController(
   state = snapshotSchema.parse(
     await recordClient.request({ kind: 'snapshot' }),
   );
+  const inputGateFile = path.join(folder, `.input-gate-${randomUUID()}`);
+  const inputGate = new InputGate(
+    app.isPackaged
+      ? path.join(process.resourcesPath, 'input-bridge.node')
+      : path.resolve('dist/native/input-bridge.node'),
+    inputGateFile,
+    true,
+  );
   const args = [
     ...(!app.isPackaged ? [app.getAppPath()] : []),
     '--workspace-host',
@@ -99,7 +110,11 @@ export async function startController(
       ...args,
     ],
     {
-      env: { ...env, HELPR_WORKSPACE_DATA: folder },
+      env: {
+        ...env,
+        HELPR_WORKSPACE_DATA: folder,
+        HELPR_INPUT_GATE: inputGateFile,
+      },
       detached: true,
       stdio: ['ignore', 'ignore', 'ignore', 'pipe', 'pipe', 'ipc', 'pipe'],
     },
@@ -133,7 +148,14 @@ export async function startController(
       }
     }
   });
-  const broker = new ObservationBroker(host);
+  const broker = new ObservationBroker(host, inputGate);
+  host.once('close', () => {
+    try {
+      unlinkSync(inputGateFile);
+    } catch {
+      /* 当前运行的临时门，不触及任务资料。 */
+    }
+  });
   const hostClient = new ProcessClient({
     send: (message) => {
       host.send(message as object);
@@ -240,8 +262,29 @@ export async function startController(
     perform: (job) => webExecutor.perform(job),
     revoke: (taskId) => webExecutor.revoke(taskId),
     stopModels: (taskId) => models.cancelTask(taskId),
+    input: {
+      prepare: async (taskId) => {
+        if (!broker.available(taskId)) throw Error('CONTROL_DISCONNECTED');
+        const result = z
+          .object({ epoch: z.number().int().nonnegative() })
+          .parse(await hostClient.request({ kind: 'verify-input', taskId }));
+        return result.epoch;
+      },
+      block: (taskId) => inputGate.block(taskId),
+      allow: (taskId, epoch) => inputGate.allow(taskId, epoch),
+      epoch: (taskId) => inputGate.state(taskId).epoch,
+      valid: (taskId, epoch) => inputGate.valid(taskId, epoch),
+      permit: (taskId, epoch, send) => inputGate.permit(taskId, epoch, send),
+    },
   });
 
+  broker.onDisconnect(() => {
+    inputGate.available(false);
+    for (const task of state.tasks)
+      void executions
+        .suspend(task.id, 'page-change', randomUUID())
+        .catch(() => {});
+  });
   records.once('exit', () => {
     recordsAvailable = false;
     models.disable();
@@ -323,7 +366,37 @@ export async function startController(
       generation: z.number().int(),
     }),
   });
+  const lastSuspensionSerial = new Map<string, number>();
   host.on('message', (input: unknown) => {
+    const suspension = z
+      .object({
+        suspension: z.strictObject({
+          taskId: z.string().nullable(),
+          reason: executionPauseReasonSchema,
+          requestId: z.string().min(1).max(60),
+          serial: z.number().int().positive(),
+        }),
+      })
+      .safeParse(input);
+    if (suspension.success) {
+      const event = suspension.data.suspension;
+      for (const task of state.tasks)
+        if (
+          (!event.taskId || task.id === event.taskId) &&
+          event.serial > (lastSuspensionSerial.get(task.id) ?? 0)
+        ) {
+          lastSuspensionSerial.set(task.id, event.serial);
+          void executions
+            .suspend(task.id, event.reason, `${event.requestId}:${task.id}`)
+            .catch(() => {
+              log.event('failure', {
+                taskId: task.id,
+                code: 'INPUT_PAUSE_NOT_SAVED',
+              });
+            });
+        }
+      return;
+    }
     const startupFailure = startupFailureSchema.safeParse(input);
     if (startupFailure.success) {
       log.event('failure', startupFailure.data.startupFailure);

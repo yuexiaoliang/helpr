@@ -14,6 +14,13 @@ export function modelFailure(
   error: unknown,
   signal?: AbortSignal,
 ): ModelErrorCode {
+  if (
+    error instanceof Error &&
+    ['INPUT_QUALIFICATION_REVOKED', 'NATIVE_INPUT_UNAVAILABLE'].includes(
+      error.message,
+    )
+  )
+    return 'MODEL_CANCELLED';
   if (signal?.aborted) {
     const reason: unknown = signal.reason;
     const parsed = modelErrorSchema.safeParse(
@@ -50,6 +57,7 @@ export async function understandPage(input: {
   planning?: boolean;
   signal: AbortSignal;
   qualified: () => boolean;
+  permit?: <T>(send: () => T) => T;
   onText: (text: string) => Promise<void>;
 }): Promise<ModelUsage | null> {
   let sent = false;
@@ -66,7 +74,9 @@ export async function understandPage(input: {
         typeof url === 'string' ? url : url instanceof URL ? url.href : url.url;
       if (address !== target) throw new Error('MODEL_CAPABILITY');
       sent = true;
-      return fetch(url, { ...init, redirect: 'error', signal: input.signal });
+      const send = () =>
+        fetch(url, { ...init, redirect: 'error', signal: input.signal });
+      return input.permit ? input.permit(send) : send();
     },
   });
   const result = streamText({

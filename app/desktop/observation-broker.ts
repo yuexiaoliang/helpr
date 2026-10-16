@@ -3,6 +3,7 @@ import type { ChildProcess } from 'node:child_process';
 import type { Readable, Writable } from 'node:stream';
 import { z } from 'zod';
 import { observationSchema } from '../shared/contracts';
+import type { InputGate } from './input-gate';
 
 const methods = new Set([
   'Page.getFrameTree',
@@ -21,6 +22,7 @@ export type Qualification = {
   generation: number;
   token: string;
   revoked: boolean;
+  inputEpoch: number;
   sessionId?: string;
 };
 export class ObservationBroker {
@@ -42,7 +44,11 @@ export class ObservationBroker {
   private readonly clients = new Set<Qualification>();
   private readonly input: Writable;
   private readonly listeners = new Set<(message: unknown) => void>();
-  constructor(host: ChildProcess) {
+  private readonly disconnectListeners = new Set<() => void>();
+  constructor(
+    host: ChildProcess,
+    private readonly inputGate?: Pick<InputGate, 'state' | 'permit'>,
+  ) {
     this.input = host.stdio[3] as Writable;
     const output = host.stdio[4] as Readable;
     output.setEncoding('utf8');
@@ -80,6 +86,7 @@ export class ObservationBroker {
     output.on('close', () => this.dispose());
   }
   register(taskId: string, targetId: string, generation: number): void {
+    if (this.closed) return;
     this.targets.set(taskId, { targetId, generation });
   }
   unregister(taskId: string): void {
@@ -87,6 +94,7 @@ export class ObservationBroker {
     for (const c of this.clients) if (c.taskId === taskId) c.revoked = true;
   }
   client(taskId: string): Qualification {
+    if (this.closed) throw Error('CONTROL_DISCONNECTED');
     const binding = this.targets.get(taskId);
     if (!binding) throw new Error('PAGE_NOT_AVAILABLE');
     const client = {
@@ -94,6 +102,7 @@ export class ObservationBroker {
       ...binding,
       token: randomBytes(32).toString('hex'),
       revoked: false,
+      inputEpoch: this.inputGate?.state(taskId).epoch ?? 0,
     };
     this.clients.add(client);
     return client;
@@ -105,13 +114,21 @@ export class ObservationBroker {
     this.listeners.add(listener);
     return () => this.listeners.delete(listener);
   }
+  available(taskId: string) {
+    return !this.closed && this.targets.has(taskId);
+  }
+  onDisconnect(listener: () => void) {
+    this.disconnectListeners.add(listener);
+    return () => this.disconnectListeners.delete(listener);
+  }
   /** 仅控制拥有者使用；不向网页或UI暴露原始协议入口。 */
   protocol(
     method: string,
     params: Record<string, unknown> = {},
     sessionId?: string,
+    qualification?: Qualification,
   ) {
-    return this.send(method, params, sessionId);
+    return this.send(method, params, sessionId, qualification);
   }
   private valid(client: Qualification, token: string): boolean {
     const current = this.targets.get(client.taskId);
@@ -126,6 +143,7 @@ export class ObservationBroker {
     method: string,
     params: Record<string, unknown> = {},
     sessionId?: string,
+    qualification?: Qualification,
   ): Promise<Record<string, unknown>> {
     if (this.closed) return Promise.reject(new Error('CONTROL_DISCONNECTED'));
     const id = ++this.sequence;
@@ -135,21 +153,35 @@ export class ObservationBroker {
         reject(new Error('OBSERVATION_TIMEOUT'));
       }, 8000);
       this.pending.set(id, { resolve, reject, timer });
-      this.input.write(
-        JSON.stringify({
-          id,
-          method,
-          params,
-          ...(sessionId ? { sessionId } : {}),
-        }) + '\0',
-        (error) => {
-          if (error) {
-            this.pending.delete(id);
-            clearTimeout(timer);
-            reject(new Error('CONTROL_DISCONNECTED'));
-          }
-        },
-      );
+      const send = () =>
+        this.input.write(
+          JSON.stringify({
+            id,
+            method,
+            params,
+            ...(sessionId ? { sessionId } : {}),
+          }) + '\0',
+          (error) => {
+            if (error) {
+              this.pending.delete(id);
+              clearTimeout(timer);
+              reject(new Error('CONTROL_DISCONNECTED'));
+            }
+          },
+        );
+      try {
+        if (qualification && this.inputGate)
+          this.inputGate.permit(
+            qualification.taskId,
+            qualification.inputEpoch,
+            send,
+          );
+        else send();
+      } catch {
+        this.pending.delete(id);
+        clearTimeout(timer);
+        reject(Error('EXECUTION_STOPPED'));
+      }
     });
   }
   async observe(
@@ -193,6 +225,7 @@ export class ObservationBroker {
       }).catch(() => {});
   }
   dispose(): void {
+    if (this.closed) return;
     this.closed = true;
     for (const c of this.clients) c.revoked = true;
     for (const p of this.pending.values()) {
@@ -201,5 +234,7 @@ export class ObservationBroker {
     }
     this.pending.clear();
     this.targets.clear();
+    for (const listener of this.disconnectListeners) listener();
+    this.disconnectListeners.clear();
   }
 }

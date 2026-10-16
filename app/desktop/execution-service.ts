@@ -8,6 +8,8 @@ import {
   type NextStep,
   type ActionFact,
   type WebAction,
+  type ExecutionPauseReason,
+  pauseDescription,
 } from '../shared/execution';
 import type { PageObservation } from '../shared/model';
 
@@ -23,6 +25,7 @@ export type ProposalInput = {
   pending: ActionFact | null;
   history: ActionFact[];
   signal: AbortSignal;
+  permit?: <T>(send: () => T) => T;
 };
 export type WebActionJob = {
   taskId: string;
@@ -38,6 +41,7 @@ type Job = {
   taskId: string;
   runId: string;
   version: number;
+  inputEpoch: number;
   abort: AbortController;
   work: Promise<void>;
 };
@@ -62,7 +66,7 @@ export class ExecutionService {
   private readonly jobs = new Map<string, Job>();
   private readonly blocked = new Map<
     string,
-    { saved: boolean; message: string }
+    { saved: boolean; message: string; reason?: ExecutionPauseReason }
   >();
   private readonly intents = new Map<string, number>();
   private readonly pendingIntents = new Set<string>();
@@ -79,6 +83,14 @@ export class ExecutionService {
       perform: (job: WebActionJob) => Promise<void>;
       revoke: (taskId: string) => void;
       stopModels: (taskId: string) => void;
+      input?: {
+        prepare: (taskId: string) => Promise<number>;
+        block: (taskId: string) => void;
+        allow: (taskId: string, epoch: number) => boolean;
+        epoch: (taskId: string) => number;
+        valid: (taskId: string, epoch: number) => boolean;
+        permit: <T>(taskId: string, epoch: number, send: () => T) => T;
+      };
     },
   ) {}
   canExit() {
@@ -99,6 +111,7 @@ export class ExecutionService {
                 blocked: true,
                 stopSaved: b.saved,
                 message: b.message,
+                ...(b.reason ? { reason: b.reason } : {}),
               },
             }
           : t;
@@ -125,6 +138,7 @@ export class ExecutionService {
           'TASK_NOT_FOUND',
           'INVALID_REQUEST',
           'EXECUTION_STOPPED',
+          'EXECUTION_CONTINUE_REQUIRED',
           'EXECUTION_RESULT_UNKNOWN',
           'EXECUTION_PAGE_CHANGED',
           'EXECUTION_LIMIT',
@@ -138,11 +152,61 @@ export class ExecutionService {
     }
   }
   private stopImmediately(taskId: string, message: string, saved = false) {
+    this.ports.input?.block(taskId);
     this.blocked.set(taskId, { saved, message });
     this.jobs.get(taskId)?.abort.abort(new Error('EXECUTION_STOPPED'));
     this.ports.revoke(taskId);
     this.ports.stopModels(taskId);
     this.publish();
+  }
+  async suspend(
+    taskId: string,
+    reason: ExecutionPauseReason,
+    requestId: string,
+  ) {
+    const prior = this.blocked.get(taskId);
+    if (
+      !this.pendingIntents.has(taskId) &&
+      prior?.saved &&
+      prior.reason === reason
+    )
+      return;
+    const sequence = (this.intents.get(taskId) ?? 0) + 1;
+    const execution = this.ports
+      .current()
+      .tasks.find((t) => t.id === taskId)?.execution;
+    const affected =
+      this.pendingIntents.has(taskId) ||
+      (execution &&
+        execution.intent !== 'stopped' &&
+        execution.phase !== 'complete');
+    this.intents.set(taskId, sequence);
+    this.ports.input?.block(taskId);
+    this.jobs.get(taskId)?.abort.abort(Error('EXECUTION_STOPPED'));
+    this.ports.revoke(taskId);
+    this.ports.stopModels(taskId);
+    if (affected)
+      this.blocked.set(taskId, {
+        saved: false,
+        reason,
+        message: pauseDescription[reason].message + ' 暂停记录正在保存。',
+      });
+    this.publish();
+    try {
+      await this.record({ kind: 'suspend', taskId, requestId, reason });
+      if (affected && this.intents.get(taskId) === sequence) {
+        this.blocked.set(taskId, {
+          saved: true,
+          reason,
+          message: pauseDescription[reason].message,
+        });
+        this.publish();
+      }
+    } finally {
+      if (this.intents.get(taskId) === sequence)
+        this.pendingIntents.delete(taskId);
+      this.pump();
+    }
   }
   async intent(input: ExecutionIntent): Promise<WorkspaceSnapshot> {
     const command = executionIntentSchema.parse(input);
@@ -162,6 +226,11 @@ export class ExecutionService {
           : '正在保存最新要求，先前执行已失效。',
       );
     try {
+      if (command.intent === 'start') this.ports.input?.block(command.taskId);
+      const inputEpoch =
+        command.intent !== 'stop'
+          ? await this.ports.input?.prepare(command.taskId)
+          : undefined;
       const result = await this.record({ ...command, kind: 'intent' });
       if (this.intents.get(command.taskId) !== sequence)
         return this.decorate(this.ports.current());
@@ -177,7 +246,23 @@ export class ExecutionService {
           saved: true,
           message: task.execution.summary,
         });
-      else this.blocked.delete(command.taskId);
+      else if (task?.execution?.pauseReason)
+        this.blocked.set(task.id, {
+          saved: true,
+          reason: task.execution.pauseReason,
+          message: task.execution.summary,
+        });
+      else {
+        if (
+          this.ports.input &&
+          (inputEpoch === undefined ||
+            !this.ports.input.allow(command.taskId, inputEpoch))
+        ) {
+          await this.suspend(command.taskId, 'ownership-unknown', randomUUID());
+          throw Error('INPUT_CHANGED_DURING_CONTINUE');
+        }
+        this.blocked.delete(command.taskId);
+      }
       this.publish();
       return this.decorate(result.state);
     } catch (error) {
@@ -206,6 +291,8 @@ export class ExecutionService {
       !this.closing &&
       !job.abort.signal.aborted &&
       !this.blocked.has(job.taskId) &&
+      (!this.ports.input ||
+        this.ports.input.valid(job.taskId, job.inputEpoch)) &&
       this.jobs.get(job.taskId) === job &&
       e?.intent === 'automatic' &&
       e.runId === job.runId &&
@@ -273,6 +360,7 @@ export class ExecutionService {
         taskId: task.id,
         runId,
         version: current.version,
+        inputEpoch: this.ports.input?.epoch(task.id) ?? 0,
         abort: new AbortController(),
         work: Promise.resolve(),
       };
@@ -314,6 +402,10 @@ export class ExecutionService {
                 pending,
                 history: current.actions,
                 signal: job.abort.signal,
+                permit: (send) =>
+                  this.ports.input
+                    ? this.ports.input.permit(job.taskId, job.inputEpoch, send)
+                    : send(),
               }),
             job.abort.signal,
           ),

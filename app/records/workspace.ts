@@ -58,20 +58,19 @@ export class WorkspaceRecords {
           "SELECT name FROM sqlite_master WHERE type='table' AND name='workspace'",
         )
         .get();
-      const models = this.sqlite
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='model_settings'",
-        )
-        .get();
-      const executions = this.sqlite
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='task_executions'",
-        )
-        .get();
-      if (legacy && (!models || !executions)) {
+      const priorVersion = legacy
+        ? this.sqlite
+            .prepare<[], { schema_version: number }>(
+              'SELECT schema_version FROM workspace WHERE id=1',
+            )
+            .get()?.schema_version
+        : 4;
+      if (!priorVersion || ![1, 2, 3, 4].includes(priorVersion))
+        throw Error('DATA_VERSION_UNSUPPORTED');
+      if (legacy && priorVersion !== 4) {
         const backup = path.join(
           folder,
-          'workspace-before-execution-03-' + randomUUID() + '.sqlite',
+          'workspace-before-takeover-04-' + randomUUID() + '.sqlite',
         );
         this.sqlite.prepare('VACUUM INTO ?').run(backup);
         chmodSync(backup, 0o600);
@@ -79,17 +78,17 @@ export class WorkspaceRecords {
       migrate(this.db, { migrationsFolder: migrations });
       this.db
         .insert(schema.workspace)
-        .values({ id: 1, active: null, revision: 0, schemaVersion: 1 })
+        .values({ id: 1, active: null, revision: 0, schemaVersion: 4 })
         .onConflictDoNothing()
         .run();
       const version = this.db
         .select()
         .from(schema.workspace)
         .get()?.schemaVersion;
-      if (version !== 1 && version !== 2 && version !== 3)
+      if (version !== 1 && version !== 2 && version !== 3 && version !== 4)
         throw new Error('DATA_VERSION_UNSUPPORTED');
-      if (version !== 3)
-        this.db.update(schema.workspace).set({ schemaVersion: 3 }).run();
+      if (version !== 4)
+        this.db.update(schema.workspace).set({ schemaVersion: 4 }).run();
       this.models = new ModelRecords(this.db);
       this.executions = new ExecutionRecords(this.db);
     } catch (error) {

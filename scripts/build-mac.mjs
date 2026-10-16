@@ -20,7 +20,9 @@ if (
 )
   throw Error('ELECTRON_VERSION_MISMATCH');
 const budget = spend('builds');
-const output = path.resolve('dist/packages');
+const candidate = process.argv[2]?.match(/^--candidate=([a-z0-9-]{1,40})$/)?.[1];
+if (process.argv.length > 3 || (process.argv[2] && !candidate)) throw Error('INVALID_BUILD_CANDIDATE');
+const output = path.resolve(candidate ? `dist/candidates/${candidate}` : 'dist/packages');
 const manifest = {
   build: budget.used.builds,
   started: new Date().toISOString(),
@@ -51,6 +53,8 @@ try {
         { from: 'app/records/migrations', to: 'migrations' },
         { from: 'dist/native/process-path', to: 'process-path' },
         { from: 'dist/native/watch-owner', to: 'watch-owner' },
+        { from: 'dist/native/input-bridge.node', to: 'input-bridge.node' },
+        { from: 'dist/native/input-bridge.build.json', to: 'input-bridge.build.json' },
         { from: 'app/renderer/assets/PHOSPHOR-LICENSE.txt', to: 'licenses/PHOSPHOR-LICENSE.txt' },
       ],
       asar: true,

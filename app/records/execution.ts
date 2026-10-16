@@ -9,6 +9,8 @@ import {
   executionPhaseSchema,
   webActionSchema,
   pageBindingSchema,
+  executionPauseReasonSchema,
+  pauseDescription,
   type TaskExecution,
 } from '../shared/execution';
 import * as schema from './schema';
@@ -45,6 +47,7 @@ const lifecycle = createMachine(
     on: {
       QUEUE: { target: '.queued', guard: 'automatic' },
       STOP: { target: '.stopped', guard: 'stopped' },
+      SUSPEND: { target: '.paused', guard: 'automatic' },
     },
   },
   {
@@ -62,7 +65,8 @@ type PhaseEvent =
   | 'WAIT'
   | 'BLOCK'
   | 'FINISH'
-  | 'FAIL';
+  | 'FAIL'
+  | 'SUSPEND';
 function move(e: TaskExecution, event: PhaseEvent) {
   const state = lifecycle.resolveState({
     value: e.phase,
@@ -79,6 +83,12 @@ const intentSchema = executionIntentSchema.extend({
 });
 const commandSchema = z.discriminatedUnion('kind', [
   intentSchema,
+  z.strictObject({
+    kind: z.literal('suspend'),
+    taskId: z.string(),
+    requestId: z.string().min(1).max(100),
+    reason: executionPauseReasonSchema,
+  }),
   z.strictObject({
     kind: z.literal('claim'),
     taskId: z.string(),
@@ -167,6 +177,41 @@ export class ExecutionRecords {
         .get();
       if (!task) throw new Error('TASK_NOT_FOUND');
       let e = this.get(c.taskId);
+      if (c.kind === 'suspend') {
+        const hash = createHash('sha256')
+          .update(JSON.stringify(c))
+          .digest('hex');
+        const prior = this.db
+          .select()
+          .from(schema.executionRequests)
+          .where(eq(schema.executionRequests.id, c.requestId))
+          .get();
+        if (prior) {
+          if (prior.hash !== hash) throw Error('REQUEST_CONTENT_CONFLICT');
+          return { recorded: false };
+        }
+        this.db
+          .insert(schema.executionRequests)
+          .values({ id: c.requestId, taskId: task.id, hash })
+          .run();
+        if (!e || e.intent === 'stopped' || e.phase === 'complete')
+          return { recorded: true };
+        e.version++;
+        e.runId = null;
+        e.pauseReason = c.reason;
+        for (const action of e.actions) {
+          if (action.status === 'reserved') action.status = 'cancelled';
+          else if (action.status === 'dispatched') action.status = 'unknown';
+        }
+        if (
+          !e.actions.some((a) => ['dispatched', 'unknown'].includes(a.status))
+        )
+          e.resource = null;
+        move(e, 'SUSPEND');
+        e.summary = pauseDescription[c.reason].message;
+        this.save(task.id, e);
+        return { recorded: true };
+      }
       if (c.kind === 'intent') {
         const hash = createHash('sha256')
           .update(JSON.stringify(c))
@@ -178,7 +223,10 @@ export class ExecutionRecords {
           .get();
         if (prior) {
           if (prior.hash !== hash) throw new Error('REQUEST_CONTENT_CONFLICT');
-          return { created: false, current: e?.intentId === c.requestId };
+          return {
+            created: false,
+            current: e?.intentId === c.requestId && !e.pauseReason,
+          };
         }
         if (
           c.expectedVersion !== undefined &&
@@ -199,6 +247,8 @@ export class ExecutionRecords {
         };
         if (c.intent === 'start' && e.intent === 'stopped')
           throw new Error('EXECUTION_STOPPED');
+        if (c.intent === 'start' && e.pauseReason)
+          throw Error('EXECUTION_CONTINUE_REQUIRED');
         if (c.intent === 'revise') {
           if (!c.text?.trim()) throw new Error('INVALID_REQUEST');
           e.goal = c.text.trim();
@@ -226,8 +276,14 @@ export class ExecutionRecords {
               : '要求已更新，任务保持停止。明确继续后再核对。';
         } else {
           e.intent = 'automatic';
-          move(e, 'QUEUE');
-          e.summary = '等待容量，轮到本任务后先核对当前页面与已有结果。';
+          if (c.intent === 'revise' && e.pauseReason) {
+            move(e, 'SUSPEND');
+            e.summary = '要求已更新，仍等待明确继续。';
+          } else {
+            delete e.pauseReason;
+            move(e, 'QUEUE');
+            e.summary = '等待容量，轮到本任务后先核对当前页面与已有结果。';
+          }
         }
         this.db
           .insert(schema.executionRequests)

@@ -23,6 +23,9 @@ assert(fs.existsSync(path.join(host, frame)), 'HOST_FRAMEWORK_MISSING');
 assert(fs.realpathSync(path.join(host, frame)).startsWith(fs.realpathSync(host) + path.sep), 'HOST_FRAMEWORK_OUTSIDE_BUNDLE');
 const hash = file => createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 assert.equal(hash(path.join(host, 'Contents/Resources/app.asar')), hash(path.join(bundle, 'Contents/Resources/app.asar')));
+for (const file of ['input-bridge.node', 'input-bridge.build.json']) {
+  assert.equal(hash(path.join(host, 'Contents/Resources', file)), hash(path.join(bundle, 'Contents/Resources', file)), 'HOST_INPUT_BRIDGE_MISMATCH');
+}
 const executable = path.join(host, 'Contents/MacOS', info.CFBundleExecutable);
 assert(!fs.readFileSync(executable).includes(Buffer.from('This is a helper executable and cannot be launched directly')), 'BROWSER_ENTRY_REQUIRED');
 const loadCommands = execFileSync('/usr/bin/otool', ['-l', executable], { encoding: 'utf8' });

@@ -4,6 +4,10 @@ import { once } from 'node:events';
 import { z } from 'zod';
 import { ObservationBroker } from '../../app/desktop/observation-broker';
 import { ExecutionProtocol } from '../../app/desktop/execution-protocol';
+import { InputGate } from '../../app/desktop/input-gate';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 
 // 独立协议接收端：记录实际收到的输入，不读取产品资料或替产品去重。
 const receiver = `
@@ -27,7 +31,7 @@ input.on('data', chunk => {
   }
 });
 `;
-function fixture() {
+function fixture(gate?: InputGate) {
   const child = spawn(process.execPath, ['-e', receiver], {
     stdio: ['ignore', 'ignore', 'pipe', 'pipe', 'pipe', 'ipc'],
   });
@@ -39,7 +43,7 @@ function fixture() {
         .parse(m),
     );
   });
-  const pipe = new ObservationBroker(child);
+  const pipe = new ObservationBroker(child, gate);
   pipe.register('A', 'page-A', 1);
   pipe.register('B', 'page-B', 1);
   const protocol = new ExecutionProtocol(pipe);
@@ -55,6 +59,77 @@ function fixture() {
     },
   };
 }
+test.skipIf(process.platform !== 'darwin')(
+  '原生宿主先撤销跨进程资格，控制通知尚未到达时旧输入也不能送出，B不受影响',
+  async () => {
+    const folder = mkdtempSync(path.join(tmpdir(), 'helpr-native-gate-'));
+    const binary = path.resolve('dist/native/input-bridge.node');
+    const file = path.join(folder, 'gate');
+    const gate = new InputGate(binary, file, true);
+    gate.available(true);
+    for (const id of ['A', 'B'])
+      expect(gate.allow(id, gate.state(id).epoch)).toBe(true);
+    const f = fixture(gate),
+      replies: unknown[] = [];
+    const open = (taskId: string) =>
+      f.protocol.open(
+        taskId,
+        { targetId: 'page-' + taskId, generation: 1 },
+        () => true,
+        (p) => replies.push(p),
+        () => {},
+      );
+    const a = open('A'),
+      b = open('B');
+    try {
+      const sessions: string[] = [];
+      for (const [client, task] of [
+        [a, 'A'],
+        [b, 'B'],
+      ] as const) {
+        await f.protocol.command(client, {
+          id: 1,
+          method: 'Target.attachToTarget',
+          params: { targetId: 'page-' + task },
+        });
+        sessions.push(
+          z
+            .object({ result: z.object({ sessionId: z.string() }) })
+            .parse(replies.at(-1)).result.sessionId,
+        );
+      }
+      const host = spawn(
+        process.execPath,
+        [
+          '-e',
+          "const n=require(process.argv[1]);n.open(process.argv[2],false);n.trip('A');",
+          binary,
+          file,
+        ],
+        { stdio: 'ignore' },
+      );
+      expect((await once(host, 'exit'))[0]).toBe(0);
+      await f.protocol.command(a, {
+        id: 2,
+        method: 'Input.insertText',
+        sessionId: sessions[0],
+        params: { text: '迟到的旧输入' },
+      });
+      await f.protocol.command(b, {
+        id: 2,
+        method: 'Input.insertText',
+        sessionId: sessions[1],
+        params: { text: 'B继续' },
+      });
+      await expect
+        .poll(() => f.received.filter((p) => p.method.startsWith('Input.')))
+        .toEqual([{ method: 'Input.insertText', sessionId: sessions[1] }]);
+    } finally {
+      await f.close();
+      rmSync(folder, { recursive: true, force: true });
+    }
+  },
+);
 test('私有网页入口拒绝跨任务、浏览器能力、重复及已撤销输入，另一个任务仍可操作', async () => {
   const f = fixture();
   const replies: unknown[] = [];

@@ -753,3 +753,39 @@ test('规划后页面已有变化，提议保留为旧依据但不交付执行�
     f.records.close();
   }
 });
+
+test('原生资格已撤销但异步取消未到达时，实际模型网络入口也不发送新请求', async () => {
+  const server = await backend('planning'),
+    f = fixture();
+  try {
+    const taskId = f.create('A');
+    await f.service.configure({
+      kind: 'model-save',
+      requestId: 'settings',
+      expectedVersion: 0,
+      protocol: 'chat-completions',
+      endpoint: server.endpoint,
+      model: 'test-chat',
+      apiKey: 'test-secret-only',
+    });
+    await expect(
+      f.service.propose({
+        taskId,
+        runId: 'run',
+        goal: '核对草稿',
+        observation: await f.observe(taskId),
+        pending: null,
+        history: [],
+        signal: new AbortController().signal,
+        permit: () => {
+          throw Error('INPUT_QUALIFICATION_REVOKED');
+        },
+      }),
+    ).rejects.toThrow('MODEL_CANCELLED');
+    expect(server.received).toHaveLength(0);
+    expect(f.get().tasks[0]?.messages.at(-1)?.call?.totalTokens).toBeNull();
+  } finally {
+    await f.service.stopAll();
+    f.records.close();
+  }
+});

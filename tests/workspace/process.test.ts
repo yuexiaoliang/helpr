@@ -52,6 +52,58 @@ function folder() {
   folders.push(dir);
   return dir;
 }
+
+test('原生接管暂停在独立记录进程重开后保留，旧开始请求不能恢复执行', async () => {
+  const dir = folder();
+  let records = await open(dir);
+  const { taskId } = (await records.client.request({
+    kind: 'create',
+    requestId: 'a',
+    goal: '核对 https://example.com/list',
+  })) as { taskId: string };
+  await records.client.request({
+    kind: 'page',
+    requestId: 'ready',
+    taskId,
+    url: 'https://example.com/list',
+    phase: 'manual',
+  });
+  const start = { kind: 'intent', taskId, requestId: 'start', intent: 'start' };
+  await records.client.request({ kind: 'execution', command: start });
+  await records.client.request({
+    kind: 'execution',
+    command: { kind: 'claim', taskId, runId: 'old' },
+  });
+  await records.client.request({
+    kind: 'execution',
+    command: {
+      kind: 'suspend',
+      taskId,
+      requestId: 'native',
+      reason: 'takeover',
+    },
+  });
+  await records.close();
+  records = await open(dir);
+  expect(
+    snapshotSchema.parse(await records.client.request({ kind: 'snapshot' }))
+      .tasks[0]?.execution,
+  ).toMatchObject({
+    intent: 'automatic',
+    phase: 'paused',
+    pauseReason: 'takeover',
+  });
+  expect(
+    await records.client.request({ kind: 'execution', command: start }),
+  ).toMatchObject({ created: false, current: false });
+  expect(
+    await records.client.request({
+      kind: 'execution',
+      command: { kind: 'claim', taskId, runId: 'stale' },
+    }),
+  ).toMatchObject({ claimed: false });
+  await records.close();
+});
 test('丢失创建回执后重开另一进程重试，仍只有原任务且不同内容被拒绝', async () => {
   const dir = folder();
   let records = await open(dir);

@@ -1,5 +1,6 @@
 import { afterEach, expect, test } from 'vitest';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, rmSync, readdirSync, copyFileSync } from 'node:fs';
+import Database from 'better-sqlite3';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { WorkspaceRecords } from '../../app/records/workspace';
@@ -10,6 +11,57 @@ afterEach(() =>
     .splice(0)
     .forEach((folder) => rmSync(folder, { recursive: true, force: true })),
 );
+
+test('03资料升级前留下独立副本，任务与草稿保留，后续重开不重复备份', () => {
+  const folder = mkdtempSync(path.join(tmpdir(), 'helpr-upgrade-04-'));
+  folders.push(folder);
+  let records = new WorkspaceRecords(folder, 'app/records/migrations');
+  const { taskId } = records.execute({
+    kind: 'create',
+    requestId: 'a',
+    goal: '已有任务',
+  });
+  records.execute({
+    kind: 'draft',
+    requestId: 'draft',
+    taskId,
+    text: '保留的中文草稿',
+  });
+  records.close();
+  // 外部输入夹具：03 的 SQL 结构相同，但记录格式版本为 3。
+  const old = new Database(path.join(folder, 'workspace.sqlite'));
+  old.prepare('UPDATE workspace SET schema_version=3').run();
+  old.close();
+  records = new WorkspaceRecords(folder, 'app/records/migrations');
+  expect(records.snapshot().tasks[0]).toMatchObject({
+    id: taskId,
+    draft: '保留的中文草稿',
+  });
+  records.close();
+  const backups = readdirSync(folder).filter((name) =>
+    name.startsWith('workspace-before-takeover-04-'),
+  );
+  expect(backups).toHaveLength(1);
+  records = new WorkspaceRecords(folder, 'app/records/migrations');
+  records.close();
+  expect(
+    readdirSync(folder).filter((name) =>
+      name.startsWith('workspace-before-takeover-04-'),
+    ),
+  ).toHaveLength(1);
+  const recovered = mkdtempSync(path.join(tmpdir(), 'helpr-backup-04-'));
+  folders.push(recovered);
+  copyFileSync(
+    path.join(folder, backups[0]!),
+    path.join(recovered, 'workspace.sqlite'),
+  );
+  records = new WorkspaceRecords(recovered, 'app/records/migrations');
+  expect(records.snapshot().tasks[0]).toMatchObject({
+    id: taskId,
+    draft: '保留的中文草稿',
+  });
+  records.close();
+});
 
 test('两项任务重开后保留原身份和各自对话', () => {
   const folder = mkdtempSync(path.join(tmpdir(), 'helpr-records-'));

@@ -398,6 +398,126 @@ async function parallelFixture() {
   };
 }
 
+test('网页接管立即阻断本项，保存回执迟到不妨碍B，明确继续先核对已有效果', async () => {
+  const f = await parallelFixture();
+  let releaseAck: () => void = () => {};
+  const ack = new Promise<void>((resolve) => {
+    releaseAck = resolve;
+  });
+  f.setAckGate(async (input) => {
+    if ((input as { kind: string }).kind === 'suspend') await ack;
+  });
+  try {
+    await f.service.intent({
+      kind: 'execution-intent',
+      requestId: 'start-a',
+      taskId: f.tasks.A!,
+      intent: 'start',
+    });
+    await expect.poll(() => f.received).toEqual(['A']);
+    const paused = f.service.suspend(f.tasks.A!, 'takeover', 'native-a');
+    expect(
+      f.service.decorate(f.get()).tasks.find((t) => t.id === f.tasks.A)
+        ?.executionControl,
+    ).toMatchObject({ blocked: true, reason: 'takeover' });
+    await f.service.intent({
+      kind: 'execution-intent',
+      requestId: 'start-b',
+      taskId: f.tasks.B!,
+      intent: 'start',
+    });
+    await expect.poll(() => f.received).toEqual(['A', 'B']);
+    releaseAck();
+    await paused;
+    f.release('A');
+    f.release('B');
+    await f.service.settled();
+    expect(
+      f.get().tasks.find((t) => t.id === f.tasks.A)?.execution,
+    ).toMatchObject({
+      intent: 'automatic',
+      phase: 'paused',
+      pauseReason: 'takeover',
+    });
+    await f.service.intent({
+      kind: 'execution-intent',
+      requestId: 'continue-a',
+      taskId: f.tasks.A!,
+      intent: 'continue',
+    });
+    await f.service.settled();
+    expect(f.received).toEqual(['A', 'B']);
+    expect(
+      f.get().tasks.find((t) => t.id === f.tasks.A)?.execution?.phase,
+    ).toBe('complete');
+  } finally {
+    releaseAck();
+    await f.close();
+  }
+});
+
+test('归属未知保留B的明确停止，刷新和修正目标均不代替A的明确继续', async () => {
+  const f = await parallelFixture();
+  try {
+    await f.service.intent({
+      kind: 'execution-intent',
+      requestId: 'stop-b',
+      taskId: f.tasks.B!,
+      intent: 'stop',
+    });
+    await f.service.intent({
+      kind: 'execution-intent',
+      requestId: 'start-a',
+      taskId: f.tasks.A!,
+      intent: 'start',
+    });
+    await expect.poll(() => f.received).toEqual(['A']);
+    await Promise.all([
+      f.service.suspend(f.tasks.A!, 'ownership-unknown', 'unknown-a'),
+      f.service.suspend(f.tasks.B!, 'ownership-unknown', 'unknown-b'),
+    ]);
+    f.release('A');
+    await f.service.settled();
+    f.service.refresh();
+    await f.service.settled();
+    expect(
+      f.get().tasks.find((t) => t.id === f.tasks.B)?.execution,
+    ).toMatchObject({ intent: 'stopped', phase: 'stopped' });
+    await expect(
+      f.service.intent({
+        kind: 'execution-intent',
+        requestId: 'start-old',
+        taskId: f.tasks.A!,
+        intent: 'start',
+      }),
+    ).rejects.toThrow('EXECUTION_CONTINUE_REQUIRED');
+    await f.service.intent({
+      kind: 'execution-intent',
+      requestId: 'revise-a',
+      taskId: f.tasks.A!,
+      intent: 'revise',
+      text: '核对A当前记录',
+    });
+    await f.service.settled();
+    expect(
+      f.get().tasks.find((t) => t.id === f.tasks.A)?.execution,
+    ).toMatchObject({ phase: 'paused', pauseReason: 'ownership-unknown' });
+    await f.service.intent({
+      kind: 'execution-intent',
+      requestId: 'continue-a',
+      taskId: f.tasks.A!,
+      intent: 'continue',
+    });
+    await f.service.settled();
+    expect(f.received).toEqual(['A']);
+    expect(
+      f.get().tasks.find((t) => t.id === f.tasks.A)?.execution?.phase,
+    ).toBe('complete');
+  } finally {
+    await f.close();
+  }
+});
+
 test('两项实际请求重叠，第三项排队；停止A释放容量，B继续，A继续先核对不重复发送', async () => {
   const f = await parallelFixture();
   try {

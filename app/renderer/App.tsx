@@ -17,6 +17,7 @@ import { WorkspaceStore, modelErrorLabel } from './store';
 import { ModelSettings } from './ModelSettings';
 import { activeModelCall } from '../shared/model';
 import type { ExecutionIntent } from '../shared/execution';
+import { pauseDescription } from '../shared/execution';
 import styles from './Workspace.module.css';
 import plus from './assets/plus.svg';
 import close from './assets/x.svg';
@@ -25,6 +26,9 @@ import exit from './assets/sign-out.svg';
 import globe from './assets/globe.svg';
 
 const phaseLabel = (task: Task) => {
+  const reason = task.executionControl?.reason ?? task.execution?.pauseReason;
+  if (reason && task.execution?.intent !== 'stopped')
+    return pauseDescription[reason].label;
   if (task.executionControl?.blocked)
     return task.executionControl.stopSaved ? '已停止' : '执行已暂停 · 需查看';
   if (task.execution) {

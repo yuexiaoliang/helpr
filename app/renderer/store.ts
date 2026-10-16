@@ -8,6 +8,14 @@ import {
 
 const labels: Record<string, string> = {
   EXECUTION_STOPPED: '这项任务已停止。明确继续后会先核对，再处理剩余工作。',
+  EXECUTION_CONTINUE_REQUIRED:
+    '这项任务已让出或暂停。请明确说“继续”，我会先核对当前网页。',
+  NATIVE_INPUT_UNAVAILABLE:
+    '本机输入识别暂不可用，自动操作已暂停。网页与文字保留，无需关闭系统安全设置。',
+  INPUT_CHANGED_DURING_CONTINUE:
+    '核对期间又发生了输入或页面变化，仍保持暂停。准备好后请再明确继续。',
+  CONTROL_DISCONNECTED:
+    '网页控制连接已中断，已暂停自动操作。请保留当前记录，重新打开 helpr 后再核对。',
   EXECUTION_RESULT_UNKNOWN: '先前操作的结果仍待核对，暂不发送后续操作。',
   EXECUTION_LIMIT: '本轮执行已达上限，已暂停并保留已有结果。',
   EXECUTION_PAGE_CHANGED: '网页已变化，已暂停；继续时先核对当前页面。',

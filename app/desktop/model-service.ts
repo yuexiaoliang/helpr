@@ -370,6 +370,7 @@ export class ModelService {
         planning: Boolean(job.planning),
         signal: job.abort.signal,
         qualified: () => this.live(job),
+        permit: job.planning?.permit,
         onText: async (output) => {
           if (!this.live(job)) throw new Error('MODEL_CANCELLED');
           if (job.planning) proposedText = output;

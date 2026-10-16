@@ -88,6 +88,35 @@ export const actionFactSchema = z.strictObject({
   returned: z.boolean(),
 });
 export type ActionFact = z.infer<typeof actionFactSchema>;
+export const executionPauseReasonSchema = z.enum([
+  'takeover',
+  'page-change',
+  'ownership-unknown',
+  'native-unavailable',
+]);
+export type ExecutionPauseReason = z.infer<typeof executionPauseReasonSchema>;
+export const pauseDescription = {
+  takeover: {
+    label: '已让出操作',
+    message:
+      '你已接手网页，我已让出操作。页面与文字保留，明确继续后先核对再续做。',
+  },
+  'page-change': {
+    label: '页面变化 · 已暂停',
+    message:
+      '页面或控制归属已变化，旧操作资格失效。重新识别后仍需明确继续，先核对现有结果。',
+  },
+  'ownership-unknown': {
+    label: '归属待核对',
+    message:
+      '暂时无法确认输入归属，窗口内任务已暂停；没有认定你接管了两项。重新识别后请分别明确继续。',
+  },
+  'native-unavailable': {
+    label: '本机能力不可用',
+    message:
+      '本机输入识别暂不可用，已暂停自动操作并保留网页。能力恢复后仍需明确继续，无需关闭系统安全设置。',
+  },
+} satisfies Record<ExecutionPauseReason, { label: string; message: string }>;
 export const executionSchema = z.strictObject({
   intent: z.enum(['automatic', 'stopped']),
   phase: executionPhaseSchema,
@@ -98,6 +127,7 @@ export const executionSchema = z.strictObject({
   runId: z.string().nullable(),
   resource: z.string().nullable(),
   summary: z.string(),
+  pauseReason: executionPauseReasonSchema.optional(),
   actions: z.array(actionFactSchema),
   result: z
     .strictObject({
@@ -121,6 +151,7 @@ export const executionControlSchema = z.strictObject({
   blocked: z.boolean(),
   stopSaved: z.boolean(),
   message: z.string(),
+  reason: executionPauseReasonSchema.optional(),
 });
 export const nextStepSchema = z.strictObject({
   decision: z.enum(['act', 'complete', 'wait']),

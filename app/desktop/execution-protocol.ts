@@ -75,6 +75,14 @@ export class ExecutionProtocol {
   private live(c: ProtocolClient) {
     return !c.closed && c.qualified() && this.pipe.owns(c.qualification);
   }
+  private send(
+    c: ProtocolClient,
+    method: string,
+    params: JSONMap = {},
+    sessionId?: string,
+  ) {
+    return this.pipe.protocol(method, params, sessionId, c.qualification);
+  }
   private deliver(c: ProtocolClient, packet: unknown) {
     try {
       c.deliver(packet);
@@ -85,9 +93,9 @@ export class ExecutionProtocol {
   }
   private async attach(c: ProtocolClient, targetId: string, parent?: string) {
     if (targetId !== c.qualification.targetId) throw Error('TARGET_NOT_OWNED');
-    const info = await this.pipe.protocol('Target.getTargetInfo', { targetId });
+    const info = await this.send(c, 'Target.getTargetInfo', { targetId });
     if (!this.live(c)) throw Error('EXECUTION_STOPPED');
-    const reply = await this.pipe.protocol('Target.attachToTarget', {
+    const reply = await this.send(c, 'Target.attachToTarget', {
       targetId,
       flatten: true,
     });
@@ -252,7 +260,7 @@ export class ExecutionProtocol {
       if (!root && (!s || s.client !== c)) throw Error('SESSION_NOT_OWNED');
       let result: JSONMap;
       if (method === 'Target.getTargets') {
-        const reply = await this.pipe.protocol(method);
+        const reply = await this.send(c, method);
         const infos = z
           .array(z.object({ targetId: z.string() }).passthrough())
           .parse(reply.targetInfos);
@@ -264,7 +272,7 @@ export class ExecutionProtocol {
       } else if (method === 'Target.getTargetInfo') {
         if (p.targetId && p.targetId !== c.qualification.targetId)
           throw Error('TARGET_NOT_OWNED');
-        result = await this.pipe.protocol(method, {
+        result = await this.send(c, method, {
           targetId: c.qualification.targetId,
         });
       } else if (method === 'Target.attachToBrowserTarget') {
@@ -283,7 +291,7 @@ export class ExecutionProtocol {
         if (this.sessions.get(key)?.client !== c)
           throw Error('SESSION_NOT_OWNED');
         this.sessions.delete(key);
-        result = await this.pipe.protocol(method, { sessionId: key });
+        result = await this.send(c, method, { sessionId: key });
       } else if (method === 'Target.setAutoAttach') {
         if (p.flatten !== true || p.autoAttach !== true)
           throw Error('AUTO_ATTACH_DENIED');
@@ -300,7 +308,8 @@ export class ExecutionProtocol {
           });
           result = {};
         } else
-          result = await this.pipe.protocol(
+          result = await this.send(
+            c,
             method,
             {
               autoAttach: true,
@@ -313,7 +322,7 @@ export class ExecutionProtocol {
       } else if (root) {
         if (method !== 'Browser.getVersion')
           throw Error('ROOT_CAPABILITY_DENIED');
-        result = await this.pipe.protocol(method);
+        result = await this.send(c, method);
       } else {
         if (!s || !pageMethods.has(method))
           throw Error('PAGE_CAPABILITY_DENIED');
@@ -340,7 +349,7 @@ export class ExecutionProtocol {
         if (method === 'Page.createIsolatedWorld')
           p.grantUniveralAccess = false;
         if (!this.live(c)) throw Error('EXECUTION_STOPPED');
-        result = await this.pipe.protocol(method, p, sessionId);
+        result = await this.send(c, method, p, sessionId);
         this.learn(s, result);
       }
       if (!this.live(c)) throw Error('EXECUTION_STOPPED');
