@@ -1,0 +1,119 @@
+{
+  "date": "2026-10-16",
+  "baseline": "59166cc",
+  "build": 18,
+  "start": 45,
+  "scope": "置前的实际应用；真实模型、本机虚构清单、所属任务继续及结果",
+  "preparation": {
+    "queuedC": true,
+    "overlap": true,
+    "stoppedA": true,
+    "completedB": true
+  },
+  "userFeedback": {
+    "accepted": true,
+    "quote": "A 已完成，次数仍为 1，结果能打开"
+  },
+  "realModel": {
+    "priorRequests": 8,
+    "finalRequests": [
+      {
+        "number": 9,
+        "status": 200,
+        "state": "returned"
+      },
+      {
+        "number": 10,
+        "status": 200,
+        "state": "returned"
+      },
+      {
+        "number": 11,
+        "status": 200,
+        "state": "returned"
+      },
+      {
+        "number": 12,
+        "status": 200,
+        "state": "returned"
+      }
+    ],
+    "totalRequests": 12,
+    "limit": 12,
+    "finalUsage": [
+      {
+        "phase": "complete",
+        "inputTokens": 1643,
+        "outputTokens": 237,
+        "totalTokens": 1880
+      },
+      {
+        "phase": "complete",
+        "inputTokens": 2084,
+        "outputTokens": 286,
+        "totalTokens": 2370
+      },
+      {
+        "phase": "complete",
+        "inputTokens": 1619,
+        "outputTokens": 322,
+        "totalTokens": 1941
+      },
+      {
+        "phase": "complete",
+        "inputTokens": 2005,
+        "outputTokens": 382,
+        "totalTokens": 2387
+      }
+    ]
+  },
+  "website": {
+    "priorWrites": 2,
+    "finalReceipts": [
+      {
+        "task": "A",
+        "completed": true,
+        "count": 1
+      },
+      {
+        "task": "B",
+        "completed": true,
+        "count": 1
+      }
+    ],
+    "cumulativeWrites": 4,
+    "remoteBusinessWrites": 0
+  },
+  "independentReadOnlyDatabase": {
+    "A": {
+      "intent": "automatic",
+      "phase": "complete",
+      "has_result": 1
+    },
+    "B": {
+      "intent": "automatic",
+      "phase": "complete",
+      "has_result": 1
+    },
+    "C": {
+      "intent": "stopped",
+      "phase": "stopped",
+      "has_result": 0
+    }
+  },
+  "limitations": [
+    "并非整项 03 或首版验收完成",
+    "遮挡或收起窗口的持续执行未通过，保留 06 贯通验证",
+    "当前 app 保存本机代理虚构 token，不作真实密钥延续证据",
+    "前两轮失败、未知动作和消耗均保留"
+  ],
+  "checks": {
+    "typecheck": "passed",
+    "lint": "passed",
+    "formatChangedSources": "passed",
+    "vitest": {
+      "files": 8,
+      "tests": 36
+    }
+  }
+}

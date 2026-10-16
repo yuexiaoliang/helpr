@@ -1,0 +1,96 @@
+{
+  "date": "2026-10-16",
+  "baseline": "59166cc",
+  "build": 18,
+  "start": 45,
+  "stage": "prepared-awaiting-user",
+  "scope": "真实模型和本机虚构清单；窗口置前；用户继续与查看结果待反馈",
+  "facts": {
+    "queuedC": true,
+    "overlap": true,
+    "stoppedA": true,
+    "completedB": true
+  },
+  "models": {
+    "priorRealRequests": 8,
+    "finalPreparationRequests": [
+      {
+        "number": 9,
+        "status": 200,
+        "state": "returned"
+      },
+      {
+        "number": 10,
+        "status": 200,
+        "state": "returned"
+      },
+      {
+        "number": 11,
+        "status": 200,
+        "state": "returned"
+      }
+    ],
+    "limit": 12
+  },
+  "website": {
+    "priorWrites": 2,
+    "finalPreparationReceipts": [
+      {
+        "task": "A",
+        "completed": true,
+        "count": 1
+      },
+      {
+        "task": "B",
+        "completed": true,
+        "count": 1
+      }
+    ],
+    "remoteBusinessWrites": 0
+  },
+  "tasks": {
+    "A": {
+      "intent": "stopped",
+      "phase": "stopped",
+      "actions": [
+        {
+          "status": "unknown",
+          "returned": false
+        }
+      ],
+      "hasResult": false
+    },
+    "B": {
+      "intent": "automatic",
+      "phase": "complete",
+      "actions": [
+        {
+          "status": "confirmed",
+          "returned": true
+        }
+      ],
+      "hasResult": true
+    },
+    "C": {
+      "intent": "stopped",
+      "phase": "stopped",
+      "actions": [],
+      "hasResult": false
+    }
+  },
+  "limitations": [
+    "人工点击继续及查看结果尚未验收",
+    "遮挡或收起窗口的持续执行未通过",
+    "当前 app 保存本机代理虚构 token，不作真实密钥延续证据",
+    "此前失败和未知动作保留，没有重置计数"
+  ],
+  "checks": {
+    "typecheck": "passed",
+    "lint": "passed",
+    "formatChangedSources": "passed",
+    "vitest": {
+      "files": 8,
+      "tests": 36
+    }
+  }
+}

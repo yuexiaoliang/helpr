@@ -3,6 +3,7 @@ import path from 'node:path';
 import { z } from 'zod';
 import type { WebActionJob, BoundObservation } from './execution-service';
 import { ExecutionProtocol, type ProtocolClient } from './execution-protocol';
+import { actionFailureCodeSchema } from '../shared/execution';
 
 /** 每次启动的工作者只持有一个动作；取消撤销通道并结束工作者，不关闭用户网页。 */
 export class WebExecutor {
@@ -17,6 +18,7 @@ export class WebExecutor {
       signal: AbortSignal,
     ) => Promise<BoundObservation>,
     private readonly env: NodeJS.ProcessEnv,
+    private readonly failure: (taskId: string, code: string) => void,
   ) {}
   async perform(job: WebActionJob): Promise<void> {
     if (!job.qualified() || job.signal.aborted)
@@ -84,14 +86,21 @@ export class WebExecutor {
           .object({
             done: z.boolean().optional(),
             failed: z.boolean().optional(),
+            code: actionFailureCodeSchema.optional(),
           })
           .safeParse(input);
-        if (outcome.success && (outcome.data.done || outcome.data.failed))
+        if (outcome.success && (outcome.data.done || outcome.data.failed)) {
+          if (outcome.data.failed)
+            this.failure(
+              job.taskId,
+              outcome.data.code ?? 'EXECUTION_ACTION_UNKNOWN',
+            );
           finish(
             outcome.data.done && job.qualified()
               ? undefined
               : Error('EXECUTION_ACTION_UNKNOWN'),
           );
+        }
       });
       if (!job.qualified() || job.signal.aborted) {
         cancel();

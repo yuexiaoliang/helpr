@@ -50,6 +50,20 @@ export const webActionSchema = z.discriminatedUnion('kind', [
   }),
 ]);
 export type WebAction = z.infer<typeof webActionSchema>;
+export const actionFailureCodeSchema = z.enum([
+  'EXECUTION_CONNECT_UNSTABLE',
+  'EXECUTION_CONNECT_INVISIBLE',
+  'EXECUTION_CONNECT_VIEWPORT',
+  'EXECUTION_CONNECT_CAPABILITY',
+  'EXECUTION_CONNECT_TIMEOUT',
+  'EXECUTION_CONNECT_UNAVAILABLE',
+  'EXECUTION_ACT_UNSTABLE',
+  'EXECUTION_ACT_INVISIBLE',
+  'EXECUTION_ACT_VIEWPORT',
+  'EXECUTION_ACT_CAPABILITY',
+  'EXECUTION_ACT_TIMEOUT',
+  'EXECUTION_ACT_UNAVAILABLE',
+]);
 export const pageBindingSchema = z.strictObject({
   targetId: z.string().min(1),
   generation: z.number().int().nonnegative(),

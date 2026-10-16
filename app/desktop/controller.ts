@@ -224,6 +224,7 @@ export async function startController(
     new ExecutionProtocol(broker),
     observePage,
     env,
+    (taskId, code) => log.event('failure', { taskId, code }),
   );
   const executions = new ExecutionService({
     records: (command) => recordClient.request({ kind: 'execution', command }),
