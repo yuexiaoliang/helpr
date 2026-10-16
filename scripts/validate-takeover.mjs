@@ -191,10 +191,11 @@ try {
   assert.equal(files.length, 1);
   gate = createRequire(import.meta.url)(path.join(built, 'Contents/Resources/input-bridge.node'));
   gate.open(path.join(profile, files[0]), false);
-  // 与已有实际试用一致，为系统凭据服务保留有界等待，不能误用普通 IPC 的短截止。
+  // 系统授权由本人完成；保留十分钟响应窗口，避免用户回复时原进程已经被关闭。
+  // 全轮仍受上面的二十分钟总截止约束，不因授权等待重置。
   evidence.phase = 'saving-local-model-configuration'; save();
   console.log('SAVING_LOCAL_MODEL_CONFIGURATION ' + out);
-  await request({ kind: 'model-save', requestId: randomUUID(), expectedVersion: 0, protocol: 'chat-completions', endpoint: base + '/v1', model: 'controlled-local-04', apiKey: 'local-fixture-not-a-secret' }, 180000);
+  await request({ kind: 'model-save', requestId: randomUUID(), expectedVersion: 0, protocol: 'chat-completions', endpoint: base + '/v1', model: 'controlled-local-04', apiKey: 'local-fixture-not-a-secret' }, 600000);
   evidence.phase = 'ready'; save(); console.log('READY ' + out);
 } catch (error) { evidence.failure = error.message; save(); await finish(); throw error; }
 const allowed = new Set(['select', 'hide-task', 'minimize', 'execution-intent', 'snapshot', 'inspect', 'observe', 'show', 'panel', 'draft', 'reload']);
