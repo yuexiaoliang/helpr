@@ -149,6 +149,7 @@ function editFocused(command: 'undo' | 'redo' | 'cut' | 'paste' | 'selectAll') {
 function nativeBindings() {
   if (!nativeInstalled || !win || win.isDestroyed()) return;
   const [width = 800, height = 600] = win.getContentSize();
+  let step = 'CHROME';
   try {
     const fullPanel = panel.panel !== 'none' && panel.panel !== 'preview';
     if (!fullPanel)
@@ -164,12 +165,14 @@ function nativeBindings() {
     }
     const page = state.active ? pages.get(state.active) : undefined;
     if (page && !fullPanel) {
+      step = 'WEB';
       if (page.view.getVisible())
         inputGate.bind('web:' + state.active, page.view.getBounds(), {
           x: 30,
           y: 120,
         });
       const chat = page.chat.getBounds();
+      step = 'CHAT';
       inputGate.bind('ui:chat:' + state.active, chat, {
         x: chat.x + 20,
         y: chat.y + 20,
@@ -177,6 +180,7 @@ function nativeBindings() {
       taggedTask = state.active;
     }
     if (panel.panel !== 'none') {
+      step = 'PANEL';
       const bounds = overlay.getBounds();
       inputGate.bind('ui:panel', bounds, {
         x: bounds.x + 20,
@@ -184,6 +188,7 @@ function nativeBindings() {
       });
     }
     if (toast.getVisible()) {
+      step = 'TOAST';
       const bounds = toast.getBounds();
       inputGate.bind('ui:toast', bounds, {
         x: bounds.x + 20,
@@ -192,7 +197,12 @@ function nativeBindings() {
     }
     inputGate.available(true);
     nativeAvailable = true;
-  } catch {
+  } catch (error) {
+    const code =
+      error instanceof Error && /^NATIVE_[A-Z_]+$/.test(error.message)
+        ? error.message
+        : 'NATIVE_INPUT_UNAVAILABLE';
+    log.event('failure', { code: '[DEBUG-n4b1]_' + step + '_' + code });
     if (nativeAvailable) suspend(null, 'native-unavailable');
     inputGate.available(false);
     nativeAvailable = false;
@@ -848,7 +858,15 @@ void app
       });
       nativeInstalled = true;
       nativeBindings();
-    } catch {
+    } catch (error) {
+      log.event('failure', {
+        code:
+          '[DEBUG-n4b1]_INSTALL_' +
+          (inputGate.failureCode ??
+            (error instanceof Error && /^NATIVE_[A-Z_]+$/.test(error.message)
+              ? error.message
+              : 'NATIVE_INPUT_UNAVAILABLE')),
+      });
       inputGate.available(false);
       suspend(null, 'native-unavailable');
       emit({

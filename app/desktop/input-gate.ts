@@ -35,13 +35,22 @@ type NativeBridge = {
 /** 本机同步资格门。持锁仅检查并交付一个发送，绝不等待记录、网络或IPC回执。 */
 export class InputGate {
   private native: NativeBridge | undefined;
+  readonly failureCode:
+    'NATIVE_INPUT_LOAD_FAILED' | 'NATIVE_INPUT_GATE_OPEN_FAILED' | undefined;
   constructor(binary: string, file: string, create: boolean) {
+    let bridge: NativeBridge;
     try {
-      const bridge = createRequire(binary)(binary) as NativeBridge;
+      bridge = createRequire(binary)(binary) as NativeBridge;
+    } catch {
+      this.failureCode = 'NATIVE_INPUT_LOAD_FAILED';
+      return;
+    }
+    try {
       bridge.open(file, create);
       this.native = bridge;
     } catch {
       /* 缺少本机能力仍允许查看网页，但任何自动派发都拒绝。 */
+      this.failureCode = 'NATIVE_INPUT_GATE_OPEN_FAILED';
     }
   }
   state(taskId: string) {

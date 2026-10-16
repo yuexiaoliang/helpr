@@ -134,9 +134,10 @@ static std::string owner(NSResponder *responder) {
 }
 static napi_value install(napi_env env, napi_callback_info info) {
   napi_value values[2]; void *data; size_t bytes; napi_valuetype type;
-  if (!gate || monitor || !args(env, info, 2, values) || napi_get_buffer_info(env, values[0], &data, &bytes) != napi_ok || bytes != sizeof(void *) || napi_typeof(env, values[1], &type) != napi_ok || type != napi_function || !NSThread.isMainThread) return failure(env, "NATIVE_INPUT_UNAVAILABLE");
+  if (!gate || monitor || !args(env, info, 2, values) || napi_get_buffer_info(env, values[0], &data, &bytes) != napi_ok || bytes != sizeof(void *) || napi_typeof(env, values[1], &type) != napi_ok || type != napi_function) return failure(env, "NATIVE_INPUT_UNAVAILABLE");
+  if (!NSThread.isMainThread) return failure(env, "NATIVE_INPUT_THREAD");
   NSView *root = (__bridge NSView *)(*static_cast<void **>(data)); rootRef = root; windowRef = root.window;
-  if (!windowRef) return failure(env, "NATIVE_INPUT_UNAVAILABLE");
+  if (!windowRef) return failure(env, "NATIVE_INPUT_WINDOW");
   monitorEnv = env; napi_create_reference(env, values[1], 1, &callbackRef);
   NSEventMask mask = NSEventMaskLeftMouseDown | NSEventMaskRightMouseDown | NSEventMaskOtherMouseDown | NSEventMaskKeyDown;
   monitor = [NSEvent addLocalMonitorForEventsMatchingMask:mask handler:^NSEvent *(NSEvent *event) {
@@ -176,16 +177,16 @@ static napi_value install(napi_env env, napi_callback_info info) {
 static napi_value tagRegion(napi_env env, napi_callback_info info) {
   windowRef = rootRef.window;
   napi_value values[7]; std::string label; double n[6];
-  if (!windowRef || !NSThread.isMainThread || !args(env, info, 7, values) || !text(env, values[0], label)) return failure(env, "NATIVE_BINDING_UNAVAILABLE");
+  if (!windowRef || !NSThread.isMainThread || !args(env, info, 7, values) || !text(env, values[0], label)) return failure(env, "NATIVE_BINDING_ARGUMENT");
   for (size_t i = 0; i < 6; i++) if (napi_get_value_double(env, values[i + 1], &n[i]) != napi_ok || !std::isfinite(n[i])) return failure(env, "NATIVE_BINDING_UNAVAILABLE");
   NSView *content = windowRef.contentView;
   NSView *view = [content hitTest:NSMakePoint(n[4], content.isFlipped ? n[5] : content.bounds.size.height - n[5])];
   while (view && view.superview != content) view = view.superview;
-  if (!view || view == content || view.window != windowRef || view.hiddenOrHasHiddenAncestor) return failure(env, "NATIVE_BINDING_UNAVAILABLE");
+  if (!view || view == content || view.window != windowRef || view.hiddenOrHasHiddenAncestor) return failure(env, "NATIVE_BINDING_POINT");
   NSRect rect = [view convertRect:view.bounds toView:content];
   double y = content.isFlipped ? rect.origin.y : content.bounds.size.height - NSMaxY(rect);
-  if (fabs(rect.origin.x - n[0]) > 1 || fabs(y - n[1]) > 1 || fabs(rect.size.width - n[2]) > 1 || fabs(rect.size.height - n[3]) > 1) return failure(env, "NATIVE_BINDING_UNAVAILABLE");
-  for (const auto &item : tagged) if (item.first != label && item.second.view == view) return failure(env, "NATIVE_BINDING_UNAVAILABLE");
+  if (fabs(rect.origin.x - n[0]) > 1 || fabs(y - n[1]) > 1 || fabs(rect.size.width - n[2]) > 1 || fabs(rect.size.height - n[3]) > 1) return failure(env, "NATIVE_BINDING_BOUNDS");
+  for (const auto &item : tagged) if (item.first != label && item.second.view == view) return failure(env, "NATIVE_BINDING_COLLISION");
   tagged[label] = {view}; return boolean(env, true);
 }
 static napi_value untag(napi_env env, napi_callback_info info) {
