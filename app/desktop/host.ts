@@ -156,7 +156,8 @@ function nativeBindings() {
       inputGate.bind(
         'ui:chrome',
         { x: 0, y: 0, width, height },
-        { x: 100, y: 28 },
+        // 顶栏左侧是 app-region:drag；从始终可见的退出按钮内部取样，仍核对完整子树边界。
+        { x: width - 36, y: 28 },
       );
     if (taggedTask && taggedTask !== state.active) {
       inputGate.unbind('web:' + taggedTask);
@@ -202,7 +203,7 @@ function nativeBindings() {
       error instanceof Error && /^NATIVE_[A-Z_]+$/.test(error.message)
         ? error.message
         : 'NATIVE_INPUT_UNAVAILABLE';
-    log.event('failure', { code: '[DEBUG-n4b1]_' + step + '_' + code });
+    log.event('failure', { code: step + '_' + code });
     if (nativeAvailable) suspend(null, 'native-unavailable');
     inputGate.available(false);
     nativeAvailable = false;
@@ -861,7 +862,7 @@ void app
     } catch (error) {
       log.event('failure', {
         code:
-          '[DEBUG-n4b1]_INSTALL_' +
+          'INSTALL_' +
           (inputGate.failureCode ??
             (error instanceof Error && /^NATIVE_[A-Z_]+$/.test(error.message)
               ? error.message

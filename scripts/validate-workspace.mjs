@@ -23,7 +23,14 @@ if (process.argv.includes('--preflight')) {
 }
 
 // 正常运行最后产物；继承通道只调用实际工作区的受限命令，没有调试端口。
-const built = path.resolve('dist/packages/mac-arm64/helpr.app');
+const candidateOption = process.argv.find((arg) => arg.startsWith('--candidate='));
+const candidate = candidateOption?.match(/^--candidate=([a-z0-9-]{1,40})$/)?.[1];
+if (candidateOption && !candidate) throw Error('INVALID_BUILD_CANDIDATE');
+if (candidate && process.argv.some((arg) => ['--install', '--installed'].includes(arg)))
+  throw Error('CANDIDATE_INSTALL_CONFLICT');
+const built = path.resolve(candidate
+  ? `dist/candidates/${candidate}/mac-arm64/helpr.app`
+  : 'dist/packages/mac-arm64/helpr.app');
 const installed = path.join(os.homedir(), 'Applications/helpr.app');
 const install = process.argv.includes('--install');
 if (install) {
@@ -187,7 +194,7 @@ const command = (kind, fields = {}) => ({
   requestId: randomUUID(),
   ...fields,
 });
-try {
+async function validate() {
   let client = await launch();
   const a = (
     await client.request(
@@ -220,6 +227,18 @@ try {
       ),
     );
   });
+  // 公开开始入口必须经过真实宿主原生准备。新资料没有模型配置，不发送模型网络请求。
+  const begun = await client.request(command('execution-intent', { taskId: a, intent: 'start' }));
+  check('实际顶栏与网页的原生准备允许开始意图通过', () => {
+    assert.equal(begun.tasks.find((t) => t.id === a)?.execution?.intent, 'automatic');
+  });
+  await client.request(command('execution-intent', { taskId: a, intent: 'stop' }));
+  if (process.argv.includes('--input-preparation')) {
+    lastPids = ownedPids(client.child.pid);
+    await client.quit();
+    checks.push({ name: '输入准备定向核对正常退出且无自有残留', passed: true });
+    return;
+  }
   const observationA = await client.request({ kind: 'observe', taskId: a });
   const observationB = await client.request({ kind: 'observe', taskId: b });
   check('受管工作者仅取得自己的页面', () => {
@@ -365,6 +384,9 @@ try {
     lastPids = ownedPids(client.child.pid);
   }
   await client.quit();
+}
+try {
+  await validate();
   evidence.passed = true;
 } catch (error) {
   evidence.passed = false;
