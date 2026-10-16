@@ -65,3 +65,5 @@ Map: [helpr 首版技术决策地图](../map.md)
 2026-10-13，一手资料研究完成并推送，见[自动更新与凭据延续研究](https://github.com/yuexiaoliang/helpr/blob/ccf081717c50cbb17621810e7709cd077fe09b2e/docs/research/unattended-update-credentials.md)。研究分支为 `codex/research-unattended-update-credentials`，仅含报告、不合并主分支。报告对齐 Electron 44.7.0 及对应 Chromium／Squirrel 源码，区分免费本机开发候选、正式对外分发、普通 ACL 与分区检查，并记录真实 Cookie 与证书续期的待验证条件。研究完成不等于此事项解决。
 
 2026-10-13，用户选择将自动安装推迟到产品盈利后。按上述 Answer 记录范围退出，同步产品共识、交付约定、验收安排与地图；关闭事项并搁置未执行的免费签名方案。本次仅调整规划，未安装工具、改动签名或凭据、运行实验。
+
+2026-10-16，原始研究报告改以远程标签 `archive/2026-10-16/unattended-update-credentials` 保留，提交仍为 `ccf081717c50cbb17621810e7709cd077fe09b2e`，旧研究分支已清理；报告不合并进产品。当前来源及恢复方式见[分支归档索引](../../../docs/maintenance/branch-archive.md)。归档不重启本事项或已搁置的验证。

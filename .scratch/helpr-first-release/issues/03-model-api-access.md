@@ -25,6 +25,8 @@ Map: [helpr 首版技术决策地图](../map.md)
 
 2026-10-10 补充：用户明确要求参考现有 AI agent 的方式，由用户自行配置模型服务；先提供 DeepSeek 测试配置，随后指定测试模型为 `deepseek-flash` 并提供测试凭据。已将凭据保存到忽略提交的本机文件，未写入报告或 Git。
 
+2026-10-16，原始配置实践报告改以远程标签 `archive/2026-10-16/model-configuration` 保留，提交仍为 `4fab6200cc1f0477a3c7189ae473ea7852c2d5c8`，旧研究分支已清理；报告不合并进产品。当前来源及恢复方式见[分支归档索引](../../../docs/maintenance/branch-archive.md)。下文分支名称保留为研究当时的记录。
+
 ## Answer
 
 **已取得继续首轮 AI 网页实验所需的真实接入条件。** 用户指定的 `deepseek-flash` 经官方 `https://api.deepseek.com` 的 Chat Completions 接口完成 8 项检查：文本、JSON、工具调用与结果回传、合成页面文本理解、截图读取、双请求重叠、流式输出、客户端取消。10 次真实请求均返回 HTTP 200。详细配置、结果、用量与局限见 [实验记录](../experiments/model-api/REPORT.md)，可重跑入口见 [实验说明](../experiments/model-api/README.md)。

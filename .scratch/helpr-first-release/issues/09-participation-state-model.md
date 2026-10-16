@@ -25,7 +25,7 @@ Map: [helpr 首版技术决策地图](../map.md)
 
 - 分支：`codex/participation-state-prototype`；初版提交：`38b9ed06aeddf0ccb64e7650c62ad88be471b6f2`。
 - 分支内文件：`.scratch/helpr-first-release/prototypes/participation-state-prototype.html`，旁有 `participation-state-notes.md` 记录范围与未决项。
-- 本地可交互文件：[并行与用户参与状态演练](/Users/yuexiaoliang/.codex/worktrees/participation-state-prototype/helpr/.scratch/helpr-first-release/prototypes/participation-state-prototype.html)。
+- 原型源码：[并行与用户参与状态演练](https://github.com/yuexiaoliang/helpr/blob/7d335bcbab09811804391d28c1d000de68eae9cd/.scratch/helpr-first-release/prototypes/participation-state-prototype.html)；2026-10-16 已归档，原本机目录不再作为长期入口，恢复方式见[归档索引](../../../docs/maintenance/branch-archive.md)。
 
 初版演练暴露一处现有要求尚未明确的行为：用户已经明确停止，之后又对同一任务说“继续”。初版暂按本次结束处理，并在页面标为候选；向用户建议改为“明确继续后先核对已有结果，再续做剩余工作，已完成则告知结果且不重发，无需重新委托”，当时等待真人选择。
 
@@ -52,8 +52,10 @@ Map: [helpr 首版技术决策地图](../map.md)
 
 原型保存在 `codex/participation-state-prototype`，最终提交 `7d335bcbab09811804391d28c1d000de68eae9cd`，未合并到产品分支：
 
-- [可交互状态原型](/Users/yuexiaoliang/.codex/worktrees/participation-state-prototype/helpr/.scratch/helpr-first-release/prototypes/participation-state-prototype.html)
-- [情境、真人反馈与走查边界](/Users/yuexiaoliang/.codex/worktrees/participation-state-prototype/helpr/.scratch/helpr-first-release/prototypes/participation-state-notes.md)
+- [可交互状态原型源码](https://github.com/yuexiaoliang/helpr/blob/7d335bcbab09811804391d28c1d000de68eae9cd/.scratch/helpr-first-release/prototypes/participation-state-prototype.html)
+- [情境、真人反馈与走查边界](https://github.com/yuexiaoliang/helpr/blob/7d335bcbab09811804391d28c1d000de68eae9cd/.scratch/helpr-first-release/prototypes/participation-state-notes.md)
+
+2026-10-16，原型以 `archive/2026-10-16/participation-state-prototype` 标签在远程保留，原提交不变，旧分支不再保留为活动开发分支。详见[分支归档索引](../../../docs/maintenance/branch-archive.md)。归档不改变上述用户决定，也不把模拟演练计作产品验收。
 
 已同步 [产品访谈记录](../../../docs/product/discovery.md)、[产品共识](../../../docs/product/product-agreement.md)、[关闭交互](../../../docs/product/task-tab-close.md)、[执行与调度建议](../../../docs/product/execution-coordination.md)和 [验收范围](../../../docs/product/acceptance-outline.md)。主工作目录只保留经确认的行为与决策资料，原型界面不作为正式工作区设计。
 

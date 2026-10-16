@@ -25,6 +25,6 @@ Map: [helpr 首版技术决策地图](../map.md)
 - Ghost 的原生 File card、文章发布与公开标签页适合准备较少的备选路径。需核对自托管上传限制和测试账号的邮件登录验证。
 - 两者均有原生公开文章页面；Excel 附件发布和读取 Excel 后生成文章必须分别验证。当前 Directus 使用源码可用许可，且公开文章前台需要额外准备，本轮不作为开源候选。
 
-完整依据、核查版本、来源与待实测路径见 [第二套验证后台调查](https://github.com/yuexiaoliang/helpr/blob/c52232537c9024955c1cf15d33f3ca1fd54bf560/docs/research/second-validation-backend.md)。报告已推送至独立 [研究分支](https://github.com/yuexiaoliang/helpr/tree/research/helpr-second-backend)，提交 `c52232537c9024955c1cf15d33f3ca1fd54bf560`；远端与本地提交一致，分支只包含该报告，按研究约定不合并到产品分支。
+完整依据、核查版本、来源与待实测路径见 [第二套验证后台调查](https://github.com/yuexiaoliang/helpr/blob/c52232537c9024955c1cf15d33f3ca1fd54bf560/docs/research/second-validation-backend.md)。报告原推送至独立分支 `research/helpr-second-backend`，提交 `c52232537c9024955c1cf15d33f3ca1fd54bf560`；2026-10-16 改以[归档标签](https://github.com/yuexiaoliang/helpr/tree/archive/2026-10-16/second-validation-backend)长期保存，原始提交不变。该独立来源只包含报告，按研究约定不合并到产品分支，处理记录见[分支归档索引](../../../docs/maintenance/branch-archive.md)。
 
 本结论是资料调查结果，尚未部署或实际操作这两套后台。实际上传、发布、栏目归属、附件下载一致性，以及无需新增产品业务代码的对照证据，由 [取得第二后台的流程对照证据](11-second-backend-comparison.md)继续取得。
