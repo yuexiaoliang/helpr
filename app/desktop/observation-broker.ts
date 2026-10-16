@@ -48,6 +48,7 @@ export class ObservationBroker {
   constructor(
     host: ChildProcess,
     private readonly inputGate?: Pick<InputGate, 'state' | 'permit'>,
+    private readonly beforeInput?: (taskId: string) => Promise<void>,
   ) {
     this.input = host.stdio[3] as Writable;
     const output = host.stdio[4] as Readable;
@@ -128,6 +129,10 @@ export class ObservationBroker {
     sessionId?: string,
     qualification?: Qualification,
   ) {
+    if (qualification && method.startsWith('Input.') && this.beforeInput)
+      return this.beforeInput(qualification.taskId).then(() =>
+        this.send(method, params, sessionId, qualification),
+      );
     return this.send(method, params, sessionId, qualification);
   }
   private valid(client: Qualification, token: string): boolean {

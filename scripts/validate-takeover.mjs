@@ -12,8 +12,11 @@ const round = process.argv.find((arg) => arg.startsWith('--round='))?.slice(8);
 assert(round && /^[a-z0-9-]{1,40}$/.test(round), 'ROUND_REQUIRED');
 const out = path.resolve(validationRoot, round);
 assert(!fs.existsSync(out), 'ROUND_ALREADY_STARTED');
-const built = path.resolve('dist/candidates/takeover-04-fixed/mac-arm64/helpr.app');
-const manifest = JSON.parse(fs.readFileSync(path.join(validationRoot, 'build-22.json')));
+const build = Number(process.argv.find((arg) => arg.startsWith('--build='))?.slice(8) ?? 22);
+assert(Number.isSafeInteger(build) && build > 0, 'INVALID_BUILD');
+const manifest = JSON.parse(fs.readFileSync(path.join(validationRoot, `build-${build}.json`)));
+const built = manifest.app;
+assert(typeof built === 'string' && path.isAbsolute(built), 'INVALID_CANDIDATE');
 assert(manifest.prepared && manifest.app === built, 'CANDIDATE_NOT_READY');
 for (const [file, hash] of Object.entries(manifest.hashes))
   assert.equal(createHash('sha256').update(fs.readFileSync(path.join(built, file))).digest('hex'), hash);
@@ -51,11 +54,11 @@ const stat = fs.statSync(profileRoot);
 assert(stat.uid === process.getuid() && (stat.mode & 0o077) === 0, 'INVALID_PROFILE_ROOT');
 const profile = fs.mkdtempSync(profileRoot + '/takeover04-');
 const evidence = {
-  build: 22, archive: manifest.hashes['Contents/Resources/app.asar'],
+  build, archive: manifest.hashes['Contents/Resources/app.asar'],
   scope: 'packaged local fixtures; tool input is not real IME/paste acceptance',
   started: new Date().toISOString(), carry,
   limits: { minutes: 20, ...Object.fromEntries(Object.entries(maximum).map(([kind, total]) => [kind, total - (carry?.counts[kind] ?? 0)])) },
-  realModelCalls: 0, remoteWrites: 0, taskAttempts: 0, effects: [], inputs: [], models: [], checkpoints: [], checks: [],
+  realModelCalls: 0, remoteWrites: 0, taskAttempts: 0, effects: [], inputs: [], models: [], checkpoints: [], checks: [], deferred: {},
 };
 const write = (file, value) => {
   const target = path.join(out, file), temporary = target + '.tmp';
@@ -66,6 +69,11 @@ const save = () => write('result.json', evidence);
 const ids = {}, held = [], holds = new Map(), pending = new Map(), pids = new Set();
 let gate, child, sequence = 0, busy = false, expired = false, poll, finishing;
 const gates = () => gate ? Object.fromEntries(Object.entries(ids).map(([name, id]) => [name, gate.state(id)])) : null;
+function trace() {
+  const value = gate?.traceRead?.();
+  if (value) { write('native-trace.json', value); assert(!value.overflow, 'NATIVE_TRACE_OVERFLOW'); }
+  return value?.rows.length;
+}
 function reply(item) {
   item.receipt.releasedAt = Date.now();
   item.receipt.connectionClosed = item.res.destroyed;
@@ -126,7 +134,7 @@ const server = http.createServer(async (req, res) => {
       res.end(`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>04 任务 ${name}</title><style>body{font:20px -apple-system;padding:36px;color:#244135;background:#f4f8f5}button,input,a{font:inherit;padding:12px;margin:10px 0;display:block}input{width:400px}iframe{height:120px;width:440px}</style><h1>04 任务 ${name}</h1><p id="progress">${name} 自动完成 0</p><button id="advance">自动推进 ${name}</button><button id="manual">手动接管 ${name}</button><input aria-label="人工文字" placeholder="接管后文字应保留"><button id="frame">加载子页面 ${name}</button><a id="popup" href="/popup/${name}" target="_blank">打开所属弹窗 ${name}</a><div id="slot"></div><p>本机虚构页面；不使用真实网站、账号或模型。</p><script>
       let count=0;const name=${JSON.stringify(name)};
       const send=(route,data)=>fetch(route,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,...data})});
-      for(const kind of ['mousedown','keydown','beforeinput','input','paste'])document.addEventListener(kind,e=>{if(e.target.id!=='advance')send('/input',{kind,target:e.target.id||e.target.tagName,trusted:e.isTrusted,value:document.querySelector('input').value});},true);
+      for(const kind of ['mousedown','keydown','beforeinput','input','paste'])document.addEventListener(kind,e=>{if(e.target.id!=='advance')send('/input',{kind,target:e.target.id||e.target.tagName,trusted:e.isTrusted,clientAt:performance.timeOrigin+performance.now(),value:document.querySelector('input').value});},true);
       document.querySelector('#advance').onclick=()=>{count++;document.querySelector('#progress').textContent=name+' 自动完成 '+count;send('/effect',{count})};
       document.querySelector('#frame').onclick=()=>{document.querySelector('#slot').innerHTML='<iframe title="任务子页面" src="/frame/'+name+'"></iframe>'};
       send('/probe',{node:typeof process,require:typeof require,bridge:typeof window.workspace});
@@ -142,7 +150,7 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'POST' && ['/probe', '/input', '/effect'].includes(url.pathname)) {
       const input = await body(req);
       assert(/^[A-Z]$/.test(input.name), 'INVALID_FIXTURE_NAME');
-      const row = { ...input, at: Date.now(), gates: gates() };
+      const row = { ...input, at: Date.now(), gates: gates(), traceLength: trace() };
       const list = url.pathname === '/effect' ? evidence.effects : evidence.inputs;
       // 导致越界的真实收件也必须保存，不能把页面已经发生的效果藏掉。
       list.push({ route: url.pathname, ...row }); save();
@@ -199,6 +207,7 @@ function finish() {
 }
 async function closeRound() {
   clearTimeout(deadline); clearInterval(poll);
+  trace();
   try {
     trackPids();
     if (child.exitCode === null) child.send({ id: ++sequence, command: { kind: 'quit' } });
@@ -231,7 +240,7 @@ try {
   deadline = setTimeout(() => { expired = true; evidence.failure = 'ROUND_TIME_LIMIT'; save(); void finish(); }, evidence.limits.minutes * 60000);
   console.log('READY ' + out);
 } catch (error) { evidence.failure = error.message; save(); await finish(); throw error; }
-const allowed = new Set(['select', 'hide-task', 'minimize', 'execution-intent', 'snapshot', 'inspect', 'observe', 'show', 'panel', 'draft', 'reload']);
+const allowed = new Set(['select', 'hide-task', 'minimize', 'execution-intent', 'snapshot', 'inspect', 'observe', 'show', 'panel', 'draft', 'reload', 'validation-barrier', 'validation-fault']);
 poll = setInterval(async () => {
   if (expired || finishing || busy || !fs.existsSync(path.join(out, 'command.json'))) return;
   busy = true; let job;
@@ -254,22 +263,35 @@ poll = setInterval(async () => {
       await request({ kind: 'show' });
       value = ids; write('ids.json', ids);
     } else if (job.kind === 'release') { for (const name of job.names) release(name); value = { released: job.names }; }
-    else if (job.kind === 'state') value = { snapshot: await snapshot(), gates: gates(), held: held.map((item) => ({ name: item.name, count: item.receipt.count, closed: item.res.destroyed })) };
+    else if (job.kind === 'state') value = { snapshot: await snapshot(), gates: gates(), traceLength: trace(), deferred: evidence.deferred, barriers: build > 22 ? await request({kind:'validation-barrier',control:{action:'status'}}) : undefined, held: held.map((item) => ({ name: item.name, count: item.receipt.count, closed: item.res.destroyed })) };
+    else if (job.kind === 'barrier') {
+      assert(ids[job.name], 'TASK_REQUIRED');
+      if (job.action === 'arm') spend('faults');
+      value = await request({ kind: 'validation-barrier', control: { action: job.action, point: job.point, taskId: ids[job.name] } });
+    }
     else if (job.kind === 'checkpoint') {
-      value = { label: job.label, at: Date.now(), snapshot: await snapshot(), gates: gates() };
+      value = { label: job.label, at: Date.now(), snapshot: await snapshot(), gates: gates(), traceLength: trace(), barriers: build > 22 ? await request({kind:'validation-barrier',control:{action:'status'}}) : undefined };
       evidence.checkpoints.push(value); save();
     } else if (job.kind === 'check') {
       const state = await snapshot();
       for (const [name, phase] of Object.entries(job.phases ?? {})) check(job.label + '-' + name + '-phase', state.tasks.find((t) => t.id === ids[name])?.execution?.phase === phase);
       for (const [name, counts] of Object.entries(job.effects ?? {})) check(job.label + '-' + name + '-effects', JSON.stringify(evidence.effects.filter((row) => row.name === name).map((row) => row.count)) === JSON.stringify(counts));
       for (const [name, reason] of Object.entries(job.reasons ?? {})) check(job.label + '-' + name + '-reason', state.tasks.find((t) => t.id === ids[name])?.execution?.pauseReason === reason);
+      for (const [name, intent] of Object.entries(job.intents ?? {})) check(job.label + '-' + name + '-intent', state.tasks.find((t) => t.id === ids[name])?.execution?.intent === intent);
       value = { passed: true };
     } else if (job.kind === 'finish') { await finish(); value = { finished: true }; }
     else {
       assert(allowed.has(job.command?.kind), 'COMMAND_DENIED');
       const command = { ...job.command };
       if (job.name) { assert(ids[job.name], 'TASK_REQUIRED'); command.taskId = ids[job.name]; }
-      value = await request(command);
+      if (command.kind === 'validation-fault') spend('faults');
+      if (job.defer) {
+        assert(typeof job.defer === 'string' && /^[a-z0-9-]{1,40}$/.test(job.defer) && !evidence.deferred[job.defer], 'NEW_DEFERRED_REQUIRED');
+        assert(command.kind === 'execution-intent', 'DEFERRED_INTENT_ONLY');
+        const receipt = evidence.deferred[job.defer] = { command, sentAt: Date.now() }; save();
+        void request(command, null).then((result) => { Object.assign(receipt, { finishedAt: Date.now(), result }); save(); }, (error) => { Object.assign(receipt, { finishedAt: Date.now(), error: error.message }); save(); });
+        value = { pending: job.defer };
+      } else value = await request(command);
     }
     write('response.json', { id: job.id, ok: true, value });
     if (job.kind !== 'finish') { await snapshot(); trackPids(); }

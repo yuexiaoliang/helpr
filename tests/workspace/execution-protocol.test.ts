@@ -31,7 +31,10 @@ input.on('data', chunk => {
   }
 });
 `;
-function fixture(gate?: InputGate) {
+function fixture(
+  gate?: InputGate,
+  beforeInput?: (taskId: string) => Promise<void>,
+) {
   const child = spawn(process.execPath, ['-e', receiver], {
     stdio: ['ignore', 'ignore', 'pipe', 'pipe', 'pipe', 'ipc'],
   });
@@ -43,7 +46,7 @@ function fixture(gate?: InputGate) {
         .parse(m),
     );
   });
-  const pipe = new ObservationBroker(child, gate);
+  const pipe = new ObservationBroker(child, gate, beforeInput);
   pipe.register('A', 'page-A', 1);
   pipe.register('B', 'page-B', 1);
   const protocol = new ExecutionProtocol(pipe);
@@ -69,7 +72,17 @@ test.skipIf(process.platform !== 'darwin')(
     gate.available(true);
     for (const id of ['A', 'B'])
       expect(gate.allow(id, gate.state(id).epoch)).toBe(true);
-    const f = fixture(gate),
+    let reached = false;
+    let release!: () => void;
+    const waiting = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const f = fixture(gate, async (taskId) => {
+        if (taskId === 'A') {
+          reached = true;
+          await waiting;
+        }
+      }),
       replies: unknown[] = [];
     const open = (taskId: string) =>
       f.protocol.open(
@@ -98,6 +111,13 @@ test.skipIf(process.platform !== 'darwin')(
             .parse(replies.at(-1)).result.sessionId,
         );
       }
+      const queued = f.protocol.command(a, {
+        id: 2,
+        method: 'Input.insertText',
+        sessionId: sessions[0],
+        params: { text: '迟到的旧输入' },
+      });
+      await expect.poll(() => reached, { timeout: 1000 }).toBe(true);
       const host = spawn(
         process.execPath,
         [
@@ -109,12 +129,8 @@ test.skipIf(process.platform !== 'darwin')(
         { stdio: 'ignore' },
       );
       expect((await once(host, 'exit'))[0]).toBe(0);
-      await f.protocol.command(a, {
-        id: 2,
-        method: 'Input.insertText',
-        sessionId: sessions[0],
-        params: { text: '迟到的旧输入' },
-      });
+      release();
+      await queued;
       await f.protocol.command(b, {
         id: 2,
         method: 'Input.insertText',
@@ -125,6 +141,7 @@ test.skipIf(process.platform !== 'darwin')(
         .poll(() => f.received.filter((p) => p.method.startsWith('Input.')))
         .toEqual([{ method: 'Input.insertText', sessionId: sessions[1] }]);
     } finally {
+      release();
       await f.close();
       rmSync(folder, { recursive: true, force: true });
     }

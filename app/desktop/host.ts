@@ -77,6 +77,7 @@ let nativeInstalled = false;
 let nativeAvailable = false;
 let taggedTask: string | null = null;
 let suspensionSerial = 0;
+const mappingGaps = new Set<string>();
 process.umask(0o077);
 const log = diagnostics(folder, 'host');
 const notify = (message: object) => {
@@ -167,7 +168,7 @@ function nativeBindings() {
     const page = state.active ? pages.get(state.active) : undefined;
     if (page && !fullPanel) {
       step = 'WEB';
-      if (page.view.getVisible())
+      if (page.view.getVisible() && !mappingGaps.has(state.active!))
         inputGate.bind('web:' + state.active, page.view.getBounds(), {
           x: 30,
           y: 120,
@@ -512,6 +513,28 @@ function reconcile(): void {
 }
 async function perform(input: unknown): Promise<unknown> {
   const command = z.object({ kind: z.string() }).parse(input);
+  if (startup.validation && command.kind === 'validation-fault') {
+    const { fault, taskId } = z
+      .strictObject({
+        kind: z.literal('validation-fault'),
+        fault: z.enum(['mapping-gap', 'mapping-restore', 'destroy-view']),
+        taskId: z.string().min(1).max(100),
+      })
+      .parse(input);
+    const page = pages.get(taskId);
+    if (!page) throw Error('PAGE_NOT_AVAILABLE');
+    if (fault === 'destroy-view') page.view.webContents.close();
+    else {
+      if (fault === 'mapping-gap') {
+        mappingGaps.add(taskId);
+        inputGate.unbind('web:' + taskId);
+      } else {
+        mappingGaps.delete(taskId);
+        nativeBindings();
+      }
+    }
+    return null;
+  }
   if (command.kind === 'show') {
     win.show();
     win.focus();

@@ -31,12 +31,14 @@ import { ExecutionProtocol } from './execution-protocol';
 import { WebExecutor } from './web-executor';
 import { InputGate } from './input-gate';
 import { executionPauseReasonSchema } from '../shared/execution';
+import { ValidationBarriers } from './validation-barriers';
 
 export async function startController(
   folder: string,
   validation: boolean,
 ): Promise<void> {
   const log = diagnostics(folder, 'controller');
+  const barriers = validation ? new ValidationBarriers() : undefined;
   let quitting = false;
   let state: WorkspaceSnapshot;
   const env: NodeJS.ProcessEnv = {};
@@ -91,6 +93,7 @@ export async function startController(
     inputGateFile,
     true,
   );
+  if (validation) inputGate.startValidationTrace();
   const args = [
     ...(!app.isPackaged ? [app.getAppPath()] : []),
     '--workspace-host',
@@ -148,7 +151,11 @@ export async function startController(
       }
     }
   });
-  const broker = new ObservationBroker(host, inputGate);
+  const broker = new ObservationBroker(
+    host,
+    inputGate,
+    barriers ? (taskId) => barriers.pass('input', taskId) : undefined,
+  );
   host.once('close', () => {
     try {
       unlinkSync(inputGateFile);
@@ -249,7 +256,21 @@ export async function startController(
     (taskId, code) => log.event('failure', { taskId, code }),
   );
   const executions = new ExecutionService({
-    records: (command) => recordClient.request({ kind: 'execution', command }),
+    records: async (command) => {
+      const delayed = z
+        .object({
+          kind: z.literal('intent'),
+          intent: z.literal('continue'),
+          taskId: z.string(),
+        })
+        .safeParse(command);
+      if (delayed.success)
+        await barriers?.pass('records-before', delayed.data.taskId);
+      const result = await recordClient.request({ kind: 'execution', command });
+      if (delayed.success)
+        await barriers?.pass('records-after', delayed.data.taskId);
+      return result;
+    },
     current: () => state,
     publish: (next) => {
       if (next.revision >= state.revision) {
@@ -380,21 +401,24 @@ export async function startController(
       .safeParse(input);
     if (suspension.success) {
       const event = suspension.data.suspension;
-      for (const task of state.tasks)
-        if (
-          (!event.taskId || task.id === event.taskId) &&
-          event.serial > (lastSuspensionSerial.get(task.id) ?? 0)
-        ) {
-          lastSuspensionSerial.set(task.id, event.serial);
-          void executions
-            .suspend(task.id, event.reason, `${event.requestId}:${task.id}`)
-            .catch(() => {
-              log.event('failure', {
-                taskId: task.id,
-                code: 'INPUT_PAUSE_NOT_SAVED',
+      void (async () => {
+        await barriers?.pass('suspension', event.taskId ?? '*');
+        for (const task of state.tasks)
+          if (
+            (!event.taskId || task.id === event.taskId) &&
+            event.serial > (lastSuspensionSerial.get(task.id) ?? 0)
+          ) {
+            lastSuspensionSerial.set(task.id, event.serial);
+            void executions
+              .suspend(task.id, event.reason, `${event.requestId}:${task.id}`)
+              .catch(() => {
+                log.event('failure', {
+                  taskId: task.id,
+                  code: 'INPUT_PAUSE_NOT_SAVED',
+                });
               });
-            });
-        }
+          }
+      })().catch(() => log.event('failure', { code: 'INPUT_PAUSE_NOT_SAVED' }));
       return;
     }
     const startupFailure = startupFailureSchema.safeParse(input);
@@ -636,6 +660,30 @@ export async function startController(
         token: z.string().optional(),
       });
       const perform = async () => {
+        if (command.success && command.data.kind === 'validation-barrier')
+          return barriers!.control(
+            z.object({ control: z.unknown() }).parse(req.data.command).control,
+          );
+        if (command.success && command.data.kind === 'validation-fault') {
+          const fault = z
+            .strictObject({
+              kind: z.literal('validation-fault'),
+              fault: z.enum([
+                'mapping-gap',
+                'mapping-restore',
+                'destroy-view',
+                'disconnect',
+              ]),
+              taskId: z.string().min(1).max(100),
+            })
+            .parse(req.data.command);
+          if (fault.fault === 'disconnect') {
+            host.stdio[3]?.destroy();
+            host.stdio[4]?.destroy();
+            return null;
+          }
+          return hostClient.request(fault);
+        }
         if (command.success && command.data.kind === 'observe') {
           const job = task.parse(req.data.command);
           return observe(job.taskId, job.method, job.requestedTask, job.token);

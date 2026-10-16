@@ -9,14 +9,28 @@
 #include <cmath>
 #include <cerrno>
 #include <map>
+#include <time.h>
 #include <string>
 
 // 仅本应用的控制和网页宿主使用。文件是临时同步设施，不保存业务事实或输入内容。
 struct Slot { char task[101]; uint64_t epoch; bool blocked; };
-struct Shared { uint64_t magic; bool available; uint64_t serial; Slot slots[4096]; };
-static constexpr uint64_t MAGIC = 0x48454c5052494e34;
+struct Trace { uint64_t serial; uint64_t epoch; double at; char stage[24]; char owner[101]; };
+struct Shared { uint64_t magic; bool available; uint64_t serial; Slot slots[4096]; bool tracing; bool overflow; uint32_t traceCount; Trace traces[4096]; };
+static constexpr uint64_t MAGIC = 0x48454c5052494e35;
 static int gateFd = -1;
 static Shared *gate = nullptr;
+static bool creator = false;
+// 仅验证模式启用；有界内存记号，不含按键、剪贴板或网址，不写业务记录。调用者已持锁。
+static void trace(const char *stage, const std::string &label, uint64_t serial, uint64_t epoch = 0) {
+  if (!gate->tracing) return;
+  if (gate->traceCount >= 4096) { gate->overflow = true; return; }
+  Trace &row = gate->traces[gate->traceCount++];
+  struct timespec now; clock_gettime(CLOCK_REALTIME, &now);
+  row.at = now.tv_sec * 1000.0 + now.tv_nsec / 1000000.0;
+  row.serial = serial; row.epoch = epoch;
+  strncpy(row.stage, stage, sizeof(row.stage) - 1);
+  strncpy(row.owner, label.c_str(), sizeof(row.owner) - 1);
+}
 struct Lock {
   bool held;
   Lock() : held(false) {
@@ -73,7 +87,7 @@ static napi_value openGate(napi_env env, napi_callback_info info) {
   gateFd = fd; gate = static_cast<Shared *>(memory);
   Lock lock;
   if (!lock.held) return failure(env, "INPUT_GATE_UNAVAILABLE");
-  if (create) { memset(gate, 0, sizeof(Shared)); gate->magic = MAGIC; }
+  if (create) { memset(gate, 0, sizeof(Shared)); gate->magic = MAGIC; creator = true; }
   if (gate->magic != MAGIC) return failure(env, "INPUT_GATE_UNAVAILABLE");
   return boolean(env, true);
 }
@@ -112,7 +126,8 @@ static napi_value permit(napi_env env, napi_callback_info info) {
   if (!gate || !args(env, info, 3, values) || !text(env, values[0], task) || napi_get_value_double(env, values[1], &epoch) != napi_ok || napi_typeof(env, values[2], &type) != napi_ok || type != napi_function) return failure(env, "INPUT_GATE_ARGUMENT");
   Lock lock; if (!lock.held) return failure(env, "INPUT_GATE_UNAVAILABLE");
   Slot *row = slot(task);
-  if (!row || !gate->available || row->blocked || row->epoch != epoch) return failure(env, "INPUT_QUALIFICATION_REVOKED");
+  if (!row || !gate->available || row->blocked || row->epoch != epoch) { trace("permit-denied", task, gate->serial, epoch); return failure(env, "INPUT_QUALIFICATION_REVOKED"); }
+  trace("permit-send", task, gate->serial, epoch);
   napi_value global, result; napi_get_global(env, &global);
   // 同步回调只把一个包交给私有管道/网络发送入口；绝不持锁等待回执或数据库。
   if (napi_call_function(env, global, values[2], 0, nullptr, &result) != napi_ok) return nullptr;
@@ -149,14 +164,16 @@ static napi_value install(napi_env env, napi_callback_info info) {
     if (!keyboard && !NSPointInRect(point, content.bounds)) return event;
     NSResponder *receiver = keyboard ? windowRef.firstResponder : [content hitTest:point];
     const std::string label = owner(receiver);
-    if (label.rfind("ui:", 0) == 0) return event;
+    if (label.rfind("ui:", 0) == 0) { Lock lock; if (lock.held) trace("ui-pass", label, ++gate->serial); return event; }
     uint64_t serial;
     {
       Lock lock;
       if (!lock.held) return event;
+      serial = ++gate->serial;
+      trace("identified", label, serial);
       if (label.rfind("web:", 0) == 0) { Slot *row = slot(label.substr(4)); if (row) block(*row); else { gate->available = false; blockAll(); } }
       else blockAll();
-      serial = ++gate->serial;
+      trace("blocked", label, serial);
     }
     // 先跨进程撤销资格，再通知 JS，最后才把原事件交回 AppKit；不读取字符或剪贴板。
     napi_handle_scope scope; napi_open_handle_scope(monitorEnv, &scope);
@@ -169,7 +186,9 @@ static napi_value install(napi_env env, napi_callback_info info) {
       napi_value exception; napi_get_and_clear_last_exception(monitorEnv, &exception);
       Lock lock; if (lock.held) { gate->available = false; blockAll(); }
     }
-    napi_close_handle_scope(monitorEnv, scope); return event;
+    napi_close_handle_scope(monitorEnv, scope);
+    { Lock lock; if (lock.held) trace("handoff", label, serial); }
+    return event;
   }];
   if (!monitor) return failure(env, "NATIVE_INPUT_UNAVAILABLE");
   return boolean(env, true);
@@ -199,6 +218,24 @@ static napi_value focused(napi_env env, napi_callback_info) {
   const std::string label = owner(windowRef.firstResponder);
   napi_value result; napi_create_string_utf8(env, label.c_str(), label.size(), &result); return result;
 }
+static napi_value traceStart(napi_env env, napi_callback_info) {
+  if (!gate || !creator) return failure(env, "INPUT_TRACE_CREATOR_REQUIRED");
+  Lock lock; if (!lock.held) return failure(env, "INPUT_GATE_UNAVAILABLE");
+  gate->tracing = true; return boolean(env, true);
+}
+static napi_value traceRead(napi_env env, napi_callback_info) {
+  if (!gate) return failure(env, "INPUT_GATE_UNAVAILABLE");
+  Lock lock; if (!lock.held) return failure(env, "INPUT_GATE_UNAVAILABLE");
+  napi_value result, rows; napi_create_object(env, &result); napi_create_array_with_length(env, gate->traceCount, &rows);
+  for (uint32_t i = 0; i < gate->traceCount; i++) {
+    const auto &row = gate->traces[i]; napi_value item; napi_create_object(env, &item);
+    setText(env, item, "stage", row.stage); setText(env, item, "owner", row.owner);
+    setNumber(env, item, "serial", row.serial); setNumber(env, item, "epoch", row.epoch); setNumber(env, item, "at", row.at);
+    napi_set_element(env, rows, i, item);
+  }
+  napi_set_named_property(env, result, "rows", rows);
+  napi_set_named_property(env, result, "overflow", boolean(env, gate->overflow)); return result;
+}
 static void cleanup(void *) {
   if (monitor) { [NSEvent removeMonitor:monitor]; monitor = nil; }
   tagged.clear();
@@ -208,6 +245,7 @@ static void cleanup(void *) {
 static napi_value init(napi_env env, napi_value exports) {
   napi_property_descriptor methods[] = {
     {"open", 0, openGate, 0, 0, 0, napi_default, 0}, {"state", 0, state, 0, 0, 0, napi_default, 0},
+    {"traceStart", 0, traceStart, 0, 0, 0, napi_default, 0}, {"traceRead", 0, traceRead, 0, 0, 0, napi_default, 0},
     {"trip", 0, trip, 0, 0, 0, napi_default, 0}, {"available", 0, available, 0, 0, 0, napi_default, 0},
     {"allow", 0, allow, 0, 0, 0, napi_default, 0}, {"permit", 0, permit, 0, 0, 0, napi_default, 0},
     {"install", 0, install, 0, 0, 0, napi_default, 0}, {"tagRegion", 0, tagRegion, 0, 0, 0, napi_default, 0},
