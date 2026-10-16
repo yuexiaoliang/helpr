@@ -94,3 +94,5 @@
 2026-10-15，用户随后回复“可以”，[02 原型确认](issues/02-model-settings-and-page-understanding.md#原型确认)已取得，正式实现以 `model-understanding-v1`（`a722b68`）覆盖范围为依据；本次只登记确认，不把模拟演示当作真实能力通过。
 
 2026-10-15，02 正式代码及最小实际试用已提交为 `cd2effd`、`20eead6`、`62f5001`：两张网页真实问答各自正确，用户确认 B 回答及切回 A 保留。用户随后要求继续推进，当前准备 [03 执行、停止与继续原型](issues/03-parallel-execution-stop-and-continue.md#原型确认)，版本 `execution-v1`，待体验确认；正式网页操作尚未开始。本轮不重复 01／02 已接受的操作，也不将其余整体验收条件提前勾选。
+
+2026-10-16，用户体验 03 后明确回复“验收通过”，已确认 [execution-v1（c3592fb）](issues/03-parallel-execution-stop-and-continue.md#原型确认)，按此前 implement 授权进入已确认范围的正式开发；原型通过与真实功能证据分别记录。
