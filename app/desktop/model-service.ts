@@ -46,6 +46,7 @@ type Job = {
   planning?: ProposalInput;
   proposal?: NextStep;
   failure?: string;
+  pageChanged?: boolean;
 };
 /** 意图、记录与发送的公开入口。取消先撤销内存资格；任何旧回执都不能重新发送。 */
 export class ModelService {
@@ -189,6 +190,7 @@ export class ModelService {
     await started.job.work;
     if (input.signal.aborted) throw new Error('MODEL_CANCELLED');
     if (started.job.failure) throw new Error(started.job.failure);
+    if (started.job.pageChanged) throw new Error('EXECUTION_PAGE_CHANGED');
     if (!started.job.proposal) throw new Error('MODEL_FORMAT');
     return started.job.proposal;
   }
@@ -400,6 +402,7 @@ export class ModelService {
       } catch {
         /* 无法再核对时不声称旧观察仍是当前页面。 */
       }
+      job.pageChanged = pageChanged;
       if (!this.live(job)) throw new Error('MODEL_CANCELLED');
       await this.record({
         kind: 'finish',

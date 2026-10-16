@@ -41,13 +41,24 @@ type Job = {
   abort: AbortController;
   work: Promise<void>;
 };
-const receipt = z.object({ state: snapshotSchema }).passthrough();
+const receipt = z
+  .object({
+    state: snapshotSchema,
+    created: z.boolean().optional(),
+    current: z.boolean().optional(),
+    claimed: z.boolean().optional(),
+    permitted: z.boolean().optional(),
+  })
+  .passthrough();
 /** 任务意图与派发公开入口。记录进程之外保留即时阻断，所有等待之后重新核对。 */
 export class ExecutionService {
   private available = true;
   private closing = false;
   private pumping: Promise<void> | null = null;
   private wake = false;
+  private recordSequence = 0;
+  private latestRecordSuccess = 0;
+  private latestRecordFailure = 0;
   private readonly jobs = new Map<string, Job>();
   private readonly blocked = new Map<
     string,
@@ -98,13 +109,16 @@ export class ExecutionService {
     this.ports.publish(state);
   }
   private async record(command: unknown) {
+    const sequence = ++this.recordSequence;
     try {
       const result = receipt.parse(await this.ports.records(command));
+      this.latestRecordSuccess = Math.max(this.latestRecordSuccess, sequence);
       this.publish(result.state);
-      return result;
+      return { ...result, receiptSequence: sequence };
     } catch (error) {
       const code = error instanceof Error ? error.message : '';
       if (
+        sequence > this.latestRecordSuccess &&
         ![
           'REQUEST_CONTENT_CONFLICT',
           'RECORD_VERSION_CONFLICT',
@@ -116,8 +130,10 @@ export class ExecutionService {
           'EXECUTION_LIMIT',
           'EXECUTION_EVIDENCE_MISSING',
         ].includes(code)
-      )
+      ) {
+        this.latestRecordFailure = Math.max(this.latestRecordFailure, sequence);
         this.disable();
+      }
       throw error;
     }
   }
@@ -147,12 +163,15 @@ export class ExecutionService {
       );
     try {
       const result = await this.record({ ...command, kind: 'intent' });
-      this.available = true;
       if (this.intents.get(command.taskId) !== sequence)
         return this.decorate(this.ports.current());
       if (result.created !== true && result.current !== true)
         throw Error('RECORD_VERSION_CONFLICT');
       const task = result.state.tasks.find((t) => t.id === command.taskId);
+      if (result.receiptSequence > this.latestRecordFailure)
+        this.available = true;
+      else if (task?.execution?.intent !== 'stopped')
+        throw Error('RECORDS_UNAVAILABLE');
       if (task?.execution?.intent === 'stopped')
         this.blocked.set(task.id, {
           saved: true,
@@ -162,7 +181,10 @@ export class ExecutionService {
       this.publish();
       return this.decorate(result.state);
     } catch (error) {
-      if (command.intent === 'stop')
+      if (
+        command.intent === 'stop' &&
+        this.intents.get(command.taskId) === sequence
+      )
         this.blocked.set(command.taskId, {
           saved: false,
           message: '已阻断新操作，但停止尚未保存。请保持应用打开并重试停止。',

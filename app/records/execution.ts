@@ -14,30 +14,46 @@ import {
 import * as schema from './schema';
 import { pageSourceSchema } from '../shared/model';
 
-const lifecycle = createMachine({
-  id: 'task-execution',
-  initial: 'queued',
-  states: {
-    queued: {},
-    checking: {},
-    running: {},
-    stopped: {},
-    unknown: {},
-    paused: {},
-    complete: {},
-    failed: {},
+const activeTransitions = {
+  DISPATCH: { target: 'running', guard: 'automatic' },
+  WAIT: { target: 'unknown', guard: 'automatic' },
+  BLOCK: { target: 'paused', guard: 'automatic' },
+  FINISH: { target: 'complete', guard: 'automatic' },
+  FAIL: { target: 'failed', guard: 'automatic' },
+};
+const lifecycle = createMachine(
+  {
+    types: { context: {} as Pick<TaskExecution, 'intent'> },
+    id: 'task-execution',
+    initial: 'queued',
+    context: { intent: 'automatic' },
+    states: {
+      queued: {
+        on: {
+          CLAIM: { target: 'checking', guard: 'automatic' },
+          BLOCK: { target: 'paused', guard: 'automatic' },
+        },
+      },
+      checking: { on: activeTransitions },
+      running: { on: activeTransitions },
+      stopped: {},
+      unknown: {},
+      paused: {},
+      complete: {},
+      failed: {},
+    },
+    on: {
+      QUEUE: { target: '.queued', guard: 'automatic' },
+      STOP: { target: '.stopped', guard: 'stopped' },
+    },
   },
-  on: {
-    QUEUE: '.queued',
-    CLAIM: '.checking',
-    DISPATCH: '.running',
-    STOP: '.stopped',
-    WAIT: '.unknown',
-    BLOCK: '.paused',
-    FINISH: '.complete',
-    FAIL: '.failed',
+  {
+    guards: {
+      automatic: ({ context }) => context.intent === 'automatic',
+      stopped: ({ context }) => context.intent === 'stopped',
+    },
   },
-});
+);
 type PhaseEvent =
   | 'QUEUE'
   | 'CLAIM'
@@ -48,11 +64,12 @@ type PhaseEvent =
   | 'FINISH'
   | 'FAIL';
 function move(e: TaskExecution, event: PhaseEvent) {
-  const [next] = transition(
-    lifecycle,
-    lifecycle.resolveState({ value: e.phase, context: {} }),
-    { type: event },
-  );
+  const state = lifecycle.resolveState({
+    value: e.phase,
+    context: { intent: e.intent },
+  });
+  if (!state.can({ type: event })) throw Error('EXECUTION_STATE_CONFLICT');
+  const [next] = transition(lifecycle, state, { type: event });
   e.phase = executionPhaseSchema.parse(next.value);
 }
 const observation = pageSourceSchema.extend({ text: z.string().max(30000) });

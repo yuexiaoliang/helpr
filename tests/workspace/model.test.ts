@@ -717,3 +717,39 @@ test('执行提议仍经过实际SDK计数入口，界面只展示摘要，不�
     f.records.close();
   }
 });
+
+test('规划后页面已有变化，提议保留为旧依据但不交付执行或完成任务', async () => {
+  const server = await backend('planning'),
+    f = fixture();
+  try {
+    const taskId = f.create('A');
+    await f.service.configure({
+      kind: 'model-save',
+      requestId: 'settings',
+      expectedVersion: 0,
+      protocol: 'chat-completions',
+      endpoint: server.endpoint,
+      model: 'test-chat',
+      apiKey: 'test-secret-only',
+    });
+    await expect(
+      f.service.propose({
+        taskId,
+        runId: 'run',
+        goal: '核对草稿',
+        observation: {
+          ...(await f.observe(taskId)),
+          fingerprint: 'earlier-page',
+        },
+        pending: null,
+        history: [],
+        signal: new AbortController().signal,
+      }),
+    ).rejects.toThrow('EXECUTION_PAGE_CHANGED');
+    expect(f.get().tasks[0]?.messages.at(-1)?.call?.pageChanged).toBe(true);
+    expect(server.received).toHaveLength(1);
+  } finally {
+    await f.service.stopAll();
+    f.records.close();
+  }
+});

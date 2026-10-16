@@ -608,3 +608,52 @@ test('继续已保存但回执丢失后，重试同一请求可核对并推进�
     await f.close();
   }
 });
+
+test('较旧停止回执超时不能覆盖已保存的新继续，或永久占住执行容量', async () => {
+  const f = await parallelFixture();
+  let release: () => void = () => {},
+    held = false;
+  const oldAck = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  f.setAckGate(async (input) => {
+    if ((input as { requestId?: string }).requestId === 'old-stop') {
+      held = true;
+      await oldAck;
+      throw Error('REQUEST_TIMEOUT');
+    }
+  });
+  try {
+    const oldStop = f.service
+      .intent({
+        kind: 'execution-intent',
+        requestId: 'old-stop',
+        taskId: f.tasks.A!,
+        intent: 'stop',
+      })
+      .catch(() => {});
+    await expect.poll(() => held).toBe(true);
+    await f.service.intent({
+      kind: 'execution-intent',
+      requestId: 'new-continue',
+      taskId: f.tasks.A!,
+      intent: 'continue',
+    });
+    await expect.poll(() => f.received).toEqual(['A']);
+    release();
+    await oldStop;
+    expect(
+      f.service.decorate(f.get()).tasks.find((t) => t.id === f.tasks.A)
+        ?.executionControl?.blocked,
+    ).not.toBe(true);
+    f.release('A');
+    await f.service.settled();
+    expect(
+      f.get().tasks.find((t) => t.id === f.tasks.A)?.execution?.phase,
+    ).toBe('complete');
+    expect(f.service.canExit()).toBe(true);
+  } finally {
+    release();
+    await f.close();
+  }
+});
