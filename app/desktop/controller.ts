@@ -255,22 +255,26 @@ export async function startController(
     env,
     (taskId, code) => log.event('failure', { taskId, code }),
   );
+  const saveExecution = (command: unknown) =>
+    recordClient.request({ kind: 'execution', command });
   const executions = new ExecutionService({
-    records: async (command) => {
-      const delayed = z
-        .object({
-          kind: z.literal('intent'),
-          intent: z.literal('continue'),
-          taskId: z.string(),
-        })
-        .safeParse(command);
-      if (delayed.success)
-        await barriers?.pass('records-before', delayed.data.taskId);
-      const result = await recordClient.request({ kind: 'execution', command });
-      if (delayed.success)
-        await barriers?.pass('records-after', delayed.data.taskId);
-      return result;
-    },
+    records: barriers
+      ? async (command) => {
+          const delayed = z
+            .object({
+              kind: z.literal('intent'),
+              intent: z.literal('continue'),
+              taskId: z.string(),
+            })
+            .safeParse(command);
+          if (delayed.success)
+            await barriers.pass('records-before', delayed.data.taskId);
+          const result = await saveExecution(command);
+          if (delayed.success)
+            await barriers.pass('records-after', delayed.data.taskId);
+          return result;
+        }
+      : saveExecution,
     current: () => state,
     publish: (next) => {
       if (next.revision >= state.revision) {
@@ -401,8 +405,7 @@ export async function startController(
       .safeParse(input);
     if (suspension.success) {
       const event = suspension.data.suspension;
-      void (async () => {
-        await barriers?.pass('suspension', event.taskId ?? '*');
+      const deliver = () => {
         for (const task of state.tasks)
           if (
             (!event.taskId || task.id === event.taskId) &&
@@ -418,7 +421,13 @@ export async function startController(
                 });
               });
           }
-      })().catch(() => log.event('failure', { code: 'INPUT_PAUSE_NOT_SAVED' }));
+      };
+      if (barriers)
+        void barriers
+          .pass('suspension', event.taskId ?? '*')
+          .then(deliver)
+          .catch(() => log.event('failure', { code: 'INPUT_PAUSE_NOT_SAVED' }));
+      else deliver();
       return;
     }
     const startupFailure = startupFailureSchema.safeParse(input);

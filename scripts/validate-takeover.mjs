@@ -71,7 +71,10 @@ let gate, child, sequence = 0, busy = false, expired = false, poll, finishing;
 const gates = () => gate ? Object.fromEntries(Object.entries(ids).map(([name, id]) => [name, gate.state(id)])) : null;
 function trace() {
   const value = gate?.traceRead?.();
-  if (value) { write('native-trace.json', value); assert(!value.overflow, 'NATIVE_TRACE_OVERFLOW'); }
+  if (value) {
+    write('native-trace.json', value);
+    if (value.overflow) { evidence.fixtureFailure ??= 'NATIVE_TRACE_OVERFLOW'; save(); expired = true; queueMicrotask(() => void finish()); }
+  }
   return value?.rows.length;
 }
 function reply(item) {
@@ -150,10 +153,12 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'POST' && ['/probe', '/input', '/effect'].includes(url.pathname)) {
       const input = await body(req);
       assert(/^[A-Z]$/.test(input.name), 'INVALID_FIXTURE_NAME');
-      const row = { ...input, at: Date.now(), gates: gates(), traceLength: trace() };
+      const row = { ...input, at: Date.now(), gates: gates() };
       const list = url.pathname === '/effect' ? evidence.effects : evidence.inputs;
       // 导致越界的真实收件也必须保存，不能把页面已经发生的效果藏掉。
-      list.push({ route: url.pathname, ...row }); save();
+      const receipt = { route: url.pathname, ...row };
+      list.push(receipt); save();
+      receipt.traceLength = trace(); save();
       assert(list.length <= (list === evidence.effects ? evidence.limits.effects : evidence.limits.inputs), 'FIXTURE_LIMIT');
       assert(!finishing, 'ROUND_CLOSING');
       res.end('accepted'); return;
@@ -207,7 +212,7 @@ function finish() {
 }
 async function closeRound() {
   clearTimeout(deadline); clearInterval(poll);
-  trace();
+  try { trace(); } catch (error) { evidence.traceFailure = error.message; save(); }
   try {
     trackPids();
     if (child.exitCode === null) child.send({ id: ++sequence, command: { kind: 'quit' } });
@@ -240,7 +245,7 @@ try {
   deadline = setTimeout(() => { expired = true; evidence.failure = 'ROUND_TIME_LIMIT'; save(); void finish(); }, evidence.limits.minutes * 60000);
   console.log('READY ' + out);
 } catch (error) { evidence.failure = error.message; save(); await finish(); throw error; }
-const allowed = new Set(['select', 'hide-task', 'minimize', 'execution-intent', 'snapshot', 'inspect', 'observe', 'show', 'panel', 'draft', 'reload', 'validation-barrier', 'validation-fault']);
+const allowed = new Set(['select', 'hide-task', 'minimize', 'execution-intent', 'snapshot', 'inspect', 'observe', 'show', 'panel', 'draft', 'reload', 'validation-fault']);
 poll = setInterval(async () => {
   if (expired || finishing || busy || !fs.existsSync(path.join(out, 'command.json'))) return;
   busy = true; let job;
@@ -288,8 +293,12 @@ poll = setInterval(async () => {
       if (job.defer) {
         assert(typeof job.defer === 'string' && /^[a-z0-9-]{1,40}$/.test(job.defer) && !evidence.deferred[job.defer], 'NEW_DEFERRED_REQUIRED');
         assert(command.kind === 'execution-intent', 'DEFERRED_INTENT_ONLY');
-        const receipt = evidence.deferred[job.defer] = { command, sentAt: Date.now() }; save();
-        void request(command, null).then((result) => { Object.assign(receipt, { finishedAt: Date.now(), result }); save(); }, (error) => { Object.assign(receipt, { finishedAt: Date.now(), error: error.message }); save(); });
+        assert(job.allowError === undefined || job.allowError === 'INPUT_CHANGED_DURING_CONTINUE', 'INVALID_EXPECTED_ERROR');
+        const receipt = evidence.deferred[job.defer] = { command, sentAt: Date.now(), allowError: job.allowError }; save();
+        void request(command, null).then((result) => { Object.assign(receipt, { finishedAt: Date.now(), result }); save(); }, (error) => {
+          Object.assign(receipt, { finishedAt: Date.now(), error: error.message }); save();
+          if (error.message !== job.allowError) { evidence.failure ??= error.message; expired = true; save(); void finish(); }
+        });
         value = { pending: job.defer };
       } else value = await request(command);
     }
