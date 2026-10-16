@@ -1,0 +1,233 @@
+// 实际候选的有界接管核对；UI 输入由桌面工具/真人产生，禁止注入网页脚本。
+import fs from 'node:fs';
+import path from 'node:path';
+import http from 'node:http';
+import assert from 'node:assert/strict';
+import { spawn, execFileSync } from 'node:child_process';
+import { createHash, randomUUID } from 'node:crypto';
+import { createRequire } from 'node:module';
+import { spend, validationRoot } from './workspace-budget.mjs';
+
+const round = process.argv.find((arg) => arg.startsWith('--round='))?.slice(8);
+assert(round && /^[a-z0-9-]{1,40}$/.test(round), 'ROUND_REQUIRED');
+const out = path.resolve(validationRoot, round);
+assert(!fs.existsSync(out), 'ROUND_ALREADY_STARTED');
+const built = path.resolve('dist/candidates/takeover-04-fixed/mac-arm64/helpr.app');
+const manifest = JSON.parse(fs.readFileSync(path.join(validationRoot, 'build-22.json')));
+assert(manifest.prepared && manifest.app === built, 'CANDIDATE_NOT_READY');
+for (const [file, hash] of Object.entries(manifest.hashes))
+  assert.equal(createHash('sha256').update(fs.readFileSync(path.join(built, file))).digest('hex'), hash);
+execFileSync(process.execPath, ['scripts/validate-workspace.mjs', '--preflight'], { stdio: 'pipe' });
+fs.mkdirSync(out, { mode: 0o700 });
+const profileRoot = `/private/tmp/helpr-workspace-validation-${process.getuid()}`;
+fs.mkdirSync(profileRoot, { recursive: true, mode: 0o700 });
+assert.equal(fs.realpathSync(profileRoot), profileRoot);
+const stat = fs.statSync(profileRoot);
+assert(stat.uid === process.getuid() && (stat.mode & 0o077) === 0, 'INVALID_PROFILE_ROOT');
+const profile = fs.mkdtempSync(profileRoot + '/takeover04-');
+const evidence = {
+  build: 22, archive: manifest.hashes['Contents/Resources/app.asar'],
+  scope: 'packaged local fixtures; tool input is not real IME/paste acceptance',
+  started: new Date().toISOString(), limits: { minutes: 20, effects: 24, inputs: 160, models: 64, tasks: 12 },
+  realModelCalls: 0, remoteWrites: 0, effects: [], inputs: [], models: [], checkpoints: [], checks: [],
+};
+const write = (file, value) => fs.writeFileSync(path.join(out, file), JSON.stringify(value, null, 2) + '\n', { mode: 0o600 });
+const save = () => write('result.json', evidence);
+const ids = {}, held = [], holds = new Map(), pending = new Map(), pids = new Set();
+let gate, child, sequence = 0, busy = false, expired = false, poll;
+const gates = () => gate ? Object.fromEntries(Object.entries(ids).map(([name, id]) => [name, gate.state(id)])) : null;
+function reply(item) {
+  item.receipt.releasedAt = Date.now();
+  item.receipt.connectionClosed = item.res.destroyed;
+  save();
+  if (item.res.destroyed) return;
+  item.res.writeHead(200, { 'Content-Type': 'text/event-stream' });
+  item.res.write('data: ' + JSON.stringify({ id: 'local04', choices: [{ index: 0, delta: { content: JSON.stringify(item.value) }, finish_reason: null }] }) + '\n\n');
+  item.res.end('data: ' + JSON.stringify({ id: 'local04', choices: [{ index: 0, delta: {}, finish_reason: 'stop' }], usage: { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 } }) + '\n\ndata: [DONE]\n\n');
+}
+function release(name) {
+  holds.delete(name);
+  for (let i = held.length - 1; i >= 0; i--)
+    if (held[i].name === name) reply(held.splice(i, 1)[0]);
+}
+function trackPids() {
+  if (!child?.pid) return;
+  const rows = execFileSync('/bin/ps', ['-axo', 'pid=,ppid='], { encoding: 'utf8' }).trim().split('\n').map((line) => line.trim().split(/\s+/).map(Number));
+  pids.add(child.pid);
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const [pid, parent] of rows) if (pids.has(parent) && !pids.has(pid)) { pids.add(pid); changed = true; }
+  }
+}
+function alive(pid) { try { process.kill(pid, 0); return true; } catch { return false; } }
+function request(command, ms = 15000) {
+  return new Promise((resolve, reject) => {
+    if (!child?.connected) { reject(Error('APPLICATION_EXITED')); return; }
+    const id = ++sequence, timer = setTimeout(() => { pending.delete(id); reject(Error('REQUEST_TIMEOUT')); }, ms);
+    pending.set(id, { resolve, reject, timer });
+    child.send({ id, command });
+  });
+}
+async function snapshot() { const value = await request({ kind: 'snapshot' }); write('snapshot.json', value); return value; }
+async function waitFor(fn, ms = 15000) {
+  const end = Date.now() + ms;
+  while (Date.now() < end) {
+    assert(!expired, 'ROUND_TIME_LIMIT');
+    if (await fn()) return;
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  throw Error('VALIDATION_WAIT_EXPIRED');
+}
+function check(name, condition) { assert(condition, name); evidence.checks.push({ name, at: Date.now(), passed: true }); save(); }
+async function body(req) {
+  let value = '';
+  for await (const chunk of req) { value += chunk; assert(value.length < 200000, 'REQUEST_TOO_LARGE'); }
+  return JSON.parse(value);
+}
+const server = http.createServer(async (req, res) => {
+  try {
+    const url = new URL(req.url, 'http://127.0.0.1');
+    const match = url.pathname.match(/^\/page\/([A-Z])$/);
+    if (req.method === 'GET' && match) {
+      const name = match[1];
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.end(`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>04 任务 ${name}</title><style>body{font:20px -apple-system;padding:36px;color:#244135;background:#f4f8f5}button,input,a{font:inherit;padding:12px;margin:10px 0;display:block}input{width:400px}iframe{height:120px;width:440px}</style><h1>04 任务 ${name}</h1><p id="progress">${name} 自动完成 0</p><button id="advance">自动推进 ${name}</button><button id="manual">手动接管 ${name}</button><input aria-label="人工文字" placeholder="接管后文字应保留"><button id="frame">加载子页面 ${name}</button><a id="popup" href="/popup/${name}" target="_blank">打开所属弹窗 ${name}</a><div id="slot"></div><p>本机虚构页面；不使用真实网站、账号或模型。</p><script>
+      let count=0;const name=${JSON.stringify(name)};
+      const send=(route,data)=>fetch(route,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,...data})});
+      for(const kind of ['mousedown','keydown','beforeinput','input','paste'])document.addEventListener(kind,e=>{if(e.target.id!=='advance')send('/input',{kind,target:e.target.id||e.target.tagName,trusted:e.isTrusted,value:document.querySelector('input').value});},true);
+      document.querySelector('#advance').onclick=()=>{count++;document.querySelector('#progress').textContent=name+' 自动完成 '+count;send('/effect',{count})};
+      document.querySelector('#frame').onclick=()=>{document.querySelector('#slot').innerHTML='<iframe title="任务子页面" src="/frame/'+name+'"></iframe>'};
+      send('/probe',{node:typeof process,require:typeof require,bridge:typeof window.workspace});
+      </script></html>`);
+      return;
+    }
+    if (req.method === 'GET' && /^\/(frame|popup)\/[A-Z]$/.test(url.pathname)) {
+      const [kind, name] = url.pathname.slice(1).split('/');
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.end(`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>${kind} ${name}</title><p>${name} 的${kind === 'frame' ? '子页面' : '所属弹窗'}</p><input aria-label="${kind} 人工文字"><button onclick="window.close()">关闭所属弹窗</button></html>`);
+      return;
+    }
+    if (req.method === 'POST' && ['/probe', '/input', '/effect'].includes(url.pathname)) {
+      const input = await body(req);
+      assert(/^[A-Z]$/.test(input.name), 'INVALID_FIXTURE_NAME');
+      const row = { ...input, at: Date.now(), gates: gates() };
+      const list = url.pathname === '/effect' ? evidence.effects : evidence.inputs;
+      assert(list.length < (list === evidence.effects ? evidence.limits.effects : evidence.limits.inputs), 'FIXTURE_LIMIT');
+      list.push({ route: url.pathname, ...row }); save(); res.end('accepted'); return;
+    }
+    if (req.method === 'POST' && url.pathname === '/v1/chat/completions') {
+      assert(evidence.models.length < evidence.limits.models, 'MODEL_FIXTURE_LIMIT');
+      const input = await body(req);
+      const plan = input.messages.map((m) => { try { return JSON.parse(m.content); } catch { return null; } }).find((m) => m?.goal);
+      const name = plan?.goal.match(/04 ([A-Z])/)?.[1];
+      assert(name && ids[name], 'PLANNING_ONLY');
+      const text = input.messages.filter((m) => m.role === 'user').map((m) => m.content).join('\n');
+      const count = Number(text.match(new RegExp(name + ' 自动完成 (\\d+)'))?.[1]);
+      assert(Number.isFinite(count) && count <= 2, 'OBSERVATION_REQUIRED');
+      const fact = name + ' 自动完成 ' + count;
+      const value = { decision: count === 2 ? 'complete' : 'act', summary: count === 2 ? '已核对本页两次推进。' : '推进本页下一步。', evidence: [fact], previous: plan.previous ? { id: plan.previous.id, status: count > 0 ? 'confirmed' : 'unknown', evidence: [fact] } : null, action: count === 2 ? null : { kind: 'click', target: { role: 'button', name: '自动推进 ' + name, exact: true } } };
+      const receipt = { name, count, at: Date.now(), gates: gates() };
+      evidence.models.push(receipt); save();
+      const item = { name, res, value, receipt };
+      if (holds.get(name) === count) held.push(item); else reply(item);
+      return;
+    }
+    res.writeHead(404); res.end();
+  } catch (error) {
+    evidence.fixtureFailure = error.code || error.message; save();
+    res.writeHead(400); res.end('FIXTURE_REJECTED');
+  }
+});
+await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+const base = `http://127.0.0.1:${server.address().port}`;
+write('context.json', { built, profile, base }); save();
+let budget;
+try { budget = spend('starts'); }
+catch (error) { server.close(); throw error; }
+evidence.start = budget.used.starts;
+const env = Object.fromEntries(['HOME', 'PATH', 'TMPDIR', 'LANG'].filter((key) => process.env[key]).map((key) => [key, process.env[key]]));
+child = spawn(path.join(built, 'Contents/MacOS/helpr'), ['--workspace-validation'], { env: { ...env, HELPR_VALIDATION_DATA: profile }, stdio: ['ignore', fs.openSync(path.join(out, 'stdout.log'), 'a', 0o600), fs.openSync(path.join(out, 'stderr.log'), 'a', 0o600), 'ipc'] });
+child.on('message', (m) => {
+  if (m.ready) { evidence.ready = m; pids.add(m.hostPid); pids.add(m.recordsPid); save(); }
+  const entry = pending.get(m.id);
+  if (entry) { clearTimeout(entry.timer); pending.delete(m.id); m.error ? entry.reject(Error(m.error)) : entry.resolve(m.value); }
+});
+const deadline = setTimeout(() => { expired = true; evidence.failure = 'ROUND_TIME_LIMIT'; save(); void finish(); }, evidence.limits.minutes * 60000);
+async function finish() {
+  clearTimeout(deadline); clearInterval(poll);
+  try {
+    trackPids();
+    if (child.exitCode === null) child.send({ id: ++sequence, command: { kind: 'quit' } });
+    const end = Date.now() + 45000;
+    while ((child.exitCode === null || [...pids].some(alive)) && Date.now() < end) await new Promise((resolve) => setTimeout(resolve, 100));
+    evidence.exitCode = child.exitCode;
+    evidence.survivors = [...pids].filter(alive);
+    check('normal-exit-and-no-owned-survivors', child.exitCode === 0 && evidence.survivors.length === 0);
+  } catch (error) { evidence.cleanupFailure = error.message; process.exitCode = 1; }
+  evidence.finished = new Date().toISOString(); save();
+  server.closeAllConnections(); server.close();
+}
+child.once('exit', () => {
+  for (const entry of pending.values()) { clearTimeout(entry.timer); entry.reject(Error('APPLICATION_EXITED')); }
+  pending.clear();
+});
+try {
+  await waitFor(() => evidence.ready);
+  trackPids();
+  const files = fs.readdirSync(profile).filter((name) => /^\.input-gate-[0-9a-f-]+$/.test(name));
+  assert.equal(files.length, 1);
+  gate = createRequire(import.meta.url)(path.join(built, 'Contents/Resources/input-bridge.node'));
+  gate.open(path.join(profile, files[0]), false);
+  // 与已有实际试用一致，为系统凭据服务保留有界等待，不能误用普通 IPC 的短截止。
+  evidence.phase = 'saving-local-model-configuration'; save();
+  console.log('SAVING_LOCAL_MODEL_CONFIGURATION ' + out);
+  await request({ kind: 'model-save', requestId: randomUUID(), expectedVersion: 0, protocol: 'chat-completions', endpoint: base + '/v1', model: 'controlled-local-04', apiKey: 'local-fixture-not-a-secret' }, 180000);
+  evidence.phase = 'ready'; save(); console.log('READY ' + out);
+} catch (error) { evidence.failure = error.message; save(); await finish(); throw error; }
+const allowed = new Set(['select', 'hide-task', 'minimize', 'execution-intent', 'snapshot', 'inspect', 'observe', 'show', 'panel', 'draft', 'reload']);
+poll = setInterval(async () => {
+  if (busy || !fs.existsSync(path.join(out, 'command.json'))) return;
+  busy = true; let job;
+  try {
+    job = JSON.parse(fs.readFileSync(path.join(out, 'command.json'))); fs.unlinkSync(path.join(out, 'command.json'));
+    let value;
+    if (job.kind === 'pair') {
+      assert(Array.isArray(job.names) && job.names.length === 2 && job.names.every((n) => /^[A-Z]$/.test(n) && !ids[n]), 'NEW_PAIR_REQUIRED');
+      assert(job.names[0] !== job.names[1] && [0, 1].includes(job.holdAt ?? 0), 'INVALID_PAIR');
+      assert(Object.keys(ids).length + 2 <= evidence.limits.tasks, 'TASK_LIMIT');
+      for (const [index, name] of job.names.entries()) {
+        holds.set(name, index === 0 ? (job.holdAt ?? 0) : 0);
+        const created = await request({ kind: 'create', requestId: randomUUID(), goal: `04 ${name}，完成本页两次自动推进，保留人工文字 ${base}/page/${name}` });
+        ids[name] = created.taskId;
+      }
+      await waitFor(async () => { const state = await snapshot(); return job.names.every((name) => state.tasks.find((t) => t.id === ids[name])?.phase === 'manual'); });
+      await request({ kind: 'select', requestId: randomUUID(), taskId: ids[job.names[0]] });
+      await request({ kind: 'show' });
+      value = ids; write('ids.json', ids);
+    } else if (job.kind === 'release') { for (const name of job.names) release(name); value = { released: job.names }; }
+    else if (job.kind === 'state') value = { snapshot: await snapshot(), gates: gates(), held: held.map((item) => ({ name: item.name, count: item.receipt.count, closed: item.res.destroyed })) };
+    else if (job.kind === 'checkpoint') {
+      value = { label: job.label, at: Date.now(), snapshot: await snapshot(), gates: gates() };
+      evidence.checkpoints.push(value); save();
+    } else if (job.kind === 'check') {
+      const state = await snapshot();
+      for (const [name, phase] of Object.entries(job.phases ?? {})) check(job.label + '-' + name + '-phase', state.tasks.find((t) => t.id === ids[name])?.execution?.phase === phase);
+      for (const [name, counts] of Object.entries(job.effects ?? {})) check(job.label + '-' + name + '-effects', JSON.stringify(evidence.effects.filter((row) => row.name === name).map((row) => row.count)) === JSON.stringify(counts));
+      for (const [name, reason] of Object.entries(job.reasons ?? {})) check(job.label + '-' + name + '-reason', state.tasks.find((t) => t.id === ids[name])?.execution?.pauseReason === reason);
+      value = { passed: true };
+    } else if (job.kind === 'finish') { await finish(); value = { finished: true }; }
+    else {
+      assert(allowed.has(job.command?.kind), 'COMMAND_DENIED');
+      const command = { ...job.command };
+      if (job.name) { assert(ids[job.name], 'TASK_REQUIRED'); command.taskId = ids[job.name]; }
+      value = await request(command);
+    }
+    write('response.json', { id: job.id, ok: true, value });
+    if (job.kind !== 'finish') { await snapshot(); trackPids(); }
+  } catch (error) {
+    evidence.controlFailure = error.message; save();
+    write('response.json', { id: job?.id, ok: false, error: error.message });
+    await finish();
+  } finally { busy = false; }
+}, 100);
