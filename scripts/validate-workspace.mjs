@@ -41,6 +41,7 @@ if (install) {
   execFileSync('/usr/bin/ditto', [built, installed]);
 }
 const appPath = install || process.argv.includes('--installed') ? installed : built;
+const inputPreparation = process.argv.includes('--input-preparation');
 const exe = path.join(appPath, 'Contents/MacOS/helpr');
 const out = path.join(validationRoot, `run-${Date.now()}`);
 fs.mkdirSync(out, { recursive: true });
@@ -66,7 +67,7 @@ const deadline = setTimeout(
     app?.kill('SIGTERM');
     process.exitCode = 1;
   },
-  30 * 60 * 1000,
+  inputPreparation ? 60000 : 30 * 60 * 1000,
 );
 function check(name, test) {
   test();
@@ -214,7 +215,7 @@ async function validate() {
     () =>
       website.receipts.some((r) => r.kind === 'probe' && r.task === 'A') &&
       website.receipts.some((r) => r.kind === 'probe' && r.task === 'B'),
-    10 * 60 * 1000,
+    inputPreparation ? 15000 : 10 * 60 * 1000,
   );
   check('两个真实页面都到达独立网站，网页没有 Node 或宿主对话桥', () => {
     const probes = website.receipts.filter((r) => r.kind === 'probe');
@@ -230,10 +231,10 @@ async function validate() {
   // 公开开始入口必须经过真实宿主原生准备。新资料没有模型配置，不发送模型网络请求。
   const begun = await client.request(command('execution-intent', { taskId: a, intent: 'start' }));
   check('实际顶栏与网页的原生准备允许开始意图通过', () => {
-    assert.equal(begun.tasks.find((t) => t.id === a)?.execution?.intent, 'automatic');
+    assert.equal(begun.state.tasks.find((t) => t.id === a)?.execution?.intent, 'automatic');
   });
   await client.request(command('execution-intent', { taskId: a, intent: 'stop' }));
-  if (process.argv.includes('--input-preparation')) {
+  if (inputPreparation) {
     lastPids = ownedPids(client.child.pid);
     await client.quit();
     checks.push({ name: '输入准备定向核对正常退出且无自有残留', passed: true });
@@ -394,6 +395,13 @@ try {
   process.exitCode = 1;
   console.error('验证停止：' + error.message);
 } finally {
+  if (app?.exitCode === null) {
+    try {
+      lastPids = ownedPids(app.pid);
+      app.send({ id: Number.MAX_SAFE_INTEGER, command: { kind: 'quit' } });
+      await waitFor(() => app.exitCode !== null && lastPids.every((pid) => !alive(pid)));
+    } catch {}
+  }
   if (app?.exitCode === null) {
     try {
       spend('cleanups');
