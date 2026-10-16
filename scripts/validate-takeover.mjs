@@ -34,7 +34,7 @@ const evidence = {
 const write = (file, value) => fs.writeFileSync(path.join(out, file), JSON.stringify(value, null, 2) + '\n', { mode: 0o600 });
 const save = () => write('result.json', evidence);
 const ids = {}, held = [], holds = new Map(), pending = new Map(), pids = new Set();
-let gate, child, sequence = 0, busy = false, expired = false, poll;
+let gate, child, sequence = 0, busy = false, expired = false, poll, finishing;
 const gates = () => gate ? Object.fromEntries(Object.entries(ids).map(([name, id]) => [name, gate.state(id)])) : null;
 function reply(item) {
   item.receipt.releasedAt = Date.now();
@@ -113,11 +113,18 @@ const server = http.createServer(async (req, res) => {
       assert(/^[A-Z]$/.test(input.name), 'INVALID_FIXTURE_NAME');
       const row = { ...input, at: Date.now(), gates: gates() };
       const list = url.pathname === '/effect' ? evidence.effects : evidence.inputs;
-      assert(list.length < (list === evidence.effects ? evidence.limits.effects : evidence.limits.inputs), 'FIXTURE_LIMIT');
-      list.push({ route: url.pathname, ...row }); save(); res.end('accepted'); return;
+      // 导致越界的真实收件也必须保存，不能把页面已经发生的效果藏掉。
+      list.push({ route: url.pathname, ...row }); save();
+      assert(list.length <= (list === evidence.effects ? evidence.limits.effects : evidence.limits.inputs), 'FIXTURE_LIMIT');
+      assert(!finishing, 'ROUND_CLOSING');
+      res.end('accepted'); return;
     }
     if (req.method === 'POST' && url.pathname === '/v1/chat/completions') {
-      assert(evidence.models.length < evidence.limits.models, 'MODEL_FIXTURE_LIMIT');
+      // 先登记请求已到达；无效或越界请求同样不能从实际用量中消失。
+      const receipt = { at: Date.now(), gates: gates() };
+      evidence.models.push(receipt); save();
+      assert(evidence.models.length <= evidence.limits.models, 'MODEL_FIXTURE_LIMIT');
+      assert(!finishing, 'ROUND_CLOSING');
       const input = await body(req);
       const plan = input.messages.map((m) => { try { return JSON.parse(m.content); } catch { return null; } }).find((m) => m?.goal);
       const name = plan?.goal.match(/04 ([A-Z])/)?.[1];
@@ -127,16 +134,17 @@ const server = http.createServer(async (req, res) => {
       assert(Number.isFinite(count) && count <= 2, 'OBSERVATION_REQUIRED');
       const fact = name + ' 自动完成 ' + count;
       const value = { decision: count === 2 ? 'complete' : 'act', summary: count === 2 ? '已核对本页两次推进。' : '推进本页下一步。', evidence: [fact], previous: plan.previous ? { id: plan.previous.id, status: count > 0 ? 'confirmed' : 'unknown', evidence: [fact] } : null, action: count === 2 ? null : { kind: 'click', target: { role: 'button', name: '自动推进 ' + name, exact: true } } };
-      const receipt = { name, count, at: Date.now(), gates: gates() };
-      evidence.models.push(receipt); save();
+      Object.assign(receipt, { name, count }); save();
       const item = { name, res, value, receipt };
       if (holds.get(name) === count) held.push(item); else reply(item);
       return;
     }
     res.writeHead(404); res.end();
   } catch (error) {
-    evidence.fixtureFailure = error.code || error.message; save();
+    evidence.fixtureFailure ??= error.code || error.message; save();
     res.writeHead(400); res.end('FIXTURE_REJECTED');
+    expired = true;
+    void finish();
   }
 });
 await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
@@ -154,7 +162,11 @@ child.on('message', (m) => {
   if (entry) { clearTimeout(entry.timer); pending.delete(m.id); m.error ? entry.reject(Error(m.error)) : entry.resolve(m.value); }
 });
 const deadline = setTimeout(() => { expired = true; evidence.failure = 'ROUND_TIME_LIMIT'; save(); void finish(); }, evidence.limits.minutes * 60000);
-async function finish() {
+function finish() {
+  finishing ??= closeRound();
+  return finishing;
+}
+async function closeRound() {
   clearTimeout(deadline); clearInterval(poll);
   try {
     trackPids();
@@ -187,7 +199,7 @@ try {
 } catch (error) { evidence.failure = error.message; save(); await finish(); throw error; }
 const allowed = new Set(['select', 'hide-task', 'minimize', 'execution-intent', 'snapshot', 'inspect', 'observe', 'show', 'panel', 'draft', 'reload']);
 poll = setInterval(async () => {
-  if (busy || !fs.existsSync(path.join(out, 'command.json'))) return;
+  if (expired || finishing || busy || !fs.existsSync(path.join(out, 'command.json'))) return;
   busy = true; let job;
   try {
     job = JSON.parse(fs.readFileSync(path.join(out, 'command.json'))); fs.unlinkSync(path.join(out, 'command.json'));
