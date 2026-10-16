@@ -40,6 +40,7 @@ const TakeoverDemo=(()=>{
    if(a.text!==undefined)t[a.field==='paste'?'paste':'text']=a.text;
   }
   if(a.type==='value')t[a.field==='paste'?'paste':'text']=a.text;
+  if(a.type==='confirm'){t.clicks++;append(s,`任务 ${t.id.toUpperCase()} 的网页收到人工确认，结果保留。`);}
   if(a.type==='stop'){t.intent='stopped';t.phase='stopped';t.epoch++;say(t,'已停止。页面和文字保留，重新识别归属也不会恢复。');append(s,`任务 ${t.id.toUpperCase()} 明确停止。`);}
   if(a.type==='continue'){
    say(t,'继续','user');
@@ -95,8 +96,9 @@ function reset(i=scenario){scenario=i;step=0;state=TakeoverDemo.initial();$('pre
 $('walk-next').onclick=()=>{const w=scenarios[scenario];if(step>=w.steps.length)return reset();for(const a of w.steps[step][1])state=TakeoverDemo.act(state,a);step++;render();};$('scenarios').onclick=e=>{const b=e.target.closest('[data-scenario]');if(b)reset(Number(b.dataset.scenario));};
 $('tabs').onclick=e=>{const b=e.target.closest('[data-task]');if(b){dispatch({type:'select',task:b.dataset.task});$('preview').hidden=true;$('results').hidden=true;}};
 $('tabs').onmouseover=e=>{const b=e.target.closest('[data-task]');if(!b)return;const t=state.tasks[b.dataset.task];$('preview').style.left=Math.min(b.getBoundingClientRect().left,innerWidth-310)+'px';$('preview').innerHTML=`<div class="row"><h3 class="grow">${esc(t.title)}</h3><button class="icon" aria-label="关闭任务卡片">×</button></div><p>● ${status(t)} · 自动进度 ${t.automatic}/8</p><div class="progress"><i style="width:${t.automatic/8*100}%"></i></div><p>${esc(t.history.at(-1).text)}</p>`;$('preview').hidden=false;$('preview').querySelector('button').onclick=()=>$('preview').hidden=true;};$('tabs').onmouseleave=e=>{if(!$('preview').contains(e.relatedTarget))$('preview').hidden=true;};$('preview').onmouseleave=()=>$('preview').hidden=true;
-$('web-click').onclick=()=>dispatch({type:'input',kind:'click'});
-for(const [id,field] of [['web-text','text'],['paste-text','paste']]){const el=$(id);el.onpointerdown=()=>dispatch({type:'input',kind:'click',confirmation:false});el.onbeforeinput=()=>dispatch({type:'input',kind:'keyboard'});el.oncompositionstart=()=>dispatch({type:'input',kind:'keyboard'});el.onpaste=()=>dispatch({type:'input',kind:'paste'});el.oninput=()=>dispatch({type:'value',field,text:el.value});}
+document.querySelector('.page').onpointerdown=()=>dispatch({type:'input',kind:'click',confirmation:false});
+$('web-click').onclick=()=>dispatch({type:'confirm'});
+for(const [id,field] of [['web-text','text'],['paste-text','paste']]){const el=$(id);el.onbeforeinput=()=>dispatch({type:'input',kind:'keyboard'});el.oncompositionstart=()=>dispatch({type:'input',kind:'keyboard'});el.onpaste=()=>dispatch({type:'input',kind:'paste'});el.oninput=()=>dispatch({type:'value',field,text:el.value});}
 $('refresh').onclick=()=>dispatch({type:'change',surface:'刷新后的页面'});$('navigate').onclick=()=>dispatch({type:'change',surface:'下一页'});$('frame').onclick=()=>dispatch({type:'change',surface:'页面内表单（模拟 frame）'});$('popup').onclick=()=>dispatch({type:'change',surface:'同任务弹窗（模拟）'});
 $('stop').onclick=()=>dispatch({type:'stop'});$('continue').onclick=()=>dispatch({type:'continue'});$('minimize').onclick=()=>dispatch({type:'collapse',value:true});$('expand').onclick=()=>dispatch({type:'collapse',value:false});$('draft').oninput=e=>{state=TakeoverDemo.act(state,{type:'draft',text:e.target.value});};$('draft').oncompositionstart=()=>composing=true;$('draft').oncompositionend=()=>composing=false;$('compose').onsubmit=e=>{e.preventDefault();if(!composing&&$('draft').value.trim())dispatch({type:'message',text:$('draft').value.trim()});};
 $('result').onclick=()=>{const t=state.tasks[state.active];$('result-body').innerHTML=`<p>任务 ${t.id.toUpperCase()} · ${status(t)}</p><p>自动进度 ${t.automatic}/8 · 人工确认 ${t.clicks} 次</p><p>网页备注：${esc(t.text||'（空）')}</p><p>补充资料：${esc(t.paste||'（空）')}</p><p class="muted">模拟记录，仅用于核对交互规则，不是实际业务结果。</p>`;$('results').hidden=false;};$('close-results').onclick=()=>$('results').hidden=true;
