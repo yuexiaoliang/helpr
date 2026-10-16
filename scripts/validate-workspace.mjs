@@ -55,6 +55,7 @@ const started = Date.now();
 const checks = [];
 let app;
 let lastPids = [];
+let timedOut = false;
 const evidence = {
   app: appPath,
   started: new Date().toISOString(),
@@ -64,7 +65,7 @@ const evidence = {
 };
 const deadline = setTimeout(
   () => {
-    app?.kill('SIGTERM');
+    timedOut = true;
     process.exitCode = 1;
   },
   inputPreparation ? 60000 : 30 * 60 * 1000,
@@ -74,9 +75,10 @@ function check(name, test) {
   checks.push({ name, passed: true });
   console.log('通过：' + name);
 }
-async function waitFor(fn, timeout = 10000) {
+async function waitFor(fn, timeout = 10000, cleanup = false) {
   const end = Date.now() + timeout;
   while (Date.now() < end) {
+    if (timedOut && !cleanup) throw Error('VALIDATION_TIME_LIMIT');
     const value = await fn();
     if (value) return value;
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -111,6 +113,7 @@ function alive(pid) {
   }
 }
 async function launch() {
+  if (timedOut) throw Error('VALIDATION_TIME_LIMIT');
   spend('starts');
   const start = Date.now();
   const env = Object.fromEntries(
@@ -174,6 +177,7 @@ async function launch() {
     ready,
     request: (command) =>
       new Promise((resolve, reject) => {
+        if (timedOut) { reject(Error('VALIDATION_TIME_LIMIT')); return; }
         const id = ++sequence;
         const timer = setTimeout(() => {
           pending.delete(id);
@@ -388,6 +392,7 @@ async function validate() {
 }
 try {
   await validate();
+  if (timedOut) throw Error('VALIDATION_TIME_LIMIT');
   evidence.passed = true;
 } catch (error) {
   evidence.passed = false;
@@ -399,14 +404,26 @@ try {
     try {
       lastPids = ownedPids(app.pid);
       app.send({ id: Number.MAX_SAFE_INTEGER, command: { kind: 'quit' } });
-      await waitFor(() => app.exitCode !== null && lastPids.every((pid) => !alive(pid)));
+      await waitFor(() => app.exitCode !== null && lastPids.every((pid) => !alive(pid)), 10000, true);
     } catch {}
   }
-  if (app?.exitCode === null) {
+  if (lastPids.some(alive)) {
     try {
       spend('cleanups');
-      app.kill('SIGKILL');
-      await waitFor(() => lastPids.every((pid) => !alive(pid)));
+      for (const pid of lastPids) {
+        if (!alive(pid)) continue;
+        try {
+          const image = execFileSync(path.join(appPath, 'Contents/Resources/process-path'), [String(pid)], {
+            encoding: 'utf8', timeout: 2000, env: {}, maxBuffer: 8192,
+          }).trim();
+          if (!image.startsWith(fs.realpathSync(appPath) + '/Contents/'))
+            throw Error('CLEANUP_IMAGE_CHANGED');
+          process.kill(pid, 'SIGKILL');
+        } catch (error) {
+          if (alive(pid)) throw error;
+        }
+      }
+      await waitFor(() => lastPids.every((pid) => !alive(pid)), 10000, true);
     } catch {}
   }
   clearTimeout(deadline);
