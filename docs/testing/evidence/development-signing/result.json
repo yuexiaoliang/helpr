@@ -1,0 +1,422 @@
+{
+  "at": "2026-10-17T02:58:19.461Z",
+  "identity": {
+    "schema": 1,
+    "purpose": "local-development-only",
+    "subject": "CN=helpr Local Development",
+    "certificateSha1": "35CB0277447FEBC576F1AF3E9D200E5A190E59C2",
+    "certificateSha256": "5bd4c2c1f28a99910837bb31ba404f3043378c54463bdc8a8bdf04ce75d2f119",
+    "expiresAt": "2036-10-14T02:45:22.000Z"
+  },
+  "keychain": {
+    "locked": true,
+    "statusBits": 2,
+    "searchListRestored": true,
+    "defaultKeychainUnchanged": true,
+    "systemTrustChanged": false,
+    "existingUserPrivateKeysReadOrExported": false,
+    "importedDevelopmentKeyExportedAfterImport": false
+  },
+  "builds": [
+    {
+      "build": 26,
+      "originalPrepared": false,
+      "originalError": "spawnSync /Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node ETIMEDOUT"
+    },
+    {
+      "build": 27,
+      "originalPrepared": false,
+      "originalError": "Command failed: /Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node scripts/validate-host-package.mjs /Users/yuexiaoliang/projects/helpr/dist/candidates/development-signing-b/mac-arm64/helpr.app"
+    }
+  ],
+  "postcheck": {
+    "build": 27,
+    "hostLayout": "standard complete main bundle",
+    "helpers": 4,
+    "independentIdentity": true,
+    "sameApplicationArchive": true,
+    "sameFuses": true,
+    "deepStrictSignatureVerified": true,
+    "certificateSha256": "5bd4c2c1f28a99910837bb31ba404f3043378c54463bdc8a8bdf04ce75d2f119",
+    "signedImages": 54,
+    "archive": "febec6e02134a005f7824ed690059fc9c17c5aff7565989cc4c252cbd79549cc",
+    "controller": "d281c393551fd7724edccd2312217d943ca098cb7c4d10662074eaad0ecbd75c",
+    "passed": true,
+    "applicationStarted": false
+  },
+  "negativeChecks": {
+    "at": "2026-10-17T02:53:53.543Z",
+    "results": [
+      {
+        "kind": "missing-policy",
+        "refused": true
+      },
+      {
+        "kind": "changed-policy",
+        "refused": true
+      },
+      {
+        "kind": "invalid-bundle",
+        "refused": true,
+        "searchListRestored": true
+      }
+    ],
+    "budgetUnchanged": true
+  },
+  "adHocNegative": {
+    "at": "2026-10-17T02:49:03.882Z",
+    "status": 1,
+    "rejectedAdHoc": true,
+    "error": "DEVELOPMENT_SIGNATURE_REQUIRED:"
+  },
+  "budget": {
+    "limits": {
+      "builds": 27,
+      "installs": 10,
+      "starts": 60,
+      "faults": 17,
+      "cleanups": 16
+    },
+    "used": {
+      "builds": 27,
+      "installs": 8,
+      "starts": 60,
+      "faults": 16,
+      "cleanups": 15
+    },
+    "realModelCalls": 0,
+    "remoteWrites": 0
+  },
+  "images": [
+    {
+      "path": ".",
+      "identifier": "local.helpr.desktop",
+      "requirement": "identifier \"local.helpr.desktop\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "8d744ff9c0b9ecdf772f7b9e5f4f48cd4cf0500fbb2ca2be51bc8438eeebb362"
+    },
+    {
+      "path": "Contents/Frameworks/Electron Framework.framework",
+      "identifier": "com.github.Electron.framework",
+      "requirement": "identifier \"com.github.Electron.framework\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "a2e69ca2beb7907af316050a330099113f8caca048c779bed1fb5a4ab66f736e"
+    },
+    {
+      "path": "Contents/Frameworks/Electron Framework.framework/Versions/A/Electron Framework",
+      "identifier": "com.github.Electron.framework",
+      "requirement": "identifier \"com.github.Electron.framework\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "a2e69ca2beb7907af316050a330099113f8caca048c779bed1fb5a4ab66f736e"
+    },
+    {
+      "path": "Contents/Frameworks/Electron Framework.framework/Versions/A/Helpers/chrome_crashpad_handler",
+      "identifier": "chrome_crashpad_handler",
+      "requirement": "identifier \"chrome_crashpad_handler\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "c63efc577c411fa782279d118b90480d24387378b38d635cf885e2b9a73dc588"
+    },
+    {
+      "path": "Contents/Frameworks/Electron Framework.framework/Versions/A/Libraries/libffmpeg.dylib",
+      "identifier": "libffmpeg",
+      "requirement": "identifier libffmpeg and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "dcca5161a45f0e20e89637ec8be975d0994c62a5c8c78d07dbd5ebe2f410c353"
+    },
+    {
+      "path": "Contents/Frameworks/Electron Framework.framework/Versions/A/Libraries/libvk_swiftshader.dylib",
+      "identifier": "libvk_swiftshader",
+      "requirement": "identifier \"libvk_swiftshader\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "5a781094bc2479a90349faa772bed176eb7ae36ea38a481111c91f0af475da8d"
+    },
+    {
+      "path": "Contents/Frameworks/Mantle.framework",
+      "identifier": "com.electron.mantle",
+      "requirement": "identifier \"com.electron.mantle\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "158ff0f6f35781bbc284a7cce4716aa2160e3ebd32ba9473247fcadf7d7916fe"
+    },
+    {
+      "path": "Contents/Frameworks/Mantle.framework/Versions/A/Mantle",
+      "identifier": "com.electron.mantle",
+      "requirement": "identifier \"com.electron.mantle\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "158ff0f6f35781bbc284a7cce4716aa2160e3ebd32ba9473247fcadf7d7916fe"
+    },
+    {
+      "path": "Contents/Frameworks/ReactiveObjC.framework",
+      "identifier": "com.electron.reactive",
+      "requirement": "identifier \"com.electron.reactive\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "9b6cf9042acd0d920a7400f6e4d965e117eabaa27e6c450e54aee95844b14dbc"
+    },
+    {
+      "path": "Contents/Frameworks/ReactiveObjC.framework/Versions/A/ReactiveObjC",
+      "identifier": "com.electron.reactive",
+      "requirement": "identifier \"com.electron.reactive\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "9b6cf9042acd0d920a7400f6e4d965e117eabaa27e6c450e54aee95844b14dbc"
+    },
+    {
+      "path": "Contents/Frameworks/Squirrel.framework",
+      "identifier": "com.github.Squirrel",
+      "requirement": "identifier \"com.github.Squirrel\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "9cf8f2cdb6d2241e7994423916727afb70cbf53c7994b19ce74f7fbffd7cc2ce"
+    },
+    {
+      "path": "Contents/Frameworks/Squirrel.framework/Versions/A/Resources/ShipIt",
+      "identifier": "ShipIt",
+      "requirement": "identifier ShipIt and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "294609297cc8d1538c662ae3d9da12d4c1e699778b3a0ede04c1fc6d5dc79442"
+    },
+    {
+      "path": "Contents/Frameworks/Squirrel.framework/Versions/A/Squirrel",
+      "identifier": "com.github.Squirrel",
+      "requirement": "identifier \"com.github.Squirrel\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "9cf8f2cdb6d2241e7994423916727afb70cbf53c7994b19ce74f7fbffd7cc2ce"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Helper (GPU).app",
+      "identifier": "local.helpr.desktop.helper.GPU",
+      "requirement": "identifier \"local.helpr.desktop.helper.GPU\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "747a492b633bf0065c5917ce94eaf320a1851a544f888fb8db795ccfb376246a"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Helper (GPU).app/Contents/MacOS/helpr Helper (GPU)",
+      "identifier": "local.helpr.desktop.helper.GPU",
+      "requirement": "identifier \"local.helpr.desktop.helper.GPU\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "747a492b633bf0065c5917ce94eaf320a1851a544f888fb8db795ccfb376246a"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Helper (Plugin).app",
+      "identifier": "local.helpr.desktop.helper.Plugin",
+      "requirement": "identifier \"local.helpr.desktop.helper.Plugin\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "8e303e5fed1747e5c3905823891c88c0780d2f8b3f7a4197f18fbcb9ef546f7a"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Helper (Plugin).app/Contents/MacOS/helpr Helper (Plugin)",
+      "identifier": "local.helpr.desktop.helper.Plugin",
+      "requirement": "identifier \"local.helpr.desktop.helper.Plugin\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "8e303e5fed1747e5c3905823891c88c0780d2f8b3f7a4197f18fbcb9ef546f7a"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Helper (Renderer).app",
+      "identifier": "local.helpr.desktop.helper.Renderer",
+      "requirement": "identifier \"local.helpr.desktop.helper.Renderer\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "9e18b2082a830ef73d36d17b7a164b8c23b8ff66ba082f061a607ff180faf8e2"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Helper (Renderer).app/Contents/MacOS/helpr Helper (Renderer)",
+      "identifier": "local.helpr.desktop.helper.Renderer",
+      "requirement": "identifier \"local.helpr.desktop.helper.Renderer\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "9e18b2082a830ef73d36d17b7a164b8c23b8ff66ba082f061a607ff180faf8e2"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Helper.app",
+      "identifier": "local.helpr.desktop.helper",
+      "requirement": "identifier \"local.helpr.desktop.helper\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "18f48a12f0e97d91ae6acba0e84ed80e18e74feb58ea044e949e189b90df263a"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Helper.app/Contents/MacOS/helpr Helper",
+      "identifier": "local.helpr.desktop.helper",
+      "requirement": "identifier \"local.helpr.desktop.helper\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "18f48a12f0e97d91ae6acba0e84ed80e18e74feb58ea044e949e189b90df263a"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app",
+      "identifier": "local.helpr.desktop.workspace",
+      "requirement": "identifier \"local.helpr.desktop.workspace\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "f2864dbd23cb7575c5bb63aa6a449d06e1023113d8249e43e6af0408fddc6f01"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Frameworks/Electron Framework.framework",
+      "identifier": "com.github.Electron.framework",
+      "requirement": "identifier \"com.github.Electron.framework\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "1081bc1d85a1625b0f525b7d990b143e83cbc5f4dd620fcb32a41738f9fb0e3c"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Frameworks/Electron Framework.framework/Versions/A/Electron Framework",
+      "identifier": "com.github.Electron.framework",
+      "requirement": "identifier \"com.github.Electron.framework\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "1081bc1d85a1625b0f525b7d990b143e83cbc5f4dd620fcb32a41738f9fb0e3c"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Frameworks/Electron Framework.framework/Versions/A/Helpers/chrome_crashpad_handler",
+      "identifier": "chrome_crashpad_handler",
+      "requirement": "identifier \"chrome_crashpad_handler\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "c63efc577c411fa782279d118b90480d24387378b38d635cf885e2b9a73dc588"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Frameworks/Electron Framework.framework/Versions/A/Libraries/libffmpeg.dylib",
+      "identifier": "libffmpeg",
+      "requirement": "identifier libffmpeg and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "dcca5161a45f0e20e89637ec8be975d0994c62a5c8c78d07dbd5ebe2f410c353"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Frameworks/Electron Framework.framework/Versions/A/Libraries/libvk_swiftshader.dylib",
+      "identifier": "libvk_swiftshader",
+      "requirement": "identifier \"libvk_swiftshader\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "5a781094bc2479a90349faa772bed176eb7ae36ea38a481111c91f0af475da8d"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Frameworks/Mantle.framework",
+      "identifier": "com.electron.mantle",
+      "requirement": "identifier \"com.electron.mantle\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "158ff0f6f35781bbc284a7cce4716aa2160e3ebd32ba9473247fcadf7d7916fe"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Frameworks/Mantle.framework/Versions/A/Mantle",
+      "identifier": "com.electron.mantle",
+      "requirement": "identifier \"com.electron.mantle\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "158ff0f6f35781bbc284a7cce4716aa2160e3ebd32ba9473247fcadf7d7916fe"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Frameworks/ReactiveObjC.framework",
+      "identifier": "com.electron.reactive",
+      "requirement": "identifier \"com.electron.reactive\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "9b6cf9042acd0d920a7400f6e4d965e117eabaa27e6c450e54aee95844b14dbc"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Frameworks/ReactiveObjC.framework/Versions/A/ReactiveObjC",
+      "identifier": "com.electron.reactive",
+      "requirement": "identifier \"com.electron.reactive\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "9b6cf9042acd0d920a7400f6e4d965e117eabaa27e6c450e54aee95844b14dbc"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Frameworks/Squirrel.framework",
+      "identifier": "com.github.Squirrel",
+      "requirement": "identifier \"com.github.Squirrel\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "0a2e153b5704cf25b53ae36648e432867a956b75da2671f00b823343fad58ebc"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Frameworks/Squirrel.framework/Versions/A/Resources/ShipIt",
+      "identifier": "ShipIt",
+      "requirement": "identifier ShipIt and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "294609297cc8d1538c662ae3d9da12d4c1e699778b3a0ede04c1fc6d5dc79442"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Frameworks/Squirrel.framework/Versions/A/Squirrel",
+      "identifier": "com.github.Squirrel",
+      "requirement": "identifier \"com.github.Squirrel\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "0a2e153b5704cf25b53ae36648e432867a956b75da2671f00b823343fad58ebc"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Frameworks/helpr Helper (GPU).app",
+      "identifier": "local.helpr.desktop.workspace.helper.GPU",
+      "requirement": "identifier \"local.helpr.desktop.workspace.helper.GPU\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "19be20e4ed00ebd3a7787efa805908a03b26bdd41c0808e12417f203df7642ae"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Frameworks/helpr Helper (GPU).app/Contents/MacOS/helpr Helper (GPU)",
+      "identifier": "local.helpr.desktop.workspace.helper.GPU",
+      "requirement": "identifier \"local.helpr.desktop.workspace.helper.GPU\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "19be20e4ed00ebd3a7787efa805908a03b26bdd41c0808e12417f203df7642ae"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Frameworks/helpr Helper (Plugin).app",
+      "identifier": "local.helpr.desktop.workspace.helper.Plugin",
+      "requirement": "identifier \"local.helpr.desktop.workspace.helper.Plugin\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "6b6d259b7ac2fff4ad3057b9b69b806d3bdda00e2687340421edc0cb7b59ae86"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Frameworks/helpr Helper (Plugin).app/Contents/MacOS/helpr Helper (Plugin)",
+      "identifier": "local.helpr.desktop.workspace.helper.Plugin",
+      "requirement": "identifier \"local.helpr.desktop.workspace.helper.Plugin\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "6b6d259b7ac2fff4ad3057b9b69b806d3bdda00e2687340421edc0cb7b59ae86"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Frameworks/helpr Helper (Renderer).app",
+      "identifier": "local.helpr.desktop.workspace.helper.Renderer",
+      "requirement": "identifier \"local.helpr.desktop.workspace.helper.Renderer\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "20333d894560ea57b75603ac8fb9ea4cc992ddabfe89ae63c0e78f8eb471b185"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Frameworks/helpr Helper (Renderer).app/Contents/MacOS/helpr Helper (Renderer)",
+      "identifier": "local.helpr.desktop.workspace.helper.Renderer",
+      "requirement": "identifier \"local.helpr.desktop.workspace.helper.Renderer\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "20333d894560ea57b75603ac8fb9ea4cc992ddabfe89ae63c0e78f8eb471b185"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Frameworks/helpr Helper.app",
+      "identifier": "local.helpr.desktop.workspace.helper",
+      "requirement": "identifier \"local.helpr.desktop.workspace.helper\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "2ae9f5b7bd2b73b067d98f17f511fc947cb3a57b30bc6256514834848c0b658c"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Frameworks/helpr Helper.app/Contents/MacOS/helpr Helper",
+      "identifier": "local.helpr.desktop.workspace.helper",
+      "requirement": "identifier \"local.helpr.desktop.workspace.helper\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "2ae9f5b7bd2b73b067d98f17f511fc947cb3a57b30bc6256514834848c0b658c"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/MacOS/helpr Workspace Helper",
+      "identifier": "local.helpr.desktop.workspace",
+      "requirement": "identifier \"local.helpr.desktop.workspace\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "f2864dbd23cb7575c5bb63aa6a449d06e1023113d8249e43e6af0408fddc6f01"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Resources/app.asar.unpacked/node_modules/better-sqlite3/prebuilds/darwin-arm64.node",
+      "identifier": "darwin-arm64",
+      "requirement": "identifier \"darwin-arm64\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "f1b43bf1035bad94ed244b83cb64a7590ce891e21975634dd01b1310377244f8"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Resources/app.asar.unpacked/node_modules/better-sqlite3/prebuilds/darwin-x64.node",
+      "identifier": "darwin-x64",
+      "requirement": "identifier \"darwin-x64\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "c2c66b43f23dd138c50d72b9e46e3d734472c04127bf855d4da05b43a060c6ca"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Resources/input-bridge.node",
+      "identifier": "input-bridge",
+      "requirement": "identifier \"input-bridge\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "7ae464eda17470774354602d92c141c1a720512827c932f3a8013b3bfe04bbc6"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Resources/process-path",
+      "identifier": "process-path",
+      "requirement": "identifier \"process-path\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "28349757e83b490067353db41b3b22bf78bd115fe937bb060943cc5a05c18428"
+    },
+    {
+      "path": "Contents/Frameworks/helpr Workspace.app/Contents/Resources/watch-owner",
+      "identifier": "watch-owner",
+      "requirement": "identifier \"watch-owner\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "033556d9c8a82dcd06019d96e873b44d8227650ee82e9dd2a7edcb268652d3a3"
+    },
+    {
+      "path": "Contents/MacOS/helpr",
+      "identifier": "local.helpr.desktop",
+      "requirement": "identifier \"local.helpr.desktop\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "8d744ff9c0b9ecdf772f7b9e5f4f48cd4cf0500fbb2ca2be51bc8438eeebb362"
+    },
+    {
+      "path": "Contents/Resources/app.asar.unpacked/node_modules/better-sqlite3/prebuilds/darwin-arm64.node",
+      "identifier": "darwin-arm64",
+      "requirement": "identifier \"darwin-arm64\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "f1b43bf1035bad94ed244b83cb64a7590ce891e21975634dd01b1310377244f8"
+    },
+    {
+      "path": "Contents/Resources/app.asar.unpacked/node_modules/better-sqlite3/prebuilds/darwin-x64.node",
+      "identifier": "darwin-x64",
+      "requirement": "identifier \"darwin-x64\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "c2c66b43f23dd138c50d72b9e46e3d734472c04127bf855d4da05b43a060c6ca"
+    },
+    {
+      "path": "Contents/Resources/input-bridge.node",
+      "identifier": "input-bridge",
+      "requirement": "identifier \"input-bridge\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "7ae464eda17470774354602d92c141c1a720512827c932f3a8013b3bfe04bbc6"
+    },
+    {
+      "path": "Contents/Resources/process-path",
+      "identifier": "process-path",
+      "requirement": "identifier \"process-path\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "28349757e83b490067353db41b3b22bf78bd115fe937bb060943cc5a05c18428"
+    },
+    {
+      "path": "Contents/Resources/watch-owner",
+      "identifier": "watch-owner",
+      "requirement": "identifier \"watch-owner\" and certificate leaf = H\"35cb0277447febc576f1af3e9d200e5a190e59c2\"",
+      "codeDirectorySha256": "033556d9c8a82dcd06019d96e873b44d8227650ee82e9dd2a7edcb268652d3a3"
+    }
+  ],
+  "limitations": [
+    "Both original build failure records are retained; two successful complete builds were not obtained.",
+    "Build 27 artifact passed subsequent read-only package verification after correcting the legacy byte-hash check.",
+    "No real credentials, persistent login or cross-version keychain prompt acceptance."
+  ],
+  "verificationSourceCommit": "566f880"
+}
