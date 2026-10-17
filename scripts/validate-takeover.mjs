@@ -252,12 +252,27 @@ function finish() {
 async function closeRound() {
   clearTimeout(deadline); clearInterval(poll);
   releaseStorage();
+  if (storageReader) {
+    const end=Date.now()+1000;
+    while(storageReader.exitCode===null && Date.now()<end) await new Promise(resolve=>setTimeout(resolve,20));
+    if(storageReader.exitCode===null) { evidence.cleanupFailure='STORAGE_READER_DID_NOT_EXIT';process.exitCode=1; }
+  }
   try { trace(); } catch (error) { evidence.traceFailure = error.message; save(); }
   try {
     trackPids();
-    if (child.exitCode === null) child.send({ id: ++sequence, command: { kind: 'quit' } });
     const end = Date.now() + 45000;
-    while ((child.exitCode === null || [...pids].some(alive)) && Date.now() < end) await new Promise((resolve) => setTimeout(resolve, 100));
+    let accepted=false;
+    while ((child.exitCode === null || [...pids].some(alive)) && Date.now() < end) {
+      if (child.exitCode === null && !accepted) {
+        try { await request({kind:'quit'},1500); accepted=true; }
+        catch(error) {
+          (evidence.quitReceipts??=[]).push({at:Date.now(),error:error.message});save();
+          // 释放读锁后仍可能有正在保存的公开操作；只对此精确拒绝重试退出。
+          if(error.message !== 'UNSAVED_CHANGES') accepted=true;
+        }
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
     evidence.exitCode = child.exitCode;
     evidence.survivors = [...pids].filter(alive);
     check('normal-exit-and-no-owned-survivors', child.exitCode === 0 && evidence.survivors.length === 0);
@@ -299,6 +314,7 @@ async function beginTiming(job) {
   check('two-real-input-packets-waiting', [job.name,job.other].every(name=>initial.waits.some(w=>w.key === 'input:'+ids[name] && w.reached)));
   timing.before = {snapshot:await snapshot(),gates:gates(),traceLength:trace(),barriers:initial}; save();
   storageReader = spawn('python3', ['scripts/takeover-storage-reader.py',path.join(profile,'workspace.sqlite')], {stdio:['pipe','pipe','pipe']});
+  timing.storagePid=storageReader.pid;save();
   let buffer='';
   storageReader.stdout.on('data',chunk=>{
     buffer+=chunk;
