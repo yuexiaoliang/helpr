@@ -1,6 +1,6 @@
 import { afterEach, expect, test } from 'vitest';
-import { fork, type ChildProcess } from 'node:child_process';
-import { mkdtempSync, rmSync, chmodSync } from 'node:fs';
+import { fork, spawn, type ChildProcess } from 'node:child_process';
+import { mkdtempSync, rmSync, chmodSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { ProcessClient } from '../../app/shared/rpc';
@@ -255,4 +255,72 @@ test('执行停止与请求身份跨记录进程保留，旧派发不能在重�
     }),
   ).rejects.toThrow('RECORD_VERSION_CONFLICT');
   await records.close();
+});
+
+test('真实提交等待期间 draft 不提前回执，释放只读夹具后可靠保存', async () => {
+  const base = `/private/tmp/helpr-workspace-validation-${process.getuid!()}`;
+  mkdirSync(base, { recursive: true, mode: 0o700 });
+  const dir = mkdtempSync(base + '/storage-reader-');
+  folders.push(dir);
+  const records = await open(dir);
+  const { taskId } = (await records.client.request({
+    kind: 'create',
+    requestId: 'slow-create',
+    goal: '慢提交',
+  })) as { taskId: string };
+  const reader = spawn(
+    'python3',
+    ['scripts/takeover-storage-reader.py', path.join(dir, 'workspace.sqlite')],
+    { stdio: ['pipe', 'pipe', 'pipe'] },
+  );
+  children.push(reader);
+  let output = '',
+    errors = '',
+    ack = false;
+  reader.stdout.on('data', (chunk) => {
+    output += chunk;
+  });
+  reader.stderr.on('data', (chunk) => {
+    errors += chunk;
+  });
+  const until = async (stage: string) => {
+    const end = Date.now() + 1500;
+    while (Date.now() < end) {
+      if (output.includes(stage)) return;
+      if (reader.exitCode !== null) throw Error(errors || 'READER_EXITED');
+      await new Promise((r) => setTimeout(r, 10));
+    }
+    throw Error('STORAGE_STAGE_TIMEOUT:' + stage);
+  };
+  let draft: Promise<unknown> | undefined;
+  try {
+    await until('reader-held');
+    draft = records.client
+      .request({
+        kind: 'draft',
+        requestId: 'slow-draft',
+        taskId,
+        text: '保留草稿',
+      })
+      .then((value) => {
+        ack = true;
+        return value;
+      });
+    void draft.catch(() => {});
+    await until('writer-waiting');
+    expect(ack).toBe(false);
+    expect(output).toContain('"independentReaderBusy": true');
+    reader.stdin.end('release\n');
+    await draft;
+    const state = snapshotSchema.parse(
+      await records.client.request({ kind: 'snapshot' }),
+    );
+    expect(state.tasks[0]?.draft).toBe('保留草稿');
+    expect(errors).toBe('');
+  } finally {
+    if (!reader.stdin.destroyed && !reader.stdin.writableEnded)
+      reader.stdin.end('release\n');
+    await draft?.catch(() => {});
+    await records.close();
+  }
 });

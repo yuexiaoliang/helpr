@@ -42,7 +42,7 @@ assert(manifest.prepared && manifest.app === built, 'CANDIDATE_NOT_READY');
 for (const [file, hash] of Object.entries(manifest.hashes))
   assert.equal(createHash('sha256').update(fs.readFileSync(path.join(built, file))).digest('hex'), hash);
 const taskLimit = Number(process.argv.find((arg) => arg.startsWith('--task-limit='))?.slice(13) ?? 12);
-assert([12,14,16,18,20,22,24].includes(taskLimit), 'INVALID_TASK_LIMIT');
+assert([12,14,16,18,20,22,24,26].includes(taskLimit), 'INVALID_TASK_LIMIT');
 const maximum = { effects: 24, inputs: 160, models: 64, tasks: taskLimit };
 const carryName = process.argv.find((arg) => arg.startsWith('--carry='))?.slice(8);
 assert(taskLimit === 12 || carryName !== undefined, 'EXTENDED_TASK_LIMIT_REQUIRES_CARRY');
@@ -313,6 +313,7 @@ async function beginTiming(job) {
   const initial = await status();
   check('two-real-input-packets-waiting', [job.name,job.other].every(name=>initial.waits.some(w=>w.key === 'input:'+ids[name] && w.reached)));
   timing.before = {snapshot:await snapshot(),gates:gates(),traceLength:trace(),barriers:initial}; save();
+  check('both-actions-live-before-storage', [job.name,job.other].every(name=>timing.before.snapshot.tasks.find(t=>t.id===ids[name])?.execution?.phase==='running' && timing.before.gates[name].available && !timing.before.gates[name].blocked));
   storageReader = spawn('python3', ['scripts/takeover-storage-reader.py',path.join(profile,'workspace.sqlite')], {stdio:['pipe','pipe','pipe']});
   timing.storagePid=storageReader.pid;save();
   let buffer='';

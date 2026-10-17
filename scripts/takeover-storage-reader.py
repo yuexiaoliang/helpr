@@ -30,17 +30,10 @@ try:
                 raise ValueError('RELEASE_REQUIRED')
             break
         if not observed:
-            probe = sqlite3.connect(file.as_uri() + '?mode=rw', uri=True, timeout=0)
-            try:
-                probe.execute('BEGIN IMMEDIATE')
-                probe.rollback()
-            except sqlite3.OperationalError as error:
-                if getattr(error, 'sqlite_errorcode', sqlite3.SQLITE_BUSY) != sqlite3.SQLITE_BUSY or str(error) != 'database is locked':
-                    raise
-                journal = Path(str(file) + '-journal')
-                if journal.exists() and journal.stat().st_size > 512:
-                    # PENDING 拒绝新 SHARED，RESERVED 仍允许；探针必须独立进程。
-                    command = """import sqlite3,sys
+            journal = Path(str(file) + '-journal')
+            if journal.exists() and journal.stat().st_size > 512:
+                # 独立进程的新读者被拒绝，证明 PENDING；本进程只保留原始 SHARED。
+                command = """import sqlite3,sys
 try:
  c=sqlite3.connect(sys.argv[1]+'?mode=ro',uri=True,timeout=0)
  c.execute('SELECT name FROM sqlite_master LIMIT 1').fetchall()
@@ -49,14 +42,13 @@ except sqlite3.OperationalError as e:
  if str(e)=='database is locked': sys.exit(2)
  raise
 """
-                    result = subprocess.run([sys.executable, '-c', command, file.as_uri()], timeout=0.5, capture_output=True)
-                    if result.returncode not in (0, 2):
-                        raise ValueError('INDEPENDENT_READER_PROBE_FAILED')
-                    if result.returncode == 2:
-                        observed = True
-                        emit('writer-waiting', independentReaderBusy=True, journalBytes=journal.stat().st_size)
-            finally:
-                probe.close()
+                result = subprocess.run([sys.executable, '-c', command, file.as_uri()], timeout=0.5, capture_output=True)
+                if result.returncode not in (0, 2):
+                    raise ValueError('INDEPENDENT_READER_PROBE_FAILED')
+                if result.returncode == 2:
+                    observed = True
+                    emit('writer-waiting', independentReaderBusy=True, journalBytes=journal.stat().st_size)
+
     else:
         emit('expired')
 finally:
