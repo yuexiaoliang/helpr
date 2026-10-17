@@ -7,6 +7,7 @@ import { spawn, execFileSync } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { spend, validationRoot } from './workspace-budget.mjs';
+import { verifyDevelopmentSignature } from './development-signing.mjs';
 
 const round = process.argv.find((arg) => arg.startsWith('--round='))?.slice(8);
 assert(round && /^[a-z0-9-]{1,40}$/.test(round), 'ROUND_REQUIRED');
@@ -14,14 +15,37 @@ const out = path.resolve(validationRoot, round);
 assert(!fs.existsSync(out), 'ROUND_ALREADY_STARTED');
 const build = Number(process.argv.find((arg) => arg.startsWith('--build='))?.slice(8) ?? 22);
 assert(Number.isSafeInteger(build) && build > 0, 'INVALID_BUILD');
-const manifest = JSON.parse(fs.readFileSync(path.join(validationRoot, `build-${build}.json`)));
+let manifest = JSON.parse(fs.readFileSync(path.join(validationRoot, `build-${build}.json`)));
+let candidateReview;
+const postchecked = process.argv.find((arg) => arg.startsWith('--postchecked-candidate='))?.slice(24);
+if (postchecked !== undefined) {
+  assert(/^[a-z0-9-]{1,40}$/.test(postchecked) && manifest.prepared === false, 'POSTCHECKED_FAILED_BUILD_REQUIRED');
+  const source = 'docs/testing/evidence/development-signing/result.json';
+  const proof = JSON.parse(fs.readFileSync(source));
+  const original = proof.builds.find((entry) => entry.build === build);
+  assert(original?.originalPrepared === false && original.originalError === manifest.error && proof.postcheck.build === build && proof.postcheck.passed === true, 'POSTCHECK_BUILD_MISMATCH');
+  const app = path.resolve(`dist/candidates/${postchecked}/mac-arm64/helpr.app`);
+  const hashes = {};
+  for (const file of ['Contents/MacOS/helpr', 'Contents/Resources/app.asar', 'Contents/Resources/watch-owner', 'Contents/Frameworks/helpr Workspace.app/Contents/MacOS/helpr Workspace Helper', 'Contents/Frameworks/helpr Workspace.app/Contents/Info.plist'])
+    hashes[file] = createHash('sha256').update(fs.readFileSync(path.join(app,file))).digest('hex');
+  assert(hashes['Contents/Resources/app.asar'] === proof.postcheck.archive && hashes['Contents/MacOS/helpr'] === proof.postcheck.controller, 'POSTCHECK_ARTIFACT_CHANGED');
+  const signing = verifyDevelopmentSignature(app);
+  assert(signing.certificateSha256 === proof.identity.certificateSha256 && JSON.stringify(signing.images) === JSON.stringify(proof.images), 'POSTCHECK_SIGNATURE_CHANGED');
+  execFileSync(process.execPath, ['scripts/validate-host-package.mjs',app], {stdio:'pipe'});
+  candidateReview = {source,build,originalPrepared:false,originalError:manifest.error,checkedAt:new Date().toISOString(),certificateSha256:signing.certificateSha256};
+  // 只生成本轮内存入口，原失败清单保持不动；本轮另外保存完整候选检查记录。
+  manifest = {...manifest,app,prepared:true,hashes};
+}
 const built = manifest.app;
 assert(typeof built === 'string' && path.isAbsolute(built), 'INVALID_CANDIDATE');
 assert(manifest.prepared && manifest.app === built, 'CANDIDATE_NOT_READY');
 for (const [file, hash] of Object.entries(manifest.hashes))
   assert.equal(createHash('sha256').update(fs.readFileSync(path.join(built, file))).digest('hex'), hash);
-const maximum = { effects: 24, inputs: 160, models: 64, tasks: 12 };
+const taskLimit = Number(process.argv.find((arg) => arg.startsWith('--task-limit='))?.slice(13) ?? 12);
+assert([12,14].includes(taskLimit), 'INVALID_TASK_LIMIT');
+const maximum = { effects: 24, inputs: 160, models: 64, tasks: taskLimit };
 const carryName = process.argv.find((arg) => arg.startsWith('--carry='))?.slice(8);
+assert(taskLimit === 12 || carryName !== undefined, 'EXTENDED_TASK_LIMIT_REQUIRES_CARRY');
 const repairOf = process.argv.find((arg) => arg.startsWith('--repair-of='))?.slice(12);
 assert(repairOf === undefined || (carryName && /^[0-9a-f]{64}$/.test(repairOf)), 'INVALID_REPAIR_LINEAGE');
 let carry;
@@ -45,7 +69,7 @@ if (carryName !== undefined) {
 }
 if (process.argv.includes('--check-carry')) {
   assert(carry, 'CARRY_ROUND_REQUIRED');
-  console.log(JSON.stringify(carry));
+  console.log(JSON.stringify({...carry,maximum,remaining:Object.fromEntries(Object.entries(maximum).map(([kind,total])=>[kind,total-carry.counts[kind]]))}));
   process.exit(0);
 }
 execFileSync(process.execPath, ['scripts/validate-workspace.mjs', '--preflight'], { stdio: 'pipe' });
@@ -60,7 +84,7 @@ const evidence = {
   build, archive: manifest.hashes['Contents/Resources/app.asar'],
   scope: 'packaged local fixtures; no system credential or persistent website-session acceptance; tool input is not real IME/paste acceptance',
   credentials: 'in-process public fixture sentinel; system keychain not tested',
-  started: new Date().toISOString(), carry,
+  started: new Date().toISOString(), carry, candidateReview,
   limits: { minutes: 20, ...Object.fromEntries(Object.entries(maximum).map(([kind, total]) => [kind, total - (carry?.counts[kind] ?? 0)])) },
   realModelCalls: 0, remoteWrites: 0, taskAttempts: 0, effects: [], inputs: [], models: [], checkpoints: [], checks: [], deferred: {},
 };
@@ -70,6 +94,7 @@ const write = (file, value) => {
   fs.renameSync(temporary, target);
 };
 const save = () => write('result.json', evidence);
+if (candidateReview) write('candidate.json', {...manifest,review:candidateReview});
 const ids = {}, held = [], holds = new Map(), pending = new Map(), pids = new Set();
 let gate, child, sequence = 0, busy = false, expired = false, poll, finishing;
 const gates = () => gate ? Object.fromEntries(Object.entries(ids).map(([name, id]) => [name, gate.state(id)])) : null;
