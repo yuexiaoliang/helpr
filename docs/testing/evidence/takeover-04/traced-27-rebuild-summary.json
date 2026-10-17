@@ -1,0 +1,430 @@
+{
+  "build": 27,
+  "start": 61,
+  "round": "takeover-04-traced-04",
+  "archive": "febec6e02134a005f7824ed690059fc9c17c5aff7565989cc4c252cbd79549cc",
+  "candidateReview": {
+    "source": "docs/testing/evidence/development-signing/result.json",
+    "build": 27,
+    "originalPrepared": false,
+    "originalError": "Command failed: /Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node scripts/validate-host-package.mjs /Users/yuexiaoliang/projects/helpr/dist/candidates/development-signing-b/mac-arm64/helpr.app",
+    "checkedAt": "2026-10-17T03:46:09.648Z",
+    "certificateSha256": "5bd4c2c1f28a99910837bb31ba404f3043378c54463bdc8a8bdf04ce75d2f119"
+  },
+  "carry": {
+    "round": "takeover-04-traced-03",
+    "counts": {
+      "effects": 14,
+      "inputs": 29,
+      "models": 30,
+      "tasks": 12
+    },
+    "repair": {
+      "build": 25,
+      "archive": "18c6f03798b5da8467b8e7eaa8a8c3ef57a64f74e630f03b6db03d3c34e0d6b1"
+    }
+  },
+  "scope": "packaged local fixtures; no system credential or persistent website-session acceptance; tool input is not real IME/paste acceptance",
+  "credentials": "in-process public fixture sentinel; system keychain not tested",
+  "fixtureSession": {
+    "origin": "local-loopback",
+    "persistent": false
+  },
+  "started": "2026-10-17T03:46:10.058Z",
+  "validationStarted": "2026-10-17T03:46:13.982Z",
+  "preparationElapsedMs": 3924,
+  "finished": "2026-10-17T03:46:37.244Z",
+  "exitCode": 0,
+  "survivors": [],
+  "postExit": {
+    "checkedAt": "2026-10-17T03:47:04.093Z",
+    "survivors": []
+  },
+  "counts": {
+    "models": 5,
+    "effects": 2,
+    "inputs": 3,
+    "tasks": 2
+  },
+  "cumulativeCounts": {
+    "models": 35,
+    "effects": 16,
+    "inputs": 32,
+    "tasks": 14
+  },
+  "checks": [
+    {
+      "name": "rebuilt-view-before-explicit-continue-Y-phase",
+      "at": 1792208779659,
+      "passed": true
+    },
+    {
+      "name": "rebuilt-view-before-explicit-continue-Y-effects",
+      "at": 1792208779659,
+      "passed": true
+    },
+    {
+      "name": "rebuilt-view-before-explicit-continue-Z-effects",
+      "at": 1792208779660,
+      "passed": true
+    },
+    {
+      "name": "rebuilt-view-before-explicit-continue-Y-reason",
+      "at": 1792208779660,
+      "passed": true
+    },
+    {
+      "name": "rebuilt-view-continue-actually-advances-Y-phase",
+      "at": 1792208780870,
+      "passed": true
+    },
+    {
+      "name": "rebuilt-view-continue-actually-advances-Z-phase",
+      "at": 1792208780870,
+      "passed": true
+    },
+    {
+      "name": "rebuilt-view-continue-actually-advances-Y-effects",
+      "at": 1792208780870,
+      "passed": true
+    },
+    {
+      "name": "rebuilt-view-continue-actually-advances-Z-effects",
+      "at": 1792208780871,
+      "passed": true
+    },
+    {
+      "name": "normal-exit-and-no-owned-survivors",
+      "at": 1792208797244,
+      "passed": true
+    }
+  ],
+  "client": {
+    "started": "2026-10-17T03:46:17.637Z",
+    "stages": [
+      {
+        "label": "rebuilt-view-before-explicit-continue",
+        "at": 1792208779775,
+        "tasks": {
+          "Y": {
+            "execution": {
+              "intent": "automatic",
+              "phase": "paused",
+              "version": 3,
+              "intentId": "f88eaf94-9939-4100-a2c5-7ebc471c9bcf",
+              "goalVersion": 1,
+              "goal": "04 Y，完成本页两次自动推进，保留人工文字 local-loopback/page/Y",
+              "runId": null,
+              "resource": null,
+              "summary": "页面或控制归属已变化，旧操作资格失效。重新识别后仍需明确继续，先核对现有结果。",
+              "pauseReason": "page-change",
+              "actions": []
+            },
+            "control": {
+              "blocked": true,
+              "stopSaved": true,
+              "message": "页面或控制归属已变化，旧操作资格失效。重新识别后仍需明确继续，先核对现有结果。",
+              "reason": "page-change"
+            }
+          },
+          "Z": {
+            "execution": {
+              "intent": "automatic",
+              "phase": "checking",
+              "version": 2,
+              "intentId": "22856c10-1441-4594-9e86-169ce26ed85c",
+              "goalVersion": 1,
+              "goal": "04 Z，完成本页两次自动推进，保留人工文字 local-loopback/page/Z",
+              "runId": "e6499395-4420-46a3-9c0b-97ac9262d096",
+              "resource": "local-loopback/page/Z",
+              "summary": "正在核对当前页面与已有结果。",
+              "actions": []
+            }
+          }
+        },
+        "gates": {
+          "Y": {
+            "epoch": 7,
+            "available": true,
+            "blocked": true
+          },
+          "Z": {
+            "epoch": 3,
+            "available": true,
+            "blocked": false
+          }
+        },
+        "held": [
+          {
+            "name": "Y",
+            "count": 0,
+            "closed": true
+          },
+          {
+            "name": "Z",
+            "count": 0,
+            "closed": false
+          }
+        ],
+        "effects": []
+      },
+      {
+        "label": "both-live-before-control-disconnect",
+        "at": 1792208781611,
+        "tasks": {
+          "Y": {
+            "execution": {
+              "intent": "automatic",
+              "phase": "running",
+              "version": 4,
+              "intentId": "ed3a7f4f-bb77-4044-b71e-6e95019c2607",
+              "goalVersion": 1,
+              "goal": "04 Y，完成本页两次自动推进，保留人工文字 local-loopback/page/Y",
+              "runId": "a9a6a967-7a6d-4e38-8c87-c53ad802f094",
+              "resource": "local-loopback/page/Y",
+              "summary": "推进本页下一步。",
+              "actions": [
+                {
+                  "id": "54cd306c-27dc-4c6b-85ef-46f244f6d2f8",
+                  "runId": "a9a6a967-7a6d-4e38-8c87-c53ad802f094",
+                  "goalVersion": 1,
+                  "status": "unknown",
+                  "summary": "推进本页下一步。",
+                  "action": {
+                    "kind": "click",
+                    "target": {
+                      "role": "button",
+                      "name": "自动推进 Y",
+                      "exact": true
+                    }
+                  },
+                  "source": {
+                    "url": "local-loopback/page/Y",
+                    "title": "04 任务 Y",
+                    "fingerprint": "917266264525f060d838146498632d38784061e93ebd76a94c1308ec844819ff",
+                    "generation": 3,
+                    "observedAt": 1792208779997,
+                    "truncated": false
+                  },
+                  "binding": {
+                    "targetId": "D81E63058E776F4BA0D04C40E8C62E11",
+                    "generation": 3
+                  },
+                  "evidence": [],
+                  "returned": true
+                }
+              ]
+            }
+          },
+          "Z": {
+            "execution": {
+              "intent": "automatic",
+              "phase": "running",
+              "version": 2,
+              "intentId": "22856c10-1441-4594-9e86-169ce26ed85c",
+              "goalVersion": 1,
+              "goal": "04 Z，完成本页两次自动推进，保留人工文字 local-loopback/page/Z",
+              "runId": "e6499395-4420-46a3-9c0b-97ac9262d096",
+              "resource": "local-loopback/page/Z",
+              "summary": "推进本页下一步。",
+              "actions": [
+                {
+                  "id": "44080ba1-1bfc-464e-bc21-82e782e3f7bf",
+                  "runId": "e6499395-4420-46a3-9c0b-97ac9262d096",
+                  "goalVersion": 1,
+                  "status": "unknown",
+                  "summary": "推进本页下一步。",
+                  "action": {
+                    "kind": "click",
+                    "target": {
+                      "role": "button",
+                      "name": "自动推进 Z",
+                      "exact": true
+                    }
+                  },
+                  "source": {
+                    "url": "local-loopback/page/Z",
+                    "title": "04 任务 Z",
+                    "fingerprint": "be5839730842f112ced6a29fea24bb33bfbf1b7c7a1d54c8342cba8e0d22ed14",
+                    "generation": 1,
+                    "observedAt": 1792208778378,
+                    "truncated": false
+                  },
+                  "binding": {
+                    "targetId": "4838B6A5ECEB84F433F4F7DCE3C9674E",
+                    "generation": 1
+                  },
+                  "evidence": [],
+                  "returned": true
+                }
+              ]
+            }
+          }
+        },
+        "gates": {
+          "Y": {
+            "epoch": 8,
+            "available": true,
+            "blocked": false
+          },
+          "Z": {
+            "epoch": 3,
+            "available": true,
+            "blocked": false
+          }
+        },
+        "held": [
+          {
+            "name": "Y",
+            "count": 1,
+            "closed": false
+          },
+          {
+            "name": "Z",
+            "count": 1,
+            "closed": false
+          }
+        ],
+        "effects": [
+          {
+            "name": "Y",
+            "count": 1,
+            "at": 1792208780653
+          },
+          {
+            "name": "Z",
+            "count": 1,
+            "at": 1792208781335
+          }
+        ]
+      }
+    ],
+    "originalGeneration": 1,
+    "viewTargets": {
+      "before": "CF37B971D67437AAB4A26DB1067BAD3F",
+      "after": "D81E63058E776F4BA0D04C40E8C62E11"
+    },
+    "rebuiltAction": {
+      "binding": {
+        "targetId": "D81E63058E776F4BA0D04C40E8C62E11",
+        "generation": 3
+      },
+      "source": {
+        "url": "local-loopback/page/Y",
+        "title": "04 任务 Y",
+        "fingerprint": "917266264525f060d838146498632d38784061e93ebd76a94c1308ec844819ff",
+        "generation": 3,
+        "observedAt": 1792208779997,
+        "truncated": false
+      },
+      "status": "unknown"
+    },
+    "failure": "LIFECYCLE_WAIT_EXPIRED"
+  },
+  "finalTasks": {
+    "Y": {
+      "intent": "automatic",
+      "phase": "paused",
+      "pauseReason": "native-unavailable",
+      "control": {
+        "blocked": true,
+        "stopSaved": true,
+        "message": "本机输入识别暂不可用，已暂停自动操作并保留网页。能力恢复后仍需明确继续，无需关闭系统安全设置。",
+        "reason": "native-unavailable"
+      }
+    },
+    "Z": {
+      "intent": "automatic",
+      "phase": "paused",
+      "pauseReason": "native-unavailable",
+      "control": {
+        "blocked": true,
+        "stopSaved": true,
+        "message": "本机输入识别暂不可用，已暂停自动操作并保留网页。能力恢复后仍需明确继续，无需关闭系统安全设置。",
+        "reason": "native-unavailable"
+      }
+    }
+  },
+  "models": [
+    {
+      "name": "Y",
+      "count": 0,
+      "at": 1792208778245,
+      "releasedAt": 1792208780266,
+      "connectionClosed": true
+    },
+    {
+      "name": "Z",
+      "count": 0,
+      "at": 1792208778409,
+      "releasedAt": 1792208780970,
+      "connectionClosed": false
+    },
+    {
+      "name": "Y",
+      "count": 0,
+      "at": 1792208780027,
+      "releasedAt": 1792208780265,
+      "connectionClosed": false
+    },
+    {
+      "name": "Y",
+      "count": 1,
+      "at": 1792208780706
+    },
+    {
+      "name": "Z",
+      "count": 1,
+      "at": 1792208781386
+    }
+  ],
+  "effects": [
+    {
+      "name": "Y",
+      "count": 1,
+      "at": 1792208780653,
+      "gates": {
+        "Y": {
+          "epoch": 8,
+          "available": true,
+          "blocked": false
+        },
+        "Z": {
+          "epoch": 3,
+          "available": true,
+          "blocked": false
+        }
+      }
+    },
+    {
+      "name": "Z",
+      "count": 1,
+      "at": 1792208781335,
+      "gates": {
+        "Y": {
+          "epoch": 8,
+          "available": true,
+          "blocked": false
+        },
+        "Z": {
+          "epoch": 3,
+          "available": true,
+          "blocked": false
+        }
+      }
+    }
+  ],
+  "deferred": {},
+  "nativeTrace": {
+    "rows": 73,
+    "overflow": false
+  },
+  "realModelCalls": 0,
+  "remoteWrites": 0,
+  "boundaries": [
+    "fixture-only; no real credential or persistent-login acceptance",
+    "unknown dispatched action remains unknown despite independent effect",
+    "closed-connection reply attempts are not delivered replies",
+    "full 04 criteria and 05 prerequisite remain open"
+  ]
+}
