@@ -71,3 +71,24 @@ Electron 44.7.2 在 WebContents 销毁时清空 WebContentsView 的内部引用�
 本轮 4 次受控模型、2 次推进、3 条收件、2 次任务创建；三轮累计 30／64、14／24、29／160、12／12。构建和启动用量达约定的 25／60，故障 16／17、清理 15／16，安装仍 8；真实模型和远程业务写入 0。本批任务额度也已用尽，任何新轮次不能把任务计数清零或直接沿用“剩余两项”的旧方案。下一份具体方案需修正阶段断言，先按实际等待请求、资格门和效果确认活跃；当前没有追加实际运行。
 
 04 完整验收、05 前置及既有时钟／真人边界继续保留。已闭合本机虚构准备反复等待授权的问题。
+
+## 候选 27：固定签名包的重建后继续与控制断管
+
+2026-10-17，按用户继续 04 的指令，沿用已确认的 `takeover-v1` 和已有候选 27，没有新构建、重签或安装。archive `febec6e02134a005f7824ed690059fc9c17c5aff7565989cc4c252cbd79549cc`，固定开发证书 SHA256 `5bd4c2c1f28a99910837bb31ba404f3043378c54463bdc8a8bdf04ce75d2f119`。每轮启动前重新核对[独立包证明](../development-signing/result.json)、54 项签名元数据和完整宿主封装；原构建清单的 `prepared:false` 及失败原因保留。
+
+启动 61 的[重建后继续摘要](traced-27-rebuild-summary.json)和启动 62 的[仅断管摘要](traced-27-disconnect-summary.json)分别保存结果。原始资料在 `.local/workspace-validation/takeover-04-traced-04/`、`takeover-04-traced-05/`。均用受限回环夹具、公开哨兵和非持久网页会话，公开配置保存分别耗时 3.924／1.160 秒，无人工授权交接；不测试真实凭据，也不证明真实钥匙串今后永不提示。
+
+| 案例 | 实际结果与边界 |
+| --- | --- |
+| 启动 61：重建后保持暂停 | Y 真实销毁后公开重开，新主 frame `D81E63058E776F4BA0D04C40E8C62E11` 不同于旧 `CF37B971D67437AAB4A26DB1067BAD3F`。Y 保持 paused/page-change，Y/Z 均无效果。销毁只是继续核对的必要前置，未重做人工输入。 |
+| 启动 61：明确继续实际推进 | Y 明确继续后使用 generation 3 的新观察和新目标（原观察 generation 1），独立 HTTP 收到推进 1，Z 尚无效果；随后 Z 推进 1。两项 count 1 模型请求真实暂留、两项门均允许后才断管。已派发动作仍 unknown，独立效果不冒充动作确认。 |
+| 启动 61：原因断言失败 | 断管后宿主报告 PANEL_NATIVE_BINDING_POINT，最终两项可靠 paused/native-unavailable、intent automatic。客户端仅接受 page-change，保存 LIFECYCLE_WAIT_EXPIRED 后正常收束；尚未释放旧回复、请求继续或独立停止，不计整个断管组合通过。 |
+| 启动 62：只补断管 | 新两项各推进 1，均 running/automatic、count 1 请求仍打开，原生门 epoch 3、available true、blocked false。未再次销毁重建。真实断管后两项可靠 paused/native-unavailable、automatic 保留，epoch 均增至 18、blocked true（本次 available false）；暂停提示如实保留能力不可用。 |
+| 启动 62：旧请求与继续、停止 | 旧模型连接已取消，释放时分别 connectionClosed true；不能声称回复成功送达后才被拒绝。公开继续精确返回 CONTROL_DISCONNECTED，效果仍各 1。独立停止 Y 后可靠 intent/phase stopped，Z 仍 paused/automatic，效果无增加，历史暂停原因保留。 |
+| 收束 | 两轮均正常退出 0，跟踪进程和退出后的独立 OS 查询均无自有残留，没有故障清理。启动 62 输出 LIFECYCLE_PASSED，17 项夹具检查通过，控制／夹具／轮次／清理／trace 无失败字段；trace 72 条、未溢出。正常退出不抵销启动 61 的失败。 |
+
+保存快照的离线重放先复现严格原因判定失败，再核对真实暂停分类。暂停原因可由后到的能力事件更新，客户端接受实际的 page-change／native-unavailable 并保存各次快照，不将某一毫秒的原因固定值当成控制连通性。真实活跃前置、旧 epoch 撤销、blocked、可靠暂停与 automatic、精确 CONTROL_DISCONNECTED、无新增效果及停止保存仍分别严格核对；产品行为和签名未改。
+
+本次两轮共 9 模型／4 推进／5 收件／4 任务；trace 系列累计 39／64、18／24、34／160、16／16，旧轮和本次失败全部累计。全局用量构建 27、安装 8、启动 62、故障 19、清理 15，真实模型和远程业务写入均 0。重建后明确继续、控制安全失效两项限定缺口已有实包证据。
+
+PANEL_NATIVE_BINDING_POINT 在两轮断管时都发生，尚未修复；本轮没有核对该原生能力恢复，没有将它改述为 page-change 或能力可用。完整 04 仍保留该故障与能力恢复、纯鼠标移动、所有竞争首收件的更强绝对次序及物理慢盘边界；真人中文输入法与 ⌘V 仍按 06 集中安排。完整验收复选和 05 前置不解除。
