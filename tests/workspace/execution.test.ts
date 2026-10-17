@@ -1000,3 +1000,33 @@ test.each(['stopped', 'unstarted'] as const)(
     }
   },
 );
+
+test('重送旧回执不使在途真实停止的控制顺序失效', async () => {
+  const f = await parallelFixture();
+  const taskId = f.tasks.A!;
+  const start = {
+    kind: 'intent',
+    taskId,
+    intent: 'start',
+    requestId: 'start',
+    controlSequence: 1,
+  };
+  try {
+    f.records.execution(start);
+    f.records.execution({ ...start, controlSequence: 3 });
+    expect(() =>
+      f.records.execution({
+        kind: 'intent',
+        taskId,
+        intent: 'stop',
+        requestId: 'stop',
+        controlSequence: 2,
+      }),
+    ).not.toThrow();
+    expect(
+      f.records.snapshot().tasks.find((t) => t.id === taskId)?.execution,
+    ).toMatchObject({ phase: 'stopped', intent: 'stopped' });
+  } finally {
+    await f.close();
+  }
+});

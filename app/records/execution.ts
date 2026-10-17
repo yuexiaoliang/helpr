@@ -173,6 +173,7 @@ export class ExecutionRecords {
   }
   execute(input: unknown): Record<string, unknown> {
     const c = commandSchema.parse(input);
+    let acceptedControl = false;
     const result = this.db.transaction(() => {
       const task = this.db
         .select()
@@ -200,6 +201,7 @@ export class ExecutionRecords {
           controlSequence <= (this.controlSequences.get(c.taskId) ?? 0)
         )
           throw Error('RECORD_VERSION_CONFLICT');
+        acceptedControl = true;
         this.db
           .insert(schema.executionRequests)
           .values({ id: c.requestId, taskId: task.id, hash })
@@ -250,6 +252,7 @@ export class ExecutionRecords {
           c.expectedVersion !== (e?.version ?? 1)
         )
           throw Error('RECORD_VERSION_CONFLICT');
+        acceptedControl = true;
         e ??= {
           intent: 'automatic',
           phase: 'queued',
@@ -489,6 +492,7 @@ export class ExecutionRecords {
       return { claimed: true, execution: e };
     });
     if (
+      acceptedControl &&
       (c.kind === 'intent' || c.kind === 'suspend') &&
       c.controlSequence !== undefined
     )

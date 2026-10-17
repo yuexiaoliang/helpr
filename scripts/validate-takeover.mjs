@@ -301,7 +301,7 @@ poll = setInterval(async () => {
       if (job.defer) {
         assert(typeof job.defer === 'string' && /^[a-z0-9-]{1,40}$/.test(job.defer) && !evidence.deferred[job.defer], 'NEW_DEFERRED_REQUIRED');
         assert(command.kind === 'execution-intent', 'DEFERRED_INTENT_ONLY');
-        assert(job.allowError === undefined || ['INPUT_CHANGED_DURING_CONTINUE', 'RECORD_VERSION_CONFLICT'].includes(job.allowError), 'INVALID_EXPECTED_ERROR');
+        assert(job.allowError === undefined || ['INPUT_CHANGED_DURING_CONTINUE', 'RECORD_VERSION_CONFLICT', 'CONTROL_DISCONNECTED'].includes(job.allowError), 'INVALID_EXPECTED_ERROR');
         const receipt = evidence.deferred[job.defer] = { command, sentAt: Date.now(), allowError: job.allowError }; save();
         void request(command, null).then((result) => { Object.assign(receipt, { finishedAt: Date.now(), result }); save(); }, (error) => {
           Object.assign(receipt, { finishedAt: Date.now(), error: error.message }); save();
