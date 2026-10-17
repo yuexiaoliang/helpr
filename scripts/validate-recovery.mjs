@@ -9,18 +9,23 @@ import {spend,validationRoot} from './workspace-budget.mjs';
 import {verifyDevelopmentSignature} from './development-signing.mjs';
 
 const build=Number(process.argv[2]?.match(/^--build=(\d+)$/)?.[1]);
-assert(process.argv.length===3&&Number.isSafeInteger(build),'BUILD_REQUIRED');
+const resume=process.argv[3]==='--resume=startup-evidence';
+assert((process.argv.length===3||(process.argv.length===4&&resume))&&Number.isSafeInteger(build),'BUILD_REQUIRED');
 const manifest=JSON.parse(fs.readFileSync(path.join(validationRoot,`build-${build}.json`)));
 assert(manifest.prepared&&path.isAbsolute(manifest.app),'PREPARED_BUILD_REQUIRED');
 for(const [name,hash] of Object.entries(manifest.hashes))assert.equal(createHash('sha256').update(fs.readFileSync(path.join(manifest.app,name))).digest('hex'),hash);
 const signature=verifyDevelopmentSignature(manifest.app);
-const root=path.join(validationRoot,`recovery-05-${build}`);
+const originalRoot=path.join(validationRoot,`recovery-05-${build}`);
+let carry=null;
+if(resume){const previous=JSON.parse(fs.readFileSync(path.join(originalRoot,'result.json')));assert(previous.build===build&&previous.archive===manifest.hashes['Contents/Resources/app.asar']&&!previous.passed&&previous.error==='UNOWNED_PROCESS_GROUP'&&previous.starts.length===1&&previous.models.length===0&&previous.effects.length===0&&previous.tasks.length===0&&previous.faults.length===0&&previous.cleanup?.remaining.length===0,'UNEXPECTED_RESUME_STATE');carry={source:path.relative(process.cwd(),path.join(originalRoot,'result.json')),sha256:createHash('sha256').update(fs.readFileSync(path.join(originalRoot,'result.json'))).digest('hex'),starts:previous.starts.map(s=>s.start),models:0,effects:0,tasks:0,faults:0,cleanups:1};}
+const root=resume?originalRoot+'-resume':originalRoot;
 assert(!fs.existsSync(root),'ROUND_ALREADY_EXISTS');fs.mkdirSync(root,{mode:0o700});
 execFileSync(process.execPath,['scripts/validate-workspace.mjs','--preflight'],{stdio:'pipe'});
 const profileRoot=`/private/tmp/helpr-workspace-validation-${process.getuid()}`;
 fs.mkdirSync(profileRoot,{recursive:true,mode:0o700});assert.equal(fs.realpathSync(profileRoot),profileRoot);
 const profile=fs.mkdtempSync(profileRoot+'/recovery05-');
-const report={build,archive:manifest.hashes['Contents/Resources/app.asar'],certificateSha256:signature.certificateSha256,started:new Date().toISOString(),scope:'packaged local fixtures; no real credential/login, IME, sleep or power-loss acceptance',limits:{starts:5,faults:3,cleanups:1,models:10,effects:2,tasks:3,minutes:8},starts:[],faults:[],effects:[],models:[],tasks:[],checks:[],realModelCalls:0,remoteWrites:0};
+const report={build,archive:manifest.hashes['Contents/Resources/app.asar'],certificateSha256:signature.certificateSha256,started:new Date().toISOString(),scope:'packaged local fixtures; no real credential/login, IME, sleep or power-loss acceptance',carry,limits:{starts:4,faults:3,cleanups:1,models:10,effects:2,tasks:3,minutes:8},starts:[],faults:[],effects:[],models:[],tasks:[],checks:[],realModelCalls:0,remoteWrites:0};
+const remainingBudget=JSON.parse(fs.readFileSync(path.join(validationRoot,'budget.json')));for(const kind of ['starts','faults','cleanups'])assert(remainingBudget.used[kind]+report.limits[kind]<=remainingBudget.limits[kind],'ROUND_BUDGET_NOT_RESERVED');
 const save=()=>fs.writeFileSync(path.join(root,'result.json'),JSON.stringify(report,null,2)+'\n',{mode:0o600});
 const snapshots={};const capture=(name,value)=>{snapshots[name]=value;fs.writeFileSync(path.join(root,'snapshots.json'),JSON.stringify(snapshots,null,2)+'\n',{mode:0o600});};
 const check=(name,condition)=>{assert(condition,name);report.checks.push(name);save();};
@@ -50,7 +55,7 @@ const env=Object.fromEntries(['HOME','PATH','TMPDIR','LANG'].filter(k=>process.e
 const alive=pid=>{try{process.kill(pid,0);return true;}catch{return false;}};
 function processRows(){return execFileSync('/bin/ps',['-axo','pid=,ppid=,pgid='],{encoding:'utf8'}).trim().split('\n').map(row=>row.trim().split(/\s+/).map(Number));}
 function descendants(rootPid){const rows=processRows();const found=new Set([rootPid]);let change=true;while(change){change=false;for(const [pid,parent]of rows)if(found.has(parent)&&!found.has(pid)){found.add(pid);change=true;}}return [...found];}
-function snapshotProcesses(app){for(const pid of descendants(app.child.pid))app.pids.add(pid);const rows=processRows().filter(([pid])=>app.pids.has(pid));for(const [,,group]of rows){assert(app.pids.has(group),'UNOWNED_PROCESS_GROUP');app.groups.add(group);}Object.assign(report.starts.find(row=>row.pid===app.child.pid),{pids:[...app.pids],groups:[...app.groups],tree:rows});save();}
+function snapshotProcesses(app){for(const pid of descendants(app.child.pid))app.pids.add(pid);const rows=processRows().filter(([pid])=>app.pids.has(pid));for(const [,,group]of rows)if(app.pids.has(group))app.groups.add(group);Object.assign(report.starts.find(row=>row.pid===app.child.pid),{pids:[...app.pids],groups:[...app.groups],tree:rows,inheritedGroups:[...new Set(rows.map(row=>row[2]).filter(group=>!app.pids.has(group)))]});save();}
 const groupMembers=app=>processRows().filter(([,,group])=>app.groups.has(group));
 async function start({holdRecovery=false,duplicate=false}={}){
  assert(report.starts.length<report.limits.starts,'START_LIMIT');const used=spend('starts');
@@ -81,14 +86,13 @@ try{
  const second=await start({holdRecovery:true});await barrier(second);await until(async()=>(await snapshot(second)).tasks.find(t=>t.id===a)?.execution?.phase==='complete');
  const recovered=await snapshot(second);capture('after-cold-recovery',recovered);check('one-effect-after-cold-recovery',counts.A===1&&counts.B===0);check('original-stop-retained',recovered.tasks.find(t=>t.id===b)?.execution?.intent==='stopped');
  await start({duplicate:true});
+ const c=await create(second,'C');await intent(second,c,'start');await until(()=>heldModels.some(m=>m.name==='C'&&!m.res.destroyed));capture('before-normal-quit',await snapshot(second));
  await rpc(second,{kind:'validation-barrier',control:{action:'arm',point:'exit-checkpoint',taskId:'*'}});
  const exiting=rpc(second,{kind:'quit'}).then(()=>({accepted:true}),error=>({error:error.message}));
  await until(async()=>{const status=await rpc(second,{kind:'validation-barrier',control:{action:'status'}});return status.waits.some(w=>w.key==='exit-checkpoint:*'&&w.reached);});
  const recordsPid=second.ready.recordsPid;fault(recordsPid,'SIGKILL','record-process-exits-during-quit-checkpoint');await until(()=>second.messages.some(m=>m.recordsUnavailable&&m.duringExit));
  await rpc(second,{kind:'validation-barrier',control:{action:'release',point:'exit-checkpoint',taskId:'*'}});const interrupted=await exiting;check('exit-failure-retains-application',Boolean(interrupted.error)&&!second.exit);
- await until(()=>second.messages.some(m=>m.recordsRestored));snapshotProcesses(second);capture('after-record-reconnect',await snapshot(second));check('new-record-process',second.messages.some(m=>m.recordsRestored&&m.recordsPid!==recordsPid));await quit(second);
- console.log('05 normal reopen and exit with undispatched remaining work');
- const third=await start();capture('normal-reopen',await snapshot(third));const c=await create(third,'C');await configure(third);await intent(third,c,'start');await until(()=>heldModels.some(m=>m.name==='C'&&!m.res.destroyed));capture('before-normal-quit',await snapshot(third));await quit(third);holdC=false;
+ await until(()=>second.messages.some(m=>m.recordsRestored));snapshotProcesses(second);capture('after-record-reconnect',await snapshot(second));check('new-record-process',second.messages.some(m=>m.recordsRestored&&m.recordsPid!==recordsPid));await quit(second);holdC=false;
  console.log('05 final reopen: resume only undispatched remainder');
  const fourth=await start({holdRecovery:true});await barrier(fourth);await until(async()=>(await snapshot(fourth)).tasks.find(t=>t.id===c)?.execution?.phase==='complete');capture('final',await snapshot(fourth));check('only-remaining-work-written-once',counts.A===1&&counts.B===0&&counts.C===1);await quit(fourth);
  report.passed=true;
