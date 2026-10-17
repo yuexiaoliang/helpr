@@ -42,25 +42,28 @@ assert(manifest.prepared && manifest.app === built, 'CANDIDATE_NOT_READY');
 for (const [file, hash] of Object.entries(manifest.hashes))
   assert.equal(createHash('sha256').update(fs.readFileSync(path.join(built, file))).digest('hex'), hash);
 const taskLimit = Number(process.argv.find((arg) => arg.startsWith('--task-limit='))?.slice(13) ?? 12);
-assert([12,14,16,18,20].includes(taskLimit), 'INVALID_TASK_LIMIT');
+assert([12,14,16,18,20,22].includes(taskLimit), 'INVALID_TASK_LIMIT');
 const maximum = { effects: 24, inputs: 160, models: 64, tasks: taskLimit };
 const carryName = process.argv.find((arg) => arg.startsWith('--carry='))?.slice(8);
 assert(taskLimit === 12 || carryName !== undefined, 'EXTENDED_TASK_LIMIT_REQUIRES_CARRY');
 const repairOf = process.argv.find((arg) => arg.startsWith('--repair-of='))?.slice(12);
 assert(repairOf === undefined || (carryName && /^[0-9a-f]{64}$/.test(repairOf)), 'INVALID_REPAIR_LINEAGE');
+const derivedFrom = process.argv.find((arg) => arg.startsWith('--derived-from='))?.slice(15);
+assert(derivedFrom === undefined || (carryName && !repairOf && /^[0-9a-f]{64}$/.test(derivedFrom)), 'INVALID_DERIVATION_LINEAGE');
 let carry;
 if (carryName !== undefined) {
   assert(/^[a-z0-9-]{1,40}$/.test(carryName) && carryName !== round, 'INVALID_CARRY_ROUND');
   const priorRoot = path.join(validationRoot, carryName);
   const prior = JSON.parse(fs.readFileSync(path.join(priorRoot, 'result.json')));
   const repaired = repairOf === prior.archive && Number.isSafeInteger(prior.build) && prior.build < build && Boolean(prior.controlFailure || prior.failure || prior.fixtureFailure);
-  assert(prior.finished && (prior.archive === manifest.hashes['Contents/Resources/app.asar'] || repaired), 'CARRY_CANDIDATE_NOT_FINISHED');
+  const derived = derivedFrom === prior.archive && Number.isSafeInteger(prior.build) && prior.build < build && prior.exitCode === 0 && !prior.failure && !prior.controlFailure && !prior.fixtureFailure;
+  assert(prior.finished && (prior.archive === manifest.hashes['Contents/Resources/app.asar'] || repaired || derived), 'CARRY_CANDIDATE_NOT_FINISHED');
   const normalExit = prior.exitCode === 0 && Array.isArray(prior.survivors) && prior.survivors.length === 0;
   const checkedCleanup = typeof prior.postCleanup?.checkedAt === 'string' && Array.isArray(prior.postCleanup.survivors) && prior.postCleanup.survivors.length === 0;
   assert(normalExit || checkedCleanup, 'CARRY_CANDIDATE_NOT_STOPPED');
   // 缺少发送前预留的旧记录不能凭成功返回的 ID 数推定没有回执不明的创建。
   assert(Number.isSafeInteger(prior.taskAttempts) && prior.taskAttempts >= 0, 'CARRY_TASK_ATTEMPTS_REQUIRED');
-  carry = { round: carryName, counts: {}, ...(repaired ? {repair:{build:prior.build,archive:prior.archive}} : {}) };
+  carry = { round: carryName, counts: {}, ...(repaired ? {repair:{build:prior.build,archive:prior.archive}} : {}), ...(derived ? {derivation:{build:prior.build,archive:prior.archive}} : {}) };
   for (const kind of Object.keys(maximum)) {
     const used = (prior.carry?.counts[kind] ?? 0) + (kind === 'tasks' ? prior.taskAttempts : prior[kind].length);
     assert(Number.isSafeInteger(used) && used >= 0 && used <= maximum[kind], 'INVALID_CARRY_COUNTS');
@@ -96,6 +99,7 @@ const write = (file, value) => {
 const save = () => write('result.json', evidence);
 if (candidateReview) write('candidate.json', {...manifest,review:candidateReview});
 const ids = {}, held = [], holds = new Map(), pending = new Map(), pids = new Set();
+let storageReader;
 let gate, child, sequence = 0, busy = false, expired = false, poll, finishing;
 const gates = () => gate ? Object.fromEntries(Object.entries(ids).map(([name, id]) => [name, gate.state(id)])) : null;
 function trace() {
@@ -171,6 +175,7 @@ const server = http.createServer(async (req, res) => {
       let count=0;const name=${JSON.stringify(name)};
       const clock=(async()=>{const sent=performance.timeOrigin+performance.now();const response=await fetch('/clock');const value=await response.json();return{sent,server:value.at,received:performance.timeOrigin+performance.now()};})();
       const send=async(route,data)=>{const clientWallAt=Date.now(),clientAt=performance.timeOrigin+performance.now();return fetch(route,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,clientAt,clientWallAt,...data,clock:await clock})});};
+      let moves=0;document.addEventListener('mousemove',e=>{if(moves++<8)send('/input',{kind:'mousemove',trusted:e.isTrusted,x:e.clientX,y:e.clientY});},true);
       for(const kind of ['mousedown','keydown','beforeinput','input','paste'])document.addEventListener(kind,e=>{if(e.target.id!=='advance')send('/input',{kind,target:e.target.id||e.target.tagName,trusted:e.isTrusted,clientAt:performance.timeOrigin+performance.now(),value:document.querySelector('input').value});},true);
       document.querySelector('#advance').onclick=()=>{count++;document.querySelector('#progress').textContent=name+' 自动完成 '+count;send('/effect',{count})};
       document.querySelector('#frame').onclick=()=>{document.querySelector('#slot').innerHTML='<iframe title="任务子页面" src="/frame/'+name+'"></iframe>'};
@@ -246,6 +251,7 @@ function finish() {
 }
 async function closeRound() {
   clearTimeout(deadline); clearInterval(poll);
+  releaseStorage();
   try { trace(); } catch (error) { evidence.traceFailure = error.message; save(); }
   try {
     trackPids();
@@ -279,7 +285,63 @@ try {
   deadline = setTimeout(() => { expired = true; evidence.failure = 'ROUND_TIME_LIMIT'; save(); void finish(); }, evidence.limits.minutes * 60000);
   console.log('READY ' + out);
 } catch (error) { evidence.failure = error.message; save(); await finish(); throw error; }
-const allowed = new Set(['select', 'hide-task', 'minimize', 'execution-intent', 'snapshot', 'inspect', 'observe', 'show', 'panel', 'draft', 'reload', 'validation-fault', 'capture']);
+// 一次组合：真实记录事务等待提交期间，延迟暂停通知并释放两项已排队输入。
+function releaseStorage() {
+  if (storageReader && !storageReader.stdin.destroyed && !storageReader.stdin.writableEnded) storageReader.stdin.end('release\n');
+}
+async function beginTiming(job) {
+  assert(!evidence.timing && ids[job.name] && ids[job.other] && job.name !== job.other, 'NEW_TIMING_PAIR_REQUIRED');
+  spend('faults');
+  const timing = evidence.timing = { name:job.name, other:job.other, startedAt:Date.now(), storage:[] };
+  const status = () => request({kind:'validation-barrier',control:{action:'status'}});
+  const releaseBarrier = (point,name) => request({kind:'validation-barrier',control:{action:'release',point,taskId:ids[name]}});
+  const initial = await status();
+  check('two-real-input-packets-waiting', [job.name,job.other].every(name=>initial.waits.some(w=>w.key === 'input:'+ids[name] && w.reached)));
+  timing.before = {snapshot:await snapshot(),gates:gates(),traceLength:trace(),barriers:initial}; save();
+  storageReader = spawn('python3', ['scripts/takeover-storage-reader.py',path.join(profile,'workspace.sqlite')], {stdio:['pipe','pipe','pipe']});
+  let buffer='';
+  storageReader.stdout.on('data',chunk=>{
+    buffer+=chunk;
+    for(let index;(index=buffer.indexOf('\n'))>=0;){const line=buffer.slice(0,index);buffer=buffer.slice(index+1);timing.storage.push(JSON.parse(line));save();}
+  });
+  storageReader.on('error',error=>{timing.storageError=error.message;save();});
+  storageReader.stdin.on('error',error=>{timing.storageError=error.message;save();});
+  storageReader.stderr.on('data',chunk=>{timing.storageError=(timing.storageError??'')+chunk;save();});
+  storageReader.on('exit',(code)=>{timing.storageExit=code;save();});
+  await waitFor(()=>timing.storage.some(e=>e.stage==='reader-held'),2000);
+  // 公开 draft 写入经过真正的记录事务；不在数据库中制造任务状态。
+  const draft = request({kind:'draft',requestId:randomUUID(),taskId:ids[job.name],text:'04 slow commit timing'},10000).then(value=>{timing.draftAck={at:Date.now(),value};save();},error=>{timing.draftError=error.message;save();throw error;});
+  void draft.catch(()=>{});
+  await waitFor(()=>timing.storage.some(e=>e.stage==='writer-waiting'),2000);
+  check('actual-commit-pending-before-input', !timing.draftAck && !timing.draftError);
+  timing.readyAt=Date.now();save();
+  void (async()=>{
+    try {
+      await waitFor(()=>evidence.inputs.some(row=>row.name===job.name && row.kind==='keydown' && row.at>=timing.readyAt),6000);
+      const delayed=await status();
+      check('pause-notification-still-delayed',delayed.waits.some(w=>w.key==='suspension:'+ids[job.name] && w.reached));
+      check('commit-still-pending-at-web-receipt',!timing.draftAck && !timing.draftError && !timing.storage.some(e=>e.stage==='reader-released'));
+      timing.receipt={at:Date.now(),gates:gates(),traceLength:trace(),barriers:delayed};save();
+      await releaseBarrier('input',job.name);
+      await releaseBarrier('input',job.other);
+      await waitFor(()=>evidence.effects.some(row=>row.name===job.other),1500);
+      check('other-effect-during-commit-wait',!timing.draftAck && !timing.draftError && !timing.storage.some(e=>e.stage==='reader-released'));
+      check('revoked-task-no-effect',!evidence.effects.some(row=>row.name===job.name));
+      timing.effects={at:Date.now(),gates:gates(),traceLength:trace()};save();
+      await releaseBarrier('suspension',job.name);
+      timing.notificationReleasedAt=Date.now();save();
+      releaseStorage();
+      await draft;
+      await waitFor(()=>timing.storageExit===0,2000);
+      check('reader-released-without-expiry',!timing.storage.some(e=>e.stage==='expired') && !timing.storageError);
+      await waitFor(async()=>{const state=await snapshot();return state.tasks.find(t=>t.id===ids[job.name])?.execution?.phase==='paused';});
+      timing.after={at:Date.now(),snapshot:await snapshot(),gates:gates(),traceLength:trace(),barriers:await status()};
+      timing.finishedAt=Date.now();save();
+    } catch(error) {timing.failure=error.message;evidence.failure??=error.message;save();await finish();}
+  })();
+  return {ready:true,at:timing.readyAt};
+}
+const allowed = new Set(['select', 'hide-task', 'minimize', 'execution-intent', 'snapshot', 'inspect', 'observe', 'show', 'panel', 'draft', 'reload', 'validation-fault', 'capture', 'validation-move']);
 poll = setInterval(async () => {
   if (expired || finishing || busy || !fs.existsSync(path.join(out, 'command.json'))) return;
   busy = true; let job;
@@ -305,6 +367,9 @@ poll = setInterval(async () => {
       assert(job.holdNext === undefined || [0,1,2].includes(job.holdNext), 'INVALID_NEXT_MODEL_HOLD');
       for (const name of job.names) release(name, job.holdNext);
       value = { released: job.names, holdNext: job.holdNext };
+    }
+    else if (job.kind === 'timing') {
+      value = await beginTiming(job);
     }
     else if (job.kind === 'state') value = { snapshot: await snapshot(), gates: gates(), traceLength: trace(), deferred: evidence.deferred, barriers: build > 22 ? await request({kind:'validation-barrier',control:{action:'status'}}) : undefined, held: held.map((item) => ({ name: item.name, count: item.receipt.count, closed: item.res.destroyed })) };
     else if (job.kind === 'native-check') {
@@ -348,7 +413,7 @@ poll = setInterval(async () => {
       } else value = await request(command);
     }
     write('response.json', { id: job.id, ok: true, value });
-    if (job.kind !== 'finish') { await snapshot(); trackPids(); }
+    if (job.kind !== 'finish' && job.kind !== 'timing') { await snapshot(); trackPids(); }
   } catch (error) {
     evidence.controlFailure = error.message; save();
     write('response.json', { id: job?.id, ok: false, error: error.message });

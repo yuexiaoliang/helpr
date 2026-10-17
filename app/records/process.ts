@@ -3,7 +3,7 @@ import { WorkspaceRecords } from './workspace';
 import { rpcRequestSchema, errorCode } from '../shared/contracts';
 import { diagnostics } from '../shared/diagnostics';
 
-const [folder, migrations] = process.argv.slice(2);
+const [folder, migrations, mode] = process.argv.slice(2);
 if (!folder || !migrations) throw new Error('INVALID_RECORDS_LOCATION');
 const log = diagnostics(folder, 'records');
 const port = process.parentPort;
@@ -13,7 +13,11 @@ const send = (message: unknown) => {
 };
 let records: WorkspaceRecords;
 try {
-  records = new WorkspaceRecords(folder, migrations);
+  records = new WorkspaceRecords(
+    folder,
+    migrations,
+    mode === '--workspace-validation',
+  );
   send({ ready: true });
   log.event('ready');
 } catch (error) {

@@ -155,6 +155,7 @@ static napi_value install(napi_env env, napi_callback_info info) {
   if (!windowRef) return failure(env, "NATIVE_INPUT_WINDOW");
   monitorEnv = env; napi_create_reference(env, values[1], 1, &callbackRef);
   NSEventMask mask = NSEventMaskLeftMouseDown | NSEventMaskRightMouseDown | NSEventMaskOtherMouseDown | NSEventMaskKeyDown;
+  if (gate->tracing) { mask |= NSEventMaskMouseMoved; windowRef.acceptsMouseMovedEvents = YES; }
   monitor = [NSEvent addLocalMonitorForEventsMatchingMask:mask handler:^NSEvent *(NSEvent *event) {
     windowRef = rootRef.window;
     if (event.window != windowRef) return event;
@@ -164,6 +165,7 @@ static napi_value install(napi_env env, napi_callback_info info) {
     if (!keyboard && !NSPointInRect(point, content.bounds)) return event;
     NSResponder *receiver = keyboard ? windowRef.firstResponder : [content hitTest:point];
     const std::string label = owner(receiver);
+    if (event.type == NSEventTypeMouseMoved) { Lock lock; if (lock.held) { Slot *row = label.rfind("web:", 0) == 0 ? slot(label.substr(4)) : nullptr; trace("move-pass", label, gate->serial, row ? row->epoch : 0); } return event; }
     if (label.rfind("ui:", 0) == 0) { Lock lock; if (lock.held) trace("ui-pass", label, ++gate->serial); return event; }
     uint64_t serial;
     {
@@ -173,7 +175,8 @@ static napi_value install(napi_env env, napi_callback_info info) {
       trace("identified", label, serial);
       if (label.rfind("web:", 0) == 0) { Slot *row = slot(label.substr(4)); if (row) block(*row); else { gate->available = false; blockAll(); } }
       else blockAll();
-      trace("blocked", label, serial);
+      Slot *row = label.rfind("web:", 0) == 0 ? slot(label.substr(4)) : nullptr;
+      trace("blocked", label, serial, row ? row->epoch : 0);
     }
     // 先跨进程撤销资格，再通知 JS，最后才把原事件交回 AppKit；不读取字符或剪贴板。
     napi_handle_scope scope; napi_open_handle_scope(monitorEnv, &scope);
@@ -223,6 +226,25 @@ static napi_value traceStart(napi_env env, napi_callback_info) {
   Lock lock; if (!lock.held) return failure(env, "INPUT_GATE_UNAVAILABLE");
   gate->tracing = true; return boolean(env, true);
 }
+// 仅验证模式的被动网页收件记号与应用内鼠标移动事件；不授予资格、不注入网页脚本。
+static napi_value pageInput(napi_env env, napi_callback_info info) {
+  napi_value values[1]; std::string task;
+  if (!gate || !gate->tracing || !args(env, info, 1, values) || !text(env, values[0], task)) return failure(env, "INPUT_TRACE_REQUIRED");
+  Lock lock; if (!lock.held) return failure(env, "INPUT_GATE_UNAVAILABLE");
+  Slot *row = slot(task); if (!row) return failure(env, "INPUT_GATE_LIMIT");
+  trace("web-before-input", "web:" + task, gate->serial, row->epoch);
+  return boolean(env, true);
+}
+static napi_value validationMove(napi_env env, napi_callback_info info) {
+  napi_value values[2]; double x, y;
+  if (!gate || !gate->tracing || !NSThread.isMainThread || !windowRef || !args(env, info, 2, values) || napi_get_value_double(env, values[0], &x) != napi_ok || napi_get_value_double(env, values[1], &y) != napi_ok || !std::isfinite(x) || !std::isfinite(y)) return failure(env, "INPUT_TRACE_REQUIRED");
+  NSView *content = windowRef.contentView;
+  NSPoint point = NSMakePoint(x, content.isFlipped ? y : content.bounds.size.height - y);
+  if (!NSPointInRect(point, content.bounds)) return failure(env, "NATIVE_BINDING_BOUNDS");
+  NSEvent *event = [NSEvent mouseEventWithType:NSEventTypeMouseMoved location:[content convertPoint:point toView:nil] modifierFlags:0 timestamp:NSProcessInfo.processInfo.systemUptime windowNumber:windowRef.windowNumber context:nil eventNumber:0 clickCount:0 pressure:0];
+  [NSApp postEvent:event atStart:NO];
+  return boolean(env, true);
+}
 static napi_value traceRead(napi_env env, napi_callback_info) {
   if (!gate) return failure(env, "INPUT_GATE_UNAVAILABLE");
   Lock lock; if (!lock.held) return failure(env, "INPUT_GATE_UNAVAILABLE");
@@ -246,6 +268,7 @@ static napi_value init(napi_env env, napi_value exports) {
   napi_property_descriptor methods[] = {
     {"open", 0, openGate, 0, 0, 0, napi_default, 0}, {"state", 0, state, 0, 0, 0, napi_default, 0},
     {"traceStart", 0, traceStart, 0, 0, 0, napi_default, 0}, {"traceRead", 0, traceRead, 0, 0, 0, napi_default, 0},
+    {"pageInput", 0, pageInput, 0, 0, 0, napi_default, 0}, {"validationMove", 0, validationMove, 0, 0, 0, napi_default, 0},
     {"trip", 0, trip, 0, 0, 0, napi_default, 0}, {"available", 0, available, 0, 0, 0, napi_default, 0},
     {"allow", 0, allow, 0, 0, 0, napi_default, 0}, {"permit", 0, permit, 0, 0, 0, napi_default, 0},
     {"install", 0, install, 0, 0, 0, napi_default, 0}, {"tagRegion", 0, tagRegion, 0, 0, 0, napi_default, 0},

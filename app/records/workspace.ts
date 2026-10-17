@@ -42,7 +42,7 @@ export class WorkspaceRecords {
   private readonly executions: ExecutionRecords;
   private readonly sqlite: Database.Database;
   private readonly db: ReturnType<typeof drizzle<typeof schema>>;
-  constructor(folder: string, migrations: string) {
+  constructor(folder: string, migrations: string, validation = false) {
     mkdirSync(folder, { recursive: true, mode: 0o700 });
     this.sqlite = new Database(path.join(folder, 'workspace.sqlite'));
     try {
@@ -51,7 +51,10 @@ export class WorkspaceRecords {
       this.sqlite.pragma('journal_mode = DELETE');
       this.sqlite.pragma('synchronous = EXTRA');
       this.sqlite.pragma('fullfsync = ON');
-      this.sqlite.pragma('busy_timeout = 3000');
+      // 受限验证给真实提交等待留出桌面工具送键时间；正常启动仍为 3 秒。
+      this.sqlite.pragma(
+        validation ? 'busy_timeout = 8000' : 'busy_timeout = 3000',
+      );
       this.db = drizzle(this.sqlite, { schema });
       const legacy = this.sqlite
         .prepare(

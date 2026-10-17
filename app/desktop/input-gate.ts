@@ -32,6 +32,8 @@ type NativeBridge = {
   untag(label: string): void;
   focused(): string;
   traceStart(): void;
+  pageInput(taskId: string): void;
+  validationMove(x: number, y: number): void;
 };
 /** 本机同步资格门。持锁仅检查并交付一个发送，绝不等待记录、网络或IPC回执。 */
 export class InputGate {
@@ -102,6 +104,12 @@ export class InputGate {
   }
   focused() {
     return this.native?.focused() ?? 'unknown';
+  }
+  tracePageInput(taskId: string) {
+    this.native?.pageInput(taskId);
+  }
+  validationMove(x: number, y: number) {
+    this.native?.validationMove(x, y);
   }
   startValidationTrace() {
     this.native?.traceStart();

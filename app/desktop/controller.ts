@@ -55,6 +55,7 @@ export async function startController(
       app.isPackaged
         ? path.join(process.resourcesPath, 'migrations')
         : path.resolve('app/records/migrations'),
+      ...(validation ? ['--workspace-validation'] : []),
     ],
     { env, stdio: 'ignore', serviceName: 'helpr 记录' },
   );
@@ -720,7 +721,9 @@ export async function startController(
         }
         if (
           command.success &&
-          ['capture', 'inspect', 'show', 'resize'].includes(command.data.kind)
+          ['capture', 'inspect', 'show', 'resize', 'validation-move'].includes(
+            command.data.kind,
+          )
         )
           return hostClient.request(req.data.command);
         return execute(req.data.command);

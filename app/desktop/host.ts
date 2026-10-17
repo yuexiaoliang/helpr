@@ -343,6 +343,10 @@ function bindPage(task: Task): void {
   );
   const watch = (view: WebContentsView) => {
     const wc = view.webContents;
+    if (startup.validation)
+      wc.on('before-input-event', (_event, input) => {
+        if (input.type === 'keyDown') inputGate.tracePageInput(task.id);
+      });
     const register = () =>
       page.view === view &&
       notify({
@@ -542,6 +546,23 @@ function reconcile(): void {
 }
 async function perform(input: unknown): Promise<unknown> {
   const command = z.object({ kind: z.string() }).parse(input);
+  if (startup.validation && command.kind === 'validation-move') {
+    const job = z
+      .strictObject({
+        kind: z.literal('validation-move'),
+        taskId: z.string().min(1).max(100),
+        x: z.number().min(1),
+        y: z.number().min(1),
+      })
+      .parse(input);
+    const page = pages.get(job.taskId);
+    if (!page || state.active !== job.taskId) throw Error('PAGE_NOT_AVAILABLE');
+    const bounds = page.view.getBounds();
+    if (job.x >= bounds.width || job.y >= bounds.height)
+      throw Error('INVALID_MOVE');
+    inputGate.validationMove(bounds.x + job.x, bounds.y + job.y);
+    return null;
+  }
   if (startup.validation && command.kind === 'validation-fault') {
     const { fault, taskId } = z
       .strictObject({
