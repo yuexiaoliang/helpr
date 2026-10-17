@@ -5,7 +5,8 @@ import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {validationRoot} from './workspace-budget.mjs';
 const round=process.argv[2]?.match(/^--round=([a-z0-9-]{1,40})$/)?.[1];
-assert(round && process.argv.length===3,'ROUND_REQUIRED');
+const timingOnly=process.argv[3]==='--only=timing';
+assert(round && process.argv.length===(timingOnly?4:3),'ROUND_REQUIRED');
 const root=path.join(validationRoot,round);
 const read=()=>JSON.parse(fs.readFileSync(path.join(root,'result.json')));
 assert(read().phase==='ready' && !read().finished,'LIVE_READY_ROUND_REQUIRED');
@@ -30,6 +31,7 @@ try{
   for(const name of ['Y','Z'])await rpc(name,{kind:'execution-intent',intent:'start'});
   let before;
   await wait(async()=>{before=await control({kind:'state'});return ['Y','Z'].every(name=>before.held.some(h=>h.name===name&&h.count===0&&!h.closed)&&before.gates[name].available&&!before.gates[name].blocked);});
+  if(!timingOnly){
   const inputOffset=read().inputs.length;
   for(const [x,y] of [[100,140],[180,140],[260,140]])await rpc('Y',{kind:'validation-move',x,y});
   await wait(()=>read().inputs.slice(inputOffset).filter(r=>r.name==='Y'&&r.kind==='mousemove').length>=3);
@@ -44,13 +46,14 @@ try{
   assert(!moves.some(r=>r.stage==='identified'||r.stage==='blocked'),'MOVEMENT_TRIGGERED_TAKEOVER');
   report.movement={before,after,inputs:read().inputs.slice(inputOffset),trace:moves};save();
   await control({kind:'checkpoint',label:'three-native-moves-without-takeover'});
+  }
   for(const name of ['Y','Z'])await control({kind:'barrier',name,point:'input',action:'arm'});
   await control({kind:'barrier',name:'Y',point:'suspension',action:'arm'});
   await control({kind:'release',names:['Y','Z'],holdNext:1});
   await wait(async()=>{const s=await control({kind:'state'});return ['Y','Z'].every(name=>s.barriers.waits.some(w=>w.key==='input:'+ids[name]&&w.reached));});
   report.phase='ready-to-arm-storage';save();console.log('READY_TO_ARM_STORAGE');
-  // 等主进程核对桌面焦点后，单独发送 timing；7 秒锁窗口中不再做其他 UI 操作。
-  await wait(()=>Boolean(read().timing?.readyAt),120000);
+  // 焦点已在开始前由桌面工具确认；两包到达后立即进入提交等待，不再插入桌面观察。
+  await control({kind:'timing',name:'Y',other:'Z'});
   report.phase='waiting-for-key';save();console.log('STORAGE_PENDING_SEND_KEY');
   await wait(()=>Boolean(read().timing?.finishedAt),15000);
   const result=read(), timing=result.timing;
