@@ -282,7 +282,7 @@ function pageState(
   error = '',
 ): void {
   const page = pages.get(taskId);
-  if (!page) return;
+  if (!page?.view.webContents) return;
   const url = page.view.webContents.getURL();
   try {
     notify({ page: { taskId, url: websiteURL(url), phase, error } });
@@ -424,7 +424,7 @@ function bindPage(task: Task): void {
             suspend(task.id, 'page-change');
             page.generation++;
             const parent = page.stack.pop();
-            if (parent && !parent.webContents.isDestroyed()) {
+            if (parent?.webContents && !parent.webContents.isDestroyed()) {
               page.view = parent;
               notify({
                 registration: {
@@ -544,7 +544,11 @@ async function perform(input: unknown): Promise<unknown> {
     const { taskId } = z.object({ taskId: z.string() }).parse(input);
     nativeBindings();
     const page = pages.get(taskId);
-    if (!page || page.view.webContents.isDestroyed() || !nativeAvailable)
+    if (
+      !page?.view.webContents ||
+      page.view.webContents.isDestroyed() ||
+      !nativeAvailable
+    )
       throw Error('NATIVE_INPUT_UNAVAILABLE');
     const ticket = inputGate.state(taskId);
     if (!ticket.available) throw Error('NATIVE_INPUT_UNAVAILABLE');
@@ -586,7 +590,9 @@ async function perform(input: unknown): Promise<unknown> {
     if (!page || !task || !safeStorage.isEncryptionAvailable())
       throw new Error('PAGE_NOT_AVAILABLE');
     try {
-      if (page.view.webContents.isDestroyed()) page.rebuild();
+      // Electron 在销毁后清空此 getter，未必还能调用 isDestroyed()。
+      if (!page.view.webContents || page.view.webContents.isDestroyed())
+        page.rebuild();
       await page.view.webContents.loadURL(websiteURL(job.url ?? task.url));
     } catch {
       throw new Error('PAGE_LOAD_FAILED');
@@ -619,7 +625,7 @@ async function perform(input: unknown): Promise<unknown> {
         memory: p.memory.workingSetSize,
       })),
       pages: [...pages.values()].map((p) => ({
-        pid: p.view.webContents.getOSProcessId(),
+        pid: p.view.webContents?.getOSProcessId() ?? null,
         bounds: p.view.getBounds(),
       })),
       encryptionAvailable: safeStorage.isEncryptionAvailable(),
@@ -723,9 +729,10 @@ app.on('before-quit', (event) => {
   }
   for (const { view, chat, stack } of pages.values()) {
     for (const owned of [...stack, view])
-      if (!owned.webContents.isDestroyed())
+      if (owned.webContents && !owned.webContents.isDestroyed())
         owned.webContents.close({ waitForBeforeUnload: false });
-    if (!chat.webContents.isDestroyed()) chat.webContents.close();
+    if (chat.webContents && !chat.webContents.isDestroyed())
+      chat.webContents.close();
   }
   log.close();
 });

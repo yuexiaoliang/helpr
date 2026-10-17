@@ -89,8 +89,8 @@ function reply(item) {
   item.res.write('data: ' + JSON.stringify({ id: 'local04', choices: [{ index: 0, delta: { content: JSON.stringify(item.value) }, finish_reason: null }] }) + '\n\n');
   item.res.end('data: ' + JSON.stringify({ id: 'local04', choices: [{ index: 0, delta: {}, finish_reason: 'stop' }], usage: { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 } }) + '\n\ndata: [DONE]\n\n');
 }
-function release(name) {
-  holds.delete(name);
+function release(name, holdNext) {
+  if (holdNext === undefined) holds.delete(name); else holds.set(name, holdNext);
   for (let i = held.length - 1; i >= 0; i--)
     if (held[i].name === name) reply(held.splice(i, 1)[0]);
 }
@@ -275,7 +275,11 @@ poll = setInterval(async () => {
       await request({ kind: 'select', requestId: randomUUID(), taskId: ids[job.names[0]] });
       await request({ kind: 'show' });
       value = ids; write('ids.json', ids);
-    } else if (job.kind === 'release') { for (const name of job.names) release(name); value = { released: job.names }; }
+    } else if (job.kind === 'release') {
+      assert(job.holdNext === undefined || [0,1,2].includes(job.holdNext), 'INVALID_NEXT_MODEL_HOLD');
+      for (const name of job.names) release(name, job.holdNext);
+      value = { released: job.names, holdNext: job.holdNext };
+    }
     else if (job.kind === 'state') value = { snapshot: await snapshot(), gates: gates(), traceLength: trace(), deferred: evidence.deferred, barriers: build > 22 ? await request({kind:'validation-barrier',control:{action:'status'}}) : undefined, held: held.map((item) => ({ name: item.name, count: item.receipt.count, closed: item.res.destroyed })) };
     else if (job.kind === 'barrier') {
       assert(ids[job.name], 'TASK_REQUIRED');
