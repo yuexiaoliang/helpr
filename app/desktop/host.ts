@@ -81,6 +81,8 @@ let nativeInstalled = false;
 let nativeAvailable = false;
 let nativeRecoveryPending = false;
 let panelAnchorGap = false;
+const nativeRestoredNotice =
+  '本机输入识别已恢复。任务不会自动续做，需要时请明确继续。';
 let taggedTask: string | null = null;
 let suspensionSerial = 0;
 const mappingGaps = new Set<string>();
@@ -157,6 +159,7 @@ function nativeBindings() {
   if (!nativeInstalled || !win || win.isDestroyed()) return;
   const [width = 800, height = 600] = win.getContentSize();
   let step = 'CHROME';
+  let restoring = false;
   try {
     const fullPanel = panel.panel !== 'none' && panel.panel !== 'preview';
     if (!fullPanel)
@@ -196,6 +199,10 @@ function nativeBindings() {
         y: bounds.y + (panelAnchorGap ? 20 : bounds.height / 2),
       });
     }
+    if (nativeRecoveryPending) {
+      stageNotice();
+      restoring = true;
+    }
     if (toast.getVisible()) {
       step = 'TOAST';
       const bounds = toast.getBounds();
@@ -206,14 +213,13 @@ function nativeBindings() {
     }
     inputGate.available(true);
     nativeAvailable = true;
-    if (nativeRecoveryPending) {
+    if (restoring) {
       nativeRecoveryPending = false;
       log.event('command', { code: 'NATIVE_INPUT_RESTORED' });
-      emit({
-        notice: '本机输入识别已恢复。任务不会自动续做，需要时请明确继续。',
-      });
+      broadcast({ notice: nativeRestoredNotice });
     }
   } catch (error) {
+    if (restoring) toast.setVisible(false);
     const code =
       error instanceof Error && /^NATIVE_[A-Z_]+$/.test(error.message)
         ? error.message
@@ -225,22 +231,28 @@ function nativeBindings() {
     nativeRecoveryPending = true;
   }
 }
-function emit(event: WorkspaceEvent): void {
-  if (event.notice && toast) {
-    clearTimeout(noticeTimer);
-    toast.setVisible(true);
-    const [w = 800] = win.getContentSize();
-    toast.setBounds({
-      x: Math.round((w - 460) / 2),
-      y: 98,
-      width: 460,
-      height: 74,
-    });
-    noticeTimer = setTimeout(() => toast.setVisible(false), 5500);
-    nativeBindings();
-  }
+function stageNotice(): void {
+  clearTimeout(noticeTimer);
+  toast.setVisible(true);
+  const [w = 800] = win.getContentSize();
+  toast.setBounds({
+    x: Math.round((w - 460) / 2),
+    y: 98,
+    width: 460,
+    height: 74,
+  });
+  noticeTimer = setTimeout(() => toast.setVisible(false), 5500);
+}
+function broadcast(event: WorkspaceEvent): void {
   for (const { contents } of trusted.values())
     if (!contents.isDestroyed()) contents.send('workspace-event', event);
+}
+function emit(event: WorkspaceEvent): void {
+  if (event.notice && toast) {
+    stageNotice();
+    nativeBindings();
+  }
+  broadcast(event);
 }
 function loadUI(
   contents: WebContents,
