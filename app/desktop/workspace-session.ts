@@ -73,4 +73,13 @@ export class WorkspaceSession {
         this.failed.delete(key);
     }
   }
+  unresolvedTasks(): string[] {
+    return [
+      ...new Set(
+        [...this.failed.values()].flatMap((command) =>
+          'taskId' in command ? [command.taskId] : [],
+        ),
+      ),
+    ];
+  }
 }

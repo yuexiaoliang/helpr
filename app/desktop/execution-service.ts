@@ -644,10 +644,20 @@ export class ExecutionService {
           });
       }
   }
-  recordsRestored(state: WorkspaceSnapshot) {
+  recordsRestored(
+    state: WorkspaceSnapshot,
+    unsettledTasks: readonly string[] = [],
+  ) {
     this.publish(state);
     this.available = true;
     for (const task of state.tasks) {
+      if (unsettledTasks.includes(task.id)) {
+        this.stopImmediately(
+          task.id,
+          '目标或任务变化尚未可靠保存，已保留现场并阻止旧目标继续。',
+        );
+        continue;
+      }
       const prior = this.blocked.get(task.id),
         e = task.execution;
       if (!prior) continue;

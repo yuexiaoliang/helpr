@@ -365,47 +365,57 @@ export async function startController(
         .catch(() => {});
   });
   let recordRestarts = 0;
+  function restoreRecordConnection() {
+    if (recordRestarts++ > 0) return;
+    if (host.connected)
+      host.send({
+        notice:
+          '本机记录连接中断，已阻断新操作并保留网页，正在重新核对可靠记录。',
+      });
+    void openRecords()
+      .then(async (opened) => {
+        if (quitting) {
+          opened.records.kill();
+          return;
+        }
+        records = opened.records;
+        recordClient = opened.recordClient;
+        watchRecords(records);
+        recordsAvailable = true;
+        await workspace.reconcileCommitted();
+        models.recordsRestored();
+        executions.recordsRestored(
+          snapshotSchema.parse(
+            await recordClient.request({ kind: 'snapshot' }),
+          ),
+          workspace.unresolvedTasks(),
+        );
+        if (validation)
+          process.send?.({ recordsRestored: true, recordsPid: records.pid });
+        if (host.connected)
+          host.send({
+            notice:
+              '可靠记录已重新读取。原停止与暂停保持，活动任务先核对实际进度。',
+          });
+      })
+      .catch((error) => {
+        log.event('failure', { code: errorCode(error) });
+        if (host.connected)
+          host.send({
+            notice:
+              '本机记录未能恢复。资料与网页仍保留，自动操作保持暂停；请保留现场后重新打开 helpr。',
+          });
+      });
+  }
   function watchRecords(child: typeof records) {
     child.once('exit', () => {
-      if (child !== records || quitting) return;
+      if (child !== records) return;
       recordsAvailable = false;
       models.disable();
       executions.disable();
-      if (host.connected)
-        host.send({
-          notice:
-            '本机记录连接中断，已阻断新操作并保留网页，正在重新核对可靠记录。',
-        });
-      if (recordRestarts++ > 0) return;
-      void openRecords()
-        .then(async (opened) => {
-          if (quitting) {
-            opened.records.kill();
-            return;
-          }
-          records = opened.records;
-          recordClient = opened.recordClient;
-          watchRecords(records);
-          recordsAvailable = true;
-          models.recordsRestored();
-          executions.recordsRestored(opened.state);
-          await workspace.reconcileCommitted();
-          if (validation)
-            process.send?.({ recordsRestored: true, recordsPid: records.pid });
-          if (host.connected)
-            host.send({
-              notice:
-                '可靠记录已重新读取。原停止与暂停保持，活动任务先核对实际进度。',
-            });
-        })
-        .catch((error) => {
-          log.event('failure', { code: errorCode(error) });
-          if (host.connected)
-            host.send({
-              notice:
-                '本机记录未能恢复。资料与网页仍保留，自动操作保持暂停；请保留现场后重新打开 helpr。',
-            });
-        });
+      if (validation)
+        process.send?.({ recordsUnavailable: true, duringExit: quitting });
+      if (!quitting) restoreRecordConnection();
     });
   }
   watchRecords(records);
@@ -420,8 +430,14 @@ export async function startController(
       if (command.apiKey !== undefined) fixture.protect(command.apiKey);
     }
     if (command.kind === 'snapshot') return executions.decorate(state);
-    if (command.kind === 'execution-intent')
+    if (command.kind === 'execution-intent') {
+      if (
+        command.intent !== 'stop' &&
+        workspace.unresolvedTasks().includes(command.taskId)
+      )
+        throw Error('UNSAVED_CHANGES');
       return { state: await executions.intent(command) };
+    }
     if (command.kind === 'model-save') return models.configure(command);
     if (command.kind === 'model-cancel')
       return models.cancel(command.taskId, command.callId);
@@ -439,6 +455,12 @@ export async function startController(
               : null;
       if (/^查看结果[。！!]?$/u.test(text))
         return { state: executions.decorate(state) };
+      if (
+        intent &&
+        intent !== 'stop' &&
+        workspace.unresolvedTasks().includes(command.taskId)
+      )
+        throw Error('UNSAVED_CHANGES');
       if (intent)
         return {
           state: await executions.intent({
@@ -469,6 +491,8 @@ export async function startController(
     if (!recordsAvailable) throw new Error('RECORDS_UNAVAILABLE');
     if (command.kind === 'cancel-create')
       return workspace.cancelCreation(command.requestId);
+    if (command.kind === 'navigate')
+      await executions.suspend(command.taskId, 'page-change', randomUUID());
     const result = await workspace.save(command);
     if (command.kind === 'navigate')
       await hostClient.request({
@@ -669,6 +693,7 @@ export async function startController(
     try {
       await executions.stopAll();
       await models.stopAll();
+      await barriers?.pass('exit-checkpoint', '*');
       state = snapshotSchema.parse(
         await recordClient.request({ kind: 'checkpoint' }),
       );
@@ -676,6 +701,7 @@ export async function startController(
       quitting = false;
       executions.cancelExit();
       models.cancelExit();
+      if (!recordsAvailable) restoreRecordConnection();
       if (host.connected)
         host.send({
           notice:

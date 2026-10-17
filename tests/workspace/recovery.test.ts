@@ -1,11 +1,18 @@
 import { afterEach, expect, test } from 'vitest';
-import { mkdtempSync, rmSync, existsSync, readFileSync } from 'node:fs';
+import {
+  mkdtempSync,
+  rmSync,
+  existsSync,
+  readFileSync,
+  writeFileSync,
+} from 'node:fs';
 import Database from 'better-sqlite3';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { WorkspaceRecords } from '../../app/records/workspace';
 import { createServer } from 'node:http';
 import { ExecutionService } from '../../app/desktop/execution-service';
+import { WorkspaceSession } from '../../app/desktop/workspace-session';
 
 const folders: string[] = [];
 afterEach(() =>
@@ -267,6 +274,19 @@ test('已经初始化的资料丢失数据库时保留现场并报错，不自�
     'DATA_MISSING',
   );
   expect(existsSync(file)).toBe(false);
+});
+
+test('已经初始化的数据库被截空时保持原字节并拒绝创建新空库', () => {
+  const dir = folder(),
+    records = new WorkspaceRecords(dir, 'app/records/migrations');
+  task(records, 'A');
+  records.close();
+  const file = path.join(dir, 'workspace.sqlite');
+  writeFileSync(file, '');
+  expect(() => new WorkspaceRecords(dir, 'app/records/migrations')).toThrow(
+    'DATA_CORRUPT',
+  );
+  expect(readFileSync(file)).toEqual(Buffer.alloc(0));
 });
 
 test('不认识的状态模型保留原库字节并明确拒绝恢复', () => {
@@ -543,6 +563,95 @@ test('退出时只冻结派发，不伪造用户停止或尚未保存的停止',
     });
     expect(state.tasks[0]?.id).toBe(a);
   } finally {
+    records.close();
+  }
+});
+
+test('新目标保存未提交时记录重连仍阻断旧目标，不能因旧资料可读而自动写入', async () => {
+  const dir = folder();
+  let records = new WorkspaceRecords(dir, 'app/records/migrations');
+  const a = task(records, 'A');
+  let state = records.snapshot(),
+    writes = 0;
+  const workspace = new WorkspaceSession(
+    state,
+    (command) => {
+      if ((command as { kind: string }).kind === 'navigate')
+        return Promise.reject(Error('PROCESS_DISCONNECTED'));
+      const original = (command as { command: unknown }).command;
+      return Promise.resolve(records.lookupRequest(original));
+    },
+    (next) => {
+      state = next;
+    },
+  );
+  await expect(
+    workspace.save({
+      kind: 'navigate',
+      requestId: 'new-target',
+      taskId: a,
+      url: 'https://example.com/B',
+    }),
+  ).rejects.toThrow('PROCESS_DISCONNECTED');
+  records.close();
+  records = new WorkspaceRecords(dir, 'app/records/migrations');
+  state = records.snapshot();
+  const source = {
+    url: 'https://example.com/A',
+    title: 'A记录',
+    fingerprint: 'A',
+    generation: 1,
+    observedAt: 1,
+    truncated: false,
+  };
+  const service = new ExecutionService({
+    records: (command) => Promise.resolve(records.execution(command)),
+    current: () => state,
+    publish: (next) => {
+      state = next;
+    },
+    observe: () =>
+      Promise.resolve({
+        observation: { ...source, text: writes ? 'A已完成' : 'A待处理' },
+        binding: { targetId: 'A', generation: 1 },
+      }),
+    propose: (input) =>
+      Promise.resolve({
+        decision: writes ? 'complete' : 'act',
+        summary: '处理A',
+        evidence: [input.observation.text],
+        previous: input.pending
+          ? {
+              id: input.pending.id,
+              status: 'confirmed',
+              evidence: [input.observation.text],
+            }
+          : null,
+        action: writes
+          ? null
+          : {
+              kind: 'click',
+              target: { role: 'button', name: '处理A', exact: true },
+            },
+      }),
+    perform: () => {
+      writes++;
+      return Promise.resolve();
+    },
+    revoke: () => {},
+    stopModels: () => {},
+  });
+  try {
+    await workspace.reconcileCommitted();
+    service.recordsRestored(state, [a]);
+    await service.settled();
+    expect(writes).toBe(0);
+    expect(workspace.canExit()).toBe(false);
+    expect(service.decorate(state).tasks[0]?.executionControl?.blocked).toBe(
+      true,
+    );
+  } finally {
+    service.disable();
     records.close();
   }
 });

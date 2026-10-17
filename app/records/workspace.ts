@@ -11,6 +11,7 @@ import {
   writeSync,
   fsyncSync,
   closeSync,
+  lstatSync,
 } from 'node:fs';
 import { randomUUID, createHash } from 'node:crypto';
 import path from 'node:path';
@@ -59,6 +60,10 @@ export class WorkspaceRecords {
       !existsSync(path.join(folder, 'workspace.sqlite'))
     )
       throw Error('DATA_MISSING');
+    if (existsSync(marker)) {
+      const file = lstatSync(path.join(folder, 'workspace.sqlite'));
+      if (!file.isFile() || file.size < 100) throw Error('DATA_CORRUPT');
+    }
     this.sqlite = new Database(path.join(folder, 'workspace.sqlite'));
     try {
       chmodSync(path.join(folder, 'workspace.sqlite'), 0o600);
@@ -78,6 +83,7 @@ export class WorkspaceRecords {
           "SELECT name FROM sqlite_master WHERE type='table' AND name='workspace'",
         )
         .get();
+      if (existsSync(marker) && !legacy) throw Error('DATA_CORRUPT');
       const priorVersion = legacy
         ? this.sqlite
             .prepare<[], { schema_version: number }>(
