@@ -418,5 +418,20 @@
     "Build 27 artifact passed subsequent read-only package verification after correcting the legacy byte-hash check.",
     "No real credentials, persistent login or cross-version keychain prompt acceptance."
   ],
-  "verificationSourceCommit": "566f880"
+  "verificationSourceCommit": "566f880",
+  "sourceChecks": {
+    "command": "pnpm check",
+    "passed": true,
+    "workspaceTests": 50,
+    "legacyTests": 25,
+    "typecheck": true,
+    "lint": true,
+    "format": true,
+    "factChecks": true
+  },
+  "review": {
+    "standardsRemaining": 0,
+    "specRemaining": 0,
+    "sourceCommit": "566f880"
+  }
 }
