@@ -334,6 +334,7 @@ async function parallelFixture(inputGate?: InputGate) {
     }).state;
   }
   let holdAck: ((command: unknown) => Promise<void>) | undefined;
+  let holdSend: ((command: unknown) => Promise<void>) | undefined;
   let holdObservation: (() => Promise<void>) | undefined;
   const service = new ExecutionService({
     input: inputGate
@@ -347,6 +348,7 @@ async function parallelFixture(inputGate?: InputGate) {
         }
       : undefined,
     records: async (c) => {
+      await holdSend?.(c);
       const result = records.execution(c);
       await holdAck?.(c);
       return result;
@@ -416,6 +418,9 @@ async function parallelFixture(inputGate?: InputGate) {
     received,
     setAckGate: (gate: typeof holdAck) => {
       holdAck = gate;
+    },
+    setSendGate: (gate: typeof holdSend) => {
+      holdSend = gate;
     },
     setObservationGate: (gate: typeof holdObservation) => {
       holdObservation = gate;
@@ -896,3 +901,102 @@ test('较旧停止回执超时不能覆盖已保存的新继续，或永久占�
     await f.close();
   }
 });
+
+test('接管保存后才到达的旧继续不能覆盖可靠暂停，另项保持运行', async () => {
+  const f = await parallelFixture();
+  let release!: () => void;
+  const waiting = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  let reached = false;
+  try {
+    f.setObservationGate(() => waiting);
+    for (const name of ['A', 'B'])
+      await f.service.intent({
+        kind: 'execution-intent',
+        requestId: 'start-' + name,
+        taskId: f.tasks[name]!,
+        intent: 'start',
+      });
+    await f.service.suspend(f.tasks.A!, 'takeover', 'first-input');
+    f.setSendGate(async (input) => {
+      const c = input as { kind: string; intent?: string };
+      if (c.kind === 'intent' && c.intent === 'continue') {
+        reached = true;
+        await waiting;
+      }
+    });
+    const old = f.service.intent({
+      kind: 'execution-intent',
+      requestId: 'old-continue',
+      taskId: f.tasks.A!,
+      intent: 'continue',
+    });
+    const rejected = expect(old).rejects.toThrow('RECORD_VERSION_CONFLICT');
+    await expect.poll(() => reached).toBe(true);
+    await f.service.suspend(f.tasks.A!, 'takeover', 'input-during-send');
+    release();
+    await rejected;
+    expect(
+      f.records.snapshot().tasks.find((t) => t.id === f.tasks.A)?.execution,
+    ).toMatchObject({ phase: 'paused', pauseReason: 'takeover' });
+    expect(
+      f.records.snapshot().tasks.find((t) => t.id === f.tasks.B)?.execution
+        ?.intent,
+    ).toBe('automatic');
+  } finally {
+    release();
+    await f.close();
+  }
+});
+
+test.each(['stopped', 'unstarted'] as const)(
+  '%s 任务的旧继续在随后输入后不能改写已有状态',
+  async (initial) => {
+    const f = await parallelFixture();
+    let release!: () => void;
+    const waiting = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    let reached = false;
+    try {
+      if (initial === 'stopped')
+        await f.service.intent({
+          kind: 'execution-intent',
+          requestId: 'stop-a',
+          taskId: f.tasks.A!,
+          intent: 'stop',
+        });
+      f.setSendGate(async (input) => {
+        const c = input as { kind: string; intent?: string };
+        if (c.kind === 'intent' && c.intent === 'continue') {
+          reached = true;
+          await waiting;
+        }
+      });
+      const old = f.service.intent({
+        kind: 'execution-intent',
+        requestId: 'old-continue',
+        taskId: f.tasks.A!,
+        intent: 'continue',
+      });
+      const rejected = expect(old).rejects.toThrow('RECORD_VERSION_CONFLICT');
+      await expect.poll(() => reached).toBe(true);
+      await f.service.suspend(f.tasks.A!, 'ownership-unknown', 'new-input');
+      release();
+      await rejected;
+      const execution = f.records
+        .snapshot()
+        .tasks.find((t) => t.id === f.tasks.A)?.execution;
+      if (initial === 'stopped')
+        expect(execution).toMatchObject({
+          phase: 'stopped',
+          intent: 'stopped',
+        });
+      else expect(execution).toBeNull();
+    } finally {
+      release();
+      await f.close();
+    }
+  },
+);

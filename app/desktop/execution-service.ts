@@ -193,7 +193,13 @@ export class ExecutionService {
       });
     this.publish();
     try {
-      await this.record({ kind: 'suspend', taskId, requestId, reason });
+      await this.record({
+        kind: 'suspend',
+        taskId,
+        requestId,
+        reason,
+        controlSequence: sequence,
+      });
       if (affected && this.intents.get(taskId) === sequence) {
         this.blocked.set(taskId, {
           saved: true,
@@ -230,7 +236,11 @@ export class ExecutionService {
         command.intent !== 'stop'
           ? await this.ports.input?.prepare(command.taskId)
           : undefined;
-      const result = await this.record({ ...command, kind: 'intent' });
+      const result = await this.record({
+        ...command,
+        kind: 'intent',
+        controlSequence: sequence,
+      });
       if (this.intents.get(command.taskId) !== sequence)
         return this.decorate(this.ports.current());
       if (result.created !== true && result.current !== true)

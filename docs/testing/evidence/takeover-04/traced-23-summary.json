@@ -1,0 +1,257 @@
+{
+  "build": 23,
+  "start": 58,
+  "archive": "2122c0c75c7f196a6274ed4b7463e8ae38e3f2f11948be1fc3211d6287e982f0",
+  "finished": "2026-10-17T01:32:44.898Z",
+  "exitCode": 0,
+  "survivors": [],
+  "controlFailure": "record-send-delay-C-phase",
+  "counts": {
+    "models": 8,
+    "effects": 4,
+    "inputs": 9,
+    "tasks": 4
+  },
+  "effects": [
+    {
+      "name": "V",
+      "count": 1,
+      "at": 1792200657078
+    },
+    {
+      "name": "V",
+      "count": 2,
+      "at": 1792200657507
+    },
+    {
+      "name": "D",
+      "count": 1,
+      "at": 1792200763760
+    },
+    {
+      "name": "D",
+      "count": 2,
+      "at": 1792200764191
+    }
+  ],
+  "native": [
+    {
+      "stage": "ui-pass",
+      "owner": "ui:chrome",
+      "serial": 1,
+      "epoch": 0,
+      "at": 1792200613528.275
+    },
+    {
+      "stage": "ui-pass",
+      "owner": "ui:chrome",
+      "serial": 2,
+      "epoch": 0,
+      "at": 1792200613661.426
+    },
+    {
+      "stage": "ui-pass",
+      "owner": "ui:chat:6977202f-dda5-43df-9df3-05eb27e693e6",
+      "serial": 3,
+      "epoch": 0,
+      "at": 1792200613750.073
+    },
+    {
+      "stage": "ui-pass",
+      "owner": "ui:chat:6977202f-dda5-43df-9df3-05eb27e693e6",
+      "serial": 4,
+      "epoch": 0,
+      "at": 1792200628755.528
+    },
+    {
+      "stage": "identified",
+      "owner": "U",
+      "serial": 5,
+      "epoch": 0,
+      "at": 1792200649718.901
+    },
+    {
+      "stage": "blocked",
+      "owner": "U",
+      "serial": 5,
+      "epoch": 0,
+      "at": 1792200649718.905
+    },
+    {
+      "stage": "handoff",
+      "owner": "U",
+      "serial": 5,
+      "epoch": 0,
+      "at": 1792200649720.072
+    },
+    {
+      "stage": "permit-denied",
+      "owner": "U",
+      "serial": 5,
+      "epoch": 3,
+      "at": 1792200656562.062
+    },
+    {
+      "stage": "identified",
+      "owner": "C",
+      "serial": 6,
+      "epoch": 0,
+      "at": 1792200742085.522
+    },
+    {
+      "stage": "blocked",
+      "owner": "C",
+      "serial": 6,
+      "epoch": 0,
+      "at": 1792200742085.524
+    },
+    {
+      "stage": "handoff",
+      "owner": "C",
+      "serial": 6,
+      "epoch": 0,
+      "at": 1792200742085.733
+    },
+    {
+      "stage": "identified",
+      "owner": "C",
+      "serial": 7,
+      "epoch": 0,
+      "at": 1792200755520.483
+    },
+    {
+      "stage": "blocked",
+      "owner": "C",
+      "serial": 7,
+      "epoch": 0,
+      "at": 1792200755520.483
+    },
+    {
+      "stage": "handoff",
+      "owner": "C",
+      "serial": 7,
+      "epoch": 0,
+      "at": 1792200755520.592
+    }
+  ],
+  "firstReceipts": [
+    {
+      "name": "U",
+      "kind": "mousedown",
+      "target": "manual",
+      "trusted": true,
+      "clientAt": 1792200649667.3,
+      "at": 1792200649731,
+      "gate": {
+        "epoch": 4,
+        "available": true,
+        "blocked": true
+      },
+      "traceLength": 195
+    },
+    {
+      "name": "C",
+      "kind": "mousedown",
+      "target": "INPUT",
+      "trusted": true,
+      "clientAt": 1792200742086.8,
+      "at": 1792200742089,
+      "gate": {
+        "epoch": 5,
+        "available": true,
+        "blocked": true
+      },
+      "traceLength": 271
+    },
+    {
+      "name": "C",
+      "kind": "keydown",
+      "target": "INPUT",
+      "trusted": true,
+      "clientAt": 1792200755553.6,
+      "at": 1792200755556,
+      "gate": {
+        "epoch": 8,
+        "available": true,
+        "blocked": true
+      },
+      "traceLength": 274
+    },
+    {
+      "name": "C",
+      "kind": "beforeinput",
+      "target": "INPUT",
+      "trusted": true,
+      "clientAt": 1792200755553.9001,
+      "at": 1792200755563,
+      "gate": {
+        "epoch": 8,
+        "available": true,
+        "blocked": true
+      },
+      "traceLength": 274
+    },
+    {
+      "name": "C",
+      "kind": "input",
+      "target": "INPUT",
+      "trusted": true,
+      "clientAt": 1792200755554.4001,
+      "at": 1792200755566,
+      "gate": {
+        "epoch": 8,
+        "available": true,
+        "blocked": true
+      },
+      "traceLength": 274
+    }
+  ],
+  "barriers": {
+    "waits": [
+      {
+        "key": "records-before:92bff425-1a05-48fd-a2d7-963835d2a249",
+        "reached": true
+      }
+    ],
+    "history": [
+      {
+        "point": "input",
+        "taskId": "6977202f-dda5-43df-9df3-05eb27e693e6",
+        "stage": "reached",
+        "at": 1792200644891
+      },
+      {
+        "point": "suspension",
+        "taskId": "6977202f-dda5-43df-9df3-05eb27e693e6",
+        "stage": "reached",
+        "at": 1792200649720
+      },
+      {
+        "point": "input",
+        "taskId": "6977202f-dda5-43df-9df3-05eb27e693e6",
+        "stage": "released",
+        "at": 1792200656561
+      },
+      {
+        "point": "suspension",
+        "taskId": "6977202f-dda5-43df-9df3-05eb27e693e6",
+        "stage": "released",
+        "at": 1792200709889
+      },
+      {
+        "point": "records-before",
+        "taskId": "92bff425-1a05-48fd-a2d7-963835d2a249",
+        "stage": "reached",
+        "at": 1792200749427
+      }
+    ]
+  },
+  "clientFailure": [
+    {
+      "error": "SCENARIO_WAIT_EXPIRED",
+      "cause": "client expected completed; contract phase is complete",
+      "productFailure": false,
+      "repeatedScenario": false
+    }
+  ]
+}

@@ -80,11 +80,13 @@ const observation = pageSourceSchema.extend({ text: z.string().max(30000) });
 const work = { taskId: z.string(), runId: z.string() };
 const intentSchema = executionIntentSchema.extend({
   kind: z.literal('intent'),
+  controlSequence: z.number().int().positive().optional(),
 });
 const commandSchema = z.discriminatedUnion('kind', [
   intentSchema,
   z.strictObject({
     kind: z.literal('suspend'),
+    controlSequence: z.number().int().positive().optional(),
     taskId: z.string(),
     requestId: z.string().min(1).max(100),
     reason: executionPauseReasonSchema,
@@ -128,6 +130,8 @@ const commandSchema = z.discriminatedUnion('kind', [
 ]);
 /** 唯一记录拥有者中计算纯转换；提交不执行网页或模型。 */
 export class ExecutionRecords {
+  // 同一控制者/记录进程生命周期的消息次序；不作为跨重启的业务事实。
+  private readonly controlSequences = new Map<string, number>();
   constructor(private readonly db: BetterSQLite3Database<typeof schema>) {
     this.db.transaction(() => {
       for (const row of this.db.select().from(schema.executions).all()) {
@@ -169,7 +173,7 @@ export class ExecutionRecords {
   }
   execute(input: unknown): Record<string, unknown> {
     const c = commandSchema.parse(input);
-    return this.db.transaction(() => {
+    const result = this.db.transaction(() => {
       const task = this.db
         .select()
         .from(schema.tasks)
@@ -178,8 +182,9 @@ export class ExecutionRecords {
       if (!task) throw new Error('TASK_NOT_FOUND');
       let e = this.get(c.taskId);
       if (c.kind === 'suspend') {
+        const { controlSequence, ...request } = c;
         const hash = createHash('sha256')
-          .update(JSON.stringify(c))
+          .update(JSON.stringify(request))
           .digest('hex');
         const prior = this.db
           .select()
@@ -190,6 +195,11 @@ export class ExecutionRecords {
           if (prior.hash !== hash) throw Error('REQUEST_CONTENT_CONFLICT');
           return { recorded: false };
         }
+        if (
+          controlSequence !== undefined &&
+          controlSequence <= (this.controlSequences.get(c.taskId) ?? 0)
+        )
+          throw Error('RECORD_VERSION_CONFLICT');
         this.db
           .insert(schema.executionRequests)
           .values({ id: c.requestId, taskId: task.id, hash })
@@ -213,8 +223,10 @@ export class ExecutionRecords {
         return { recorded: true };
       }
       if (c.kind === 'intent') {
+        // 传输前提不是用户意图内容；重送回执不能因重新取样而改变指纹。
+        const { controlSequence, ...request } = c;
         const hash = createHash('sha256')
-          .update(JSON.stringify(c))
+          .update(JSON.stringify(request))
           .digest('hex');
         const prior = this.db
           .select()
@@ -229,10 +241,15 @@ export class ExecutionRecords {
           };
         }
         if (
+          controlSequence !== undefined &&
+          controlSequence <= (this.controlSequences.get(c.taskId) ?? 0)
+        )
+          throw Error('RECORD_VERSION_CONFLICT');
+        if (
           c.expectedVersion !== undefined &&
           c.expectedVersion !== (e?.version ?? 1)
         )
-          throw new Error('RECORD_VERSION_CONFLICT');
+          throw Error('RECORD_VERSION_CONFLICT');
         e ??= {
           intent: 'automatic',
           phase: 'queued',
@@ -471,5 +488,14 @@ export class ExecutionRecords {
       this.save(task.id, e);
       return { claimed: true, execution: e };
     });
+    if (
+      (c.kind === 'intent' || c.kind === 'suspend') &&
+      c.controlSequence !== undefined
+    )
+      this.controlSequences.set(
+        c.taskId,
+        Math.max(c.controlSequence, this.controlSequences.get(c.taskId) ?? 0),
+      );
+    return result;
   }
 }

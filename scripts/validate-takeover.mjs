@@ -22,18 +22,21 @@ for (const [file, hash] of Object.entries(manifest.hashes))
   assert.equal(createHash('sha256').update(fs.readFileSync(path.join(built, file))).digest('hex'), hash);
 const maximum = { effects: 24, inputs: 160, models: 64, tasks: 12 };
 const carryName = process.argv.find((arg) => arg.startsWith('--carry='))?.slice(8);
+const repairOf = process.argv.find((arg) => arg.startsWith('--repair-of='))?.slice(12);
+assert(repairOf === undefined || (carryName && /^[0-9a-f]{64}$/.test(repairOf)), 'INVALID_REPAIR_LINEAGE');
 let carry;
 if (carryName !== undefined) {
   assert(/^[a-z0-9-]{1,40}$/.test(carryName) && carryName !== round, 'INVALID_CARRY_ROUND');
   const priorRoot = path.join(validationRoot, carryName);
   const prior = JSON.parse(fs.readFileSync(path.join(priorRoot, 'result.json')));
-  assert(prior.finished && prior.archive === manifest.hashes['Contents/Resources/app.asar'], 'CARRY_CANDIDATE_NOT_FINISHED');
+  const repaired = repairOf === prior.archive && Number.isSafeInteger(prior.build) && prior.build < build && Boolean(prior.controlFailure || prior.failure || prior.fixtureFailure);
+  assert(prior.finished && (prior.archive === manifest.hashes['Contents/Resources/app.asar'] || repaired), 'CARRY_CANDIDATE_NOT_FINISHED');
   const normalExit = prior.exitCode === 0 && Array.isArray(prior.survivors) && prior.survivors.length === 0;
   const checkedCleanup = typeof prior.postCleanup?.checkedAt === 'string' && Array.isArray(prior.postCleanup.survivors) && prior.postCleanup.survivors.length === 0;
   assert(normalExit || checkedCleanup, 'CARRY_CANDIDATE_NOT_STOPPED');
   // 缺少发送前预留的旧记录不能凭成功返回的 ID 数推定没有回执不明的创建。
   assert(Number.isSafeInteger(prior.taskAttempts) && prior.taskAttempts >= 0, 'CARRY_TASK_ATTEMPTS_REQUIRED');
-  carry = { round: carryName, counts: {} };
+  carry = { round: carryName, counts: {}, ...(repaired ? {repair:{build:prior.build,archive:prior.archive}} : {}) };
   for (const kind of Object.keys(maximum)) {
     const used = (prior.carry?.counts[kind] ?? 0) + (kind === 'tasks' ? prior.taskAttempts : prior[kind].length);
     assert(Number.isSafeInteger(used) && used >= 0 && used <= maximum[kind], 'INVALID_CARRY_COUNTS');
@@ -130,13 +133,18 @@ async function body(req) {
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, 'http://127.0.0.1');
+    if (req.method === 'GET' && url.pathname === '/clock') {
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({at:Date.now()})); return;
+    }
     const match = url.pathname.match(/^\/page\/([A-Z])$/);
     if (req.method === 'GET' && match) {
       const name = match[1];
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.end(`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>04 任务 ${name}</title><style>body{font:20px -apple-system;padding:36px;color:#244135;background:#f4f8f5}button,input,a{font:inherit;padding:12px;margin:10px 0;display:block}input{width:400px}iframe{height:120px;width:440px}</style><h1>04 任务 ${name}</h1><p id="progress">${name} 自动完成 0</p><button id="advance">自动推进 ${name}</button><button id="manual">手动接管 ${name}</button><input aria-label="人工文字" placeholder="接管后文字应保留"><button id="frame">加载子页面 ${name}</button><a id="popup" href="/popup/${name}" target="_blank">打开所属弹窗 ${name}</a><div id="slot"></div><p>本机虚构页面；不使用真实网站、账号或模型。</p><script>
       let count=0;const name=${JSON.stringify(name)};
-      const send=(route,data)=>fetch(route,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,...data})});
+      const clock=(async()=>{const sent=performance.timeOrigin+performance.now();const response=await fetch('/clock');const value=await response.json();return{sent,server:value.at,received:performance.timeOrigin+performance.now()};})();
+      const send=async(route,data)=>{const clientAt=performance.timeOrigin+performance.now();return fetch(route,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,clientAt,...data,clock:await clock})});};
       for(const kind of ['mousedown','keydown','beforeinput','input','paste'])document.addEventListener(kind,e=>{if(e.target.id!=='advance')send('/input',{kind,target:e.target.id||e.target.tagName,trusted:e.isTrusted,clientAt:performance.timeOrigin+performance.now(),value:document.querySelector('input').value});},true);
       document.querySelector('#advance').onclick=()=>{count++;document.querySelector('#progress').textContent=name+' 自动完成 '+count;send('/effect',{count})};
       document.querySelector('#frame').onclick=()=>{document.querySelector('#slot').innerHTML='<iframe title="任务子页面" src="/frame/'+name+'"></iframe>'};
@@ -293,7 +301,7 @@ poll = setInterval(async () => {
       if (job.defer) {
         assert(typeof job.defer === 'string' && /^[a-z0-9-]{1,40}$/.test(job.defer) && !evidence.deferred[job.defer], 'NEW_DEFERRED_REQUIRED');
         assert(command.kind === 'execution-intent', 'DEFERRED_INTENT_ONLY');
-        assert(job.allowError === undefined || job.allowError === 'INPUT_CHANGED_DURING_CONTINUE', 'INVALID_EXPECTED_ERROR');
+        assert(job.allowError === undefined || ['INPUT_CHANGED_DURING_CONTINUE', 'RECORD_VERSION_CONFLICT'].includes(job.allowError), 'INVALID_EXPECTED_ERROR');
         const receipt = evidence.deferred[job.defer] = { command, sentAt: Date.now(), allowError: job.allowError }; save();
         void request(command, null).then((result) => { Object.assign(receipt, { finishedAt: Date.now(), result }); save(); }, (error) => {
           Object.assign(receipt, { finishedAt: Date.now(), error: error.message }); save();
