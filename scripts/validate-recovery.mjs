@@ -68,15 +68,16 @@ const check=(name,condition)=>{assert(condition,name);report.checks.push(name);s
 const counts=quitFollowup?{...previous.counts}:{A:0,B:0,C:0},heldModels=[];
 let holdA=true,holdC=true,current,failed;
 const deadline=Date.now()+report.limits.minutes*60000;
-async function until(fn,ms=15000){const end=Math.min(deadline,Date.now()+ms);while(Date.now()<end){if(failed)throw Error(failed);if(await fn())return;await new Promise(r=>setTimeout(r,40));}throw Error('RECOVERY_WAIT_EXPIRED');}
-function modelReply(res,value){nextStepSchema.parse(value);res.writeHead(200,{'Content-Type':'text/event-stream'});res.write('data: '+JSON.stringify({id:'fixture05',choices:[{index:0,delta:{content:JSON.stringify(value)},finish_reason:null}]})+'\n\n');res.end('data: '+JSON.stringify({id:'fixture05',choices:[{index:0,delta:{},finish_reason:'stop'}],usage:{prompt_tokens:1,completion_tokens:1,total_tokens:2}})+'\n\ndata: [DONE]\n\n');}
+async function until(fn,ms=60000,cleanup=false){const end=cleanup?Date.now()+ms:Math.min(deadline,Date.now()+ms);while(Date.now()<end){if(failed&&!cleanup)throw Error(failed);if(await fn())return;await new Promise(r=>setTimeout(r,40));}throw Error('RECOVERY_WAIT_EXPIRED');}
+function fixtureWork(){if(Date.now()>=deadline){failed??='ROUND_TIME_LIMIT';throw Error('ROUND_TIME_LIMIT');}}
+function modelReply(res,value){fixtureWork();nextStepSchema.parse(value);res.writeHead(200,{'Content-Type':'text/event-stream'});res.write('data: '+JSON.stringify({id:'fixture05',choices:[{index:0,delta:{content:JSON.stringify(value)},finish_reason:null}]})+'\n\n');res.end('data: '+JSON.stringify({id:'fixture05',choices:[{index:0,delta:{},finish_reason:'stop'}],usage:{prompt_tokens:1,completion_tokens:1,total_tokens:2}})+'\n\ndata: [DONE]\n\n');}
 async function body(req){let value='';for await(const chunk of req){value+=chunk;assert(value.length<200000,'FIXTURE_REQUEST_TOO_LARGE');}return JSON.parse(value);}
 const server=http.createServer(async(req,res)=>{try{
  const url=new URL(req.url,'http://127.0.0.1');const page=url.pathname.match(/^\/page\/([ABC])$/),effect=url.pathname.match(/^\/effect\/([ABC])$/);
  if(req.method==='GET'&&page){const name=page[1];res.setHeader('Content-Type','text/html; charset=utf-8');res.end(`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>05 ${name} 记录</title><style>body{font:20px -apple-system;padding:40px;color:#244135;background:#f4f8f5}button{font:inherit;padding:12px}</style><h1>05 ${name} 记录</h1><p>本次目标 ${name}-05</p><p id="count">${name} 写入 ${counts[name]} 次</p><button onclick="fetch('/effect/${name}',{method:'POST'}).then(r=>r.json()).then(r=>document.querySelector('#count').textContent='${name} 写入 '+r.count+' 次')">写入备注 ${name}</button><p>本机虚构记录，仅核对生命周期和重复操作。</p></html>`);return;}
- if(req.method==='POST'&&effect){const name=effect[1];counts[name]++;report.effects.push({name,count:counts[name],at:Date.now()});save();assert(report.effects.length<=report.limits.effects,'EFFECT_LIMIT');res.setHeader('Content-Type','application/json');res.end(JSON.stringify({count:counts[name]}));return;}
+ if(req.method==='POST'&&effect){fixtureWork();const name=effect[1];counts[name]++;report.effects.push({name,count:counts[name],at:Date.now()});save();assert(report.effects.length<=report.limits.effects,'EFFECT_LIMIT');res.setHeader('Content-Type','application/json');res.end(JSON.stringify({count:counts[name]}));return;}
  if(req.method==='POST'&&url.pathname==='/v1/chat/completions'){
-  report.models.push({at:Date.now()});save();assert(report.models.length<=report.limits.models,'MODEL_LIMIT');const input=await body(req);
+  fixtureWork();report.models.push({at:Date.now()});save();assert(report.models.length<=report.limits.models,'MODEL_LIMIT');const input=await body(req);fixtureWork();
   const plan=input.messages.map(m=>{try{return JSON.parse(m.content);}catch{return null;}}).find(m=>m?.goal);
   const name=plan?.goal.match(/05 ([ABC])/)?.[1];assert(name,'PLAN_REQUIRED');if(quitFollowup)assert.equal(name,'C','ONLY_REMAINING_TASK_ALLOWED');
   const text=input.messages.filter(m=>m.role==='user').map(m=>m.content).join('\n');const count=Number(text.match(new RegExp(name+' 写入 (\\d+) 次'))?.[1]);assert(Number.isSafeInteger(count),'OBSERVATION_REQUIRED');
@@ -94,7 +95,7 @@ function descendants(rootPid){const rows=processRows();const found=new Set([root
 function snapshotProcesses(app){for(const pid of descendants(app.child.pid))app.pids.add(pid);const rows=processRows().filter(([pid])=>app.pids.has(pid));for(const [,,group]of rows)if(app.pids.has(group))app.groups.add(group);Object.assign(report.starts.find(row=>row.pid===app.child.pid),{pids:[...app.pids],groups:[...app.groups],tree:rows,inheritedGroups:[...new Set(rows.map(row=>row[2]).filter(group=>!app.pids.has(group)))]});save();}
 const groupMembers=app=>processRows().filter(([,,group])=>app.groups.has(group));
 async function start({holdRecovery=false,duplicate=false}={}){
- assert(report.starts.length<report.limits.starts,'START_LIMIT');const used=spend('starts');
+ assert(Date.now()<deadline,'ROUND_TIME_LIMIT');assert(report.starts.length<report.limits.starts,'START_LIMIT');const used=spend('starts');
  const child=spawn(path.join(manifest.app,'Contents/MacOS/helpr'),['--workspace-validation','--workspace-fixture'],{env:{...env,HELPR_VALIDATION_DATA:profile,HELPR_FIXTURE_ORIGIN:origin,...(holdRecovery?{HELPR_VALIDATION_HOLD_RECOVERY:'1'}:{})},stdio:['ignore','ignore',fs.openSync(path.join(root,`stderr-${used.used.starts}.log`),'a',0o600),'ipc']});
  const app={child,pids:new Set([child.pid]),groups:new Set(),messages:[],pending:new Map(),sequence:0,ready:null,exit:null};
  report.starts.push({start:used.used.starts,pid:child.pid,duplicate,at:Date.now()});save();
@@ -103,14 +104,14 @@ async function start({holdRecovery=false,duplicate=false}={}){
  if(duplicate){await until(()=>{snapshotProcesses(app);return app.exit;});await gone(app);check('competing-start-exits-without-new-owner',app.exit.code===0&&!app.ready);return app;}
  current=app;await until(()=>app.ready||app.exit);assert(app.ready&&!app.exit,'APPLICATION_NOT_READY');snapshotProcesses(app);return app;
 }
-function rpc(app,command){if(command.kind!=='validation-barrier')uiCommandSchema.parse(command);assert(app.child.connected,'NO_APPLICATION_CHANNEL');return new Promise((resolve,reject)=>{const id=++app.sequence;const timer=setTimeout(()=>{app.pending.delete(id);reject(Error('RPC_TIMEOUT'));},12000);app.pending.set(id,{resolve,reject,timer,commandKind:command.kind});app.child.send({id,command});});}
+function rpc(app,command){if(command.kind!=='quit'&&Date.now()>=deadline)throw Error('ROUND_TIME_LIMIT');if(command.kind!=='validation-barrier')uiCommandSchema.parse(command);assert(app.child.connected,'NO_APPLICATION_CHANNEL');return new Promise((resolve,reject)=>{const id=++app.sequence;const timer=setTimeout(()=>{app.pending.delete(id);reject(Error('RPC_TIMEOUT'));},command.kind==='quit'?45000:Math.min(45000,Math.max(1,deadline-Date.now())));app.pending.set(id,{resolve,reject,timer,commandKind:command.kind});app.child.send({id,command});});}
 const snapshot=app=>rpc(app,commands.snapshot());
 async function configure(app){await rpc(app,commands.configure(await snapshot(app)));}
 async function create(app,name){assert(report.tasks.length<report.limits.tasks,'TASK_LIMIT');report.tasks.push({name,attempt:true});save();const result=await rpc(app,commands.create(name));Object.assign(report.tasks.at(-1),{id:result.taskId});save();await until(async()=>(await snapshot(app)).tasks.find(t=>t.id===result.taskId)?.phase==='manual');return result.taskId;}
 const intent=(app,taskId,value)=>rpc(app,commands.intent(taskId,value));
 async function barrier(app){await until(async()=>{const s=await rpc(app,{kind:'validation-barrier',control:{action:'status'}});return s.waits.some(w=>w.key==='recovery:*'&&w.reached);});await configure(app);await rpc(app,{kind:'validation-barrier',control:{action:'release',point:'recovery',taskId:'*'}});}
-async function gone(app){await until(()=>app.exit,10000);await until(()=>[...app.pids].every(pid=>!alive(pid))&&groupMembers(app).length===0,8000);const remaining=groupMembers(app);Object.assign(report.starts.find(row=>row.pid===app.child.pid),{exit:app.exit,remaining});check('owned-tree-cleared-'+app.child.pid,[...app.pids].every(pid=>!alive(pid))&&remaining.length===0);}
-async function quit(app){snapshotProcesses(app);await rpc(app,commands.quit()).catch(error=>{if(error.message!=='APPLICATION_EXITED')throw error;});await gone(app);assert.equal(app.exit.code,0,'NORMAL_EXIT_REQUIRED');}
+async function gone(app,cleanup=false){await until(()=>app.exit,10000,cleanup);await until(()=>[...app.pids].every(pid=>!alive(pid))&&groupMembers(app).length===0,8000,cleanup);const remaining=groupMembers(app);Object.assign(report.starts.find(row=>row.pid===app.child.pid),{exit:app.exit,remaining});check('owned-tree-cleared-'+app.child.pid,[...app.pids].every(pid=>!alive(pid))&&remaining.length===0);app.cleared=true;}
+async function quit(app,cleanup=true){snapshotProcesses(app);await rpc(app,commands.quit()).catch(error=>{if(error.message!=='APPLICATION_EXITED')throw error;});await gone(app,cleanup);assert.equal(app.exit.code,0,'NORMAL_EXIT_REQUIRED');}
 function fault(pid,signal,label){assert(report.faults.length<report.limits.faults,'FAULT_LIMIT');spend('faults');report.faults.push({pid,signal,label,at:Date.now()});save();process.kill(pid,signal);}
 try{
  if(quitFollowup){
@@ -145,10 +146,10 @@ try{
  console.log('05 final reopen: resume only undispatched remainder');
  const fourth=await start({holdRecovery:true});await barrier(fourth);await until(async()=>(await snapshot(fourth)).tasks.find(t=>t.id===c)?.execution?.phase==='complete');capture('final',await snapshot(fourth));check('only-remaining-work-written-once',counts.A===1&&counts.B===0&&counts.C===1);await quit(fourth);
  }
- report.passed=true;
+ fixtureWork();report.passed=true;
 }catch(error){report.passed=false;report.error=error.message;report.failedCommand=error.commandKind;process.exitCode=1;}
 finally{
- if(current&&!current.exit){try{await quit(current);}catch(error){report.quitFailure=error.message;}}
+ if(current&&!current.cleared){try{if(current.exit)await gone(current,true);else await quit(current,true);}catch(error){report.quitFailure=error.message;}}
  if(current){const left=[...current.pids].filter(alive);if(left.length){spend('cleanups');report.cleanup={pids:left};for(const pid of left.reverse())if(alive(pid))process.kill(pid,'SIGKILL');const cleanupDeadline=Date.now()+5000;while(left.some(alive)&&Date.now()<cleanupDeadline)await new Promise(r=>setTimeout(r,40));report.cleanup.remaining=left.filter(alive);}}
  for(const item of heldModels)if(!item.res.destroyed)item.res.destroy();server.closeAllConnections();await new Promise(r=>server.close(r));
  report.finished=new Date().toISOString();report.counts=counts;report.cumulative={models:(carry?.models??0)+report.models.length,effects:(carry?.effects??0)+report.effects.length,tasks:(carry?.tasks??0)+report.tasks.length,faults:(carry?.faults??0)+report.faults.length};report.global=JSON.parse(fs.readFileSync(path.join(validationRoot,'budget.json'))).used;save();

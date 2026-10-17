@@ -12,7 +12,7 @@ import { fixture } from './workspace-fixture.mjs';
 let registry;
 try {
   registry = execFileSync('/usr/sbin/ioreg', ['-l', '-w', '0'], {
-    encoding: 'utf8', timeout: 8000, maxBuffer: 16 * 1024 * 1024,
+    encoding: 'utf8', timeout: process.argv.includes('--preflight') ? 60000 : 8000, maxBuffer: 16 * 1024 * 1024,
   });
 } catch { throw Error('MAC_SESSION_UNAVAILABLE'); }
 if (/"CGSSessionScreenIsLocked"\s*=\s*Yes/.test(registry)) throw Error('MAC_SCREEN_LOCKED');
