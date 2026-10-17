@@ -84,7 +84,8 @@ try{
   const stopped=await wait(s=>['Y','Z'].every(n=>execution(s,n).phase==='paused'&&['page-change','native-unavailable'].includes(execution(s,n).pauseReason)&&s.gates[n].epoch>active.gates[n].epoch&&s.gates[n].blocked));
   assert(['Y','Z'].every(n=>execution(stopped,n).intent==='automatic'),'DISCONNECT_MUST_PRESERVE_INTENT');
   report.disconnectReasons=Object.fromEntries(['Y','Z'].map(n=>[n,execution(stopped,n).pauseReason]));save();
-  await control({kind:'check',label:'disconnect-revokes-both-live-tasks',phases:{Y:'paused',Z:'paused'},reasons:report.disconnectReasons,intents:{Y:'automatic',Z:'automatic'},effects:{Y:[1],Z:[1]}});
+  // 暂停原因可被后到的能力事件更新；真实原因留在各次快照，不锁定某一毫秒的值。
+  await control({kind:'check',label:'disconnect-revokes-both-live-tasks',phases:{Y:'paused',Z:'paused'},intents:{Y:'automatic',Z:'automatic'},effects:{Y:[1],Z:[1]}});
   await checkpoint('both-paused-after-control-disconnect');
   await control({kind:'release',names:['Y','Z']});
   await control({name:'Y',defer:'disconnected-continue',allowError:'CONTROL_DISCONNECTED',command:{kind:'execution-intent',intent:'continue',requestId:randomUUID()}});
