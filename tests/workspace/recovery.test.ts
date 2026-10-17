@@ -656,9 +656,13 @@ test('新目标保存未提交时记录重连仍阻断旧目标，不能因旧�
   }
 });
 
-test.each(['draft', 'page'] as const)(
-  '%s 保存失败后重连，重试成功即可退出，冷重开仍保持暂停',
-  async (kind) => {
+test.each([
+  { kind: 'draft', failedStop: false },
+  { kind: 'page', failedStop: false },
+  { kind: 'draft', failedStop: true },
+] as const)(
+  '$kind 保存失败后重连及冷重开，未保存停止=$failedStop',
+  async ({ kind, failedStop }) => {
     const dir = folder();
     let records = new WorkspaceRecords(dir, 'app/records/migrations');
     const a = task(records, 'A');
@@ -683,9 +687,13 @@ test.each(['draft', 'page'] as const)(
         state = next;
       },
     );
+    let rejectStop = failedStop;
     const createService = () =>
       new ExecutionService({
-        records: (command) => Promise.resolve(records.execution(command)),
+        records: (command) =>
+          rejectStop
+            ? Promise.reject(Error('PROCESS_DISCONNECTED'))
+            : Promise.resolve(records.execution(command)),
         current: () => state,
         publish: (next) => {
           state = next;
@@ -712,6 +720,16 @@ test.each(['draft', 'page'] as const)(
         await expect(workspace.save(command(taskId))).rejects.toThrow(
           'PROCESS_DISCONNECTED',
         );
+      if (failedStop)
+        await expect(
+          service.intent({
+            kind: 'execution-intent',
+            taskId: a,
+            requestId: 'failed-stop',
+            intent: 'stop',
+          }),
+        ).rejects.toThrow('PROCESS_DISCONNECTED');
+      rejectStop = false;
       await service.recordsRestored(state, workspace.unresolvedTasks());
       expect(service.canExit()).toBe(false);
       disconnected = false;
@@ -721,10 +739,23 @@ test.each(['draft', 'page'] as const)(
       }
       await service.settled();
       expect(workspace.canExit()).toBe(true);
+      if (failedStop) {
+        expect(service.canExit()).toBe(false);
+        expect(
+          service.decorate(state).tasks.find((t) => t.id === a)
+            ?.executionControl?.stopSaved,
+        ).toBe(false);
+        await service.intent({
+          kind: 'execution-intent',
+          taskId: a,
+          requestId: 'failed-stop',
+          intent: 'stop',
+        });
+      }
       expect(service.canExit()).toBe(true);
       expect(
         records.snapshot().tasks.find((t) => t.id === a)?.execution,
-      ).toMatchObject({ phase: 'paused' });
+      ).toMatchObject({ phase: failedStop ? 'stopped' : 'paused' });
       expect(
         service.decorate(state).tasks.map((t) => t.executionControl),
       ).toMatchObject([
@@ -740,7 +771,7 @@ test.each(['draft', 'page'] as const)(
       await restarted.settled();
       expect(observations).toBe(0);
       expect(state.tasks.find((t) => t.id === a)?.execution?.phase).toBe(
-        'paused',
+        failedStop ? 'stopped' : 'paused',
       );
       restarted.disable();
     } finally {

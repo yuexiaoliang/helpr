@@ -48,12 +48,14 @@ const server=http.createServer(async(req,res)=>{try{
 await new Promise(r=>server.listen(0,'127.0.0.1',r));const origin=`http://127.0.0.1:${server.address().port}`;
 const env=Object.fromEntries(['HOME','PATH','TMPDIR','LANG'].filter(k=>process.env[k]).map(k=>[k,process.env[k]]));
 const alive=pid=>{try{process.kill(pid,0);return true;}catch{return false;}};
-function descendants(rootPid){const rows=execFileSync('/bin/ps',['-axo','pid=,ppid='],{encoding:'utf8'}).trim().split('\n').map(row=>row.trim().split(/\s+/).map(Number));const found=new Set([rootPid]);let change=true;while(change){change=false;for(const [pid,parent]of rows)if(found.has(parent)&&!found.has(pid)){found.add(pid);change=true;}}return [...found];}
-function snapshotProcesses(app){for(const pid of descendants(app.child.pid))app.pids.add(pid);report.starts.find(row=>row.pid===app.child.pid).pids=[...app.pids];save();}
+function processRows(){return execFileSync('/bin/ps',['-axo','pid=,ppid=,pgid='],{encoding:'utf8'}).trim().split('\n').map(row=>row.trim().split(/\s+/).map(Number));}
+function descendants(rootPid){const rows=processRows();const found=new Set([rootPid]);let change=true;while(change){change=false;for(const [pid,parent]of rows)if(found.has(parent)&&!found.has(pid)){found.add(pid);change=true;}}return [...found];}
+function snapshotProcesses(app){for(const pid of descendants(app.child.pid))app.pids.add(pid);const rows=processRows().filter(([pid])=>app.pids.has(pid));for(const [,,group]of rows){assert(app.pids.has(group),'UNOWNED_PROCESS_GROUP');app.groups.add(group);}Object.assign(report.starts.find(row=>row.pid===app.child.pid),{pids:[...app.pids],groups:[...app.groups],tree:rows});save();}
+const groupMembers=app=>processRows().filter(([,,group])=>app.groups.has(group));
 async function start({holdRecovery=false,duplicate=false}={}){
  assert(report.starts.length<report.limits.starts,'START_LIMIT');const used=spend('starts');
  const child=spawn(path.join(manifest.app,'Contents/MacOS/helpr'),['--workspace-validation','--workspace-fixture'],{env:{...env,HELPR_VALIDATION_DATA:profile,HELPR_FIXTURE_ORIGIN:origin,...(holdRecovery?{HELPR_VALIDATION_HOLD_RECOVERY:'1'}:{})},stdio:['ignore','ignore',fs.openSync(path.join(root,`stderr-${used.used.starts}.log`),'a',0o600),'ipc']});
- const app={child,pids:new Set([child.pid]),messages:[],pending:new Map(),sequence:0,ready:null,exit:null};
+ const app={child,pids:new Set([child.pid]),groups:new Set(),messages:[],pending:new Map(),sequence:0,ready:null,exit:null};
  report.starts.push({start:used.used.starts,pid:child.pid,duplicate,at:Date.now()});save();
  child.on('message',m=>{app.messages.push(m);if(m.ready)app.ready=m;const p=app.pending.get(m.id);if(p){clearTimeout(p.timer);app.pending.delete(m.id);m.error?p.reject(Error(m.error)):p.resolve(m.value);}});
  child.once('exit',(code,signal)=>{app.exit={code,signal};for(const p of app.pending.values()){clearTimeout(p.timer);p.reject(Error('APPLICATION_EXITED'));}app.pending.clear();});
@@ -66,7 +68,7 @@ async function configure(app){await rpc(app,{kind:'model-save',requestId:randomU
 async function create(app,name){assert(report.tasks.length<report.limits.tasks,'TASK_LIMIT');report.tasks.push({name,attempt:true});save();const result=await rpc(app,{kind:'create',requestId:randomUUID(),goal:`05 ${name} 写入一条核对备注并核对完成 ${origin}/page/${name}`});Object.assign(report.tasks.at(-1),{id:result.taskId});save();await until(async()=>(await snapshot(app)).tasks.find(t=>t.id===result.taskId)?.phase==='manual');return result.taskId;}
 const intent=(app,taskId,value)=>rpc(app,{kind:'execution-intent',taskId,requestId:randomUUID(),intent:value});
 async function barrier(app){await until(async()=>{const s=await rpc(app,{kind:'validation-barrier',control:{action:'status'}});return s.waits.some(w=>w.key==='recovery:*'&&w.reached);});await configure(app);await rpc(app,{kind:'validation-barrier',control:{action:'release',point:'recovery',taskId:'*'}});}
-async function gone(app){await until(()=>app.exit,10000);await until(()=>[...app.pids].every(pid=>!alive(pid)),8000);check('owned-tree-cleared-'+app.child.pid,[...app.pids].every(pid=>!alive(pid)));}
+async function gone(app){await until(()=>app.exit,10000);await until(()=>[...app.pids].every(pid=>!alive(pid))&&groupMembers(app).length===0,8000);const remaining=groupMembers(app);Object.assign(report.starts.find(row=>row.pid===app.child.pid),{exit:app.exit,remaining});check('owned-tree-cleared-'+app.child.pid,[...app.pids].every(pid=>!alive(pid))&&remaining.length===0);}
 async function quit(app){snapshotProcesses(app);await rpc(app,{kind:'quit'}).catch(error=>{if(error.message!=='APPLICATION_EXITED')throw error;});await gone(app);assert.equal(app.exit.code,0,'NORMAL_EXIT_REQUIRED');}
 function fault(pid,signal,label){assert(report.faults.length<report.limits.faults,'FAULT_LIMIT');spend('faults');report.faults.push({pid,signal,label,at:Date.now()});save();process.kill(pid,signal);}
 try{

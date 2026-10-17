@@ -685,7 +685,11 @@ export class ExecutionService {
       const e = this.ports
         .current()
         .tasks.find((t) => t.id === taskId)?.execution;
-      if (e && ['queued', 'checking', 'running'].includes(e.phase))
+      if (
+        e &&
+        this.blocked.get(taskId)?.saved !== false &&
+        ['queued', 'checking', 'running'].includes(e.phase)
+      )
         await this.suspend(taskId, 'record-unavailable', randomUUID());
     }
     this.publish();
