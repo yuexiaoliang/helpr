@@ -73,7 +73,9 @@ try{
   for(const name of ['Y','Z'])assert(active.gates[name].available&&!active.gates[name].blocked,'LIVE_ALLOWED_GATE_REQUIRED');
   await checkpoint('both-live-before-control-disconnect');
   await rpc('Y',{kind:'validation-fault',fault:'disconnect'});
-  const stopped=await wait(s=>['Y','Z'].every(n=>execution(s,n).phase==='paused'&&execution(s,n).pauseReason==='page-change'&&!s.gates[n].available&&s.gates[n].blocked));
+  // available 表示原生绑定能力；宿主发布暂停后的重新布局可以恢复它。
+  // 旧资格是否撤销由 epoch/blocked 判断，控制连接另由公开继续的错误核对。
+  const stopped=await wait(s=>['Y','Z'].every(n=>execution(s,n).phase==='paused'&&execution(s,n).pauseReason==='page-change'&&s.gates[n].epoch>active.gates[n].epoch&&s.gates[n].blocked));
   assert(['Y','Z'].every(n=>execution(stopped,n).intent==='automatic'),'DISCONNECT_MUST_PRESERVE_INTENT');
   await control({kind:'check',label:'disconnect-revokes-both-live-tasks',phases:{Y:'paused',Z:'paused'},reasons:{Y:'page-change',Z:'page-change'},intents:{Y:'automatic',Z:'automatic'},effects:{Y:[1],Z:[1]}});
   await checkpoint('both-paused-after-control-disconnect');
@@ -88,7 +90,9 @@ try{
   await control({kind:'check',label:'explicit-stop-after-disconnect-is-saved',phases:{Y:'stopped',Z:'paused'},intents:{Y:'stopped',Z:'automatic'},effects:{Y:[1],Z:[1]}});
   await checkpoint('disconnected-continue-refused-and-explicit-stop-saved');
   await finish();
-  assert(read().exitCode===0&&read().survivors.length===0,'NORMAL_EXIT_REQUIRED');
+  const result=read();
+  for(const key of ['controlFailure','fixtureFailure','failure','cleanupFailure','traceFailure'])assert(!result[key],`ROUND_FAILED:${key}:${result[key]}`);
+  assert(result.exitCode===0&&result.survivors.length===0,'NORMAL_EXIT_REQUIRED');
   report.finished=new Date().toISOString();save();console.log('LIFECYCLE_PASSED');
 }catch(error){
   report.failure=error.message;save();
