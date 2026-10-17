@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>helpr · 退出与冷重开恢复原型</title>
+<style>
+/* PROTOTYPE recovery-v1. Self-contained, in-memory simulation only. */
+*{box-sizing:border-box}[hidden]{display:none!important}:root{--ink:#293e34;--muted:#72836d;--green:#2b594b;--line:#dfe6dc;--soft:#f1f5ed;--amber:#91652b}body{margin:0;background:#f4f6f2;color:var(--ink);font:14px/1.65 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}button,input,textarea,select{font:inherit;color:inherit}button{cursor:pointer;background:white;border:1px solid var(--line);border-radius:8px;padding:7px 11px}button:hover:not(:disabled){background:#edf3e9}button:disabled{opacity:.45;cursor:default}button:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid #547d64;outline-offset:3px}button.primary{background:var(--green);color:white;border-color:var(--green)}button.icon{border:0;background:none;font-size:21px;padding:0 7px}.muted{color:var(--muted)}.tiny{font-size:11px}.row{display:flex;align-items:center;gap:10px}.grow{flex:1;min-width:0}h1,h2,h3,p{margin-top:0}h3{font-size:14px}textarea,select{width:100%;padding:9px;border:1px solid #d6e0d2;border-radius:8px;background:white}textarea{resize:vertical}.lab{min-height:38px;display:flex;align-items:center;gap:15px;padding:7px 18px;background:#263f33;color:#edf4eb;font-size:11px}.lab span{color:#c1d0ba}.lab button{margin-left:auto;color:white;border:0;background:none;padding:0;font-size:11px}
+#workspace{height:calc(100dvh - 38px);min-height:620px;display:flex;flex-direction:column;position:relative;background:white}.header{height:53px;flex:none;display:flex;align-items:stretch;background:#eaf0e9;padding:0 18px;gap:23px}.brand{align-self:center;font-size:24px;font-weight:780;color:var(--green);letter-spacing:-1px}.tabs{display:flex;align-items:flex-end;gap:9px;flex:1;min-width:0}.task-tab{height:44px;max-width:345px;min-width:230px;flex:1;border:0;border-radius:12px 12px 0 0;background:none;display:flex;align-items:center;gap:9px;text-align:left;padding:0 14px}.task-tab[aria-selected=true]{background:white}.tab-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}.site-icon{font:21px Georgia,serif;color:#4b7890;width:22px}.tab-status{margin-left:auto;font-size:11px;white-space:nowrap;color:#587650}.task-tab[data-held=true] .tab-status{color:var(--amber)}.header-note{font-size:11px;color:var(--muted);align-self:center;white-space:nowrap}.browserbar{height:35px;flex:none;display:flex;align-items:center;gap:14px;padding:0 20px;border-bottom:1px solid var(--line);font-size:11px;color:var(--muted)}.browserbar button{padding:0 7px;border:0;background:none;font-size:16px}.page{flex:1;min-height:0;overflow:auto;background:#f7f8f5}.web-main{padding:30px 32px 130px;max-width:1200px;margin:0 auto}.kicker{font-size:11px;color:var(--muted);letter-spacing:.7px}.web-main h1{font-size:25px;margin:4px 0 22px;letter-spacing:-.4px}.web-content{max-width:690px;margin-left:140px;margin-right:280px;min-width:350px}.paper{padding:24px;border:1px solid var(--line);border-radius:11px;background:white}.paper h2{font-size:20px;margin-bottom:7px}.pill{display:inline-block;border-radius:5px;padding:4px 8px;font-size:11px;background:#eef3e9;color:#52764a}.web-count{font-size:42px;font-weight:650;line-height:1.1;letter-spacing:-2px;margin:26px 0 6px}.web-count small{font-size:12px;color:var(--muted);letter-spacing:0;font-weight:400;margin-left:7px}.web-fact{padding:15px 0;border-top:1px solid var(--line);margin-top:20px;font-size:12px}.web-fact strong{display:block;font-size:13px;margin-bottom:5px}.paper label{display:block;font-size:12px;margin:16px 0 6px}.paper textarea{min-height:70px;font-size:12px}.web-note{font-size:11px;color:var(--muted);margin-top:12px}.web-overlay{position:absolute;inset:88px 0 0;background:#f3f6f0eb;z-index:2;display:grid;place-items:start center;padding:65px 25px 20px}.offline-card{width:390px;max-width:100%;background:white;border:1px solid var(--line);border-radius:15px;padding:28px;box-shadow:0 10px 30px #2b402512}.offline-card h2{font-size:23px;margin:12px 0}.offline-card p{font-size:12px;color:var(--muted)}.offline-card .row{flex-wrap:wrap;margin-top:18px}.round-icon{width:42px;height:42px;border-radius:12px;background:#edf3e7;display:grid;place-items:center;color:var(--green);font-size:23px}
+.chat{position:absolute;bottom:22px;right:20px;width:350px;border:1px solid #cedac8;border-radius:13px;background:white;box-shadow:0 9px 32px #2b402525;overflow:hidden;z-index:4}.chat-head{display:flex;gap:10px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}.avatar{height:29px;width:29px;border-radius:9px;background:#e9f0e4;display:grid;place-items:center;font-weight:600}.chat-head strong{font-size:12px;display:block}.chat-head small{font-size:10px;color:var(--muted)}.chat-head button{font-size:11px;border:0;padding:3px;background:none}.chat-status{padding:12px 14px;background:#f1f5ed;font-size:12px;min-height:76px}.chat-status strong{display:block}.chat-status.held{background:#faf4e8;color:#86632e}.feed{height:145px;overflow:auto;padding:14px;font-size:12px}.message{white-space:pre-wrap;overflow-wrap:anywhere;margin-bottom:13px}.message.user{background:#edf3e8;padding:8px 11px;border-radius:9px;margin-left:30px}.message small{display:block;font-size:10px;color:var(--muted)}.quick{padding:0 12px 11px;display:flex;gap:6px}.quick button{border-radius:17px;padding:4px 10px;font-size:11px}.compose{border-top:1px solid var(--line);padding:10px 12px}.compose textarea{border:0;height:48px;resize:none;font-size:12px;padding:4px}.compose .row{justify-content:space-between}.compose button{font-size:11px;padding:5px 11px}.chat-min{position:absolute;bottom:22px;right:20px;z-index:4;border-radius:25px;box-shadow:0 5px 20px #23382b20}.toast{position:absolute;z-index:8;top:100px;left:50%;transform:translateX(-50%);width:max-content;max-width:75%;background:#f0f5e9;border:1px solid #d1dfc8;border-radius:9px;padding:9px 14px;box-shadow:0 5px 18px #28482c17;font-size:12px}.preview{position:absolute;top:57px;z-index:9;width:300px;border:1px solid var(--line);background:white;border-radius:12px;padding:18px;box-shadow:0 12px 28px #243c2925;font-size:12px}.preview h3{margin:0}.preview p{margin:9px 0 0;color:var(--muted)}
+.guide-toggle{position:absolute;bottom:23px;left:20px;border:0;border-radius:25px;padding:11px 17px;background:#263f33;color:white;box-shadow:0 4px 16px #23382b25;z-index:12;font-size:12px}.guide{position:absolute;z-index:11;left:20px;bottom:77px;width:470px;max-width:calc(100% - 40px);max-height:calc(100% - 106px);overflow:auto;border:1px solid #d5e0cf;border-radius:14px;background:white;box-shadow:0 12px 40px #243c2927;padding:20px;scrollbar-width:thin}.guide h2{margin:4px 0 8px;font-size:22px;letter-spacing:-.5px}.intro{font-size:12px;color:var(--muted);margin-bottom:14px}.scenarios{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:14px 0}.scenarios button{font-size:10px;padding:7px 3px;white-space:nowrap}.scenarios button[aria-selected=true]{background:var(--green);color:white;border-color:var(--green)}.walk{padding:15px;border-radius:9px;background:#f1f5eb}.walk h3{margin:3px 0}.walk p{font-size:12px;color:var(--muted);margin:6px 0 12px}.walk button{font-size:12px;width:100%;text-align:left}.step-dots{display:flex;gap:4px;margin-bottom:11px}.step-dots i{height:3px;flex:1;background:#dce7d3}.step-dots i.done{background:#538165}.live-note{font-size:11px;margin-top:10px;color:#4c6b42;white-space:pre-wrap}.state-grid{margin:14px 0;font-size:11px}.state-row{display:grid;grid-template-columns:72px 1fr;gap:10px;background:#f6f7f1;border-radius:7px;padding:11px;margin-top:7px}.state-row b{color:#52734b;font-size:12px}.state-row span{overflow-wrap:anywhere}.state-row em{font-style:normal;color:var(--muted)}.events{font-size:11px;color:var(--muted);padding:11px;background:#f7f8f3;border-radius:7px}.events ol{padding-left:17px;margin:6px 0}.events li{margin:4px 0}.free{border-top:1px solid var(--line);margin-top:14px;padding-top:10px}.free summary{cursor:pointer;font-size:12px;font-weight:600}.free-group{margin-top:12px}.free-group strong{font-size:10px;display:block;color:var(--muted);margin-bottom:5px}.buttons{display:flex;gap:5px;flex-wrap:wrap}.buttons button,.free select{font-size:10px;padding:6px 8px}.free select{margin-top:6px}.footer{font-size:10px;color:var(--muted);margin:12px 0 0}.results{position:absolute;inset:100px 20px auto auto;width:350px;max-width:calc(100% - 40px);z-index:15;background:white;border:1px solid var(--line);border-radius:12px;padding:22px;box-shadow:0 12px 40px #243c2927;font-size:12px}.results h3{margin:0}.result-body{margin-top:15px}.result-body p{margin-bottom:12px}
+@media(min-width:1450px){.web-content{margin-left:210px}}@media(max-width:1100px){.guide{width:435px}.web-content{margin-left:60px}.web-main{padding:25px 20px}.header-note{display:none}.header{gap:12px}.task-tab{min-width:200px}.chat{width:325px}.guide h2{font-size:21px}.scenarios button{font-size:10px}}
+@media(max-width:800px){.lab span{display:none}.lab{height:38px}.header{padding:0 12px}.brand{font-size:21px}.tabs{overflow:auto}.task-tab{min-width:190px;padding:0 10px;gap:5px}.tab-title{font-size:12px}.tab-status{font-size:10px}.web-main{padding:23px 18px 480px}.web-content{margin:0;max-width:440px;min-width:0}.chat{width:315px;right:12px;bottom:16px}.feed{height:105px}.guide{width:420px;left:12px;bottom:73px;max-width:calc(100% - 24px);max-height:calc(100% - 93px)}.guide-toggle{left:12px;bottom:18px}.scenarios{grid-template-columns:repeat(5,1fr)}.offline-card{margin-left:0}.web-overlay{padding-top:45px}.toast{max-width:92%;font-size:11px}.browserbar{gap:8px;padding:0 12px}.browserbar span:last-child{display:none}}
+.web-main{max-width:none;padding:30px 390px 130px 60px}.web-content{margin:0;max-width:690px;min-width:0}.guiding .web-main{padding-left:520px}.guide{max-height:calc(100% - 175px)}
+@media(max-width:1100px){.web-main{padding-left:25px;padding-right:365px}.guiding .web-main{padding-left:480px}.paper{padding:18px}}
+@media(max-width:800px){.web-main,.guiding .web-main{padding:23px 18px 480px}.guide{max-height:calc(100% - 125px)}.web-content{max-width:440px}}
+</style>
+</head>
+<body>
+<div class="lab"><strong>PROTOTYPE · 05 / recovery-v1</strong><span>退出后，原来的工作如何回来？保存、进程与网页效果全部为内存模拟。</span><button id="open-guide">打开体验指南</button></div>
+<main id="workspace">
+<header class="header"><span class="brand">helpr</span><div id="tabs" class="tabs" role="tablist" aria-label="任务标签页"></div><span id="app-label" class="header-note"></span></header>
+<div class="browserbar"><button id="view-page" aria-label="只查看当前网页">↻</button><span id="url" class="grow"></span><span>模拟网页 · 可与本机记录不同</span><button id="quit-top">退出 helpr</button></div>
+<div class="page"><section class="web-main"><div class="kicker">工作记录 / 内存模拟网站</div><h1 id="page-title"></h1><div class="web-content"><article class="paper"><span id="web-target" class="pill"></span><h2 style="margin-top:18px">本次备注写入</h2><p class="muted tiny">网站侧实际发生的结果 · 原型观察窗口</p><div id="web-count" class="web-count"></div><div class="web-fact"><strong id="web-outcome"></strong><span id="web-detail"></span></div><label for="web-text">网页中的人工备注</label><textarea id="web-text" placeholder="可留下文字，体验接管后退出与重开"></textarea><p id="text-note" class="web-note"></p></article><p class="web-note">数字和网站均为虚构。此窗口让你看见模拟的实际效果；helpr 仍须经过自己的结果核对，不能直接用这个计数决定是否重发。</p></div></section></div>
+<div id="app-overlay" class="web-overlay" hidden><section class="offline-card"><div class="round-icon">↻</div><h2 id="overlay-title"></h2><p id="overlay-copy"></p><p class="tiny">下方按钮是原型的分步控制。正式应用自动完成保存、清理与启动核对，用户无需逐步操作。</p><div id="overlay-actions" class="row"></div></section></div>
+<div id="toast" class="toast" role="status" hidden></div>
+<aside id="chat" class="chat" aria-label="当前任务独立对话"><div class="chat-head"><span id="avatar" class="avatar">A</span><div class="grow"><strong id="chat-title"></strong><small>任务记录与对话 · 模拟回复</small></div><button id="stop">停止</button><button id="minimize" aria-label="收起对话">−</button></div><div id="chat-status" class="chat-status" aria-live="polite"></div><div id="feed" class="feed" role="log"></div><div class="quick"><button id="continue">继续</button><button id="result">查看记录</button></div><form id="compose" class="compose"><textarea id="draft" aria-label="任务对话" placeholder="可以说“继续”“停止”，或询问进度…"></textarea><div class="row"><small class="tiny muted">属于当前任务的独立对话</small><button class="primary" type="submit">发送</button></div></form></aside><button id="expand" class="chat-min" hidden>展开对话</button>
+<div id="preview" class="preview" hidden></div>
+<button id="guide-toggle" class="guide-toggle" aria-expanded="true">◇ 体验指南与演练</button>
+<aside id="guide" class="guide" aria-label="体验指南与完整状态"><div class="row"><small class="muted grow">RECOVERY · 05</small><button id="close-guide" class="icon" aria-label="关闭体验指南">×</button></div><h2>重开后，先认清原来的工作</h2><p class="intro">这份演示核对：怎样保留任务与原意图，怎样区分“还没做”和“可能已做”，以及什么时候能续做。按下方绿色按钮逐步体验；也可展开自由操作。</p><div id="scenarios" class="scenarios" role="tablist" aria-label="演练场景"></div><div class="walk"><div id="step-dots" class="step-dots"></div><h3 id="walk-title"></h3><p id="walk-copy"></p><button id="walk-next" class="primary"></button><div id="walk-note" class="live-note" aria-live="polite"></div></div><div id="state-grid" class="state-grid"></div><div class="events"><strong>最近发生了什么 · 模拟次序</strong><ol id="events"></ol></div>
+<details id="free" class="free"><summary>自由操作 · 对当前选中的任务生效</summary><div class="free-group"><strong>应用与恢复</strong><div id="app-buttons" class="buttons"></div></div><div class="free-group"><strong>当前任务</strong><div id="task-buttons" class="buttons"></div></div><div class="free-group"><strong>中断位置与网站结果</strong><div id="effect-buttons" class="buttons"></div></div><div class="free-group"><strong>故障与模拟条件</strong><div id="fault-buttons" class="buttons"></div><label class="tiny" for="integrity">下次读取资料时</label><select id="integrity"><option value="ok">资料可读且相容</option><option value="missing">记录缺失</option><option value="damaged">记录损坏</option><option value="model">状态版本不兼容</option><option value="material">素材版本不匹配</option></select></div></details><p class="footer">指南、状态表、故障按钮和网站计数都是原型工具。重开仅模拟生命周期；刷新浏览器会重置全部演示。没有真实模型、数据库、进程清理、文件保存或网页请求。</p></aside>
+<aside id="results" class="results" hidden><div class="row"><h3 class="grow">当前任务记录</h3><button id="close-results" class="icon" aria-label="关闭任务记录">×</button></div><div id="result-body" class="result-body"></div></aside>
+</main>
+<script>
+// Portable pure state module. No DOM, network, persistence or real process operations.
+const RecoveryDemo=(()=>{
+ const task=(id,title)=>({id,title,intent:'automatic',savedIntent:'automatic',phase:'ready',checkpoint:'unsent',safe:true,version:1,target:1,webTarget:1,count:0,inFlight:false,applied:false,receipt:'none',evidence:'visible',page:true,bound:true,text:'',draft:'',collapsed:false,token:null,late:0,unsaved:false,history:[{role:'assistant',text:'准备写入一条核对备注。退出后会保留任务，重新打开时先核对进度。'}]});
+ const initial=()=>({active:'a',stage:'running',records:true,writeFail:false,integrity:'ok',isolated:true,loaded:true,generation:1,secondStarts:0,processes:{controller:'运行中',web:'运行中',worker:'运行中',records:'运行中'},tasks:{a:task('a','整理云杉项目资料'),b:task('b','核对海棠团队记录')},events:['演示开始：两项任务均有可信未派发检查点，尚无网页效果。'],note:'请选择场景，按绿色按钮逐步体验。',toast:'',lostStop:false});
+ const log=(s,text)=>{s.note=text;s.events.push(text);s.events=s.events.slice(-7);};
+ const say=(t,text,role='assistant')=>t.history.push({role,text});
+ const guard=s=>s.stage==='running'&&s.records&&!s.writeFail&&s.integrity==='ok'&&s.isolated&&s.loaded;
+ const writeable=(s,t)=>guard(s)&&t.intent==='automatic'&&t.phase==='ready'&&t.bound&&t.page;
+ const reason=t=>({stopped:'已停止，等你明确说“继续”。',takeover:'仍由你接管；重开不会把网页交回自动操作。',waiting:'仍在等待你补充原来的信息。',unknown:'输入归属尚待核对；重新登录不会自动恢复。'}[t.intent]||'先核对当前页面与本次结果。');
+ const act=(previous,a)=>{
+  const s=structuredClone(previous),t=s.tasks[a.task||s.active];s.toast='';
+  const needOnline=()=>{if(!['running','saving'].includes(s.stage)){log(s,'应用尚未就绪，没有接受新的执行指令。请先完成重开核对。');return false;}return true;};
+  const persistIntent=()=>{if(s.records&&!s.writeFail){t.savedIntent=t.intent;t.unsaved=false;}else t.unsaved=true;};
+  const failWrite=()=>log(s,'当前条件不允许派发；任务和网站效果没有改变。');
+  switch(a.type){
+   case 'select':s.active=a.task;log(s,`只查看任务 ${a.task.toUpperCase()}；原意图不变。`);break;
+   case 'draft':t.draft=a.text;break;
+   case 'collapse':t.collapsed=a.value;break;
+   case 'quit':
+    if(s.stage!=='running'){log(s,'应用正在退出或恢复，未重复发起退出。');break;}
+    s.stage='saving';log(s,'已先阻止新派发，正在保存任务与必要事实。退出不会把两项都改成“用户停止”。');break;
+   case 'saveExit':
+    if(s.stage!=='saving'){log(s,'请先选择“退出 helpr”。');break;}
+    if(!s.records||s.writeFail){log(s,'保存未成功，仍阻止新派发并保留当前现场；尚未宣称安全退出。');break;}
+    for(const x of Object.values(s.tasks)){x.savedIntent=x.intent;x.unsaved=false;}
+    s.stage='cleaning';log(s,'任务与必要事实已保存，接下来关闭自有网页、工作者和记录进程。');break;
+   case 'cleanup':
+    if(!['cleaning','offline','starting'].includes(s.stage)){log(s,'当前没有等待退出清理的旧进程。');break;}
+    for(const k of Object.keys(s.processes))s.processes[k]='已结束';
+    if(s.stage==='cleaning')s.stage='offline';
+    log(s,'模拟核对：旧自有进程均已结束。此前送到网站的请求仍可能产生效果。');break;
+   case 'crash':
+    if(s.stage==='offline'){log(s,'应用已经退出。');break;}
+    s.stage='offline';s.loaded=false;s.isolated=false;s.generation++;s.processes.controller='已结束';
+    for(const k of ['web','worker','records'])if(s.processes[k]!=='已结束')s.processes[k]='待清理';
+    for(const x of Object.values(s.tasks)){x.token=null;if(x.unsaved)s.lostStop=true;}
+    log(s,'控制拥有者意外退出，旧资格失效；仍需核对自有进程清理，不能凭退出通知认定完成。');break;
+   case 'open':
+    if(s.stage!=='offline'){s.secondStarts++;log(s,'另一启动请求已拦住：当前已有应用拥有者，不创建第二份执行。');break;}
+    s.stage='starting';s.generation++;s.isolated=false;s.loaded=false;
+    for(const x of Object.values(s.tasks)){x.token=null;x.intent=x.savedIntent;x.unsaved=false;if(x.checkpoint!=='done')x.phase='checking';}
+    log(s,s.lostStop?'已找到上次可靠保存的记录；此前未保存的停止不能保证跨重启保留，本轮自动操作先保持暂停。':'重新打开：先取得唯一拥有者并隔离旧执行，此时还不允许网页写入。');break;
+   case 'isolate':
+    if(s.stage!=='starting'){log(s,'当前不在启动核对阶段。');break;}
+    if(Object.values(s.processes).some(v=>v!=='已结束')){log(s,'旧自有进程尚未确认结束，不能解除隔离。PID 变化和超时都不算完成依据。');break;}
+    s.isolated=true;s.processes={controller:'新拥有者',web:'未重建',worker:'未派发',records:'读取中'};s.stage='reading';log(s,'旧控制已隔离，新拥有者唯一；接下来只读取可靠记录，不重放旧动作。');break;
+   case 'read':
+    if(s.stage!=='reading'){log(s,'尚未完成旧执行隔离，不能读取后直接执行。');break;}
+    s.loaded=true;s.records=true;s.processes.records='运行中';s.processes.web='现场核对中';s.processes.worker='未派发';s.stage='running';
+    for(const x of Object.values(s.tasks)){
+     if(s.integrity!=='ok'||s.lostStop){x.phase='blocked';continue;}
+     if(x.checkpoint==='done')x.phase='complete';else x.phase=x.intent==='automatic'?'checking':'paused';
+     if(!x.page)x.phase='needs-page';
+    }
+    log(s,s.integrity!=='ok'?'资料读取检查未通过：保留原资料，两项自动工作暂停，不从空白记录重建任务。':s.lostStop?'可靠记录已读取，但上次存在未保存意图，本轮两项保持暂停，请先核实。':'任务与原意图已恢复。活动任务待核对，停止、接管和待参与均保持；没有重发网页动作。');break;
+   case 'begin':
+    if(!guard(s)||s.lostStop){log(s,'当前记录或拥有者条件未就绪，只保留现场，不能开始恢复。');break;}
+    if(!t.page){t.phase='needs-page';log(s,'原网页现场不能安全重建，说明原因并等待参与，不生成空白可执行任务。');break;}
+    if(t.intent!=='automatic'){log(s,reason(t));break;}
+    if(t.phase==='complete'){log(s,'本任务已有核实结果，不重复恢复。');break;}
+    t.token={generation:s.generation,version:t.version,target:t.target};t.phase='checking';say(t,'正在只读核对本次目标、已发生的结果与未派发检查点。');log(s,`任务 ${t.id.toUpperCase()} 开始核对，此时没有网页写入。`);break;
+   case 'resolve':{
+    const token=t.token;
+    if(!token){log(s,'当前没有等待返回的核对。');break;}
+    t.token=null;
+    if(token.generation!==s.generation||token.version!==t.version||token.target!==t.target||t.intent!=='automatic'||!guard(s)||s.lostStop){t.late++;log(s,'旧核对返回，只保留历史观察；新的停止、目标或运行条件优先，没有推进执行。');break;}
+    if(t.count===1&&t.webTarget===t.target&&t.evidence==='visible'){t.phase='complete';t.checkpoint='done';t.receipt='saved';say(t,'已核对本次备注确实写入，记录完成；不会再写一次。');log(s,`任务 ${t.id.toUpperCase()} 核实完成，网站次数仍为 1。`);}
+    else if(t.safe&&t.checkpoint==='unsent'&&t.bound){t.phase='ready';say(t,'已核对现场与当前要求，并确认剩余动作尚未派发，可以续做剩余部分。');log(s,`任务 ${t.id.toUpperCase()} 核对通过，仅允许未做的剩余工作。`);}
+    else{t.phase='unknown';say(t,'现有证据无法确认本次操作是否完成。我会保留结果不明并只读核对，不把查不到当成没发生。');log(s,'结果仍不明，没有重发；“继续”也不能绕过这个未知。');}
+    break;}
+   case 'advance':{
+    const done=[];for(const x of Object.values(s.tasks))if(writeable(s,x)&&!s.lostStop&&x.safe&&x.checkpoint==='unsent'){
+     x.checkpoint='done';x.safe=false;x.count++;x.webTarget=x.target;x.applied=true;x.receipt='saved';x.phase='complete';say(x,'剩余备注已写入并核对完成。');done.push(x.id.toUpperCase());
+    }
+    log(s,done.length?`${done.join('、')} 仅执行可信未派发的剩余动作并核对完成；其它任务未改变。`:'没有合格的新动作：停止、等待、结果不明及退出中的任务都没有重发。');break;}
+   case 'advanceOne':
+    if(!writeable(s,t)||!t.safe||t.checkpoint!=='unsent'||s.lostStop){failWrite();break;}
+    t.count++;t.webTarget=t.target;t.applied=true;t.checkpoint='done';t.safe=false;t.receipt='saved';t.phase='complete';say(t,'本次备注已写入并核对完成。');log(s,`任务 ${t.id.toUpperCase()} 完成，独立网站计数 +1。`);break;
+   case 'reserve':
+    if(!writeable(s,t)||!['unsent','unreserved'].includes(t.checkpoint)||s.lostStop){failWrite();break;}
+    t.checkpoint='reserved';t.safe=false;log(s,'动作预留已可靠保存。预留本身不能证明恢复时一定尚未送出。');break;
+   case 'proveUnsent':
+    if(t.checkpoint!=='reserved'||!writeable(s,t)){log(s,'只有尚未派发且能核实的预留，才能保存可信未派发检查点。');break;}
+    t.checkpoint='unsent';t.safe=true;log(s,'已模拟保存可信未派发检查点；恢复仍须核对旧控制、现场与当前条件。');break;
+   case 'send':
+    if(!writeable(s,t)||!['reserved','unsent','unreserved'].includes(t.checkpoint)||s.lostStop){failWrite();break;}
+    t.checkpoint='possible';t.safe=false;t.inFlight=true;t.dispatchedTarget=t.target;t.phase='inflight';log(s,'动作可能已送出，本机尚无完成回执。没有成功记录不代表网站没收到。');break;
+   case 'effect':
+    if(!t.inFlight||t.applied){log(s,'没有新的在途请求；模拟网站没有再次产生效果。');break;}
+    t.count++;t.webTarget=t.dispatchedTarget;t.applied=true;t.inFlight=false;log(s,'网站实际效果 +1；本机仍未记完成。此效果可以在应用退出后到达。');break;
+   case 'receipt':
+    if(!guard(s)||s.lostStop||!t.applied){log(s,'回执暂不可登记；原事实保留，不据此重发。');break;}
+    if(t.intent!=='automatic'||t.webTarget!==t.target){t.late++;log(s,'旧动作回执仅登记历史观察，没有清除当前停止或改变目标。');break;}
+    t.checkpoint='done';t.receipt='saved';t.phase='complete';log(s,'已将本次效果核对记录为完成。');break;
+   case 'stop':
+    if(!needOnline())break;
+    if(t.phase==='complete'){log(s,'这项工作已经完成，保留原结果，没有新的自动动作需要停止。');break;}
+    t.intent='stopped';t.phase='paused';t.version++;persistIntent();say(t,t.unsaved?'已立即阻断；停止尚未可靠保存，不能保证跨重启保留。':'已停止。重新打开、查看或登录都不会自行继续。');log(s,t.unsaved?'先阻断，再保存失败：如实显示“停止尚未保存”，不承诺跨重开保留。':`任务 ${t.id.toUpperCase()} 明确停止并保存；另一个任务的意图不变。`);break;
+   case 'hold':
+    if(!needOnline())break;
+    t.intent=a.intent;t.phase='paused';t.version++;if(a.intent==='unknown')t.bound=false;persistIntent();say(t,reason(t));log(s,`任务 ${t.id.toUpperCase()} 的原意图已记为：${{takeover:'人工接管',waiting:'等待补充信息',unknown:'输入归属未知'}[t.intent]}。`);break;
+   case 'continue':
+    if(!needOnline())break;say(t,'继续','user');
+    if(!guard(s)||s.lostStop){say(t,'记录或运行条件尚未恢复，先保留当前状态。');log(s,'继续指令没有绕过记录与启动检查。');break;}
+    if(t.intent==='waiting'){say(t,'仍需补充原来的信息，单说“继续”不能代替回复。');log(s,'原参与请求仍等待回复，没有自动继续。');break;}
+    if(!t.bound||!t.page){say(t,'先核对当前网页归属及能否重建现场，再明确继续。');log(s,'页面条件尚未核实，没有派发。');break;}
+    if(t.phase==='complete'||t.checkpoint==='done'){say(t,'本次工作已经完成，保留结果，不重复写入。');log(s,'已有完成结果保持，没有重做。');break;}
+    t.intent='automatic';t.savedIntent='automatic';t.unsaved=false;t.version++;t.phase='checking';t.token={generation:s.generation,version:t.version,target:t.target};say(t,'已收到明确继续，先只读核对现有结果和剩余工作。');log(s,'仅当前任务明确继续，先核对，没有直接重发。');break;
+   case 'answer':
+    if(!needOnline()||t.intent!=='waiting'){log(s,'当前没有等待补充信息的请求。');break;}
+    if(!guard(s)){log(s,'记录尚不可用，未将回复冒充已保存。');break;}
+    t.intent='automatic';t.savedIntent='automatic';t.version++;t.phase='checking';t.token={generation:s.generation,version:t.version,target:t.target};say(t,'按原要求保留这段备注','user');say(t,'已保存对原请求的补充，先核对再续做。');log(s,'原参与回复已收到；不把重新登录当成回复。');break;
+   case 'view':log(s,'只查看或重新登录；当前意图、参与请求与暂停原因均不变。');break;
+   case 'rebind':
+    if(!guard(s)){log(s,'应用未就绪，尚不能核对页面归属。');break;}
+    t.bound=true;log(s,'当前页面归属已核对；停止和输入未知暂停仍保留，需对应任务明确继续。');break;
+   case 'target':
+    if(!needOnline())break;
+    if(!guard(s)){log(s,'记录不可用，未更改已保存目标。');break;}
+    t.target++;t.version++;t.safe=false;t.bound=false;if(t.intent!=='stopped'){t.intent='waiting';t.savedIntent='waiting';t.phase='paused';}say(t,'目标已改变，先补足新目标信息；旧结果不作为新目标完成依据。');log(s,'目标版本已改变，正在进行的旧核对已失去资格。');break;
+   case 'old':t.late++;log(s,'旧工作者回执已归为历史观察，没有恢复网页写入或覆盖新意图。');break;
+   case 'hideEvidence':t.evidence='hidden';log(s,'模拟网站无法提供可唯一关联的结果，已发生的效果仍保留。');break;
+   case 'showEvidence':t.evidence='visible';log(s,'模拟网站结果入口已可读，仍需再发起只读核对。');break;
+   case 'noPage':t.page=false;t.bound=false;if(s.stage==='running')t.phase='needs-page';log(s,'此网页现场不能安全重建，保留原任务与文字，不新建可执行空白任务。');break;
+   case 'restorePage':t.page=true;t.bound=true;log(s,'模拟条件：已找回同一现场；原暂停与意图保留，不自动续做。');break;
+   case 'recordsDown':
+    s.records=false;s.processes.records='已结束';for(const x of Object.values(s.tasks))if(x.intent==='automatic'&&x.phase!=='complete')x.phase='blocked';log(s,'独立记录进程退出，立即阻止依赖保存的新派发；网页现场保留。');break;
+   case 'recordsUp':
+    s.records=true;s.processes.records='运行中';for(const x of Object.values(s.tasks)){if(x.unsaved){x.savedIntent=x.intent;x.unsaved=false;}if(x.intent==='automatic'&&x.phase==='blocked')x.phase='checking';}
+    log(s,'记录服务恢复，重新核对可靠事实；原停止、接管和未知没有解除，活动任务仍需核对。');break;
+   case 'lostAck':
+    if(!guard(s)){log(s,'记录服务尚不可用，不能演示已提交回执丢失。');break;}
+    t.intent='stopped';t.savedIntent='stopped';t.phase='paused';t.version++;t.receipt='ack-lost';s.records=false;s.processes.records='已结束';say(t,'停止已提交，但回执丢失，当前继续阻断；恢复后核对可靠记录。');log(s,'模拟：停止事务已提交，随后记录进程退出且回执丢失。不得将“无回执”解释成“未提交”。');break;
+   case 'failSave':s.writeFail=true;log(s,'已模拟关键保存失败；后续自动派发被阻断。');break;
+   case 'restoreSave':
+    s.writeFail=false;for(const x of Object.values(s.tasks)){if(x.unsaved&&s.records){x.savedIntent=x.intent;x.unsaved=false;}}
+    log(s,'模拟存储恢复，尚在内存的停止可重新保存；原意图保持，恢复本身不派发动作。');break;
+   case 'integrity':s.integrity=a.value;log(s,'已更改模拟资料条件；下次读取时展示对应暂停，不修改或删除原资料。');break;
+   case 'text':
+    if(s.stage!=='running'||!t.page)break;
+    t.text=a.text;if(t.intent!=='stopped'){t.intent='takeover';t.phase='paused';t.version++;persistIntent();}log(s,'人工网页文字已保留，所属任务让出；冷重开能否还原真实网页文字仍须正式实现验证。');break;
+   case 'message':
+    if(!needOnline())break;t.draft='';
+    if(a.text.trim()==='停止')return act(s,{type:'stop',task:t.id});if(a.text.trim()==='继续')return act(s,{type:'continue',task:t.id});
+    say(t,a.text,'user');say(t,'已收到这项任务的对话。普通交流和查看不会改变原有执行意图。（模拟回复）');log(s,'普通对话已保留，网页执行状态不变。');break;
+  }
+  return s;
+ };
+ return {initial,act,reason};
+})();
+const $=id=>document.getElementById(id),esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const restart=[{type:'crash'},{type:'cleanup'},{type:'open'},{type:'isolate'},{type:'read'}];
+const scenarios=[
+ {name:'正常退出',title:'退出不是停止，重开先核对',copy:'B 已完成，A 还没写。退出时先保存和清理；重开后仅续做 A，B 不再写一次。',steps:[['先完成 B 的备注',[{type:'advanceOne',task:'b'}]],['退出 helpr：先拦住新派发',[{type:'quit'}]],['保存任务，再结束自有进程',[{type:'saveExit'},{type:'cleanup'}]],['重新打开，隔离旧执行',[{type:'open'},{type:'isolate'}]],['读取任务：A 待核对，B 已完成',[{type:'read'}]],['只读核对 A 的未做部分',[{type:'begin',task:'a'},{type:'resolve',task:'a'}]],['续做 A，B 的网站次数仍为 1',[{type:'advance'}]]]},
+ {name:'已做未记',title:'网站已完成，本机还不知道',copy:'中断落在效果发生与本机记账之间。核对找到唯一结果，就登记完成；缺回执不会导致再写一次。',steps:[['为 A 保存动作预留',[{type:'reserve',task:'a'}]],['动作送出，本机尚无回执',[{type:'send',task:'a'}]],['网站已写入，本机尚未记完成',[{type:'effect',task:'a'}]],['模拟意外退出、清理与冷重开',restart],['对 A 发起只读结果核对',[{type:'begin',task:'a'}]],['唯一结果匹配：补记完成',[{type:'resolve',task:'a'}]],['再推进：A 不会重复写入',[{type:'advance'}]]]},
+ {name:'结果不明',title:'应用退出，请求仍可能完成',copy:'请求已送出，退出后网站才完成，但结果入口无法可靠核对。A 保持未知，B 可以独立续做。',steps:[['A 送出动作，结果暂不可查',[{type:'reserve',task:'a'},{type:'send',task:'a'},{type:'hideEvidence',task:'a'}]],['拥有者意外退出并清理',[{type:'crash'},{type:'cleanup'}]],['退出后，网站才产生效果',[{type:'effect',task:'a'}]],['冷重开并读取记录',[{type:'open'},{type:'isolate'},{type:'read'}]],['A 核对仍不明，B 核对可续做',[{type:'begin',task:'a'},{type:'resolve',task:'a'},{type:'begin',task:'b'},{type:'resolve',task:'b'}]],['说继续也不绕过 A 的未知',[{type:'continue',task:'a'},{type:'resolve',task:'a'},{type:'advance'}]],['结果入口恢复，再核实 A 已完成',[{type:'showEvidence',task:'a'},{type:'begin',task:'a'},{type:'resolve',task:'a'}]]]},
+ {name:'停止接管',title:'重开后，A 仍停，B 仍由你接管',copy:'两个任务保留不同意图。查看、登录和重开都不能替代明确继续；只继续 A 不会带动 B。',steps:[['停止 A，在 B 留下接管文字',[{type:'stop',task:'a'},{type:'text',task:'b',text:'人工填写的备注，请保留'}]],['保存退出，随后重新打开',[{type:'quit'},{type:'saveExit'},{type:'cleanup'},{type:'open'},{type:'isolate'},{type:'read'}]],['查看、登录和推进都不解除暂停',[{type:'view'},{type:'advance'}]],['只在 A 明确说“继续”',[{type:'continue',task:'a'}]],['核对 A，再只续做 A',[{type:'resolve',task:'a'},{type:'advance'}]],['切到 B：接管与文字仍保留',[{type:'select',task:'b'}]]]},
+ {name:'等待参与',title:'登录恢复，不等于回答了原请求',copy:'A 在等信息，B 因输入归属未知暂停。重开后两者继续等待；补充 A 的信息和明确继续 B 分别生效。',steps:[['A 等信息，B 的输入归属未知',[{type:'hold',task:'a',intent:'waiting'},{type:'hold',task:'b',intent:'unknown'}]],['意外退出后冷重开',restart],['重新登录，再说继续 A',[{type:'view'},{type:'continue',task:'a'}]],['补充 A 原来等待的信息',[{type:'answer',task:'a'},{type:'resolve',task:'a'},{type:'advance'}]],['核对 B 的页面归属，不自行恢复',[{type:'select',task:'b'},{type:'rebind',task:'b'},{type:'advance'}]],['明确继续 B，再核对续做',[{type:'continue',task:'b'},{type:'resolve',task:'b'},{type:'advance'}]]]},
+ {name:'新的停止',title:'核对尚未回来，你又说了停止',copy:'A 的只读核对在途时，用户又停止 A。旧观察返回只留历史，不能覆盖新的停止；B 独立推进。也可自由操作中更改目标。',steps:[['冷重开，准备核对原活动任务',restart],['开始核对 A，暂不返回结果',[{type:'begin',task:'a'}]],['此时明确停止 A',[{type:'stop',task:'a'}]],['旧核对返回：不恢复 A',[{type:'resolve',task:'a'}]],['B 核对后续做，A 仍停',[{type:'begin',task:'b'},{type:'resolve',task:'b'},{type:'advance'}]]]},
+ {name:'预留边界',title:'仅有预留，不能推断尚未派发',copy:'A 只有动作预留；B 另有可信未派发检查点。即使网站计数都是零，恢复仍不能把 A 的缺结果解释成未发生。',steps:[['A 保存预留，B 保存未派发检查点',[{type:'reserve',task:'a'},{type:'reserve',task:'b'},{type:'proveUnsent',task:'b'}]],['在这个边界中断后重开',restart],['核对 A：证据不够，保持未知',[{type:'begin',task:'a'},{type:'resolve',task:'a'}]],['核对 B：未派发且条件匹配',[{type:'begin',task:'b'},{type:'resolve',task:'b'}]],['只续做 B，A 不盲目重发',[{type:'advance'}]]]},
+ {name:'记录故障',title:'记录服务回来，不会自行解除停止',copy:'先体验独立记录进程退出，再体验“停止已提交，但回执丢失”。恢复读取可靠事实，不依据回执缺失重做。',steps:[['记录进程单独退出',[{type:'recordsDown'}]],['尝试推进：依赖保存的动作受阻',[{type:'advance'}]],['恢复记录，重新核对 A',[{type:'recordsUp'},{type:'begin',task:'a'},{type:'resolve',task:'a'}]],['A 的停止已提交，但回执丢失',[{type:'lostAck',task:'a'}]],['记录恢复，再收到旧动作回执',[{type:'recordsUp'},{type:'old',task:'a'},{type:'advance'}]],['冷重开：A 仍按可靠停止保留',restart]]},
+ {name:'资料异常',title:'资料有问题，保留原件并说明',copy:'先模拟版本不兼容。自由操作可切换记录缺失、损坏或素材不符，也可模拟网页现场无法安全重建。',steps:[['设置为状态版本不兼容',[{type:'integrity',value:'model'}]],['冷重开，读取时暂停',restart],['尝试继续：不能从空白任务重做',[{type:'continue',task:'a'},{type:'advance'}]],['切换模拟条件：可读资料，重新读取',[{type:'integrity',value:'ok'},...restart]],['A 原网页现场无法安全重建',[{type:'noPage',task:'a'},{type:'begin',task:'a'}]],['B 独立核对续做，A 保留原任务',[{type:'begin',task:'b'},{type:'resolve',task:'b'},{type:'advance'}]]]},
+ {name:'退出竞争',title:'保存失败不冒称退出，旧控制未清不写',copy:'体验保存失败、意外退出后的清理，以及两个启动请求竞争。新应用不凭超时或 PID 改变就假定旧控制已经结束。',steps:[['退出时模拟保存失败',[{type:'quit'},{type:'failSave'},{type:'saveExit'}]],['恢复保存，再完成有序退出',[{type:'restoreSave'},{type:'saveExit'},{type:'cleanup'}]],['先重开，再发生一次意外退出',[{type:'open'},{type:'isolate'},{type:'read'},{type:'crash'}]],['新启动尝试隔离：旧进程仍待清理',[{type:'open'},{type:'isolate'}]],['另一启动也不能创建第二份执行',[{type:'open'},{type:'old',task:'a'}]],['清理旧控制后，唯一拥有者读取记录',[{type:'cleanup'},{type:'isolate'},{type:'read'}]],['核对 A 后续做，不复活旧执行',[{type:'begin',task:'a'},{type:'resolve',task:'a'},{type:'advance'}]]]}
+];
+const intentLabels={automatic:'允许自动推进',stopped:'用户明确停止',takeover:'人工接管',waiting:'等待补充信息',unknown:'输入归属未知暂停'};
+const phaseLabels={ready:'待续做',checking:'待核对',paused:'保持暂停',unknown:'结果不明',complete:'已完成',blocked:'记录条件未就绪',inflight:'已送出 · 待核对', 'needs-page':'现场无法重建'};
+const checkpointLabels={unreserved:'尚未预留',reserved:'仅有预留，未派发证明不足',unsent:'可信未派发检查点',possible:'可能已送出',done:'核实完成'};
+const stages={running:'应用运行中',saving:'退出中 · 先保存',cleaning:'退出中 · 清理进程',offline:'应用已退出',starting:'启动中 · 隔离旧执行',reading:'启动中 · 读取记录'};
+const integrityLabels={ok:'可读且相容',missing:'记录缺失',damaged:'记录损坏',model:'状态版本不兼容',material:'素材版本不匹配'};
+let state=RecoveryDemo.initial(),scenario=0,step=0,guideOpen=true,composing=false;
+function status(t){if(state.stage==='offline')return '记录已保留';if(state.stage!=='running')return stages[state.stage];if(state.integrity!=='ok')return integrityLabels[state.integrity];if(t.unsaved)return '已阻断 · 停止未保存';if(!state.records||state.writeFail)return '保存不可用 · 已暂停';if(t.phase==='complete')return '已完成';if(t.intent!=='automatic')return {stopped:'已停止',takeover:'已让出操作',waiting:'等你补充信息',unknown:'输入归属待核对'}[t.intent];return phaseLabels[t.phase];}
+function explanation(t){
+ if(state.stage==='offline')return '应用已结束。原任务意图仍保留，送到网站的请求可能继续完成。';
+ if(state.stage!=='running')return {saving:'已先阻止新派发。必要事实保存成功后，才结束自有进程。',cleaning:'事实已保存，正在结束自有网页、工作者与记录进程。',starting:'旧控制未隔离前，不恢复网页写入。',reading:'先读取可靠记录与状态版本，不从快照直接重发动作。'}[state.stage];
+ if(state.integrity!=='ok')return `${integrityLabels[state.integrity]}。保留原资料并暂停，不生成空白可执行任务。`;
+ if(state.lostStop)return '上次有意图未可靠保存，不能保证跨重启保留。当前保持暂停，先核实。';
+ if(t.unsaved)return '已经立即阻断，但停止尚未可靠保存，不能保证跨重开保留。';
+ if(!state.records||state.writeFail)return '当前不能可靠保存，依赖它的自动工作暂停；原意图保持。';
+ if(!t.page)return '原网页现场无法安全重建，已保留任务及原资料，等待补充现场。';
+ if(t.phase==='complete')return '本次结果已核实完成，已有网页效果不会再做一次。';
+ if(t.intent!=='automatic')return RecoveryDemo.reason(t);
+ return {ready:'当前条件已核对，只续做可信未派发的剩余部分。',checking:'先核对实际结果、原目标和未派发检查点，没有直接重发。',unknown:'无法确认本次效果，保持只读核对；“继续”也不代表允许盲目重发。',inflight:'操作可能已送出，尚无可靠完成记录。先核对结果，不能再次发送。',blocked:'记录条件已恢复时，仍需重新核对当前事实。'}[t.phase]||'先核对当前条件。';
+}
+function render(){const t=state.tasks[state.active],offline=state.stage==='offline',online=state.stage==='running';$('workspace').classList.toggle('guiding',guideOpen);
+ $('tabs').innerHTML=Object.values(state.tasks).map(x=>`<button class="task-tab" role="tab" aria-selected="${x.id===state.active}" data-task="${x.id}" data-held="${x.intent!=='automatic'||!['ready','complete'].includes(x.phase)}"><span class="site-icon">${x.id==='a'?'W':'d'}</span><span class="tab-title">${esc(x.title)}</span><span class="tab-status">● ${esc(status(x))}</span></button>`).join('');
+ $('app-label').textContent=stages[state.stage];$('url').textContent=`https://${t.id==='a'?'spruce':'begonia'}.example/record/${t.target}`;$('page-title').textContent=t.title;$('web-target').textContent=`任务 ${t.id.toUpperCase()} · 目标第 ${t.target} 版 · ${t.page?'网页现场可重建':'现场无法安全重建'}`;
+ $('web-count').innerHTML=`${t.count}<small>次实际写入（模拟）</small>`;$('web-outcome').textContent=t.count?`网站已在目标第 ${t.webTarget} 版写入一条备注`:'网站尚无本次备注效果';$('web-detail').textContent=t.evidence==='visible'?'结果入口可读，但仍须关联本次任务与内容。':'结果入口暂不可唯一核对；网站效果不会因此消失。';
+ if(document.activeElement!==$('web-text'))$('web-text').value=t.text;$('web-text').disabled=!online||!t.page;$('text-note').textContent=t.page?'原型将人工文字保留在内存中；真实重建能力仍待实现验证。':'演示保留原文字供说明，当前不能安全重建可操作的网页现场。';
+ $('avatar').textContent=t.id.toUpperCase();$('chat-title').textContent=`任务 ${t.id.toUpperCase()} · ${t.title}`;$('chat-status').className='chat-status'+(t.intent!=='automatic'||t.phase!=='ready'||!online?' held':'');$('chat-status').innerHTML=`<strong>${esc(status(t))}</strong>${esc(explanation(t))}`;$('feed').innerHTML=t.history.map(m=>`<div class="message ${m.role}">${m.role==='assistant'?'<small>helpr · 模拟回复</small>':''}${esc(m.text)}</div>`).join('');$('feed').scrollTop=$('feed').scrollHeight;
+ $('stop').disabled=!online||t.intent==='stopped'||t.phase==='complete';$('continue').disabled=!online;$('quit-top').disabled=!online;$('chat').hidden=t.collapsed||offline;$('expand').hidden=!t.collapsed||offline;$('expand').textContent=`任务 ${t.id.toUpperCase()} 的对话 · ${status(t)}`;if(document.activeElement!==$('draft'))$('draft').value=t.draft;$('draft').disabled=!online;
+ const overlay=!online;$('app-overlay').hidden=!overlay;$('overlay-title').textContent=offline?'helpr 已退出':stages[state.stage];$('overlay-copy').textContent=offline?'原来的任务仍在。重新打开后先核对旧控制、可靠记录和实际网页结果，不会把所有任务从头再做。':explanation(t);
+ const overlayActions={offline:[['重新打开 helpr','open']],saving:[['保存并准备结束','saveExit']],cleaning:[['结束自有进程','cleanup']],starting:[['核对并隔离旧执行','isolate']],reading:[['读取原任务','read']]}[state.stage]||[];
+ $('overlay-actions').innerHTML=overlayActions.map(([label,type])=>`<button class="primary" data-action="${type}">${label}</button>`).join('');
+ $('toast').hidden=!state.toast;$('toast').textContent=state.toast;
+ $('guide').hidden=!guideOpen;$('guide-toggle').setAttribute('aria-expanded',guideOpen);$('scenarios').innerHTML=scenarios.map((w,i)=>`<button role="tab" aria-selected="${i===scenario}" data-scenario="${i}">${w.name}</button>`).join('');const w=scenarios[scenario];$('walk-title').textContent=w.title;$('walk-copy').textContent=w.copy;$('walk-next').textContent=step<w.steps.length?`${step+1}. ${w.steps[step][0]}`:'本场景结束 · 重新体验';$('step-dots').innerHTML=w.steps.map((_,i)=>`<i class="${i<step?'done':''}"></i>`).join('');$('walk-note').textContent=state.note;
+ $('state-grid').innerHTML=`<div class="state-row"><b>应用条件</b><span>${stages[state.stage]} · 记录${state.records?'可用':'不可用'}${state.writeFail?' · 关键保存失败':''}<br>旧控制：${state.isolated?'已隔离':'尚未隔离'} · 资料：${integrityLabels[state.integrity]}<br>控制：${state.processes.controller} · 网页：${state.processes.web}<br>工作者：${state.processes.worker} · 记录进程：${state.processes.records}<br>重复启动拒绝 ${state.secondStarts} 次${state.lostStop?'<br>上次有未保存意图：当前保持暂停':''}<br><em>均为模拟状态，不是实际进程或持久化证据</em></span></div>`+Object.values(state.tasks).map(x=>`<div class="state-row"><b>任务 ${x.id.toUpperCase()}<br>${esc(status(x))}</b><span>当前意图：${intentLabels[x.intent]}<br>可靠意图：${intentLabels[x.savedIntent]}${x.unsaved?'（最新意图未保存）':''}<br>本机动作：${checkpointLabels[x.checkpoint]}<br>网站效果 ${x.count} 次 · ${x.receipt==='saved'?'已核对记账':x.receipt==='ack-lost'?'停止已提交，回执丢失':'本机未记完成'}<br>目标 ${x.target} · 页面${x.page?'可重建':'不可重建'} · 归属${x.bound?'已知':'待核对'}<br>核对${x.token?'在途':'未在途'} · 旧观察留档 ${x.late} 次<br>人工文字：${esc(x.text||'（空）')}</span></div>`).join('');$('events').innerHTML=state.events.map(x=>`<li>${esc(x)}</li>`).join('');$('integrity').value=state.integrity;
+ if(!$('results').hidden)renderResults();
+}
+function renderResults(){const t=state.tasks[state.active];$('result-body').innerHTML=`<p><b>任务 ${t.id.toUpperCase()} · ${esc(status(t))}</b></p><p>${esc(explanation(t))}</p><p>当前意图：${intentLabels[t.intent]}<br>可靠保存的意图：${intentLabels[t.savedIntent]}<br>本机动作：${checkpointLabels[t.checkpoint]}<br>模拟网站实际写入：${t.count} 次</p><p>人工备注：${esc(t.text||'（空）')}</p><p class="muted tiny">本记录为内存演示，不是实际应用数据或验收结果。</p>`;}
+function dispatch(a){state=RecoveryDemo.act(state,a);render();}
+function reset(i=scenario){scenario=i;step=0;state=RecoveryDemo.initial();$('preview').hidden=true;$('results').hidden=true;render();}
+function buttons(id,entries){$(id).innerHTML=entries.map(([label,type])=>`<button data-action="${type}">${label}</button>`).join('');}
+buttons('app-buttons',[['退出 helpr','quit'],['保存退出记录','saveExit'],['模拟清理旧进程','cleanup'],['意外退出','crash'],['重新打开','open'],['隔离旧执行','isolate'],['读取原任务','read'],['推进合格任务','advance'],['重置当前场景','reset']]);
+buttons('task-buttons',[['开始只读核对','begin'],['返回本次核对','resolve'],['停止当前任务','stop'],['明确继续当前任务','continue'],['查看／重新登录','view'],['回复原参与请求','answer'],['核对页面归属','rebind'],['更改目标','target']]);
+buttons('effect-buttons',[['保存动作预留','reserve'],['保存未派发检查点','proveUnsent'],['动作可能已送出','send'],['网站完成在途请求','effect'],['登记效果回执','receipt'],['旧回执返回','old'],['结果暂不可查','hideEvidence'],['结果入口可读','showEvidence']]);
+buttons('fault-buttons',[['记录进程退出','recordsDown'],['恢复记录服务','recordsUp'],['已提交但回执丢失','lostAck'],['关键保存失败','failSave'],['存储恢复','restoreSave'],['现场无法重建','noPage'],['找回同一现场','restorePage']]);
+for(const id of ['app-buttons','task-buttons','effect-buttons','fault-buttons','overlay-actions'])$(id).onclick=e=>{const b=e.target.closest('[data-action]');if(b){if(b.dataset.action==='reset')reset();else dispatch({type:b.dataset.action});}};
+document.querySelectorAll('[role="tablist"]').forEach(list=>list.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;const tabs=[...list.querySelectorAll('[role="tab"]')],idx=tabs.indexOf(document.activeElement);if(idx<0)return;e.preventDefault();let next=e.key==='Home'?0:e.key==='End'?tabs.length-1:(idx+(e.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;const target=tabs[next];target.click();const attr=target.dataset.scenario!==undefined?'data-scenario':'data-task';list.querySelector(`[${attr}="${target.getAttribute(attr)}"]`).focus();}));
+$('walk-next').onclick=()=>{const w=scenarios[scenario];if(step>=w.steps.length)return reset();for(const a of w.steps[step][1])state=RecoveryDemo.act(state,a);step++;render();};$('scenarios').onclick=e=>{const b=e.target.closest('[data-scenario]');if(b){reset(Number(b.dataset.scenario));$('guide').scrollTop=0;}};
+$('tabs').onclick=e=>{const b=e.target.closest('[data-task]');if(b){dispatch({type:'select',task:b.dataset.task});$('preview').hidden=true;}};
+$('tabs').onmouseover=e=>{const b=e.target.closest('[data-task]');if(!b)return;const t=state.tasks[b.dataset.task];$('preview').style.left=Math.max(10,Math.min(b.getBoundingClientRect().left,innerWidth-310))+'px';$('preview').innerHTML=`<h3>${esc(t.title)}</h3><p>${esc(status(t))} · 网站写入 ${t.count} 次</p><p>${esc(explanation(t))}</p>`;$('preview').hidden=false;};$('tabs').onmouseleave=e=>{if(!$('preview').contains(e.relatedTarget))$('preview').hidden=true;};$('preview').onmouseleave=()=>$('preview').hidden=true;
+$('quit-top').onclick=()=>dispatch({type:'quit'});$('view-page').onclick=()=>dispatch({type:'view'});$('stop').onclick=()=>dispatch({type:'stop'});$('continue').onclick=()=>dispatch({type:'continue'});$('minimize').onclick=()=>dispatch({type:'collapse',value:true});$('expand').onclick=()=>dispatch({type:'collapse',value:false});$('web-text').oninput=e=>dispatch({type:'text',text:e.target.value});$('draft').oninput=e=>{state=RecoveryDemo.act(state,{type:'draft',text:e.target.value});};$('draft').oncompositionstart=()=>composing=true;$('draft').oncompositionend=()=>composing=false;$('compose').onsubmit=e=>{e.preventDefault();if(!composing&&$('draft').value.trim())dispatch({type:'message',text:$('draft').value.trim()});};
+$('result').onclick=()=>{$('results').hidden=false;renderResults();};$('close-results').onclick=()=>$('results').hidden=true;$('integrity').onchange=e=>dispatch({type:'integrity',value:e.target.value});$('guide-toggle').onclick=()=>{guideOpen=!guideOpen;render();};$('open-guide').onclick=()=>{guideOpen=true;render();};$('close-guide').onclick=()=>{guideOpen=false;render();};document.addEventListener('keydown',e=>{if(e.key==='Escape'){guideOpen=false;$('preview').hidden=true;$('results').hidden=true;render();}});
+render();
+</script>
+</body>
+</html>
