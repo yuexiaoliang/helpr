@@ -77,6 +77,7 @@ export class ExecutionService {
   >();
   private readonly intents = new Map<string, number>();
   private readonly pendingIntents = new Set<string>();
+  private workspaceUnsettled = new Set<string>();
   constructor(
     private readonly ports: {
       records: (command: unknown) => Promise<unknown>;
@@ -104,6 +105,7 @@ export class ExecutionService {
   canExit() {
     return (
       this.pendingIntents.size === 0 &&
+      this.workspaceUnsettled.size === 0 &&
       ![...this.blocked.values()].some((b) => !b.saved)
     );
   }
@@ -112,13 +114,16 @@ export class ExecutionService {
       ...state,
       tasks: state.tasks.map((t) => {
         const b = this.blocked.get(t.id);
+        const unsettled = this.workspaceUnsettled.has(t.id);
         return b
           ? {
               ...t,
               executionControl: {
                 blocked: true,
-                stopSaved: b.saved,
-                message: b.message,
+                stopSaved: b.saved && !unsettled,
+                message: unsettled
+                  ? '目标或任务变化尚未可靠保存，已保留现场并阻止旧目标继续。'
+                  : b.message,
                 ...(b.reason ? { reason: b.reason } : {}),
               },
             }
@@ -650,19 +655,13 @@ export class ExecutionService {
   ) {
     this.publish(state);
     this.available = true;
+    this.workspaceUnsettled = new Set(unsettledTasks);
     for (const task of state.tasks) {
-      if (unsettledTasks.includes(task.id)) {
-        this.stopImmediately(
-          task.id,
-          '目标或任务变化尚未可靠保存，已保留现场并阻止旧目标继续。',
-        );
-        continue;
-      }
       const prior = this.blocked.get(task.id),
         e = task.execution;
-      if (!prior) continue;
-      if (prior.outage) this.blocked.delete(task.id);
+      if (prior?.outage) this.blocked.delete(task.id);
       else if (
+        prior &&
         e &&
         ((prior.control === 'stop' && e.intent === 'stopped') ||
           (prior.reason && prior.reason === e.pauseReason))
@@ -672,9 +671,22 @@ export class ExecutionService {
           saved: true,
           message: e.summary,
         });
+      if (unsettledTasks.includes(task.id)) {
+        const reconciled = this.blocked.get(task.id);
+        this.stopImmediately(
+          task.id,
+          '已暂停自动操作，请核对任务变化后再明确继续。',
+          true,
+        );
+        if (reconciled) this.blocked.set(task.id, reconciled);
+      }
     }
     this.publish();
     this.pump();
+  }
+  workspaceSaved(unsettledTasks: readonly string[]) {
+    this.workspaceUnsettled = new Set(unsettledTasks);
+    this.publish();
   }
   async stopAll() {
     this.closing = true;

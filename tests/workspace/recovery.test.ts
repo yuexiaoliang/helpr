@@ -655,3 +655,75 @@ test('新目标保存未提交时记录重连仍阻断旧目标，不能因旧�
     records.close();
   }
 });
+
+test('工作区保存失败后重连，重试成功即可退出，但不自动解除执行阻断', async () => {
+  const records = new WorkspaceRecords(folder(), 'app/records/migrations');
+  const a = task(records, 'A');
+  const b = records.execute({
+    kind: 'create',
+    requestId: 'B',
+    goal: 'B',
+  }).taskId;
+  let state = records.snapshot(),
+    disconnected = true;
+  const workspace = new WorkspaceSession(
+    state,
+    (input) => {
+      const command = input as { kind: string; command: unknown };
+      if (command.kind === 'lookup')
+        return Promise.resolve(records.lookupRequest(command.command));
+      if (disconnected) return Promise.reject(Error('PROCESS_DISCONNECTED'));
+      return Promise.resolve(records.execute(command));
+    },
+    (next) => {
+      state = next;
+    },
+  );
+  const service = new ExecutionService({
+    records: (command) => Promise.resolve(records.execution(command)),
+    current: () => state,
+    publish: (next) => {
+      state = next;
+    },
+    observe: () => Promise.reject(Error('SHOULD_STAY_BLOCKED')),
+    propose: () => Promise.reject(Error('NO_MODEL')),
+    perform: () => Promise.reject(Error('NO_WRITE')),
+    revoke: () => {},
+    stopModels: () => {},
+  });
+  try {
+    for (const taskId of [a, b])
+      await expect(
+        workspace.save({
+          kind: 'draft',
+          requestId: 'draft-' + taskId,
+          taskId,
+          text: '新草稿',
+        }),
+      ).rejects.toThrow('PROCESS_DISCONNECTED');
+    service.recordsRestored(state, workspace.unresolvedTasks());
+    expect(service.canExit()).toBe(false);
+    disconnected = false;
+    for (const taskId of [a, b]) {
+      await workspace.save({
+        kind: 'draft',
+        requestId: 'draft-' + taskId,
+        taskId,
+        text: '新草稿',
+      });
+      service.workspaceSaved(workspace.unresolvedTasks());
+    }
+    await service.settled();
+    expect(workspace.canExit()).toBe(true);
+    expect(service.canExit()).toBe(true);
+    expect(
+      service.decorate(state).tasks.map((t) => t.executionControl),
+    ).toMatchObject([
+      { blocked: true, stopSaved: true },
+      { blocked: true, stopSaved: true },
+    ]);
+  } finally {
+    service.disable();
+    records.close();
+  }
+});

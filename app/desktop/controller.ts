@@ -494,6 +494,7 @@ export async function startController(
     if (command.kind === 'navigate')
       await executions.suspend(command.taskId, 'page-change', randomUUID());
     const result = await workspace.save(command);
+    executions.workspaceSaved(workspace.unresolvedTasks());
     if (command.kind === 'navigate')
       await hostClient.request({
         kind: 'navigate',

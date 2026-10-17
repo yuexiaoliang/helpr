@@ -93,7 +93,7 @@ try{
 }catch(error){report.passed=false;report.error=error.message;process.exitCode=1;}
 finally{
  if(current&&!current.exit){try{await quit(current);}catch(error){report.quitFailure=error.message;}}
- if(current){const left=[...current.pids].filter(alive);if(left.length){spend('cleanups');report.cleanup={pids:left};for(const pid of left.reverse())if(alive(pid))process.kill(pid,'SIGKILL');await until(()=>left.every(pid=>!alive(pid)),5000).catch(()=>{});report.cleanup.remaining=left.filter(alive);}}
+ if(current){const left=[...current.pids].filter(alive);if(left.length){spend('cleanups');report.cleanup={pids:left};for(const pid of left.reverse())if(alive(pid))process.kill(pid,'SIGKILL');const cleanupDeadline=Date.now()+5000;while(left.some(alive)&&Date.now()<cleanupDeadline)await new Promise(r=>setTimeout(r,40));report.cleanup.remaining=left.filter(alive);}}
  for(const item of heldModels)if(!item.res.destroyed)item.res.destroy();server.closeAllConnections();await new Promise(r=>server.close(r));
  report.finished=new Date().toISOString();report.counts=counts;report.global=JSON.parse(fs.readFileSync(path.join(validationRoot,'budget.json'))).used;save();
  console.log(JSON.stringify({passed:report.passed,error:report.error,build,starts:report.starts.map(s=>s.start),models:report.models.length,effects:report.effects.length,checks:report.checks,cleanup:report.cleanup}));
