@@ -19,7 +19,7 @@
 | [01 可安装的双任务真实工作区](issues/01-installable-task-workspace.md) | 无 |
 | [02 配置模型并在所属任务理解网页](issues/02-model-settings-and-page-understanding.md) | [01](issues/01-installable-task-workspace.md) |
 | [03 两项网页任务执行、停止与继续](issues/03-parallel-execution-stop-and-continue.md) | [02](issues/02-model-settings-and-page-understanding.md) |
-| [04 直接接管网页与页面变化后的归属](issues/04-native-takeover-and-page-ownership.md) | [03](issues/03-parallel-execution-stop-and-continue.md) |
+| [04 直接接管网页与页面变化后的归属](issues/04-native-takeover-and-page-ownership.md)（已验收） | [03](issues/03-parallel-execution-stop-and-continue.md) |
 | [05 退出、意外退出与冷重开核对](issues/05-quit-crash-and-cold-recovery.md) | [04](issues/04-native-takeover-and-page-ownership.md) |
 | [06 收起运行、锁屏与休眠恢复](issues/06-hide-lock-sleep-and-resume.md) | [05](issues/05-quit-crash-and-cold-recovery.md) |
 | [07 本机备份与旧备份恢复](issues/07-local-backup-and-restore.md) | [05](issues/05-quit-crash-and-cold-recovery.md) |
@@ -104,3 +104,5 @@
 2026-10-16，用户确认“按这一版及所列范围实现”，[04 takeover-v1（b3d6e31）](issues/04-native-takeover-and-page-ownership.md#原型确认)已取得明确同意，按本次指令推进接管、页面归属、即时资格与可靠暂停记录。03 其余组合缺口保留；新功能不由原型或源码检查直接计为完成，真人核对仍按既定集中安排。
 
 2026-10-16，04 复用候选 22 取得点击、键盘、工具粘贴、明确继续与文字保留、刷新、iframe／弹窗归属的[限定实际包证据](../../docs/testing/evidence/takeover-04/PACKAGED-TAKEOVER.md)，没有重复已通过人工步骤。记录写锁未形成预期慢保存重叠，失败及必要清理保留；原生因果、未知归属及其余组合缺口尚未补齐，04 不整体勾选，也不解除 05 前置。真人中文输入法与 ⌘V 仍归 06。
+
+2026-10-17，04 九条验收已按具体证据逐项关闭，见[最终验收及原失败边界](../../docs/testing/evidence/takeover-04/FINAL-ACCEPTANCE.md)。本轮仅补移动不接管与通知延迟／真实提交等待下的输入次序，沿用固定签名和既有确认；原准备失败和观察 hook 缺失保留，独立复核取得严格先后区间。04 的前置交付现已满足，05、11 对04的依赖满足（11仍须10）；本轮没有开始05或扩展其它事项。06 的真人输入法、⌘V、锁屏与休眠继续保留，不重复已通过人工步骤。

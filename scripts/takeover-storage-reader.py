@@ -9,7 +9,8 @@ import time
 from pathlib import Path
 
 file = Path(sys.argv[1]).resolve(strict=True)
-root = Path(f'/private/tmp/helpr-workspace-validation-{os.getuid()}')
+base = Path('/private/tmp' if sys.platform == 'darwin' else '/tmp').resolve(strict=True)
+root = base / f'helpr-workspace-validation-{os.getuid()}'
 if file.name != 'workspace.sqlite' or root not in file.parents:
     raise ValueError('FIXTURE_DATABASE_REQUIRED')
 reader = sqlite3.connect(file.as_uri() + '?mode=ro', uri=True, timeout=0)

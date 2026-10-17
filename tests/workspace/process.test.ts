@@ -1,10 +1,11 @@
 import { afterEach, expect, test } from 'vitest';
 import { fork, spawn, type ChildProcess } from 'node:child_process';
-import { mkdtempSync, rmSync, chmodSync, mkdirSync } from 'node:fs';
+import { mkdtempSync, rmSync, chmodSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { ProcessClient } from '../../app/shared/rpc';
 import { snapshotSchema } from '../../app/shared/contracts';
+import { validationDirectory } from '../../app/desktop/startup';
 
 const folders: string[] = [];
 const children: ChildProcess[] = [];
@@ -258,8 +259,7 @@ test('执行停止与请求身份跨记录进程保留，旧派发不能在重�
 });
 
 test('真实提交等待期间 draft 不提前回执，释放只读夹具后可靠保存', async () => {
-  const base = `/private/tmp/helpr-workspace-validation-${process.getuid!()}`;
-  mkdirSync(base, { recursive: true, mode: 0o700 });
+  const base = validationDirectory();
   const dir = mkdtempSync(base + '/storage-reader-');
   folders.push(dir);
   const records = await open(dir);

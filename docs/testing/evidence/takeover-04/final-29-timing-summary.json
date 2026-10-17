@@ -1,0 +1,273 @@
+{
+  "checkedAt": "2026-10-17T09:13:37.971Z",
+  "round": "takeover-04-timing-fixed",
+  "build": 29,
+  "start": 68,
+  "archive": "7bab2ca3a4e07411837fec6a6665d6479fa4e24e99ddc216c38f52e001be2e1d",
+  "passed": true,
+  "scope": "one native key under suspension IPC delay and actual SQLite PENDING commit wait; independent retrospective verification",
+  "sourceHashes": {
+    "result.json": "96be6b53c5fbd26d04f69f25b5001c1187a3562251bc6d2db6bfbc16acb73c39",
+    "final-client.json": "a6fdc9dc6b68c17649cb0e9d7d26d0af0ec084ee46aa71018ffc3eb9f95d6876",
+    "native-trace.json": "e4660b2a196ec30e52f2fa7575c1b172eb5f831b65919d1663df8167ead982f5"
+  },
+  "originalClientFailure": "NATIVE_TO_PAGE_CAUSAL_ORDER",
+  "absentObserver": "web-before-input",
+  "assumptions": [
+    "No wall-clock step between loopback calibration and the key event; page performance clock and server wall clock remain stable during this short sample.",
+    "Interval includes 2 ms extra margin for timestamp quantization; no strict conclusion if bounds overlap."
+  ],
+  "clock": {
+    "sample": {
+      "sent": 1792228218901.4,
+      "server": 1792228218916,
+      "received": 1792228218949.0999
+    },
+    "pageClientAt": 1792228241992.7,
+    "pageWallAt": 1792228241992,
+    "offsetBoundsMs": [
+      -33.099853515625,
+      14.60009765625
+    ],
+    "marginMs": 2,
+    "firstDomReceiptBounds": [
+      1792228241957.6,
+      1792228242009.3
+    ],
+    "handoffToLowerBoundMs": 33.671142578125
+  },
+  "native": {
+    "identified": {
+      "stage": "identified",
+      "owner": "web:71973232-e311-4930-bb7a-8f2c3c86d90d",
+      "serial": 2,
+      "epoch": 0,
+      "at": 1792228241923.815,
+      "index": 403
+    },
+    "blocked": {
+      "stage": "blocked",
+      "owner": "web:71973232-e311-4930-bb7a-8f2c3c86d90d",
+      "serial": 2,
+      "epoch": 6,
+      "at": 1792228241923.818,
+      "index": 404
+    },
+    "handoff": {
+      "stage": "handoff",
+      "owner": "web:71973232-e311-4930-bb7a-8f2c3c86d90d",
+      "serial": 2,
+      "epoch": 0,
+      "at": 1792228241923.929,
+      "index": 405
+    },
+    "denied": {
+      "stage": "permit-denied",
+      "owner": "71973232-e311-4930-bb7a-8f2c3c86d90d",
+      "serial": 2,
+      "epoch": 5,
+      "at": 1792228242058.966,
+      "index": 406
+    }
+  },
+  "receipt": {
+    "route": "/input",
+    "name": "Y",
+    "clientAt": 1792228241992.7,
+    "clientWallAt": 1792228241992,
+    "kind": "keydown",
+    "target": "INPUT",
+    "trusted": true,
+    "value": "",
+    "clock": {
+      "sent": 1792228218901.4,
+      "server": 1792228218916,
+      "received": 1792228218949.0999
+    },
+    "at": 1792228241999,
+    "gates": {
+      "Y": {
+        "epoch": 6,
+        "available": true,
+        "blocked": true
+      },
+      "Z": {
+        "epoch": 3,
+        "available": true,
+        "blocked": false
+      }
+    },
+    "traceLength": 406
+  },
+  "effect": {
+    "route": "/effect",
+    "name": "Z",
+    "clientAt": 1792228242192.9001,
+    "clientWallAt": 1792228242192,
+    "count": 1,
+    "clock": {
+      "sent": 1792228218924.3,
+      "server": 1792228218927,
+      "received": 1792228218949
+    },
+    "at": 1792228242195,
+    "gates": {
+      "Y": {
+        "epoch": 6,
+        "available": true,
+        "blocked": true
+      },
+      "Z": {
+        "epoch": 3,
+        "available": true,
+        "blocked": false
+      }
+    },
+    "traceLength": 425
+  },
+  "storage": [
+    {
+      "stage": "reader-held",
+      "at": 1792228236758.091
+    },
+    {
+      "stage": "writer-waiting",
+      "at": 1792228236854.076,
+      "independentReaderBusy": true,
+      "journalBytes": 16928
+    },
+    {
+      "stage": "reader-released",
+      "at": 1792228242264.086
+    }
+  ],
+  "draftAckAt": 1792228242315,
+  "after": {
+    "Y": {
+      "execution": {
+        "intent": "automatic",
+        "phase": "paused",
+        "version": 3,
+        "intentId": "09f4ec11-23fb-49e3-9aed-3f13aaa2925b",
+        "goalVersion": 1,
+        "goal": "04 Y，完成本页两次自动推进，保留人工文字 <fixture-origin>/page/Y",
+        "runId": null,
+        "resource": "<fixture-origin>/page/Y",
+        "summary": "你已接手网页，我已让出操作。页面与文字保留，明确继续后先核对再续做。",
+        "pauseReason": "takeover",
+        "actions": [
+          {
+            "id": "f010ff03-272a-4274-9ab9-0f309384de62",
+            "runId": "7a40006d-e7c8-4693-bee9-ef5cfeb0e993",
+            "goalVersion": 1,
+            "status": "unknown",
+            "summary": "推进本页下一步。",
+            "action": {
+              "kind": "click",
+              "target": {
+                "role": "button",
+                "name": "自动推进 Y",
+                "exact": true
+              }
+            },
+            "source": {
+              "url": "<fixture-origin>/page/Y",
+              "title": "04 任务 Y",
+              "fingerprint": "bb7325f45ada37017a802d13bd7d3055b1dd9a3638eddd89bb072010e46316f7",
+              "generation": 1,
+              "observedAt": 1792228235547,
+              "truncated": false
+            },
+            "binding": {
+              "targetId": "63A8758A18E6FADCFE82C36C882B76C6",
+              "generation": 1
+            },
+            "evidence": [],
+            "returned": false
+          }
+        ]
+      },
+      "control": {
+        "blocked": true,
+        "stopSaved": true,
+        "message": "你已接手网页，我已让出操作。页面与文字保留，明确继续后先核对再续做。",
+        "reason": "takeover"
+      },
+      "gate": {
+        "epoch": 7,
+        "available": true,
+        "blocked": true
+      }
+    },
+    "Z": {
+      "execution": {
+        "intent": "automatic",
+        "phase": "running",
+        "version": 2,
+        "intentId": "2f57587e-b96c-4d86-aa82-1d0f522db832",
+        "goalVersion": 1,
+        "goal": "04 Z，完成本页两次自动推进，保留人工文字 <fixture-origin>/page/Z",
+        "runId": "48a88962-0239-474b-8f51-c37e310b6854",
+        "resource": "<fixture-origin>/page/Z",
+        "summary": "推进本页下一步。",
+        "actions": [
+          {
+            "id": "2f4fdc3d-1efe-44ef-8458-c417b381678a",
+            "runId": "48a88962-0239-474b-8f51-c37e310b6854",
+            "goalVersion": 1,
+            "status": "unknown",
+            "summary": "推进本页下一步。",
+            "action": {
+              "kind": "click",
+              "target": {
+                "role": "button",
+                "name": "自动推进 Z",
+                "exact": true
+              }
+            },
+            "source": {
+              "url": "<fixture-origin>/page/Z",
+              "title": "04 任务 Z",
+              "fingerprint": "0ea02c57854c28677bf45111242c3cab21c181b8a1164ff8b8728487da81b687",
+              "generation": 1,
+              "observedAt": 1792228235646,
+              "truncated": false
+            },
+            "binding": {
+              "targetId": "2ED7BCE718555865A1656ACF67A5DB92",
+              "generation": 1
+            },
+            "evidence": [],
+            "returned": true
+          }
+        ]
+      },
+      "gate": {
+        "epoch": 3,
+        "available": true,
+        "blocked": false
+      }
+    }
+  },
+  "cumulative": {
+    "models": 50,
+    "effects": 20,
+    "inputs": 61,
+    "tasks": 26
+  },
+  "exitCode": 0,
+  "survivors": [],
+  "storageExit": 0,
+  "signature": {
+    "certificateSha256": "5bd4c2c1f28a99910837bb31ba404f3043378c54463bdc8a8bdf04ce75d2f119",
+    "componentCount": 54,
+    "identifiersAndRequirementsEqual": true
+  },
+  "bundleSource": "d6cf070",
+  "driverSource": "0a0ed51",
+  "independentExitCheck": {
+    "checkedAt": "2026-10-17T09:14:27.509664+00:00",
+    "ownedCandidateMatches": [],
+    "storageReaderAlive": false
+  }
+}

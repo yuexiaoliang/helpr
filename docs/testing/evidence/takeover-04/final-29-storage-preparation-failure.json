@@ -1,0 +1,30 @@
+{
+  "build": 29,
+  "start": 67,
+  "round": "takeover-04-timing",
+  "archive": "7bab2ca3a4e07411837fec6a6665d6479fa4e24e99ddc216c38f52e001be2e1d",
+  "clientFailure": "VALIDATION_WAIT_EXPIRED",
+  "controlFailure": "VALIDATION_WAIT_EXPIRED",
+  "storage": [
+    {
+      "stage": "reader-held",
+      "at": 1792228097538.301
+    },
+    {
+      "stage": "reader-released",
+      "at": 1792228097551.189
+    }
+  ],
+  "storageError": "Traceback (most recent call last):\n  File \"/Users/yuexiaoliang/projects/helpr/scripts/takeover-storage-reader.py\", line 35, in <module>\n    probe.execute('BEGIN IMMEDIATE')\nsqlite3.OperationalError: disk I/O error\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/yuexiaoliang/projects/helpr/scripts/takeover-storage-reader.py\", line 38, in <module>\n    if getattr(error, 'sqlite_errorcode', sqlite3.SQLITE_BUSY) != sqlite3.SQLITE_BUSY or str(error) != 'database is locked':\nAttributeError: module 'sqlite3' has no attribute 'SQLITE_BUSY'\n",
+  "storageExit": 1,
+  "draftSaved": true,
+  "timingKeySent": false,
+  "effects": [],
+  "exitCode": 0,
+  "survivors": [],
+  "independentExitCheck": {
+    "checkedAt": "2026-10-17T09:14:27.478456+00:00",
+    "ownedCandidateMatches": [],
+    "storageReaderAlive": false
+  }
+}
