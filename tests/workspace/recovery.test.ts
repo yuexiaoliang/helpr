@@ -567,6 +567,49 @@ test('退出时只冻结派发，不伪造用户停止或尚未保存的停止',
   }
 });
 
+test('有序退出主动关闭网页控制连接时，不把原活动意图保存成页面变化暂停', async () => {
+  const dir = folder();
+  let records = new WorkspaceRecords(dir, 'app/records/migrations');
+  const a = task(records, 'A');
+  let state = records.snapshot();
+  const service = new ExecutionService({
+    records: (command) => Promise.resolve(records.execution(command)),
+    current: () => state,
+    publish: (next) => {
+      state = next;
+    },
+    observe: () => Promise.reject(Error('NO_PAGE')),
+    propose: () => Promise.reject(Error('NO_MODEL')),
+    perform: () => Promise.reject(Error('NO_WRITE')),
+    revoke: () => {},
+    stopModels: () => {},
+  });
+  try {
+    await service.stopAll();
+    // 与控制拥有者主动 dispose 私有连接产生的业务通知走同一公开入口。
+    await service.suspend(a, 'page-change', 'planned-control-close');
+    expect(records.snapshot().tasks[0]?.execution).toMatchObject({
+      intent: 'automatic',
+      phase: 'queued',
+    });
+    records.close();
+    records = new WorkspaceRecords(dir, 'app/records/migrations');
+    expect(records.snapshot().tasks[0]?.execution).toMatchObject({
+      intent: 'automatic',
+      phase: 'queued',
+      recoveryPending: true,
+    });
+    service.cancelExit();
+    await service.suspend(a, 'page-change', 'unexpected-control-close');
+    expect(records.snapshot().tasks[0]?.execution).toMatchObject({
+      phase: 'paused',
+      pauseReason: 'page-change',
+    });
+  } finally {
+    records.close();
+  }
+});
+
 test('新目标保存未提交时记录重连仍阻断旧目标，不能因旧资料可读而自动写入', async () => {
   const dir = folder();
   let records = new WorkspaceRecords(dir, 'app/records/migrations');

@@ -177,6 +177,7 @@ export class ExecutionService {
     reason: ExecutionPauseReason,
     requestId: string,
   ) {
+    if (this.closing) return;
     const prior = this.blocked.get(taskId);
     if (
       !this.pendingIntents.has(taskId) &&
