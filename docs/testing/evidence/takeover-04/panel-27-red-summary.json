@@ -1,0 +1,73 @@
+{
+  "build": 27,
+  "start": 63,
+  "archive": "febec6e02134a005f7824ed690059fc9c17c5aff7565989cc4c252cbd79549cc",
+  "candidateReview": {
+    "source": "docs/testing/evidence/development-signing/result.json",
+    "build": 27,
+    "originalPrepared": false,
+    "originalError": "Command failed: /Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node scripts/validate-host-package.mjs /Users/yuexiaoliang/projects/helpr/dist/candidates/development-signing-b/mac-arm64/helpr.app",
+    "checkedAt": "2026-10-17T07:37:17.216Z",
+    "certificateSha256": "5bd4c2c1f28a99910837bb31ba404f3043378c54463bdc8a8bdf04ce75d2f119"
+  },
+  "scope": "minimal public quit-panel reproducer; reserved native status slot is not a business task",
+  "started": "2026-10-17T07:37:17.617Z",
+  "validationStarted": "2026-10-17T07:37:18.987Z",
+  "finished": "2026-10-17T07:37:28.698Z",
+  "carry": {
+    "round": "takeover-04-traced-05",
+    "counts": {
+      "effects": 18,
+      "inputs": 34,
+      "models": 39,
+      "tasks": 16
+    }
+  },
+  "counts": {
+    "models": 0,
+    "effects": 0,
+    "inputs": 0,
+    "tasks": 0
+  },
+  "cumulativeCounts": {
+    "models": 39,
+    "effects": 18,
+    "inputs": 34,
+    "tasks": 16
+  },
+  "nativeChecks": [
+    {
+      "label": "before-quit-panel",
+      "at": 1792222648274,
+      "state": {
+        "epoch": 1,
+        "available": true,
+        "blocked": true
+      }
+    },
+    {
+      "label": "quit-panel-preserves-native-capability",
+      "at": 1792222648476,
+      "state": {
+        "epoch": 3,
+        "available": false,
+        "blocked": true
+      }
+    }
+  ],
+  "controlFailure": "quit-panel-preserves-native-capability",
+  "hostFailures": [
+    {
+      "time": "2026-10-17T07:37:28.377Z",
+      "code": "PANEL_NATIVE_BINDING_POINT"
+    }
+  ],
+  "exitCode": 0,
+  "survivors": [],
+  "postExit": {
+    "checkedAt": "2026-10-17T07:41:50.237Z",
+    "survivors": []
+  },
+  "realModelCalls": 0,
+  "remoteWrites": 0
+}

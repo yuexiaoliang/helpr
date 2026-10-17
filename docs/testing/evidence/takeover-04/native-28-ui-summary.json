@@ -1,0 +1,165 @@
+{
+  "build": 28,
+  "start": 65,
+  "round": "takeover-04-capability-ui",
+  "archive": "bd610d41aadd88bd4f3e28429d75b5ed342e943d97292a24c940106244cf4be7",
+  "source": "343ac38",
+  "signature": {
+    "certificateSha256": "5bd4c2c1f28a99910837bb31ba404f3043378c54463bdc8a8bdf04ce75d2f119",
+    "componentCount": 54,
+    "identifiersAndRequirementsEqual": true,
+    "reference": "docs/testing/evidence/development-signing/result.json",
+    "identityMapSha256": "f0f832953d438241a2e8af54a06a79ee79786434db2157c044cd0fc7e35e2040"
+  },
+  "scope": "native recovery notice visibility only; no models or automatic effects",
+  "credentials": "in-process public fixture sentinel; system keychain not tested",
+  "fixtureSession": {
+    "persistent": false,
+    "origin": "local-loopback"
+  },
+  "carry": {
+    "round": "takeover-04-capability",
+    "counts": {
+      "effects": 19,
+      "inputs": 36,
+      "models": 43,
+      "tasks": 18
+    }
+  },
+  "started": "2026-10-17T07:50:03.295Z",
+  "validationStarted": "2026-10-17T07:50:04.556Z",
+  "preparationElapsedMs": 1261,
+  "finished": "2026-10-17T07:50:54.518Z",
+  "counts": {
+    "models": 0,
+    "effects": 0,
+    "inputs": 2,
+    "tasks": 2
+  },
+  "cumulativeCounts": {
+    "models": 43,
+    "effects": 19,
+    "inputs": 38,
+    "tasks": 20
+  },
+  "nativeChecks": [
+    {
+      "label": "UI-panel-native-before-loss",
+      "at": 1792223425952,
+      "state": {
+        "epoch": 1,
+        "available": true,
+        "blocked": true
+      }
+    },
+    {
+      "label": "UI-real-native-loss",
+      "at": 1792223426154,
+      "state": {
+        "epoch": 7,
+        "available": false,
+        "blocked": true
+      }
+    },
+    {
+      "label": "UI-real-native-restoration",
+      "at": 1792223442294,
+      "state": {
+        "epoch": 7,
+        "available": true,
+        "blocked": true
+      }
+    }
+  ],
+  "checks": [
+    {
+      "name": "UI-panel-native-before-loss",
+      "at": 1792223425952,
+      "passed": true
+    },
+    {
+      "name": "UI-real-native-loss",
+      "at": 1792223426154,
+      "passed": true
+    },
+    {
+      "name": "UI-real-native-restoration",
+      "at": 1792223442295,
+      "passed": true
+    },
+    {
+      "name": "normal-exit-and-no-owned-survivors",
+      "at": 1792223454518,
+      "passed": true
+    }
+  ],
+  "client": {
+    "scope": "native recovery notice visibility only; no models or automatic effects",
+    "started": "2026-10-17T07:50:25.406Z",
+    "ids": {
+      "Y": "c8bc5238-09ae-4106-83b4-149b604504d2",
+      "Z": "c21b32eb-4293-4ae2-83ac-ef1be6ec6188"
+    },
+    "faultRequestedAt": 1792223426015,
+    "restoreRequestedAt": 1792223442137,
+    "restoredAt": 1792223442444,
+    "observedAt": 1792223447487,
+    "finished": "2026-10-17T07:50:54.555Z"
+  },
+  "hostEvents": [
+    {
+      "time": "2026-10-17T07:50:26.055Z",
+      "event": "failure",
+      "code": "PANEL_NATIVE_BINDING_POINT"
+    },
+    {
+      "time": "2026-10-17T07:50:26.055Z",
+      "event": "failure",
+      "code": "PANEL_NATIVE_BINDING_POINT"
+    },
+    {
+      "time": "2026-10-17T07:50:26.057Z",
+      "event": "failure",
+      "code": "PANEL_NATIVE_BINDING_POINT"
+    },
+    {
+      "time": "2026-10-17T07:50:26.069Z",
+      "event": "failure",
+      "code": "PANEL_NATIVE_BINDING_POINT"
+    },
+    {
+      "time": "2026-10-17T07:50:26.081Z",
+      "event": "failure",
+      "code": "PANEL_NATIVE_BINDING_POINT"
+    },
+    {
+      "time": "2026-10-17T07:50:42.191Z",
+      "event": "command",
+      "code": "NATIVE_INPUT_RESTORED"
+    }
+  ],
+  "allNativeFailuresInsideIntentionalFaultWindow": true,
+  "models": [],
+  "effects": [],
+  "deferred": {},
+  "nativeTrace": {
+    "rows": 0,
+    "overflow": false
+  },
+  "exitCode": 0,
+  "survivors": [],
+  "postExit": {
+    "checkedAt": "2026-10-17T07:50:54.638Z",
+    "survivors": []
+  },
+  "realModelCalls": 0,
+  "remoteWrites": 0,
+  "nativeUi": {
+    "at": 1792223447487,
+    "tool": "cua native AX and window screenshot",
+    "notice": "本机输入识别已恢复。任务不会自动续做，需要时请明确继续。",
+    "axContainsNotice": true,
+    "image": "native-restored-28.png",
+    "taskState": "unstarted/manual; no models or automatic effects"
+  }
+}

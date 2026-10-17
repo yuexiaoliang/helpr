@@ -1,0 +1,686 @@
+{
+  "build": 28,
+  "start": 64,
+  "round": "takeover-04-capability",
+  "archive": "bd610d41aadd88bd4f3e28429d75b5ed342e943d97292a24c940106244cf4be7",
+  "source": "343ac38",
+  "signature": {
+    "certificateSha256": "5bd4c2c1f28a99910837bb31ba404f3043378c54463bdc8a8bdf04ce75d2f119",
+    "componentCount": 54,
+    "identifiersAndRequirementsEqual": true,
+    "reference": "docs/testing/evidence/development-signing/result.json",
+    "identityMapSha256": "f0f832953d438241a2e8af54a06a79ee79786434db2157c044cd0fc7e35e2040"
+  },
+  "scope": "native-panel-and-capability-recovery",
+  "credentials": "in-process public fixture sentinel; system keychain not tested",
+  "fixtureSession": {
+    "persistent": false,
+    "origin": "local-loopback"
+  },
+  "carry": {
+    "round": "takeover-04-panel-red",
+    "counts": {
+      "effects": 18,
+      "inputs": 34,
+      "models": 39,
+      "tasks": 16
+    },
+    "repair": {
+      "build": 27,
+      "archive": "febec6e02134a005f7824ed690059fc9c17c5aff7565989cc4c252cbd79549cc"
+    }
+  },
+  "started": "2026-10-17T07:47:56.375Z",
+  "validationStarted": "2026-10-17T07:48:00.066Z",
+  "preparationElapsedMs": 3691,
+  "finished": "2026-10-17T07:48:10.495Z",
+  "counts": {
+    "models": 4,
+    "effects": 1,
+    "inputs": 2,
+    "tasks": 2
+  },
+  "cumulativeCounts": {
+    "models": 43,
+    "effects": 19,
+    "inputs": 36,
+    "tasks": 18
+  },
+  "nativeChecks": [
+    {
+      "label": "before-panel-checks",
+      "at": 1792223284034,
+      "state": {
+        "epoch": 1,
+        "available": true,
+        "blocked": true
+      }
+    },
+    {
+      "label": "quit-panel-preserves-native-capability",
+      "at": 1792223284340,
+      "state": {
+        "epoch": 1,
+        "available": true,
+        "blocked": true
+      }
+    },
+    {
+      "label": "new-panel-preserves-native-capability",
+      "at": 1792223284743,
+      "state": {
+        "epoch": 1,
+        "available": true,
+        "blocked": true
+      }
+    },
+    {
+      "label": "settings-panel-preserves-native-capability",
+      "at": 1792223285049,
+      "state": {
+        "epoch": 1,
+        "available": true,
+        "blocked": true
+      }
+    },
+    {
+      "label": "tasks-panel-preserves-native-capability",
+      "at": 1792223285350,
+      "state": {
+        "epoch": 1,
+        "available": true,
+        "blocked": true
+      }
+    },
+    {
+      "label": "loaded-quit-panel-before-fault",
+      "at": 1792223286196,
+      "state": {
+        "epoch": 1,
+        "available": true,
+        "blocked": true
+      }
+    },
+    {
+      "label": "old-panel-anchor-reproduces-real-native-loss",
+      "at": 1792223286706,
+      "state": {
+        "epoch": 11,
+        "available": false,
+        "blocked": true
+      }
+    },
+    {
+      "label": "same-panel-center-restores-real-native-capability",
+      "at": 1792223287929,
+      "state": {
+        "epoch": 14,
+        "available": true,
+        "blocked": true
+      }
+    }
+  ],
+  "checks": [
+    {
+      "name": "before-panel-checks",
+      "at": 1792223284035,
+      "passed": true
+    },
+    {
+      "name": "quit-panel-preserves-native-capability",
+      "at": 1792223284340,
+      "passed": true
+    },
+    {
+      "name": "new-panel-preserves-native-capability",
+      "at": 1792223284743,
+      "passed": true
+    },
+    {
+      "name": "settings-panel-preserves-native-capability",
+      "at": 1792223285049,
+      "passed": true
+    },
+    {
+      "name": "tasks-panel-preserves-native-capability",
+      "at": 1792223285350,
+      "passed": true
+    },
+    {
+      "name": "loaded-quit-panel-before-fault",
+      "at": 1792223286196,
+      "passed": true
+    },
+    {
+      "name": "old-panel-anchor-reproduces-real-native-loss",
+      "at": 1792223286707,
+      "passed": true
+    },
+    {
+      "name": "same-panel-center-restores-real-native-capability",
+      "at": 1792223287930,
+      "passed": true
+    },
+    {
+      "name": "native-restoration-does-not-continue-Y-phase",
+      "at": 1792223288337,
+      "passed": true
+    },
+    {
+      "name": "native-restoration-does-not-continue-Z-phase",
+      "at": 1792223288338,
+      "passed": true
+    },
+    {
+      "name": "native-restoration-does-not-continue-Y-effects",
+      "at": 1792223288339,
+      "passed": true
+    },
+    {
+      "name": "native-restoration-does-not-continue-Z-effects",
+      "at": 1792223288340,
+      "passed": true
+    },
+    {
+      "name": "native-restoration-does-not-continue-Y-intent",
+      "at": 1792223288341,
+      "passed": true
+    },
+    {
+      "name": "native-restoration-does-not-continue-Z-intent",
+      "at": 1792223288342,
+      "passed": true
+    },
+    {
+      "name": "explicit-continue-only-Y-advances-after-native-restoration-Y-phase",
+      "at": 1792223289861,
+      "passed": true
+    },
+    {
+      "name": "explicit-continue-only-Y-advances-after-native-restoration-Z-phase",
+      "at": 1792223289862,
+      "passed": true
+    },
+    {
+      "name": "explicit-continue-only-Y-advances-after-native-restoration-Y-effects",
+      "at": 1792223289862,
+      "passed": true
+    },
+    {
+      "name": "explicit-continue-only-Y-advances-after-native-restoration-Z-effects",
+      "at": 1792223289862,
+      "passed": true
+    },
+    {
+      "name": "normal-exit-and-no-owned-survivors",
+      "at": 1792223290494,
+      "passed": true
+    }
+  ],
+  "client": {
+    "scope": "native-panel-and-capability-recovery",
+    "started": "2026-10-17T07:48:03.934Z",
+    "stages": [
+      {
+        "label": "both-live-before-native-binding-loss",
+        "at": 1792223286394,
+        "tasks": {
+          "Y": {
+            "execution": {
+              "intent": "automatic",
+              "phase": "checking",
+              "version": 2,
+              "intentId": "c3b383d8-3583-4d1e-a8f7-924e8987411b",
+              "goalVersion": 1,
+              "goal": "04 Y，完成本页两次自动推进，保留人工文字 local-loopback/page/Y",
+              "runId": "2a067ea2-4f57-4fbb-96d2-d0dfe987f05a",
+              "resource": "local-loopback/page/Y",
+              "summary": "正在核对当前页面与已有结果。",
+              "actions": []
+            }
+          },
+          "Z": {
+            "execution": {
+              "intent": "automatic",
+              "phase": "checking",
+              "version": 2,
+              "intentId": "02708666-1b51-48d9-a056-97a050810e42",
+              "goalVersion": 1,
+              "goal": "04 Z，完成本页两次自动推进，保留人工文字 local-loopback/page/Z",
+              "runId": "de0eac82-3ee3-46d4-acc4-896e17b35590",
+              "resource": "local-loopback/page/Z",
+              "summary": "正在核对当前页面与已有结果。",
+              "actions": []
+            }
+          }
+        },
+        "gates": {
+          "Y": {
+            "epoch": 3,
+            "available": true,
+            "blocked": false
+          },
+          "Z": {
+            "epoch": 3,
+            "available": true,
+            "blocked": false
+          }
+        },
+        "held": [
+          {
+            "name": "Y",
+            "count": 0,
+            "closed": false
+          },
+          {
+            "name": "Z",
+            "count": 0,
+            "closed": false
+          }
+        ],
+        "effects": []
+      },
+      {
+        "label": "native-binding-loss-reliably-pauses-both",
+        "at": 1792223286905,
+        "tasks": {
+          "Y": {
+            "execution": {
+              "intent": "automatic",
+              "phase": "paused",
+              "version": 3,
+              "intentId": "c3b383d8-3583-4d1e-a8f7-924e8987411b",
+              "goalVersion": 1,
+              "goal": "04 Y，完成本页两次自动推进，保留人工文字 local-loopback/page/Y",
+              "runId": null,
+              "resource": null,
+              "summary": "本机输入识别暂不可用，已暂停自动操作并保留网页。能力恢复后仍需明确继续，无需关闭系统安全设置。",
+              "pauseReason": "native-unavailable",
+              "actions": []
+            },
+            "control": {
+              "blocked": true,
+              "stopSaved": true,
+              "message": "本机输入识别暂不可用，已暂停自动操作并保留网页。能力恢复后仍需明确继续，无需关闭系统安全设置。",
+              "reason": "native-unavailable"
+            }
+          },
+          "Z": {
+            "execution": {
+              "intent": "automatic",
+              "phase": "paused",
+              "version": 3,
+              "intentId": "02708666-1b51-48d9-a056-97a050810e42",
+              "goalVersion": 1,
+              "goal": "04 Z，完成本页两次自动推进，保留人工文字 local-loopback/page/Z",
+              "runId": null,
+              "resource": null,
+              "summary": "本机输入识别暂不可用，已暂停自动操作并保留网页。能力恢复后仍需明确继续，无需关闭系统安全设置。",
+              "pauseReason": "native-unavailable",
+              "actions": []
+            },
+            "control": {
+              "blocked": true,
+              "stopSaved": true,
+              "message": "本机输入识别暂不可用，已暂停自动操作并保留网页。能力恢复后仍需明确继续，无需关闭系统安全设置。",
+              "reason": "native-unavailable"
+            }
+          }
+        },
+        "gates": {
+          "Y": {
+            "epoch": 14,
+            "available": false,
+            "blocked": true
+          },
+          "Z": {
+            "epoch": 14,
+            "available": false,
+            "blocked": true
+          }
+        },
+        "held": [
+          {
+            "name": "Y",
+            "count": 0,
+            "closed": true
+          },
+          {
+            "name": "Z",
+            "count": 0,
+            "closed": true
+          }
+        ],
+        "effects": []
+      },
+      {
+        "label": "native-restored-both-await-explicit-continue",
+        "at": 1792223288545,
+        "tasks": {
+          "Y": {
+            "execution": {
+              "intent": "automatic",
+              "phase": "paused",
+              "version": 3,
+              "intentId": "c3b383d8-3583-4d1e-a8f7-924e8987411b",
+              "goalVersion": 1,
+              "goal": "04 Y，完成本页两次自动推进，保留人工文字 local-loopback/page/Y",
+              "runId": null,
+              "resource": null,
+              "summary": "本机输入识别暂不可用，已暂停自动操作并保留网页。能力恢复后仍需明确继续，无需关闭系统安全设置。",
+              "pauseReason": "native-unavailable",
+              "actions": []
+            },
+            "control": {
+              "blocked": true,
+              "stopSaved": true,
+              "message": "本机输入识别暂不可用，已暂停自动操作并保留网页。能力恢复后仍需明确继续，无需关闭系统安全设置。",
+              "reason": "native-unavailable"
+            }
+          },
+          "Z": {
+            "execution": {
+              "intent": "automatic",
+              "phase": "paused",
+              "version": 3,
+              "intentId": "02708666-1b51-48d9-a056-97a050810e42",
+              "goalVersion": 1,
+              "goal": "04 Z，完成本页两次自动推进，保留人工文字 local-loopback/page/Z",
+              "runId": null,
+              "resource": null,
+              "summary": "本机输入识别暂不可用，已暂停自动操作并保留网页。能力恢复后仍需明确继续，无需关闭系统安全设置。",
+              "pauseReason": "native-unavailable",
+              "actions": []
+            },
+            "control": {
+              "blocked": true,
+              "stopSaved": true,
+              "message": "本机输入识别暂不可用，已暂停自动操作并保留网页。能力恢复后仍需明确继续，无需关闭系统安全设置。",
+              "reason": "native-unavailable"
+            }
+          }
+        },
+        "gates": {
+          "Y": {
+            "epoch": 18,
+            "available": true,
+            "blocked": true
+          },
+          "Z": {
+            "epoch": 17,
+            "available": true,
+            "blocked": true
+          }
+        },
+        "held": [
+          {
+            "name": "Y",
+            "count": 0,
+            "closed": true
+          },
+          {
+            "name": "Z",
+            "count": 0,
+            "closed": true
+          }
+        ],
+        "effects": []
+      },
+      {
+        "label": "restored-native-capability-allows-explicit-Y-only",
+        "at": 1792223290035,
+        "tasks": {
+          "Y": {
+            "execution": {
+              "intent": "automatic",
+              "phase": "running",
+              "version": 4,
+              "intentId": "462302f4-0ef9-480f-8ed2-0fa1e8b453f2",
+              "goalVersion": 1,
+              "goal": "04 Y，完成本页两次自动推进，保留人工文字 local-loopback/page/Y",
+              "runId": "004f4520-2a93-4817-9298-ce3cd0086443",
+              "resource": "local-loopback/page/Y",
+              "summary": "推进本页下一步。",
+              "actions": [
+                {
+                  "id": "a3e22f56-5d6b-4bca-adaf-f2cc78762c28",
+                  "runId": "004f4520-2a93-4817-9298-ce3cd0086443",
+                  "goalVersion": 1,
+                  "status": "unknown",
+                  "summary": "推进本页下一步。",
+                  "action": {
+                    "kind": "click",
+                    "target": {
+                      "role": "button",
+                      "name": "自动推进 Y",
+                      "exact": true
+                    }
+                  },
+                  "source": {
+                    "url": "local-loopback/page/Y",
+                    "title": "04 任务 Y",
+                    "fingerprint": "6d6349a3cf49e21c0fa1169358e14e322849e048dbf58829ce2582410d4eb2b7",
+                    "generation": 1,
+                    "observedAt": 1792223289080,
+                    "truncated": false
+                  },
+                  "binding": {
+                    "targetId": "B22C71248578FACA1572138C06C4D0E8",
+                    "generation": 1
+                  },
+                  "evidence": [],
+                  "returned": true
+                }
+              ]
+            }
+          },
+          "Z": {
+            "execution": {
+              "intent": "automatic",
+              "phase": "paused",
+              "version": 3,
+              "intentId": "02708666-1b51-48d9-a056-97a050810e42",
+              "goalVersion": 1,
+              "goal": "04 Z，完成本页两次自动推进，保留人工文字 local-loopback/page/Z",
+              "runId": null,
+              "resource": null,
+              "summary": "本机输入识别暂不可用，已暂停自动操作并保留网页。能力恢复后仍需明确继续，无需关闭系统安全设置。",
+              "pauseReason": "native-unavailable",
+              "actions": []
+            },
+            "control": {
+              "blocked": true,
+              "stopSaved": true,
+              "message": "本机输入识别暂不可用，已暂停自动操作并保留网页。能力恢复后仍需明确继续，无需关闭系统安全设置。",
+              "reason": "native-unavailable"
+            }
+          }
+        },
+        "gates": {
+          "Y": {
+            "epoch": 19,
+            "available": true,
+            "blocked": false
+          },
+          "Z": {
+            "epoch": 17,
+            "available": true,
+            "blocked": true
+          }
+        },
+        "held": [
+          {
+            "name": "Y",
+            "count": 1,
+            "closed": false
+          }
+        ],
+        "effects": [
+          {
+            "name": "Y",
+            "count": 1,
+            "at": 1792223289623
+          }
+        ]
+      }
+    ],
+    "faultRequestedAt": 1792223286498,
+    "restoreRequestedAt": 1792223287419,
+    "capture": "native-restored.png",
+    "restoredGates": {
+      "Y": {
+        "epoch": 18,
+        "available": true,
+        "blocked": true
+      },
+      "Z": {
+        "epoch": 17,
+        "available": true,
+        "blocked": true
+      }
+    },
+    "finished": "2026-10-17T07:48:10.549Z"
+  },
+  "hostEvents": [
+    {
+      "time": "2026-10-17T07:48:06.505Z",
+      "event": "failure",
+      "code": "PANEL_NATIVE_BINDING_POINT"
+    },
+    {
+      "time": "2026-10-17T07:48:06.510Z",
+      "event": "failure",
+      "code": "PANEL_NATIVE_BINDING_POINT"
+    },
+    {
+      "time": "2026-10-17T07:48:06.512Z",
+      "event": "failure",
+      "code": "PANEL_NATIVE_BINDING_POINT"
+    },
+    {
+      "time": "2026-10-17T07:48:06.525Z",
+      "event": "failure",
+      "code": "PANEL_NATIVE_BINDING_POINT"
+    },
+    {
+      "time": "2026-10-17T07:48:06.525Z",
+      "event": "failure",
+      "code": "PANEL_NATIVE_BINDING_POINT"
+    },
+    {
+      "time": "2026-10-17T07:48:06.538Z",
+      "event": "failure",
+      "code": "PANEL_NATIVE_BINDING_POINT"
+    },
+    {
+      "time": "2026-10-17T07:48:06.539Z",
+      "event": "failure",
+      "code": "PANEL_NATIVE_BINDING_POINT"
+    },
+    {
+      "time": "2026-10-17T07:48:06.551Z",
+      "event": "failure",
+      "code": "PANEL_NATIVE_BINDING_POINT"
+    },
+    {
+      "time": "2026-10-17T07:48:06.563Z",
+      "event": "failure",
+      "code": "PANEL_NATIVE_BINDING_POINT"
+    },
+    {
+      "time": "2026-10-17T07:48:07.116Z",
+      "event": "failure",
+      "code": "PANEL_NATIVE_BINDING_POINT"
+    },
+    {
+      "time": "2026-10-17T07:48:07.120Z",
+      "event": "failure",
+      "code": "PANEL_NATIVE_BINDING_POINT"
+    },
+    {
+      "time": "2026-10-17T07:48:07.121Z",
+      "event": "failure",
+      "code": "PANEL_NATIVE_BINDING_POINT"
+    },
+    {
+      "time": "2026-10-17T07:48:07.524Z",
+      "event": "command",
+      "code": "NATIVE_INPUT_RESTORED"
+    }
+  ],
+  "allNativeFailuresInsideIntentionalFaultWindow": true,
+  "models": [
+    {
+      "name": "Y",
+      "count": 0,
+      "at": 1792223285889,
+      "releasedAt": 1792223288947,
+      "connectionClosed": true
+    },
+    {
+      "name": "Z",
+      "count": 0,
+      "at": 1792223285958,
+      "releasedAt": 1792223288947,
+      "connectionClosed": true
+    },
+    {
+      "name": "Y",
+      "count": 0,
+      "at": 1792223289111,
+      "releasedAt": 1792223289251,
+      "connectionClosed": false
+    },
+    {
+      "name": "Y",
+      "count": 1,
+      "at": 1792223289678
+    }
+  ],
+  "effects": [
+    {
+      "name": "Y",
+      "count": 1,
+      "at": 1792223289623,
+      "gates": {
+        "Y": {
+          "epoch": 19,
+          "available": true,
+          "blocked": false
+        },
+        "Z": {
+          "epoch": 17,
+          "available": true,
+          "blocked": true
+        }
+      }
+    }
+  ],
+  "deferred": {
+    "unavailable-continue": {
+      "command": {
+        "kind": "execution-intent",
+        "intent": "continue",
+        "requestId": "bee1c15e-e64b-48d2-83c7-c3994fde8789",
+        "taskId": "1597d5d2-5c57-41df-a8c4-7c7de3a8d527"
+      },
+      "sentAt": 1792223287113,
+      "allowError": "NATIVE_INPUT_UNAVAILABLE",
+      "finishedAt": 1792223287143,
+      "error": "NATIVE_INPUT_UNAVAILABLE"
+    }
+  },
+  "nativeTrace": {
+    "rows": 38,
+    "overflow": false
+  },
+  "exitCode": 0,
+  "survivors": [],
+  "postExit": {
+    "checkedAt": "2026-10-17T07:48:19.007Z",
+    "survivors": []
+  },
+  "realModelCalls": 0,
+  "remoteWrites": 0,
+  "captureBoundary": "BrowserWindow capture shows only main WebContents; excluded as recovery-notice visibility evidence"
+}
