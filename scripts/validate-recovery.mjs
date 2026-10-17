@@ -5,11 +5,30 @@ import http from 'node:http';
 import assert from 'node:assert/strict';
 import {spawn,execFileSync} from 'node:child_process';
 import {createHash,randomUUID} from 'node:crypto';
+import {createRequire} from 'node:module';
+import {pathToFileURL} from 'node:url';
 import {spend,validationRoot} from './workspace-budget.mjs';
 import {verifyDevelopmentSignature} from './development-signing.mjs';
 
+// 直接加载正式公开契约；预检不启动产品、不访问网站或凭据。
+function commandsFor(origin){return {
+ snapshot:()=>({kind:'snapshot'}), quit:()=>({kind:'quit'}),
+ configure:state=>({kind:'model-save',requestId:randomUUID(),protocol:'chat-completions',expectedVersion:state.modelSettings?.version??0,endpoint:origin+'/v1',model:'local-fixture-05',apiKey:'local-fixture-not-a-secret'}),
+ create:name=>({kind:'create',requestId:randomUUID(),goal:`05 ${name} 写入一条核对备注并核对完成 ${origin}/page/${name}`}),
+ intent:(taskId,intent)=>({kind:'execution-intent',taskId,requestId:randomUUID(),intent}),
+};}
+fs.mkdirSync(validationRoot,{recursive:true,mode:0o700});
+const schemaFile=path.join(validationRoot,'recovery-command-contracts.mjs');
+createRequire(import.meta.resolve('vite'))('esbuild').buildSync({stdin:{contents:"export {uiCommandSchema} from './app/shared/contracts';export {nextStepSchema} from './app/shared/execution';export {ValidationBarriers} from './app/desktop/validation-barriers';",resolveDir:process.cwd(),loader:'ts'},bundle:true,platform:'node',format:'esm',outfile:schemaFile});
+const {uiCommandSchema,nextStepSchema,ValidationBarriers}=await import(pathToFileURL(schemaFile).href);
+const samples=commandsFor('http://127.0.0.1:4319');
+assert.equal(samples.configure({modelSettings:null}).expectedVersion,0);assert.equal(samples.configure({modelSettings:{version:7}}).expectedVersion,7);
+for(const command of [samples.snapshot(),samples.quit(),samples.configure({modelSettings:null}),samples.configure({modelSettings:{version:7}}),...['A','B','C'].map(name=>samples.create(name)),samples.intent('fixture-task','start'),samples.intent('fixture-task','stop')])uiCommandSchema.parse(command);
+for(const point of ['recovery','exit-checkpoint']){const barrier=new ValidationBarriers();barrier.control({action:'arm',point,taskId:'*'});const waiting=barrier.pass(point,'*');barrier.control({action:'status'});barrier.control({action:'release',point,taskId:'*'});await waiting;}
+if(process.argv.length===3&&process.argv[2]==='--check-commands'){console.log(JSON.stringify({commandsValid:true,configurationVersions:[0,7],barriers:['recovery','exit-checkpoint'],appStarts:0,modelCalls:0,effects:0}));process.exit(0);}
+
 const build=Number(process.argv[2]?.match(/^--build=(\d+)$/)?.[1]);
-const resume=process.argv[3]==='--resume=startup-evidence';
+const resume=process.argv[3]==='--resume=startup-evidence'?'startup-evidence':process.argv[3]==='--resume=configuration-contract'?'configuration-contract':null;
 assert((process.argv.length===3||(process.argv.length===4&&resume))&&Number.isSafeInteger(build),'BUILD_REQUIRED');
 const manifest=JSON.parse(fs.readFileSync(path.join(validationRoot,`build-${build}.json`)));
 assert(manifest.prepared&&path.isAbsolute(manifest.app),'PREPARED_BUILD_REQUIRED');
@@ -17,8 +36,13 @@ for(const [name,hash] of Object.entries(manifest.hashes))assert.equal(createHash
 const signature=verifyDevelopmentSignature(manifest.app);
 const originalRoot=path.join(validationRoot,`recovery-05-${build}`);
 let carry=null;
-if(resume){const previous=JSON.parse(fs.readFileSync(path.join(originalRoot,'result.json')));assert(previous.build===build&&previous.archive===manifest.hashes['Contents/Resources/app.asar']&&!previous.passed&&previous.error==='UNOWNED_PROCESS_GROUP'&&previous.starts.length===1&&previous.models.length===0&&previous.effects.length===0&&previous.tasks.length===0&&previous.faults.length===0&&previous.cleanup?.remaining.length===0,'UNEXPECTED_RESUME_STATE');carry={source:path.relative(process.cwd(),path.join(originalRoot,'result.json')),sha256:createHash('sha256').update(fs.readFileSync(path.join(originalRoot,'result.json'))).digest('hex'),starts:previous.starts.map(s=>s.start),models:0,effects:0,tasks:0,faults:0,cleanups:1};}
-const root=resume?originalRoot+'-resume':originalRoot;
+if(resume){
+ const previousFile=path.join(resume==='startup-evidence'?originalRoot:originalRoot+'-resume','result.json'),previous=JSON.parse(fs.readFileSync(previousFile));
+ assert(previous.build===build&&previous.archive===manifest.hashes['Contents/Resources/app.asar']&&!previous.passed&&previous.error===(resume==='startup-evidence'?'UNOWNED_PROCESS_GROUP':'INVALID_REQUEST')&&previous.starts.length===1&&previous.models.length===0&&previous.effects.length===0&&previous.tasks.length===0&&previous.faults.length===0&&(previous.cleanup?.remaining??[]).length===0,'UNEXPECTED_RESUME_STATE');
+ if(resume==='configuration-contract')assert(previous.starts[0].start===71&&previous.checks.includes('owned-tree-cleared-'+previous.starts[0].pid),'UNCLEARED_PREVIOUS_RUN');
+ carry={source:path.relative(process.cwd(),previousFile),sha256:createHash('sha256').update(fs.readFileSync(previousFile)).digest('hex'),starts:[...(previous.carry?.starts??[]),...previous.starts.map(s=>s.start)],models:0,effects:0,tasks:0,faults:0,cleanups:(previous.carry?.cleanups??0)+(previous.cleanup?1:0)};
+}
+const root=resume?originalRoot+(resume==='startup-evidence'?'-resume':'-contract-resume'):originalRoot;
 assert(!fs.existsSync(root),'ROUND_ALREADY_EXISTS');fs.mkdirSync(root,{mode:0o700});
 execFileSync(process.execPath,['scripts/validate-workspace.mjs','--preflight'],{stdio:'pipe'});
 const profileRoot=`/private/tmp/helpr-workspace-validation-${process.getuid()}`;
@@ -33,7 +57,7 @@ const counts={A:0,B:0,C:0},heldModels=[];
 let holdA=true,holdC=true,current,failed;
 const deadline=Date.now()+report.limits.minutes*60000;
 async function until(fn,ms=15000){const end=Math.min(deadline,Date.now()+ms);while(Date.now()<end){if(failed)throw Error(failed);if(await fn())return;await new Promise(r=>setTimeout(r,40));}throw Error('RECOVERY_WAIT_EXPIRED');}
-function modelReply(res,value){res.writeHead(200,{'Content-Type':'text/event-stream'});res.write('data: '+JSON.stringify({id:'fixture05',choices:[{index:0,delta:{content:JSON.stringify(value)},finish_reason:null}]})+'\n\n');res.end('data: '+JSON.stringify({id:'fixture05',choices:[{index:0,delta:{},finish_reason:'stop'}],usage:{prompt_tokens:1,completion_tokens:1,total_tokens:2}})+'\n\ndata: [DONE]\n\n');}
+function modelReply(res,value){nextStepSchema.parse(value);res.writeHead(200,{'Content-Type':'text/event-stream'});res.write('data: '+JSON.stringify({id:'fixture05',choices:[{index:0,delta:{content:JSON.stringify(value)},finish_reason:null}]})+'\n\n');res.end('data: '+JSON.stringify({id:'fixture05',choices:[{index:0,delta:{},finish_reason:'stop'}],usage:{prompt_tokens:1,completion_tokens:1,total_tokens:2}})+'\n\ndata: [DONE]\n\n');}
 async function body(req){let value='';for await(const chunk of req){value+=chunk;assert(value.length<200000,'FIXTURE_REQUEST_TOO_LARGE');}return JSON.parse(value);}
 const server=http.createServer(async(req,res)=>{try{
  const url=new URL(req.url,'http://127.0.0.1');const page=url.pathname.match(/^\/page\/([ABC])$/),effect=url.pathname.match(/^\/effect\/([ABC])$/);
@@ -50,7 +74,7 @@ const server=http.createServer(async(req,res)=>{try{
  }
  res.writeHead(404);res.end();
 }catch(error){failed??=error.message;save();res.writeHead(400);res.end('FIXTURE_REJECTED');}});
-await new Promise(r=>server.listen(0,'127.0.0.1',r));const origin=`http://127.0.0.1:${server.address().port}`;
+await new Promise(r=>server.listen(0,'127.0.0.1',r));const origin=`http://127.0.0.1:${server.address().port}`;const commands=commandsFor(origin);
 const env=Object.fromEntries(['HOME','PATH','TMPDIR','LANG'].filter(k=>process.env[k]).map(k=>[k,process.env[k]]));
 const alive=pid=>{try{process.kill(pid,0);return true;}catch{return false;}};
 function processRows(){return execFileSync('/bin/ps',['-axo','pid=,ppid=,pgid='],{encoding:'utf8'}).trim().split('\n').map(row=>row.trim().split(/\s+/).map(Number));}
@@ -62,19 +86,19 @@ async function start({holdRecovery=false,duplicate=false}={}){
  const child=spawn(path.join(manifest.app,'Contents/MacOS/helpr'),['--workspace-validation','--workspace-fixture'],{env:{...env,HELPR_VALIDATION_DATA:profile,HELPR_FIXTURE_ORIGIN:origin,...(holdRecovery?{HELPR_VALIDATION_HOLD_RECOVERY:'1'}:{})},stdio:['ignore','ignore',fs.openSync(path.join(root,`stderr-${used.used.starts}.log`),'a',0o600),'ipc']});
  const app={child,pids:new Set([child.pid]),groups:new Set(),messages:[],pending:new Map(),sequence:0,ready:null,exit:null};
  report.starts.push({start:used.used.starts,pid:child.pid,duplicate,at:Date.now()});save();
- child.on('message',m=>{app.messages.push(m);if(m.ready)app.ready=m;const p=app.pending.get(m.id);if(p){clearTimeout(p.timer);app.pending.delete(m.id);m.error?p.reject(Error(m.error)):p.resolve(m.value);}});
+ child.on('message',m=>{app.messages.push(m);if(m.ready)app.ready=m;const p=app.pending.get(m.id);if(p){clearTimeout(p.timer);app.pending.delete(m.id);m.error?p.reject(Object.assign(Error(m.error),{commandKind:p.commandKind})):p.resolve(m.value);}});
  child.once('exit',(code,signal)=>{app.exit={code,signal};for(const p of app.pending.values()){clearTimeout(p.timer);p.reject(Error('APPLICATION_EXITED'));}app.pending.clear();});
- if(duplicate){await until(()=>app.exit);check('competing-start-exits-without-new-owner',app.exit.code===0&&!app.ready);return app;}
+ if(duplicate){await until(()=>{snapshotProcesses(app);return app.exit;});await gone(app);check('competing-start-exits-without-new-owner',app.exit.code===0&&!app.ready);return app;}
  current=app;await until(()=>app.ready||app.exit);assert(app.ready&&!app.exit,'APPLICATION_NOT_READY');snapshotProcesses(app);return app;
 }
-function rpc(app,command){assert(app.child.connected,'NO_APPLICATION_CHANNEL');return new Promise((resolve,reject)=>{const id=++app.sequence;const timer=setTimeout(()=>{app.pending.delete(id);reject(Error('RPC_TIMEOUT'));},12000);app.pending.set(id,{resolve,reject,timer});app.child.send({id,command});});}
-const snapshot=app=>rpc(app,{kind:'snapshot'});
-async function configure(app){await rpc(app,{kind:'model-save',requestId:randomUUID(),endpoint:origin+'/v1',model:'local-fixture-05',apiKey:'local-fixture-not-a-secret'});}
-async function create(app,name){assert(report.tasks.length<report.limits.tasks,'TASK_LIMIT');report.tasks.push({name,attempt:true});save();const result=await rpc(app,{kind:'create',requestId:randomUUID(),goal:`05 ${name} 写入一条核对备注并核对完成 ${origin}/page/${name}`});Object.assign(report.tasks.at(-1),{id:result.taskId});save();await until(async()=>(await snapshot(app)).tasks.find(t=>t.id===result.taskId)?.phase==='manual');return result.taskId;}
-const intent=(app,taskId,value)=>rpc(app,{kind:'execution-intent',taskId,requestId:randomUUID(),intent:value});
+function rpc(app,command){if(command.kind!=='validation-barrier')uiCommandSchema.parse(command);assert(app.child.connected,'NO_APPLICATION_CHANNEL');return new Promise((resolve,reject)=>{const id=++app.sequence;const timer=setTimeout(()=>{app.pending.delete(id);reject(Error('RPC_TIMEOUT'));},12000);app.pending.set(id,{resolve,reject,timer,commandKind:command.kind});app.child.send({id,command});});}
+const snapshot=app=>rpc(app,commands.snapshot());
+async function configure(app){await rpc(app,commands.configure(await snapshot(app)));}
+async function create(app,name){assert(report.tasks.length<report.limits.tasks,'TASK_LIMIT');report.tasks.push({name,attempt:true});save();const result=await rpc(app,commands.create(name));Object.assign(report.tasks.at(-1),{id:result.taskId});save();await until(async()=>(await snapshot(app)).tasks.find(t=>t.id===result.taskId)?.phase==='manual');return result.taskId;}
+const intent=(app,taskId,value)=>rpc(app,commands.intent(taskId,value));
 async function barrier(app){await until(async()=>{const s=await rpc(app,{kind:'validation-barrier',control:{action:'status'}});return s.waits.some(w=>w.key==='recovery:*'&&w.reached);});await configure(app);await rpc(app,{kind:'validation-barrier',control:{action:'release',point:'recovery',taskId:'*'}});}
 async function gone(app){await until(()=>app.exit,10000);await until(()=>[...app.pids].every(pid=>!alive(pid))&&groupMembers(app).length===0,8000);const remaining=groupMembers(app);Object.assign(report.starts.find(row=>row.pid===app.child.pid),{exit:app.exit,remaining});check('owned-tree-cleared-'+app.child.pid,[...app.pids].every(pid=>!alive(pid))&&remaining.length===0);}
-async function quit(app){snapshotProcesses(app);await rpc(app,{kind:'quit'}).catch(error=>{if(error.message!=='APPLICATION_EXITED')throw error;});await gone(app);assert.equal(app.exit.code,0,'NORMAL_EXIT_REQUIRED');}
+async function quit(app){snapshotProcesses(app);await rpc(app,commands.quit()).catch(error=>{if(error.message!=='APPLICATION_EXITED')throw error;});await gone(app);assert.equal(app.exit.code,0,'NORMAL_EXIT_REQUIRED');}
 function fault(pid,signal,label){assert(report.faults.length<report.limits.faults,'FAULT_LIMIT');spend('faults');report.faults.push({pid,signal,label,at:Date.now()});save();process.kill(pid,signal);}
 try{
  console.log('05 first start: interrupted result and owner cleanup');
@@ -88,7 +112,7 @@ try{
  await start({duplicate:true});
  const c=await create(second,'C');await intent(second,c,'start');await until(()=>heldModels.some(m=>m.name==='C'&&!m.res.destroyed));capture('before-normal-quit',await snapshot(second));
  await rpc(second,{kind:'validation-barrier',control:{action:'arm',point:'exit-checkpoint',taskId:'*'}});
- const exiting=rpc(second,{kind:'quit'}).then(()=>({accepted:true}),error=>({error:error.message}));
+ const exiting=rpc(second,commands.quit()).then(()=>({accepted:true}),error=>({error:error.message}));
  await until(async()=>{const status=await rpc(second,{kind:'validation-barrier',control:{action:'status'}});return status.waits.some(w=>w.key==='exit-checkpoint:*'&&w.reached);});
  const recordsPid=second.ready.recordsPid;fault(recordsPid,'SIGKILL','record-process-exits-during-quit-checkpoint');await until(()=>second.messages.some(m=>m.recordsUnavailable&&m.duringExit));
  await rpc(second,{kind:'validation-barrier',control:{action:'release',point:'exit-checkpoint',taskId:'*'}});const interrupted=await exiting;check('exit-failure-retains-application',Boolean(interrupted.error)&&!second.exit);
@@ -96,7 +120,7 @@ try{
  console.log('05 final reopen: resume only undispatched remainder');
  const fourth=await start({holdRecovery:true});await barrier(fourth);await until(async()=>(await snapshot(fourth)).tasks.find(t=>t.id===c)?.execution?.phase==='complete');capture('final',await snapshot(fourth));check('only-remaining-work-written-once',counts.A===1&&counts.B===0&&counts.C===1);await quit(fourth);
  report.passed=true;
-}catch(error){report.passed=false;report.error=error.message;process.exitCode=1;}
+}catch(error){report.passed=false;report.error=error.message;report.failedCommand=error.commandKind;process.exitCode=1;}
 finally{
  if(current&&!current.exit){try{await quit(current);}catch(error){report.quitFailure=error.message;}}
  if(current){const left=[...current.pids].filter(alive);if(left.length){spend('cleanups');report.cleanup={pids:left};for(const pid of left.reverse())if(alive(pid))process.kill(pid,'SIGKILL');const cleanupDeadline=Date.now()+5000;while(left.some(alive)&&Date.now()<cleanupDeadline)await new Promise(r=>setTimeout(r,40));report.cleanup.remaining=left.filter(alive);}}
