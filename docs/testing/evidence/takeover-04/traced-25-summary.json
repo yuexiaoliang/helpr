@@ -1,0 +1,179 @@
+{
+  "build": 25,
+  "start": 60,
+  "archive": "18c6f03798b5da8467b8e7eaa8a8c3ef57a64f74e630f03b6db03d3c34e0d6b1",
+  "carry": {
+    "round": "takeover-04-traced-02",
+    "counts": {
+      "effects": 12,
+      "inputs": 26,
+      "models": 26,
+      "tasks": 10
+    },
+    "repair": {
+      "build": 24,
+      "archive": "192646dbdc155f370dc1b107c719ae0926c84c37a79330edefef07c0d05cd791"
+    }
+  },
+  "scope": "packaged local fixtures; no system credential or persistent website-session acceptance; tool input is not real IME/paste acceptance",
+  "credentials": "in-process public fixture sentinel; system keychain not tested",
+  "fixtureSession": {
+    "persistent": false,
+    "origin": "local-loopback"
+  },
+  "started": "2026-10-17T02:20:36.246Z",
+  "validationStarted": "2026-10-17T02:20:40.016Z",
+  "preparationElapsedMs": 3770,
+  "finished": "2026-10-17T02:20:56.087Z",
+  "exitCode": 0,
+  "survivors": [],
+  "postExit": {
+    "checkedAt": "2026-10-17T02:21:49.693Z",
+    "survivors": []
+  },
+  "controlFailure": "Z-advances-while-rebuilt-Y-paused-Z-phase",
+  "counts": {
+    "models": 4,
+    "effects": 2,
+    "inputs": 3,
+    "tasks": 2
+  },
+  "cumulativeCounts": {
+    "models": 30,
+    "effects": 14,
+    "inputs": 29,
+    "tasks": 12
+  },
+  "checks": [
+    {
+      "name": "destroyed-Y-only-paused-Y-phase",
+      "at": 1792203654139,
+      "passed": true
+    },
+    {
+      "name": "destroyed-Y-only-paused-Z-phase",
+      "at": 1792203654139,
+      "passed": true
+    },
+    {
+      "name": "destroyed-Y-only-paused-Y-effects",
+      "at": 1792203654139,
+      "passed": true
+    },
+    {
+      "name": "destroyed-Y-only-paused-Z-effects",
+      "at": 1792203654140,
+      "passed": true
+    },
+    {
+      "name": "destroyed-Y-only-paused-Y-reason",
+      "at": 1792203654140,
+      "passed": true
+    },
+    {
+      "name": "rebuilt-view-waits-for-explicit-continue-Y-phase",
+      "at": 1792203654644,
+      "passed": true
+    },
+    {
+      "name": "rebuilt-view-waits-for-explicit-continue-Z-phase",
+      "at": 1792203654645,
+      "passed": true
+    },
+    {
+      "name": "rebuilt-view-waits-for-explicit-continue-Y-effects",
+      "at": 1792203654645,
+      "passed": true
+    },
+    {
+      "name": "rebuilt-view-waits-for-explicit-continue-Z-effects",
+      "at": 1792203654645,
+      "passed": true
+    },
+    {
+      "name": "rebuilt-view-waits-for-explicit-continue-Y-reason",
+      "at": 1792203654646,
+      "passed": true
+    },
+    {
+      "name": "Z-advances-while-rebuilt-Y-paused-Y-phase",
+      "at": 1792203655762,
+      "passed": true
+    },
+    {
+      "name": "normal-exit-and-no-owned-survivors",
+      "at": 1792203656086,
+      "passed": true
+    }
+  ],
+  "effects": [
+    {
+      "name": "Z",
+      "count": 1,
+      "at": 1792203655118,
+      "gates": {
+        "Y": {
+          "epoch": 7,
+          "available": true,
+          "blocked": true
+        },
+        "Z": {
+          "epoch": 3,
+          "available": true,
+          "blocked": false
+        }
+      }
+    },
+    {
+      "name": "Z",
+      "count": 2,
+      "at": 1792203655532,
+      "gates": {
+        "Y": {
+          "epoch": 7,
+          "available": true,
+          "blocked": true
+        },
+        "Z": {
+          "epoch": 3,
+          "available": true,
+          "blocked": false
+        }
+      }
+    }
+  ],
+  "viewTargets": {
+    "before": "351CB44648AAA5CF250C4199EB0F0BD5",
+    "after": "EF795A31D7944F3F2A64ED1F9B19F48E"
+  },
+  "finalTasks": [
+    {
+      "name": "Y",
+      "phase": "paused",
+      "intent": "automatic",
+      "reason": "page-change",
+      "gate": {
+        "epoch": 7,
+        "available": true,
+        "blocked": true
+      }
+    },
+    {
+      "name": "Z",
+      "phase": "running",
+      "intent": "automatic",
+      "gate": {
+        "epoch": 3,
+        "available": true,
+        "blocked": false
+      }
+    }
+  ],
+  "limitations": [
+    "The client incorrectly expected checking after successful DISPATCH; the actual running phase is the existing contract.",
+    "The run stopped at that assertion; explicit continue on the rebuilt view and control disconnection were not exercised.",
+    "No real credential encryption, persistent login, human IME or clipboard acceptance."
+  ],
+  "clientFailure": "Z-advances-while-rebuilt-Y-paused-Z-phase",
+  "finishClientFailure": "CONTROL_TIMEOUT"
+}
