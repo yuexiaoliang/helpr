@@ -373,7 +373,7 @@ test('停止已提交但回执丢失，记录服务重新连接后核对可靠�
     expect(service.decorate(state).tasks[0]?.executionControl?.stopSaved).toBe(
       false,
     );
-    service.recordsRestored(records.snapshot());
+    await service.recordsRestored(records.snapshot());
     await service.settled();
     expect(service.decorate(state).tasks[0]).toMatchObject({
       execution: { intent: 'stopped', phase: 'stopped' },
@@ -643,7 +643,7 @@ test('新目标保存未提交时记录重连仍阻断旧目标，不能因旧�
   });
   try {
     await workspace.reconcileCommitted();
-    service.recordsRestored(state, [a]);
+    await service.recordsRestored(state, [a]);
     await service.settled();
     expect(writes).toBe(0);
     expect(workspace.canExit()).toBe(false);
@@ -656,74 +656,96 @@ test('新目标保存未提交时记录重连仍阻断旧目标，不能因旧�
   }
 });
 
-test('工作区保存失败后重连，重试成功即可退出，但不自动解除执行阻断', async () => {
-  const records = new WorkspaceRecords(folder(), 'app/records/migrations');
-  const a = task(records, 'A');
-  const b = records.execute({
-    kind: 'create',
-    requestId: 'B',
-    goal: 'B',
-  }).taskId;
-  let state = records.snapshot(),
-    disconnected = true;
-  const workspace = new WorkspaceSession(
-    state,
-    (input) => {
-      const command = input as { kind: string; command: unknown };
-      if (command.kind === 'lookup')
-        return Promise.resolve(records.lookupRequest(command.command));
-      if (disconnected) return Promise.reject(Error('PROCESS_DISCONNECTED'));
-      return Promise.resolve(records.execute(command));
-    },
-    (next) => {
-      state = next;
-    },
-  );
-  const service = new ExecutionService({
-    records: (command) => Promise.resolve(records.execution(command)),
-    current: () => state,
-    publish: (next) => {
-      state = next;
-    },
-    observe: () => Promise.reject(Error('SHOULD_STAY_BLOCKED')),
-    propose: () => Promise.reject(Error('NO_MODEL')),
-    perform: () => Promise.reject(Error('NO_WRITE')),
-    revoke: () => {},
-    stopModels: () => {},
-  });
-  try {
-    for (const taskId of [a, b])
-      await expect(
-        workspace.save({
-          kind: 'draft',
-          requestId: 'draft-' + taskId,
-          taskId,
-          text: '新草稿',
-        }),
-      ).rejects.toThrow('PROCESS_DISCONNECTED');
-    service.recordsRestored(state, workspace.unresolvedTasks());
-    expect(service.canExit()).toBe(false);
-    disconnected = false;
-    for (const taskId of [a, b]) {
-      await workspace.save({
-        kind: 'draft',
-        requestId: 'draft-' + taskId,
-        taskId,
-        text: '新草稿',
+test.each(['draft', 'page'] as const)(
+  '%s 保存失败后重连，重试成功即可退出，冷重开仍保持暂停',
+  async (kind) => {
+    const dir = folder();
+    let records = new WorkspaceRecords(dir, 'app/records/migrations');
+    const a = task(records, 'A');
+    const b = records.execute({
+      kind: 'create',
+      requestId: 'B',
+      goal: 'B',
+    }).taskId;
+    let state = records.snapshot(),
+      disconnected = true,
+      observations = 0;
+    const workspace = new WorkspaceSession(
+      state,
+      (input) => {
+        const command = input as { kind: string; command: unknown };
+        if (command.kind === 'lookup')
+          return Promise.resolve(records.lookupRequest(command.command));
+        if (disconnected) return Promise.reject(Error('PROCESS_DISCONNECTED'));
+        return Promise.resolve(records.execute(command));
+      },
+      (next) => {
+        state = next;
+      },
+    );
+    const createService = () =>
+      new ExecutionService({
+        records: (command) => Promise.resolve(records.execution(command)),
+        current: () => state,
+        publish: (next) => {
+          state = next;
+        },
+        observe: () => {
+          observations++;
+          return Promise.reject(Error('SHOULD_STAY_BLOCKED'));
+        },
+        propose: () => Promise.reject(Error('NO_MODEL')),
+        perform: () => Promise.reject(Error('NO_WRITE')),
+        revoke: () => {},
+        stopModels: () => {},
       });
-      service.workspaceSaved(workspace.unresolvedTasks());
+    const service = createService();
+    const command = (taskId: string) => ({
+      requestId: kind + '-' + taskId,
+      taskId,
+      ...(kind === 'draft'
+        ? { kind, text: '新草稿' }
+        : { kind, url: 'https://example.com/A', phase: 'manual' }),
+    });
+    try {
+      for (const taskId of [a, b])
+        await expect(workspace.save(command(taskId))).rejects.toThrow(
+          'PROCESS_DISCONNECTED',
+        );
+      await service.recordsRestored(state, workspace.unresolvedTasks());
+      expect(service.canExit()).toBe(false);
+      disconnected = false;
+      for (const taskId of [a, b]) {
+        await workspace.save(command(taskId));
+        service.workspaceSaved(workspace.unresolvedTasks());
+      }
+      await service.settled();
+      expect(workspace.canExit()).toBe(true);
+      expect(service.canExit()).toBe(true);
+      expect(
+        records.snapshot().tasks.find((t) => t.id === a)?.execution,
+      ).toMatchObject({ phase: 'paused' });
+      expect(
+        service.decorate(state).tasks.map((t) => t.executionControl),
+      ).toMatchObject([
+        { blocked: true, stopSaved: true },
+        { blocked: true, stopSaved: true },
+      ]);
+      service.disable();
+      records.close();
+      records = new WorkspaceRecords(dir, 'app/records/migrations');
+      state = records.snapshot();
+      const restarted = createService();
+      restarted.refresh();
+      await restarted.settled();
+      expect(observations).toBe(0);
+      expect(state.tasks.find((t) => t.id === a)?.execution?.phase).toBe(
+        'paused',
+      );
+      restarted.disable();
+    } finally {
+      service.disable();
+      records.close();
     }
-    await service.settled();
-    expect(workspace.canExit()).toBe(true);
-    expect(service.canExit()).toBe(true);
-    expect(
-      service.decorate(state).tasks.map((t) => t.executionControl),
-    ).toMatchObject([
-      { blocked: true, stopSaved: true },
-      { blocked: true, stopSaved: true },
-    ]);
-  } finally {
-    service.disable();
-    records.close();
-  }
-});
+  },
+);

@@ -384,7 +384,7 @@ export async function startController(
         recordsAvailable = true;
         await workspace.reconcileCommitted();
         models.recordsRestored();
-        executions.recordsRestored(
+        await executions.recordsRestored(
           snapshotSchema.parse(
             await recordClient.request({ kind: 'snapshot' }),
           ),
@@ -493,14 +493,18 @@ export async function startController(
       return workspace.cancelCreation(command.requestId);
     if (command.kind === 'navigate')
       await executions.suspend(command.taskId, 'page-change', randomUUID());
-    const result = await workspace.save(command);
-    executions.workspaceSaved(workspace.unresolvedTasks());
+    const result = await saveWorkspace(command);
     if (command.kind === 'navigate')
       await hostClient.request({
         kind: 'navigate',
         taskId: command.taskId,
         url: command.url,
       });
+    return result;
+  }
+  async function saveWorkspace(command: unknown) {
+    const result = await workspace.save(command);
+    executions.workspaceSaved(workspace.unresolvedTasks());
     return result;
   }
   const registration = z.object({
@@ -577,8 +581,11 @@ export async function startController(
       .safeParse(input);
     if (page.success) {
       if (quitting) return;
-      void workspace
-        .save({ kind: 'page', requestId: randomUUID(), ...page.data.page })
+      void saveWorkspace({
+        kind: 'page',
+        requestId: randomUUID(),
+        ...page.data.page,
+      })
         .then(() => executions.refresh())
         .catch((error) => {
           log.event('failure', { code: errorCode(error) });

@@ -649,7 +649,7 @@ export class ExecutionService {
           });
       }
   }
-  recordsRestored(
+  async recordsRestored(
     state: WorkspaceSnapshot,
     unsettledTasks: readonly string[] = [],
   ) {
@@ -680,6 +680,13 @@ export class ExecutionService {
         );
         if (reconciled) this.blocked.set(task.id, reconciled);
       }
+    }
+    for (const taskId of unsettledTasks) {
+      const e = this.ports
+        .current()
+        .tasks.find((t) => t.id === taskId)?.execution;
+      if (e && ['queued', 'checking', 'running'].includes(e.phase))
+        await this.suspend(taskId, 'record-unavailable', randomUUID());
     }
     this.publish();
     this.pump();

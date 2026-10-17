@@ -94,6 +94,7 @@ export const executionPauseReasonSchema = z.enum([
   'page-change',
   'ownership-unknown',
   'native-unavailable',
+  'record-unavailable',
 ]);
 export type ExecutionPauseReason = z.infer<typeof executionPauseReasonSchema>;
 export const pauseDescription = {
@@ -116,6 +117,11 @@ export const pauseDescription = {
     label: '本机能力不可用',
     message:
       '本机输入识别暂不可用，已暂停自动操作并保留网页。能力恢复后仍需明确继续，无需关闭系统安全设置。',
+  },
+  'record-unavailable': {
+    label: '保存中断 · 已暂停',
+    message:
+      '任务变化在记录连接中断时未能保存，已暂停自动操作。保存恢复后请核对任务，再明确继续。',
   },
 } satisfies Record<ExecutionPauseReason, { label: string; message: string }>;
 export const executionSchema = z.strictObject({
