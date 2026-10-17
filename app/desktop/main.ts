@@ -48,7 +48,7 @@ app.setName('helpr');
 try {
   const images = runtimeImages(process.execPath, app.isPackaged);
   startupStage = 'ownership';
-  const { role, root, validation } = resolveStartup({
+  const { role, root, validation, fixtureOrigin } = resolveStartup({
     argv: process.argv,
     runtimeSwitches: debuggingSwitches.filter((name) =>
       app.commandLine.hasSwitch(name),
@@ -95,7 +95,7 @@ try {
         .whenReady()
         .then(() => {
           startupStage = 'controller-init';
-          return startController(root, validation);
+          return startController(root, validation, fixtureOrigin);
         })
         .catch((error: unknown) => {
           dialog.showErrorBox(

@@ -789,3 +789,77 @@ test('原生资格已撤销但异步取消未到达时，实际模型网络入�
     f.records.close();
   }
 });
+
+test('本机虚构凭据不依赖系统凭据，只接受公开哨兵并完成真实本机问答', async () => {
+  const { LocalFixture, FIXTURE_API_KEY } =
+    await import('../../app/desktop/local-fixture');
+  const server = await backend();
+  const f = fixture();
+  const local = new LocalFixture(new URL(server.endpoint).origin);
+  const service = new ModelService({
+    records: (input) => Promise.resolve(f.records.model(input)),
+    protection: local,
+    observe: f.observe,
+    current: () => f.records.snapshot(),
+    publish: () => {},
+  });
+  try {
+    const taskId = f.create('fixture-task');
+    await expect(
+      service.configure({
+        kind: 'model-save',
+        requestId: 'deny-real-key',
+        expectedVersion: 0,
+        protocol: 'chat-completions',
+        endpoint: server.endpoint,
+        model: 'local',
+        apiKey: 'real-key-must-be-rejected',
+      }),
+    ).rejects.toThrow('MODEL_CREDENTIAL_UNAVAILABLE');
+    expect(f.records.snapshot().modelSettings).toBeNull();
+    await service.configure({
+      kind: 'model-save',
+      requestId: 'fixture-settings',
+      expectedVersion: 0,
+      protocol: 'chat-completions',
+      endpoint: server.endpoint,
+      model: 'local',
+      apiKey: FIXTURE_API_KEY,
+    });
+    await service.ask({
+      kind: 'message',
+      requestId: 'fixture-question',
+      taskId,
+      text: '营收是多少？',
+    });
+    await service.settled();
+    expect(
+      f.records
+        .snapshot()
+        .tasks.find((t) => t.id === taskId)
+        ?.messages.at(-1)?.call?.phase,
+    ).toBe('complete');
+    expect(server.received).toHaveLength(1);
+    expect(server.received[0]?.authorization).toBe('Bearer ' + FIXTURE_API_KEY);
+    expect(() => local.reveal('foreign-production-ciphertext')).toThrow(
+      'MODEL_CREDENTIAL_UNAVAILABLE',
+    );
+    expect(local.partition.startsWith('persist:')).toBe(false);
+    for (const url of [
+      'https://example.com',
+      'http://127.0.0.1:1/elsewhere',
+      'file:///tmp/data',
+      'http://user@' + new URL(server.endpoint).host,
+    ])
+      expect(local.allowsRequest(url)).toBe(false);
+    expect(local.allowsRequest(new URL('/page/A', server.endpoint).href)).toBe(
+      true,
+    );
+    expect(() => local.checkModel('https://example.com/v1')).toThrow(
+      'INVALID_MODEL_ENDPOINT',
+    );
+  } finally {
+    await service.stopAll();
+    f.records.close();
+  }
+});

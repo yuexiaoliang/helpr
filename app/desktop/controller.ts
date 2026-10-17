@@ -32,11 +32,15 @@ import { WebExecutor } from './web-executor';
 import { InputGate } from './input-gate';
 import { executionPauseReasonSchema } from '../shared/execution';
 import { ValidationBarriers } from './validation-barriers';
+import { LocalFixture } from './local-fixture';
 
 export async function startController(
   folder: string,
   validation: boolean,
+  fixtureOrigin?: string,
 ): Promise<void> {
+  if (fixtureOrigin && !validation) throw Error('STARTUP_NOT_AUTHORIZED');
+  const fixture = fixtureOrigin ? new LocalFixture(fixtureOrigin) : undefined;
   const log = diagnostics(folder, 'controller');
   const barriers = validation ? new ValidationBarriers() : undefined;
   let quitting = false;
@@ -97,6 +101,7 @@ export async function startController(
   const args = [
     ...(!app.isPackaged ? [app.getAppPath()] : []),
     '--workspace-host',
+    ...(fixture ? ['--workspace-fixture'] : []),
     '--remote-debugging-pipe',
     '--site-per-process',
   ];
@@ -117,6 +122,7 @@ export async function startController(
         ...env,
         HELPR_WORKSPACE_DATA: folder,
         HELPR_INPUT_GATE: inputGateFile,
+        ...(fixture ? { HELPR_FIXTURE_ORIGIN: fixture.origin } : {}),
       },
       detached: true,
       stdio: ['ignore', 'ignore', 'ignore', 'pipe', 'pipe', 'ipc', 'pipe'],
@@ -194,7 +200,7 @@ export async function startController(
         publish();
       }
     },
-    protection: {
+    protection: fixture ?? {
       protect: async (key) => {
         if (
           process.platform !== 'darwin' ||
@@ -323,6 +329,13 @@ export async function startController(
   async function execute(input: unknown): Promise<unknown> {
     const command = uiCommandSchema.parse(input);
     if (quitting) throw new Error('APPLICATION_EXITING');
+    if (
+      fixture &&
+      (command.kind === 'model-save' || command.kind === 'model-test')
+    ) {
+      fixture.checkModel(command.endpoint);
+      if (command.apiKey !== undefined) fixture.protect(command.apiKey);
+    }
     if (command.kind === 'snapshot') return executions.decorate(state);
     if (command.kind === 'execution-intent')
       return { state: await executions.intent(command) };
@@ -640,6 +653,9 @@ export async function startController(
       .object({
         ready: z.record(z.string(), z.unknown()),
         hostPid: z.number().int().positive(),
+        fixture: z
+          .object({ origin: z.string(), persistent: z.boolean() })
+          .optional(),
       })
       .safeParse(input);
     if (!ready.success) return;
@@ -652,6 +668,9 @@ export async function startController(
         hostPid: ready.data.hostPid,
         recordsPid: records.pid,
         versions: ready.data.ready,
+        ...(fixture
+          ? { fixture: true, fixtureSession: ready.data.fixture }
+          : {}),
       });
   });
   // 仅继承父进程的验证通道；不创建服务器、端口或任意代码执行入口。

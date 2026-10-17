@@ -90,10 +90,14 @@ test.skipIf(process.platform !== 'darwin')(
       copyFileSync(process.execPath, file);
     }
     const production = folder();
+    const fixtureProfile = folder(validationDirectory());
     const hostScript = `(async () => {
       const { resolveStartup } = await import(process.argv[1]);
       const result = resolveStartup({ argv:['--workspace-host','--remote-debugging-pipe'], connected:process.connected, executable:process.execPath, controllerExecutable:process.argv[5], hostExecutable:process.execPath, parentPid:process.ppid, production:process.argv[2], env:{HELPR_WORKSPACE_DATA:process.argv[2]}, probe:process.argv[3], watcher:process.argv[4] });
-      process.send({result}, () => process.exit(0));
+      const base = {argv:['--workspace-host','--remote-debugging-pipe','--workspace-fixture'],connected:process.connected,executable:process.execPath,controllerExecutable:process.argv[5],hostExecutable:process.execPath,parentPid:process.ppid,production:process.argv[2],probe:process.argv[3],watcher:process.argv[4]};
+      const fixture = resolveStartup({...base,env:{HELPR_WORKSPACE_DATA:process.argv[6],HELPR_FIXTURE_ORIGIN:'http://127.0.0.1:43210'}});
+      let rejected;try{resolveStartup({...base,env:{HELPR_WORKSPACE_DATA:process.argv[2],HELPR_FIXTURE_ORIGIN:'http://127.0.0.1:43210'}});}catch(error){rejected=error.message;}
+      process.send({result,fixture,rejected}, () => process.exit(0));
     })().catch(() => process.exit(1));`;
     const controllerScript = `
       const {spawn} = require('node:child_process');
@@ -114,6 +118,7 @@ test.skipIf(process.platform !== 'darwin')(
         path.resolve('dist/native/process-path'),
         path.resolve('dist/native/watch-owner'),
         controller,
+        fixtureProfile,
       ],
       { stdio: ['ignore', 'ignore', 'ignore', 'ipc'] },
     );
@@ -133,6 +138,13 @@ test.skipIf(process.platform !== 'darwin')(
     });
     expect(result).toEqual({
       result: { role: 'host', root: production, validation: false },
+      fixture: {
+        role: 'host',
+        root: fixtureProfile,
+        validation: true,
+        fixtureOrigin: 'http://127.0.0.1:43210',
+      },
+      rejected: 'STARTUP_NOT_AUTHORIZED',
     });
     await new Promise<void>((resolve) => {
       if (child.exitCode !== null || child.signalCode !== null) resolve();
@@ -298,3 +310,49 @@ test.skipIf(process.platform !== 'darwin')(
     ).toThrow('STARTUP_NOT_AUTHORIZED');
   },
 );
+
+test('无人值守虚构入口必须显式选择且仅绑定继承通道、临时资料与本机来源', () => {
+  const input = options();
+  expect(() =>
+    resolveStartup({
+      ...input,
+      argv: ['--workspace-fixture'],
+      env: { HELPR_FIXTURE_ORIGIN: 'http://127.0.0.1:43210' },
+    }),
+  ).toThrow('STARTUP_NOT_AUTHORIZED');
+  const valid = {
+    ...input,
+    argv: ['--workspace-validation', '--workspace-fixture'],
+    connected: true,
+    env: {
+      HELPR_VALIDATION_DATA: folder(validationDirectory()),
+      HELPR_FIXTURE_ORIGIN: 'http://127.0.0.1:43210',
+    },
+  };
+  expect(resolveStartup(valid)).toMatchObject({
+    validation: true,
+    fixtureOrigin: 'http://127.0.0.1:43210',
+  });
+  for (const origin of [
+    'https://example.com',
+    'http://localhost:43210',
+    'http://127.0.0.1:43210/path',
+    'http://user@127.0.0.1:43210',
+    '',
+  ])
+    expect(() =>
+      resolveStartup({
+        ...valid,
+        env: { ...valid.env, HELPR_FIXTURE_ORIGIN: origin },
+      }),
+    ).toThrow('VALIDATION_PROFILE_REQUIRED');
+  expect(() => resolveStartup({ ...valid, connected: false })).toThrow(
+    'VALIDATION_PROFILE_REQUIRED',
+  );
+  expect(() =>
+    resolveStartup({
+      ...valid,
+      env: { ...valid.env, HELPR_VALIDATION_DATA: input.production },
+    }),
+  ).toThrow('VALIDATION_PROFILE_REQUIRED');
+});

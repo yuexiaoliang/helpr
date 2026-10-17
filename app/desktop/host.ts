@@ -32,6 +32,7 @@ import { diagnostics } from '../shared/diagnostics';
 import { resolveStartup, debuggingSwitches, runtimeImages } from './startup';
 import { InputGate } from './input-gate';
 import type { ExecutionPauseReason } from '../shared/execution';
+import { LocalFixture } from './local-fixture';
 
 const images = runtimeImages(process.execPath, app.isPackaged);
 const startup = resolveStartup({
@@ -50,6 +51,9 @@ const startup = resolveStartup({
   watcher: path.join(images.resources, 'watch-owner'),
 });
 if (startup.role !== 'host') throw new Error('HOST_OWNER_REQUIRED');
+const fixture = startup.fixtureOrigin
+  ? new LocalFixture(startup.fixtureOrigin)
+  : undefined;
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -291,7 +295,9 @@ function pageState(
   }
 }
 function bindPage(task: Task): void {
-  const remote = session.fromPartition('persist:helpr-web');
+  const remote = session.fromPartition(
+    fixture?.partition ?? 'persist:helpr-web',
+  );
   const local = session.fromPartition('helpr-ui');
   const view = new WebContentsView({
     webPreferences: { ...prefs, session: remote, focusOnNavigation: false },
@@ -488,7 +494,7 @@ function bindPage(task: Task): void {
     watch(page.view);
     layout();
   };
-  if (task.url && safeStorage.isEncryptionAvailable())
+  if (task.url && (fixture || safeStorage.isEncryptionAvailable()))
     void view.webContents.loadURL(websiteURL(task.url)).catch(() => {});
   else if (task.url)
     emit({
@@ -587,7 +593,7 @@ async function perform(input: unknown): Promise<unknown> {
       .parse(input);
     const page = pages.get(job.taskId),
       task = state.tasks.find((t) => t.id === job.taskId);
-    if (!page || !task || !safeStorage.isEncryptionAvailable())
+    if (!page || !task || !(fixture || safeStorage.isEncryptionAvailable()))
       throw new Error('PAGE_NOT_AVAILABLE');
     try {
       // Electron 在销毁后清空此 getter，未必还能调用 isDestroyed()。
@@ -628,7 +634,7 @@ async function perform(input: unknown): Promise<unknown> {
         pid: p.view.webContents?.getOSProcessId() ?? null,
         bounds: p.view.getBounds(),
       })),
-      encryptionAvailable: safeStorage.isEncryptionAvailable(),
+      encryptionAvailable: fixture ? null : safeStorage.isEncryptionAvailable(),
       window: {
         bounds: win.getBounds(),
         contentBounds: win.getContentBounds(),
@@ -740,7 +746,11 @@ void app
   .whenReady()
   .then(async () => {
     const local = session.fromPartition('helpr-ui'),
-      remote = session.fromPartition('persist:helpr-web');
+      remote = session.fromPartition(fixture?.partition ?? 'persist:helpr-web');
+    if (fixture)
+      remote.webRequest.onBeforeRequest((details, callback) => {
+        callback({ cancel: !fixture.allowsRequest(details.url) });
+      });
     local.protocol.handle('helpr', async (request) => {
       const url = new URL(request.url);
       if (
@@ -911,6 +921,14 @@ void app
     });
     notify({
       hostPid: process.pid,
+      ...(fixture
+        ? {
+            fixture: {
+              origin: fixture.origin,
+              persistent: remote.isPersistent(),
+            },
+          }
+        : {}),
       ready: {
         electron: process.versions.electron,
         node: process.versions.node,

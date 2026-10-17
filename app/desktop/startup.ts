@@ -2,6 +2,17 @@ import { mkdirSync, realpathSync } from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 
+export function localFixtureOrigin(value: string | undefined): string {
+  if (!value || !/^http:\/\/127\.0\.0\.1:[1-9]\d{0,4}$/.test(value))
+    throw Error('VALIDATION_PROFILE_REQUIRED');
+  try {
+    if (new URL(value).origin !== value) throw Error();
+  } catch {
+    throw Error('VALIDATION_PROFILE_REQUIRED');
+  }
+  return value;
+}
+
 /** 安装包内只有窗口宿主使用独立的应用身份；开发入口仍共用运行时。 */
 export function runtimeImages(executable: string, packaged: boolean) {
   if (!packaged)
@@ -76,6 +87,7 @@ export function resolveStartup(input: {
   role: 'controller' | 'host' | 'reopen';
   root: string;
   validation: boolean;
+  fixtureOrigin?: string;
 } {
   const switches = [
     ...input.argv
@@ -85,6 +97,8 @@ export function resolveStartup(input: {
   ];
   const host = switches.includes('workspace-host');
   const validation = switches.includes('workspace-validation');
+  const fixture = switches.includes('workspace-fixture');
+  if (fixture && !host && !validation) throw Error('STARTUP_NOT_AUTHORIZED');
   if (
     switches.some(
       (arg) =>
@@ -144,10 +158,21 @@ export function resolveStartup(input: {
       throw new Error('HOST_OWNER_REQUIRED');
     }
     const root = input.env.HELPR_WORKSPACE_DATA;
+    if (root === path.resolve(input.production) && fixture)
+      throw Error('STARTUP_NOT_AUTHORIZED');
     if (root === path.resolve(input.production))
       return { role: 'host', root, validation: false };
     try {
-      return { role: 'host', root: validationProfile(root), validation: true };
+      return {
+        role: 'host',
+        root: validationProfile(root),
+        validation: true,
+        ...(fixture
+          ? {
+              fixtureOrigin: localFixtureOrigin(input.env.HELPR_FIXTURE_ORIGIN),
+            }
+          : {}),
+      };
     } catch {
       throw new Error('HOST_PROFILE_REQUIRED');
     }
@@ -158,6 +183,9 @@ export function resolveStartup(input: {
       role: 'controller',
       root: validationProfile(input.env.HELPR_VALIDATION_DATA),
       validation: true,
+      ...(fixture
+        ? { fixtureOrigin: localFixtureOrigin(input.env.HELPR_FIXTURE_ORIGIN) }
+        : {}),
     };
   }
   return {

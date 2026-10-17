@@ -58,7 +58,8 @@ assert(stat.uid === process.getuid() && (stat.mode & 0o077) === 0, 'INVALID_PROF
 const profile = fs.mkdtempSync(profileRoot + '/takeover04-');
 const evidence = {
   build, archive: manifest.hashes['Contents/Resources/app.asar'],
-  scope: 'packaged local fixtures; tool input is not real IME/paste acceptance',
+  scope: 'packaged local fixtures; no system credential or persistent website-session acceptance; tool input is not real IME/paste acceptance',
+  credentials: 'in-process public fixture sentinel; system keychain not tested',
   started: new Date().toISOString(), carry,
   limits: { minutes: 20, ...Object.fromEntries(Object.entries(maximum).map(([kind, total]) => [kind, total - (carry?.counts[kind] ?? 0)])) },
   realModelCalls: 0, remoteWrites: 0, taskAttempts: 0, effects: [], inputs: [], models: [], checkpoints: [], checks: [], deferred: {},
@@ -207,7 +208,7 @@ try { budget = spend('starts'); }
 catch (error) { server.close(); throw error; }
 evidence.start = budget.used.starts;
 const env = Object.fromEntries(['HOME', 'PATH', 'TMPDIR', 'LANG'].filter((key) => process.env[key]).map((key) => [key, process.env[key]]));
-child = spawn(path.join(built, 'Contents/MacOS/helpr'), ['--workspace-validation'], { env: { ...env, HELPR_VALIDATION_DATA: profile }, stdio: ['ignore', fs.openSync(path.join(out, 'stdout.log'), 'a', 0o600), fs.openSync(path.join(out, 'stderr.log'), 'a', 0o600), 'ipc'] });
+child = spawn(path.join(built, 'Contents/MacOS/helpr'), ['--workspace-validation','--workspace-fixture'], { env: { ...env, HELPR_VALIDATION_DATA: profile, HELPR_FIXTURE_ORIGIN:base }, stdio: ['ignore', fs.openSync(path.join(out, 'stdout.log'), 'a', 0o600), fs.openSync(path.join(out, 'stderr.log'), 'a', 0o600), 'ipc'] });
 child.on('message', (m) => {
   if (m.ready) { evidence.ready = m; pids.add(m.hostPid); pids.add(m.recordsPid); save(); }
   const entry = pending.get(m.id);
@@ -239,16 +240,16 @@ child.once('exit', () => {
 });
 try {
   await waitFor(() => evidence.ready);
+  assert(evidence.ready.fixture === true && evidence.ready.fixtureSession?.persistent === false && evidence.ready.fixtureSession?.origin === base, 'LOCAL_FIXTURE_MODE_REQUIRED');
   trackPids();
   const files = fs.readdirSync(profile).filter((name) => /^\.input-gate-[0-9a-f-]+$/.test(name));
   assert.equal(files.length, 1);
   gate = createRequire(import.meta.url)(path.join(built, 'Contents/Resources/input-bridge.node'));
   gate.open(path.join(profile, files[0]), false);
-  // 系统授权是交给本人处理的准备阶段，不用自动测试截止提前关掉等待中的窗口。
-  // 此阶段不创建网站任务、不调用模型；自动核对的二十分钟在准备完成后才开始。
-  evidence.phase = 'saving-local-model-configuration'; save();
-  console.log('SAVING_LOCAL_MODEL_CONFIGURATION ' + out);
-  await request({ kind: 'model-save', requestId: randomUUID(), expectedVersion: 0, protocol: 'chat-completions', endpoint: base + '/v1', model: 'controlled-local-04', apiKey: 'local-fixture-not-a-secret' }, null);
+  // 只保存公开虚构哨兵；不再让接管测试依赖真人系统授权。
+  evidence.phase = 'saving-local-fixture-configuration'; save();
+  console.log('SAVING_LOCAL_FIXTURE_CONFIGURATION ' + out);
+  await request({ kind: 'model-save', requestId: randomUUID(), expectedVersion: 0, protocol: 'chat-completions', endpoint: base + '/v1', model: 'controlled-local-04', apiKey: 'local-fixture-not-a-secret' }, 10000);
   evidence.phase = 'ready'; evidence.validationStarted = new Date().toISOString(); save();
   deadline = setTimeout(() => { expired = true; evidence.failure = 'ROUND_TIME_LIMIT'; save(); void finish(); }, evidence.limits.minutes * 60000);
   console.log('READY ' + out);
