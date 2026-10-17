@@ -25,9 +25,15 @@ assert(fs.existsSync(path.join(host, frame)), 'HOST_FRAMEWORK_MISSING');
 assert(fs.realpathSync(path.join(host, frame)).startsWith(fs.realpathSync(host) + path.sep), 'HOST_FRAMEWORK_OUTSIDE_BUNDLE');
 const hash = file => createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 assert.equal(hash(path.join(host, 'Contents/Resources/app.asar')), hash(path.join(bundle, 'Contents/Resources/app.asar')));
-for (const file of ['input-bridge.node', 'input-bridge.build.json']) {
-  assert.equal(hash(path.join(host, 'Contents/Resources', file)), hash(path.join(bundle, 'Contents/Resources', file)), 'HOST_INPUT_BRIDGE_MISMATCH');
-}
+assert.equal(hash(path.join(host, 'Contents/Resources/input-bridge.build.json')), hash(path.join(bundle, 'Contents/Resources/input-bridge.build.json')), 'HOST_INPUT_BRIDGE_MISMATCH');
+// 证书签名的 CMS 时间可不同；CodeDirectory 覆盖相同代码及权限，不含 CMS 签名封装。
+const bridges = ['Contents/Resources/input-bridge.node', 'Contents/Frameworks/helpr Workspace.app/Contents/Resources/input-bridge.node'].map(file => {
+  assert.equal(execFileSync('/usr/bin/lipo', ['-archs', path.join(bundle,file)], {encoding:'utf8'}).trim(), 'arm64');
+  const image = signing.images.find(image=>image.path===file);
+  assert(image, 'HOST_INPUT_BRIDGE_MISSING');
+  return image;
+});
+for (const key of ['codeDirectorySha256','identifier','requirement']) assert.equal(bridges[0][key],bridges[1][key],'HOST_INPUT_BRIDGE_MISMATCH');
 const executable = path.join(host, 'Contents/MacOS', info.CFBundleExecutable);
 assert(!fs.readFileSync(executable).includes(Buffer.from('This is a helper executable and cannot be launched directly')), 'BROWSER_ENTRY_REQUIRED');
 const loadCommands = execFileSync('/usr/bin/otool', ['-l', executable], { encoding: 'utf8' });

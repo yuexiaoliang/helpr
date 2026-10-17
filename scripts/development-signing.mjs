@@ -131,12 +131,13 @@ export function verifyDevelopmentSignature(bundle) {
     // 独立核对证书约束，不把“自身签名有效”当作“选定身份正确”。
     try { execFileSync('/usr/bin/codesign', ['--verify', '--strict', '-R', '=certificate leaf = H"' + policy.certificateSha1 + '"', file], {stdio:'pipe',timeout:15000}); }
     catch { throw Error('DEVELOPMENT_SIGNATURE_REQUIRED:' + path.relative(bundle,file)); }
-    const result = spawnSync('/usr/bin/codesign', ['-d', '-r-', '--verbose=2', file], {encoding:'utf8',timeout:15000});
+    const result = spawnSync('/usr/bin/codesign', ['-d', '-r-', '--verbose=4', file], {encoding:'utf8',timeout:15000});
     const output = (result.stdout ?? '') + (result.stderr ?? '');
     const identifier = output.match(/^Identifier=(.+)$/m)?.[1];
     const requirement = output.match(/^designated => (.+)$/m)?.[1];
-    demand(result.status === 0 && identifier && requirement && !/\bcdhash\b/.test(requirement) && requirement.toUpperCase().includes(policy.certificateSha1), 'UNSTABLE_DEVELOPMENT_REQUIREMENT');
-    images.push({path:path.relative(bundle,file)||'.',identifier,requirement});
+    const codeDirectorySha256 = output.match(/^CandidateCDHashFull sha256=([0-9a-f]{64})$/m)?.[1];
+    demand(result.status === 0 && identifier && requirement && codeDirectorySha256 && !/\bcdhash\b/.test(requirement) && requirement.toUpperCase().includes(policy.certificateSha1), 'UNSTABLE_DEVELOPMENT_REQUIREMENT');
+    images.push({path:path.relative(bundle,file)||'.',identifier,requirement,codeDirectorySha256});
   }
   demand(images.length > 0 && images.some(image=>image.path==='.'&&image.identifier==='local.helpr.desktop'), 'DEVELOPMENT_APPLICATION_ID_REQUIRED');
   demand(images.some(image=>image.path==='Contents/Frameworks/helpr Workspace.app'&&image.identifier==='local.helpr.desktop.workspace'), 'DEVELOPMENT_HOST_ID_REQUIRED');
