@@ -339,7 +339,11 @@ async function parallelFixture(inputGate?: InputGate) {
   const service = new ExecutionService({
     input: inputGate
       ? {
-          prepare: (id) => Promise.resolve(inputGate.state(id).epoch),
+          prepare: (id) => {
+            const state = inputGate.state(id);
+            if (!state.available) throw Error('NATIVE_INPUT_UNAVAILABLE');
+            return Promise.resolve(state.epoch);
+          },
           block: (id) => inputGate.block(id),
           allow: (id, epoch) => inputGate.allow(id, epoch),
           epoch: (id) => inputGate.state(id).epoch,
@@ -439,6 +443,77 @@ async function parallelFixture(inputGate?: InputGate) {
     },
   };
 }
+
+test.skipIf(process.platform !== 'darwin')(
+  '能力不可用时继续被拒绝仍保留已保存暂停，恢复后只在明确继续时推进',
+  async () => {
+    const gate = nativeGate();
+    const f = await parallelFixture(gate);
+    let observing = false;
+    let release: () => void = () => {};
+    const pending = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    f.setObservationGate(async () => {
+      observing = true;
+      await pending;
+    });
+    try {
+      await f.service.intent({
+        kind: 'execution-intent',
+        requestId: 'start-native-a',
+        taskId: f.tasks.A!,
+        intent: 'start',
+      });
+      await expect.poll(() => observing).toBe(true);
+      gate.available(false);
+      await f.service.suspend(
+        f.tasks.A!,
+        'native-unavailable',
+        'native-failed',
+      );
+      await expect(
+        f.service.intent({
+          kind: 'execution-intent',
+          requestId: 'unavailable-continue',
+          taskId: f.tasks.A!,
+          intent: 'continue',
+        }),
+      ).rejects.toThrow('NATIVE_INPUT_UNAVAILABLE');
+      expect(
+        f.service.decorate(f.get()).tasks.find((t) => t.id === f.tasks.A)
+          ?.executionControl,
+      ).toMatchObject({
+        blocked: true,
+        stopSaved: true,
+        reason: 'native-unavailable',
+      });
+      gate.available(true);
+      release();
+      await f.service.settled();
+      expect(
+        f.get().tasks.find((t) => t.id === f.tasks.A)?.execution,
+      ).toMatchObject({
+        phase: 'paused',
+        intent: 'automatic',
+        pauseReason: 'native-unavailable',
+      });
+      expect(f.received).toEqual([]);
+      await f.service.intent({
+        kind: 'execution-intent',
+        requestId: 'restored-continue',
+        taskId: f.tasks.A!,
+        intent: 'continue',
+      });
+      await expect.poll(() => f.received).toEqual(['A']);
+      f.release('A');
+      await f.service.settled();
+    } finally {
+      release();
+      await f.close();
+    }
+  },
+);
 
 test.skipIf(process.platform !== 'darwin')(
   '重送同一开始请求保留当前执行资格，仍能完成且只产生一次网页效果',

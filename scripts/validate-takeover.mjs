@@ -42,7 +42,7 @@ assert(manifest.prepared && manifest.app === built, 'CANDIDATE_NOT_READY');
 for (const [file, hash] of Object.entries(manifest.hashes))
   assert.equal(createHash('sha256').update(fs.readFileSync(path.join(built, file))).digest('hex'), hash);
 const taskLimit = Number(process.argv.find((arg) => arg.startsWith('--task-limit='))?.slice(13) ?? 12);
-assert([12,14,16].includes(taskLimit), 'INVALID_TASK_LIMIT');
+assert([12,14,16,18].includes(taskLimit), 'INVALID_TASK_LIMIT');
 const maximum = { effects: 24, inputs: 160, models: 64, tasks: taskLimit };
 const carryName = process.argv.find((arg) => arg.startsWith('--carry='))?.slice(8);
 assert(taskLimit === 12 || carryName !== undefined, 'EXTENDED_TASK_LIMIT_REQUIRES_CARRY');
@@ -279,7 +279,7 @@ try {
   deadline = setTimeout(() => { expired = true; evidence.failure = 'ROUND_TIME_LIMIT'; save(); void finish(); }, evidence.limits.minutes * 60000);
   console.log('READY ' + out);
 } catch (error) { evidence.failure = error.message; save(); await finish(); throw error; }
-const allowed = new Set(['select', 'hide-task', 'minimize', 'execution-intent', 'snapshot', 'inspect', 'observe', 'show', 'panel', 'draft', 'reload', 'validation-fault']);
+const allowed = new Set(['select', 'hide-task', 'minimize', 'execution-intent', 'snapshot', 'inspect', 'observe', 'show', 'panel', 'draft', 'reload', 'validation-fault', 'capture']);
 poll = setInterval(async () => {
   if (expired || finishing || busy || !fs.existsSync(path.join(out, 'command.json'))) return;
   busy = true; let job;
@@ -307,6 +307,13 @@ poll = setInterval(async () => {
       value = { released: job.names, holdNext: job.holdNext };
     }
     else if (job.kind === 'state') value = { snapshot: await snapshot(), gates: gates(), traceLength: trace(), deferred: evidence.deferred, barriers: build > 22 ? await request({kind:'validation-barrier',control:{action:'status'}}) : undefined, held: held.map((item) => ({ name: item.name, count: item.receipt.count, closed: item.res.destroyed })) };
+    else if (job.kind === 'native-check') {
+      assert(typeof job.available === 'boolean' && typeof job.label === 'string', 'NATIVE_CHECK_REQUIRED');
+      // 固定的诊断槽只读取全局能力，不创建业务任务或授予执行资格。
+      value = {label:job.label,at:Date.now(),state:gate.state('validation-capability-probe')};
+      (evidence.nativeChecks ??= []).push(value); save();
+      check(job.label,value.state.available === job.available);
+    }
     else if (job.kind === 'barrier') {
       assert(ids[job.name], 'TASK_REQUIRED');
       if (job.action === 'arm') spend('faults');
@@ -331,7 +338,7 @@ poll = setInterval(async () => {
       if (job.defer) {
         assert(typeof job.defer === 'string' && /^[a-z0-9-]{1,40}$/.test(job.defer) && !evidence.deferred[job.defer], 'NEW_DEFERRED_REQUIRED');
         assert(command.kind === 'execution-intent', 'DEFERRED_INTENT_ONLY');
-        assert(job.allowError === undefined || ['INPUT_CHANGED_DURING_CONTINUE', 'RECORD_VERSION_CONFLICT', 'CONTROL_DISCONNECTED'].includes(job.allowError), 'INVALID_EXPECTED_ERROR');
+        assert(job.allowError === undefined || ['INPUT_CHANGED_DURING_CONTINUE', 'RECORD_VERSION_CONFLICT', 'CONTROL_DISCONNECTED', 'NATIVE_INPUT_UNAVAILABLE'].includes(job.allowError), 'INVALID_EXPECTED_ERROR');
         const receipt = evidence.deferred[job.defer] = { command, sentAt: Date.now(), allowError: job.allowError }; save();
         void request(command, null).then((result) => { Object.assign(receipt, { finishedAt: Date.now(), result }); save(); }, (error) => {
           Object.assign(receipt, { finishedAt: Date.now(), error: error.message }); save();

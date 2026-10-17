@@ -79,6 +79,8 @@ const inputGate = new InputGate(
 );
 let nativeInstalled = false;
 let nativeAvailable = false;
+let nativeRecoveryPending = false;
+let panelAnchorGap = false;
 let taggedTask: string | null = null;
 let suspensionSerial = 0;
 const mappingGaps = new Set<string>();
@@ -189,8 +191,9 @@ function nativeBindings() {
       step = 'PANEL';
       const bounds = overlay.getBounds();
       inputGate.bind('ui:panel', bounds, {
-        x: bounds.x + 20,
-        y: bounds.y + 20,
+        // 全屏面板的左上角可能命中 macOS 窗口按钮；内部中心仍须通过完整原生子树核对。
+        x: bounds.x + (panelAnchorGap ? 20 : bounds.width / 2),
+        y: bounds.y + (panelAnchorGap ? 20 : bounds.height / 2),
       });
     }
     if (toast.getVisible()) {
@@ -203,6 +206,13 @@ function nativeBindings() {
     }
     inputGate.available(true);
     nativeAvailable = true;
+    if (nativeRecoveryPending) {
+      nativeRecoveryPending = false;
+      log.event('command', { code: 'NATIVE_INPUT_RESTORED' });
+      emit({
+        notice: '本机输入识别已恢复。任务不会自动续做，需要时请明确继续。',
+      });
+    }
   } catch (error) {
     const code =
       error instanceof Error && /^NATIVE_[A-Z_]+$/.test(error.message)
@@ -212,6 +222,7 @@ function nativeBindings() {
     if (nativeAvailable) suspend(null, 'native-unavailable');
     inputGate.available(false);
     nativeAvailable = false;
+    nativeRecoveryPending = true;
   }
 }
 function emit(event: WorkspaceEvent): void {
@@ -523,12 +534,26 @@ async function perform(input: unknown): Promise<unknown> {
     const { fault, taskId } = z
       .strictObject({
         kind: z.literal('validation-fault'),
-        fault: z.enum(['mapping-gap', 'mapping-restore', 'destroy-view']),
+        fault: z.enum([
+          'mapping-gap',
+          'mapping-restore',
+          'destroy-view',
+          'panel-anchor-gap',
+          'panel-anchor-restore',
+        ]),
         taskId: z.string().min(1).max(100),
       })
       .parse(input);
     const page = pages.get(taskId);
     if (!page) throw Error('PAGE_NOT_AVAILABLE');
+    if (fault === 'panel-anchor-gap' || fault === 'panel-anchor-restore') {
+      if (panel.panel === 'none' || panel.panel === 'preview')
+        throw Error('FULL_PANEL_REQUIRED');
+      // 只由继承的验证父通道改变取样点，实际失败和恢复仍走原生绑定及暂停路径。
+      panelAnchorGap = fault === 'panel-anchor-gap';
+      nativeBindings();
+      return null;
+    }
     if (fault === 'destroy-view') page.view.webContents.close();
     else {
       if (fault === 'mapping-gap') {

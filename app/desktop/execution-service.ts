@@ -216,6 +216,8 @@ export class ExecutionService {
   }
   async intent(input: ExecutionIntent): Promise<WorkspaceSnapshot> {
     const command = executionIntentSchema.parse(input);
+    const priorBlock = this.blocked.get(command.taskId);
+    let recordStarted = false;
     if (this.closing) throw Error('APPLICATION_EXITING');
     const sequence = (this.intents.get(command.taskId) ?? 0) + 1;
     this.intents.set(command.taskId, sequence);
@@ -236,6 +238,7 @@ export class ExecutionService {
         command.intent !== 'stop'
           ? await this.ports.input?.prepare(command.taskId)
           : undefined;
+      recordStarted = true;
       const result = await this.record({
         ...command,
         kind: 'intent',
@@ -285,6 +288,13 @@ export class ExecutionService {
       this.publish();
       return this.decorate(result.state);
     } catch (error) {
+      // 准备能力失败时尚未请求新保存，保留先前已可靠保存的暂停／停止。
+      if (
+        !recordStarted &&
+        priorBlock?.saved &&
+        this.intents.get(command.taskId) === sequence
+      )
+        this.blocked.set(command.taskId, priorBlock);
       if (
         command.intent === 'stop' &&
         this.intents.get(command.taskId) === sequence

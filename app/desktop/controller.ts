@@ -701,6 +701,8 @@ export async function startController(
                 'mapping-restore',
                 'destroy-view',
                 'disconnect',
+                'panel-anchor-gap',
+                'panel-anchor-restore',
               ]),
               taskId: z.string().min(1).max(100),
             })
