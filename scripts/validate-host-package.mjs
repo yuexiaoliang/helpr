@@ -4,8 +4,10 @@ import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { getCurrentFuseWire } from '@electron/fuses';
+import { verifyDevelopmentSignature } from './development-signing.mjs';
 
 const bundle = path.resolve(process.argv[2] ?? 'dist/packages/mac-arm64/helpr.app');
+const signing = verifyDevelopmentSignature(bundle);
 const host = path.join(bundle, 'Contents/Frameworks/helpr Workspace.app');
 const readInfo = app => JSON.parse(execFileSync('/usr/bin/plutil', ['-convert', 'json', '-o', '-', path.join(app, 'Contents/Info.plist')], { encoding: 'utf8' }));
 const info = readInfo(host);
@@ -32,4 +34,4 @@ const loadCommands = execFileSync('/usr/bin/otool', ['-l', executable], { encodi
 assert(loadCommands.includes('path @executable_path/../Frameworks '), 'HOST_RPATH_REQUIRED');
 assert.deepEqual(await getCurrentFuseWire(host), await getCurrentFuseWire(bundle));
 execFileSync('/usr/bin/codesign', ['--verify', '--deep', '--strict', bundle]);
-console.log(JSON.stringify({ hostLayout: 'standard complete main bundle', helpers: 4, independentIdentity: true, sameApplicationArchive: true, sameFuses: true, deepStrictSignatureVerified: true }));
+console.log(JSON.stringify({ hostLayout: 'standard complete main bundle', helpers: 4, independentIdentity: true, sameApplicationArchive: true, sameFuses: true, deepStrictSignatureVerified: true, certificateSha256: signing.certificateSha256, signedImages: signing.images.length }));

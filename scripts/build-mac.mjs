@@ -11,6 +11,7 @@ import {
 } from '@electron/fuses';
 import { spend, validationRoot } from './workspace-budget.mjs';
 import { packageWorkspaceHost } from './package-workspace-host.mjs';
+import { developmentIdentity, verifyDevelopmentSignature, signDevelopmentPackage } from './development-signing.mjs';
 
 if (process.platform !== 'darwin' || process.arch !== 'arm64')
   throw Error('MAC_ARM64_REQUIRED');
@@ -19,16 +20,22 @@ if (
   '44.7.2'
 )
   throw Error('ELECTRON_VERSION_MISMATCH');
-const budget = spend('builds');
+const signing = developmentIdentity();
+if (process.argv.length === 3 && process.argv[2] === '--check-signing') {
+  console.log(JSON.stringify(signing));
+  process.exit(0);
+}
 const candidate = process.argv[2]?.match(/^--candidate=([a-z0-9-]{1,40})$/)?.[1];
 if (process.argv.length > 3 || (process.argv[2] && !candidate)) throw Error('INVALID_BUILD_CANDIDATE');
+const budget = spend('builds');
 const output = path.resolve(candidate ? `dist/candidates/${candidate}` : 'dist/packages');
 const manifest = {
   build: budget.used.builds,
   started: new Date().toISOString(),
   toolchain: { node: process.version, pnpm: '11.7.0' },
   appId: 'local.helpr.desktop',
-  signature: 'ad-hoc, current Mac self-use only',
+  signature: 'pinned local development certificate, current Mac self-use only',
+  signing,
   hashes: {},
 };
 try {
@@ -42,6 +49,8 @@ try {
       electronDist: path.resolve('node_modules/electron/dist'),
       appId: manifest.appId,
       productName: 'helpr',
+      buildVersion: String(manifest.build),
+      extraMetadata: { helprBuild: manifest.build },
       directories: { output },
       files: [
         'dist/main/**',
@@ -62,7 +71,8 @@ try {
       npmRebuild: true,
       nativeRebuilder: 'sequential',
       mac: {
-        identity: '-',
+        // builder 不自动选择或退回其它身份；afterPack 使用已固定证书统一签名。
+        identity: null,
         minimumSystemVersion: '14.0',
         category: 'public.app-category.productivity',
         hardenedRuntime: false,
@@ -81,6 +91,7 @@ try {
         });
         manifest.fuses = await getCurrentFuseWire(appPath);
         packageWorkspaceHost(appPath);
+        signDevelopmentPackage(appPath);
       },
     },
   });
@@ -91,6 +102,7 @@ try {
     { stdio: 'pipe' },
   );
   execFileSync(process.execPath, ['scripts/validate-host-package.mjs', appPath], { stdio: 'inherit' });
+  manifest.signing = verifyDevelopmentSignature(appPath);
   for (const file of [
     'Contents/MacOS/helpr',
     'Contents/Resources/app.asar',
