@@ -25,3 +25,11 @@
 ## 依据
 
 Apple 明确允许用自签名证书作内部开发，并说明跨版本保留 identifier／designated requirement 的身份语义；签名证书由本机生成，无需购买会员：[Code Signing Tasks](https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Procedures/Procedures.html)。Electron 提醒 macOS 的 safeStorage 需一致有效签名：[safeStorage](https://www.electronjs.org/docs/latest/api/safe-storage)。这些资料不替代本机实际钥匙串与登录延续验收。
+
+### 首包失败后的定向修正
+
+候选 26 的构建清单保留 `prepared:false` 与 `ETIMEDOUT`，不算实包通过。原签名库把二进制资源和 framework 符号链接别名也逐项签名，现场进程仍在签 locale.pak 时触及父调用两分钟截止；不是人工授权等待。旧父调用未能执行子进程 finally，临时搜索列表和空锁记录留存；独立核对无残余签名工具后移除本工具钥匙串、锁回并清掉这份已知空锁，诊断另存，未改系统信任或旧凭据 ACL。
+
+修正只逐项签实际 Mach-O 与 bundle，资源仍由外层资源封装签名保护；符号链接别名不重复签。父调用现在控制独立签名进程组，失败时终止本组工具，并按子进程预先保存的搜索列表恢复及锁回。两轴审阅指出恢复失败会跳过锁回或过早删除恢复记录，已改成独立尝试恢复及锁回，全部成功后才删记录；初始化也保留独立恢复记录且不跳过导入材料清理。
+
+本轮整体上限仍为 2 次构建，不增加原 27 上限。停止旧失败候选后，只用已经预留的最后一次构建 27 核对上述具体修正；保留 26，不再重建 26 或追加构建。由于首包未通过，原计划的两份完整包对照不能宣称完成；若 27 通过，只记录其实际结果及最小包已取得的同身份规则对照。后续若仍有授权提示再按用户约定诊断，本轮不运行真实凭据验收。

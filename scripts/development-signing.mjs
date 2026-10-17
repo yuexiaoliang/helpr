@@ -58,6 +58,17 @@ export function developmentIdentity() {
 function searchList() {
   return command('/usr/bin/security', ['list-keychains', '-d', 'user']).trim().split('\n').filter(Boolean).map(value => JSON.parse(value.trim()));
 }
+function restoreKeychainState(originalSearch) {
+  let failure;
+  try {
+    security(['list-keychains', '-d', 'user', '-s', ...originalSearch]);
+    demand(JSON.stringify(searchList()) === JSON.stringify(originalSearch), 'KEYCHAIN_SEARCH_LIST_NOT_RESTORED');
+  } catch (error) { failure = error; }
+  // 搜索列表恢复失败也须独立尝试锁回，恢复记录由调用方保留。
+  try { if (fs.existsSync(keychain)) security(['lock-keychain', keychain]); }
+  catch (error) { failure ??= error; }
+  if (failure) throw failure;
+}
 function initialize() {
   demand(process.platform === 'darwin', 'MAC_REQUIRED');
   if (fs.existsSync(policyFile)) return developmentIdentity();
@@ -69,6 +80,8 @@ function initialize() {
   const privateKey = path.join(directory, 'import-key.pem');
   const archive = path.join(directory, 'import.p12');
   const originalSearch = searchList();
+  const recovery = path.join(directory, 'setup-recovery.json');
+  fs.writeFileSync(recovery,JSON.stringify({originalSearch}),{flag:'wx',mode:0o600});
   let imported = false;
   try {
     fs.writeFileSync(config, '[req]\nprompt=no\ndistinguished_name=subject\nx509_extensions=signing\n[subject]\nCN=helpr Local Development\n[signing]\nbasicConstraints=critical,CA:FALSE\nkeyUsage=critical,digitalSignature\nextendedKeyUsage=codeSigning\n', {mode:0o600,flag:'wx'});
@@ -84,10 +97,12 @@ function initialize() {
     fs.writeFileSync(policyFile, JSON.stringify(policy, null, 2) + '\n', {mode:0o644,flag:'wx'});
     return developmentIdentity();
   } finally {
-    security(['list-keychains', '-d', 'user', '-s', ...originalSearch]);
-    demand(JSON.stringify(searchList()) === JSON.stringify(originalSearch), 'KEYCHAIN_SEARCH_LIST_NOT_RESTORED');
-    if (imported) for (const file of [privateKey, archive, config]) fs.rmSync(file, { force: true });
-    if (fs.existsSync(keychain)) security(['lock-keychain', keychain]);
+    try {
+      restoreKeychainState(originalSearch);
+      fs.unlinkSync(recovery);
+    } finally {
+      if (imported) for (const file of [privateKey, archive, config]) fs.rmSync(file, { force: true });
+    }
   }
 }
 function codePaths(bundle) {
@@ -148,13 +163,8 @@ async function sign(bundle) {
     });
     return verifyDevelopmentSignature(path.resolve(bundle));
   } finally {
-    try {
-      security(['list-keychains', '-d', 'user', '-s', ...originalSearch]);
-      demand(JSON.stringify(searchList()) === JSON.stringify(originalSearch), 'KEYCHAIN_SEARCH_LIST_NOT_RESTORED');
-    } finally {
-      try { security(['lock-keychain', keychain]); }
-      finally { fs.unlinkSync(lock); }
-    }
+    restoreKeychainState(originalSearch);
+    fs.unlinkSync(lock);
   }
 }
 export function signDevelopmentPackage(bundle) {
@@ -169,16 +179,11 @@ export function signDevelopmentPackage(bundle) {
       privatePath(lock);
       const owner = JSON.parse(fs.readFileSync(lock,'utf8'));
       if (owner.pid === result.pid) {
-        try {
-          security(['list-keychains','-d','user','-s',...owner.originalSearch]);
-          demand(JSON.stringify(searchList()) === JSON.stringify(owner.originalSearch),'KEYCHAIN_SEARCH_LIST_NOT_RESTORED');
-        } finally {
-          try { security(['lock-keychain',keychain]); }
-          finally { fs.unlinkSync(lock); }
-        }
+        restoreKeychainState(owner.originalSearch);
+        fs.unlinkSync(lock);
       }
     }
-    throw Error(result.error ? 'DEVELOPMENT_SIGNING_TIME_LIMIT' : (result.stderr?.trim() || 'DEVELOPMENT_SIGNING_FAILED'));
+    throw Error(result.error ? (result.error.code === 'ETIMEDOUT' ? 'DEVELOPMENT_SIGNING_TIME_LIMIT' : 'DEVELOPMENT_SIGNING_PROCESS_FAILED') : (result.stderr?.trim() || 'DEVELOPMENT_SIGNING_FAILED'));
   }
   return JSON.parse(result.stdout);
 }
