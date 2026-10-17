@@ -71,6 +71,9 @@ export class ModelService {
       job.abort.abort(new Error('MODEL_RECORDS_UNAVAILABLE')),
     );
   }
+  recordsRestored(): void {
+    this.available = true;
+  }
   private async record(command: unknown) {
     if (!this.available) throw new Error('MODEL_RECORDS_UNAVAILABLE');
     try {
@@ -459,5 +462,8 @@ export class ModelService {
       [...this.jobs.values()].map((job) => this.cancel(job.taskId, job.id)),
     );
     await this.settled();
+  }
+  cancelExit(): void {
+    this.closing = false;
   }
 }

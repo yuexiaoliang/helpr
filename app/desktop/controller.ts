@@ -33,6 +33,7 @@ import { InputGate } from './input-gate';
 import { executionPauseReasonSchema } from '../shared/execution';
 import { ValidationBarriers } from './validation-barriers';
 import { LocalFixture } from './local-fixture';
+import { acquireRuntimeOwnership } from './runtime-ownership';
 
 export async function startController(
   folder: string,
@@ -43,52 +44,19 @@ export async function startController(
   const fixture = fixtureOrigin ? new LocalFixture(fixtureOrigin) : undefined;
   const log = diagnostics(folder, 'controller');
   const barriers = validation ? new ValidationBarriers() : undefined;
+  if (validation && process.env.HELPR_VALIDATION_HOLD_RECOVERY === '1')
+    barriers!.control({ action: 'arm', point: 'recovery', taskId: '*' });
   let quitting = false;
   let state: WorkspaceSnapshot;
   const env: NodeJS.ProcessEnv = {};
   for (const key of ['HOME', 'PATH', 'TMPDIR', 'LANG'])
     if (process.env[key]) env[key] = process.env[key];
-  const records = utilityProcess.fork(
-    path.join(__dirname, 'records.cjs'),
-    [
-      folder,
-      app.isPackaged
-        ? path.join(process.resourcesPath, 'migrations')
-        : path.resolve('app/records/migrations'),
-      ...(validation ? ['--workspace-validation'] : []),
-    ],
-    { env, stdio: 'ignore', serviceName: 'helpr 记录' },
-  );
-  const recordClient = new ProcessClient({
-    send: (message) => records.postMessage(message),
-    listen: (listener) => records.on('message', listener),
-    onExit: (listener) => records.once('exit', listener),
-  });
-  await new Promise<void>((resolve, reject) => {
-    const timer = setTimeout(
-      () => reject(new Error('RECORDS_UNAVAILABLE')),
-      10000,
-    );
-    records.on('message', (input: unknown) => {
-      const msg = z
-        .object({
-          ready: z.boolean().optional(),
-          startupError: z.string().optional(),
-        })
-        .safeParse(input);
-      if (msg.success && (msg.data.ready || msg.data.startupError)) {
-        clearTimeout(timer);
-        if (msg.data.ready) resolve();
-        else reject(new Error('RECORDS_UNAVAILABLE'));
-      }
-    });
-    records.once('exit', () => {
-      clearTimeout(timer);
-      reject(new Error('RECORDS_UNAVAILABLE'));
-    });
-  });
-  state = snapshotSchema.parse(
-    await recordClient.request({ kind: 'snapshot' }),
+  const ownership = await acquireRuntimeOwnership(
+    folder,
+    path.join(
+      runtimeImages(process.execPath, app.isPackaged).resources,
+      'input-bridge.node',
+    ),
   );
   const inputGateFile = path.join(folder, `.input-gate-${randomUUID()}`);
   const inputGate = new InputGate(
@@ -112,6 +80,7 @@ export async function startController(
   const host = spawn(
     watcher,
     [
+      '--runtime-owner',
       ...(validation && process.env.HELPR_VALIDATION_PAUSE_START === '1'
         ? ['--pause-before-exec']
         : []),
@@ -126,9 +95,82 @@ export async function startController(
         ...(fixture ? { HELPR_FIXTURE_ORIGIN: fixture.origin } : {}),
       },
       detached: true,
-      stdio: ['ignore', 'ignore', 'ignore', 'pipe', 'pipe', 'ipc', 'pipe'],
+      stdio: [
+        'ignore',
+        'ignore',
+        'ignore',
+        'pipe',
+        'pipe',
+        'ipc',
+        'pipe',
+        ownership.fd,
+      ],
     },
   );
+  const earlyHostMessages: unknown[] = [];
+  const collectHostMessage = (input: unknown) => earlyHostMessages.push(input);
+  host.on('message', collectHostMessage);
+  let workspaceExited = false;
+  let resolveWorkspaceExit: () => void = () => {};
+  const workspaceExit = new Promise<void>((resolve) => {
+    resolveWorkspaceExit = resolve;
+  });
+  async function openRecords() {
+    const records = utilityProcess.fork(
+      path.join(__dirname, 'records.cjs'),
+      [
+        folder,
+        app.isPackaged
+          ? path.join(process.resourcesPath, 'migrations')
+          : path.resolve('app/records/migrations'),
+        ...(validation ? ['--workspace-validation'] : []),
+      ],
+      { env, stdio: 'ignore', serviceName: 'helpr 记录' },
+    );
+    const recordClient = new ProcessClient({
+      send: (message) => records.postMessage(message),
+      listen: (listener) => records.on('message', listener),
+      onExit: (listener) => records.once('exit', listener),
+    });
+    await new Promise<void>((resolve, reject) => {
+      const timer = setTimeout(
+        () => reject(new Error('RECORDS_UNAVAILABLE')),
+        10000,
+      );
+      records.on('message', (input: unknown) => {
+        const msg = z
+          .object({
+            ready: z.boolean().optional(),
+            startupError: z.string().optional(),
+          })
+          .safeParse(input);
+        if (msg.success && (msg.data.ready || msg.data.startupError)) {
+          clearTimeout(timer);
+          if (msg.data.ready) resolve();
+          else reject(new Error(msg.data.startupError));
+        }
+      });
+      records.once('exit', () => {
+        clearTimeout(timer);
+        reject(new Error('RECORDS_UNAVAILABLE'));
+      });
+    });
+    if (!ownership.owns(records.pid)) {
+      records.kill();
+      throw Error('RUNTIME_GROUP_UNAVAILABLE');
+    }
+    return {
+      records,
+      recordClient,
+      state: snapshotSchema.parse(
+        await recordClient.request({ kind: 'snapshot' }),
+      ),
+    };
+  }
+  const initial = await openRecords();
+  let records = initial.records;
+  let recordClient = initial.recordClient;
+  state = initial.state;
   let launcherText = '';
   host.stdio.at(6)?.on('data', (data: Buffer) => {
     launcherText = (launcherText + data.toString()).slice(-256);
@@ -154,6 +196,9 @@ export async function startController(
               signal,
             });
           if (validation) process.send?.({ nativeExit: { exitCode, signal } });
+          workspaceExited = true;
+          resolveWorkspaceExit();
+          onWorkspaceExit();
         }
       }
     }
@@ -261,6 +306,7 @@ export async function startController(
     observePage,
     env,
     (taskId, code) => log.event('failure', { taskId, code }),
+    (pid) => ownership.owns(pid),
   );
   const saveExecution = (command: unknown) =>
     recordClient.request({ kind: 'execution', command });
@@ -294,6 +340,7 @@ export async function startController(
     perform: (job) => webExecutor.perform(job),
     revoke: (taskId) => webExecutor.revoke(taskId),
     stopModels: (taskId) => models.cancelTask(taskId),
+    beforeRecovery: barriers ? () => barriers.pass('recovery', '*') : undefined,
     input: {
       prepare: async (taskId) => {
         if (!broker.available(taskId)) throw Error('CONTROL_DISCONNECTED');
@@ -317,16 +364,51 @@ export async function startController(
         .suspend(task.id, 'page-change', randomUUID())
         .catch(() => {});
   });
-  records.once('exit', () => {
-    recordsAvailable = false;
-    models.disable();
-    executions.disable();
-    if (!quitting && host.connected)
-      host.send({
-        notice:
-          '本机记录暂不可用。已保留的网页可继续查看，请保持窗口打开并重新启动 helpr 后重试。',
-      });
-  });
+  let recordRestarts = 0;
+  function watchRecords(child: typeof records) {
+    child.once('exit', () => {
+      if (child !== records || quitting) return;
+      recordsAvailable = false;
+      models.disable();
+      executions.disable();
+      if (host.connected)
+        host.send({
+          notice:
+            '本机记录连接中断，已阻断新操作并保留网页，正在重新核对可靠记录。',
+        });
+      if (recordRestarts++ > 0) return;
+      void openRecords()
+        .then(async (opened) => {
+          if (quitting) {
+            opened.records.kill();
+            return;
+          }
+          records = opened.records;
+          recordClient = opened.recordClient;
+          watchRecords(records);
+          recordsAvailable = true;
+          models.recordsRestored();
+          executions.recordsRestored(opened.state);
+          await workspace.reconcileCommitted();
+          if (validation)
+            process.send?.({ recordsRestored: true, recordsPid: records.pid });
+          if (host.connected)
+            host.send({
+              notice:
+                '可靠记录已重新读取。原停止与暂停保持，活动任务先核对实际进度。',
+            });
+        })
+        .catch((error) => {
+          log.event('failure', { code: errorCode(error) });
+          if (host.connected)
+            host.send({
+              notice:
+                '本机记录未能恢复。资料与网页仍保留，自动操作保持暂停；请保留现场后重新打开 helpr。',
+            });
+        });
+    });
+  }
+  watchRecords(records);
   async function execute(input: unknown): Promise<unknown> {
     const command = uiCommandSchema.parse(input);
     if (quitting) throw new Error('APPLICATION_EXITING');
@@ -374,8 +456,6 @@ export async function startController(
     if (command.kind === 'quit') {
       if (!recordsAvailable || !workspace.canExit() || !executions.canExit())
         throw new Error('UNSAVED_CHANGES');
-      await executions.stopAll();
-      await models.stopAll();
       await quit();
       return null;
     }
@@ -418,6 +498,7 @@ export async function startController(
       })
       .safeParse(input);
     if (suspension.success) {
+      if (quitting) return;
       const event = suspension.data.suspension;
       const deliver = () => {
         for (const task of state.tasks)
@@ -470,6 +551,7 @@ export async function startController(
       })
       .safeParse(input);
     if (page.success) {
+      if (quitting) return;
       void workspace
         .save({ kind: 'page', requestId: randomUUID(), ...page.data.page })
         .then(() => executions.refresh())
@@ -494,7 +576,7 @@ export async function startController(
             host.send({ id: request.data.id, error: errorCode(error) });
         });
   });
-  host.once('exit', () => {
+  function onWorkspaceExit() {
     models.disable();
     executions.disable();
     webExecutor.dispose();
@@ -502,28 +584,15 @@ export async function startController(
     workers.forEach((worker) => worker.kill());
     if (!quitting) {
       records.kill();
-      let finished = false;
-      const finish = () => {
-        if (finished) return;
-        finished = true;
+      const timer = setTimeout(() => app.exit(1), 100);
+      log.close(() => {
         clearTimeout(timer);
         app.exit(1);
-      };
-      // exit 不能证明 fd6/IPC 已排空；收尾总共最多等 100ms。
-      const timer = setTimeout(finish, 100);
-      host.once('close', () =>
-        log.close(() => {
-          try {
-            if (validation && process.connected && process.send)
-              process.send({ hostExited: true }, finish);
-            else finish();
-          } catch {
-            finish();
-          }
-        }),
-      );
+      });
     }
-  });
+  }
+  host.once('exit', onWorkspaceExit);
+  if (workspaceExited) onWorkspaceExit();
   async function observe(
     taskId: string,
     method: string,
@@ -573,12 +642,19 @@ export async function startController(
           clearTimeout(timer);
           reject(new Error('WORKER_EXITED'));
         });
-        worker.postMessage({
-          job: {
-            taskId: requestedTask ?? taskId,
-            token: token ?? qualification.token,
-            method,
-          },
+        worker.once('spawn', () => {
+          if (!ownership.owns(worker.pid)) {
+            worker.kill();
+            reject(Error('RUNTIME_GROUP_UNAVAILABLE'));
+            return;
+          }
+          worker.postMessage({
+            job: {
+              taskId: requestedTask ?? taskId,
+              token: token ?? qualification.token,
+              method,
+            },
+          });
         });
       });
     } finally {
@@ -590,6 +666,23 @@ export async function startController(
   async function quit(): Promise<void> {
     if (quitting) return;
     quitting = true;
+    try {
+      await executions.stopAll();
+      await models.stopAll();
+      state = snapshotSchema.parse(
+        await recordClient.request({ kind: 'checkpoint' }),
+      );
+    } catch (error) {
+      quitting = false;
+      executions.cancelExit();
+      models.cancelExit();
+      if (host.connected)
+        host.send({
+          notice:
+            '退出前的必要事实尚未可靠保存，已保留现场并阻止新操作。请恢复保存条件后重试退出。',
+        });
+      throw error;
+    }
     broker.dispose();
     workers.forEach((worker) => worker.kill());
     try {
@@ -599,12 +692,11 @@ export async function startController(
     }
     if (host.connected) host.send({ close: true });
     await new Promise<void>((resolve) => {
-      if (host.exitCode !== null || host.signalCode !== null) return resolve();
       const timer = setTimeout(() => {
         host.kill('SIGTERM');
         resolve();
       }, 5000);
-      host.once('exit', () => {
+      void workspaceExit.then(() => {
         clearTimeout(timer);
         resolve();
       });
@@ -734,4 +826,6 @@ export async function startController(
           process.send?.({ id: req.data.id, error: errorCode(error) }),
         );
     });
+  host.removeListener('message', collectHostMessage);
+  for (const input of earlyHostMessages) host.emit('message', input);
 }

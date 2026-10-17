@@ -814,7 +814,9 @@ function Panel({ store }: { store: WorkspaceStore }) {
           ) : (
             <>
               <Heading slot="title">退出 helpr？</Heading>
-              <p>任务与对话保存在本机。下次打开仍可找回这些记录。</p>
+              <p>
+                任务与对话保存在本机。下次打开先核对原来的进度，已停止和等待的任务保持原状态。
+              </p>
               <p className={styles.warning}>
                 网站中尚未保存的编辑可能丢失。请先回网页保存；浏览器登录由网站会话决定是否仍然有效。
               </p>

@@ -264,8 +264,31 @@ static void cleanup(void *) {
   if (gate) { munmap(gate, sizeof(Shared)); gate = nullptr; }
   if (gateFd >= 0) { close(gateFd); gateFd = -1; }
 }
+static napi_value ownerGroup(napi_env env, napi_callback_info) {
+  if (getpgrp() != getpid() && setpgid(0, 0) != 0) return failure(env, "RUNTIME_GROUP_UNAVAILABLE");
+  napi_value result; napi_create_int32(env, getpgrp(), &result); return result;
+}
+static napi_value runtimeGroup(napi_env env, napi_callback_info info) {
+  napi_value values[1]; int32_t pid;
+  if (!args(env, info, 1, values) || napi_get_value_int32(env, values[0], &pid) != napi_ok || pid <= 1) return failure(env, "RUNTIME_GROUP_UNAVAILABLE");
+  napi_value result; napi_create_int32(env, getpgid(pid), &result); return result;
+}
+static napi_value runtimeLease(napi_env env, napi_callback_info info) {
+  napi_value values[1]; std::string file;
+  if (!args(env, info, 1, values) || !text(env, values[0], file, 4096)) return failure(env, "RUNTIME_LEASE_UNAVAILABLE");
+  int fd = open(file.c_str(), O_RDWR | O_CREAT | O_NOFOLLOW | O_CLOEXEC, 0600); struct stat st;
+  if (fd < 0) return failure(env, "RUNTIME_LEASE_UNAVAILABLE");
+  if (fstat(fd, &st) || !S_ISREG(st.st_mode) || st.st_uid != getuid() || (st.st_mode & 0777) != 0600 || st.st_nlink != 1) { close(fd); return failure(env, "RUNTIME_LEASE_UNAVAILABLE"); }
+  if (flock(fd, LOCK_EX | LOCK_NB) != 0) {
+    const int error = errno; close(fd);
+    if (error != EWOULDBLOCK && error != EAGAIN) return failure(env, "RUNTIME_LEASE_UNAVAILABLE");
+    fd = -1;
+  }
+  napi_value result; napi_create_int32(env, fd, &result); return result;
+}
 static napi_value init(napi_env env, napi_value exports) {
   napi_property_descriptor methods[] = {
+    {"ownerGroup", 0, ownerGroup, 0, 0, 0, napi_default, 0}, {"runtimeLease", 0, runtimeLease, 0, 0, 0, napi_default, 0}, {"runtimeGroup", 0, runtimeGroup, 0, 0, 0, napi_default, 0},
     {"open", 0, openGate, 0, 0, 0, napi_default, 0}, {"state", 0, state, 0, 0, 0, napi_default, 0},
     {"traceStart", 0, traceStart, 0, 0, 0, napi_default, 0}, {"traceRead", 0, traceRead, 0, 0, 0, napi_default, 0},
     {"pageInput", 0, pageInput, 0, 0, 0, napi_default, 0}, {"validationMove", 0, validationMove, 0, 0, 0, napi_default, 0},

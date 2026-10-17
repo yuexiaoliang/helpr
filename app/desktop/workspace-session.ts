@@ -63,4 +63,14 @@ export class WorkspaceSession {
     this.adopt(receipt.state);
     this.failed.delete(key);
   }
+  async reconcileCommitted(): Promise<void> {
+    for (const [key, command] of this.failed) {
+      const receipt = z
+        .object({ applied: z.boolean(), state: snapshotSchema })
+        .parse(await this.request({ kind: 'lookup', command }));
+      this.adopt(receipt.state);
+      if (receipt.applied && this.failed.get(key) === command)
+        this.failed.delete(key);
+    }
+  }
 }

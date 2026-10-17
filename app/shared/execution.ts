@@ -86,6 +86,7 @@ export const actionFactSchema = z.strictObject({
   binding: pageBindingSchema,
   evidence: z.array(z.string().max(2000)).max(10),
   returned: z.boolean(),
+  dispatchState: z.enum(['not-dispatched', 'possible']).optional(),
 });
 export type ActionFact = z.infer<typeof actionFactSchema>;
 export const executionPauseReasonSchema = z.enum([
@@ -118,6 +119,11 @@ export const pauseDescription = {
   },
 } satisfies Record<ExecutionPauseReason, { label: string; message: string }>;
 export const executionSchema = z.strictObject({
+  modelVersion: z.literal(1).default(1),
+  recoveryPending: z.boolean().optional(),
+  recoverySource: z
+    .strictObject({ url: z.string(), goalVersion: z.number().int().positive() })
+    .optional(),
   intent: z.enum(['automatic', 'stopped']),
   phase: executionPhaseSchema,
   version: z.number().int().positive(),

@@ -343,6 +343,10 @@ function bindPage(task: Task): void {
   );
   const watch = (view: WebContentsView) => {
     const wc = view.webContents;
+    let initialLoad = true;
+    wc.once('did-finish-load', () => {
+      initialLoad = false;
+    });
     if (startup.validation)
       wc.on('before-input-event', (_event, input) => {
         if (input.type === 'keyDown') inputGate.tracePageInput(task.id);
@@ -358,7 +362,8 @@ function bindPage(task: Task): void {
       });
     wc.on('did-start-navigation', (_event, _url, _inPlace, main) => {
       if (page.view === view) {
-        suspend(task.id, 'page-change');
+        // 首次重建页面仍在阻断门内；其加载不能覆盖从记录恢复的原暂停原因。
+        if (!initialLoad) suspend(task.id, 'page-change');
         page.generation++;
         register();
         if (main) pageState(task.id, 'loading');
@@ -759,7 +764,7 @@ process.on('message', (input: unknown) => {
         recovered = true;
         if (state.tasks.length)
           emit({
-            notice: `已找回 ${state.tasks.length} 项原任务和对话。网站会重新打开，没有自动开始执行。`,
+            notice: `已找回 ${state.tasks.length} 项原任务和对话。原活动任务先核对进度，停止和等待状态保留。`,
           });
       }
     }

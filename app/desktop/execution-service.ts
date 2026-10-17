@@ -52,6 +52,7 @@ const receipt = z
     current: z.boolean().optional(),
     claimed: z.boolean().optional(),
     permitted: z.boolean().optional(),
+    recovered: z.boolean().optional(),
   })
   .passthrough();
 /** 任务意图与派发公开入口。记录进程之外保留即时阻断，所有等待之后重新核对。 */
@@ -66,7 +67,13 @@ export class ExecutionService {
   private readonly jobs = new Map<string, Job>();
   private readonly blocked = new Map<
     string,
-    { saved: boolean; message: string; reason?: ExecutionPauseReason }
+    {
+      saved: boolean;
+      message: string;
+      reason?: ExecutionPauseReason;
+      outage?: boolean;
+      control?: ExecutionIntent['intent'];
+    }
   >();
   private readonly intents = new Map<string, number>();
   private readonly pendingIntents = new Set<string>();
@@ -83,6 +90,7 @@ export class ExecutionService {
       perform: (job: WebActionJob) => Promise<void>;
       revoke: (taskId: string) => void;
       stopModels: (taskId: string) => void;
+      beforeRecovery?: () => Promise<void>;
       input?: {
         prepare: (taskId: string) => Promise<number>;
         block: (taskId: string) => void;
@@ -233,6 +241,9 @@ export class ExecutionService {
           ? '已阻断新操作，正在保存停止记录。'
           : '正在保存最新要求，先前执行已失效。',
       );
+    const blocking = this.blocked.get(command.taskId);
+    if (blocking && command.intent !== 'start')
+      blocking.control = command.intent;
     try {
       const inputEpoch =
         command.intent !== 'stop'
@@ -301,6 +312,7 @@ export class ExecutionService {
       )
         this.blocked.set(command.taskId, {
           saved: false,
+          control: 'stop',
           message: '已阻断新操作，但停止尚未保存。请保持应用打开并重试停止。',
         });
       this.publish();
@@ -374,6 +386,52 @@ export class ExecutionService {
         this.pendingIntents.has(task.id)
       )
         continue;
+      if (task.execution.recoveryPending) {
+        const version = task.execution.version;
+        const sequence = this.intents.get(task.id);
+        try {
+          await this.ports.beforeRecovery?.();
+          const epoch = await this.ports.input?.prepare(task.id);
+          if (
+            !this.available ||
+            this.closing ||
+            this.blocked.has(task.id) ||
+            this.pendingIntents.has(task.id) ||
+            this.intents.get(task.id) !== sequence
+          )
+            continue;
+          const recovered = await this.record({
+            kind: 'recover',
+            taskId: task.id,
+            expectedVersion: version,
+          });
+          const current = this.ports
+            .current()
+            .tasks.find((t) => t.id === task.id)?.execution;
+          if (
+            !recovered.recovered ||
+            !current ||
+            current.version !== version ||
+            current.phase !== 'queued' ||
+            this.blocked.has(task.id) ||
+            this.pendingIntents.has(task.id) ||
+            this.closing ||
+            !this.available ||
+            this.intents.get(task.id) !== sequence
+          )
+            continue;
+          if (
+            this.ports.input &&
+            (epoch === undefined || !this.ports.input.allow(task.id, epoch))
+          ) {
+            await this.suspend(task.id, 'ownership-unknown', randomUUID());
+            continue;
+          }
+        } catch {
+          // 初次页面／原生能力尚未就绪时保留恢复标记，下一次就绪通知再核对。
+          continue;
+        }
+      }
       const runId = randomUUID();
       const claim = await this.record({
         kind: 'claim',
@@ -570,16 +628,55 @@ export class ExecutionService {
       if (
         task.execution?.intent === 'automatic' &&
         task.execution.phase !== 'complete'
-      )
+      ) {
+        const prior = this.blocked.get(task.id);
         this.stopImmediately(
           task.id,
           '执行记录或控制连接暂不可用，已阻断新的自动操作。',
+          true,
         );
+        if (prior) this.blocked.set(task.id, prior);
+        else
+          this.blocked.set(task.id, {
+            saved: true,
+            message: '记录连接已中断，等待可靠记录重新核对。',
+            outage: true,
+          });
+      }
+  }
+  recordsRestored(state: WorkspaceSnapshot) {
+    this.publish(state);
+    this.available = true;
+    for (const task of state.tasks) {
+      const prior = this.blocked.get(task.id),
+        e = task.execution;
+      if (!prior) continue;
+      if (prior.outage) this.blocked.delete(task.id);
+      else if (
+        e &&
+        ((prior.control === 'stop' && e.intent === 'stopped') ||
+          (prior.reason && prior.reason === e.pauseReason))
+      )
+        this.blocked.set(task.id, {
+          ...prior,
+          saved: true,
+          message: e.summary,
+        });
+    }
+    this.publish();
+    this.pump();
   }
   async stopAll() {
     this.closing = true;
-    for (const t of this.ports.current().tasks)
-      this.stopImmediately(t.id, '应用正在退出，已阻断新的自动操作。');
+    for (const t of this.ports.current().tasks) {
+      const prior = this.blocked.get(t.id);
+      this.stopImmediately(t.id, '应用正在退出，已阻断新的自动操作。', true);
+      if (prior) this.blocked.set(t.id, prior);
+    }
     await this.settled();
+  }
+  cancelExit() {
+    this.closing = false;
+    this.publish();
   }
 }

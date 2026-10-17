@@ -19,6 +19,7 @@ export class WebExecutor {
     ) => Promise<BoundObservation>,
     private readonly env: NodeJS.ProcessEnv,
     private readonly failure: (taskId: string, code: string) => void,
+    private readonly ownsProcess?: (pid: number | undefined) => boolean,
   ) {}
   async perform(job: WebActionJob): Promise<void> {
     if (!job.qualified() || job.signal.aborted)
@@ -106,7 +107,14 @@ export class WebExecutor {
         cancel();
         return;
       }
-      worker.postMessage({ job: job.action });
+      worker.once('spawn', () => {
+        if (ended) return;
+        if (this.ownsProcess && !this.ownsProcess(worker.pid)) {
+          finish(Error('RUNTIME_GROUP_UNAVAILABLE'));
+          return;
+        }
+        worker.postMessage({ job: job.action });
+      });
     });
   }
   revoke(taskId: string) {

@@ -100,7 +100,15 @@ try {
         .catch((error: unknown) => {
           dialog.showErrorBox(
             'helpr 暂时无法打开',
-            '本机记录暂不可用。你的资料仍保留，请重新打开应用后重试。',
+            error instanceof Error &&
+              [
+                'DATA_MISSING',
+                'DATA_CORRUPT',
+                'DATA_VERSION_UNSUPPORTED',
+                'STATE_MODEL_UNSUPPORTED',
+              ].includes(error.message)
+              ? '本机资料缺失、损坏或版本不兼容，已保留原资料并暂停恢复。请使用相容版本或已有备份核对，不能从空白任务重新执行。'
+              : '本机记录或旧运行的清理暂未就绪。你的资料仍保留，已暂停恢复，请稍后重新打开应用。',
           );
           failStartup(error);
         });

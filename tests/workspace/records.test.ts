@@ -12,7 +12,7 @@ afterEach(() =>
     .forEach((folder) => rmSync(folder, { recursive: true, force: true })),
 );
 
-test('03资料升级前留下独立副本，任务与草稿保留，后续重开不重复备份', () => {
+test('旧资料升级前留下独立副本，任务与草稿保留，后续重开不重复备份', () => {
   const folder = mkdtempSync(path.join(tmpdir(), 'helpr-upgrade-04-'));
   folders.push(folder);
   let records = new WorkspaceRecords(folder, 'app/records/migrations');
@@ -39,14 +39,14 @@ test('03资料升级前留下独立副本，任务与草稿保留，后续重开
   });
   records.close();
   const backups = readdirSync(folder).filter((name) =>
-    name.startsWith('workspace-before-takeover-04-'),
+    name.startsWith('workspace-before-recovery-05-'),
   );
   expect(backups).toHaveLength(1);
   records = new WorkspaceRecords(folder, 'app/records/migrations');
   records.close();
   expect(
     readdirSync(folder).filter((name) =>
-      name.startsWith('workspace-before-takeover-04-'),
+      name.startsWith('workspace-before-recovery-05-'),
     ),
   ).toHaveLength(1);
   const recovered = mkdtempSync(path.join(tmpdir(), 'helpr-backup-04-'));

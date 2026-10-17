@@ -5,6 +5,7 @@ const point = z.enum([
   'records-after',
   'suspension',
   'input',
+  'recovery',
 ]);
 const command = z.discriminatedUnion('action', [
   z.strictObject({

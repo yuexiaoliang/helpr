@@ -85,6 +85,11 @@ const intentSchema = executionIntentSchema.extend({
 const commandSchema = z.discriminatedUnion('kind', [
   intentSchema,
   z.strictObject({
+    kind: z.literal('recover'),
+    taskId: z.string(),
+    expectedVersion: z.number().int().positive(),
+  }),
+  z.strictObject({
     kind: z.literal('suspend'),
     controlSequence: z.number().int().positive().optional(),
     taskId: z.string(),
@@ -138,11 +143,25 @@ export class ExecutionRecords {
         const e = executionSchema.parse(row.body);
         if (['queued', 'checking', 'running'].includes(e.phase)) {
           e.runId = null;
-          move(e, 'BLOCK');
-          e.summary = '上次执行已中断。请先核对页面与已有结果，再明确继续。';
+          e.version++;
+          move(e, 'QUEUE');
+          e.recoveryPending = true;
+          e.recoverySource ??= {
+            url:
+              this.db
+                .select()
+                .from(schema.tasks)
+                .where(eq(schema.tasks.id, row.taskId))
+                .get()?.url ?? '',
+            goalVersion: e.goalVersion,
+          };
+          e.summary =
+            '已找回原活动任务，先核对当前页面与实际结果，再续做剩余工作。';
           for (const a of e.actions) {
-            if (a.status === 'reserved') a.status = 'cancelled';
-            else if (a.status === 'dispatched') a.status = 'unknown';
+            if (a.status === 'reserved' && a.dispatchState === 'not-dispatched')
+              a.status = 'cancelled';
+            else if (a.status === 'reserved' || a.status === 'dispatched')
+              a.status = 'unknown';
           }
           this.save(row.taskId, e);
         }
@@ -182,6 +201,38 @@ export class ExecutionRecords {
         .get();
       if (!task) throw new Error('TASK_NOT_FOUND');
       let e = this.get(c.taskId);
+      if (c.kind === 'recover') {
+        if (
+          !e ||
+          !e.recoveryPending ||
+          e.version !== c.expectedVersion ||
+          e.intent !== 'automatic' ||
+          e.phase !== 'queued' ||
+          e.pauseReason ||
+          !task.url ||
+          task.phase !== 'manual'
+        )
+          return { recovered: false };
+        if (
+          !e.recoverySource ||
+          e.recoverySource.url !== task.url ||
+          e.recoverySource.goalVersion !== e.goalVersion
+        ) {
+          move(e, 'BLOCK');
+          e.pauseReason = 'page-change';
+          e.version++;
+          delete e.recoveryPending;
+          delete e.recoverySource;
+          e.summary =
+            '重开的网页与原目标无法对应，已保留原任务并暂停。请先核对现场，再明确继续。';
+          this.save(task.id, e);
+          return { recovered: false };
+        }
+        delete e.recoveryPending;
+        delete e.recoverySource;
+        this.save(task.id, e);
+        return { recovered: true };
+      }
       if (c.kind === 'suspend') {
         const { controlSequence, ...request } = c;
         const hash = createHash('sha256')
@@ -209,6 +260,8 @@ export class ExecutionRecords {
         if (!e || e.intent === 'stopped' || e.phase === 'complete')
           return { recorded: true };
         e.version++;
+        delete e.recoveryPending;
+        delete e.recoverySource;
         e.runId = null;
         e.pauseReason = c.reason;
         for (const action of e.actions) {
@@ -254,6 +307,7 @@ export class ExecutionRecords {
           throw Error('RECORD_VERSION_CONFLICT');
         acceptedControl = true;
         e ??= {
+          modelVersion: 1,
           intent: 'automatic',
           phase: 'queued',
           version: 1,
@@ -280,6 +334,8 @@ export class ExecutionRecords {
             .run();
         }
         e.version++;
+        delete e.recoveryPending;
+        delete e.recoverySource;
         e.intentId = c.requestId;
         e.runId = null;
         for (const a of e.actions)
@@ -362,6 +418,7 @@ export class ExecutionRecords {
           if (!a || a.runId !== c.runId || a.status !== 'reserved')
             return { permitted: false };
           a.status = 'dispatched';
+          a.dispatchState = 'possible';
           move(e, 'DISPATCH');
           e.summary = a.summary;
           this.save(task.id, e);
@@ -397,6 +454,7 @@ export class ExecutionRecords {
             binding: c.binding,
             evidence: [],
             returned: false,
+            dispatchState: 'not-dispatched',
           });
           e.summary = c.summary;
           this.save(task.id, e);
@@ -456,7 +514,12 @@ export class ExecutionRecords {
         this.save(task.id, e);
         return { finished: true };
       }
-      if (!e || e.intent !== 'automatic' || e.phase !== 'queued')
+      if (
+        !e ||
+        e.intent !== 'automatic' ||
+        e.phase !== 'queued' ||
+        e.recoveryPending
+      )
         return { claimed: false };
       if (!task.url || task.phase === 'loading' || task.phase === 'error')
         return { claimed: false };

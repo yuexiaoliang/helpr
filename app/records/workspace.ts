@@ -3,7 +3,15 @@ import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import { eq, sql } from 'drizzle-orm';
 import { createMachine, transition } from 'xstate';
-import { mkdirSync, chmodSync } from 'node:fs';
+import {
+  mkdirSync,
+  chmodSync,
+  existsSync,
+  openSync,
+  writeSync,
+  fsyncSync,
+  closeSync,
+} from 'node:fs';
 import { randomUUID, createHash } from 'node:crypto';
 import path from 'node:path';
 import {
@@ -16,6 +24,7 @@ import { explicitWebsite, websiteURL } from '../shared/url-policy';
 import * as schema from './schema';
 import { ModelRecords } from './model';
 import { ExecutionRecords } from './execution';
+import { executionSchema } from '../shared/execution';
 
 // 本项只有手动网页状态；计算转换不启动 actor、invocation 或网页动作。
 const lifecycle = createMachine({
@@ -44,6 +53,12 @@ export class WorkspaceRecords {
   private readonly db: ReturnType<typeof drizzle<typeof schema>>;
   constructor(folder: string, migrations: string, validation = false) {
     mkdirSync(folder, { recursive: true, mode: 0o700 });
+    const marker = path.join(folder, '.workspace-records');
+    if (
+      existsSync(marker) &&
+      !existsSync(path.join(folder, 'workspace.sqlite'))
+    )
+      throw Error('DATA_MISSING');
     this.sqlite = new Database(path.join(folder, 'workspace.sqlite'));
     try {
       chmodSync(path.join(folder, 'workspace.sqlite'), 0o600);
@@ -56,6 +71,8 @@ export class WorkspaceRecords {
         validation ? 'busy_timeout = 8000' : 'busy_timeout = 3000',
       );
       this.db = drizzle(this.sqlite, { schema });
+      if (this.sqlite.pragma('quick_check', { simple: true }) !== 'ok')
+        throw Error('DATA_CORRUPT');
       const legacy = this.sqlite
         .prepare(
           "SELECT name FROM sqlite_master WHERE type='table' AND name='workspace'",
@@ -67,33 +84,66 @@ export class WorkspaceRecords {
               'SELECT schema_version FROM workspace WHERE id=1',
             )
             .get()?.schema_version
-        : 4;
-      if (!priorVersion || ![1, 2, 3, 4].includes(priorVersion))
+        : 5;
+      if (!priorVersion || ![1, 2, 3, 4, 5].includes(priorVersion))
         throw Error('DATA_VERSION_UNSUPPORTED');
-      if (legacy && priorVersion !== 4) {
+      if (legacy && priorVersion !== 5) {
         const backup = path.join(
           folder,
-          'workspace-before-takeover-04-' + randomUUID() + '.sqlite',
+          'workspace-before-recovery-05-' + randomUUID() + '.sqlite',
         );
         this.sqlite.prepare('VACUUM INTO ?').run(backup);
         chmodSync(backup, 0o600);
       }
       migrate(this.db, { migrationsFolder: migrations });
+      for (const row of this.db.select().from(schema.executions).all()) {
+        const body = row.body;
+        if (
+          body &&
+          typeof body === 'object' &&
+          'modelVersion' in body &&
+          body.modelVersion !== 1
+        )
+          throw Error('STATE_MODEL_UNSUPPORTED');
+        if (!executionSchema.safeParse(body).success)
+          throw Error('DATA_CORRUPT');
+      }
       this.db
         .insert(schema.workspace)
-        .values({ id: 1, active: null, revision: 0, schemaVersion: 4 })
+        .values({ id: 1, active: null, revision: 0, schemaVersion: 5 })
         .onConflictDoNothing()
         .run();
       const version = this.db
         .select()
         .from(schema.workspace)
         .get()?.schemaVersion;
-      if (version !== 1 && version !== 2 && version !== 3 && version !== 4)
+      if (
+        version !== 1 &&
+        version !== 2 &&
+        version !== 3 &&
+        version !== 4 &&
+        version !== 5
+      )
         throw new Error('DATA_VERSION_UNSUPPORTED');
-      if (version !== 4)
-        this.db.update(schema.workspace).set({ schemaVersion: 4 }).run();
+      if (version !== 5)
+        this.db.update(schema.workspace).set({ schemaVersion: 5 }).run();
       this.models = new ModelRecords(this.db);
       this.executions = new ExecutionRecords(this.db);
+      if (!existsSync(marker)) {
+        const fd = openSync(marker, 'wx', 0o600);
+        try {
+          writeSync(fd, 'helpr records initialized\n');
+          fsyncSync(fd);
+        } finally {
+          closeSync(fd);
+        }
+        const directory = openSync(folder, 'r');
+        try {
+          fsyncSync(directory);
+        } finally {
+          closeSync(directory);
+        }
+      }
     } catch (error) {
       this.sqlite.close();
       throw error;
@@ -292,5 +342,14 @@ export class WorkspaceRecords {
   }
   close(): void {
     this.sqlite.close();
+  }
+  checkpoint(): WorkspaceSnapshot {
+    this.db.transaction(() => {
+      this.db
+        .update(schema.workspace)
+        .set({ revision: sql`${schema.workspace.revision}+1` })
+        .run();
+    });
+    return this.snapshot();
   }
 }
