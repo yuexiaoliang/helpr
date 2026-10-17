@@ -146,9 +146,12 @@ async function sign(bundle) {
   const policy = developmentIdentity();
   const password = fs.readFileSync(passwordFile, 'utf8');
   const lock = path.join(directory, 'signing.lock');
-  const originalSearch = searchList();
-  fs.writeFileSync(lock, JSON.stringify({pid:process.pid,originalSearch}), {flag:'wx',mode:0o600});
+  const descriptor = fs.openSync(lock, 'wx', 0o600);
+  let originalSearch;
   try {
+    // 取得排他锁后才读取快照，不能把另一轮的临时列表当作原状态。
+    originalSearch = searchList();
+    fs.writeFileSync(descriptor, JSON.stringify({pid:process.pid,originalSearch}));
     security(['unlock-keychain', '-p', password, keychain]);
     // codesign 的私钥查找仍依赖搜索列表，即使已传 --keychain。
     security(['list-keychains', '-d', 'user', '-s', ...new Set([...originalSearch, keychain])]);
@@ -163,8 +166,10 @@ async function sign(bundle) {
     });
     return verifyDevelopmentSignature(path.resolve(bundle));
   } finally {
-    restoreKeychainState(originalSearch);
-    fs.unlinkSync(lock);
+    try {
+      if (originalSearch) restoreKeychainState(originalSearch);
+      fs.unlinkSync(lock);
+    } finally { fs.closeSync(descriptor); }
   }
 }
 export function signDevelopmentPackage(bundle) {
