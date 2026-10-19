@@ -132,7 +132,7 @@ function release(name, holdNext) {
 }
 function trackPids() {
   if (!child?.pid) return;
-  const rows = execFileSync('/bin/ps', ['-axo', 'pid=,ppid=,pgid='], { encoding: 'utf8' }).trim().split('\n').map((line) => line.trim().split(/\s+/).map(Number));
+  const rows = execFileSync('/bin/ps', ['-axo', 'pid=,ppid=,pgid='], { encoding: 'utf8', timeout: 3000 }).trim().split('\n').map((line) => line.trim().split(/\s+/).map(Number));
   pids.add(child.pid);
   let changed = true;
   while (changed) {
@@ -289,7 +289,7 @@ async function closeRound() {
     evidence.exitCode = child.exitCode;
     evidence.survivors = [...pids].filter(alive);
     if (lifecycle) {
-      const rows = execFileSync('/bin/ps',['-axo','pid=,ppid=,pgid='],{encoding:'utf8'}).trim().split('\n').map(line=>line.trim().split(/\s+/).map(Number));
+      const rows = execFileSync('/bin/ps',['-axo','pid=,ppid=,pgid='],{encoding:'utf8',timeout:3000}).trim().split('\n').map(line=>line.trim().split(/\s+/).map(Number));
       evidence.groupSurvivors = rows.filter(([, , group])=>ownedGroups.has(group));
       check('owned-process-groups-cleared',evidence.groupSurvivors.length===0);
     }
