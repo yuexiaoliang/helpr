@@ -1,0 +1,301 @@
+{
+  "build": 32,
+  "preparation": "signing-followup",
+  "profileState": "fresh-after-profile-loss",
+  "archive": "35445bb6e438f95ecd3d51f15bea562f010115e23c915cb7668022212b3fe9eb",
+  "certificateSha256": "5bd4c2c1f28a99910837bb31ba404f3043378c54463bdc8a8bdf04ce75d2f119",
+  "started": "2026-10-19T01:56:28.306Z",
+  "scope": "packaged local fixtures; no real credential/login, IME, sleep or power-loss acceptance",
+  "carry": {
+    "source": ".local/workspace-validation/recovery-05-31-contract-resume/result.json",
+    "sha256": "c1531b35331d39e93ee548ca9faae701d9448dc27e68689b759705db20f8df46",
+    "starts": [
+      70,
+      71,
+      72,
+      73,
+      74,
+      75
+    ],
+    "models": 4,
+    "effects": 1,
+    "tasks": 3,
+    "faults": 3,
+    "cleanups": 1
+  },
+  "limits": {
+    "starts": 2,
+    "faults": 0,
+    "cleanups": 1,
+    "models": 6,
+    "effects": 1,
+    "tasks": 1,
+    "minutes": 8
+  },
+  "starts": [
+    {
+      "start": 76,
+      "pid": 35796,
+      "duplicate": false,
+      "at": 1792374988367,
+      "pids": [
+        35796,
+        35800,
+        35801,
+        35802,
+        35803,
+        35804,
+        35809,
+        35810,
+        35811,
+        35812,
+        35813,
+        35817,
+        35818
+      ],
+      "groups": [
+        35796,
+        35802,
+        35804
+      ],
+      "tree": [
+        [
+          35796,
+          35681,
+          35796
+        ],
+        [
+          35800,
+          35796,
+          35681
+        ],
+        [
+          35801,
+          35796,
+          35681
+        ],
+        [
+          35802,
+          35796,
+          35802
+        ],
+        [
+          35803,
+          35796,
+          35796
+        ],
+        [
+          35804,
+          35802,
+          35804
+        ],
+        [
+          35809,
+          35804,
+          35804
+        ],
+        [
+          35810,
+          35804,
+          35804
+        ],
+        [
+          35811,
+          35804,
+          35804
+        ],
+        [
+          35812,
+          35804,
+          35804
+        ],
+        [
+          35813,
+          35804,
+          35804
+        ],
+        [
+          35817,
+          35804,
+          35804
+        ],
+        [
+          35818,
+          35804,
+          35804
+        ]
+      ],
+      "inheritedGroups": [
+        35681
+      ],
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "remaining": []
+    },
+    {
+      "start": 77,
+      "pid": 35825,
+      "duplicate": false,
+      "at": 1792374992992,
+      "pids": [
+        35825,
+        35826,
+        35827,
+        35828,
+        35829,
+        35830,
+        35836,
+        35837,
+        35838,
+        35839,
+        35840,
+        35843,
+        35844
+      ],
+      "groups": [
+        35825,
+        35828,
+        35830
+      ],
+      "tree": [
+        [
+          35825,
+          35681,
+          35825
+        ],
+        [
+          35826,
+          35825,
+          35681
+        ],
+        [
+          35827,
+          35825,
+          35681
+        ],
+        [
+          35828,
+          35825,
+          35828
+        ],
+        [
+          35829,
+          35825,
+          35825
+        ],
+        [
+          35830,
+          35828,
+          35830
+        ],
+        [
+          35836,
+          35830,
+          35830
+        ],
+        [
+          35837,
+          35830,
+          35830
+        ],
+        [
+          35838,
+          35830,
+          35830
+        ],
+        [
+          35839,
+          35830,
+          35830
+        ],
+        [
+          35840,
+          35830,
+          35830
+        ],
+        [
+          35843,
+          35830,
+          35830
+        ],
+        [
+          35844,
+          35830,
+          35830
+        ]
+      ],
+      "inheritedGroups": [
+        35681
+      ],
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "remaining": []
+    }
+  ],
+  "faults": [],
+  "effects": [
+    {
+      "name": "C",
+      "count": 1,
+      "at": 1792374995056
+    }
+  ],
+  "models": [
+    {
+      "at": 1792374992537,
+      "name": "C",
+      "count": 0
+    },
+    {
+      "at": 1792374994672,
+      "name": "C",
+      "count": 0
+    },
+    {
+      "at": 1792374995108,
+      "name": "C",
+      "count": 1
+    }
+  ],
+  "tasks": [
+    {
+      "name": "C",
+      "attempt": true,
+      "id": "5b330ab4-a2c9-4acb-a6fd-fb45288d1fee"
+    }
+  ],
+  "checks": [
+    "fresh-profile-has-no-old-tasks",
+    "no-action-before-normal-quit",
+    "owned-tree-cleared-35796",
+    "normal-quit-preserved-active-intent",
+    "fresh-C-effect-once",
+    "owned-tree-cleared-35825"
+  ],
+  "realModelCalls": 0,
+  "remoteWrites": 0,
+  "passed": true,
+  "finished": "2026-10-19T01:56:35.628Z",
+  "counts": {
+    "A": 0,
+    "B": 0,
+    "C": 1
+  },
+  "cumulative": {
+    "models": 7,
+    "effects": 2,
+    "tasks": 4,
+    "faults": 3
+  },
+  "global": {
+    "builds": 32,
+    "installs": 8,
+    "starts": 77,
+    "faults": 37,
+    "cleanups": 16
+  }
+}

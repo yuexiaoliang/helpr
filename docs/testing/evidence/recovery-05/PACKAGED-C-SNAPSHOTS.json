@@ -1,0 +1,354 @@
+{
+  "followup-initial": {
+    "revision": 0,
+    "active": null,
+    "tasks": [],
+    "modelSettings": null
+  },
+  "followup-before-quit": {
+    "revision": 7,
+    "active": "5b330ab4-a2c9-4acb-a6fd-fb45288d1fee",
+    "tasks": [
+      {
+        "id": "5b330ab4-a2c9-4acb-a6fd-fb45288d1fee",
+        "goal": "05 C 写入一条核对备注并核对完成 http://127.0.0.1:52989/page/C",
+        "created": 1792374992244,
+        "url": "http://127.0.0.1:52989/page/C",
+        "draft": "",
+        "hidden": false,
+        "minimized": false,
+        "phase": "manual",
+        "execution": {
+          "modelVersion": 1,
+          "intent": "automatic",
+          "phase": "checking",
+          "version": 2,
+          "intentId": "1851c244-fb4d-403b-88d3-78fb5c7f8bb2",
+          "goalVersion": 1,
+          "goal": "05 C 写入一条核对备注并核对完成 http://127.0.0.1:52989/page/C",
+          "runId": "4e965971-c855-4aaa-8602-5687e18194ef",
+          "resource": "http://127.0.0.1:52989/page/C",
+          "summary": "正在核对当前页面与已有结果。",
+          "actions": []
+        },
+        "error": "",
+        "version": 3,
+        "messages": [
+          {
+            "role": "user",
+            "text": "05 C 写入一条核对备注并核对完成 http://127.0.0.1:52989/page/C"
+          },
+          {
+            "role": "system",
+            "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+          },
+          {
+            "role": "user",
+            "text": "开始执行"
+          },
+          {
+            "role": "assistant",
+            "text": "",
+            "call": {
+              "id": "caacc67a-288a-48fb-81f8-001c15a3d713",
+              "taskId": "5b330ab4-a2c9-4acb-a6fd-fb45288d1fee",
+              "model": "local-fixture-05",
+              "configurationVersion": 1,
+              "phase": "sending",
+              "source": {
+                "url": "http://127.0.0.1:52989/page/C",
+                "title": "05 C 记录",
+                "fingerprint": "93704892754686876a345167826c2a5df32f1238b6119aea920ecd7854496a0f",
+                "generation": 1,
+                "observedAt": 1792374992480,
+                "truncated": false
+              },
+              "pageChanged": false,
+              "dispatched": true,
+              "reservedTokens": 10507,
+              "inputTokens": null,
+              "outputTokens": null,
+              "totalTokens": null,
+              "error": null
+            }
+          }
+        ]
+      }
+    ],
+    "modelSettings": {
+      "protocol": "chat-completions",
+      "endpoint": "http://127.0.0.1:52989/v1",
+      "model": "local-fixture-05",
+      "version": 1,
+      "hasCredential": true
+    }
+  },
+  "followup-cold-before-recovery": {
+    "revision": 10,
+    "active": "5b330ab4-a2c9-4acb-a6fd-fb45288d1fee",
+    "tasks": [
+      {
+        "id": "5b330ab4-a2c9-4acb-a6fd-fb45288d1fee",
+        "goal": "05 C 写入一条核对备注并核对完成 http://127.0.0.1:52989/page/C",
+        "created": 1792374992244,
+        "url": "http://127.0.0.1:52989/page/C",
+        "draft": "",
+        "hidden": false,
+        "minimized": false,
+        "phase": "manual",
+        "execution": {
+          "modelVersion": 1,
+          "recoveryPending": true,
+          "recoverySource": {
+            "url": "http://127.0.0.1:52989/page/C",
+            "goalVersion": 1
+          },
+          "intent": "automatic",
+          "phase": "queued",
+          "version": 3,
+          "intentId": "1851c244-fb4d-403b-88d3-78fb5c7f8bb2",
+          "goalVersion": 1,
+          "goal": "05 C 写入一条核对备注并核对完成 http://127.0.0.1:52989/page/C",
+          "runId": null,
+          "resource": "http://127.0.0.1:52989/page/C",
+          "summary": "已找回原活动任务，先核对当前页面与实际结果，再续做剩余工作。",
+          "actions": []
+        },
+        "error": "",
+        "version": 3,
+        "messages": [
+          {
+            "role": "user",
+            "text": "05 C 写入一条核对备注并核对完成 http://127.0.0.1:52989/page/C"
+          },
+          {
+            "role": "system",
+            "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+          },
+          {
+            "role": "user",
+            "text": "开始执行"
+          },
+          {
+            "role": "assistant",
+            "text": "",
+            "call": {
+              "id": "caacc67a-288a-48fb-81f8-001c15a3d713",
+              "taskId": "5b330ab4-a2c9-4acb-a6fd-fb45288d1fee",
+              "model": "local-fixture-05",
+              "configurationVersion": 1,
+              "phase": "cancelled",
+              "source": {
+                "url": "http://127.0.0.1:52989/page/C",
+                "title": "05 C 记录",
+                "fingerprint": "93704892754686876a345167826c2a5df32f1238b6119aea920ecd7854496a0f",
+                "generation": 1,
+                "observedAt": 1792374992480,
+                "truncated": false
+              },
+              "pageChanged": false,
+              "dispatched": true,
+              "reservedTokens": 10507,
+              "inputTokens": null,
+              "outputTokens": null,
+              "totalTokens": null,
+              "error": "MODEL_CANCELLED"
+            }
+          }
+        ]
+      }
+    ],
+    "modelSettings": {
+      "protocol": "chat-completions",
+      "endpoint": "http://127.0.0.1:52989/v1",
+      "model": "local-fixture-05",
+      "version": 1,
+      "hasCredential": true
+    }
+  },
+  "followup-final": {
+    "revision": 27,
+    "active": "5b330ab4-a2c9-4acb-a6fd-fb45288d1fee",
+    "tasks": [
+      {
+        "id": "5b330ab4-a2c9-4acb-a6fd-fb45288d1fee",
+        "goal": "05 C 写入一条核对备注并核对完成 http://127.0.0.1:52989/page/C",
+        "created": 1792374992244,
+        "url": "http://127.0.0.1:52989/page/C",
+        "draft": "",
+        "hidden": false,
+        "minimized": false,
+        "phase": "manual",
+        "execution": {
+          "modelVersion": 1,
+          "intent": "automatic",
+          "phase": "complete",
+          "version": 3,
+          "intentId": "1851c244-fb4d-403b-88d3-78fb5c7f8bb2",
+          "goalVersion": 1,
+          "goal": "05 C 写入一条核对备注并核对完成 http://127.0.0.1:52989/page/C",
+          "runId": null,
+          "resource": null,
+          "summary": "本次备注已核对完成",
+          "actions": [
+            {
+              "id": "291e81cd-4422-444f-835b-0b4fa4c0e166",
+              "runId": "98503e7a-c59b-4c0e-8744-5a415174aaa3",
+              "goalVersion": 1,
+              "status": "confirmed",
+              "summary": "写入本次备注",
+              "action": {
+                "kind": "click",
+                "target": {
+                  "role": "button",
+                  "name": "写入备注 C",
+                  "exact": true
+                }
+              },
+              "source": {
+                "url": "http://127.0.0.1:52989/page/C",
+                "title": "05 C 记录",
+                "fingerprint": "93704892754686876a345167826c2a5df32f1238b6119aea920ecd7854496a0f",
+                "generation": 1,
+                "observedAt": 1792374994615,
+                "truncated": false
+              },
+              "resultSource": {
+                "url": "http://127.0.0.1:52989/page/C",
+                "title": "05 C 记录",
+                "fingerprint": "ed811696e42d9ec1dbed56418a08d6a69cf7b665e5796c0a5f83604f3fa2478a",
+                "generation": 1,
+                "observedAt": 1792374995078,
+                "truncated": false
+              },
+              "binding": {
+                "targetId": "D874DB927594F750E67BF16D510E1602",
+                "generation": 1
+              },
+              "evidence": [
+                "C 写入 1 次"
+              ],
+              "returned": true,
+              "dispatchState": "possible"
+            }
+          ],
+          "result": {
+            "goalVersion": 1,
+            "source": {
+              "url": "http://127.0.0.1:52989/page/C",
+              "title": "05 C 记录",
+              "fingerprint": "ed811696e42d9ec1dbed56418a08d6a69cf7b665e5796c0a5f83604f3fa2478a",
+              "generation": 1,
+              "observedAt": 1792374995078,
+              "truncated": false
+            },
+            "evidence": [
+              "C 写入 1 次"
+            ]
+          }
+        },
+        "error": "",
+        "version": 6,
+        "messages": [
+          {
+            "role": "user",
+            "text": "05 C 写入一条核对备注并核对完成 http://127.0.0.1:52989/page/C"
+          },
+          {
+            "role": "system",
+            "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+          },
+          {
+            "role": "user",
+            "text": "开始执行"
+          },
+          {
+            "role": "assistant",
+            "text": "",
+            "call": {
+              "id": "caacc67a-288a-48fb-81f8-001c15a3d713",
+              "taskId": "5b330ab4-a2c9-4acb-a6fd-fb45288d1fee",
+              "model": "local-fixture-05",
+              "configurationVersion": 1,
+              "phase": "cancelled",
+              "source": {
+                "url": "http://127.0.0.1:52989/page/C",
+                "title": "05 C 记录",
+                "fingerprint": "93704892754686876a345167826c2a5df32f1238b6119aea920ecd7854496a0f",
+                "generation": 1,
+                "observedAt": 1792374992480,
+                "truncated": false
+              },
+              "pageChanged": false,
+              "dispatched": true,
+              "reservedTokens": 10507,
+              "inputTokens": null,
+              "outputTokens": null,
+              "totalTokens": null,
+              "error": "MODEL_CANCELLED"
+            }
+          },
+          {
+            "role": "assistant",
+            "text": "写入本次备注",
+            "call": {
+              "id": "df35e203-2867-4ef8-a9a1-1f99b311c0f6",
+              "taskId": "5b330ab4-a2c9-4acb-a6fd-fb45288d1fee",
+              "model": "local-fixture-05",
+              "configurationVersion": 2,
+              "phase": "complete",
+              "source": {
+                "url": "http://127.0.0.1:52989/page/C",
+                "title": "05 C 记录",
+                "fingerprint": "93704892754686876a345167826c2a5df32f1238b6119aea920ecd7854496a0f",
+                "generation": 1,
+                "observedAt": 1792374994615,
+                "truncated": false
+              },
+              "pageChanged": false,
+              "dispatched": true,
+              "reservedTokens": 10507,
+              "inputTokens": 1,
+              "outputTokens": 1,
+              "totalTokens": 2,
+              "error": null
+            }
+          },
+          {
+            "role": "assistant",
+            "text": "本次备注已核对完成",
+            "call": {
+              "id": "3637bc4c-f3c1-4496-81c8-6e9c2f69678b",
+              "taskId": "5b330ab4-a2c9-4acb-a6fd-fb45288d1fee",
+              "model": "local-fixture-05",
+              "configurationVersion": 2,
+              "phase": "complete",
+              "source": {
+                "url": "http://127.0.0.1:52989/page/C",
+                "title": "05 C 记录",
+                "fingerprint": "ed811696e42d9ec1dbed56418a08d6a69cf7b665e5796c0a5f83604f3fa2478a",
+                "generation": 1,
+                "observedAt": 1792374995078,
+                "truncated": false
+              },
+              "pageChanged": false,
+              "dispatched": true,
+              "reservedTokens": 11517,
+              "inputTokens": 1,
+              "outputTokens": 1,
+              "totalTokens": 2,
+              "error": null
+            }
+          }
+        ]
+      }
+    ],
+    "modelSettings": {
+      "protocol": "chat-completions",
+      "endpoint": "http://127.0.0.1:52989/v1",
+      "model": "local-fixture-05",
+      "version": 2,
+      "hasCredential": true
+    }
+  }
+}

@@ -20,7 +20,7 @@
 | [02 配置模型并在所属任务理解网页](issues/02-model-settings-and-page-understanding.md) | [01](issues/01-installable-task-workspace.md) |
 | [03 两项网页任务执行、停止与继续](issues/03-parallel-execution-stop-and-continue.md) | [02](issues/02-model-settings-and-page-understanding.md) |
 | [04 直接接管网页与页面变化后的归属](issues/04-native-takeover-and-page-ownership.md)（已验收） | [03](issues/03-parallel-execution-stop-and-continue.md) |
-| [05 退出、意外退出与冷重开核对](issues/05-quit-crash-and-cold-recovery.md) | [04](issues/04-native-takeover-and-page-ownership.md) |
+| [05 退出、意外退出与冷重开核对](issues/05-quit-crash-and-cold-recovery.md)（已验收） | [04](issues/04-native-takeover-and-page-ownership.md) |
 | [06 收起运行、锁屏与休眠恢复](issues/06-hide-lock-sleep-and-resume.md) | [05](issues/05-quit-crash-and-cold-recovery.md) |
 | [07 本机备份与旧备份恢复](issues/07-local-backup-and-restore.md) | [05](issues/05-quit-crash-and-cold-recovery.md) |
 | [08 自动检查新版与可信下载提醒](issues/08-version-check-and-download-notice.md) | [02](issues/02-model-settings-and-page-understanding.md) |
@@ -112,3 +112,5 @@
 2026-10-17，05 原型已获用户确认并进入正式实现，当前源码与 69 正式测试/25 旧回归通过；候选 31 的异常清理、A 结果补记不重发、原停止、竞争启动和记录重连通过。最后 C 的有序退出/冷恢复发现主动断管误存暂停，源码已红绿修正并复核；只补 C 的 1 构建/2 启动具体增量待确认。见 [05 当前记录](../../docs/testing/evidence/recovery-05/REPORT.md)。05 尚未整体验收，06/07 依赖未解除。
 
 2026-10-19，05 构建 32 原签名超时已保留，副本离线签名与完整包检查通过。C 补验在启动前发现原隔离临时资料缺失，0 新启动或业务用量；已准备只追加 1 个虚构 C 任务、复用原两启动及全部其余额度的替代案例，等待具体增量确认。05 仍未整体验收，06/07 依赖未解除，详见 [05 当前记录](../../docs/testing/evidence/recovery-05/REPORT.md)。
+
+2026-10-19，05 九条验收已按累计正式入口与实包证据关闭，见 [05 最终验收](../../docs/testing/evidence/recovery-05/FINAL-ACCEPTANCE.md)。最后 C 在签名副本 32 的 76/77 无需开始/继续自动恢复，仅写入一次，正常退出且树清空；最终 69 正式/25 旧回归和两轴审阅通过。原 C 缺陷、签名超时和临时资料缺失等全部保留，正式安装未替换。06/07 对 05 的前置依赖现已满足，各自仍按原型确认流程推进；本轮未开始它们的实现。
