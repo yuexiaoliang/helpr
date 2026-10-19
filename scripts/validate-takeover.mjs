@@ -44,6 +44,9 @@ assert(manifest.prepared && manifest.app === built, 'CANDIDATE_NOT_READY');
 for (const [file, hash] of Object.entries(manifest.hashes))
   assert.equal(createHash('sha256').update(fs.readFileSync(path.join(built, file))).digest('hex'), hash);
 const carryName = process.argv.find((arg) => arg.startsWith('--carry='))?.slice(8);
+const reuseInputPreparation = process.argv.includes('--reuse-input-preparation');
+assert(!reuseInputPreparation || (lifecycle && carryName === 'lifecycle-06-input-final'), 'INPUT_PREPARATION_REUSE_REQUIRES_SOURCE');
+let preparationReuse;
 const taskLimit = Number(process.argv.find((arg) => arg.startsWith('--task-limit='))?.slice(13) ?? (lifecycle ? 4 : 12));
 assert((lifecycle && (taskLimit === 4 || ([6,8].includes(taskLimit) && carryName))) || (!lifecycle && [12,14,16,18,20,22,24,26].includes(taskLimit)), 'INVALID_TASK_LIMIT');
 const lifecycleInputArgument = process.argv.find((arg) => arg.startsWith('--lifecycle-input-limit='))?.slice(24);
@@ -83,9 +86,37 @@ if (carryName !== undefined) {
     carry.counts[kind] = used;
   }
 }
+if (reuseInputPreparation) {
+  const priorRoot=path.join(validationRoot,carryName);
+  const proof=JSON.parse(fs.readFileSync('docs/testing/evidence/lifecycle-06/INPUT-PREPARATION-FAILURE.json'));
+  for(const [file,key] of [['result.json','resultSHA256'],['context.json','contextSHA256'],['ids.json','idsSHA256'],['snapshot.json','snapshotSHA256']])
+    assert.equal(createHash('sha256').update(fs.readFileSync(path.join(priorRoot,file))).digest('hex'),proof[key],'INPUT_PREPARATION_SOURCE_CHANGED');
+  const previous=JSON.parse(fs.readFileSync(path.join(priorRoot,'result.json')));
+  const context=JSON.parse(fs.readFileSync(path.join(priorRoot,'context.json')));
+  const previousIds=JSON.parse(fs.readFileSync(path.join(priorRoot,'ids.json')));
+  const previousState=JSON.parse(fs.readFileSync(path.join(priorRoot,'snapshot.json')));
+  assert(previous.build===build && previous.archive===manifest.hashes['Contents/Resources/app.asar'] && previous.failure==='VALIDATION_WAIT_EXPIRED' && previous.models.length===0 && previous.effects.length===0 && previous.taskAttempts===2 && previous.humanSteps.length===1 && !previous.humanSteps[0].armSentAt,'INPUT_PREPARATION_NEVER_STARTED_REQUIRED');
+  assert(previous.exitCode===0 && previous.survivors.length===0 && previous.groupSurvivors.length===0 && proof.independentExit.pidSurvivors.length===0 && proof.independentExit.groupSurvivors.length===0,'INPUT_PREPARATION_EXIT_REQUIRED');
+  assert(previous.processTree.every(row=>!alive(row.pid)),'INPUT_PREPARATION_PROCESS_STILL_ALIVE');
+  const root=`/private/tmp/helpr-workspace-validation-${process.getuid()}`;
+  assert(context.built===built && context.profile.startsWith(root+'/lifecycle06-') && path.dirname(context.profile)===root && fs.realpathSync(root)===root && fs.realpathSync(context.profile)===context.profile,'INPUT_PREPARATION_PROFILE_REQUIRED');
+  const stat=fs.statSync(context.profile); assert(stat.uid===process.getuid() && (stat.mode&0o077)===0,'INPUT_PREPARATION_PROFILE_OWNER_REQUIRED');
+  const databaseFiles=['workspace.sqlite','workspace.sqlite-wal','workspace.sqlite-shm'];
+  assert.deepEqual(databaseFiles.filter(file=>fs.existsSync(path.join(context.profile,file))).sort(),Object.keys(proof.profileFiles).sort(),'INPUT_PREPARATION_DATABASE_FILES_CHANGED');
+  for(const [file,sha] of Object.entries(proof.profileFiles)) {
+    assert(['workspace.sqlite','workspace.sqlite-wal','workspace.sqlite-shm'].includes(file),'INPUT_PREPARATION_FILE_DENIED');
+    assert(!fs.lstatSync(path.join(context.profile,file)).isSymbolicLink(),'INPUT_PREPARATION_FILE_SYMLINK');
+    assert.equal(createHash('sha256').update(fs.readFileSync(path.join(context.profile,file))).digest('hex'),sha,'INPUT_PREPARATION_DATABASE_CHANGED');
+  }
+  assert(proof.profileFiles['workspace.sqlite'],'INPUT_PREPARATION_DATABASE_REQUIRED');
+  const origin=new URL(context.base); assert(origin.origin===context.base && origin.protocol==='http:' && origin.hostname==='127.0.0.1' && origin.port,'INPUT_PREPARATION_LOCAL_ORIGIN_REQUIRED');
+  assert(Object.keys(previousIds).sort().join(',')==='A,B' && previousState.tasks.length===2 && ['A','B'].every(name=>previousState.tasks.some(task=>task.id===previousIds[name] && task.url===context.base+'/page/'+name && !task.execution)),'INPUT_PREPARATION_UNUSED_TASKS_REQUIRED');
+  assert(previousState.modelSettings?.endpoint===context.base+'/v1' && previousState.modelSettings.model==='controlled-local-04' && previousState.modelSettings.hasCredential && previousState.modelSettings.version>=1,'INPUT_PREPARATION_CONFIGURATION_REQUIRED');
+  preparationReuse={source:carryName,resultSHA256:proof.resultSHA256,profile:context.profile,base:context.base,ids:previousIds};
+}
 if (process.argv.includes('--check-carry')) {
   assert(carry, 'CARRY_ROUND_REQUIRED');
-  console.log(JSON.stringify({...carry,maximum,remaining:Object.fromEntries(Object.entries(maximum).map(([kind,total])=>[kind,total-carry.counts[kind]]))}));
+  console.log(JSON.stringify({...carry,maximum,remaining:Object.fromEntries(Object.entries(maximum).map(([kind,total])=>[kind,total-carry.counts[kind]])),reusedTasks:preparationReuse?2:0}));
   process.exit(0);
 }
 execFileSync(process.execPath, ['scripts/validate-workspace.mjs', '--preflight'], { stdio: 'pipe' });
@@ -95,13 +126,13 @@ fs.mkdirSync(profileRoot, { recursive: true, mode: 0o700 });
 assert.equal(fs.realpathSync(profileRoot), profileRoot);
 const stat = fs.statSync(profileRoot);
 assert(stat.uid === process.getuid() && (stat.mode & 0o077) === 0, 'INVALID_PROFILE_ROOT');
-const profile = fs.mkdtempSync(profileRoot + (lifecycle ? '/lifecycle06-' : '/takeover04-'));
+const profile = preparationReuse?.profile ?? fs.mkdtempSync(profileRoot + (lifecycle ? '/lifecycle06-' : '/takeover04-'));
 const evidence = {
   purpose: lifecycle ? 'lifecycle-06' : 'takeover-04',
   build, archive: manifest.hashes['Contents/Resources/app.asar'],
   scope: 'packaged local fixtures; no system credential or persistent website-session acceptance; tool input is not real IME/paste acceptance',
   credentials: 'in-process public fixture sentinel; system keychain not tested',
-  started: new Date().toISOString(), carry, candidateReview,
+  started: new Date().toISOString(), carry, candidateReview, preparationReuse,
   limits: { minutes: 20, ...Object.fromEntries(Object.entries(maximum).map(([kind, total]) => [kind, total - (carry?.counts[kind] ?? 0)])) },
   realModelCalls: 0, remoteWrites: 0, taskAttempts: 0, effects: [], inputs: [], models: [], checkpoints: [], checks: [], deferred: {},
 };
@@ -114,6 +145,7 @@ const save = () => write('result.json', evidence);
 if (candidateReview) write('candidate.json', {...manifest,review:candidateReview});
 const ownedGroups = new Set();
 const ids = {}, held = [], holds = new Map(), pending = new Map(), pids = new Set(), humanSignals = new Map();
+if(preparationReuse) {Object.assign(ids,preparationReuse.ids);for(const name of Object.keys(ids))holds.set(name,0);write('ids.json',ids);}
 let activeHuman, humanRun, humanAbort;
 let storageReader, resourceTimer;
 if (lifecycle) evidence.performance = {scope:"OS RSS sums and public IPC round trips; not paint latency",samples:[],commands:[]};
@@ -262,8 +294,9 @@ const server = http.createServer(async (req, res) => {
     void finish();
   }
 });
-await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+await new Promise((resolve,reject) => {server.once('error',reject);server.listen(preparationReuse?Number(new URL(preparationReuse.base).port):0, '127.0.0.1', resolve);});
 const base = `http://127.0.0.1:${server.address().port}`;
+if(preparationReuse) assert.equal(base,preparationReuse.base,'INPUT_PREPARATION_ORIGIN_CHANGED');
 write('context.json', { built, profile, base }); save();
 let budget;
 try { budget = spend('starts'); }
@@ -335,7 +368,12 @@ try {
   // 只保存公开虚构哨兵；不再让接管测试依赖真人系统授权。
   evidence.phase = 'saving-local-fixture-configuration'; save();
   console.log('SAVING_LOCAL_FIXTURE_CONFIGURATION ' + out);
-  await request({ kind: 'model-save', requestId: randomUUID(), expectedVersion: 0, protocol: 'chat-completions', endpoint: base + '/v1', model: 'controlled-local-04', apiKey: 'local-fixture-not-a-secret' }, 10000);
+  const configurationVersion=preparationReuse?(await snapshot()).modelSettings?.version:0;
+  await request({ kind: 'model-save', requestId: randomUUID(), expectedVersion: configurationVersion, protocol: 'chat-completions', endpoint: base + '/v1', model: 'controlled-local-04', apiKey: 'local-fixture-not-a-secret' }, 10000);
+  if(preparationReuse) {
+    const restored=await snapshot();
+    assert(restored.tasks.length===2 && Object.values(ids).every(id=>restored.tasks.some(task=>task.id===id && !task.execution)) && evidence.models.length===0 && evidence.effects.length===0,'INPUT_PREPARATION_RESTORE_MUST_REMAIN_MANUAL');
+  }
   evidence.phase = 'ready'; evidence.validationStarted = new Date().toISOString(); save();
   deadline = setTimeout(() => { expired = true; evidence.failure = 'ROUND_TIME_LIMIT'; save(); void finish(); }, evidence.limits.minutes * 60000);
   if (lifecycle) resourceTimer = setInterval(() => {
@@ -410,9 +448,12 @@ async function beginTiming(job) {
 }
 function beginHuman(job) {
   assert(lifecycle && ['ime','paste'].includes(job.input) && ids[job.name] && !activeHuman, 'HUMAN_STEP_REQUIRED');
+  const visibleAcknowledgement=evidence.humanWindowReady;
+  assert(visibleAcknowledgement && !visibleAcknowledgement.consumedAt && Date.now()-visibleAcknowledgement.at<30000,'HUMAN_WINDOW_ACKNOWLEDGEMENT_REQUIRED');
   assert(!job.other || (ids[job.other] && job.other !== job.name), 'HUMAN_OTHER_REQUIRED');
   assert(!(evidence.humanSteps ?? []).some(step=>step.input===job.input), 'HUMAN_STEP_ALREADY_ATTEMPTED');
-  const step = {input:job.input,name:job.name,other:job.other,actor:'human',startedAt:Date.now(),phase:'preparation',intentId:randomUUID(),inputOffset:evidence.inputs.length};
+  visibleAcknowledgement.consumedAt=Date.now();
+  const step = {input:job.input,name:job.name,other:job.other,actor:'human',startedAt:Date.now(),phase:'preparation',intentId:randomUUID(),inputOffset:evidence.inputs.length,visibleAcknowledgement:{...visibleAcknowledgement}};
   (evidence.humanSteps ??= []).push(step); activeHuman=step;
   humanAbort=new AbortController(); const signal=humanAbort.signal;
   const checked=async fn=>{signal.throwIfAborted();const value=await fn();signal.throwIfAborted();return value;};
@@ -526,7 +567,12 @@ poll = setInterval(async () => {
       await request({ kind: 'select', requestId: randomUUID(), taskId: ids[job.names[0]] });
       await request({ kind: 'show' });
       value = ids; write('ids.json', ids);
-    } else if (job.kind === 'human-input') value=beginHuman(job);
+    } else if (job.kind === 'human-window-ready') {
+      assert(lifecycle && job.userConfirmed===true && typeof job.reply==='string' && job.reply.length>0 && job.reply.length<=200,'HUMAN_VISIBLE_CONFIRMATION_REQUIRED');
+      assert((await request({kind:'inspect'})).window?.visible===true,'HUMAN_WINDOW_NOT_VISIBLE');
+      value={at:Date.now(),reply:job.reply}; evidence.humanWindowReady=value; save();
+    }
+    else if (job.kind === 'human-input') value=beginHuman(job);
     else if (job.kind === 'release') {
       assert(job.holdNext === undefined || [0,1,2].includes(job.holdNext), 'INVALID_NEXT_MODEL_HOLD');
       for (const name of job.names) release(name, job.holdNext);

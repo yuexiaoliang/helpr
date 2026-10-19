@@ -82,3 +82,12 @@
 
 
 本次入口固定为 `node scripts/validate-takeover.mjs --round=lifecycle-06-input-final --build=34 --lifecycle --carry=lifecycle-06-hidden-fix --task-limit=8 --lifecycle-model-limit=32 --lifecycle-input-limit=224`。carry 只读核对确认剩余2任务／10模型／4效果／74收件。校验装置增加只读网页阶段提示与受管 `human-input` 观察；准备点击后等待公开停止回执，新意图与当前 sending／held 请求有效才显示绿色。首个原生事件与异步网页收件允许3秒间隔；正式阶段30秒，准备90秒、启动就绪20秒。正式区间以收件／trace数组位置分界，禁止额外点击；核对首个交付的同serial识别、阻断、handoff、epoch及HTTP顺序。所有请求／快照前后检查取消，收束主动取消并等待观察器，避免结束后继续授予资格。五项离线VM时序检查及两轴只读审阅通过，见[检查范围](evidence/lifecycle-06/HUMAN-OBSERVER-CHECK.json)；它们不充抵真人结果。
+
+
+## 准备失败后的仅启动复用提案（尚未获准）
+
+启动 81 在用户尚未确认看到窗口时开启90秒准备，超时后正常退出；模型／效果0，15 PID／3组空。用户反馈“窗口不在了”，agent 已承认交接安排问题。不得重置失败或直接重开已结束的轮次。累计8任务／22模型／4效果／162收件，批准上限8／32／8／224，全局启动81/81；两个尚未开始的任务及隔离资料保留。
+
+本提案仅追加1次启动（82），构建、安装、任务、模型、页面效果、收件、故障与清理上限均不增加。复用候选34及上一轮原资料／A、B身份／同一回环服务地址；剩10本机模型、4效果、62收件。入口预备为 `node scripts/validate-takeover.mjs --round=lifecycle-06-input-ready --build=34 --lifecycle --carry=lifecycle-06-input-final --task-limit=8 --lifecycle-model-limit=32 --lifecycle-input-limit=224 --reuse-input-preparation`。加 `--check-carry` 仅只读核对，已确认可复用2项、创建0项；源JSON和数据库哈希、固定临时路径／拥有者／权限、同候选和未执行状态均匹配。复用守卫不通过即停，不自动新增任务、换资料或再构建。
+
+新一轮仍从ready起最多20分钟。先完成实际绘制、窗口和焦点预检，然后只询问用户“窗口可见并准备好了吗”；没有实际可见确认时不启动输入观察、自动任务或模型。确认可见后在30秒内登记并消费一次 `human-window-ready`，才开启该步90秒准备与绿色后30秒输入阶段。第二步同样使用新近的实际用户可见回应。公开命令15秒、原生10秒、退出45秒，失败即正常退出并保留，不追加第二次重试。输入和性能目标保持，不重复已通过系统动作。此段仅准备方案，尚未增加启动额度或运行。

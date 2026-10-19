@@ -1,7 +1,7 @@
 {
   "date": "2026-10-19",
   "scope": "offline VM invokes actual beginHuman source with isolated fixture ports; no app, browser, native input, model or product acceptance",
-  "scriptSHA256": "b3729d4ce9db4a69b7148ad217fe43327146769b19dcfe6cdc4c3fdc67c31487",
+  "scriptSHA256": "37643a345dbb75913b20bbac324cc5c7ebd3498e6dba27b0acc5a0a972eb5dc9",
   "cases": [
     {
       "name": "native-cancel-before-delayed-web-receipt",
@@ -22,10 +22,25 @@
     {
       "name": "cancel-during-continue-no-other-start",
       "passed": true
+    },
+    {
+      "name": "no-window-acknowledgement-rejected-before-start",
+      "passed": true
     }
   ],
   "syntax": "passed",
   "standardsResidual": 0,
   "specResidual": 0,
-  "sourceChanges": "validation fixture only; candidate34 unchanged"
+  "sourceChanges": "validation fixture only; candidate34 unchanged",
+  "profileReusePreflight": {
+    "passed": true,
+    "appStarts": 0,
+    "reusedTasks": 2,
+    "newTasks": 0,
+    "remaining": {
+      "models": 10,
+      "effects": 4,
+      "inputs": 62
+    }
+  }
 }
