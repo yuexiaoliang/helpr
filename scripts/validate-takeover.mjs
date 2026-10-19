@@ -45,8 +45,11 @@ for (const [file, hash] of Object.entries(manifest.hashes))
   assert.equal(createHash('sha256').update(fs.readFileSync(path.join(built, file))).digest('hex'), hash);
 const taskLimit = Number(process.argv.find((arg) => arg.startsWith('--task-limit='))?.slice(13) ?? (lifecycle ? 4 : 12));
 assert((lifecycle && taskLimit === 4) || (!lifecycle && [12,14,16,18,20,22,24,26].includes(taskLimit)), 'INVALID_TASK_LIMIT');
-const maximum = lifecycle ? {effects:8, inputs:16, models:24, tasks:4} : { effects: 24, inputs: 160, models: 64, tasks: taskLimit };
 const carryName = process.argv.find((arg) => arg.startsWith('--carry='))?.slice(8);
+const lifecycleInputArgument = process.argv.find((arg) => arg.startsWith('--lifecycle-input-limit='))?.slice(24);
+const lifecycleInputs = Number(lifecycleInputArgument ?? 16);
+assert(lifecycleInputArgument === undefined || (lifecycle && carryName && lifecycleInputs === 160), 'LIFECYCLE_INPUT_EXTENSION_REQUIRES_CARRY');
+const maximum = lifecycle ? {effects:8, inputs:lifecycleInputs, models:24, tasks:4} : { effects: 24, inputs: 160, models: 64, tasks: taskLimit };
 assert(lifecycle || taskLimit === 12 || carryName !== undefined, 'EXTENDED_TASK_LIMIT_REQUIRES_CARRY');
 const repairOf = process.argv.find((arg) => arg.startsWith('--repair-of='))?.slice(12);
 assert(repairOf === undefined || (carryName && /^[0-9a-f]{64}$/.test(repairOf)), 'INVALID_REPAIR_LINEAGE');
