@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-19",
+  "build": 33,
+  "start": 78,
+  "stage": "CUA application binding before automatic execution",
+  "tool": "cua.getApp(candidate internal Workspace app path)",
+  "error": "js execution timed out; kernel reset",
+  "resultSHA256": "a4fbdb525d93071c5e6ae363d8210592582cd0f75889e742953fc604d6613ec6",
+  "models": 0,
+  "effects": 0,
+  "tasks": 2,
+  "nativeInputs": 10,
+  "normalExit": 0,
+  "cleanupUsed": false,
+  "scope": "Preparation failure. No verified CUA native UI interaction or lifecycle acceptance. The 10 fixture receipts comprise 2 page registrations and 8 mouse moves, all with empty text; none establishes human input acceptance.",
+  "nativeDiagnostic": [
+    {
+      "target": "com.openai.codex",
+      "result": "Computer Use policy refused access; no bypass attempted"
+    },
+    {
+      "target": "com.apple.finder",
+      "alreadyRunning": true,
+      "timeoutMs": 10000,
+      "result": "js execution timed out; kernel reset"
+    }
+  ]
+}
