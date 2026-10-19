@@ -43,13 +43,13 @@ assert(typeof built === 'string' && path.isAbsolute(built), 'INVALID_CANDIDATE')
 assert(manifest.prepared && manifest.app === built, 'CANDIDATE_NOT_READY');
 for (const [file, hash] of Object.entries(manifest.hashes))
   assert.equal(createHash('sha256').update(fs.readFileSync(path.join(built, file))).digest('hex'), hash);
-const taskLimit = Number(process.argv.find((arg) => arg.startsWith('--task-limit='))?.slice(13) ?? (lifecycle ? 4 : 12));
-assert((lifecycle && taskLimit === 4) || (!lifecycle && [12,14,16,18,20,22,24,26].includes(taskLimit)), 'INVALID_TASK_LIMIT');
 const carryName = process.argv.find((arg) => arg.startsWith('--carry='))?.slice(8);
+const taskLimit = Number(process.argv.find((arg) => arg.startsWith('--task-limit='))?.slice(13) ?? (lifecycle ? 4 : 12));
+assert((lifecycle && (taskLimit === 4 || (taskLimit === 6 && carryName))) || (!lifecycle && [12,14,16,18,20,22,24,26].includes(taskLimit)), 'INVALID_TASK_LIMIT');
 const lifecycleInputArgument = process.argv.find((arg) => arg.startsWith('--lifecycle-input-limit='))?.slice(24);
 const lifecycleInputs = Number(lifecycleInputArgument ?? 16);
 assert(lifecycleInputArgument === undefined || (lifecycle && carryName && lifecycleInputs === 160), 'LIFECYCLE_INPUT_EXTENSION_REQUIRES_CARRY');
-const maximum = lifecycle ? {effects:8, inputs:lifecycleInputs, models:24, tasks:4} : { effects: 24, inputs: 160, models: 64, tasks: taskLimit };
+const maximum = lifecycle ? {effects:8, inputs:lifecycleInputs, models:24, tasks:taskLimit} : { effects: 24, inputs: 160, models: 64, tasks: taskLimit };
 assert(lifecycle || taskLimit === 12 || carryName !== undefined, 'EXTENDED_TASK_LIMIT_REQUIRES_CARRY');
 const repairOf = process.argv.find((arg) => arg.startsWith('--repair-of='))?.slice(12);
 assert(repairOf === undefined || (carryName && /^[0-9a-f]{64}$/.test(repairOf)), 'INVALID_REPAIR_LINEAGE');
@@ -59,9 +59,13 @@ let carry;
 if (carryName !== undefined) {
   assert(/^[a-z0-9-]{1,40}$/.test(carryName) && carryName !== round, 'INVALID_CARRY_ROUND');
   const priorRoot = path.join(validationRoot, carryName);
-  const prior = JSON.parse(fs.readFileSync(path.join(priorRoot, 'result.json')));
+  const priorBytes = fs.readFileSync(path.join(priorRoot, 'result.json'));
+  const prior = JSON.parse(priorBytes);
   if (lifecycle) assert(prior.purpose === 'lifecycle-06', 'LIFECYCLE_CARRY_REQUIRED');
-  const repaired = repairOf === prior.archive && Number.isSafeInteger(prior.build) && prior.build < build && Boolean(prior.controlFailure || prior.failure || prior.fixtureFailure);
+  const postcheckFile = path.join(priorRoot, 'hidden-check.json');
+  const postcheck = lifecycle && fs.existsSync(postcheckFile) ? JSON.parse(fs.readFileSync(postcheckFile)) : undefined;
+  if (postcheck) assert(postcheck.failure === 'HIDDEN_TASKS_MUST_ADVANCE_WITHOUT_PAUSING' && postcheck.archive === prior.archive && postcheck.resultSHA256 === createHash('sha256').update(priorBytes).digest('hex'), 'INVALID_HIDDEN_POSTCHECK');
+  const repaired = repairOf === prior.archive && Number.isSafeInteger(prior.build) && prior.build < build && Boolean(prior.controlFailure || prior.failure || prior.fixtureFailure || postcheck?.failure);
   const derived = derivedFrom === prior.archive && Number.isSafeInteger(prior.build) && prior.build < build && prior.exitCode === 0 && !prior.failure && !prior.controlFailure && !prior.fixtureFailure;
   assert(prior.finished && (prior.archive === manifest.hashes['Contents/Resources/app.asar'] || repaired || derived), 'CARRY_CANDIDATE_NOT_FINISHED');
   const normalExit = prior.exitCode === 0 && Array.isArray(prior.survivors) && prior.survivors.length === 0;
@@ -69,7 +73,7 @@ if (carryName !== undefined) {
   assert(normalExit || checkedCleanup, 'CARRY_CANDIDATE_NOT_STOPPED');
   // 缺少发送前预留的旧记录不能凭成功返回的 ID 数推定没有回执不明的创建。
   assert(Number.isSafeInteger(prior.taskAttempts) && prior.taskAttempts >= 0, 'CARRY_TASK_ATTEMPTS_REQUIRED');
-  carry = { round: carryName, counts: {}, ...(repaired ? {repair:{build:prior.build,archive:prior.archive}} : {}), ...(derived ? {derivation:{build:prior.build,archive:prior.archive}} : {}) };
+  carry = { round: carryName, counts: {}, ...(repaired ? {repair:{build:prior.build,archive:prior.archive,...(postcheck?{postcheck:postcheck.failure}:{})}} : {}), ...(derived ? {derivation:{build:prior.build,archive:prior.archive}} : {}) };
   for (const kind of Object.keys(maximum)) {
     const used = (prior.carry?.counts[kind] ?? 0) + (kind === 'tasks' ? prior.taskAttempts : prior[kind].length);
     assert(Number.isSafeInteger(used) && used >= 0 && used <= maximum[kind], 'INVALID_CARRY_COUNTS');
