@@ -9,6 +9,8 @@ import { createRequire } from 'node:module';
 import { spend, validationRoot } from './workspace-budget.mjs';
 import { verifyDevelopmentSignature } from './development-signing.mjs';
 
+const lifecycle = process.argv.includes('--lifecycle');
+const label = lifecycle ? '06' : '04';
 const round = process.argv.find((arg) => arg.startsWith('--round='))?.slice(8);
 assert(round && /^[a-z0-9-]{1,40}$/.test(round), 'ROUND_REQUIRED');
 const out = path.resolve(validationRoot, round);
@@ -41,11 +43,11 @@ assert(typeof built === 'string' && path.isAbsolute(built), 'INVALID_CANDIDATE')
 assert(manifest.prepared && manifest.app === built, 'CANDIDATE_NOT_READY');
 for (const [file, hash] of Object.entries(manifest.hashes))
   assert.equal(createHash('sha256').update(fs.readFileSync(path.join(built, file))).digest('hex'), hash);
-const taskLimit = Number(process.argv.find((arg) => arg.startsWith('--task-limit='))?.slice(13) ?? 12);
-assert([12,14,16,18,20,22,24,26].includes(taskLimit), 'INVALID_TASK_LIMIT');
-const maximum = { effects: 24, inputs: 160, models: 64, tasks: taskLimit };
+const taskLimit = Number(process.argv.find((arg) => arg.startsWith('--task-limit='))?.slice(13) ?? (lifecycle ? 4 : 12));
+assert((lifecycle && taskLimit === 4) || (!lifecycle && [12,14,16,18,20,22,24,26].includes(taskLimit)), 'INVALID_TASK_LIMIT');
+const maximum = lifecycle ? {effects:8, inputs:16, models:24, tasks:4} : { effects: 24, inputs: 160, models: 64, tasks: taskLimit };
 const carryName = process.argv.find((arg) => arg.startsWith('--carry='))?.slice(8);
-assert(taskLimit === 12 || carryName !== undefined, 'EXTENDED_TASK_LIMIT_REQUIRES_CARRY');
+assert(lifecycle || taskLimit === 12 || carryName !== undefined, 'EXTENDED_TASK_LIMIT_REQUIRES_CARRY');
 const repairOf = process.argv.find((arg) => arg.startsWith('--repair-of='))?.slice(12);
 assert(repairOf === undefined || (carryName && /^[0-9a-f]{64}$/.test(repairOf)), 'INVALID_REPAIR_LINEAGE');
 const derivedFrom = process.argv.find((arg) => arg.startsWith('--derived-from='))?.slice(15);
@@ -55,6 +57,7 @@ if (carryName !== undefined) {
   assert(/^[a-z0-9-]{1,40}$/.test(carryName) && carryName !== round, 'INVALID_CARRY_ROUND');
   const priorRoot = path.join(validationRoot, carryName);
   const prior = JSON.parse(fs.readFileSync(path.join(priorRoot, 'result.json')));
+  if (lifecycle) assert(prior.purpose === 'lifecycle-06', 'LIFECYCLE_CARRY_REQUIRED');
   const repaired = repairOf === prior.archive && Number.isSafeInteger(prior.build) && prior.build < build && Boolean(prior.controlFailure || prior.failure || prior.fixtureFailure);
   const derived = derivedFrom === prior.archive && Number.isSafeInteger(prior.build) && prior.build < build && prior.exitCode === 0 && !prior.failure && !prior.controlFailure && !prior.fixtureFailure;
   assert(prior.finished && (prior.archive === manifest.hashes['Contents/Resources/app.asar'] || repaired || derived), 'CARRY_CANDIDATE_NOT_FINISHED');
@@ -82,8 +85,9 @@ fs.mkdirSync(profileRoot, { recursive: true, mode: 0o700 });
 assert.equal(fs.realpathSync(profileRoot), profileRoot);
 const stat = fs.statSync(profileRoot);
 assert(stat.uid === process.getuid() && (stat.mode & 0o077) === 0, 'INVALID_PROFILE_ROOT');
-const profile = fs.mkdtempSync(profileRoot + '/takeover04-');
+const profile = fs.mkdtempSync(profileRoot + (lifecycle ? '/lifecycle06-' : '/takeover04-'));
 const evidence = {
+  purpose: lifecycle ? 'lifecycle-06' : 'takeover-04',
   build, archive: manifest.hashes['Contents/Resources/app.asar'],
   scope: 'packaged local fixtures; no system credential or persistent website-session acceptance; tool input is not real IME/paste acceptance',
   credentials: 'in-process public fixture sentinel; system keychain not tested',
@@ -98,6 +102,7 @@ const write = (file, value) => {
 };
 const save = () => write('result.json', evidence);
 if (candidateReview) write('candidate.json', {...manifest,review:candidateReview});
+const ownedGroups = new Set();
 const ids = {}, held = [], holds = new Map(), pending = new Map(), pids = new Set();
 let storageReader;
 let gate, child, sequence = 0, busy = false, expired = false, poll, finishing;
@@ -126,12 +131,18 @@ function release(name, holdNext) {
 }
 function trackPids() {
   if (!child?.pid) return;
-  const rows = execFileSync('/bin/ps', ['-axo', 'pid=,ppid='], { encoding: 'utf8' }).trim().split('\n').map((line) => line.trim().split(/\s+/).map(Number));
+  const rows = execFileSync('/bin/ps', ['-axo', 'pid=,ppid=,pgid='], { encoding: 'utf8' }).trim().split('\n').map((line) => line.trim().split(/\s+/).map(Number));
   pids.add(child.pid);
   let changed = true;
   while (changed) {
     changed = false;
     for (const [pid, parent] of rows) if (pids.has(parent) && !pids.has(pid)) { pids.add(pid); changed = true; }
+  }
+  if (lifecycle) {
+    evidence.processTree = rows.filter(([pid]) => pids.has(pid)).map(([pid,parent,group]) => ({pid,parent,group}));
+    for (const [, , group] of rows.filter(([pid]) => pids.has(pid))) if (pids.has(group)) ownedGroups.add(group);
+    evidence.ownedGroups = [...ownedGroups];
+    save();
   }
 }
 function alive(pid) { try { process.kill(pid, 0); return true; } catch { return false; } }
@@ -171,7 +182,7 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'GET' && match) {
       const name = match[1];
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.end(`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>04 任务 ${name}</title><style>body{font:20px -apple-system;padding:36px;color:#244135;background:#f4f8f5}button,input,a{font:inherit;padding:12px;margin:10px 0;display:block}input{width:400px}iframe{height:120px;width:440px}</style><h1>04 任务 ${name}</h1><p id="progress">${name} 自动完成 0</p><button id="advance">自动推进 ${name}</button><button id="manual">手动接管 ${name}</button><input aria-label="人工文字" placeholder="接管后文字应保留"><button id="frame">加载子页面 ${name}</button><a id="popup" href="/popup/${name}" target="_blank">打开所属弹窗 ${name}</a><div id="slot"></div><p>本机虚构页面；不使用真实网站、账号或模型。</p><script>
+      res.end(`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>${label} 任务 ${name}</title><style>body{font:20px -apple-system;padding:36px;color:#244135;background:#f4f8f5}button,input,a{font:inherit;padding:12px;margin:10px 0;display:block}input{width:400px}iframe{height:120px;width:440px}</style><h1>${label} 任务 ${name}</h1><p id="progress">${name} 自动完成 0</p><button id="advance">自动推进 ${name}</button><button id="manual">手动接管 ${name}</button><input aria-label="人工文字" placeholder="接管后文字应保留"><button id="frame">加载子页面 ${name}</button><a id="popup" href="/popup/${name}" target="_blank">打开所属弹窗 ${name}</a><div id="slot"></div><p>本机虚构页面；不使用真实网站、账号或模型。</p><script>
       let count=0;const name=${JSON.stringify(name)};
       const clock=(async()=>{const sent=performance.timeOrigin+performance.now();const response=await fetch('/clock');const value=await response.json();return{sent,server:value.at,received:performance.timeOrigin+performance.now()};})();
       const send=async(route,data)=>{const clientWallAt=Date.now(),clientAt=performance.timeOrigin+performance.now();return fetch(route,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,clientAt,clientWallAt,...data,clock:await clock})});};
@@ -210,7 +221,7 @@ const server = http.createServer(async (req, res) => {
       assert(!finishing, 'ROUND_CLOSING');
       const input = await body(req);
       const plan = input.messages.map((m) => { try { return JSON.parse(m.content); } catch { return null; } }).find((m) => m?.goal);
-      const name = plan?.goal.match(/04 ([A-Z])/)?.[1];
+      const name = plan?.goal.match(new RegExp(label + ' ([A-Z])'))?.[1];
       assert(name && ids[name], 'PLANNING_ONLY');
       const text = input.messages.filter((m) => m.role === 'user').map((m) => m.content).join('\n');
       const count = Number(text.match(new RegExp(name + ' 自动完成 (\\d+)'))?.[1]);
@@ -275,6 +286,11 @@ async function closeRound() {
     }
     evidence.exitCode = child.exitCode;
     evidence.survivors = [...pids].filter(alive);
+    if (lifecycle) {
+      const rows = execFileSync('/bin/ps',['-axo','pid=,ppid=,pgid='],{encoding:'utf8'}).trim().split('\n').map(line=>line.trim().split(/\s+/).map(Number));
+      evidence.groupSurvivors = rows.filter(([, , group])=>ownedGroups.has(group));
+      check('owned-process-groups-cleared',evidence.groupSurvivors.length===0);
+    }
     check('normal-exit-and-no-owned-survivors', child.exitCode === 0 && evidence.survivors.length === 0);
   } catch (error) { evidence.cleanupFailure = error.message; process.exitCode = 1; }
   evidence.finished = new Date().toISOString(); save();
@@ -372,7 +388,7 @@ poll = setInterval(async () => {
       for (const [index, name] of job.names.entries()) {
         holds.set(name, index === 0 ? (job.holdAt ?? 0) : 0);
         evidence.taskAttempts++; save();
-        const created = await request({ kind: 'create', requestId: randomUUID(), goal: `04 ${name}，完成本页两次自动推进，保留人工文字 ${base}/page/${name}` });
+        const created = await request({ kind: 'create', requestId: randomUUID(), goal: `${label} ${name}，完成本页两次自动推进，保留人工文字 ${base}/page/${name}` });
         ids[name] = created.taskId;
         write('ids.json', ids);
       }

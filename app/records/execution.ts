@@ -90,6 +90,11 @@ const commandSchema = z.discriminatedUnion('kind', [
     expectedVersion: z.number().int().positive(),
   }),
   z.strictObject({
+    kind: z.literal('system-interrupt'),
+    taskId: z.string(),
+    expectedVersion: z.number().int().positive(),
+  }),
+  z.strictObject({
     kind: z.literal('suspend'),
     controlSequence: z.number().int().positive().optional(),
     taskId: z.string(),
@@ -201,6 +206,37 @@ export class ExecutionRecords {
         .get();
       if (!task) throw new Error('TASK_NOT_FOUND');
       let e = this.get(c.taskId);
+      if (c.kind === 'system-interrupt') {
+        if (
+          !e ||
+          e.version < c.expectedVersion ||
+          e.intent !== 'automatic' ||
+          e.pauseReason ||
+          !['queued', 'checking', 'running'].includes(e.phase)
+        )
+          return { interrupted: false };
+        if (e.recoveryPending) return { interrupted: true };
+        e.version++;
+        e.runId = null;
+        move(e, 'QUEUE');
+        e.recoveryPending = true;
+        e.recoverySource = { url: task.url, goalVersion: e.goalVersion };
+        for (const action of e.actions) {
+          if (
+            action.status === 'reserved' &&
+            action.dispatchState === 'not-dispatched'
+          )
+            action.status = 'cancelled';
+          else if (
+            action.status === 'reserved' ||
+            action.status === 'dispatched'
+          )
+            action.status = 'unknown';
+        }
+        e.summary = '系统运行条件已变化，保留原任务，条件恢复后先核对再续做。';
+        this.save(task.id, e);
+        return { interrupted: true };
+      }
       if (c.kind === 'recover') {
         if (
           !e ||

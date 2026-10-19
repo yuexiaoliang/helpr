@@ -12,12 +12,12 @@ import {
   Heading,
   Button,
 } from 'react-aria-components';
-import type { Task, UICommand } from '../shared/contracts';
+import type { Task, UICommand, WorkspaceSnapshot } from '../shared/contracts';
 import { WorkspaceStore, modelErrorLabel } from './store';
 import { ModelSettings } from './ModelSettings';
 import { activeModelCall } from '../shared/model';
 import type { ExecutionIntent } from '../shared/execution';
-import { pauseDescription } from '../shared/execution';
+import { pauseDescription, systemConditionLabel } from '../shared/execution';
 import styles from './Workspace.module.css';
 import plus from './assets/plus.svg';
 import close from './assets/x.svg';
@@ -26,6 +26,7 @@ import exit from './assets/sign-out.svg';
 import globe from './assets/globe.svg';
 
 const phaseLabel = (task: Task) => {
+  if (task.executionControl?.system) return '系统暂停';
   const reason = task.executionControl?.reason ?? task.execution?.pauseReason;
   if (reason && task.execution?.intent !== 'stopped')
     return pauseDescription[reason].label;
@@ -141,7 +142,12 @@ export function App({
         </div>
       </header>
       {task && !task.hidden ? (
-        <AddressBar key={task.id} task={task} store={store} />
+        <AddressBar
+          key={task.id}
+          task={task}
+          store={store}
+          runtime={view.state.runtime}
+        />
       ) : (
         <div className={styles.empty}>
           <span>从一个目标开始</span>
@@ -269,7 +275,15 @@ function TaskTab({
     </div>
   );
 }
-function AddressBar({ task, store }: { task: Task; store: WorkspaceStore }) {
+function AddressBar({
+  task,
+  store,
+  runtime,
+}: {
+  task: Task;
+  store: WorkspaceStore;
+  runtime: WorkspaceSnapshot['runtime'];
+}) {
   const input = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (input.current && document.activeElement !== input.current)
@@ -307,7 +321,17 @@ function AddressBar({ task, store }: { task: Task; store: WorkspaceStore }) {
         placeholder="输入网站地址"
       />
       <button>打开</button>
-      <span>{task.execution ? phaseLabel(task) : '手动工作区'}</span>
+      <span
+        role="status"
+        title="关闭主窗口仅收起，任务和网页保留；遵循 Mac 休眠设置，休眠期间不保证按时执行。"
+      >
+        {runtime?.conditions.length
+          ? `系统暂停：${runtime.conditions.map((c) => systemConditionLabel[c]).join('、')}`
+          : task.execution
+            ? phaseLabel(task)
+            : '手动工作区'}
+        {' · 休眠期间不保证按时执行'}
+      </span>
     </form>
   );
 }

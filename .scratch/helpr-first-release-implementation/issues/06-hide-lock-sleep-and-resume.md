@@ -17,12 +17,12 @@ User stories: 21–24、31、51、59、61
 
 ## 原型确认
 
-- 状态：待确认。
+- 状态：已确认。
 - 原型：[收起、锁屏与休眠状态演示](http://127.0.0.1:4319/lifecycle-prototype.html)，版本 `lifecycle-v1`；来源分支 `codex/lifecycle-prototype`，固定提交 `980141ccde93fbddda48c371abe0a7d26dd4936c`。[单文件原型](/Users/yuexiaoliang/.codex/worktrees/lifecycle-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/lifecycle/lifecycle-prototype.html)、[覆盖范围与体验说明](/Users/yuexiaoliang/.codex/worktrees/lifecycle-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/lifecycle/README.md)。可以双击 HTML；临时预览依赖本机静态服务。原型独立保留，不合并为正式产品。
 - 覆盖范围：沿用现有双任务标签页与独立对话，演示主窗口仅收起、菜单栏返回、隐藏时合格任务继续；锁屏与休眠分别保留暂停条件，全部运行条件解除后原活动任务先只读核对；原停止、待参与、人工接管、输入归属未知及结果不明分别保持；新的停止、人工输入或锁屏撤销旧核对；核对失败不放行、重复通知不并发恢复、记录不可用时阻断。提供 9 个分步演练、自由操作和完整相关状态。
 - 模拟边界：系统事件、运行条件、网页、对话、写入效果、核对与记录均在内存中模拟，不实际锁屏、休眠或改动 Mac 设置。按钮、状态表与模拟菜单栏属于原型工具，正式产品自动处理相应暂停与核对。真实 AppKit 输入、中文输入法、⌘V、双任务隐藏推进、锁屏与休眠组合及持续运行性能仍须实际包验收；不由原型推定通过。退出与冷重开沿用 05，定时计划及错过时间归 20。
 - 真人及性能安排：原型内呈现先自动核对现场就绪，再一次一个动作、说明停止位置的既定安排，预计主动操作 10–15 分钟；实际中文输入法、⌘V、锁屏和休眠分别取证。性能门槛依据实际组合测量确定，本原型不填虚构数字；确认原型不额外追加实际运行预算。
-- 确认记录：2026-10-19，用户要求“/prototype 为事项 06 制作可体验的状态演示原型，沿用现有工作区。”本次授权制作与走查原型；尚未取得对 `lifecycle-v1` 及上述范围的明确实现同意，正式代码未开始，验收条件保持未勾选。
+- 确认记录：2026-10-19，用户要求制作原型并体验后，明确回复“/implement 确认，按 lifecycle-v1 及所列范围实现事项 06。”据此确认 `lifecycle-v1`（`980141c`）及上述范围作为正式实现依据；原型通过不计作实际产品验收或追加真实运行预算。
 
 ## Acceptance criteria
 

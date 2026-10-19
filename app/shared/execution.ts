@@ -1,6 +1,18 @@
 import { z } from 'zod';
 import { pageSourceSchema } from './model';
 
+export const systemConditionSchema = z.enum([
+  'screen-locked',
+  'sleeping',
+  'session-unavailable',
+]);
+export type SystemCondition = z.infer<typeof systemConditionSchema>;
+export const systemConditionLabel: Record<SystemCondition, string> = {
+  'screen-locked': '屏幕锁定',
+  sleeping: '电脑休眠',
+  'session-unavailable': '系统会话尚未就绪',
+};
+
 export const executionPhaseSchema = z.enum([
   'queued',
   'checking',
@@ -164,6 +176,7 @@ export const executionControlSchema = z.strictObject({
   stopSaved: z.boolean(),
   message: z.string(),
   reason: executionPauseReasonSchema.optional(),
+  system: z.boolean().optional(),
 });
 export const nextStepSchema = z.strictObject({
   decision: z.enum(['act', 'complete', 'wait']),

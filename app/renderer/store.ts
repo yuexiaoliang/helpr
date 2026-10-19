@@ -46,6 +46,8 @@ const labels: Record<string, string> = {
   REQUEST_CONTENT_CONFLICT:
     '这次请求与先前保存的内容不同。请先核对原任务；新目标需要另建任务。',
   UNSAVED_CHANGES: '仍有内容等待保存或保存失败。请先回到任务完成保存，再退出。',
+  SYSTEM_SUSPENDED:
+    '锁屏、休眠或系统条件尚未恢复，已暂停新操作。条件恢复后先核对原任务。',
   PAGE_LOAD_FAILED: '网页暂未打开。任务和地址已保存，请核对地址后重试。',
   PAGE_NOT_AVAILABLE: '网页暂不可用，请检查地址或系统授权后重试。',
 };

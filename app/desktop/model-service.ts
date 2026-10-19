@@ -63,6 +63,7 @@ export class ModelService {
       ) => Promise<PageObservation>;
       current: () => WorkspaceSnapshot;
       publish: (snapshot: WorkspaceSnapshot) => void;
+      systemReady?: () => boolean;
     },
   ) {}
   disable(): void {
@@ -152,6 +153,7 @@ export class ModelService {
       }
     }
     if (this.closing || !this.available) throw new Error('MODEL_CANCELLED');
+    if (this.ports.systemReady?.() === false) throw Error('SYSTEM_SUSPENDED');
     try {
       const response = await fetch(config.endpoint + '/models', {
         headers: { Authorization: 'Bearer ' + apiKey },
@@ -257,6 +259,7 @@ export class ModelService {
   private live(job: Job): boolean {
     return (
       this.available &&
+      this.ports.systemReady?.() !== false &&
       !this.closing &&
       this.jobs.get(job.taskId) === job &&
       !job.abort.signal.aborted

@@ -10,6 +10,8 @@ import {
   type WebAction,
   type ExecutionPauseReason,
   pauseDescription,
+  type SystemCondition,
+  systemConditionLabel,
 } from '../shared/execution';
 import type { PageObservation } from '../shared/model';
 
@@ -42,6 +44,7 @@ type Job = {
   runId: string;
   version: number;
   inputEpoch: number;
+  systemGeneration: number;
   abort: AbortController;
   work: Promise<void>;
 };
@@ -78,6 +81,9 @@ export class ExecutionService {
   private readonly intents = new Map<string, number>();
   private readonly pendingIntents = new Set<string>();
   private workspaceUnsettled = new Set<string>();
+  private readonly systemConditions = new Set<SystemCondition>();
+  private systemGeneration = 0;
+  private readonly interruptions = new Set<Promise<unknown>>();
   constructor(
     private readonly ports: {
       records: (command: unknown) => Promise<unknown>;
@@ -105,6 +111,7 @@ export class ExecutionService {
   canExit() {
     return (
       this.pendingIntents.size === 0 &&
+      this.interruptions.size === 0 &&
       this.workspaceUnsettled.size === 0 &&
       ![...this.blocked.values()].some((b) => !b.saved)
     );
@@ -112,6 +119,7 @@ export class ExecutionService {
   decorate(state: WorkspaceSnapshot): WorkspaceSnapshot {
     return {
       ...state,
+      runtime: { conditions: [...this.systemConditions] },
       tasks: state.tasks.map((t) => {
         const b = this.blocked.get(t.id);
         const unsettled = this.workspaceUnsettled.has(t.id);
@@ -127,19 +135,82 @@ export class ExecutionService {
                 ...(b.reason ? { reason: b.reason } : {}),
               },
             }
-          : t;
+          : !this.systemReady() &&
+              t.execution?.intent === 'automatic' &&
+              !t.execution.pauseReason &&
+              ['queued', 'checking', 'running'].includes(t.execution.phase)
+            ? {
+                ...t,
+                executionControl: {
+                  blocked: true,
+                  stopSaved: true,
+                  system: true,
+                  message: this.systemConditions.size
+                    ? `系统暂停：${[...this.systemConditions].map((c) => systemConditionLabel[c]).join('、')}。原任务与网页保留，条件恢复后先核对再续做。`
+                    : '正在可靠保存系统暂停检查点，完成后先核对原任务；没有直接重发。',
+                },
+              }
+            : t;
       }),
     };
   }
   private publish(state = this.ports.current()) {
     this.ports.publish(state);
   }
+  /** 系统事件先同步阻断，再保存恢复检查点；解除条件不替代用户继续。 */
+  async setSystemCondition(condition: SystemCondition, blocked: boolean) {
+    if (this.systemConditions.has(condition) === blocked) return;
+    if (blocked) this.systemConditions.add(condition);
+    else this.systemConditions.delete(condition);
+    this.systemGeneration++;
+    if (blocked) {
+      const tasks = this.ports.current().tasks;
+      // 在任何等待之前撤权，记录进程迟滞不能延长旧派发资格。
+      for (const task of tasks) {
+        this.ports.input?.block(task.id);
+        this.jobs.get(task.id)?.abort.abort(Error('SYSTEM_SUSPENDED'));
+        this.ports.revoke(task.id);
+        this.ports.stopModels(task.id);
+      }
+      this.publish();
+      for (const task of tasks) {
+        const e = task.execution;
+        if (
+          !e ||
+          e.intent !== 'automatic' ||
+          e.pauseReason ||
+          !['queued', 'checking', 'running'].includes(e.phase)
+        )
+          continue;
+        const saved = this.record({
+          kind: 'system-interrupt',
+          taskId: task.id,
+          expectedVersion: e.version,
+        });
+        this.interruptions.add(saved);
+        void saved
+          .finally(() => {
+            this.interruptions.delete(saved);
+            this.publish();
+            this.pump();
+          })
+          .catch(() => {});
+      }
+    }
+    this.publish();
+    await Promise.all([...this.interruptions]);
+    this.pump();
+  }
+  systemReady() {
+    return this.systemConditions.size === 0 && this.interruptions.size === 0;
+  }
   private async record(command: unknown) {
     const sequence = ++this.recordSequence;
     try {
       const result = receipt.parse(await this.ports.records(command));
       this.latestRecordSuccess = Math.max(this.latestRecordSuccess, sequence);
-      this.publish(result.state);
+      if (result.state.revision >= this.ports.current().revision)
+        this.publish(result.state);
       return { ...result, receiptSequence: sequence };
     } catch (error) {
       const code = error instanceof Error ? error.message : '';
@@ -233,6 +304,9 @@ export class ExecutionService {
     const priorBlock = this.blocked.get(command.taskId);
     let recordStarted = false;
     if (this.closing) throw Error('APPLICATION_EXITING');
+    if (command.intent !== 'stop' && !this.systemReady())
+      throw Error('SYSTEM_SUSPENDED');
+    const systemGeneration = this.systemGeneration;
     const sequence = (this.intents.get(command.taskId) ?? 0) + 1;
     this.intents.set(command.taskId, sequence);
     this.pendingIntents.add(command.taskId);
@@ -270,6 +344,24 @@ export class ExecutionService {
         this.available = true;
       else if (task?.execution?.intent !== 'stopped')
         throw Error('RECORDS_UNAVAILABLE');
+      if (
+        command.intent !== 'stop' &&
+        (!this.systemReady() || systemGeneration !== this.systemGeneration)
+      ) {
+        this.ports.input?.block(command.taskId);
+        if (task?.execution)
+          await this.record({
+            kind: 'system-interrupt',
+            taskId: task.id,
+            expectedVersion: task.execution.version,
+          });
+        if (
+          this.intents.get(command.taskId) === sequence &&
+          !task?.execution?.pauseReason
+        )
+          this.blocked.delete(command.taskId);
+        return this.decorate(this.ports.current());
+      }
       // 已接受的开始请求重送只返回回执，不改变正在执行或刚被原生撤销的资格。
       if (command.intent === 'start' && result.created !== true) {
         if (
@@ -335,6 +427,8 @@ export class ExecutionService {
       .tasks.find((t) => t.id === job.taskId)?.execution;
     return (
       this.available &&
+      this.systemReady() &&
+      job.systemGeneration === this.systemGeneration &&
       !this.closing &&
       !job.abort.signal.aborted &&
       !this.blocked.has(job.taskId) &&
@@ -367,7 +461,7 @@ export class ExecutionService {
     this.pump();
   }
   private pump() {
-    if (!this.available || this.closing) return;
+    if (!this.available || this.closing || !this.systemReady()) return;
     if (this.pumping) {
       this.wake = true;
       return;
@@ -383,8 +477,15 @@ export class ExecutionService {
       });
   }
   private async schedule() {
+    const systemGeneration = this.systemGeneration;
     for (const task of this.ports.current().tasks) {
-      if (!this.available || this.closing) return;
+      if (
+        !this.available ||
+        this.closing ||
+        !this.systemReady() ||
+        systemGeneration !== this.systemGeneration
+      )
+        return;
       if (
         task.execution?.phase !== 'queued' ||
         this.jobs.has(task.id) ||
@@ -400,6 +501,8 @@ export class ExecutionService {
           const epoch = await this.ports.input?.prepare(task.id);
           if (
             !this.available ||
+            !this.systemReady() ||
+            systemGeneration !== this.systemGeneration ||
             this.closing ||
             this.blocked.has(task.id) ||
             this.pendingIntents.has(task.id) ||
@@ -423,6 +526,8 @@ export class ExecutionService {
             this.pendingIntents.has(task.id) ||
             this.closing ||
             !this.available ||
+            !this.systemReady() ||
+            systemGeneration !== this.systemGeneration ||
             this.intents.get(task.id) !== sequence
           )
             continue;
@@ -444,6 +549,19 @@ export class ExecutionService {
         taskId: task.id,
         runId,
       });
+      if (!this.systemReady() || systemGeneration !== this.systemGeneration) {
+        const execution = this.ports
+          .current()
+          .tasks.find((t) => t.id === task.id)?.execution;
+        if (execution)
+          await this.record({
+            kind: 'system-interrupt',
+            taskId: task.id,
+            expectedVersion: execution.version,
+          });
+        this.wake = true;
+        return;
+      }
       if (!claim.claimed) continue;
       const current = claim.state.tasks.find(
         (t) => t.id === task.id,
@@ -454,6 +572,7 @@ export class ExecutionService {
         runId,
         version: current.version,
         inputEpoch: this.ports.input?.epoch(task.id) ?? 0,
+        systemGeneration,
         abort: new AbortController(),
         work: Promise.resolve(),
       };
@@ -622,6 +741,7 @@ export class ExecutionService {
   async settled() {
     for (;;) {
       const pump = this.pumping;
+      await Promise.allSettled([...this.interruptions]);
       if (pump) await pump;
       const jobs = [...this.jobs.values()];
       if (!jobs.length && !this.pumping) return;

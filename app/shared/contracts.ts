@@ -4,6 +4,7 @@ import {
   executionSchema,
   executionIntentSchema,
   executionControlSchema,
+  systemConditionSchema,
 } from './execution';
 import {
   modelCallSchema,
@@ -126,6 +127,9 @@ export const snapshotSchema = z.strictObject({
   active: id.nullable(),
   tasks: z.array(taskSchema),
   modelSettings: modelSettingsSchema.nullable().optional(),
+  runtime: z
+    .strictObject({ conditions: z.array(systemConditionSchema) })
+    .optional(),
 });
 export type WorkspaceSnapshot = z.infer<typeof snapshotSchema>;
 export const panelSchema = z.strictObject({

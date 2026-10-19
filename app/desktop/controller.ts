@@ -5,6 +5,7 @@ import {
   Tray,
   nativeImage,
   safeStorage,
+  powerMonitor,
 } from 'electron';
 import { spawn } from 'node:child_process';
 import path from 'node:path';
@@ -30,7 +31,10 @@ import { ExecutionService, type BoundObservation } from './execution-service';
 import { ExecutionProtocol } from './execution-protocol';
 import { WebExecutor } from './web-executor';
 import { InputGate } from './input-gate';
-import { executionPauseReasonSchema } from '../shared/execution';
+import {
+  executionPauseReasonSchema,
+  type SystemCondition,
+} from '../shared/execution';
 import { ValidationBarriers } from './validation-barriers';
 import { LocalFixture } from './local-fixture';
 import { acquireRuntimeOwnership } from './runtime-ownership';
@@ -43,6 +47,40 @@ export async function startController(
   if (fixtureOrigin && !validation) throw Error('STARTUP_NOT_AUTHORIZED');
   const fixture = fixtureOrigin ? new LocalFixture(fixtureOrigin) : undefined;
   const log = diagnostics(folder, 'controller');
+  // 在异步启动前收集事件；执行入口建立后再交付当前条件。
+  const systemConditions = new Set<SystemCondition>();
+  const systemSink: {
+    notify?: (condition: SystemCondition, blocked: boolean) => void;
+  } = {};
+  const systemChanged = (condition: SystemCondition, blocked: boolean) => {
+    if (blocked) systemConditions.add(condition);
+    else systemConditions.delete(condition);
+    systemSink.notify?.(condition, blocked);
+  };
+  const readScreen = () => {
+    const idle = powerMonitor.getSystemIdleState(1);
+    if (idle === 'unknown') systemChanged('session-unavailable', true);
+    else {
+      // 唤醒取样不解除已收到的锁屏；只有明确解锁事件才解除它。
+      if (idle === 'locked') systemChanged('screen-locked', true);
+      systemChanged('session-unavailable', false);
+    }
+  };
+  powerMonitor.on('lock-screen', () => systemChanged('screen-locked', true));
+  powerMonitor.on('unlock-screen', () => {
+    systemChanged('screen-locked', false);
+    systemChanged('session-unavailable', false);
+  });
+  powerMonitor.on('suspend', () => systemChanged('sleeping', true));
+  powerMonitor.on('resume', () => {
+    readScreen();
+    systemChanged('sleeping', false);
+  });
+  powerMonitor.on('user-did-resign-active', () =>
+    systemChanged('session-unavailable', true),
+  );
+  powerMonitor.on('user-did-become-active', readScreen);
+  readScreen();
   const barriers = validation ? new ValidationBarriers() : undefined;
   if (validation && process.env.HELPR_VALIDATION_HOLD_RECOVERY === '1')
     barriers!.control({ action: 'arm', point: 'recovery', taskId: '*' });
@@ -237,7 +275,8 @@ export async function startController(
       }
     },
   );
-  const models = new ModelService({
+  const models: ModelService = new ModelService({
+    systemReady: () => executions.systemReady(),
     records: (command) => recordClient.request({ kind: 'model', command }),
     current: () => state,
     publish: (next) => {
@@ -310,7 +349,7 @@ export async function startController(
   );
   const saveExecution = (command: unknown) =>
     recordClient.request({ kind: 'execution', command });
-  const executions = new ExecutionService({
+  const executions: ExecutionService = new ExecutionService({
     records: barriers
       ? async (command) => {
           const delayed = z
@@ -356,6 +395,13 @@ export async function startController(
       permit: (taskId, epoch, send) => inputGate.permit(taskId, epoch, send),
     },
   });
+
+  systemSink.notify = (condition, blocked) => {
+    void executions.setSystemCondition(condition, blocked).catch((error) => {
+      log.event('failure', { code: errorCode(error) });
+    });
+  };
+  for (const condition of systemConditions) systemSink.notify(condition, true);
 
   broker.onDisconnect(() => {
     inputGate.available(false);
@@ -420,6 +466,18 @@ export async function startController(
   }
   watchRecords(records);
   async function execute(input: unknown): Promise<unknown> {
+    const result = await executeCommand(input);
+    const direct = snapshotSchema.safeParse(result);
+    if (direct.success) return executions.decorate(direct.data);
+    const nested = z
+      .object({ state: snapshotSchema })
+      .passthrough()
+      .safeParse(result);
+    return nested.success
+      ? { ...nested.data, state: executions.decorate(nested.data.state) }
+      : result;
+  }
+  async function executeCommand(input: unknown): Promise<unknown> {
     const command = uiCommandSchema.parse(input);
     if (quitting) throw new Error('APPLICATION_EXITING');
     if (
@@ -473,6 +531,7 @@ export async function startController(
               : { text }),
           }),
         };
+      if (!executions.systemReady()) throw Error('SYSTEM_SUSPENDED');
       return { state: await models.ask(command) };
     }
     if (command.kind === 'quit') {
