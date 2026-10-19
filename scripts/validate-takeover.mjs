@@ -104,7 +104,8 @@ const save = () => write('result.json', evidence);
 if (candidateReview) write('candidate.json', {...manifest,review:candidateReview});
 const ownedGroups = new Set();
 const ids = {}, held = [], holds = new Map(), pending = new Map(), pids = new Set();
-let storageReader;
+let storageReader, resourceTimer;
+if (lifecycle) evidence.performance = {scope:"OS RSS sums and public IPC round trips; not paint latency",samples:[],commands:[]};
 let gate, child, sequence = 0, busy = false, expired = false, poll, finishing;
 const gates = () => gate ? Object.fromEntries(Object.entries(ids).map(([name, id]) => [name, gate.state(id)])) : null;
 function trace() {
@@ -151,7 +152,7 @@ function request(command, ms = 15000) {
     if (!child?.connected) { reject(Error('APPLICATION_EXITED')); return; }
     const id = ++sequence;
     const timer = ms === null ? undefined : setTimeout(() => { pending.delete(id); reject(Error('REQUEST_TIMEOUT')); }, ms);
-    pending.set(id, { resolve, reject, timer });
+    pending.set(id, { resolve, reject, timer, kind:command.kind, sentAt:Date.now() });
     child.send({ id, command });
   });
 }
@@ -249,11 +250,12 @@ try { budget = spend('starts'); }
 catch (error) { server.close(); throw error; }
 evidence.start = budget.used.starts;
 const env = Object.fromEntries(['HOME', 'PATH', 'TMPDIR', 'LANG'].filter((key) => process.env[key]).map((key) => [key, process.env[key]]));
+const spawnedAt = Date.now();
 child = spawn(path.join(built, 'Contents/MacOS/helpr'), ['--workspace-validation','--workspace-fixture'], { env: { ...env, HELPR_VALIDATION_DATA: profile, HELPR_FIXTURE_ORIGIN:base }, stdio: ['ignore', fs.openSync(path.join(out, 'stdout.log'), 'a', 0o600), fs.openSync(path.join(out, 'stderr.log'), 'a', 0o600), 'ipc'] });
 child.on('message', (m) => {
-  if (m.ready) { evidence.ready = m; pids.add(m.hostPid); pids.add(m.recordsPid); save(); }
+  if (m.ready) { if (lifecycle) evidence.performance.readyMs = Date.now()-spawnedAt; evidence.ready = m; pids.add(m.hostPid); pids.add(m.recordsPid); save(); }
   const entry = pending.get(m.id);
-  if (entry) { clearTimeout(entry.timer); pending.delete(m.id); m.error ? entry.reject(Error(m.error)) : entry.resolve(m.value); }
+  if (entry) { if (lifecycle && ['select','hide','snapshot'].includes(entry.kind) && evidence.performance.commands.length<200) evidence.performance.commands.push({kind:entry.kind,durationMs:Date.now()-entry.sentAt}); clearTimeout(entry.timer); pending.delete(m.id); m.error ? entry.reject(Error(m.error)) : entry.resolve(m.value); }
 });
 let deadline;
 function finish() {
@@ -261,7 +263,7 @@ function finish() {
   return finishing;
 }
 async function closeRound() {
-  clearTimeout(deadline); clearInterval(poll);
+  clearTimeout(deadline); clearInterval(poll); clearInterval(resourceTimer);
   releaseStorage();
   if (storageReader) {
     const end=Date.now()+1000;
@@ -314,6 +316,16 @@ try {
   await request({ kind: 'model-save', requestId: randomUUID(), expectedVersion: 0, protocol: 'chat-completions', endpoint: base + '/v1', model: 'controlled-local-04', apiKey: 'local-fixture-not-a-secret' }, 10000);
   evidence.phase = 'ready'; evidence.validationStarted = new Date().toISOString(); save();
   deadline = setTimeout(() => { expired = true; evidence.failure = 'ROUND_TIME_LIMIT'; save(); void finish(); }, evidence.limits.minutes * 60000);
+  if (lifecycle) resourceTimer = setInterval(() => {
+    try {
+      trackPids();
+      const rows=execFileSync('/bin/ps',['-axo','pid=,rss='],{encoding:'utf8',timeout:3000}).trim().split('\n').map(line=>line.trim().split(/\s+/).map(Number));
+      const rssKiB=rows.filter(([pid])=>pids.has(pid)).reduce((total,[,rss])=>total+rss,0);
+      evidence.performance.samples.push({at:Date.now(),rssKiB});
+      if(evidence.performance.samples.length>420) evidence.performance.samples.shift();
+      save();
+    } catch(error) {evidence.performance.error=error.message;evidence.failure??='RESOURCE_SAMPLING_FAILED';save();void finish();}
+  },3000);
   console.log('READY ' + out);
 } catch (error) { evidence.failure = error.message; save(); await finish(); throw error; }
 // 一次组合：真实记录事务等待提交期间，延迟暂停通知并释放两项已排队输入。

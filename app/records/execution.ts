@@ -138,6 +138,23 @@ const commandSchema = z.discriminatedUnion('kind', [
     evidence: z.array(z.string()).max(10).optional(),
   }),
 ]);
+function queueRecovery(e: TaskExecution, url: string, summary: string) {
+  e.runId = null;
+  e.version++;
+  move(e, 'QUEUE');
+  e.recoveryPending = true;
+  e.recoverySource ??= { url, goalVersion: e.goalVersion };
+  e.summary = summary;
+  for (const action of e.actions) {
+    if (
+      action.status === 'reserved' &&
+      action.dispatchState === 'not-dispatched'
+    )
+      action.status = 'cancelled';
+    else if (action.status === 'reserved' || action.status === 'dispatched')
+      action.status = 'unknown';
+  }
+}
 /** 唯一记录拥有者中计算纯转换；提交不执行网页或模型。 */
 export class ExecutionRecords {
   // 同一控制者/记录进程生命周期的消息次序；不作为跨重启的业务事实。
@@ -147,27 +164,15 @@ export class ExecutionRecords {
       for (const row of this.db.select().from(schema.executions).all()) {
         const e = executionSchema.parse(row.body);
         if (['queued', 'checking', 'running'].includes(e.phase)) {
-          e.runId = null;
-          e.version++;
-          move(e, 'QUEUE');
-          e.recoveryPending = true;
-          e.recoverySource ??= {
-            url:
-              this.db
-                .select()
-                .from(schema.tasks)
-                .where(eq(schema.tasks.id, row.taskId))
-                .get()?.url ?? '',
-            goalVersion: e.goalVersion,
-          };
-          e.summary =
-            '已找回原活动任务，先核对当前页面与实际结果，再续做剩余工作。';
-          for (const a of e.actions) {
-            if (a.status === 'reserved' && a.dispatchState === 'not-dispatched')
-              a.status = 'cancelled';
-            else if (a.status === 'reserved' || a.status === 'dispatched')
-              a.status = 'unknown';
-          }
+          queueRecovery(
+            e,
+            this.db
+              .select()
+              .from(schema.tasks)
+              .where(eq(schema.tasks.id, row.taskId))
+              .get()?.url ?? '',
+            '已找回原活动任务，先核对当前页面与实际结果，再续做剩余工作。',
+          );
           this.save(row.taskId, e);
         }
       }
@@ -216,24 +221,11 @@ export class ExecutionRecords {
         )
           return { interrupted: false };
         if (e.recoveryPending) return { interrupted: true };
-        e.version++;
-        e.runId = null;
-        move(e, 'QUEUE');
-        e.recoveryPending = true;
-        e.recoverySource = { url: task.url, goalVersion: e.goalVersion };
-        for (const action of e.actions) {
-          if (
-            action.status === 'reserved' &&
-            action.dispatchState === 'not-dispatched'
-          )
-            action.status = 'cancelled';
-          else if (
-            action.status === 'reserved' ||
-            action.status === 'dispatched'
-          )
-            action.status = 'unknown';
-        }
-        e.summary = '系统运行条件已变化，保留原任务，条件恢复后先核对再续做。';
+        queueRecovery(
+          e,
+          task.url,
+          '系统运行条件已变化，保留原任务，条件恢复后先核对再续做。',
+        );
         this.save(task.id, e);
         return { interrupted: true };
       }
