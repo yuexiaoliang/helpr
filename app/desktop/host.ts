@@ -157,6 +157,9 @@ function editFocused(command: 'undo' | 'redo' | 'cut' | 'paste' | 'selectAll') {
 }
 function nativeBindings() {
   if (!nativeInstalled || !win || win.isDestroyed()) return;
+  // 收起后 AppKit 命中测试可能不再命中子视图；保留已安装的识别与资格。
+  // 隐藏窗口不接收人工输入，重新显示时同步核对现有视图，失败仍先阻断。
+  if (!win.isVisible()) return;
   const [width = 800, height = 600] = win.getContentSize();
   let step = 'CHROME';
   let restoring = false;
@@ -699,6 +702,7 @@ async function perform(input: unknown): Promise<unknown> {
       })),
       encryptionAvailable: fixture ? null : safeStorage.isEncryptionAvailable(),
       window: {
+        visible: win.isVisible(),
         bounds: win.getBounds(),
         contentBounds: win.getContentBounds(),
         workArea: screen.getDisplayMatching(win.getBounds()).workArea,
@@ -882,6 +886,7 @@ void app
     win.on('resize', layout);
     win.on('show', () => {
       if (!win.isFullScreen()) win.setWindowButtonVisibility(true);
+      nativeBindings();
     });
     win.on('close', (event) => {
       if (!closing) {

@@ -434,6 +434,7 @@ poll = setInterval(async () => {
     }
     else if (job.kind === 'checkpoint') {
       value = { label: job.label, at: Date.now(), snapshot: await snapshot(), gates: gates(), traceLength: trace(), barriers: build > 22 ? await request({kind:'validation-barrier',control:{action:'status'}}) : undefined };
+      if (lifecycle) value.window = (await request({kind:'inspect'})).window;
       evidence.checkpoints.push(value); save();
     } else if (job.kind === 'check') {
       const state = await snapshot();
