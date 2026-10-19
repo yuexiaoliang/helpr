@@ -8,6 +8,7 @@
 - `codex/core-workspace-prototype`：仍需回看的 01–04 原型，保留本地分支和工作副本。其当前源码另有远程归档标签备份；本机预览入口仍在原目录。
 - `codex/recovery-prototype`：2026-10-17 新增的 05 状态演示，版本 `recovery-v1`，固定来源 `5a75723b480ec88215e74de00d08c3e57346129f`，尚待体验确认。活动副本为 `/Users/yuexiaoliang/.codex/worktrees/recovery-prototype/helpr`，入口为其中的 `.scratch/helpr-first-release-implementation/prototypes/recovery/recovery-prototype.html`，可直接双击；临时预览在 `http://127.0.0.1:4318/recovery-prototype.html`。本轮仅本机保存分支与提交，没有新增远程归档标签。
 - 其它已结束的分支由下表的附注标签保留。删除旧分支名不删除源码或报告；后续引用使用归档标签或完整提交，不依赖已经删除的分支名。
+- `codex/lifecycle-prototype`：2026-10-19 新增的 06 状态演示，版本 `lifecycle-v1`，固定来源 `980141ccde93fbddda48c371abe0a7d26dd4936c`，待用户体验与明确确认。活动副本为 `/Users/yuexiaoliang/.codex/worktrees/lifecycle-prototype/helpr`，入口为其中的 `.scratch/helpr-first-release-implementation/prototypes/lifecycle/lifecycle-prototype.html`，可双击；临时预览为 `http://127.0.0.1:4319/lifecycle-prototype.html`。本轮本机保存分支与提交，没有新增远程归档标签。
 
 早期状态原型与凭据研究的旧工作副本已切换到对应归档标签，处于 detached HEAD，不再占用开发分支；也已提交 Codex 工作副本归档请求。归档来源与恢复不依赖这些本机目录是否继续存在。
 
