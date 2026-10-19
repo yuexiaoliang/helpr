@@ -45,11 +45,14 @@ for (const [file, hash] of Object.entries(manifest.hashes))
   assert.equal(createHash('sha256').update(fs.readFileSync(path.join(built, file))).digest('hex'), hash);
 const carryName = process.argv.find((arg) => arg.startsWith('--carry='))?.slice(8);
 const taskLimit = Number(process.argv.find((arg) => arg.startsWith('--task-limit='))?.slice(13) ?? (lifecycle ? 4 : 12));
-assert((lifecycle && (taskLimit === 4 || (taskLimit === 6 && carryName))) || (!lifecycle && [12,14,16,18,20,22,24,26].includes(taskLimit)), 'INVALID_TASK_LIMIT');
+assert((lifecycle && (taskLimit === 4 || ([6,8].includes(taskLimit) && carryName))) || (!lifecycle && [12,14,16,18,20,22,24,26].includes(taskLimit)), 'INVALID_TASK_LIMIT');
 const lifecycleInputArgument = process.argv.find((arg) => arg.startsWith('--lifecycle-input-limit='))?.slice(24);
 const lifecycleInputs = Number(lifecycleInputArgument ?? 16);
-assert(lifecycleInputArgument === undefined || (lifecycle && carryName && lifecycleInputs === 160), 'LIFECYCLE_INPUT_EXTENSION_REQUIRES_CARRY');
-const maximum = lifecycle ? {effects:8, inputs:lifecycleInputs, models:24, tasks:taskLimit} : { effects: 24, inputs: 160, models: 64, tasks: taskLimit };
+assert(lifecycleInputArgument === undefined || (lifecycle && carryName && [160,224].includes(lifecycleInputs)), 'LIFECYCLE_INPUT_EXTENSION_REQUIRES_CARRY');
+const lifecycleModelArgument = process.argv.find((arg) => arg.startsWith('--lifecycle-model-limit='))?.slice(24);
+const lifecycleModels = Number(lifecycleModelArgument ?? 24);
+assert(lifecycleModelArgument === undefined || (lifecycle && carryName && lifecycleModels === 32), 'LIFECYCLE_MODEL_EXTENSION_REQUIRES_CARRY');
+const maximum = lifecycle ? {effects:8, inputs:lifecycleInputs, models:lifecycleModels, tasks:taskLimit} : { effects: 24, inputs: 160, models: 64, tasks: taskLimit };
 assert(lifecycle || taskLimit === 12 || carryName !== undefined, 'EXTENDED_TASK_LIMIT_REQUIRES_CARRY');
 const repairOf = process.argv.find((arg) => arg.startsWith('--repair-of='))?.slice(12);
 assert(repairOf === undefined || (carryName && /^[0-9a-f]{64}$/.test(repairOf)), 'INVALID_REPAIR_LINEAGE');
@@ -110,7 +113,8 @@ const write = (file, value) => {
 const save = () => write('result.json', evidence);
 if (candidateReview) write('candidate.json', {...manifest,review:candidateReview});
 const ownedGroups = new Set();
-const ids = {}, held = [], holds = new Map(), pending = new Map(), pids = new Set();
+const ids = {}, held = [], holds = new Map(), pending = new Map(), pids = new Set(), humanSignals = new Map();
+let activeHuman, humanRun, humanAbort;
 let storageReader, resourceTimer;
 if (lifecycle) evidence.performance = {scope:"OS RSS sums and public IPC round trips; not paint latency",samples:[],commands:[]};
 let gate, child, sequence = 0, busy = false, expired = false, poll, finishing;
@@ -186,12 +190,20 @@ const server = http.createServer(async (req, res) => {
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({at:Date.now()})); return;
     }
+    const humanSignal = url.pathname.match(/^\/human-stage\/([A-Z])$/);
+    if (req.method === 'GET' && lifecycle && humanSignal) {
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Cache-Control', 'no-store');
+      res.end(JSON.stringify(humanSignals.get(humanSignal[1]) ?? {phase:'idle',text:'本机输入核对尚未开始，请等待。'}));
+      return;
+    }
     const match = url.pathname.match(/^\/page\/([A-Z])$/);
     if (req.method === 'GET' && match) {
       const name = match[1];
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.end(`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>${label} 任务 ${name}</title><style>body{font:20px -apple-system;padding:36px;color:#244135;background:#f4f8f5}button,input,a{font:inherit;padding:12px;margin:10px 0;display:block}input{width:400px}iframe{height:120px;width:440px}</style><h1>${label} 任务 ${name}</h1><p id="progress">${name} 自动完成 0</p><button id="advance">自动推进 ${name}</button><button id="manual">手动接管 ${name}</button><input aria-label="人工文字" placeholder="接管后文字应保留"><button id="frame">加载子页面 ${name}</button><a id="popup" href="/popup/${name}" target="_blank">打开所属弹窗 ${name}</a><div id="slot"></div><p>本机虚构页面；不使用真实网站、账号或模型。</p><script>
+      res.end(`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>${label} 任务 ${name}</title><style>body{font:20px -apple-system;padding:36px;color:#244135;background:#f4f8f5}button,input,a{font:inherit;padding:12px;margin:10px 0;display:block}input{width:400px}iframe{height:120px;width:440px}</style><h1>${label} 任务 ${name}</h1><p id="progress">${name} 自动完成 0</p><button id="advance">自动推进 ${name}</button><button id="manual">手动接管 ${name}</button>${lifecycle ? '<p id="human-status" role="status" style="max-width:520px"></p>' : ''}<input aria-label="人工文字" placeholder="接管后文字应保留"><button id="frame">加载子页面 ${name}</button><a id="popup" href="/popup/${name}" target="_blank">打开所属弹窗 ${name}</a><div id="slot"></div><p>本机虚构页面；不使用真实网站、账号或模型。</p><script>
       let count=0;const name=${JSON.stringify(name)};
+      ${lifecycle ? `setInterval(async()=>{try{const s=await(await fetch('/human-stage/'+name,{cache:'no-store'})).json();const el=document.querySelector('#human-status');if(el.textContent!==s.text){el.textContent=s.text;el.style.color=s.phase==='armed'?'#087b32':'#5c665e';}}catch{}},250);` : ''}
       const clock=(async()=>{const sent=performance.timeOrigin+performance.now();const response=await fetch('/clock');const value=await response.json();return{sent,server:value.at,received:performance.timeOrigin+performance.now()};})();
       const send=async(route,data)=>{const clientWallAt=Date.now(),clientAt=performance.timeOrigin+performance.now();return fetch(route,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,clientAt,clientWallAt,...data,clock:await clock})});};
       let moves=0;document.addEventListener('mousemove',e=>{if(moves++<8)send('/input',{kind:'mousemove',trusted:e.isTrusted,x:e.clientX,y:e.clientY});},true);
@@ -238,6 +250,7 @@ const server = http.createServer(async (req, res) => {
       const value = { decision: count === 2 ? 'complete' : 'act', summary: count === 2 ? '已核对本页两次推进。' : '推进本页下一步。', evidence: [fact], previous: plan.previous ? { id: plan.previous.id, status: count > 0 ? 'confirmed' : 'unknown', evidence: [fact] } : null, action: count === 2 ? null : { kind: 'click', target: { role: 'button', name: '自动推进 ' + name, exact: true } } };
       Object.assign(receipt, { name, count }); save();
       const item = { name, res, value, receipt };
+      res.on('close', () => { receipt.closedAt = Date.now(); save(); });
       if (holds.get(name) === count) held.push(item); else reply(item);
       return;
     }
@@ -270,7 +283,10 @@ function finish() {
   return finishing;
 }
 async function closeRound() {
+  const end = Date.now() + 45000;
   clearTimeout(deadline); clearInterval(poll); clearInterval(resourceTimer);
+  humanAbort?.abort(Error('ROUND_CLOSING'));
+  if (humanRun) await humanRun;
   releaseStorage();
   if (storageReader) {
     const end=Date.now()+1000;
@@ -280,7 +296,6 @@ async function closeRound() {
   try { trace(); } catch (error) { evidence.traceFailure = error.message; save(); }
   try {
     trackPids();
-    const end = Date.now() + 45000;
     let accepted=false;
     while ((child.exitCode === null || [...pids].some(alive)) && Date.now() < end) {
       if (child.exitCode === null && !accepted) {
@@ -328,7 +343,7 @@ try {
       trackPids();
       const rows=execFileSync('/bin/ps',['-axo','pid=,rss='],{encoding:'utf8',timeout:3000}).trim().split('\n').map(line=>line.trim().split(/\s+/).map(Number));
       const rssKiB=rows.filter(([pid])=>pids.has(pid)).reduce((total,[,rss])=>total+rss,0);
-      evidence.performance.samples.push({at:Date.now(),rssKiB});
+      evidence.performance.samples.push({at:Date.now(),rssKiB,stage:activeHuman?.input ?? evidence.performance.stage ?? 'preparation'});
       if(evidence.performance.samples.length>420) evidence.performance.samples.shift();
       save();
     } catch(error) {evidence.performance.error=error.message;evidence.failure??='RESOURCE_SAMPLING_FAILED';save();void finish();}
@@ -393,12 +408,108 @@ async function beginTiming(job) {
   })();
   return {ready:true,at:timing.readyAt};
 }
+function beginHuman(job) {
+  assert(lifecycle && ['ime','paste'].includes(job.input) && ids[job.name] && !activeHuman, 'HUMAN_STEP_REQUIRED');
+  assert(!job.other || (ids[job.other] && job.other !== job.name), 'HUMAN_OTHER_REQUIRED');
+  assert(!(evidence.humanSteps ?? []).some(step=>step.input===job.input), 'HUMAN_STEP_ALREADY_ATTEMPTED');
+  const step = {input:job.input,name:job.name,other:job.other,actor:'human',startedAt:Date.now(),phase:'preparation',intentId:randomUUID(),inputOffset:evidence.inputs.length};
+  (evidence.humanSteps ??= []).push(step); activeHuman=step;
+  humanAbort=new AbortController(); const signal=humanAbort.signal;
+  const checked=async fn=>{signal.throwIfAborted();const value=await fn();signal.throwIfAborted();return value;};
+  const read=()=>checked(snapshot), send=command=>checked(()=>request(command));
+  const until=(fn,ms)=>waitFor(()=>checked(fn),ms);
+  humanSignals.set(job.name,{phase:'preparation',text:'准备：请点击下方输入框一次，然后留在这里等待绿色提示，先不输入。'}); save();
+  humanRun=(async()=>{
+    const own = state => state.tasks.find(task=>task.id===ids[job.name]);
+    let preparation;
+    await until(()=>{
+      const rows=evidence.inputs.slice(step.inputOffset).filter(row=>row.name===job.name && row.kind!=='mousemove');
+      assert(!rows.some(row=>['input','paste'].includes(row.kind)), 'HUMAN_INPUT_BEFORE_READY');
+      preparation=rows.find(row=>row.kind==='mousedown' && row.target==='INPUT' && row.trusted===true);
+      return Boolean(preparation);
+    },90000);
+    step.preparation=preparation;
+    // 准备点击不属于正式样本；等待公开停止回执与稳定的阻断状态后才授予新资格。
+    await send({kind:'execution-intent',taskId:ids[job.name],intent:'stop',requestId:randomUUID()});
+    await until(async()=>{
+      const state=await read(), task=own(state), ticket=gate.state(ids[job.name]);
+      return task?.execution?.intent==='stopped' && task.executionControl?.stopSaved && ticket.available && ticket.blocked;
+    },5000);
+    step.prepared={at:Date.now(),snapshot:await read(),gates:gates(),traceLength:trace()}; save();
+    holds.set(job.name,0);
+    step.armSentAt=Date.now(); save();
+    await send({kind:'execution-intent',taskId:ids[job.name],intent:'continue',requestId:step.intentId});
+    if(job.other) await send({kind:'execution-intent',taskId:ids[job.other],intent:'start',requestId:randomUUID()});
+    let current, model;
+    await until(async()=>{
+      current=await read(); const task=own(current), ticket=gate.state(ids[job.name]);
+      assert(current.runtime.conditions.length===0, 'HUMAN_SYSTEM_NOT_READY');
+      model=held.findLast(item=>item.name===job.name && item.receipt.at>=step.armSentAt && !item.res.destroyed && !item.receipt.closedAt && !item.receipt.releasedAt);
+      const call=task?.messages.findLast(message=>message.call)?.call;
+      const other=job.other && current.tasks.find(task=>task.id===ids[job.other]);
+      const otherReady=!job.other || (other?.execution?.phase==='checking' && held.some(item=>item.name===job.other && !item.res.destroyed && !item.receipt.closedAt));
+      if(task?.execution?.intentId!==step.intentId || task.execution.phase!=='checking' || !ticket.available || ticket.blocked || call?.phase!=='sending' || !model || !otherReady) return false;
+      assert(Date.now()-model.receipt.at<20000, 'HUMAN_MODEL_TOO_OLD');
+      step.callId=call.id; return true;
+    },20000);
+    step.armedAt=Date.now(); step.phase='armed';
+    step.qualified={at:step.armedAt,inputOffset:evidence.inputs.length,snapshot:current,gates:gates(),traceLength:trace(),model:model.receipt};
+    humanSignals.set(job.name,{phase:'armed',text:job.input==='ime'?'现在直接输入 a，选出“啊”上屏；不要再点击。完成后回 Codex 回复。':'现在直接按一次 ⌘V；不要再点击。完成后回 Codex 回复。'}); save();
+    let releasedOther=false, committed;
+    await until(async()=>{
+      const rows=evidence.inputs.slice(step.qualified.inputOffset).filter(row=>row.name===job.name && row.kind!=='mousemove');
+      assert(!rows.some(row=>row.kind==='mousedown'), 'HUMAN_EXTRA_CLICK');
+      if(job.input==='ime') assert(!rows.some(row=>row.kind==='paste'), 'HUMAN_IME_WAS_PASTE');
+      const first=rows.find(row=>['keydown','beforeinput','paste','input'].includes(row.kind));
+      if(!first) {
+        const native=gate.traceRead().rows.find(row=>row.owner==='web:'+ids[job.name] && row.stage==='identified' && row.at>=step.armedAt);
+        // 正确的原生阻断会先取消模型，网页收件随后异步到达；不能把这段先后窗口误判为失败。
+        if(native) assert(Date.now()-native.at<3000, 'HUMAN_WEB_RECEIPT_MISSING');
+        else {
+          const live=own(await read()), call=live?.messages.findLast(message=>message.call)?.call;
+          const afterSnapshot=gate.traceRead().rows.some(row=>row.owner==='web:'+ids[job.name] && row.stage==='identified' && row.at>=step.armedAt);
+          assert(afterSnapshot || (live?.execution?.phase==='checking' && live.execution.intentId===step.intentId && call?.id===step.callId && call.phase==='sending' && !model.res.destroyed && !model.receipt.closedAt), 'HUMAN_MODEL_NO_LONGER_LIVE');
+        }
+      }
+      if(first && job.other && !releasedOther) { release(job.other); releasedOther=true; step.otherReleasedAt=Date.now(); }
+      committed=rows.find(row=>row.kind==='input' && row.target==='INPUT' && row.trusted && (job.input==='ime'?row.value.endsWith('啊'):row.value.includes('粘贴核对')));
+      if(committed) {
+        if(job.input==='paste') assert(rows.some(row=>row.kind==='paste' && row.trusted), 'HUMAN_PASTE_EVENT_REQUIRED');
+        step.receipts=rows; return true;
+      }
+      return false;
+    },30000);
+    await until(async()=>{const task=own(await read());return task?.execution?.phase==='paused' && task.execution.pauseReason==='takeover' && task.executionControl?.stopSaved;},5000);
+    assert(!evidence.effects.some(row=>row.name===job.name), 'HUMAN_REVOKED_TASK_EFFECT');
+    if(job.other) await until(async()=>{const state=await read();return state.tasks.find(task=>task.id===ids[job.other])?.execution?.phase==='complete';},10000);
+    const first=step.receipts.find(row=>['keydown','beforeinput','paste','input'].includes(row.kind));
+    const rows=gate.traceRead().rows.slice(0,first.traceLength);
+    const delivered=rows.slice(step.qualified.traceLength).find(row=>row.owner==='web:'+ids[job.name] && row.stage==='web-before-input' && row.at>=step.armedAt);
+    assert(delivered, 'HUMAN_NATIVE_DELIVERY_REQUIRED');
+    const identified=rows.find(row=>row.owner===delivered?.owner && row.serial===delivered.serial && row.stage==='identified');
+    const blocked=rows.find(row=>row.owner===delivered?.owner && row.serial===delivered.serial && row.stage==='blocked');
+    const handoff=rows.find(row=>row.owner===delivered.owner && row.serial===delivered.serial && row.stage==='handoff');
+    assert(identified && blocked && handoff && identified.at>=step.armedAt && identified.at<=blocked.at && blocked.at<=handoff.at && handoff.at<delivered.at && blocked.epoch>step.qualified.gates[job.name].epoch && first.gates[job.name].blocked, 'HUMAN_NATIVE_ORDER_REQUIRED');
+    assert(!model.receipt.closedAt || model.receipt.closedAt>=identified.at, 'HUMAN_MODEL_CLOSED_BEFORE_INPUT');
+    step.nativeOrder={identified,blocked,handoff,delivered};
+    step.after={at:Date.now(),snapshot:await read(),gates:gates(),traceLength:trace()};
+    step.phase='complete'; step.finishedAt=Date.now();
+    humanSignals.set(job.name,{phase:'complete',text:'本步记录完成。请回 Codex 回复，保留当前文字。'}); save();
+  })().catch(async error=>{
+    if(signal.aborted) {step.cancelledAt=Date.now();step.phase='cancelled';save();return;}
+    step.failure=error.message; step.phase='failed'; evidence.failure??=error.message;
+    humanSignals.set(job.name,{phase:'failed',text:'本步已停止，请回 Codex 查看结果，不再输入。'}); save();
+    void finish();
+  }).finally(()=>{activeHuman=undefined;});
+  return {pending:step.input};
+}
 const allowed = new Set(['select', 'hide-task', 'minimize', 'execution-intent', 'snapshot', 'inspect', 'observe', 'show', 'panel', 'draft', 'reload', 'validation-fault', 'capture', 'validation-move']);
 poll = setInterval(async () => {
   if (expired || finishing || busy || !fs.existsSync(path.join(out, 'command.json'))) return;
   busy = true; let job;
   try {
     job = JSON.parse(fs.readFileSync(path.join(out, 'command.json'))); fs.unlinkSync(path.join(out, 'command.json'));
+    assert(!activeHuman || ['state','finish'].includes(job.kind), 'HUMAN_STEP_STILL_RUNNING');
     let value;
     if (job.kind === 'pair') {
       assert(Array.isArray(job.names) && job.names.length === 2 && job.names.every((n) => /^[A-Z]$/.test(n) && !ids[n]), 'NEW_PAIR_REQUIRED');
@@ -415,13 +526,19 @@ poll = setInterval(async () => {
       await request({ kind: 'select', requestId: randomUUID(), taskId: ids[job.names[0]] });
       await request({ kind: 'show' });
       value = ids; write('ids.json', ids);
-    } else if (job.kind === 'release') {
+    } else if (job.kind === 'human-input') value=beginHuman(job);
+    else if (job.kind === 'release') {
       assert(job.holdNext === undefined || [0,1,2].includes(job.holdNext), 'INVALID_NEXT_MODEL_HOLD');
       for (const name of job.names) release(name, job.holdNext);
       value = { released: job.names, holdNext: job.holdNext };
     }
     else if (job.kind === 'timing') {
       value = await beginTiming(job);
+    }
+    else if (job.kind === 'performance-stage') {
+      assert(lifecycle && ['empty','two-tasks','active','settled','switching'].includes(job.stage), 'PERFORMANCE_STAGE_REQUIRED');
+      evidence.performance.stage=job.stage;
+      value={stage:job.stage,at:Date.now()}; (evidence.performance.stages??=[]).push(value); save();
     }
     else if (job.kind === 'state') value = { snapshot: await snapshot(), gates: gates(), traceLength: trace(), deferred: evidence.deferred, barriers: build > 22 ? await request({kind:'validation-barrier',control:{action:'status'}}) : undefined, held: held.map((item) => ({ name: item.name, count: item.receipt.count, closed: item.res.destroyed })) };
     else if (job.kind === 'native-check') {
