@@ -303,6 +303,7 @@ try { budget = spend('starts'); }
 catch (error) { server.close(); throw error; }
 evidence.start = budget.used.starts;
 const env = Object.fromEntries(['HOME', 'PATH', 'TMPDIR', 'LANG'].filter((key) => process.env[key]).map((key) => [key, process.env[key]]));
+const inputGateNamesBefore = new Set(fs.readdirSync(profile).filter(name=>/^\.input-gate-[0-9a-f-]+$/.test(name)));
 const spawnedAt = Date.now();
 child = spawn(path.join(built, 'Contents/MacOS/helpr'), ['--workspace-validation','--workspace-fixture'], { env: { ...env, HELPR_VALIDATION_DATA: profile, HELPR_FIXTURE_ORIGIN:base }, stdio: ['ignore', fs.openSync(path.join(out, 'stdout.log'), 'a', 0o600), fs.openSync(path.join(out, 'stderr.log'), 'a', 0o600), 'ipc'] });
 child.on('message', (m) => {
@@ -361,8 +362,9 @@ try {
   await waitFor(() => evidence.ready);
   assert(evidence.ready.fixture === true && evidence.ready.fixtureSession?.persistent === false && evidence.ready.fixtureSession?.origin === base, 'LOCAL_FIXTURE_MODE_REQUIRED');
   trackPids();
-  const files = fs.readdirSync(profile).filter((name) => /^\.input-gate-[0-9a-f-]+$/.test(name));
-  assert.equal(files.length, 1);
+  const files = fs.readdirSync(profile).filter((name) => /^\.input-gate-[0-9a-f-]+$/.test(name) && !inputGateNamesBefore.has(name));
+  evidence.inputGateLineage={retained:[...inputGateNamesBefore],newCandidates:files};save();
+  assert.equal(files.length, 1, 'ONE_NEW_NATIVE_INPUT_GATE_REQUIRED');
   gate = createRequire(import.meta.url)(path.join(built, 'Contents/Resources/input-bridge.node'));
   gate.open(path.join(profile, files[0]), false);
   // 只保存公开虚构哨兵；不再让接管测试依赖真人系统授权。

@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-19",
+  "candidate": 34,
+  "start": 82,
+  "failure": "Expected values to be strictly equal:\n\n2 !== 1\n",
+  "cause": "Validation selected all native gate files and asserted exactly one; reused profile retains old gate beside current startup gate",
+  "responsibility": "Agent omitted stale gate handling in validation reuse path",
+  "productOutcome": "Validator did not open current input-gate reader; no human window acknowledgement, model request or input step reached",
+  "resultSHA256": "3883067e2f3d4ab293435a28fb171ce6d434aa7d69837e56fa7a5c0e61c411e3",
+  "currentGateFiles": [
+    ".input-gate-2ea0c962-41a3-4e3d-ab70-aff7eb0ca2ff",
+    ".input-gate-c6dfbecf-666b-4045-9ab4-509cb9ef7a15"
+  ],
+  "newCounts": {
+    "tasks": 0,
+    "models": 0,
+    "effects": 0,
+    "inputs": 0
+  },
+  "cumulative": {
+    "tasks": 8,
+    "models": 22,
+    "effects": 4,
+    "inputs": 162
+  },
+  "starts": {
+    "used": 82,
+    "limit": 82
+  },
+  "fix": {
+    "scope": "validation script only; packaged candidate unchanged",
+    "selection": "Snapshot pre-start gate names; require exactly one newly created gate; record retained and all candidates before assertion",
+    "offlineCases": [
+      "fresh profile",
+      "retained old plus one new",
+      "no new must reject",
+      "multiple new must reject"
+    ],
+    "allPassed": true,
+    "syntax": "passed",
+    "sourceSHA256": "bbc4ed07f0420f8df8bb3b8613a47333224127b31ff5a54fceee47bc2aa56f9a",
+    "standardsResidual": 0,
+    "specResidual": 0
+  },
+  "remainingLimitations": [
+    "No actual startup after fix",
+    "Old reuse database byte hash now differs after cold opening; original expected proof is preserved and guard still rejects",
+    "Read-only immutable audit finds identical two task rows and zero task_executions/model_calls; this does not override byte guard",
+    "No additional start performed"
+  ]
+}

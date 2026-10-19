@@ -1,0 +1,164 @@
+{
+  "purpose": "lifecycle-06",
+  "build": 34,
+  "archive": "de92eb195d79e528e76ea4e35fdd38e93c11c7452d72a74821601b73eead1dcd",
+  "scope": "packaged local fixtures; no system credential or persistent website-session acceptance; tool input is not real IME/paste acceptance",
+  "credentials": "in-process public fixture sentinel; system keychain not tested",
+  "started": "2026-10-19T10:08:26.312Z",
+  "carry": {
+    "round": "lifecycle-06-input-final",
+    "counts": {
+      "effects": 4,
+      "inputs": 162,
+      "models": 22,
+      "tasks": 8
+    }
+  },
+  "preparationReuse": {
+    "source": "lifecycle-06-input-final",
+    "resultSHA256": "bb75109fd14223dec26b2724362ea4f94e16493ea28ecaad2a693b6acad255dd",
+    "profile": "/private/tmp/helpr-workspace-validation-501/lifecycle06-NDLUpM",
+    "base": "http://127.0.0.1:58400",
+    "ids": {
+      "A": "8803eea5-23ba-4798-9244-29fe678e033f",
+      "B": "36976139-efef-4bc5-8786-dc90bf3e3e89"
+    }
+  },
+  "limits": {
+    "minutes": 20,
+    "effects": 4,
+    "inputs": 62,
+    "models": 10,
+    "tasks": 0
+  },
+  "realModelCalls": 0,
+  "remoteWrites": 0,
+  "taskAttempts": 0,
+  "effects": [],
+  "inputs": [],
+  "models": [],
+  "checkpoints": [],
+  "checks": [
+    {
+      "name": "owned-process-groups-cleared",
+      "at": 1792404508835,
+      "passed": true
+    },
+    {
+      "name": "normal-exit-and-no-owned-survivors",
+      "at": 1792404508836,
+      "passed": true
+    }
+  ],
+  "deferred": {},
+  "performance": {
+    "scope": "OS RSS sums and public IPC round trips; not paint latency",
+    "samples": [],
+    "commands": [],
+    "readyMs": 1880
+  },
+  "start": 82,
+  "ready": {
+    "ready": true,
+    "controllerPid": 4219,
+    "hostPid": 4223,
+    "recordsPid": 4224,
+    "versions": {
+      "electron": "44.7.2",
+      "node": "24.21.0",
+      "chrome": "152.0.7977.149"
+    },
+    "fixture": true,
+    "fixtureSession": {
+      "origin": "http://127.0.0.1:58400",
+      "persistent": false
+    }
+  },
+  "processTree": [
+    {
+      "pid": 4219,
+      "parent": 4216,
+      "group": 4219
+    },
+    {
+      "pid": 4220,
+      "parent": 4219,
+      "group": 4216
+    },
+    {
+      "pid": 4221,
+      "parent": 4219,
+      "group": 4216
+    },
+    {
+      "pid": 4222,
+      "parent": 4219,
+      "group": 4222
+    },
+    {
+      "pid": 4223,
+      "parent": 4222,
+      "group": 4223
+    },
+    {
+      "pid": 4224,
+      "parent": 4219,
+      "group": 4219
+    },
+    {
+      "pid": 4229,
+      "parent": 4223,
+      "group": 4223
+    },
+    {
+      "pid": 4230,
+      "parent": 4223,
+      "group": 4223
+    },
+    {
+      "pid": 4231,
+      "parent": 4223,
+      "group": 4223
+    },
+    {
+      "pid": 4232,
+      "parent": 4223,
+      "group": 4223
+    },
+    {
+      "pid": 4233,
+      "parent": 4223,
+      "group": 4223
+    },
+    {
+      "pid": 4235,
+      "parent": 4223,
+      "group": 4223
+    },
+    {
+      "pid": 4236,
+      "parent": 4223,
+      "group": 4223
+    },
+    {
+      "pid": 4237,
+      "parent": 4223,
+      "group": 4223
+    },
+    {
+      "pid": 4239,
+      "parent": 4223,
+      "group": 4223
+    }
+  ],
+  "ownedGroups": [
+    4219,
+    4222,
+    4223
+  ],
+  "failure": "Expected values to be strictly equal:\n\n2 !== 1\n",
+  "exitCode": 0,
+  "survivors": [],
+  "groupSurvivors": [],
+  "finished": "2026-10-19T10:08:28.836Z"
+}
