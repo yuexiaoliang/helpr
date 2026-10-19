@@ -29,9 +29,15 @@ if(process.argv.length===3&&process.argv[2]==='--check-commands'){console.log(JS
 
 const build=Number(process.argv[2]?.match(/^--build=(\d+)$/)?.[1]);
 const quitFollowup=process.argv[3]==='--resume=planned-control-close';
+const signingFollowup=process.argv[4]==='--signing-followup';
 const resume=process.argv[3]==='--resume=startup-evidence'?'startup-evidence':process.argv[3]==='--resume=configuration-contract'?'configuration-contract':null;
-assert((process.argv.length===3||(process.argv.length===4&&(resume||quitFollowup)))&&Number.isSafeInteger(build),'BUILD_REQUIRED');
-const manifest=JSON.parse(fs.readFileSync(path.join(validationRoot,`build-${build}.json`)));
+assert((process.argv.length===3||(process.argv.length===4&&(resume||quitFollowup))||(process.argv.length===5&&quitFollowup&&signingFollowup&&build===32))&&Number.isSafeInteger(build),'BUILD_REQUIRED');
+const manifest=JSON.parse(fs.readFileSync(path.join(validationRoot,`build-${build}${signingFollowup?'-signing-followup':''}.json`)));
+if(signingFollowup){
+ const original=path.join(validationRoot,'build-32.json');
+ assert(manifest.origin==='signing-followup'&&manifest.build===32&&manifest.sourceManifestSha256===createHash('sha256').update(fs.readFileSync(original)).digest('hex'),'SIGNING_FOLLOWUP_SOURCE_CHANGED');
+ assert.equal(manifest.hashes?.['Contents/Resources/app.asar'],manifest.sourceArchiveSha256,'SIGNING_FOLLOWUP_ARCHIVE_CHANGED');
+}
 assert(manifest.prepared&&path.isAbsolute(manifest.app),'PREPARED_BUILD_REQUIRED');
 for(const [name,hash] of Object.entries(manifest.hashes))assert.equal(createHash('sha256').update(fs.readFileSync(path.join(manifest.app,name))).digest('hex'),hash);
 const signature=verifyDevelopmentSignature(manifest.app);
@@ -60,7 +66,7 @@ const profileRoot=`/private/tmp/helpr-workspace-validation-${process.getuid()}`;
 fs.mkdirSync(profileRoot,{recursive:true,mode:0o700});assert.equal(fs.realpathSync(profileRoot),profileRoot);
 const profile=quitFollowup?followup.profile:fs.mkdtempSync(profileRoot+'/recovery05-');
 assert(profile.startsWith(profileRoot+'/recovery05-')&&fs.realpathSync(profile)===profile,'INVALID_PROFILE_ROOT');
-const report={build,archive:manifest.hashes['Contents/Resources/app.asar'],certificateSha256:signature.certificateSha256,started:new Date().toISOString(),scope:'packaged local fixtures; no real credential/login, IME, sleep or power-loss acceptance',carry,limits:quitFollowup?{starts:2,faults:0,cleanups:1,models:6,effects:1,tasks:0,minutes:8}:{starts:4,faults:3,cleanups:1,models:10,effects:2,tasks:3,minutes:8},starts:[],faults:[],effects:[],models:[],tasks:[],checks:[],realModelCalls:0,remoteWrites:0};
+const report={build,preparation:signingFollowup?'signing-followup':'original',archive:manifest.hashes['Contents/Resources/app.asar'],certificateSha256:signature.certificateSha256,started:new Date().toISOString(),scope:'packaged local fixtures; no real credential/login, IME, sleep or power-loss acceptance',carry,limits:quitFollowup?{starts:2,faults:0,cleanups:1,models:6,effects:1,tasks:0,minutes:8}:{starts:4,faults:3,cleanups:1,models:10,effects:2,tasks:3,minutes:8},starts:[],faults:[],effects:[],models:[],tasks:[],checks:[],realModelCalls:0,remoteWrites:0};
 const remainingBudget=JSON.parse(fs.readFileSync(path.join(validationRoot,'budget.json')));for(const kind of ['starts','faults','cleanups'])assert(remainingBudget.used[kind]+report.limits[kind]<=remainingBudget.limits[kind],'ROUND_BUDGET_NOT_RESERVED');
 const save=()=>fs.writeFileSync(path.join(root,'result.json'),JSON.stringify(report,null,2)+'\n',{mode:0o600});
 const snapshots={};const capture=(name,value)=>{snapshots[name]=value;fs.writeFileSync(path.join(root,'snapshots.json'),JSON.stringify(snapshots,null,2)+'\n',{mode:0o600});};

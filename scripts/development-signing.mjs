@@ -173,10 +173,11 @@ async function sign(bundle) {
     } finally { fs.closeSync(descriptor); }
   }
 }
-export function signDevelopmentPackage(bundle) {
+export function signDevelopmentPackage(bundle, timeout = 120000) {
+  demand(Number.isSafeInteger(timeout) && timeout >= 120000 && timeout <= 900000, 'INVALID_DEVELOPMENT_SIGNING_TIME_LIMIT');
   // 独立进程组限定整次签名，超时先结束本组工具，再由父进程恢复子进程保存的状态。
   const result = spawnSync(process.execPath, [fileURLToPath(import.meta.url), 'sign', bundle], {
-    stdio:'pipe',encoding:'utf8',detached:true,timeout:120000,killSignal:'SIGKILL',
+    stdio:'pipe',encoding:'utf8',detached:true,timeout,killSignal:'SIGKILL',
   });
   if (result.error || result.status !== 0) {
     if (result.pid) { try { process.kill(-result.pid,'SIGKILL'); } catch {} }
