@@ -1,0 +1,32 @@
+{
+  "recordedAt": "2026-10-19T09:05:14Z",
+  "stage": "Native connectivity before starting repair candidate 34",
+  "target": "com.apple.finder",
+  "priorComponentRetry": {
+    "timeoutMs": 10000,
+    "result": "js execution timed out; kernel reset, rerun your request"
+  },
+  "restartIdentityGuard": {
+    "expectedOldPid": 77649,
+    "oldPidAlreadyExited": true,
+    "signalIssued": false,
+    "launchIssued": false,
+    "currentServicePid": 89489,
+    "currentServiceParentPid": 89039,
+    "currentServiceGroup": 89039,
+    "scope": "The old PID identity check stopped before any process mutation; a replacement service was already running. No Codex parent or shared group was terminated."
+  },
+  "newServiceProbe": {
+    "timeoutMs": 10000,
+    "elapsedSeconds": 1.2393,
+    "serverCode": -10005,
+    "domain": "com.apple.ScreenCaptureKit.SCStreamErrorDomain",
+    "code": -3801,
+    "message": "用户拒绝了应用程序、窗口、显示器捕捉的TCC"
+  },
+  "candidate34Started": false,
+  "startup80Used": false,
+  "additionalProductUsage": 0,
+  "userActionRequested": "Re-enable Codex Computer Use Screen Recording in macOS settings and follow any relaunch prompt; the agent did not change system privacy permissions.",
+  "scope": "Concrete macOS capture-authorization denial, not evidence of a helpr lifecycle failure or acceptance."
+}
