@@ -66,7 +66,7 @@ if (carryName !== undefined) {
   const postcheck = lifecycle && fs.existsSync(postcheckFile) ? JSON.parse(fs.readFileSync(postcheckFile)) : undefined;
   if (postcheck) assert(postcheck.failure === 'HIDDEN_TASKS_MUST_ADVANCE_WITHOUT_PAUSING' && postcheck.archive === prior.archive && postcheck.resultSHA256 === createHash('sha256').update(priorBytes).digest('hex'), 'INVALID_HIDDEN_POSTCHECK');
   const repaired = repairOf === prior.archive && Number.isSafeInteger(prior.build) && prior.build < build && Boolean(prior.controlFailure || prior.failure || prior.fixtureFailure || postcheck?.failure);
-  const derived = derivedFrom === prior.archive && Number.isSafeInteger(prior.build) && prior.build < build && prior.exitCode === 0 && !prior.failure && !prior.controlFailure && !prior.fixtureFailure;
+  const derived = derivedFrom === prior.archive && Number.isSafeInteger(prior.build) && prior.build < build && prior.exitCode === 0 && !prior.failure && !prior.controlFailure && !prior.fixtureFailure && !postcheck?.failure;
   assert(prior.finished && (prior.archive === manifest.hashes['Contents/Resources/app.asar'] || repaired || derived), 'CARRY_CANDIDATE_NOT_FINISHED');
   const normalExit = prior.exitCode === 0 && Array.isArray(prior.survivors) && prior.survivors.length === 0;
   const checkedCleanup = typeof prior.postCleanup?.checkedAt === 'string' && Array.isArray(prior.postCleanup.survivors) && prior.postCleanup.survivors.length === 0;
