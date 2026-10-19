@@ -27,11 +27,13 @@ for(const command of [samples.snapshot(),samples.quit(),samples.configure({model
 for(const point of ['recovery','exit-checkpoint']){const barrier=new ValidationBarriers();barrier.control({action:'arm',point,taskId:'*'});const waiting=barrier.pass(point,'*');barrier.control({action:'status'});barrier.control({action:'release',point,taskId:'*'});await waiting;}
 if(process.argv.length===3&&process.argv[2]==='--check-commands'){console.log(JSON.stringify({commandsValid:true,configurationVersions:[0,7],barriers:['recovery','exit-checkpoint'],appStarts:0,modelCalls:0,effects:0}));process.exit(0);}
 
-const build=Number(process.argv[2]?.match(/^--build=(\d+)$/)?.[1]);
-const quitFollowup=process.argv[3]==='--resume=planned-control-close';
-const signingFollowup=process.argv[4]==='--signing-followup';
-const resume=process.argv[3]==='--resume=startup-evidence'?'startup-evidence':process.argv[3]==='--resume=configuration-contract'?'configuration-contract':null;
-assert((process.argv.length===3||(process.argv.length===4&&(resume||quitFollowup))||(process.argv.length===5&&quitFollowup&&signingFollowup&&build===32))&&Number.isSafeInteger(build),'BUILD_REQUIRED');
+const args=process.argv.slice(2),preflight=args.at(-1)==='--preflight';if(preflight)args.pop();
+const build=Number(args[0]?.match(/^--build=(\d+)$/)?.[1]);
+const quitFollowup=args[1]==='--resume=planned-control-close';
+const signingFollowup=args[2]==='--signing-followup';
+const freshC=args[3]==='--fresh-c-after-profile-loss';
+const resume=args[1]==='--resume=startup-evidence'?'startup-evidence':args[1]==='--resume=configuration-contract'?'configuration-contract':null;
+assert((args.length===1||(args.length===2&&(resume||quitFollowup))||(args.length===3&&quitFollowup&&signingFollowup&&build===32)||(args.length===4&&freshC&&quitFollowup&&signingFollowup&&build===32))&&Number.isSafeInteger(build),'BUILD_REQUIRED');
 const manifest=JSON.parse(fs.readFileSync(path.join(validationRoot,`build-${build}${signingFollowup?'-signing-followup':''}.json`)));
 if(signingFollowup){
  const original=path.join(validationRoot,'build-32.json');
@@ -50,6 +52,8 @@ if(quitFollowup){
  previous=JSON.parse(fs.readFileSync(followup.source));
  assert(previous.build<build&&previous.certificateSha256===signature.certificateSha256&&previous.error==='RECOVERY_WAIT_EXPIRED'&&previous.counts.A===1&&previous.counts.B===0&&previous.counts.C===0&&previous.models.length===4&&previous.effects.length===1&&previous.tasks.length===3&&previous.faults.length===3&&previous.starts.every(s=>s.remaining?.length===0),'INVALID_QUIT_FOLLOWUP');
  assert(previous.tasks.some(t=>t.name==='C'&&t.id===followup.taskId),'INVALID_FOLLOWUP_TASK');
+ if(freshC)assert(!fs.existsSync(followup.profile),'ORIGINAL_PROFILE_STILL_EXISTS');
+ else assert(fs.existsSync(followup.profile),'ORIGINAL_PROFILE_MISSING');
  const origin=new URL(followup.origin);assert(origin.protocol==='http:'&&origin.hostname==='127.0.0.1'&&origin.port&&origin.origin===followup.origin,'LOCAL_ORIGIN_REQUIRED');
  carry={source:followup.source,sha256:followup.sourceSha256,starts:[...previous.carry.starts,...previous.starts.map(s=>s.start)],models:previous.models.length,effects:previous.effects.length,tasks:previous.tasks.length,faults:previous.faults.length,cleanups:previous.carry.cleanups+(previous.cleanup?1:0)};
 }
@@ -59,19 +63,23 @@ if(resume){
  if(resume==='configuration-contract')assert(previous.starts[0].start===71&&previous.checks.includes('owned-tree-cleared-'+previous.starts[0].pid),'UNCLEARED_PREVIOUS_RUN');
  carry={source:path.relative(process.cwd(),previousFile),sha256:createHash('sha256').update(fs.readFileSync(previousFile)).digest('hex'),starts:[...(previous.carry?.starts??[]),...previous.starts.map(s=>s.start)],models:0,effects:0,tasks:0,faults:0,cleanups:(previous.carry?.cleanups??0)+(previous.cleanup?1:0)};
 }
-const root=quitFollowup?originalRoot+'-quit-followup':resume?originalRoot+(resume==='startup-evidence'?'-resume':'-contract-resume'):originalRoot;
-assert(!fs.existsSync(root),'ROUND_ALREADY_EXISTS');fs.mkdirSync(root,{mode:0o700});
+const root=freshC?originalRoot+'-quit-followup-after-profile-loss':quitFollowup?originalRoot+'-quit-followup':resume?originalRoot+(resume==='startup-evidence'?'-resume':'-contract-resume'):originalRoot;
+assert(!fs.existsSync(root),'ROUND_ALREADY_EXISTS');
 execFileSync(process.execPath,['scripts/validate-workspace.mjs','--preflight'],{stdio:'pipe'});
 const profileRoot=`/private/tmp/helpr-workspace-validation-${process.getuid()}`;
 fs.mkdirSync(profileRoot,{recursive:true,mode:0o700});assert.equal(fs.realpathSync(profileRoot),profileRoot);
-const profile=quitFollowup?followup.profile:fs.mkdtempSync(profileRoot+'/recovery05-');
+if(quitFollowup&&!freshC)assert(followup.profile.startsWith(profileRoot+'/recovery05-')&&fs.realpathSync(followup.profile)===followup.profile,'INVALID_PROFILE_ROOT');
+const limits=quitFollowup?{starts:2,faults:0,cleanups:1,models:6,effects:1,tasks:freshC?1:0,minutes:8}:{starts:4,faults:3,cleanups:1,models:10,effects:2,tasks:3,minutes:8};
+const remainingBudget=JSON.parse(fs.readFileSync(path.join(validationRoot,'budget.json')));for(const kind of ['starts','faults','cleanups'])assert(remainingBudget.used[kind]+limits[kind]<=remainingBudget.limits[kind],'ROUND_BUDGET_NOT_RESERVED');
+if(preflight){console.log(JSON.stringify({preflightPassed:true,build,preparation:signingFollowup?'signing-followup':'original',freshC,limits,carry,appStarts:0,modelCalls:0,effects:0}));process.exit(0);}
+fs.mkdirSync(root,{mode:0o700});
+const profile=quitFollowup&&!freshC?followup.profile:fs.mkdtempSync(profileRoot+'/recovery05-');
 assert(profile.startsWith(profileRoot+'/recovery05-')&&fs.realpathSync(profile)===profile,'INVALID_PROFILE_ROOT');
-const report={build,preparation:signingFollowup?'signing-followup':'original',archive:manifest.hashes['Contents/Resources/app.asar'],certificateSha256:signature.certificateSha256,started:new Date().toISOString(),scope:'packaged local fixtures; no real credential/login, IME, sleep or power-loss acceptance',carry,limits:quitFollowup?{starts:2,faults:0,cleanups:1,models:6,effects:1,tasks:0,minutes:8}:{starts:4,faults:3,cleanups:1,models:10,effects:2,tasks:3,minutes:8},starts:[],faults:[],effects:[],models:[],tasks:[],checks:[],realModelCalls:0,remoteWrites:0};
-const remainingBudget=JSON.parse(fs.readFileSync(path.join(validationRoot,'budget.json')));for(const kind of ['starts','faults','cleanups'])assert(remainingBudget.used[kind]+report.limits[kind]<=remainingBudget.limits[kind],'ROUND_BUDGET_NOT_RESERVED');
+const report={build,preparation:signingFollowup?'signing-followup':'original',profileState:freshC?'fresh-after-profile-loss':'retained',archive:manifest.hashes['Contents/Resources/app.asar'],certificateSha256:signature.certificateSha256,started:new Date().toISOString(),scope:'packaged local fixtures; no real credential/login, IME, sleep or power-loss acceptance',carry,limits,starts:[],faults:[],effects:[],models:[],tasks:[],checks:[],realModelCalls:0,remoteWrites:0};
 const save=()=>fs.writeFileSync(path.join(root,'result.json'),JSON.stringify(report,null,2)+'\n',{mode:0o600});
 const snapshots={};const capture=(name,value)=>{snapshots[name]=value;fs.writeFileSync(path.join(root,'snapshots.json'),JSON.stringify(snapshots,null,2)+'\n',{mode:0o600});};
 const check=(name,condition)=>{assert(condition,name);report.checks.push(name);save();};
-const counts=quitFollowup?{...previous.counts}:{A:0,B:0,C:0},heldModels=[];
+const counts=quitFollowup&&!freshC?{...previous.counts}:{A:0,B:0,C:0},heldModels=[];
 let holdA=true,holdC=true,current,failed;
 const deadline=Date.now()+report.limits.minutes*60000;
 async function until(fn,ms=60000,cleanup=false){const end=cleanup?Date.now()+ms:Math.min(deadline,Date.now()+ms);while(Date.now()<end){if(failed&&!cleanup)throw Error(failed);if(await fn())return;await new Promise(r=>setTimeout(r,40));}throw Error('RECOVERY_WAIT_EXPIRED');}
@@ -122,16 +130,19 @@ function fault(pid,signal,label){assert(report.faults.length<report.limits.fault
 try{
  if(quitFollowup){
   console.log('05 follow-up: normal quit with undispatched work');
-  const first=await start();const initial=await snapshot(first),c=followup.taskId;capture('followup-initial',initial);
-  check('old-pause-preserved-before-explicit-setup',initial.tasks.find(t=>t.id===c)?.execution?.phase==='paused');
-  await configure(first);await intent(first,c,'continue');await until(()=>heldModels.some(m=>m.name==='C'&&!m.res.destroyed));
+  const first=await start();const initial=await snapshot(first);let c=followup.taskId;capture('followup-initial',initial);
+  if(freshC)check('fresh-profile-has-no-old-tasks',initial.tasks.length===0);
+  else check('old-pause-preserved-before-explicit-setup',initial.tasks.find(t=>t.id===c)?.execution?.phase==='paused');
+  await configure(first);if(freshC)c=await create(first,'C');await intent(first,c,freshC?'start':'continue');await until(()=>heldModels.some(m=>m.name==='C'&&!m.res.destroyed));
   const pending=await snapshot(first);capture('followup-before-quit',pending);check('no-action-before-normal-quit',counts.C===0&&pending.tasks.find(t=>t.id===c)?.execution?.actions.length===0);
   await quit(first);holdC=false;
   console.log('05 follow-up: cold reopen without continue');
   const second=await start({holdRecovery:true});const reopened=await snapshot(second);capture('followup-cold-before-recovery',reopened);
   const restored=reopened.tasks.find(t=>t.id===c)?.execution;check('normal-quit-preserved-active-intent',restored?.phase==='queued'&&restored.intent==='automatic'&&restored.recoveryPending&&!restored.pauseReason);
   await barrier(second);await until(async()=>(await snapshot(second)).tasks.find(t=>t.id===c)?.execution?.phase==='complete');
-  const final=await snapshot(second);capture('followup-final',final);check('remaining-effect-once-and-stop-retained',counts.A===1&&counts.B===0&&counts.C===1&&final.tasks.find(t=>t.id===previous.tasks.find(t=>t.name==='B').id)?.execution?.intent==='stopped');await quit(second);
+  const final=await snapshot(second);capture('followup-final',final);
+  if(freshC)check('fresh-C-effect-once',counts.C===1&&counts.A===0&&counts.B===0&&report.effects.length===1&&report.effects[0].name==='C');
+  else check('remaining-effect-once-and-stop-retained',counts.A===1&&counts.B===0&&counts.C===1&&final.tasks.find(t=>t.id===previous.tasks.find(t=>t.name==='B').id)?.execution?.intent==='stopped');await quit(second);
  }else{
  console.log('05 first start: interrupted result and owner cleanup');
  const first=await start();await configure(first);const a=await create(first,'A'),b=await create(first,'B');
