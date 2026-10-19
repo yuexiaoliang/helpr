@@ -1,0 +1,317 @@
+{
+  "round": "lifecycle-06-hidden-fix",
+  "candidate": 34,
+  "start": 80,
+  "resultSHA256": "c8ea45cd48a08281d6bf980d1c17bdb8ed80af70d74d2732f5cd7e0bd182d053",
+  "cumulative": {
+    "tasks": 6,
+    "models": 22,
+    "effects": 4,
+    "inputs": 150
+  },
+  "limits": {
+    "tasks": 6,
+    "models": 24,
+    "effects": 8,
+    "inputs": 160
+  },
+  "human": {
+    "click": {
+      "armedAt": 1792401838955.563,
+      "actor": "human",
+      "step": "click-A-input",
+      "timeoutSeconds": 30,
+      "inputAt": 1792401865082,
+      "releaseB": "{\"released\":[\"B\"]}"
+    },
+    "paste": {
+      "step": "human-command-v",
+      "actor": "human",
+      "observedAt": 1792402233859,
+      "paste": [
+        {
+          "route": "/input",
+          "name": "A",
+          "clientAt": 1792402233647.2,
+          "clientWallAt": 1792402233714,
+          "kind": "paste",
+          "target": "INPUT",
+          "trusted": true,
+          "value": "中文接管",
+          "clock": {
+            "sent": 1792401496860.1,
+            "server": 1792401496872,
+            "received": 1792401496879.4001
+          },
+          "at": 1792402233717,
+          "gates": {
+            "A": {
+              "epoch": 45,
+              "available": true,
+              "blocked": true
+            },
+            "B": {
+              "epoch": 2,
+              "available": true,
+              "blocked": false
+            }
+          },
+          "traceLength": 836
+        }
+      ],
+      "confirmation": "已按 ⌘V 粘贴",
+      "acceptedForIndependentActiveTakeover": false,
+      "precedingMousedownAt": 1792402233351,
+      "reason": "Mousedown already revoked A 366ms before paste; paste/native ordering/text retention proved, independent paste takeover not proved"
+    },
+    "initialIME": {
+      "confirmation": "已用中文输入法输入并上屏",
+      "acceptedForActiveNoClickTakeover": false,
+      "reasons": [
+        "extra mousedown",
+        "model already timed out"
+      ]
+    },
+    "focusPreparationFailure": {
+      "userReport": "没有聚焦到输入法还不让我点，怎么输入？",
+      "cause": "Agent omitted focus recheck after sleep",
+      "correction": "Agent clicked AX field 36; CUA confirmed focused field 36; preparation click excluded from sample"
+    },
+    "finalIME": {
+      "confirmation": "已输入“啊”，没有点击",
+      "receipts": [
+        {
+          "route": "/input",
+          "name": "A",
+          "clientAt": 1792402579949.1,
+          "clientWallAt": 1792402582715,
+          "kind": "keydown",
+          "target": "INPUT",
+          "trusted": true,
+          "value": "中文接管粘贴接管",
+          "clock": {
+            "sent": 1792401496860.1,
+            "server": 1792401496872,
+            "received": 1792401496879.4001
+          },
+          "at": 1792402582729,
+          "gates": {
+            "A": {
+              "epoch": 59,
+              "available": true,
+              "blocked": true
+            },
+            "B": {
+              "epoch": 9,
+              "available": true,
+              "blocked": true
+            }
+          },
+          "traceLength": 895
+        },
+        {
+          "route": "/input",
+          "name": "A",
+          "clientAt": 1792402579951.4001,
+          "clientWallAt": 1792402582717,
+          "kind": "beforeinput",
+          "target": "INPUT",
+          "trusted": true,
+          "value": "中文接管粘贴接管",
+          "clock": {
+            "sent": 1792401496860.1,
+            "server": 1792401496872,
+            "received": 1792401496879.4001
+          },
+          "at": 1792402582740,
+          "gates": {
+            "A": {
+              "epoch": 59,
+              "available": true,
+              "blocked": true
+            },
+            "B": {
+              "epoch": 9,
+              "available": true,
+              "blocked": true
+            }
+          },
+          "traceLength": 895
+        },
+        {
+          "route": "/input",
+          "name": "A",
+          "clientAt": 1792402579956.9001,
+          "clientWallAt": 1792402582723,
+          "kind": "input",
+          "target": "INPUT",
+          "trusted": true,
+          "value": "中文接管粘贴接管a",
+          "clock": {
+            "sent": 1792401496860.1,
+            "server": 1792401496872,
+            "received": 1792401496879.4001
+          },
+          "at": 1792402582753,
+          "gates": {
+            "A": {
+              "epoch": 59,
+              "available": true,
+              "blocked": true
+            },
+            "B": {
+              "epoch": 9,
+              "available": true,
+              "blocked": true
+            }
+          },
+          "traceLength": 895
+        },
+        {
+          "route": "/input",
+          "name": "A",
+          "clientAt": 1792402580739.4001,
+          "clientWallAt": 1792402583505,
+          "kind": "keydown",
+          "target": "INPUT",
+          "trusted": true,
+          "value": "中文接管粘贴接管a",
+          "clock": {
+            "sent": 1792401496860.1,
+            "server": 1792401496872,
+            "received": 1792401496879.4001
+          },
+          "at": 1792402583523,
+          "gates": {
+            "A": {
+              "epoch": 60,
+              "available": true,
+              "blocked": true
+            },
+            "B": {
+              "epoch": 9,
+              "available": true,
+              "blocked": true
+            }
+          },
+          "traceLength": 898
+        },
+        {
+          "route": "/input",
+          "name": "A",
+          "clientAt": 1792402580740.6,
+          "clientWallAt": 1792402583507,
+          "kind": "beforeinput",
+          "target": "INPUT",
+          "trusted": true,
+          "value": "中文接管粘贴接管a",
+          "clock": {
+            "sent": 1792401496860.1,
+            "server": 1792401496872,
+            "received": 1792401496879.4001
+          },
+          "at": 1792402583538,
+          "gates": {
+            "A": {
+              "epoch": 60,
+              "available": true,
+              "blocked": true
+            },
+            "B": {
+              "epoch": 9,
+              "available": true,
+              "blocked": true
+            }
+          },
+          "traceLength": 898
+        },
+        {
+          "route": "/input",
+          "name": "A",
+          "clientAt": 1792402580743.9001,
+          "clientWallAt": 1792402583510,
+          "kind": "input",
+          "target": "INPUT",
+          "trusted": true,
+          "value": "中文接管粘贴接管啊",
+          "clock": {
+            "sent": 1792401496860.1,
+            "server": 1792401496872,
+            "received": 1792401496879.4001
+          },
+          "at": 1792402583552,
+          "gates": {
+            "A": {
+              "epoch": 60,
+              "available": true,
+              "blocked": true
+            },
+            "B": {
+              "epoch": 9,
+              "available": true,
+              "blocked": true
+            }
+          },
+          "traceLength": 898
+        },
+        {
+          "route": "/input",
+          "name": "A",
+          "clientAt": 1792402581446.1,
+          "clientWallAt": 1792402584212,
+          "kind": "keydown",
+          "target": "INPUT",
+          "trusted": true,
+          "value": "中文接管粘贴接管啊",
+          "clock": {
+            "sent": 1792401496860.1,
+            "server": 1792401496872,
+            "received": 1792401496879.4001
+          },
+          "at": 1792402584217,
+          "gates": {
+            "A": {
+              "epoch": 60,
+              "available": true,
+              "blocked": true
+            },
+            "B": {
+              "epoch": 9,
+              "available": true,
+              "blocked": true
+            }
+          },
+          "traceLength": 899
+        }
+      ],
+      "noMousedownSincePreparedFocus": true,
+      "modelAt": 1792402474635,
+      "inputDelayMs": 108094,
+      "activeTakeoverAccepted": false,
+      "reason": "MODEL_TIMEOUT before real input; source call and final UI retain timeout",
+      "compositionTelemetry": "No compositionstart/isComposing telemetry; human confirmation, intermediate a, committed 啊, native rows and web receipts only"
+    },
+    "lockConfirmation": "已锁屏并解锁",
+    "sleepConfirmation": "已真正休眠、唤醒并解锁"
+  },
+  "performance": {
+    "readyMs": 3825,
+    "sampleCount": 384,
+    "spanMinutes": 19.162916666666668,
+    "rssSumMiB": {
+      "min": 612.28125,
+      "max": 1348.59375
+    },
+    "scope": "owned-process RSS sum and IPC only; held-model preparation and human waits included; not paint/steady workload; thresholds remain pending"
+  },
+  "archive": {
+    "REPAIR-PACKAGED.json": "c8ea45cd48a08281d6bf980d1c17bdb8ed80af70d74d2732f5cd7e0bd182d053",
+    "REPAIR-NATIVE-TRACE.json": "f01cfe7d446578c68f24357b8ed2781a03cf699c0d6143ce9deeaf1f5a0c8d13",
+    "REPAIR-POST-EXIT.json": "f551b4c198aaf9d7d37e71f8172cfa9c7eef3fe9012ea7ad6b1c91a7b2ce5a75",
+    "HUMAN-LOCK.json": "37f1920b192d5daebdd9143692affee71c469047e0101ef6f96acb48674acd5f",
+    "HUMAN-SLEEP.json": "0c2744422565ca0957842bb26729b213ef0612c11f06269a88f853331b37e174",
+    "repair-menu-return.png": "6d9ad93935215bb0cfcf9d154c07ca598def887d5634e83bf40b870231a02100",
+    "repair-final.png": "ba0202fa9b344fc56966e4cf4851851db2665ec1ad1ab645cb2e045a3dfae2fe",
+    "OS-SLEEP-WAKE.txt": "74a53078b627b006872c5064bfdabe468356e4662f656574a84abc6167440b38"
+  }
+}
