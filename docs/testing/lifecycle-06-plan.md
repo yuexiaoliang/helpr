@@ -173,3 +173,14 @@ IME准备增加真实中文预热：用户先点击A输入框，在灰色提示�
 精确86退出资料的[复用证明](evidence/lifecycle-06/INPUT-KNOWN-REUSE.json)和[40项入口检查](evidence/lifecycle-06/FULL-VALIDATOR-READY-CHECK.json)已完成，不改旧字节依据或原截止。下一次预备入口 `node scripts/validate-takeover.mjs --round=lifecycle-06-input-present --build=34 --lifecycle --carry=lifecycle-06-input-known --task-limit=8 --lifecycle-model-limit=80 --lifecycle-input-limit=1024 --reuse-input-progress`，`--check-carry`只读通过；当前余4启动、51本机模型、793收件、2效果、0新任务。87未开始，不另问额度。
 
 该精确来源若冷启动收到新的完整unknown原生阻断链，只允许保守的takeover→ownership-unknown变化，并同时核对无溢出、当前阻断和已保存暂停，记录preparationInputRevocation；无证据仍拒绝。它不放行执行、不用新未知状态覆盖旧停止，也不改变正式准备／停止／继续顺序。原方案的单轮20分钟、正式IME／paste各一次、失败保留说明及正常退出边界保持。
+
+
+## 2026-10-20 启动87实际收尾与剩余边界
+
+启动87已按先人在场、实际可见确认后短计时完成独立IME、独立paste及明确继续，详细原始记录和人为刷新偏离见[结果](evidence/lifecycle-06/REPORT.md#启动87真人输入与继续通过原生工具及性能仍有缺口)。当前8/10条，第6完整自动界面准备与第10性能仍未关闭；不重做中文、粘贴、锁屏、休眠或网页推进。
+
+本轮从13:45:18.961至14:05:16.503（Asia/Shanghai），正常退出且独立确认15PID／3组空，没有延长20分钟。累计8任务／35本机模型／8效果／328收件，启动87/90；已授权仍余3启动、45模型、696收件、0新任务／0效果。固定候选34与原资料保留，不重复询问额度。
+
+CUA对Finder可读，但对实际helpr连接仍10秒超时；真实用户激活后的唯一新假设检查也失败。未完成原生截图／自动绘制焦点检查及6次原生标签测速，不换工具或注入网页替代。ready1849ms、RSS峰1341.84MiB；完成态实际样本273.097秒，不足原5分钟，故门槛及方法保持，第10条不提前关闭。
+
+续验只需界面准备和性能，不应再调用模型、增加网页效果或要求真人重复输入。需先恢复原生界面连接，并为本次两任务均complete的精确来源准备只读资料／原任务／原动作身份复用依据；旧仅接受A暂停的progress守卫不得直接改成宽松通过。当前没有启动88，未宣称该新来源已经可直接运行。

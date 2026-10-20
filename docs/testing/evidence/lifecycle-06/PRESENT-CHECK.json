@@ -1,0 +1,219 @@
+{
+  "at": "2026-10-20T06:06:30.735313+00:00",
+  "start": 87,
+  "build": 34,
+  "archiveSHA256": "de92eb195d79e528e76ea4e35fdd38e93c11c7452d72a74821601b73eead1dcd",
+  "sourceCommit": "1310f32",
+  "scope": "Actual immutable candidate with original two tasks and profile; human IME and independent paste, public final continue; native UI measurement blocked",
+  "humanSteps": [
+    {
+      "input": "ime",
+      "phase": "complete",
+      "firstReceipt": {
+        "route": "/input",
+        "name": "A",
+        "clientAt": 1792475789148.5,
+        "clientWallAt": 1792475789153,
+        "kind": "keydown",
+        "modifierOnly": false,
+        "keyCode": 229,
+        "isComposing": false,
+        "target": "INPUT",
+        "trusted": true,
+        "value": "试",
+        "clock": {
+          "sent": 1792475118929.3,
+          "server": 1792475118997,
+          "received": 1792475118999
+        },
+        "at": 1792475789159,
+        "gates": {
+          "A": {
+            "epoch": 20,
+            "available": true,
+            "blocked": true
+          },
+          "B": {
+            "epoch": 1,
+            "available": true,
+            "blocked": false
+          }
+        },
+        "traceLength": 238
+      },
+      "nativeOrder": {
+        "identified": {
+          "stage": "identified",
+          "owner": "web:8803eea5-23ba-4798-9244-29fe678e033f",
+          "serial": 15,
+          "epoch": 0,
+          "at": 1792475789127.488
+        },
+        "blocked": {
+          "stage": "blocked",
+          "owner": "web:8803eea5-23ba-4798-9244-29fe678e033f",
+          "serial": 15,
+          "epoch": 19,
+          "at": 1792475789127.488
+        },
+        "handoff": {
+          "stage": "handoff",
+          "owner": "web:8803eea5-23ba-4798-9244-29fe678e033f",
+          "serial": 15,
+          "epoch": 0,
+          "at": 1792475789127.565
+        },
+        "compositionReceipt": {
+          "kind": "keydown",
+          "at": 1792475789159,
+          "clientWallAt": 1792475789153,
+          "traceLength": 238,
+          "keyCode": 229,
+          "isComposing": false
+        },
+        "method": "unique-AppKit-handoff-and-trusted-composition-receipt"
+      },
+      "callId": "a2957347-1927-4828-a15c-874f99b19a95",
+      "cancelledCall": {
+        "phase": "cancelled",
+        "error": "MODEL_CANCELLED"
+      },
+      "finalValue": "试啊",
+      "AEffects": 0,
+      "BActions": 2
+    },
+    {
+      "input": "paste",
+      "phase": "complete",
+      "firstReceipt": {
+        "route": "/input",
+        "name": "A",
+        "clientAt": 1792476014209,
+        "clientWallAt": 1792476014209,
+        "kind": "keydown",
+        "modifierOnly": false,
+        "keyCode": 86,
+        "isComposing": false,
+        "target": "INPUT",
+        "trusted": true,
+        "value": "",
+        "clock": {
+          "sent": 1792475980500.4001,
+          "server": 1792475980501,
+          "received": 1792475980502.6
+        },
+        "at": 1792476014220,
+        "gates": {
+          "A": {
+            "epoch": 42,
+            "available": true,
+            "blocked": true
+          },
+          "B": {
+            "epoch": 1,
+            "available": true,
+            "blocked": false
+          }
+        },
+        "traceLength": 1296
+      },
+      "nativeOrder": {
+        "identified": {
+          "stage": "identified",
+          "owner": "web:8803eea5-23ba-4798-9244-29fe678e033f",
+          "serial": 57,
+          "epoch": 0,
+          "at": 1792476014206.846
+        },
+        "blocked": {
+          "stage": "blocked",
+          "owner": "web:8803eea5-23ba-4798-9244-29fe678e033f",
+          "serial": 57,
+          "epoch": 39,
+          "at": 1792476014206.847
+        },
+        "handoff": {
+          "stage": "handoff",
+          "owner": "web:8803eea5-23ba-4798-9244-29fe678e033f",
+          "serial": 57,
+          "epoch": 0,
+          "at": 1792476014206.927
+        },
+        "delivered": {
+          "stage": "web-before-input",
+          "owner": "web:8803eea5-23ba-4798-9244-29fe678e033f",
+          "serial": 57,
+          "epoch": 40,
+          "at": 1792476014209.188
+        }
+      },
+      "callId": "09ba337c-7e9b-4b29-8304-8797428e2c6e",
+      "cancelledCall": {
+        "phase": "cancelled",
+        "error": "MODEL_CANCELLED"
+      },
+      "finalValue": "粘贴核对",
+      "AEffects": 0,
+      "BActions": 2
+    }
+  ],
+  "humanReloadBetweenSteps": true,
+  "reloadScope": "User refreshed A after formal IME; original 试啊 was cleared. Redundant agent instructions caused extra human warmup 试 after reload, preserved as deviation. No new formal IME observer or automatic qualification, and no new acceptance credit. Fresh paste value retained through explicit continue, user visually confirmed.",
+  "final": {
+    "A": {
+      "phase": "complete",
+      "confirmedActions": 2
+    },
+    "B": {
+      "phase": "complete",
+      "confirmedActions": 2,
+      "originalActionIdsPreserved": true
+    },
+    "retentionActor": "human",
+    "retainedValue": "粘贴核对"
+  },
+  "consumption": {
+    "newTasks": 0,
+    "localModels": 6,
+    "newEffects": 2,
+    "newInputs": 97,
+    "cumulative": {
+      "tasks": 8,
+      "models": 35,
+      "effects": 8,
+      "inputs": 328
+    },
+    "realModels": 0,
+    "remoteWrites": 0
+  },
+  "performance": {
+    "readyMs": 1849,
+    "readyThresholdMs": 5000,
+    "rssPeakMiB": 1341.84375,
+    "rssThresholdMiB": 2048,
+    "sampleCount": 398,
+    "settledSampleCount": 92,
+    "settledSampleSpanMs": 273097,
+    "settledStageElapsedToLastSampleMs": 274736,
+    "requiredCompletedStateMs": 300000,
+    "fullCompletedStateIntervalPassed": false,
+    "partialTailSampleSpanMs": 177064,
+    "partialTailRangeMiB": 171.859375,
+    "nativeSwitchSamples": 0,
+    "fullPerformanceAcceptance": false,
+    "obstruction": "App-specific CUA attachment times out at 10s. Original 20-minute cutoff preserved; no full 5-minute completed-state interval fits."
+  },
+  "normalExit": true,
+  "independentKnownPidsCleared": 15,
+  "independentOwnedGroupsCleared": 3,
+  "artifacts": {
+    "PRESENT-PACKAGED.json": "b2f3a57684e18aed989fcd0a4ffaeadbe8d0fbcd78d8791aaf03290d3e15982d",
+    "PRESENT-NATIVE-TRACE.json": "9b78cd66ce86af6c1c06219d2bba585d3fea0e8d92c9f2ef2a77cdfaa0f19814",
+    "PRESENT-POST-EXIT.json": "197a39a0737f3d21ce2967feff1afbcfaae94128eefe8f89325b21b6114af2f5",
+    "PRESENT-HUMAN-RELOAD.json": "59d3c93674efeb1a5c47471cafa3568655f31f6fdee40203998a381a6797c0dc",
+    "PRESENT-RETENTION.json": "72d6b460edde36e11fafde603202af69b8867d0f8cba3171a31eb5f8ecad7122",
+    "PRESENT-NATIVE-OBSTRUCTION.json": "7ee5cbbb84d8c29d586b67a405a41d25802ab53d4a7ec1e5be97109b51baba0a",
+    "PRESENT-REFRESH-STATE.json": "732f14a32aea21ed267d4ff44b1532c13e1e9e1e65acf2e401de5af8ee6cae6d",
+    "PRESENT-REFRESH-FRAME.json": "6426922b71c2aaead20a40ec3868bbee7730d962e04fa38370bdd5a2bbe520f1"
+  }
+}
