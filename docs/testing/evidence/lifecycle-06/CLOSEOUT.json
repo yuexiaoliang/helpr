@@ -32,8 +32,13 @@
     "toolResponse": "queued",
     "confirmedComplete": false,
     "lastObservedAttachmentType": "worktree",
-    "lastObservedCheckoutExists": true,
-    "next": "Check the existing archive request for completion; do not repeat identical requests or manually remove the managed checkout"
+    "lastObservedCheckoutExists": false,
+    "next": "Filesystem and Git cleanup complete; Codex still lists stale attachment metadata. Do not recreate the checkout or alter app metadata files.",
+    "resolvedBy": "User-authorized normal git worktree remove of clean checkout; prototype branch retained",
+    "userRequest": "那是不是可以删掉了",
+    "directoryRemoved": true,
+    "gitWorktreeRegistrationRemoved": true,
+    "codexAttachmentStillListed": true
   },
   "retainedForAudit": [
     "Candidate34",
@@ -43,6 +48,8 @@
   ],
   "allHousekeepingComplete": false,
   "remainingHousekeeping": [
-    "Managed prototype worktree archive still queued; completion not confirmed"
-  ]
+    "Codex still exposes stale attachment metadata for the removed checkout; disk directory and Git worktree registration are removed"
+  ],
+  "updatedAt": "2026-10-20T06:48:30.383023+00:00",
+  "filesystemAndGitCleanupComplete": true
 }
