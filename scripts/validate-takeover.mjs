@@ -306,8 +306,14 @@ const server = http.createServer(async (req, res) => {
       const value = { decision: count === 2 ? 'complete' : 'act', summary: count === 2 ? '已核对本页两次推进。' : '推进本页下一步。', evidence: [fact], previous: plan.previous ? { id: plan.previous.id, status: count > 0 ? 'confirmed' : 'unknown', evidence: [fact] } : null, action: count === 2 ? null : { kind: 'click', target: { role: 'button', name: '自动推进 ' + name, exact: true } } };
       Object.assign(receipt, { name, count }); save();
       const item = { name, res, value, receipt };
-      // 与原生 trace 的小数毫秒保持同一精度，避免同毫秒内正确关闭被向下取整误拒。
-      res.on('close', () => { receipt.closedAt = performance.timeOrigin + performance.now(); save(); });
+      res.on('close', () => {
+        receipt.closedAt = performance.timeOrigin + performance.now();
+        receipt.closedWallAt = Date.now();
+        // 高精度墙钟与CLOCK_REALTIME未经校准；用同一共享记录的位置核对先后。
+        try { receipt.closedNative={traceLength:gate.traceRead().rows.length,gate:gate.state(ids[name])}; }
+        catch(error) { receipt.closedNativeError=error.message; }
+        save();
+      });
       if (holds.get(name) === count) held.push(item); else reply(item);
       return;
     }
@@ -565,6 +571,7 @@ function beginHuman(job) {
     // 且首条网页收件前恰有唯一原生事件时采用AppKit交付证据；不挑后续合格事件。
     const compositionStart=step.receipts.slice(0,step.receipts.findIndex(row=>row.kind==='input')).some(row=>row.kind==='compositionstart' && row.trusted && row.target==='INPUT');
     const composition=job.input==='ime' && (first.isComposing===true || first.inputType==='insertCompositionText' || (first.keyCode===229 && compositionStart));
+    assert(job.input!=='ime' || composition,'HUMAN_IME_FIRST_OPERATION_REQUIRED');
     const identifiedRows=prefix.filter(row=>row.stage==='identified');
     const compositionHandoff=!delivered && modifierCount===0 && composition && identifiedRows.length===1 && ['blocked','handoff'].every(stage=>prefix.filter(row=>row.stage===stage).length===1) && !prefix.some(row=>row.stage==='web-before-input');
     assert(delivered || compositionHandoff, 'HUMAN_NATIVE_DELIVERY_REQUIRED');
@@ -573,9 +580,20 @@ function beginHuman(job) {
     const handoff=rows.find(row=>row.owner===identified?.owner && row.serial===identified.serial && row.stage==='handoff');
     const deliveryAt=delivered?.at ?? first.clientWallAt;
     assert(Number.isFinite(deliveryAt) && identified && prefix.includes(identified) && blocked && handoff && identified.at<=blocked.at && blocked.at<=handoff.at && handoff.at<deliveryAt && blocked.epoch>step.qualified.gates[job.name].epoch && first.gates[job.name].blocked, 'HUMAN_NATIVE_ORDER_REQUIRED');
-    assert(!model.receipt.closedAt || model.receipt.closedAt>=identified.at, 'HUMAN_MODEL_CLOSED_BEFORE_INPUT');
+    if(model.receipt.closedAt) {
+      const closed=model.receipt.closedNative;
+      assert(!model.receipt.closedNativeError && Number.isSafeInteger(closed?.traceLength) && closed.traceLength>rows.indexOf(blocked) && closed.gate.available && closed.gate.blocked && closed.gate.epoch>=blocked.epoch,'HUMAN_MODEL_CLOSED_BEFORE_INPUT');
+    }
+    let after;
+    await until(async()=>{
+      after=await read();
+      const call=own(after)?.messages.find(message=>message.call?.id===step.callId)?.call;
+      if(!call || ['queued','sending'].includes(call.phase)) return false;
+      assert(call.phase==='cancelled' && call.error==='MODEL_CANCELLED','HUMAN_INPUT_CANCELLED_CALL_REQUIRED');
+      return true;
+    },5000);
     step.nativeOrder={identified,blocked,handoff,...(delivered?{delivered}:{compositionReceipt:{kind:first.kind,at:first.at,clientWallAt:first.clientWallAt,traceLength:first.traceLength,keyCode:first.keyCode,isComposing:first.isComposing,inputType:first.inputType},method:'unique-AppKit-handoff-and-trusted-composition-receipt'})};
-    step.after={at:Date.now(),snapshot:await read(),gates:gates(),traceLength:trace()};
+    step.after={at:Date.now(),snapshot:after,gates:gates(),traceLength:trace()};
     step.phase='complete'; step.finishedAt=Date.now();
     humanSignals.set(job.name,{phase:'complete',text:'本步记录完成。请回 Codex 回复，保留当前文字。'}); save();
   })().catch(async error=>{

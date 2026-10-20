@@ -1,0 +1,73 @@
+{
+  "checkedAt": "2026-10-20T03:20:42.555Z",
+  "scope": "Offline VM invokes actual beginHuman source with isolated fixture ports and explicit public/native substitutes; no application, browser, real model, global budget or human acceptance",
+  "sourceSHA256": "88f3cee137091a37557caa1699327c494165bb5e51069226f0aa5b41f3f9437f",
+  "harnessSHA256": "641d6f8cc3ef0c545555b8c61104772bd5c6a998d1295a9398d8c9f70eb519af",
+  "logSHA256": "2bc74fa41e2db34e9b89476ee50c4746b1df91e6d4e2f7202f79cf040d5ad323",
+  "cases": [
+    {
+      "scenario": "normal",
+      "phase": "complete",
+      "passed": true
+    },
+    {
+      "scenario": "first-unproved",
+      "phase": "failed",
+      "failure": "HUMAN_NATIVE_ORDER_REQUIRED",
+      "passed": true
+    },
+    {
+      "scenario": "cancel",
+      "phase": "cancelled",
+      "passed": true
+    },
+    {
+      "scenario": "cancel-prepared-snapshot",
+      "phase": "cancelled",
+      "passed": true
+    },
+    {
+      "scenario": "cancel-continue",
+      "phase": "cancelled",
+      "passed": true
+    },
+    {
+      "scenario": "no-visible-ack",
+      "phase": "rejected-before-start",
+      "passed": true
+    },
+    {
+      "scenario": "ordinary-before-composition",
+      "phase": "failed",
+      "failure": "HUMAN_IME_FIRST_OPERATION_REQUIRED",
+      "passed": true
+    },
+    {
+      "scenario": "early-close",
+      "phase": "failed",
+      "failure": "HUMAN_MODEL_CLOSED_BEFORE_INPUT",
+      "passed": true
+    },
+    {
+      "scenario": "close-observation-missing",
+      "phase": "failed",
+      "failure": "HUMAN_MODEL_CLOSED_BEFORE_INPUT",
+      "passed": true
+    }
+  ],
+  "redRegressions": [
+    {
+      "scenario": "clock-origin-behind",
+      "sourceCommit": "e01ac61",
+      "result": "expected offline failure reproduced",
+      "logSHA256": "e1ca19e531064bad85bc1e31ae688d774ac89ecb3fe90dcd9d24a297a0eaaadc"
+    },
+    {
+      "scenario": "ime-ascii-then-composition",
+      "sourceCommit": "e01ac61",
+      "result": "expected offline failure reproduced",
+      "logSHA256": "67f1451769e90f931ff3233eee5206e24b75e9e3eb2fcf36707820445a65985d"
+    }
+  ],
+  "actualAcceptance": "start84 failures preserved; no actual application run after validator corrections"
+}

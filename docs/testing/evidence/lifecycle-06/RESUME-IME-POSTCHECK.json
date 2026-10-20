@@ -1,0 +1,98 @@
+{
+  "at": "2026-10-20T03:05:58.648Z",
+  "observerPhase": "complete",
+  "assessment": "inconclusive-for-independent-IME-takeover",
+  "firstOperation": {
+    "kind": "keydown",
+    "keyCode": 65,
+    "isComposing": false
+  },
+  "sequence": [
+    {
+      "kind": "keydown",
+      "keyCode": 65,
+      "isComposing": false,
+      "value": ""
+    },
+    {
+      "kind": "beforeinput",
+      "isComposing": false,
+      "inputType": "insertText",
+      "value": ""
+    },
+    {
+      "kind": "input",
+      "isComposing": false,
+      "inputType": "insertText",
+      "value": "a"
+    },
+    {
+      "kind": "keydown",
+      "keyCode": 8,
+      "isComposing": false,
+      "value": "a"
+    },
+    {
+      "kind": "beforeinput",
+      "isComposing": false,
+      "inputType": "deleteContentBackward",
+      "value": "a"
+    },
+    {
+      "kind": "input",
+      "isComposing": false,
+      "inputType": "deleteContentBackward",
+      "value": ""
+    },
+    {
+      "kind": "keydown",
+      "keyCode": 16,
+      "isComposing": false,
+      "value": ""
+    },
+    {
+      "kind": "keydown",
+      "keyCode": 229,
+      "isComposing": false,
+      "value": ""
+    },
+    {
+      "kind": "compositionstart",
+      "value": ""
+    },
+    {
+      "kind": "beforeinput",
+      "isComposing": true,
+      "inputType": "insertCompositionText",
+      "value": ""
+    },
+    {
+      "kind": "input",
+      "isComposing": true,
+      "inputType": "insertCompositionText",
+      "value": "a"
+    },
+    {
+      "kind": "beforeinput",
+      "isComposing": true,
+      "inputType": "insertCompositionText",
+      "value": "a"
+    },
+    {
+      "kind": "input",
+      "isComposing": true,
+      "inputType": "insertCompositionText",
+      "value": "啊"
+    },
+    {
+      "kind": "compositionend",
+      "value": "啊"
+    }
+  ],
+  "reason": "Ordinary Latin a caused takeover; backspace and Shift preceded later composition. Native ordinary-key handoff passed, but composition occurred after takeover. Preserve raw observer complete; do not credit independent IME. No IME retry in this round.",
+  "remaining": {
+    "models": 4,
+    "effects": 2,
+    "inputs": 13
+  }
+}

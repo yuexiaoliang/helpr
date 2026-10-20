@@ -1,0 +1,199 @@
+{
+  "date": "2026-10-20",
+  "candidate": 34,
+  "start": 84,
+  "sourceCommit": "e01ac61",
+  "failure": "HUMAN_MODEL_CLOSED_BEFORE_INPUT",
+  "responsibility": "Validation compared uncalibrated performance-origin timestamps with native CLOCK_REALTIME; IME observer also lacked a shared first-operation composition requirement",
+  "ime": {
+    "rawObserver": "complete",
+    "assessment": "not-passed",
+    "postcheckFile": "RESUME-IME-POSTCHECK.json",
+    "reason": "First ordinary Latin a triggered takeover; composition followed backspace/Shift after takeover. No IME retry."
+  },
+  "continuationAuthorization": "User explicitly confirmed: window visible, may continue paste and closure; no IME retry",
+  "paste": {
+    "assessment": "raw observation failed; native delivery facts retained; no retroactive overall pass",
+    "modelAt": 1792465605640,
+    "armedAt": 1792465605695,
+    "firstNative": {
+      "stage": "identified",
+      "owner": "web:8803eea5-23ba-4798-9244-29fe678e033f",
+      "serial": 10,
+      "epoch": 0,
+      "at": 1792465606056.811
+    },
+    "blocked": {
+      "stage": "blocked",
+      "owner": "web:8803eea5-23ba-4798-9244-29fe678e033f",
+      "serial": 10,
+      "epoch": 16,
+      "at": 1792465606056.812
+    },
+    "handoff": {
+      "stage": "handoff",
+      "owner": "web:8803eea5-23ba-4798-9244-29fe678e033f",
+      "serial": 10,
+      "epoch": 0,
+      "at": 1792465606056.93
+    },
+    "delivered": {
+      "stage": "web-before-input",
+      "owner": "web:8803eea5-23ba-4798-9244-29fe678e033f",
+      "serial": 10,
+      "epoch": 17,
+      "at": 1792465606059.744
+    },
+    "modelClosedAt": 1792465606056.067,
+    "closedMinusNativeMs": -0.744140625,
+    "clockScope": "closedAt from performance.timeOrigin+performance.now; native at from CLOCK_REALTIME; no cross-clock calibration or native-close prefix was recorded",
+    "firstActualOperation": {
+      "route": "/input",
+      "name": "A",
+      "clientAt": 1792465606054.7,
+      "clientWallAt": 1792465606059,
+      "kind": "keydown",
+      "modifierOnly": false,
+      "keyCode": 86,
+      "isComposing": false,
+      "target": "INPUT",
+      "trusted": true,
+      "value": "啊",
+      "clock": {
+        "sent": 1792465341422.3,
+        "server": 1792465341425,
+        "received": 1792465341483
+      },
+      "at": 1792465606078,
+      "gates": {
+        "A": {
+          "epoch": 19,
+          "available": true,
+          "blocked": true
+        },
+        "B": {
+          "epoch": 1,
+          "available": true,
+          "blocked": false
+        }
+      },
+      "traceLength": 232
+    },
+    "compositionReceipt": {
+      "route": "/input",
+      "name": "A",
+      "clientAt": 1792465606090.7,
+      "clientWallAt": 1792465606096,
+      "kind": "beforeinput",
+      "modifierOnly": false,
+      "isComposing": false,
+      "inputType": "insertFromPaste",
+      "target": "INPUT",
+      "trusted": true,
+      "value": "啊",
+      "clock": {
+        "sent": 1792465341422.3,
+        "server": 1792465341425,
+        "received": 1792465341483
+      },
+      "at": 1792465606114,
+      "gates": {
+        "A": {
+          "epoch": 19,
+          "available": true,
+          "blocked": true
+        },
+        "B": {
+          "epoch": 1,
+          "available": true,
+          "blocked": false
+        }
+      },
+      "traceLength": 232
+    },
+    "finalValue": "啊粘贴核对",
+    "formalMouseDowns": 0,
+    "aEffects": 0,
+    "bNewEffects": 0,
+    "bRestoredCount": 2
+  },
+  "resultSHA256": "c491f5175ebcc8f6c3f8cad8d8afd2536a1fdca626ff15702f0c97181a756207",
+  "traceSHA256": "89a649210f2551e06d53f6de688b9c5e2009e47adb0f211171783d1883594233",
+  "newCounts": {
+    "tasks": 0,
+    "models": 3,
+    "effects": 0,
+    "inputs": 35
+  },
+  "cumulative": {
+    "tasks": 8,
+    "models": 29,
+    "effects": 6,
+    "inputs": 217
+  },
+  "remaining": {
+    "tasks": 0,
+    "models": 3,
+    "effects": 2,
+    "inputs": 7
+  },
+  "globalStarts": {
+    "used": 84,
+    "limit": 84
+  },
+  "performance": {
+    "readyMs": 1375,
+    "activeDurationMs": 265281,
+    "samples": 88,
+    "minRssMiB": 936.234375,
+    "maxRssMiB": 1375.6875,
+    "steadyState": "not reached",
+    "nativeSwitching": "not attempted"
+  },
+  "notPerformed": [
+    "final explicit continue",
+    "remaining two A effects",
+    "retained text after continue",
+    "five-minute settled window",
+    "six native task switches"
+  ],
+  "exit": {
+    "at": 1792465818375,
+    "knownPids": [
+      77835,
+      77844,
+      77845,
+      77847,
+      77848,
+      77849,
+      77855,
+      77856,
+      77857,
+      77858,
+      77859,
+      77861,
+      77862,
+      77863,
+      77864
+    ],
+    "ownedGroups": [
+      77835,
+      77847,
+      77849
+    ],
+    "pidSurvivors": [],
+    "groupSurvivors": [],
+    "exitCode": 0,
+    "finished": "2026-10-20T03:06:46.635Z"
+  },
+  "offlineCorrection": {
+    "sourceSHA256": "88f3cee137091a37557caa1699327c494165bb5e51069226f0aa5b41f3f9437f",
+    "fullValidator": "FULL-VALIDATOR-CLOSURE-CHECK.json",
+    "fullCases": 21,
+    "observer": "CLOSURE-OBSERVER-CHECK.json",
+    "observerCases": 9,
+    "directCli": "CLOSURE-CLI-CHECK.json",
+    "actualRerun": false,
+    "actualAcceptance": "unchanged; failed or incomplete"
+  }
+}
