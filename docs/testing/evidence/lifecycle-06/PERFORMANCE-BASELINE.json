@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-20",
+  "scenario": "16 GiB current Mac; candidate34; original two completed tasks with local fixture pages; native tab switching and a fixed full five-minute settled interval",
+  "build": 34,
+  "archive": "de92eb195d79e528e76ea4e35fdd38e93c11c7452d72a74821601b73eead1dcd",
+  "implementationCommit": "6677f6a",
+  "thresholds": {
+    "coldReadyMsMaximum": 5000,
+    "nativeSwitchClickToAXAddressMsMaximum": 2000,
+    "ownPidRssSumMiBMaximum": 2048,
+    "settledLastThreeMinutesRssRangeMiBMaximum": 256,
+    "requiredSettledIntervalMs": 300000
+  },
+  "measured": {
+    "start": 88,
+    "readyMs": 2002,
+    "nativeSwitchUpperBoundsMs": [
+      578,
+      491,
+      486,
+      519,
+      701,
+      505
+    ],
+    "ownPidRssSumPeakMiB": 1333.703125,
+    "settledSpanMs": 300064,
+    "settledSamples": 101,
+    "tailSamples": 60,
+    "tailSampleSpanMs": 177052,
+    "tailRangeMiB": 52.921875
+  },
+  "methods": {
+    "ready": "managed app spawn until actual ready IPC",
+    "switch": "Computer Use native tab click until actual AX target address and web heading returned; includes tool overhead, not paint latency",
+    "memory": "sum OS RSS of owned application process tree every3s; excludes unrelated apps and measurement controller",
+    "steady": "first settled sample to first sample at/after +300000ms; first minute settling, last180000ms range; no best-window selection",
+    "modelAndSiteWait": "No model requests or new website effects in88. Prior03 real service and site waits are separate functional evidence, not this latency metric."
+  },
+  "sourceEvidence": {
+    "01": "../workspace-01/REPORT.md",
+    "03": "../../execution-03-trial.md",
+    "06Human": "PRESENT-CHECK.json",
+    "06Performance": "PERFORMANCE-CHECK.json",
+    "raw": "PERFORMANCE-PACKAGED.json"
+  },
+  "laterAcceptance": "23 repeats same numerical thresholds and methods on the frozen final candidate; this does not accept23 or real-site workload performance"
+}

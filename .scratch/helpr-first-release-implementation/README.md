@@ -21,7 +21,7 @@
 | [03 两项网页任务执行、停止与继续](issues/03-parallel-execution-stop-and-continue.md) | [02](issues/02-model-settings-and-page-understanding.md) |
 | [04 直接接管网页与页面变化后的归属](issues/04-native-takeover-and-page-ownership.md)（已验收） | [03](issues/03-parallel-execution-stop-and-continue.md) |
 | [05 退出、意外退出与冷重开核对](issues/05-quit-crash-and-cold-recovery.md)（已验收） | [04](issues/04-native-takeover-and-page-ownership.md) |
-| [06 收起运行、锁屏与休眠恢复](issues/06-hide-lock-sleep-and-resume.md) | [05](issues/05-quit-crash-and-cold-recovery.md) |
+| [06 收起运行、锁屏与休眠恢复](issues/06-hide-lock-sleep-and-resume.md)（已验收） | [05](issues/05-quit-crash-and-cold-recovery.md) |
 | [07 本机备份与旧备份恢复](issues/07-local-backup-and-restore.md) | [05](issues/05-quit-crash-and-cold-recovery.md) |
 | [08 自动检查新版与可信下载提醒](issues/08-version-check-and-download-notice.md) | [02](issues/02-model-settings-and-page-understanding.md) |
 | [09 手动换版保留资料、原密钥和有效登录](issues/09-manual-upgrade-and-credential-continuity.md) | [06](issues/06-hide-lock-sleep-and-resume.md)、[07](issues/07-local-backup-and-restore.md)、[08](issues/08-version-check-and-download-notice.md) |
@@ -137,3 +137,6 @@
 2026-10-20，用户批准的唯一启动84已退出：IME首操作普通a，不计独立中文接管；用户同意只继续paste及收尾，paste随后因跨时钟模型关闭断言失败，正常退出15PID／3组全空。仅离线修正验证器，未再启动。累计8任务／29本机模型／6效果／217收件，启动84/84；最后继续及性能未执行，06保持6/10条、后续依赖不解除，见[84实际边界](../../docs/testing/evidence/lifecycle-06/REPORT.md#启动84ime首操作复核及粘贴跨时钟断言失败)。
 
 2026-10-20，用户要求继续测试后，已准备精确84现场复用与中文预热，29项完整入口离线检查及两轴只读复核通过，候选签名／原生连接可用；实际预算未改、应用未启动。只增1启动／3本机模拟模型／64收件的[具体方案](../../docs/testing/lifecycle-06-plan.md#84退出后的单轮续验准备待增量确认)待确认；6/10条与后续依赖保持。
+
+
+2026-10-20，06十条验收已按累计正式入口、真实系统／真人及固定候选34证据关闭，见[06最终验收](../../docs/testing/evidence/lifecycle-06/FINAL-ACCEPTANCE.md)。87补齐独立中文／粘贴和明确继续；88零新任务／模型／效果补齐实际界面及完整性能，正常退出且独立15PID／3组空。原失败、人为刷新和额外预热保持。09／12对06的依赖现已满足，其它依赖及原型确认各自适用；23接收[性能基线](../../docs/testing/evidence/lifecycle-06/PERFORMANCE-BASELINE.md)后仍须在最终候选复验。本轮未开始其它事项。
