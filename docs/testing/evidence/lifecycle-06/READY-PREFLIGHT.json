@@ -1,0 +1,64 @@
+{
+  "checkedAt": "2026-10-20T05:42:43.216Z",
+  "sourceSHA256": "9eaee6aa65595375258217b3368975d0ab6c6341dabf5f1cf1dcad0df2b6286e",
+  "sourceHelperSHA256": "be059109e7fd4a6012842f3c88aff709c74ddd269e5b3e19ecb2270c2a208bc8",
+  "harnessSHA256": "96725410b6da99a01cce9ebe587d93b774688c76ce11f8fc5f8175b6dc0d1959",
+  "scope": "Offline preflight after readiness timeout; application is closed; next start waits for fresh user availability",
+  "carry": {
+    "round": "lifecycle-06-input-known",
+    "counts": {
+      "effects": 6,
+      "inputs": 231,
+      "models": 29,
+      "tasks": 8
+    },
+    "maximum": {
+      "effects": 8,
+      "inputs": 1024,
+      "models": 80,
+      "tasks": 8
+    },
+    "remaining": {
+      "effects": 2,
+      "inputs": 793,
+      "models": 51,
+      "tasks": 0
+    },
+    "reusedTasks": 2
+  },
+  "fullValidator": {
+    "file": "FULL-VALIDATOR-READY-CHECK.json",
+    "cases": 40,
+    "SHA256": "4630af86d6661004d40119f1689e6155769782c040c12b41184914642f63fe49"
+  },
+  "reuseProofSHA256": "f9af086102d404a350653595c5bf3181830b29c70ff28cac22dd03cce36e76d4",
+  "globalBudget": {
+    "used": {
+      "builds": 34,
+      "installs": 8,
+      "starts": 86,
+      "faults": 37,
+      "cleanups": 16
+    },
+    "limits": {
+      "builds": 36,
+      "installs": 10,
+      "starts": 90,
+      "faults": 37,
+      "cleanups": 18
+    }
+  },
+  "review": {
+    "standardsHard": 0,
+    "standardsSmells": 0,
+    "specResidual": 0
+  },
+  "retainedDraftFailure": {
+    "logSHA256": "14d3c07773347867ff83ff7209cead4efeb8b99bdec699f5ffd390740f566b63",
+    "cause": "Unproved-native mock accidentally also mutated database; fixture corrected so it exercises actual restore assertion",
+    "fixed": true
+  },
+  "actualNextRun": "not started",
+  "nextHumanPrerequisite": "Fresh availability and clipboard/IME preparation before opening; fresh actual window visible confirmation before human-input command",
+  "budgetApprovalNeeded": false
+}

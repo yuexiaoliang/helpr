@@ -47,8 +47,8 @@ for (const [file, hash] of Object.entries(manifest.hashes))
 const carryName = process.argv.find((arg) => arg.startsWith('--carry='))?.slice(8);
 const reuseInputPreparation = process.argv.includes('--reuse-input-preparation');
 const reuseInputProgress = process.argv.includes('--reuse-input-progress');
-assert(!reuseInputProgress || (lifecycle && !reuseInputPreparation && ['lifecycle-06-input-verified','lifecycle-06-input-resume','lifecycle-06-input-closure'].includes(carryName)),'INPUT_PROGRESS_REUSE_REQUIRES_SOURCE');
-const requireImeProbe=reuseInputProgress && ['lifecycle-06-input-resume','lifecycle-06-input-closure'].includes(carryName);
+assert(!reuseInputProgress || (lifecycle && !reuseInputPreparation && ['lifecycle-06-input-verified','lifecycle-06-input-resume','lifecycle-06-input-closure','lifecycle-06-input-known'].includes(carryName)),'INPUT_PROGRESS_REUSE_REQUIRES_SOURCE');
+const requireImeProbe=reuseInputProgress && ['lifecycle-06-input-resume','lifecycle-06-input-closure','lifecycle-06-input-known'].includes(carryName);
 assert(!reuseInputPreparation || (lifecycle && ['lifecycle-06-input-final','lifecycle-06-input-ready'].includes(carryName)), 'INPUT_PREPARATION_REUSE_REQUIRES_SOURCE');
 let preparationReuse;
 const taskLimit = Number(process.argv.find((arg) => arg.startsWith('--task-limit='))?.slice(13) ?? (lifecycle ? 4 : 12));
@@ -407,8 +407,19 @@ try {
   if(preparationReuse) {
     const restored=await snapshot();
     if(preparationReuse.progress) {
-      const a=restored.tasks.find(task=>task.id===ids.A)?.execution,b=restored.tasks.find(task=>task.id===ids.B)?.execution;
-      assert(restored.tasks.length===2 && a?.phase==='paused' && a.pauseReason===(preparationReuse.pauseReason ?? 'takeover') && a.intent==='automatic' && a.actions.length===0 && b?.phase==='complete' && b.actions.length===2 && b.actions.every(action=>action.status==='confirmed') && !a.recoveryPending && !b.recoveryPending && evidence.models.length===0 && evidence.effects.length===0,'INPUT_PROGRESS_RESTORE_MUST_PRESERVE_EXECUTIONS');
+      const taskA=restored.tasks.find(task=>task.id===ids.A),a=taskA?.execution,b=restored.tasks.find(task=>task.id===ids.B)?.execution;
+      const savedPause=preparationReuse.pauseReason ?? 'takeover';
+      let freshUnknown;
+      if(carryName==='lifecycle-06-input-known' && savedPause==='takeover' && a?.pauseReason==='ownership-unknown') {
+        const native=gate.traceRead(),ticket=gate.state(ids.A),rows=native.rows;
+        for(let index=0;index<rows.length-2;index++) {
+          const [identified,blocked,handoff]=rows.slice(index,index+3);
+          if([identified,blocked,handoff].every(row=>row.owner==='unknown' && row.serial===identified.serial) && identified.stage==='identified' && blocked.stage==='blocked' && handoff.stage==='handoff' && identified.at<=blocked.at && blocked.at<=handoff.at) freshUnknown={identified,blocked,handoff};
+        }
+        if(native.overflow || !ticket.available || !ticket.blocked || !taskA.executionControl?.stopSaved || taskA.executionControl.reason!=='ownership-unknown') freshUnknown=undefined;
+      }
+      assert(restored.tasks.length===2 && a?.phase==='paused' && (a.pauseReason===savedPause || freshUnknown) && a.intent==='automatic' && a.actions.length===0 && b?.phase==='complete' && b.actions.length===2 && b.actions.every(action=>action.status==='confirmed') && !a.recoveryPending && !b.recoveryPending && evidence.models.length===0 && evidence.effects.length===0,'INPUT_PROGRESS_RESTORE_MUST_PRESERVE_EXECUTIONS');
+      if(freshUnknown) {evidence.preparationInputRevocation={savedPause,observedPause:a.pauseReason,scope:'fresh conservative startup revocation only; no execution permission granted',native:freshUnknown};save();}
     } else assert(restored.tasks.length===2 && Object.values(ids).every(id=>restored.tasks.some(task=>task.id===id && !task.execution)) && evidence.models.length===0 && evidence.effects.length===0,'INPUT_PREPARATION_RESTORE_MUST_REMAIN_MANUAL');
   }
   evidence.phase = 'ready'; evidence.validationStarted = new Date().toISOString(); save();

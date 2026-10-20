@@ -167,3 +167,9 @@ IME准备增加真实中文预热：用户先点击A输入框，在灰色提示�
 85实际因冷准备出现新的ownership-unknown而停止，0模型／效果，正常退出且独立清空，原失败保留，详见[85结果](evidence/lifecycle-06/REPORT.md#启动85冷准备的新增归属未知暂停)。精确85复用另冻结退出数据库与原生链，保留未知暂停及最终task版本差，不回退旧84字节。35项完整离线检查及两轴复核通过。
 
 本批下一次入口为 `node scripts/validate-takeover.mjs --round=lifecycle-06-input-known --build=34 --lifecycle --carry=lifecycle-06-input-closure --task-limit=8 --lifecycle-model-limit=80 --lifecycle-input-limit=1024 --reuse-input-progress`，只读预检通过。80／1024与失败保留窗口约束扩至该精确85来源；任务／效果／原候选及所有停止规则不变，仍余51模型／804收件／2效果，授权尚余5启动。不重复询问预算；正式资格仍在准备点击和明确继续后核对。
+
+86已在等用户窗口就绪时到达原20分钟截止，于12:09正常退出且独立确认清空，未启动真人步骤、模型或网页效果。用户13:34回复窗口不可见／未准备好后，停止提前开窗等待；新的顺序是先明确当前可立即配合、剪贴板和中文输入法已备好，再打开并核对实际窗口，取得新近可见确认后才开始输入。
+
+精确86退出资料的[复用证明](evidence/lifecycle-06/INPUT-KNOWN-REUSE.json)和[40项入口检查](evidence/lifecycle-06/FULL-VALIDATOR-READY-CHECK.json)已完成，不改旧字节依据或原截止。下一次预备入口 `node scripts/validate-takeover.mjs --round=lifecycle-06-input-present --build=34 --lifecycle --carry=lifecycle-06-input-known --task-limit=8 --lifecycle-model-limit=80 --lifecycle-input-limit=1024 --reuse-input-progress`，`--check-carry`只读通过；当前余4启动、51本机模型、793收件、2效果、0新任务。87未开始，不另问额度。
+
+该精确来源若冷启动收到新的完整unknown原生阻断链，只允许保守的takeover→ownership-unknown变化，并同时核对无溢出、当前阻断和已保存暂停，记录preparationInputRevocation；无证据仍拒绝。它不放行执行、不用新未知状态覆盖旧停止，也不改变正式准备／停止／继续顺序。原方案的单轮20分钟、正式IME／paste各一次、失败保留说明及正常退出边界保持。

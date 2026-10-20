@@ -1,4 +1,4 @@
-// 只复用06启动83–85的精确退出现场；不修改数据库或将旧资格当作当前资格。
+// 只复用06启动83–86的精确退出现场；不修改数据库或将旧资格当作当前资格。
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
@@ -8,12 +8,13 @@ export function readLifecycleProgress({root,source,build,built,archive}, {filesy
   const read=file=>JSON.parse(filesystem.readFileSync(file));
   const digest=file=>createHash('sha256').update(filesystem.readFileSync(file)).digest('hex');
   const unknown=source==='lifecycle-06-input-closure';
-  const resumed=unknown || source==='lifecycle-06-input-resume';
+  const waiting=source==='lifecycle-06-input-known';
+  const resumed=waiting || unknown || source==='lifecycle-06-input-resume';
   assert((resumed || source==='lifecycle-06-input-verified') && build===34,'INPUT_PROGRESS_SOURCE_REQUIRED');
   const directory=path.join(root,source);
-  const proof=read('docs/testing/evidence/lifecycle-06/'+(unknown?'INPUT-CLOSURE-REUSE.json':resumed?'INPUT-RESUME-REUSE.json':'INPUT-PROGRESS-REUSE.json'));
-  const failure=read('docs/testing/evidence/lifecycle-06/'+(unknown?'CLOSURE-FAILURE.json':resumed?'RESUME-FAILURE.json':'INPUT-IME-FAILURE.json'));
-  const parent=read('docs/testing/evidence/lifecycle-06/'+(unknown?'RESUME-FAILURE.json':resumed?'INPUT-IME-FAILURE.json':'REUSE-GATE-FAILURE.json'));
+  const proof=read('docs/testing/evidence/lifecycle-06/'+(waiting?'INPUT-KNOWN-REUSE.json':unknown?'INPUT-CLOSURE-REUSE.json':resumed?'INPUT-RESUME-REUSE.json':'INPUT-PROGRESS-REUSE.json'));
+  const failure=read('docs/testing/evidence/lifecycle-06/'+(waiting?'KNOWN-FAILURE.json':unknown?'CLOSURE-FAILURE.json':resumed?'RESUME-FAILURE.json':'INPUT-IME-FAILURE.json'));
+  const parent=read('docs/testing/evidence/lifecycle-06/'+(waiting?'CLOSURE-FAILURE.json':unknown?'RESUME-FAILURE.json':resumed?'INPUT-IME-FAILURE.json':'REUSE-GATE-FAILURE.json'));
   assert(proof.source===source && Object.keys(proof.sourceFiles).sort().join(',')==='context.json,ids.json,result.json,snapshot.json','INPUT_PROGRESS_FILES_REQUIRED');
   for(const [file,sha] of Object.entries(proof.sourceFiles))
     assert.equal(digest(path.join(directory,file)),sha,'INPUT_PROGRESS_SOURCE_CHANGED');
@@ -21,18 +22,19 @@ export function readLifecycleProgress({root,source,build,built,archive}, {filesy
   const context=read(path.join(directory,'context.json'));
   const ids=read(path.join(directory,'ids.json'));
   const state=read(path.join(directory,'snapshot.json'));
-  assert(proof.sourceFiles['result.json']===failure.resultSHA256 && previous.start===(unknown?85:resumed?84:83) && previous.build===build && previous.archive===archive && previous.failure===(unknown?'INPUT_PROGRESS_RESTORE_MUST_PRESERVE_EXECUTIONS':resumed?'HUMAN_MODEL_CLOSED_BEFORE_INPUT':'HUMAN_NATIVE_DELIVERY_REQUIRED') && !previous.controlFailure && (unknown?previous.fixtureFailure==='ERR_ASSERTION':!previous.fixtureFailure),'INPUT_PROGRESS_FAILURE_REQUIRED');
-  assert(previous.carry.round===(unknown?'lifecycle-06-input-resume':resumed?'lifecycle-06-input-verified':'lifecycle-06-input-ready') && previous.preparationReuse.source===previous.carry.round && previous.preparationReuse.resultSHA256===parent.resultSHA256,'INPUT_PROGRESS_PARENT_REQUIRED');
+  assert(proof.sourceFiles['result.json']===failure.resultSHA256 && previous.start===(waiting?86:unknown?85:resumed?84:83) && previous.build===build && previous.archive===archive && previous.failure===(waiting?'ROUND_TIME_LIMIT':unknown?'INPUT_PROGRESS_RESTORE_MUST_PRESERVE_EXECUTIONS':resumed?'HUMAN_MODEL_CLOSED_BEFORE_INPUT':'HUMAN_NATIVE_DELIVERY_REQUIRED') && !previous.controlFailure && (unknown?previous.fixtureFailure==='ERR_ASSERTION':!previous.fixtureFailure),'INPUT_PROGRESS_FAILURE_REQUIRED');
+  assert(previous.carry.round===(waiting?'lifecycle-06-input-closure':unknown?'lifecycle-06-input-resume':resumed?'lifecycle-06-input-verified':'lifecycle-06-input-ready') && previous.preparationReuse.source===previous.carry.round && previous.preparationReuse.resultSHA256===parent.resultSHA256,'INPUT_PROGRESS_PARENT_REQUIRED');
   assert(previous.finished && previous.exitCode===0 && previous.survivors.length===0 && previous.groupSurvivors.length===0 && previous.processTree.every(row=>!alive(row.pid)) && proof.independentExit.pidSurvivors.length===0 && proof.independentExit.groupSurvivors.length===0,'INPUT_PROGRESS_EXIT_REQUIRED');
-  assert(previous.taskAttempts===0 && previous.models.length===(unknown?0:resumed?3:4) && previous.effects.length===(resumed?0:2) && previous.inputs.length===(unknown?3:resumed?35:20) && (unknown?(!previous.validationStarted && !previous.humanSteps):(previous.humanSteps.length===(resumed?2:1) && previous.humanSteps.at(-1).failure===previous.failure)),'INPUT_PROGRESS_COUNTS_REQUIRED');
+  assert(previous.taskAttempts===0 && previous.models.length===((waiting||unknown)?0:resumed?3:4) && previous.effects.length===(resumed?0:2) && previous.inputs.length===(waiting?11:unknown?3:resumed?35:20) && (waiting?(previous.validationStarted && previous.deadlineReachedAt && !previous.humanSteps && !previous.humanWindowReady):unknown?(!previous.validationStarted && !previous.humanSteps):(previous.humanSteps.length===(resumed?2:1) && previous.humanSteps.at(-1).failure===previous.failure)),'INPUT_PROGRESS_COUNTS_REQUIRED');
   assert.deepEqual(previous.effects.map(row=>[row.name,row.count]),resumed?[]:[['B',1],['B',2]],'INPUT_PROGRESS_EFFECTS_REQUIRED');
   if(resumed) {
     assert.equal(proof.parentResultSHA256,parent.resultSHA256,'INPUT_PROGRESS_PARENT_PROOF_REQUIRED');
-    assert.deepEqual(previous.carry.counts,unknown?{effects:6,inputs:217,models:29,tasks:8}:{effects:6,inputs:182,models:26,tasks:8},'INPUT_PROGRESS_CUMULATIVE_COUNTS_REQUIRED');
+    assert.deepEqual(previous.carry.counts,waiting?{effects:6,inputs:220,models:29,tasks:8}:unknown?{effects:6,inputs:217,models:29,tasks:8}:{effects:6,inputs:182,models:26,tasks:8},'INPUT_PROGRESS_CUMULATIVE_COUNTS_REQUIRED');
     assert.deepEqual(previous.preparationReuse.initialCounts,{A:0,B:2},'INPUT_PROGRESS_OLD_SITE_STATE_REQUIRED');
     const ime=read('docs/testing/evidence/lifecycle-06/RESUME-IME-POSTCHECK.json');
     assert(ime.observerPhase==='complete' && ime.assessment==='inconclusive-for-independent-IME-takeover' && ime.firstOperation.keyCode===65,'INPUT_PROGRESS_IME_FAILURE_PRESERVED');
   }
+  if(waiting) assert.equal(proof.nativeTraceSHA256,digest(path.join(directory,'native-trace.json')),'INPUT_PROGRESS_WAIT_TRACE_CHANGED');
   if(unknown) {
     assert.equal(proof.nativeTraceSHA256,digest(path.join(directory,'native-trace.json')),'INPUT_PROGRESS_UNKNOWN_TRACE_CHANGED');
     const rows=read(path.join(directory,'native-trace.json')).rows;
