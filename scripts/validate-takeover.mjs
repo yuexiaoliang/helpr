@@ -45,7 +45,7 @@ for (const [file, hash] of Object.entries(manifest.hashes))
   assert.equal(createHash('sha256').update(fs.readFileSync(path.join(built, file))).digest('hex'), hash);
 const carryName = process.argv.find((arg) => arg.startsWith('--carry='))?.slice(8);
 const reuseInputPreparation = process.argv.includes('--reuse-input-preparation');
-assert(!reuseInputPreparation || (lifecycle && carryName === 'lifecycle-06-input-final'), 'INPUT_PREPARATION_REUSE_REQUIRES_SOURCE');
+assert(!reuseInputPreparation || (lifecycle && ['lifecycle-06-input-final','lifecycle-06-input-ready'].includes(carryName)), 'INPUT_PREPARATION_REUSE_REQUIRES_SOURCE');
 let preparationReuse;
 const taskLimit = Number(process.argv.find((arg) => arg.startsWith('--task-limit='))?.slice(13) ?? (lifecycle ? 4 : 12));
 assert((lifecycle && (taskLimit === 4 || ([6,8].includes(taskLimit) && carryName))) || (!lifecycle && [12,14,16,18,20,22,24,26].includes(taskLimit)), 'INVALID_TASK_LIMIT');
@@ -87,8 +87,25 @@ if (carryName !== undefined) {
   }
 }
 if (reuseInputPreparation) {
-  const priorRoot=path.join(validationRoot,carryName);
+  // 原始81资料证明保持不变；82的正常冷打开另有退出后的字节依据。
+  const priorRoot=path.join(validationRoot,'lifecycle-06-input-final');
   const proof=JSON.parse(fs.readFileSync('docs/testing/evidence/lifecycle-06/INPUT-PREPARATION-FAILURE.json'));
+  let databaseProof=proof;
+  if(carryName==='lifecycle-06-input-ready') {
+    databaseProof=JSON.parse(fs.readFileSync('docs/testing/evidence/lifecycle-06/REUSE-PRELAUNCH-PROOF.json'));
+    const openedRoot=path.join(validationRoot,carryName);
+    for(const [file,sha] of Object.entries(databaseProof.sourceFiles))
+      assert(['result.json','context.json','ids.json'].includes(file) && createHash('sha256').update(fs.readFileSync(path.join(openedRoot,file))).digest('hex')===sha,'INPUT_PREPARATION_OPENED_SOURCE_CHANGED');
+    assert(Object.keys(databaseProof.sourceFiles).sort().join(',')==='context.json,ids.json,result.json','INPUT_PREPARATION_OPENED_FILES_REQUIRED');
+    const opened=JSON.parse(fs.readFileSync(path.join(openedRoot,'result.json')));
+    const gateFailure=JSON.parse(fs.readFileSync('docs/testing/evidence/lifecycle-06/REUSE-GATE-FAILURE.json'));
+    assert(databaseProof.source==='lifecycle-06-input-ready' && opened.start===82 && opened.build===build && opened.archive===manifest.hashes['Contents/Resources/app.asar'] && opened.failure===gateFailure.failure && databaseProof.sourceFiles['result.json']===gateFailure.resultSHA256,'INPUT_PREPARATION_GATE_FAILURE_REQUIRED');
+    assert(opened.taskAttempts===0 && ['models','effects','inputs'].every(kind=>opened[kind].length===0) && !opened.validationStarted && !opened.humanSteps && !opened.controlFailure && !opened.fixtureFailure,'INPUT_PREPARATION_OPENED_UNUSED_REQUIRED');
+    assert(opened.finished && opened.exitCode===0 && opened.survivors.length===0 && opened.groupSurvivors.length===0 && opened.processTree.every(row=>!alive(row.pid)) && databaseProof.independentExit.pidSurvivors.length===0 && databaseProof.independentExit.groupSurvivors.length===0,'INPUT_PREPARATION_OPENED_EXIT_REQUIRED');
+    assert(opened.preparationReuse?.source==='lifecycle-06-input-final' && opened.preparationReuse.resultSHA256===proof.resultSHA256 && databaseProof.parentResultSHA256===proof.resultSHA256 && databaseProof.audit.unusedTasksPreserved===true,'INPUT_PREPARATION_PARENT_REQUIRED');
+    for(const file of ['context.json','ids.json']) assert(fs.readFileSync(path.join(openedRoot,file)).equals(fs.readFileSync(path.join(priorRoot,file))),'INPUT_PREPARATION_IDENTITY_CHANGED');
+    assert.deepEqual(opened.carry.counts,carry.counts,'INPUT_PREPARATION_COUNTS_CHANGED');
+  }
   for(const [file,key] of [['result.json','resultSHA256'],['context.json','contextSHA256'],['ids.json','idsSHA256'],['snapshot.json','snapshotSHA256']])
     assert.equal(createHash('sha256').update(fs.readFileSync(path.join(priorRoot,file))).digest('hex'),proof[key],'INPUT_PREPARATION_SOURCE_CHANGED');
   const previous=JSON.parse(fs.readFileSync(path.join(priorRoot,'result.json')));
@@ -102,17 +119,17 @@ if (reuseInputPreparation) {
   assert(context.built===built && context.profile.startsWith(root+'/lifecycle06-') && path.dirname(context.profile)===root && fs.realpathSync(root)===root && fs.realpathSync(context.profile)===context.profile,'INPUT_PREPARATION_PROFILE_REQUIRED');
   const stat=fs.statSync(context.profile); assert(stat.uid===process.getuid() && (stat.mode&0o077)===0,'INPUT_PREPARATION_PROFILE_OWNER_REQUIRED');
   const databaseFiles=['workspace.sqlite','workspace.sqlite-wal','workspace.sqlite-shm'];
-  assert.deepEqual(databaseFiles.filter(file=>fs.existsSync(path.join(context.profile,file))).sort(),Object.keys(proof.profileFiles).sort(),'INPUT_PREPARATION_DATABASE_FILES_CHANGED');
-  for(const [file,sha] of Object.entries(proof.profileFiles)) {
+  assert.deepEqual(databaseFiles.filter(file=>fs.existsSync(path.join(context.profile,file))).sort(),Object.keys(databaseProof.profileFiles).sort(),'INPUT_PREPARATION_DATABASE_FILES_CHANGED');
+  for(const [file,sha] of Object.entries(databaseProof.profileFiles)) {
     assert(['workspace.sqlite','workspace.sqlite-wal','workspace.sqlite-shm'].includes(file),'INPUT_PREPARATION_FILE_DENIED');
     assert(!fs.lstatSync(path.join(context.profile,file)).isSymbolicLink(),'INPUT_PREPARATION_FILE_SYMLINK');
     assert.equal(createHash('sha256').update(fs.readFileSync(path.join(context.profile,file))).digest('hex'),sha,'INPUT_PREPARATION_DATABASE_CHANGED');
   }
-  assert(proof.profileFiles['workspace.sqlite'],'INPUT_PREPARATION_DATABASE_REQUIRED');
+  assert(databaseProof.profileFiles['workspace.sqlite'],'INPUT_PREPARATION_DATABASE_REQUIRED');
   const origin=new URL(context.base); assert(origin.origin===context.base && origin.protocol==='http:' && origin.hostname==='127.0.0.1' && origin.port,'INPUT_PREPARATION_LOCAL_ORIGIN_REQUIRED');
   assert(Object.keys(previousIds).sort().join(',')==='A,B' && previousState.tasks.length===2 && ['A','B'].every(name=>previousState.tasks.some(task=>task.id===previousIds[name] && task.url===context.base+'/page/'+name && !task.execution)),'INPUT_PREPARATION_UNUSED_TASKS_REQUIRED');
   assert(previousState.modelSettings?.endpoint===context.base+'/v1' && previousState.modelSettings.model==='controlled-local-04' && previousState.modelSettings.hasCredential && previousState.modelSettings.version>=1,'INPUT_PREPARATION_CONFIGURATION_REQUIRED');
-  preparationReuse={source:carryName,resultSHA256:proof.resultSHA256,profile:context.profile,base:context.base,ids:previousIds};
+  preparationReuse={source:carryName,resultSHA256:databaseProof.sourceFiles?.['result.json'] ?? proof.resultSHA256,parentResultSHA256:proof.resultSHA256,profile:context.profile,base:context.base,ids:previousIds};
 }
 if (process.argv.includes('--check-carry')) {
   assert(carry, 'CARRY_ROUND_REQUIRED');
@@ -239,7 +256,7 @@ const server = http.createServer(async (req, res) => {
       const clock=(async()=>{const sent=performance.timeOrigin+performance.now();const response=await fetch('/clock');const value=await response.json();return{sent,server:value.at,received:performance.timeOrigin+performance.now()};})();
       const send=async(route,data)=>{const clientWallAt=Date.now(),clientAt=performance.timeOrigin+performance.now();return fetch(route,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,clientAt,clientWallAt,...data,clock:await clock})});};
       let moves=0;document.addEventListener('mousemove',e=>{if(moves++<8)send('/input',{kind:'mousemove',trusted:e.isTrusted,x:e.clientX,y:e.clientY});},true);
-      for(const kind of ['mousedown','keydown','beforeinput','input','paste'])document.addEventListener(kind,e=>{if(e.target.id!=='advance')send('/input',{kind,target:e.target.id||e.target.tagName,trusted:e.isTrusted,clientAt:performance.timeOrigin+performance.now(),value:document.querySelector('input').value});},true);
+      for(const kind of ['mousedown','keydown','beforeinput','input','paste'])document.addEventListener(kind,e=>{if(e.target.id!=='advance')send('/input',{kind,modifierOnly:kind==='keydown'&&['Meta','Shift','Control','Alt'].includes(e.key),target:e.target.id||e.target.tagName,trusted:e.isTrusted,clientAt:performance.timeOrigin+performance.now(),value:document.querySelector('input').value});},true);
       document.querySelector('#advance').onclick=()=>{count++;document.querySelector('#progress').textContent=name+' 自动完成 '+count;send('/effect',{count})};
       document.querySelector('#frame').onclick=()=>{document.querySelector('#slot').innerHTML='<iframe title="任务子页面" src="/frame/'+name+'"></iframe>'};
       send('/probe',{node:typeof process,require:typeof require,bridge:typeof window.workspace});
@@ -282,7 +299,8 @@ const server = http.createServer(async (req, res) => {
       const value = { decision: count === 2 ? 'complete' : 'act', summary: count === 2 ? '已核对本页两次推进。' : '推进本页下一步。', evidence: [fact], previous: plan.previous ? { id: plan.previous.id, status: count > 0 ? 'confirmed' : 'unknown', evidence: [fact] } : null, action: count === 2 ? null : { kind: 'click', target: { role: 'button', name: '自动推进 ' + name, exact: true } } };
       Object.assign(receipt, { name, count }); save();
       const item = { name, res, value, receipt };
-      res.on('close', () => { receipt.closedAt = Date.now(); save(); });
+      // 与原生 trace 的小数毫秒保持同一精度，避免同毫秒内正确关闭被向下取整误拒。
+      res.on('close', () => { receipt.closedAt = performance.timeOrigin + performance.now(); save(); });
       if (holds.get(name) === count) held.push(item); else reply(item);
       return;
     }
@@ -503,7 +521,7 @@ function beginHuman(job) {
       const rows=evidence.inputs.slice(step.qualified.inputOffset).filter(row=>row.name===job.name && row.kind!=='mousemove');
       assert(!rows.some(row=>row.kind==='mousedown'), 'HUMAN_EXTRA_CLICK');
       if(job.input==='ime') assert(!rows.some(row=>row.kind==='paste'), 'HUMAN_IME_WAS_PASTE');
-      const first=rows.find(row=>['keydown','beforeinput','paste','input'].includes(row.kind));
+      const first=rows.find(row=>!row.modifierOnly && ['keydown','beforeinput','paste','input'].includes(row.kind));
       if(!first) {
         const native=gate.traceRead().rows.find(row=>row.owner==='web:'+ids[job.name] && row.stage==='identified' && row.at>=step.armedAt);
         // 正确的原生阻断会先取消模型，网页收件随后异步到达；不能把这段先后窗口误判为失败。
@@ -525,9 +543,12 @@ function beginHuman(job) {
     await until(async()=>{const task=own(await read());return task?.execution?.phase==='paused' && task.execution.pauseReason==='takeover' && task.executionControl?.stopSaved;},5000);
     assert(!evidence.effects.some(row=>row.name===job.name), 'HUMAN_REVOKED_TASK_EFFECT');
     if(job.other) await until(async()=>{const state=await read();return state.tasks.find(task=>task.id===ids[job.other])?.execution?.phase==='complete';},10000);
-    const first=step.receipts.find(row=>['keydown','beforeinput','paste','input'].includes(row.kind));
+    const first=step.receipts.find(row=>!row.modifierOnly && ['keydown','beforeinput','paste','input'].includes(row.kind));
     const rows=gate.traceRead().rows.slice(0,first.traceLength);
-    const delivered=rows.slice(step.qualified.traceLength).find(row=>row.owner==='web:'+ids[job.name] && row.stage==='web-before-input' && row.at>=step.armedAt);
+    // AppKit 不把单独的修饰键视为接管；Electron仍为每个keyDown写一个收件记号。
+    // 只逐个跳过网页已证实的前置修饰键，首个真正操作缺少阻断仍必须失败。
+    const modifierCount=step.receipts.slice(0,step.receipts.indexOf(first)).filter(row=>row.kind==='keydown' && row.modifierOnly).length;
+    const delivered=rows.slice(step.qualified.traceLength).filter(row=>row.owner==='web:'+ids[job.name] && row.stage==='web-before-input' && row.at>=step.armedAt)[modifierCount];
     assert(delivered, 'HUMAN_NATIVE_DELIVERY_REQUIRED');
     const identified=rows.find(row=>row.owner===delivered?.owner && row.serial===delivered.serial && row.stage==='identified');
     const blocked=rows.find(row=>row.owner===delivered?.owner && row.serial===delivered.serial && row.stage==='blocked');

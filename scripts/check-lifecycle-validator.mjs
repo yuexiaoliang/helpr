@@ -1,0 +1,67 @@
+// 离线执行完整实际验证入口：所有spawn/IPC/native为显式替身；不运行应用或使用真实预算。
+import fs from 'node:fs';import path from 'node:path';import http from 'node:http';import assert from 'node:assert/strict';import {EventEmitter} from 'node:events';import {createHash,randomUUID} from 'node:crypto';import {performance} from 'node:perf_hooks';
+const raw=fs.readFileSync('scripts/validate-takeover.mjs','utf8');
+const source=raw.replace(/^import .*;\n/gm,'').replaceAll('import.meta.url',JSON.stringify(import.meta.url));
+const AsyncFunction=Object.getPrototypeOf(async function(){}).constructor;
+const root=path.resolve('.local/workspace-validation');
+const previous=JSON.parse(fs.readFileSync(root+'/lifecycle-06-input-final/snapshot.json'));
+const context=JSON.parse(fs.readFileSync(root+'/lifecycle-06-input-ready/context.json'));
+const gateName='.input-gate-12345678-1234-1234-1234-123456789abc';
+const report=[];
+for(const mode of ['complete-ime-paste-final-quit','missing-visible-ack','cleanup-during-preparation','wrong-model-version','changed-database','old-gate-only','multiple-new-gates']) {
+ const round='offline-full-'+randomUUID().slice(0,12);let live=false,createdGate=false,starts=0,exitCode=0,activeRequests=new Map(),serial=100,traceRows=[];const tickets=new Map(),counts={A:0,B:0};
+ const state=structuredClone(previous);const ids=JSON.parse(fs.readFileSync(root+'/lifecycle-06-input-ready/ids.json'));let base;
+ for(const id of Object.values(ids))tickets.set(id,{available:true,blocked:true,epoch:1});
+ const gate={state:id=>structuredClone(tickets.get(id)??{available:true,blocked:true,epoch:0}),traceRead:()=>({rows:structuredClone(traceRows),overflow:false}),open(file,creator){assert.equal(file,path.join(context.profile,gateName));assert.equal(creator,false);}};
+ const fakeFs=new Proxy(fs,{get(target,key){if(key==='readFileSync')return function(file,...args){const bytes=fs.readFileSync(file,...args);return mode==='changed-database'&&file===path.join(context.profile,'workspace.sqlite')?Buffer.concat([bytes,Buffer.from('changed')]):bytes;};if(key==='readdirSync')return function(dir,...args){const names=fs.readdirSync(dir,...args);return dir===context.profile&&createdGate?mode==='old-gate-only'?names:[...names,gateName,...(mode==='multiple-new-gates'?['.input-gate-98765432-1234-1234-1234-123456789abc']:[])]:names;};return target[key];}});
+ const child=new EventEmitter();child.pid=990001;child.exitCode=null;child.connected=true;
+ const post=async(route,value,signal)=>fetch(base+route,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(value),signal});
+ async function plan(name,intentId){
+  const task=state.tasks.find(t=>t.id===ids[name]);const abort=new AbortController();activeRequests.set(name,abort);const call={id:randomUUID(),phase:'sending'};task.messages.push({call});task.execution.phase='checking';
+  try{const response=await post('/v1/chat/completions',{messages:[{role:'user',content:JSON.stringify({goal:task.goal})},{role:'user',content:name+' 自动完成 '+counts[name]}]},abort.signal);const text=await response.text();if(abort.signal.aborted||task.execution.intentId!==intentId)return;assert(text.includes('[DONE]'));call.phase='complete';
+   if(counts[name]===2){task.execution.phase='complete';return;}
+   assert(!tickets.get(ids[name]).blocked);counts[name]++;await post('/effect',{name,count:counts[name]});void plan(name,intentId);
+  }catch(error){if(!abort.signal.aborted)throw error;call.phase='cancelled';}
+ }
+ child.send=({id,command})=>{queueMicrotask(()=>{let value,error;try{switch(command.kind){
+  case 'snapshot':value=structuredClone(state);break;
+  case 'model-save':assert.equal(command.expectedVersion,state.modelSettings.version);assert.equal(command.endpoint,base+'/v1');assert.equal(command.apiKey,'local-fixture-not-a-secret');if(mode==='wrong-model-version')throw Error('RECORD_VERSION_CONFLICT');state.modelSettings.version++;value={saved:true};break;
+  case 'inspect':value={window:{visible:true}};break;
+  case 'validation-barrier':value={waits:[]};break;
+  case 'execution-intent':{const task=state.tasks.find(t=>t.id===command.taskId),name=Object.keys(ids).find(n=>ids[n]===command.taskId),ticket=tickets.get(task.id);assert(task);if(command.intent==='stop'){activeRequests.get(name)?.abort();task.execution={intent:'stopped',phase:'stopped'};task.executionControl={stopSaved:true};ticket.blocked=true;ticket.epoch++;}else{assert(['start','continue'].includes(command.intent));ticket.blocked=false;ticket.epoch++;task.execution={intent:'automatic',phase:'checking',intentId:command.requestId};task.executionControl={stopSaved:true};void plan(name,command.requestId);}value={accepted:true};break;}
+  case 'quit':live=false;for(const abort of activeRequests.values())abort.abort();child.exitCode=0;child.connected=false;value={};break;
+  default:throw Error('UNEXERCISED_PUBLIC_COMMAND:'+command.kind);
+ }}catch(e){error=e.message;}child.emit('message',{id,value,error});if(command.kind==='quit')child.emit('exit',0);});};
+ const fakeSpawn=(file,args,options)=>{assert.equal(file,path.join(context.built,'Contents/MacOS/helpr'));assert.deepEqual(args,['--workspace-validation','--workspace-fixture']);assert.equal(options.env.HELPR_VALIDATION_DATA,context.profile);base=options.env.HELPR_FIXTURE_ORIGIN;assert.equal(base,context.base);live=true;createdGate=true;queueMicrotask(()=>child.emit('message',{ready:true,fixture:true,fixtureSession:{persistent:false,origin:base},hostPid:990002,recordsPid:990003}));return child;};
+ const fakeExec=(file,args)=>{if(file===process.execPath){assert.deepEqual(args,['scripts/validate-workspace.mjs','--preflight']);return Buffer.from('offline contract');}assert.equal(file,'/bin/ps');return live?(args[1].includes('rss')?'990001 100000\n990002 200000\n990003 10000\n':'990001 1 990001\n990002 990001 990002\n990003 990001 990003\n'):'';};
+ const fakeProcess={argv:['node','script','--round='+round,'--build=34','--lifecycle','--carry=lifecycle-06-input-ready','--task-limit=8','--lifecycle-model-limit=32','--lifecycle-input-limit=224','--reuse-input-preparation'],env:process.env,execPath:process.execPath,getuid:()=>process.getuid(),kill(pid){if(!live||![990001,990002,990003].includes(pid))throw Error('ESRCH');},set exitCode(value){exitCode=value;}};
+ const until=async(fn,ms=6000)=>{const end=Date.now()+ms;while(Date.now()<end){if(await fn())return;await new Promise(r=>setTimeout(r,5));}throw Error('OFFLINE_WAIT:'+mode);};
+ async function drive(api){
+  assert.equal(starts,1);assert.equal(api.evidence.limits.tasks,0);assert.equal(api.evidence.models.length,0);assert.equal(api.evidence.humanSteps,undefined);assert.deepEqual(api.evidence.inputGateLineage.newCandidates,[gateName]);
+  const command=async job=>{const id=randomUUID();fs.writeFileSync(api.out+'/command.json',JSON.stringify({...job,id}));let response;await until(()=>{const file=api.out+'/response.json';if(!fs.existsSync(file))return false;response=JSON.parse(fs.readFileSync(file));return response.id===id;});return response;};
+  if(mode==='missing-visible-ack'){assert.equal((await command({kind:'human-input',input:'ime',name:'A'})).error,'HUMAN_WINDOW_ACKNOWLEDGEMENT_REQUIRED');await until(()=>api.evidence.finished);assert.equal(api.evidence.models.length,0);}
+  else if(mode==='cleanup-during-preparation'){await command({kind:'human-window-ready',userConfirmed:true,reply:'离线替身可见确认'});await command({kind:'human-input',input:'ime',name:'A'});await command({kind:'finish'});assert.equal(api.evidence.humanSteps[0].phase,'cancelled');assert.equal(api.evidence.models.length,0);}
+  else {
+   for(const input of ['ime','paste']){
+    assert((await command({kind:'human-window-ready',userConfirmed:true,reply:'离线替身可见确认'})).ok);assert((await command({kind:'human-input',input,name:'A',...(input==='ime'?{other:'B'}:{})})).ok);
+    await post('/input',{name:'A',kind:'mousedown',target:'INPUT',trusted:true});await until(()=>api.signals.get('A')?.phase==='armed');
+    if(input==='paste') {traceRows.push({owner:'web:'+ids.A,stage:'web-before-input',serial,epoch:tickets.get(ids.A).epoch,at:performance.timeOrigin+performance.now()});await post('/input',{name:'A',kind:'keydown',modifierOnly:true,target:'INPUT',trusted:true,value:'啊'});}
+    const at=performance.timeOrigin+performance.now(),ticket=tickets.get(ids.A);ticket.epoch++;ticket.blocked=true;serial++;
+    traceRows.push({owner:'web:'+ids.A,stage:'identified',serial,at},{owner:'web:'+ids.A,stage:'blocked',serial,epoch:ticket.epoch,at:at+.001},{owner:'web:'+ids.A,stage:'handoff',serial,at:at+.002},{owner:'web:'+ids.A,stage:'web-before-input',serial,at:at+.003});
+    const a=state.tasks.find(t=>t.id===ids.A);a.execution.phase='paused';a.execution.pauseReason='takeover';a.executionControl.stopSaved=true;activeRequests.get('A').abort();
+    await post('/input',{name:'A',kind:input==='ime'?'keydown':'paste',target:'INPUT',trusted:true,value:input==='ime'?'':'啊'});await post('/input',{name:'A',kind:'input',target:'INPUT',trusted:true,value:input==='ime'?'啊':'啊粘贴核对'});
+    await until(()=>['complete','failed'].includes(api.evidence.humanSteps.at(-1).phase));assert.equal(api.evidence.humanSteps.at(-1).phase,'complete',api.evidence.humanSteps.at(-1).failure);
+   }
+   await command({kind:'release',names:['A']});await command({name:'A',command:{kind:'execution-intent',intent:'continue',requestId:randomUUID()}});await until(()=>state.tasks.every(t=>t.execution?.phase==='complete'));
+   assert.deepEqual(api.evidence.effects.map(r=>r.name+':'+r.count),['B:1','B:2','A:1','A:2']);assert.equal(api.evidence.models.length,8);assert.equal(api.evidence.taskAttempts,0);await command({kind:'finish'});
+  }
+  assert.equal(api.evidence.exitCode,0);assert.equal(api.evidence.survivors.length,0);assert.equal(api.evidence.groupSurvivors.length,0);report.push({scenario:mode,passed:true,models:api.evidence.models.length,effects:api.evidence.effects.length,inputs:api.evidence.inputs.length,startsStubbed:starts});
+ }
+ const tail='\nawait offlineDrive({out,base,evidence,ids,signals:humanSignals});';
+ const deps={fs:fakeFs,path,http,assert,spawn:fakeSpawn,execFileSync:fakeExec,createHash,randomUUID,createRequire:()=>()=>gate,spend:kind=>{assert.equal(kind,'starts');starts++;return{used:{starts:83}};},validationRoot:root,process:fakeProcess,performance,setInterval,clearInterval,setTimeout,clearTimeout,console:{log(){}},offlineDrive:drive};
+ try{await new AsyncFunction(...Object.keys(deps),source+tail)(...Object.values(deps));assert(!['wrong-model-version','changed-database','old-gate-only','multiple-new-gates'].includes(mode));}
+ catch(error){if(mode==='changed-database'){assert(error.message.includes('INPUT_PREPARATION_DATABASE_CHANGED'));assert.equal(starts,0);report.push({scenario:mode,passed:true,startsStubbed:starts});continue;}if(!['wrong-model-version','old-gate-only','multiple-new-gates'].includes(mode))throw error;assert(error.message.includes(mode==='wrong-model-version'?'RECORD_VERSION_CONFLICT':'ONE_NEW_NATIVE_INPUT_GATE_REQUIRED'));const result=JSON.parse(fs.readFileSync(root+'/'+round+'/result.json'));assert(result.finished&&result.exitCode===0&&result.survivors.length===0);report.push({scenario:mode,passed:true,models:result.models.length,effects:result.effects.length,startsStubbed:starts});}
+ assert(!live);assert.equal(exitCode,0);
+}
+const result={checkedAt:new Date().toISOString(),harnessSHA256:createHash('sha256').update(fs.readFileSync('scripts/check-lifecycle-validator.mjs')).digest('hex'),sourceSHA256:createHash('sha256').update(raw).digest('hex'),scope:'Complete actual validator source with stubbed spawn/public IPC/native input; actual loopback HTTP, commands, gate selection, retained profile proof reads, limits, human observer, and cleanup; no app, browser, global budget or human acceptance',cases:report};
+fs.writeFileSync('docs/testing/evidence/lifecycle-06/FULL-VALIDATOR-CHECK.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result,null,2));
