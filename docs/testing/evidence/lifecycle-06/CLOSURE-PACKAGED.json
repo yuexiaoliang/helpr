@@ -1,0 +1,283 @@
+{
+  "purpose": "lifecycle-06",
+  "build": 34,
+  "archive": "de92eb195d79e528e76ea4e35fdd38e93c11c7452d72a74821601b73eead1dcd",
+  "scope": "packaged local fixtures; no system credential or persistent website-session acceptance; tool input is not real IME/paste acceptance",
+  "credentials": "in-process public fixture sentinel; system keychain not tested",
+  "started": "2026-10-20T03:41:51.952Z",
+  "carry": {
+    "round": "lifecycle-06-input-resume",
+    "counts": {
+      "effects": 6,
+      "inputs": 217,
+      "models": 29,
+      "tasks": 8
+    }
+  },
+  "preparationReuse": {
+    "source": "lifecycle-06-input-resume",
+    "resultSHA256": "c491f5175ebcc8f6c3f8cad8d8afd2536a1fdca626ff15702f0c97181a756207",
+    "profile": "/private/tmp/helpr-workspace-validation-501/lifecycle06-NDLUpM",
+    "base": "http://127.0.0.1:58400",
+    "ids": {
+      "A": "8803eea5-23ba-4798-9244-29fe678e033f",
+      "B": "36976139-efef-4bc5-8786-dc90bf3e3e89"
+    },
+    "initialCounts": {
+      "A": 0,
+      "B": 2
+    },
+    "progress": true
+  },
+  "limits": {
+    "minutes": 20,
+    "effects": 2,
+    "inputs": 807,
+    "models": 51,
+    "tasks": 0
+  },
+  "realModelCalls": 0,
+  "remoteWrites": 0,
+  "taskAttempts": 0,
+  "effects": [],
+  "inputs": [
+    {
+      "route": "/probe",
+      "name": "A",
+      "clientAt": 1792467713918.3,
+      "clientWallAt": 1792467713918,
+      "node": "undefined",
+      "require": "undefined",
+      "bridge": "undefined",
+      "clock": {
+        "sent": 1792467713916.7,
+        "server": 1792467713924,
+        "received": 1792467713976.4
+      },
+      "at": 1792467714066,
+      "gates": {
+        "A": {
+          "epoch": 3,
+          "available": true,
+          "blocked": true
+        },
+        "B": {
+          "epoch": 4,
+          "available": true,
+          "blocked": true
+        }
+      },
+      "traceLength": 6
+    },
+    {
+      "route": "/probe",
+      "name": "B",
+      "clientAt": 1792467713920.6,
+      "clientWallAt": 1792467713920,
+      "node": "undefined",
+      "require": "undefined",
+      "bridge": "undefined",
+      "clock": {
+        "sent": 1792467713920.2,
+        "server": 1792467714064,
+        "received": 1792467714065.5
+      },
+      "at": 1792467714083,
+      "gates": {
+        "A": {
+          "epoch": 3,
+          "available": true,
+          "blocked": true
+        },
+        "B": {
+          "epoch": 4,
+          "available": true,
+          "blocked": true
+        }
+      },
+      "traceLength": 6
+    },
+    {
+      "route": "/input",
+      "name": "A",
+      "clientAt": 1792467713973.9,
+      "clientWallAt": 1792467713974,
+      "kind": "mousemove",
+      "trusted": true,
+      "x": 667,
+      "y": 574,
+      "clock": {
+        "sent": 1792467713916.7,
+        "server": 1792467713924,
+        "received": 1792467713976.4
+      },
+      "at": 1792467714099,
+      "gates": {
+        "A": {
+          "epoch": 3,
+          "available": true,
+          "blocked": true
+        },
+        "B": {
+          "epoch": 4,
+          "available": true,
+          "blocked": true
+        }
+      },
+      "traceLength": 6
+    }
+  ],
+  "models": [],
+  "checkpoints": [],
+  "checks": [
+    {
+      "name": "owned-process-groups-cleared",
+      "at": 1792467714545,
+      "passed": true
+    },
+    {
+      "name": "normal-exit-and-no-owned-survivors",
+      "at": 1792467714546,
+      "passed": true
+    }
+  ],
+  "deferred": {},
+  "performance": {
+    "scope": "OS RSS sums and public IPC round trips; not paint latency",
+    "samples": [],
+    "commands": [
+      {
+        "kind": "snapshot",
+        "durationMs": 5
+      },
+      {
+        "kind": "snapshot",
+        "durationMs": 7
+      }
+    ],
+    "readyMs": 1753
+  },
+  "start": 85,
+  "ready": {
+    "ready": true,
+    "controllerPid": 84996,
+    "hostPid": 85001,
+    "recordsPid": 85000,
+    "versions": {
+      "electron": "44.7.2",
+      "node": "24.21.0",
+      "chrome": "152.0.7977.149"
+    },
+    "fixture": true,
+    "fixtureSession": {
+      "origin": "http://127.0.0.1:58400",
+      "persistent": false
+    }
+  },
+  "processTree": [
+    {
+      "pid": 84996,
+      "parent": 84993,
+      "group": 84996
+    },
+    {
+      "pid": 84997,
+      "parent": 84996,
+      "group": 84993
+    },
+    {
+      "pid": 84998,
+      "parent": 84996,
+      "group": 84993
+    },
+    {
+      "pid": 84999,
+      "parent": 84996,
+      "group": 84999
+    },
+    {
+      "pid": 85000,
+      "parent": 84996,
+      "group": 84996
+    },
+    {
+      "pid": 85001,
+      "parent": 84999,
+      "group": 85001
+    },
+    {
+      "pid": 85006,
+      "parent": 85001,
+      "group": 85001
+    },
+    {
+      "pid": 85007,
+      "parent": 85001,
+      "group": 85001
+    },
+    {
+      "pid": 85008,
+      "parent": 85001,
+      "group": 85001
+    },
+    {
+      "pid": 85009,
+      "parent": 85001,
+      "group": 85001
+    },
+    {
+      "pid": 85010,
+      "parent": 85001,
+      "group": 85001
+    },
+    {
+      "pid": 85012,
+      "parent": 85001,
+      "group": 85001
+    },
+    {
+      "pid": 85013,
+      "parent": 85001,
+      "group": 85001
+    },
+    {
+      "pid": 85014,
+      "parent": 85001,
+      "group": 85001
+    },
+    {
+      "pid": 85015,
+      "parent": 85001,
+      "group": 85001
+    }
+  ],
+  "ownedGroups": [
+    84996,
+    84999,
+    85001
+  ],
+  "inputGateLineage": {
+    "retained": [
+      ".input-gate-2ea0c962-41a3-4e3d-ab70-aff7eb0ca2ff",
+      ".input-gate-6a55ca00-ad5c-4a29-a837-ff54328927b3",
+      ".input-gate-93964c24-3219-479e-a418-a3f23d72ea10",
+      ".input-gate-c6dfbecf-666b-4045-9ab4-509cb9ef7a15"
+    ],
+    "newCandidates": [
+      ".input-gate-a18b09f4-31cd-4125-a443-172c31fc9237"
+    ]
+  },
+  "phase": "saving-local-fixture-configuration",
+  "failure": "INPUT_PROGRESS_RESTORE_MUST_PRESERVE_EXECUTIONS",
+  "fixtureFailure": "ERR_ASSERTION",
+  "quitReceipts": [
+    {
+      "at": 1792467714096,
+      "error": "UNSAVED_CHANGES"
+    }
+  ],
+  "exitCode": 0,
+  "survivors": [],
+  "groupSurvivors": [],
+  "finished": "2026-10-20T03:41:54.546Z"
+}

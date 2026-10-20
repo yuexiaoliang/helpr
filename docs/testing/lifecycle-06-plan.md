@@ -163,3 +163,7 @@ IME准备增加真实中文预热：用户先点击A输入框，在灰色提示�
 该精确复用轮的真人观察失败后，页内显示红色停止说明并保留窗口，记录awaitingFailureClose；只接受state／finish，不再接受release、继续或下一输入。A模型固定扣在0步、B只读核对原2步，没有可放行的新写入；agent读取失败并向用户说明后显式finish，正常退出且独立核查。原20分钟deadline继续兜底；工具或更早准备的重大失败仍按原规则收束。完成时先告知测量收尾，再显式退出。不会为了留窗口解除阻断或延长本轮。
 
 [31项完整入口离线检查](evidence/lifecycle-06/FULL-VALIDATOR-COMPLETION-CHECK.json)保留原29情境，新增普通首键失败时窗口保留、其它命令拒绝且不退出、明确finish后清空，以及20分钟截止到达后仍保留首个失败并清空。初版拒绝命令误入通用退出分支的离线失败保留，修正后通过；它们不抵算实际验收。后续仍按上节中文预热→独立IME→独立paste→明确继续／文字保留→5分钟稳态／6次切换测量执行，不重复通过的系统动作。
+
+85实际因冷准备出现新的ownership-unknown而停止，0模型／效果，正常退出且独立清空，原失败保留，详见[85结果](evidence/lifecycle-06/REPORT.md#启动85冷准备的新增归属未知暂停)。精确85复用另冻结退出数据库与原生链，保留未知暂停及最终task版本差，不回退旧84字节。35项完整离线检查及两轴复核通过。
+
+本批下一次入口为 `node scripts/validate-takeover.mjs --round=lifecycle-06-input-known --build=34 --lifecycle --carry=lifecycle-06-input-closure --task-limit=8 --lifecycle-model-limit=80 --lifecycle-input-limit=1024 --reuse-input-progress`，只读预检通过。80／1024与失败保留窗口约束扩至该精确85来源；任务／效果／原候选及所有停止规则不变，仍余51模型／804收件／2效果，授权尚余5启动。不重复询问预算；正式资格仍在准备点击和明确继续后核对。

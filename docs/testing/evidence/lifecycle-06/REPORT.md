@@ -161,3 +161,13 @@ paste正式阶段无mousedown：先⌘修饰键（旧serial9记号），再V，�
 2026-10-20，用户随后要求“继续测试”。已完成[84精确退出现场的复用依据](INPUT-RESUME-REUSE.json)和[29项离线检查](FULL-VALIDATOR-RESUME84-CHECK.json)，增加准备阶段中文“试”的真实组合上屏守卫，避免正式绿灯前仍为英文模式。原资料、任务、失败和累计用量保持；原生Finder状态／截图及独立退出复查通过，实际应用未启动。单轮所需1启动／3本机模拟模型／64收件增量及测量边界见[待确认方案](../../lifecycle-06-plan.md#84退出后的单轮续验准备待增量确认)，尚未改变额度或提前验收。
 
 用户随后明确要求追加足够额度直到06完成，并询问84退出原因。已按[完成批次授权](COMPLETION-AUTHORIZATION.json)登记有限6新启动及必要余量，不再逐次询问一次启动额度；原失败和全部计数不重置。真人观察失败先保留窗口／红提示，由agent说明后显式finish，原20分钟截止仍独立收束且保留首失败。31项完整离线检查与两轴定向复核通过，见[准备摘要](COMPLETION-PREFLIGHT.json)；实际验收仍待本批运行，不因扩额提前通过。
+
+## 启动85：冷准备的新增归属未知暂停
+
+实际85在保存本机配置后的准备断言失败，尚无validationStarted或真人步骤，新0任务／0模型／0效果／3收件。原生trace有两个unknown的identified→blocked→handoff链，A保持automatic／paused／ownership-unknown、0动作且stopSaved，B仍完成原2次。原生阻断符合已确认保守规则；验证器只接受takeover原因而拒绝。未改产品行为，不把新暂停解释为权限恢复。[原始结果](CLOSURE-PACKAGED.json)、[原生记录](CLOSURE-TRACE.json)及[失败摘要](CLOSURE-FAILURE.json)保留。
+
+该准备失败主动正常退出code0，[独立OS核查](CLOSURE-POST-EXIT.json)15PID／3组全空，无强制清理。没有向用户交付输入计时，尚未触及新的真人失败保留窗口路径；退出原因已即时说明。累计8任务／29本机模型／6效果／220收件，启动85/90。
+
+下一次只精确续用85退出资料，见[独立复用依据](INPUT-CLOSURE-REUSE.json)：2任务、2执行、7模型记录、4配置；完整执行JSON及所有业务字段同最后公开快照。最终两task行version各比快照多1（10→11），明确列出这一差异，不宣称字节内容完全等同快照、不改原快照。85必须满足两个唯一任务的固定版本差及完整执行相同，不能以matchesSnapshot:true绕过。原始ERR_ASSERTION包装码只对此精确准备失败接受，旧来源规则不变。
+
+主入口只保持来源声明的ownership-unknown暂停，仍须准备点击、保存停止及明确continue后取得新资格。[35项完整离线检查](FULL-VALIDATOR-UNKNOWN-CHECK.json)及两轴定向复核通过，新增未知来源续用、版本例外误置true拒绝、原生trace变化拒绝、新冷打开原因变化拒绝；不抵算真人或性能。[下一轮准备](UNKNOWN-PREFLIGHT.json)确认余5启动／51本机模型／804收件／2效果／0新任务，授权范围内继续，不再问一次启动增量。
