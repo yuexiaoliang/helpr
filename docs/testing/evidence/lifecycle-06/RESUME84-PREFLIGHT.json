@@ -1,0 +1,141 @@
+{
+  "checkedAt": "2026-10-20T03:31:38.561Z",
+  "scope": "Offline preparation only; no actual application or browser started; proposed limits do not authorize execution",
+  "sourceFiles": {
+    "scripts/validate-takeover.mjs": "d8c987d2b68a87a7a49e71fbf806d9bd8f46f88172e96e55b3ac4058921dab03",
+    "scripts/lifecycle-progress-reuse.mjs": "524bda8e04e31fd8e5d096551933c7ace4af715ad27c1d391e43e90f2f71db8d",
+    "scripts/check-lifecycle-validator.mjs": "75e6cf9dbb9b847924f6b1cac183efd87abf0c401f010d2cc465b2f426f220f9"
+  },
+  "source": "lifecycle-06-input-resume",
+  "reuseProofSHA256": "f6c97f238646e1f0bdfd6b0f1be216c16cd41620aaa1f894755d6d05d1429cb8",
+  "carryPreflight": {
+    "round": "lifecycle-06-input-resume",
+    "counts": {
+      "effects": 6,
+      "inputs": 217,
+      "models": 29,
+      "tasks": 8
+    },
+    "maximum": {
+      "effects": 8,
+      "inputs": 288,
+      "models": 35,
+      "tasks": 8
+    },
+    "remaining": {
+      "effects": 2,
+      "inputs": 71,
+      "models": 6,
+      "tasks": 0
+    },
+    "reusedTasks": 2
+  },
+  "packageCheck": {
+    "hostLayout": "standard complete main bundle",
+    "helpers": 4,
+    "independentIdentity": true,
+    "sameApplicationArchive": true,
+    "sameFuses": true,
+    "deepStrictSignatureVerified": true,
+    "certificateSha256": "5bd4c2c1f28a99910837bb31ba404f3043378c54463bdc8a8bdf04ce75d2f119",
+    "signedImages": 54
+  },
+  "fullValidator": {
+    "file": "FULL-VALIDATOR-RESUME84-CHECK.json",
+    "SHA256": "f3f2f67054409c1ab00079608c32f84de97b0440a88ea032e924d469c26306d9",
+    "passed": 29
+  },
+  "retainedRed": {
+    "case": "resume-probe-untrusted-end",
+    "failure": "OFFLINE_WAIT:resume-probe-untrusted-end",
+    "exitCode": 1,
+    "sourceSHA256": "4b6fac95638b398662b093f5a814a217242adb2a23149e94518298006e991212",
+    "logSHA256": "49dcbac5259e5877b4c66bbebd3573d86f045a0276bd68697a612055058835eb",
+    "scope": "Explicit spawn/IPC/native substitutes; no actual app or real budget"
+  },
+  "nativeToolPreflight": {
+    "finderState": "passed",
+    "finderScreenshot": "passed",
+    "inAppBrowserTabs": 0,
+    "applicationStarted": false
+  },
+  "independentExit": {
+    "checkedAt": "2026-10-20T03:31:38.563Z",
+    "knownPids": [
+      77835,
+      77844,
+      77845,
+      77847,
+      77848,
+      77849,
+      77855,
+      77856,
+      77857,
+      77858,
+      77859,
+      77861,
+      77862,
+      77863,
+      77864
+    ],
+    "ownedGroups": [
+      77835,
+      77847,
+      77849
+    ],
+    "pidSurvivors": [],
+    "groupSurvivors": []
+  },
+  "currentGlobalBudget": {
+    "used": {
+      "builds": 34,
+      "installs": 8,
+      "starts": 84,
+      "faults": 37,
+      "cleanups": 16
+    },
+    "limits": {
+      "builds": 34,
+      "installs": 10,
+      "starts": 84,
+      "faults": 37,
+      "cleanups": 18
+    }
+  },
+  "newActualUse": {
+    "starts": 0,
+    "builds": 0,
+    "installs": 0,
+    "tasks": 0,
+    "models": 0,
+    "effects": 0
+  },
+  "proposal": {
+    "approval": "pending",
+    "starts": {
+      "from": 84,
+      "to": 85,
+      "increment": 1
+    },
+    "localModels": {
+      "from": 32,
+      "to": 35,
+      "increment": 3
+    },
+    "inputReceipts": {
+      "from": 224,
+      "to": 288,
+      "increment": 64
+    },
+    "roundMinutes": 20,
+    "restarts": 0,
+    "otherLimits": "unchanged"
+  },
+  "review": {
+    "standardsHard": 0,
+    "standardsSmells": 0,
+    "specResidual": 0,
+    "closedFinding": "Trusted-only compositionend assumption; real start84 untrusted-end path reproduced red and corrected with trusted matching input required",
+    "scope": "Existing two independent reviewers; read-only, no app or tests run by reviewers"
+  }
+}

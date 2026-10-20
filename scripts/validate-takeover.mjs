@@ -47,17 +47,18 @@ for (const [file, hash] of Object.entries(manifest.hashes))
 const carryName = process.argv.find((arg) => arg.startsWith('--carry='))?.slice(8);
 const reuseInputPreparation = process.argv.includes('--reuse-input-preparation');
 const reuseInputProgress = process.argv.includes('--reuse-input-progress');
-assert(!reuseInputProgress || (lifecycle && !reuseInputPreparation && carryName==='lifecycle-06-input-verified'),'INPUT_PROGRESS_REUSE_REQUIRES_SOURCE');
+assert(!reuseInputProgress || (lifecycle && !reuseInputPreparation && ['lifecycle-06-input-verified','lifecycle-06-input-resume'].includes(carryName)),'INPUT_PROGRESS_REUSE_REQUIRES_SOURCE');
+const requireImeProbe=reuseInputProgress && carryName==='lifecycle-06-input-resume';
 assert(!reuseInputPreparation || (lifecycle && ['lifecycle-06-input-final','lifecycle-06-input-ready'].includes(carryName)), 'INPUT_PREPARATION_REUSE_REQUIRES_SOURCE');
 let preparationReuse;
 const taskLimit = Number(process.argv.find((arg) => arg.startsWith('--task-limit='))?.slice(13) ?? (lifecycle ? 4 : 12));
 assert((lifecycle && (taskLimit === 4 || ([6,8].includes(taskLimit) && carryName))) || (!lifecycle && [12,14,16,18,20,22,24,26].includes(taskLimit)), 'INVALID_TASK_LIMIT');
 const lifecycleInputArgument = process.argv.find((arg) => arg.startsWith('--lifecycle-input-limit='))?.slice(24);
 const lifecycleInputs = Number(lifecycleInputArgument ?? 16);
-assert(lifecycleInputArgument === undefined || (lifecycle && carryName && [160,224].includes(lifecycleInputs)), 'LIFECYCLE_INPUT_EXTENSION_REQUIRES_CARRY');
+assert(lifecycleInputArgument === undefined || (lifecycle && carryName && ([160,224].includes(lifecycleInputs) || (requireImeProbe && lifecycleInputs===288))), 'LIFECYCLE_INPUT_EXTENSION_REQUIRES_CARRY');
 const lifecycleModelArgument = process.argv.find((arg) => arg.startsWith('--lifecycle-model-limit='))?.slice(24);
 const lifecycleModels = Number(lifecycleModelArgument ?? 24);
-assert(lifecycleModelArgument === undefined || (lifecycle && carryName && lifecycleModels === 32), 'LIFECYCLE_MODEL_EXTENSION_REQUIRES_CARRY');
+assert(lifecycleModelArgument === undefined || (lifecycle && carryName && (lifecycleModels === 32 || (requireImeProbe && lifecycleModels===35))), 'LIFECYCLE_MODEL_EXTENSION_REQUIRES_CARRY');
 const maximum = lifecycle ? {effects:8, inputs:lifecycleInputs, models:lifecycleModels, tasks:taskLimit} : { effects: 24, inputs: 160, models: 64, tasks: taskLimit };
 assert(lifecycle || taskLimit === 12 || carryName !== undefined, 'EXTENDED_TASK_LIMIT_REQUIRES_CARRY');
 const repairOf = process.argv.find((arg) => arg.startsWith('--repair-of='))?.slice(12);
@@ -495,15 +496,25 @@ function beginHuman(job) {
   const checked=async fn=>{signal.throwIfAborted();const value=await fn();signal.throwIfAborted();return value;};
   const read=()=>checked(snapshot), send=command=>checked(()=>request(command));
   const until=(fn,ms)=>waitFor(()=>checked(fn),ms);
-  humanSignals.set(job.name,{phase:'preparation',text:'准备：请点击下方输入框一次，然后留在这里等待绿色提示，先不输入。'}); save();
+  const probeRequired=requireImeProbe && job.input==='ime';
+  humanSignals.set(job.name,{phase:'preparation',text:probeRequired?'准备：点击下方输入框，用中文输入法先输入“试”并选词上屏，然后等绿色提示。若出现英文，请先切换为中文。':'准备：请点击下方输入框一次，然后留在这里等待绿色提示，先不输入。'}); save();
   humanRun=(async()=>{
     const own = state => state.tasks.find(task=>task.id===ids[job.name]);
     let preparation;
     await until(()=>{
       const rows=evidence.inputs.slice(step.inputOffset).filter(row=>row.name===job.name && row.kind!=='mousemove');
-      assert(!rows.some(row=>['input','paste'].includes(row.kind)), 'HUMAN_INPUT_BEFORE_READY');
+      assert(!rows.some(row=>probeRequired?row.kind==='paste':['input','paste'].includes(row.kind)), 'HUMAN_INPUT_BEFORE_READY');
       preparation=rows.find(row=>row.kind==='mousedown' && row.target==='INPUT' && row.trusted===true);
-      return Boolean(preparation);
+      if(!preparation) return false;
+      if(probeRequired) {
+        const probe=rows.slice(rows.indexOf(preparation)+1).filter(row=>row.target==='INPUT');
+        const start=probe.findIndex(row=>row.kind==='compositionstart' && row.trusted);
+        const end=probe.findLastIndex(row=>row.kind==='compositionend' && row.value.endsWith('试'));
+        // 同候选真实Mac的end可为非可信，仅作边界；中文值必须已由可信组合input给出。
+        if(start<0 || end<=start || !probe.slice(start,end).some(row=>row.kind==='input' && row.trusted && row.isComposing && row.inputType==='insertCompositionText' && row.value===probe[end].value)) return false;
+        step.imeProbe={actor:'human',scope:'preparation only; not formal takeover acceptance',receipts:probe};
+      }
+      return true;
     },90000);
     step.preparation=preparation;
     // 准备点击不属于正式样本；等待公开停止回执与稳定的阻断状态后才授予新资格。

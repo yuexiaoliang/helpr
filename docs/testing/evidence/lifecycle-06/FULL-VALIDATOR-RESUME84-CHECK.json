@@ -1,0 +1,209 @@
+{
+  "checkedAt": "2026-10-20T03:30:40.553Z",
+  "harnessSHA256": "75e6cf9dbb9b847924f6b1cac183efd87abf0c401f010d2cc465b2f426f220f9",
+  "sourceHelperSHA256": "524bda8e04e31fd8e5d096551933c7ace4af715ad27c1d391e43e90f2f71db8d",
+  "sourceSHA256": "d8c987d2b68a87a7a49e71fbf806d9bd8f46f88172e96e55b3ac4058921dab03",
+  "scope": "Complete actual validator source with stubbed spawn/public IPC/native input; actual loopback HTTP, commands, gate selection, synthetic database bytes/proof with preserved source chain, limits, human observer, and cleanup; no app, browser, global budget or human acceptance",
+  "cases": [
+    {
+      "scenario": "complete-ime-paste-final-quit",
+      "passed": true,
+      "models": 8,
+      "effects": 4,
+      "inputs": 7,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "complete-ime-without-key-marker",
+      "passed": true,
+      "models": 8,
+      "effects": 4,
+      "inputs": 7,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "ime-229-with-composition-start",
+      "passed": true,
+      "models": 8,
+      "effects": 4,
+      "inputs": 8,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "ime-no-composition",
+      "passed": true,
+      "expectedRejection": "HUMAN_IME_FIRST_OPERATION_REQUIRED",
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "ime-229-alone",
+      "passed": true,
+      "expectedRejection": "HUMAN_IME_FIRST_OPERATION_REQUIRED",
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "ime-ambiguous-prefix",
+      "passed": true,
+      "expectedRejection": "HUMAN_NATIVE_DELIVERY_REQUIRED",
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "ime-handoff-after-dom",
+      "passed": true,
+      "expectedRejection": "HUMAN_NATIVE_ORDER_REQUIRED",
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "missing-visible-ack",
+      "passed": true,
+      "models": 0,
+      "effects": 0,
+      "inputs": 0,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "cleanup-during-preparation",
+      "passed": true,
+      "models": 0,
+      "effects": 0,
+      "inputs": 0,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "wrong-model-version",
+      "passed": true,
+      "models": 0,
+      "effects": 0,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "changed-database",
+      "passed": true,
+      "startsStubbed": 0
+    },
+    {
+      "scenario": "old-gate-only",
+      "passed": true,
+      "models": 0,
+      "effects": 0,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "multiple-new-gates",
+      "passed": true,
+      "models": 0,
+      "effects": 0,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "progress-ime-paste-final-quit",
+      "passed": true,
+      "models": 6,
+      "effects": 2,
+      "inputs": 7,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "progress-composition",
+      "passed": true,
+      "models": 6,
+      "effects": 2,
+      "inputs": 7,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "progress-changed-database",
+      "passed": true,
+      "startsStubbed": 0
+    },
+    {
+      "scenario": "progress-changed-site",
+      "passed": true,
+      "startsStubbed": 0
+    },
+    {
+      "scenario": "progress-restored-execution-changed",
+      "passed": true,
+      "models": 0,
+      "effects": 0,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "clock-origin-behind",
+      "passed": true,
+      "models": 8,
+      "effects": 4,
+      "inputs": 7,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "ime-ascii-then-composition",
+      "passed": true,
+      "expectedRejection": "HUMAN_IME_FIRST_OPERATION_REQUIRED",
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "cancel-reason-timeout",
+      "passed": true,
+      "expectedRejection": "HUMAN_INPUT_CANCELLED_CALL_REQUIRED",
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "resume-probe",
+      "passed": true,
+      "models": 6,
+      "effects": 2,
+      "inputs": 10,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "resume-probe-composition",
+      "passed": true,
+      "models": 6,
+      "effects": 2,
+      "inputs": 10,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "resume-probe-latin-and-uncommitted",
+      "passed": true,
+      "models": 6,
+      "effects": 2,
+      "inputs": 11,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "resume-changed-database",
+      "passed": true,
+      "startsStubbed": 0
+    },
+    {
+      "scenario": "resume-changed-parent",
+      "passed": true,
+      "startsStubbed": 0
+    },
+    {
+      "scenario": "resume-restored-execution-changed",
+      "passed": true,
+      "models": 0,
+      "effects": 0,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "resume-probe-untrusted-end",
+      "passed": true,
+      "models": 6,
+      "effects": 2,
+      "inputs": 10,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "resume-probe-untrusted-end-no-chinese",
+      "passed": true,
+      "models": 6,
+      "effects": 2,
+      "inputs": 12,
+      "startsStubbed": 1
+    }
+  ]
+}
