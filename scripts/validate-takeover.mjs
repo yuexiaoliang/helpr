@@ -55,10 +55,10 @@ const taskLimit = Number(process.argv.find((arg) => arg.startsWith('--task-limit
 assert((lifecycle && (taskLimit === 4 || ([6,8].includes(taskLimit) && carryName))) || (!lifecycle && [12,14,16,18,20,22,24,26].includes(taskLimit)), 'INVALID_TASK_LIMIT');
 const lifecycleInputArgument = process.argv.find((arg) => arg.startsWith('--lifecycle-input-limit='))?.slice(24);
 const lifecycleInputs = Number(lifecycleInputArgument ?? 16);
-assert(lifecycleInputArgument === undefined || (lifecycle && carryName && ([160,224].includes(lifecycleInputs) || (requireImeProbe && lifecycleInputs===288))), 'LIFECYCLE_INPUT_EXTENSION_REQUIRES_CARRY');
+assert(lifecycleInputArgument === undefined || (lifecycle && carryName && ([160,224].includes(lifecycleInputs) || (requireImeProbe && [288,1024].includes(lifecycleInputs)))), 'LIFECYCLE_INPUT_EXTENSION_REQUIRES_CARRY');
 const lifecycleModelArgument = process.argv.find((arg) => arg.startsWith('--lifecycle-model-limit='))?.slice(24);
 const lifecycleModels = Number(lifecycleModelArgument ?? 24);
-assert(lifecycleModelArgument === undefined || (lifecycle && carryName && (lifecycleModels === 32 || (requireImeProbe && lifecycleModels===35))), 'LIFECYCLE_MODEL_EXTENSION_REQUIRES_CARRY');
+assert(lifecycleModelArgument === undefined || (lifecycle && carryName && (lifecycleModels === 32 || (requireImeProbe && [35,80].includes(lifecycleModels)))), 'LIFECYCLE_MODEL_EXTENSION_REQUIRES_CARRY');
 const maximum = lifecycle ? {effects:8, inputs:lifecycleInputs, models:lifecycleModels, tasks:taskLimit} : { effects: 24, inputs: 160, models: 64, tasks: taskLimit };
 assert(lifecycle || taskLimit === 12 || carryName !== undefined, 'EXTENDED_TASK_LIMIT_REQUIRES_CARRY');
 const repairOf = process.argv.find((arg) => arg.startsWith('--repair-of='))?.slice(12);
@@ -259,7 +259,7 @@ const server = http.createServer(async (req, res) => {
       res.end(`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>${label} 任务 ${name}</title><style>body{font:20px -apple-system;padding:36px;color:#244135;background:#f4f8f5}button,input,a{font:inherit;padding:12px;margin:10px 0;display:block}input{width:400px}iframe{height:120px;width:440px}</style><h1>${label} 任务 ${name}</h1><p id="progress">${name} 自动完成 0</p><button id="advance">自动推进 ${name}</button><button id="manual">手动接管 ${name}</button>${lifecycle ? '<p id="human-status" role="status" style="max-width:520px"></p>' : ''}<input aria-label="人工文字" placeholder="接管后文字应保留"><button id="frame">加载子页面 ${name}</button><a id="popup" href="/popup/${name}" target="_blank">打开所属弹窗 ${name}</a><div id="slot"></div><p>本机虚构页面；不使用真实网站、账号或模型。</p><script>
       let count=${initialCount};const name=${JSON.stringify(name)};
       document.querySelector('#progress').textContent=name+' 自动完成 '+count;
-      ${lifecycle ? `setInterval(async()=>{try{const s=await(await fetch('/human-stage/'+name,{cache:'no-store'})).json();const el=document.querySelector('#human-status');if(el.textContent!==s.text){el.textContent=s.text;el.style.color=s.phase==='armed'?'#087b32':'#5c665e';}}catch{}},250);` : ''}
+      ${lifecycle ? `setInterval(async()=>{try{const s=await(await fetch('/human-stage/'+name,{cache:'no-store'})).json();const el=document.querySelector('#human-status');if(el.textContent!==s.text){el.textContent=s.text;el.style.color=s.phase==='armed'?'#087b32':s.phase==='failed'?'#b42318':'#5c665e';}}catch{}},250);` : ''}
       const clock=(async()=>{const sent=performance.timeOrigin+performance.now();const response=await fetch('/clock');const value=await response.json();return{sent,server:value.at,received:performance.timeOrigin+performance.now()};})();
       const send=async(route,data)=>{const clientWallAt=Date.now(),clientAt=performance.timeOrigin+performance.now();return fetch(route,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,clientAt,clientWallAt,...data,clock:await clock})});};
       let moves=0;document.addEventListener('mousemove',e=>{if(moves++<8)send('/input',{kind:'mousemove',trusted:e.isTrusted,x:e.clientX,y:e.clientY});},true);
@@ -412,7 +412,7 @@ try {
     } else assert(restored.tasks.length===2 && Object.values(ids).every(id=>restored.tasks.some(task=>task.id===id && !task.execution)) && evidence.models.length===0 && evidence.effects.length===0,'INPUT_PREPARATION_RESTORE_MUST_REMAIN_MANUAL');
   }
   evidence.phase = 'ready'; evidence.validationStarted = new Date().toISOString(); save();
-  deadline = setTimeout(() => { expired = true; evidence.failure = 'ROUND_TIME_LIMIT'; save(); void finish(); }, evidence.limits.minutes * 60000);
+  deadline = setTimeout(() => { expired = true; evidence.deadlineReachedAt=Date.now(); evidence.failure ??= 'ROUND_TIME_LIMIT'; save(); void finish(); }, evidence.limits.minutes * 60000);
   if (lifecycle) resourceTimer = setInterval(() => {
     try {
       trackPids();
@@ -610,8 +610,12 @@ function beginHuman(job) {
   })().catch(async error=>{
     if(signal.aborted) {step.cancelledAt=Date.now();step.phase='cancelled';save();return;}
     step.failure=error.message; step.phase='failed'; evidence.failure??=error.message;
-    humanSignals.set(job.name,{phase:'failed',text:'本步已停止，请回 Codex 查看结果，不再输入。'}); save();
-    void finish();
+    humanSignals.set(job.name,{phase:'failed',text:'本步未通过，自动操作已停止。窗口保留以便说明原因，请回 Codex 查看，不再输入；本轮截止时会正常退出。'});
+    // 精确84复用的A始终扣住0步、B只读核对已有2步；失败后不再接受新操作。
+    // 先由agent说明，再显式finish；20分钟独立deadline仍兜底，不延长本轮。
+    if(requireImeProbe) evidence.awaitingFailureClose={at:Date.now(),failure:error.message};
+    save();
+    if(!requireImeProbe) void finish();
   }).finally(()=>{activeHuman=undefined;});
   return {pending:step.input};
 }
@@ -621,6 +625,7 @@ poll = setInterval(async () => {
   busy = true; let job;
   try {
     job = JSON.parse(fs.readFileSync(path.join(out, 'command.json'))); fs.unlinkSync(path.join(out, 'command.json'));
+    assert(!evidence.awaitingFailureClose || ['state','finish'].includes(job.kind),'HUMAN_FAILURE_REQUIRES_CLOSURE');
     assert(!activeHuman || ['state','finish'].includes(job.kind), 'HUMAN_STEP_STILL_RUNNING');
     let value;
     if (job.kind === 'pair') {
@@ -702,6 +707,11 @@ poll = setInterval(async () => {
     write('response.json', { id: job.id, ok: true, value });
     if (job.kind !== 'finish' && job.kind !== 'timing') { await snapshot(); trackPids(); }
   } catch (error) {
+    if(error.message==='HUMAN_FAILURE_REQUIRES_CLOSURE' && evidence.awaitingFailureClose) {
+      (evidence.rejectedAfterFailure??=[]).push({at:Date.now(),kind:job?.kind,error:error.message});save();
+      write('response.json',{id:job?.id,ok:false,error:error.message});
+      return;
+    }
     evidence.controlFailure = error.message; save();
     write('response.json', { id: job?.id, ok: false, error: error.message });
     await finish();

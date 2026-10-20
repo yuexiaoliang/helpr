@@ -1,0 +1,66 @@
+{
+  "checkedAt": "2026-10-20T03:41:34.752Z",
+  "scope": "Offline checks before authorized first completion start; no actual run yet",
+  "sourceSHA256": "9b9839125ba87c790cea489f3902a6b4e13fb2c638ecdd1d21e58c30abe83add",
+  "harnessSHA256": "fada04d11d930b9c405d69664f940a8e6d73ccf21434f41194102cdcad3a073a",
+  "sourceHelperSHA256": "524bda8e04e31fd8e5d096551933c7ace4af715ad27c1d391e43e90f2f71db8d",
+  "fullValidator": {
+    "file": "FULL-VALIDATOR-COMPLETION-CHECK.json",
+    "cases": 31,
+    "SHA256": "86c2502f3bc3c485550ae3e2d0e0462c9676c23574c730ccf6259014e92ca76a"
+  },
+  "carryPreflight": {
+    "round": "lifecycle-06-input-resume",
+    "counts": {
+      "effects": 6,
+      "inputs": 217,
+      "models": 29,
+      "tasks": 8
+    },
+    "maximum": {
+      "effects": 8,
+      "inputs": 1024,
+      "models": 80,
+      "tasks": 8
+    },
+    "remaining": {
+      "effects": 2,
+      "inputs": 807,
+      "models": 51,
+      "tasks": 0
+    },
+    "reusedTasks": 2
+  },
+  "authorization": {
+    "file": "COMPLETION-AUTHORIZATION.json",
+    "SHA256": "0b6e529760bebdc76f377e9aaad7005065280a2e0f8cbc4c33fc2078f5e87639"
+  },
+  "globalBudget": {
+    "used": {
+      "builds": 34,
+      "installs": 8,
+      "starts": 84,
+      "faults": 37,
+      "cleanups": 16
+    },
+    "limits": {
+      "builds": 36,
+      "installs": 10,
+      "starts": 90,
+      "faults": 37,
+      "cleanups": 18
+    }
+  },
+  "review": {
+    "standardsHard": 0,
+    "standardsSmells": 0,
+    "specResidual": 0
+  },
+  "retainedDraftFailure": {
+    "kind": "Rejected command after human failure erroneously closed window in common catch",
+    "logSHA256": "df5bf13f9ec651c3616aa9cae3055dfba28e382aa1ca48c0e8a4ce22e9917395",
+    "fixed": true
+  },
+  "actualNewStarts": 0,
+  "actualAcceptance": "pending; offline results do not count as actual IME/paste/performance"
+}
