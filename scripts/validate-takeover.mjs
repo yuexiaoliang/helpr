@@ -256,7 +256,7 @@ const server = http.createServer(async (req, res) => {
       const clock=(async()=>{const sent=performance.timeOrigin+performance.now();const response=await fetch('/clock');const value=await response.json();return{sent,server:value.at,received:performance.timeOrigin+performance.now()};})();
       const send=async(route,data)=>{const clientWallAt=Date.now(),clientAt=performance.timeOrigin+performance.now();return fetch(route,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,clientAt,clientWallAt,...data,clock:await clock})});};
       let moves=0;document.addEventListener('mousemove',e=>{if(moves++<8)send('/input',{kind:'mousemove',trusted:e.isTrusted,x:e.clientX,y:e.clientY});},true);
-      for(const kind of ['mousedown','keydown','beforeinput','input','paste'])document.addEventListener(kind,e=>{if(e.target.id!=='advance')send('/input',{kind,modifierOnly:kind==='keydown'&&['Meta','Shift','Control','Alt'].includes(e.key),target:e.target.id||e.target.tagName,trusted:e.isTrusted,clientAt:performance.timeOrigin+performance.now(),value:document.querySelector('input').value});},true);
+      for(const kind of ['mousedown','keydown','beforeinput','input','paste','compositionstart','compositionend'])document.addEventListener(kind,e=>{if(e.target.id!=='advance')send('/input',{kind,modifierOnly:kind==='keydown'&&['Meta','Shift','Control','Alt'].includes(e.key),keyCode:e.keyCode,isComposing:e.isComposing,inputType:e.inputType,target:e.target.id||e.target.tagName,trusted:e.isTrusted,clientAt:performance.timeOrigin+performance.now(),value:document.querySelector('input').value});},true);
       document.querySelector('#advance').onclick=()=>{count++;document.querySelector('#progress').textContent=name+' 自动完成 '+count;send('/effect',{count})};
       document.querySelector('#frame').onclick=()=>{document.querySelector('#slot').innerHTML='<iframe title="任务子页面" src="/frame/'+name+'"></iframe>'};
       send('/probe',{node:typeof process,require:typeof require,bridge:typeof window.workspace});
@@ -544,18 +544,27 @@ function beginHuman(job) {
     assert(!evidence.effects.some(row=>row.name===job.name), 'HUMAN_REVOKED_TASK_EFFECT');
     if(job.other) await until(async()=>{const state=await read();return state.tasks.find(task=>task.id===ids[job.other])?.execution?.phase==='complete';},10000);
     const first=step.receipts.find(row=>!row.modifierOnly && ['keydown','beforeinput','paste','input'].includes(row.kind));
+    assert(first?.trusted===true && first.target==='INPUT', 'HUMAN_TRUSTED_FIRST_OPERATION_REQUIRED');
     const rows=gate.traceRead().rows.slice(0,first.traceLength);
     // AppKit 不把单独的修饰键视为接管；Electron仍为每个keyDown写一个收件记号。
     // 只逐个跳过网页已证实的前置修饰键，首个真正操作缺少阻断仍必须失败。
     const modifierCount=step.receipts.slice(0,step.receipts.indexOf(first)).filter(row=>row.kind==='keydown' && row.modifierOnly).length;
-    const delivered=rows.slice(step.qualified.traceLength).filter(row=>row.owner==='web:'+ids[job.name] && row.stage==='web-before-input' && row.at>=step.armedAt)[modifierCount];
-    assert(delivered, 'HUMAN_NATIVE_DELIVERY_REQUIRED');
-    const identified=rows.find(row=>row.owner===delivered?.owner && row.serial===delivered.serial && row.stage==='identified');
-    const blocked=rows.find(row=>row.owner===delivered?.owner && row.serial===delivered.serial && row.stage==='blocked');
-    const handoff=rows.find(row=>row.owner===delivered.owner && row.serial===delivered.serial && row.stage==='handoff');
-    assert(identified && blocked && handoff && identified.at>=step.armedAt && identified.at<=blocked.at && blocked.at<=handoff.at && handoff.at<delivered.at && blocked.epoch>step.qualified.gates[job.name].epoch && first.gates[job.name].blocked, 'HUMAN_NATIVE_ORDER_REQUIRED');
+    const prefix=rows.slice(step.qualified.traceLength).filter(row=>row.owner==='web:'+ids[job.name] && row.at>=step.armedAt);
+    const delivered=prefix.filter(row=>row.stage==='web-before-input')[modifierCount];
+    // 输入法可能绕过Electron的keyDown标记。仅首个真实操作明确属于组合输入、
+    // 且首条网页收件前恰有唯一原生事件时采用AppKit交付证据；不挑后续合格事件。
+    const compositionStart=step.receipts.slice(0,step.receipts.findIndex(row=>row.kind==='input')).some(row=>row.kind==='compositionstart' && row.trusted && row.target==='INPUT');
+    const composition=job.input==='ime' && (first.isComposing===true || first.inputType==='insertCompositionText' || (first.keyCode===229 && compositionStart));
+    const identifiedRows=prefix.filter(row=>row.stage==='identified');
+    const compositionHandoff=!delivered && modifierCount===0 && composition && identifiedRows.length===1 && ['blocked','handoff'].every(stage=>prefix.filter(row=>row.stage===stage).length===1) && !prefix.some(row=>row.stage==='web-before-input');
+    assert(delivered || compositionHandoff, 'HUMAN_NATIVE_DELIVERY_REQUIRED');
+    const identified=compositionHandoff?identifiedRows[0]:rows.find(row=>row.owner===delivered.owner && row.serial===delivered.serial && row.stage==='identified');
+    const blocked=rows.find(row=>row.owner===identified?.owner && row.serial===identified.serial && row.stage==='blocked');
+    const handoff=rows.find(row=>row.owner===identified?.owner && row.serial===identified.serial && row.stage==='handoff');
+    const deliveryAt=delivered?.at ?? first.clientWallAt;
+    assert(Number.isFinite(deliveryAt) && identified && blocked && handoff && identified.at>=step.armedAt && identified.at<=blocked.at && blocked.at<=handoff.at && handoff.at<deliveryAt && blocked.epoch>step.qualified.gates[job.name].epoch && first.gates[job.name].blocked, 'HUMAN_NATIVE_ORDER_REQUIRED');
     assert(!model.receipt.closedAt || model.receipt.closedAt>=identified.at, 'HUMAN_MODEL_CLOSED_BEFORE_INPUT');
-    step.nativeOrder={identified,blocked,handoff,delivered};
+    step.nativeOrder={identified,blocked,handoff,...(delivered?{delivered}:{compositionReceipt:{kind:first.kind,at:first.at,clientWallAt:first.clientWallAt,traceLength:first.traceLength,keyCode:first.keyCode,isComposing:first.isComposing,inputType:first.inputType},method:'unique-AppKit-handoff-and-trusted-composition-receipt'})};
     step.after={at:Date.now(),snapshot:await read(),gates:gates(),traceLength:trace()};
     step.phase='complete'; step.finishedAt=Date.now();
     humanSignals.set(job.name,{phase:'complete',text:'本步记录完成。请回 Codex 回复，保留当前文字。'}); save();

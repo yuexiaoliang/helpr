@@ -1,0 +1,178 @@
+{
+  "date": "2026-10-20",
+  "candidate": 34,
+  "start": 83,
+  "sourceCommit": "e563b9b",
+  "sourceSHA256AtStart": "684b6cd9d69f122c77e0031c30e866f71ded3aeec2209d564166d1281bd43485",
+  "failure": "HUMAN_NATIVE_DELIVERY_REQUIRED",
+  "responsibility": "Validator required Electron keyDown delivery marker for every IME input; complete prelaunch mock did not cover composition bypass",
+  "windowAcknowledgement": {
+    "at": 1792463333768,
+    "reply": "窗口可见，已复制并准备好",
+    "consumedAt": 1792463333868
+  },
+  "productFacts": {
+    "originalTasksReused": true,
+    "newTasks": 0,
+    "formalMouseDowns": 0,
+    "firstTrustedReceipt": {
+      "route": "/input",
+      "name": "A",
+      "clientAt": 1792463369912.6,
+      "clientWallAt": 1792463369915,
+      "kind": "keydown",
+      "modifierOnly": false,
+      "target": "INPUT",
+      "trusted": true,
+      "value": "",
+      "clock": {
+        "sent": 1792463201137.5,
+        "server": 1792463201145,
+        "received": 1792463201190.6
+      },
+      "at": 1792463369924,
+      "gates": {
+        "A": {
+          "epoch": 9,
+          "available": true,
+          "blocked": true
+        },
+        "B": {
+          "epoch": 1,
+          "available": true,
+          "blocked": false
+        }
+      },
+      "traceLength": 311
+    },
+    "nativePrefixBeforeFirstReceipt": [
+      {
+        "stage": "identified",
+        "owner": "web:8803eea5-23ba-4798-9244-29fe678e033f",
+        "serial": 5,
+        "epoch": 0,
+        "at": 1792463369868.377
+      },
+      {
+        "stage": "blocked",
+        "owner": "web:8803eea5-23ba-4798-9244-29fe678e033f",
+        "serial": 5,
+        "epoch": 8,
+        "at": 1792463369868.377
+      },
+      {
+        "stage": "handoff",
+        "owner": "web:8803eea5-23ba-4798-9244-29fe678e033f",
+        "serial": 5,
+        "epoch": 0,
+        "at": 1792463369868.471
+      }
+    ],
+    "modelLiveAtArm": {
+      "at": 1792463367161,
+      "gates": {
+        "A": {
+          "epoch": 7,
+          "available": true,
+          "blocked": false
+        },
+        "B": {
+          "epoch": 1,
+          "available": true,
+          "blocked": false
+        }
+      },
+      "name": "A",
+      "count": 0,
+      "closedAt": 1792463369870.6448
+    },
+    "modelClosedAfterIdentificationMs": 2.267822265625,
+    "a": {
+      "phase": "paused",
+      "pauseReason": "takeover",
+      "stopSaved": true,
+      "effects": 0
+    },
+    "b": {
+      "phase": "complete",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    "finalHumanText": "啊",
+    "userFeedback": "输入 “啊” 后应用退出了"
+  },
+  "limitation": "Original failed observation retained. Missing explicit composition telemetry prevents retroactive full pass. Paste, final continue/text retention and sustained performance not attempted after failure.",
+  "resultSHA256": "6f14002758df4b47dacc7cb1ebb8d78d59970b4dbdfefb104f3146f5bfd3ce01",
+  "traceSHA256": "660f1e0fc5ebe85a8dab39247fd7b29cb74d5e7080c2ef6602409ab873e208f1",
+  "newCounts": {
+    "tasks": 0,
+    "models": 4,
+    "effects": 2,
+    "inputs": 20
+  },
+  "cumulative": {
+    "effects": 6,
+    "inputs": 182,
+    "models": 26,
+    "tasks": 8
+  },
+  "remaining": {
+    "tasks": 0,
+    "models": 6,
+    "effects": 2,
+    "inputs": 42
+  },
+  "globalStarts": {
+    "used": 83,
+    "limit": 83
+  },
+  "performance": {
+    "readyMs": 1818,
+    "activeDurationMs": 170746,
+    "rssSamples": 56,
+    "minMiB": 1298.0625,
+    "maxMiB": 1402,
+    "scope": "Preparation and short IME activity only; no sustained-load threshold inferred"
+  },
+  "fix": {
+    "scope": "validator only; packaged candidate unchanged; no actual run after fix",
+    "sourceSHA256": "cf3238b586034a99a9ba44734ff94a1f4a29d87fb2ebc0c43276e2efc29c748c",
+    "harnessSHA256": "fc4be2e53cbd7501d18d5873b8c3c8fb80336e9261009d55f1a07f1247e98ed2",
+    "offlineCases": 13,
+    "allPassed": true,
+    "oldValidatorRedLogSHA256": "0c1ad4ac165d8600e69c98307e0ad2537e6ba950ee47258deaa9c4e74552d483",
+    "actualImeAcceptance": "pending",
+    "actualPasteAcceptance": "pending"
+  },
+  "exit": {
+    "at": 1792463437252,
+    "knownPids": [
+      70479,
+      70483,
+      70484,
+      70485,
+      70486,
+      70487,
+      70492,
+      70493,
+      70494,
+      70495,
+      70496,
+      70500,
+      70501,
+      70502,
+      70503
+    ],
+    "ownedGroups": [
+      70479,
+      70485,
+      70486
+    ],
+    "pidSurvivors": [],
+    "groupSurvivors": [],
+    "exitCode": 0,
+    "finished": "2026-10-20T02:29:31.742Z"
+  }
+}

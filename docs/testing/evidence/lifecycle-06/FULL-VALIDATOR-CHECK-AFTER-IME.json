@@ -1,0 +1,98 @@
+{
+  "checkedAt": "2026-10-20T02:34:57.111Z",
+  "harnessSHA256": "fc4be2e53cbd7501d18d5873b8c3c8fb80336e9261009d55f1a07f1247e98ed2",
+  "sourceSHA256": "cf3238b586034a99a9ba44734ff94a1f4a29d87fb2ebc0c43276e2efc29c748c",
+  "scope": "Complete actual validator source with stubbed spawn/public IPC/native input; actual loopback HTTP, commands, gate selection, synthetic database bytes/proof with preserved source chain, limits, human observer, and cleanup; no app, browser, global budget or human acceptance",
+  "cases": [
+    {
+      "scenario": "complete-ime-paste-final-quit",
+      "passed": true,
+      "models": 8,
+      "effects": 4,
+      "inputs": 7,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "complete-ime-without-key-marker",
+      "passed": true,
+      "models": 8,
+      "effects": 4,
+      "inputs": 7,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "ime-229-with-composition-start",
+      "passed": true,
+      "models": 8,
+      "effects": 4,
+      "inputs": 8,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "ime-no-composition",
+      "passed": true,
+      "expectedRejection": "HUMAN_NATIVE_DELIVERY_REQUIRED",
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "ime-229-alone",
+      "passed": true,
+      "expectedRejection": "HUMAN_NATIVE_DELIVERY_REQUIRED",
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "ime-ambiguous-prefix",
+      "passed": true,
+      "expectedRejection": "HUMAN_NATIVE_DELIVERY_REQUIRED",
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "ime-handoff-after-dom",
+      "passed": true,
+      "expectedRejection": "HUMAN_NATIVE_ORDER_REQUIRED",
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "missing-visible-ack",
+      "passed": true,
+      "models": 0,
+      "effects": 0,
+      "inputs": 0,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "cleanup-during-preparation",
+      "passed": true,
+      "models": 0,
+      "effects": 0,
+      "inputs": 0,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "wrong-model-version",
+      "passed": true,
+      "models": 0,
+      "effects": 0,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "changed-database",
+      "passed": true,
+      "startsStubbed": 0
+    },
+    {
+      "scenario": "old-gate-only",
+      "passed": true,
+      "models": 0,
+      "effects": 0,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "multiple-new-gates",
+      "passed": true,
+      "models": 0,
+      "effects": 0,
+      "startsStubbed": 1
+    }
+  ]
+}

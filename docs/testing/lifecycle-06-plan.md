@@ -107,3 +107,5 @@
 完整验证入口已离线执行，spawn／公开IPC／原生输入采用明确替身，实际执行资料守卫、本机HTTP、命令收发、模型夹具、IME→paste→最后继续和退出；另覆盖缺少窗口确认、准备中取消、配置版本冲突、数据库改动以及缺少／多个新增gate。见[检查记录](evidence/lifecycle-06/FULL-VALIDATOR-CHECK.json)与 `scripts/check-lifecycle-validator.mjs`。这不代替真实界面或真人输入。全源码只读复核还发现并修正模型关闭时间精度与⌘修饰键配对的验证错误，候选包不变。
 
 入口固定 `node scripts/validate-takeover.mjs --round=lifecycle-06-input-verified --build=34 --lifecycle --carry=lifecycle-06-input-ready --task-limit=8 --lifecycle-model-limit=32 --lifecycle-input-limit=224 --reuse-input-preparation`。从ready起20分钟，公开命令15秒／原生10秒／正常退出45秒。启动后先自动检查绘制与焦点，再等待用户确认窗口可见及“粘贴核对”剪贴板准备；确认前不启动90秒准备、30秒输入计时或模型。每步消费新近可见确认，IME与paste各仅一次。失败保存并收束，不追加启动。
+
+实际83已按可见确认交接，正式IME使A接管、B完成两次，但验证器漏计IME绕过Electron键盘标记而失败，随后正常退出并独立确认15PID／3组空。原失败及累计消耗保持，未再启动。仅离线补充显式composition遥测与唯一原生链关联，13项完整入口及原时序检查通过；修正不追认本轮、也不追加启动许可。现累计8／26／6／182，剩0新任务／6本机模型／2效果／42收件，启动83/83；实际paste、最终继续及持续运行未开展。详见[83实际边界](evidence/lifecycle-06/REPORT.md#启动-83输入法交付标记缺失与主动收束)。
