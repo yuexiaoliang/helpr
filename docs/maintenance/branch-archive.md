@@ -8,7 +8,7 @@
 - `codex/core-workspace-prototype`：仍需回看的 01–04 原型，保留本地分支和工作副本。其当前源码另有远程归档标签备份；本机预览入口仍在原目录。
 - `codex/recovery-prototype`：2026-10-17 新增的 05 状态演示，版本 `recovery-v1`，固定来源 `5a75723b480ec88215e74de00d08c3e57346129f`，尚待体验确认。活动副本为 `/Users/yuexiaoliang/.codex/worktrees/recovery-prototype/helpr`，入口为其中的 `.scratch/helpr-first-release-implementation/prototypes/recovery/recovery-prototype.html`，可直接双击；临时预览在 `http://127.0.0.1:4318/recovery-prototype.html`。本轮仅本机保存分支与提交，没有新增远程归档标签。
 - 其它已结束的分支由下表的附注标签保留。删除旧分支名不删除源码或报告；后续引用使用归档标签或完整提交，不依赖已经删除的分支名。
-- `codex/lifecycle-prototype`：2026-10-19 新增的 06 状态演示，版本 `lifecycle-v1`，固定来源 `980141ccde93fbddda48c371abe0a7d26dd4936c`，待用户体验与明确确认。活动副本为 `/Users/yuexiaoliang/.codex/worktrees/lifecycle-prototype/helpr`，入口为其中的 `.scratch/helpr-first-release-implementation/prototypes/lifecycle/lifecycle-prototype.html`，可双击；临时预览为 `http://127.0.0.1:4319/lifecycle-prototype.html`。本轮本机保存分支与提交，没有新增远程归档标签。
+- `codex/lifecycle-prototype`：06 状态演示 `lifecycle-v1`，固定来源 `980141ccde93fbddda48c371abe0a7d26dd4936c`。用户于2026-10-19明确确认，06于2026-10-20完成十条验收；原型仍作为独立一手来源保留，不合并为产品代码。2026-10-20已向Codex提交可恢复工作副本归档请求，归档状态见下方收尾记录；旧路径为 `/Users/yuexiaoliang/.codex/worktrees/lifecycle-prototype/helpr`，不再将临时4319预览作为当前入口。本地分支及完整提交保留，没有新增远程归档标签。
 
 早期状态原型与凭据研究的旧工作副本已切换到对应归档标签，处于 detached HEAD，不再占用开发分支；也已提交 Codex 工作副本归档请求。归档来源与恢复不依赖这些本机目录是否继续存在。
 
@@ -37,3 +37,17 @@ git worktree add --detach ../helpr-participation-archive archive/2026-10-16/part
 状态原型的入口是新工作副本中的 `.scratch/helpr-first-release/prototypes/participation-state-prototype.html`，可直接打开。其它来源替换标签和目标目录即可；归档标签不随后续开发移动。
 
 整理前另已制作并验证本机完整 Git 备份：`.local/branch-cleanup/2026-10-16/helpr-before-branch-cleanup.bundle`。它不进入版本库；可用 `git bundle verify` 检查，必要时从中取得整理前的分支。核心原型工作副本中的未跟踪预览日志保留在原处。
+
+
+## 06 完成后的原型恢复
+
+06已通过[最终验收](../testing/evidence/lifecycle-06/FINAL-ACCEPTANCE.md)。其原型分支仍固定在`980141ccde93fbddda48c371abe0a7d26dd4936c`；工作副本归档不删除Git来源。归档完成后可从本聊天附件恢复工作区；也可随时基于保留提交创建独立副本：
+
+```sh
+git worktree add --detach ../helpr-lifecycle-archive 980141ccde93fbddda48c371abe0a7d26dd4936c
+```
+
+入口为新目录中的`.scratch/helpr-first-release-implementation/prototypes/lifecycle/lifecycle-prototype.html`，可直接双击。原型内存状态、模拟系统事件与正式验收仍有原来边界；恢复原型不代表重新运行正式验证。
+
+
+2026-10-20善后复查：原型工作副本无未提交或忽略文件，来源分支和HTML已核对。两次Codex归档调用均仅返回`queued`，最后检查时目录及活动附件仍在，因此尚未确认归档完成，不手动删除受管目录，也不重复同样请求。应用15PID／3组及旧4319预览端口均已独立确认无残留；详见[收尾状态](../testing/evidence/lifecycle-06/CLOSEOUT.json)。
