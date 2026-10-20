@@ -20,6 +20,7 @@ User stories: 21–25、35、51、65
 ## 原型确认
 
 - 状态：已确认。
+- 当前回看入口：原分支名已于2026-10-20清理，源码由远端归档标签 `archive/2026-10-16/core-workspace-prototype` 保留；[恢复方法](../../../docs/maintenance/branch-archive.md#回看与恢复)。下列临时网址与本机路径保留为历史体验记录。
 - 原型：[直接接管与页面归属](http://127.0.0.1:4317/takeover-prototype.html?v=b3d6e31)，版本 `takeover-v1`；来源分支 `codex/core-workspace-prototype`，最终源码提交 `b3d6e31`。[单文件原型](/Users/yuexiaoliang/.codex/worktrees/core-workspace-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/core-workspace/takeover-prototype.html)、[范围与说明](/Users/yuexiaoliang/.codex/worktrees/core-workspace-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/core-workspace/takeover-prototype.md)。原型只在隔离分支，不合并为正式产品。
 - 覆盖范围：点击、键入与粘贴让出对应任务，独立 B 继续；查看、切标签、移动鼠标与普通任务对话不接管网页；明确继续先核对并保留人工内容；页面变化后旧资格失效，旧建议拒绝，重识别不自行恢复；归属未知时暂停窗口内两项并说明未知，分别明确继续，已有停止保持；本机能力不可用的暂停与恢复提示。沿用既定标签栏、任务卡片和独立对话。
 - 确认记录：2026-10-16，用户在列明版本与覆盖范围的确认问题中回复“确认，按这一版及所列范围实现”。确认 `takeover-v1`（`b3d6e31`）作为上述范围的正式实现依据；不把本次同意视为真实原生输入已经验收。

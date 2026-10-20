@@ -20,6 +20,7 @@ User stories: 1、2、4、16、64
 ## 原型确认
 
 - 状态：已确认。
+- 当前回看入口：原分支名已于2026-10-20清理，源码由远端归档标签 `archive/2026-10-16/core-workspace-prototype` 保留；[恢复方法](../../../docs/maintenance/branch-archive.md#回看与恢复)。下列临时网址与本机路径保留为历史体验记录。
 - 原型：[模型配置与网页理解](http://127.0.0.1:4317/model-understanding-prototype.html)，版本 `model-understanding-v1`。来源分支 `codex/core-workspace-prototype`，提交 `a722b68`；[原型说明](/Users/yuexiaoliang/.codex/worktrees/core-workspace-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/core-workspace/model-understanding-prototype.md)，自包含 HTML 可直接打开。
 - 覆盖范围：全局服务协议、地址、模型及演示凭据的配置与模拟连接；所属任务的页面问答、独立草稿与逐段回复；逐任务停止回复与未知消耗；更换服务只影响后续请求；凭据、连接、超时、格式、能力、保护不可用及上限提示；回复页面依据与网页变化提示。沿用已确认的紧凑标签栏、网页主工作区与独立对话，不重做整体布局。
 - 确认记录：2026-10-15，交付 `model-understanding-v1`（`a722b68`）并说明“等你确认后再接入真实模型”后，用户回复“可以”。在该上下文中，确认本版本及本节覆盖范围可作为 02 正式实现依据；不扩展到 03 网页操作，也不作为真实能力验收通过。

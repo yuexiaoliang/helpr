@@ -20,6 +20,7 @@ User stories: 25、48–51、60
 ## 原型确认
 
 - 状态：已确认。
+- 当前回看入口：原分支名已于2026-10-20清理，源码由远端归档标签 `archive/2026-10-20/recovery-prototype` 保留；[恢复方法](../../../docs/maintenance/branch-archive.md#回看与恢复)。下列临时网址与本机路径保留为历史体验记录。
 - 原型：[退出与冷重开恢复演示](http://127.0.0.1:4318/recovery-prototype.html?v=5a75723)，版本 `recovery-v1`；来源分支 `codex/recovery-prototype`，固定源码提交 `5a75723b480ec88215e74de00d08c3e57346129f`。[单文件原型](/Users/yuexiaoliang/.codex/worktrees/recovery-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/recovery/recovery-prototype.html)、[范围与体验说明](/Users/yuexiaoliang/.codex/worktrees/recovery-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/recovery/README.md)。可直接双击 HTML；临时预览入口依赖本机静态服务。原型独立保留，不合并为正式产品。
 - 覆盖范围：有序退出的阻断、保存与清理次序；意外退出后的旧控制隔离、唯一拥有者与竞争启动；按可靠记录恢复任务和不同意图；唯一实际结果补记、可信未派发续做与结果不明不重发；核对中新的停止或目标变化使旧核对失效；记录进程退出、保存失败、提交回执丢失及迟到回执；缺失／损坏／不兼容／素材不符资料与无法重建网页现场的保留和说明。通过两项虚构备注写入及 10 个引导场景体验行为，附自由操作与完整状态。
 - 模拟边界：记录、意图、提交、进程、目标身份、网页结果和人工文字均在内存中模拟，不构成实际持久化、进程树清理、真实网页重建或自主恢复依据的证据。分步按钮和状态表是原型工具，正式产品自动处理相应阶段。12–14 的真实上传／草稿／发布恢复及 06 的系统生命周期范围保留，原验收条件未勾选。

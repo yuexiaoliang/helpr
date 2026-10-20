@@ -20,6 +20,7 @@ User stories: 4、25–28、33–34、48、52、53、65
 ## 原型确认
 
 - 状态：已确认。
+- 当前回看入口：原分支名已于2026-10-20清理，源码由远端归档标签 `archive/2026-10-16/core-workspace-prototype` 保留；[恢复方法](../../../docs/maintenance/branch-archive.md#回看与恢复)。下列临时网址与本机路径保留为历史体验记录。
 - 原型：[网页执行、停止与继续](http://127.0.0.1:4317/execution-prototype.html)，版本 `execution-v1`。来源分支 `codex/core-workspace-prototype`，提交 `c3592fb`；[单文件原型](/Users/yuexiaoliang/.codex/worktrees/core-workspace-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/core-workspace/execution-prototype.html)可直接双击，[范围与说明](/Users/yuexiaoliang/.codex/worktrees/core-workspace-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/core-workspace/execution-prototype.md)。代码只在原型分支，未合并为产品。
 - 覆盖范围：所属任务中的开始、停止、继续与结果；两项自动推进及第三项排队；A 停止后独立 B 继续；先前已送出效果迟到登记而不解锁；明确继续先核对、只做剩余、已完成不重发、结果不明保持核对；关键保存失败阻断与停止尚未保存的说明；目标收窄后旧建议失效。沿用已确认紧凑标签、悬停任务卡片及独立对话浮窗。
 - 确认记录：2026-10-16，用户询问是否按体验指南测试，获知逐步体验及模拟范围后明确回复“验收通过”。在该上下文中，确认 `execution-v1`（`c3592fb`）及本节覆盖范围作为 03 实现依据；这不是尚未实现的真实网页执行已通过验收。此前 implement“继续推进”的授权沿用。

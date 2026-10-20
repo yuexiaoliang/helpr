@@ -18,6 +18,7 @@ User stories: 3、17、58、64、65
 ## 原型确认
 
 - 状态：已确认（`foundation-v2` 的交互与布局；第 4 款标签栏视觉方向已选定）
+- 当前回看入口：原分支名已于2026-10-20清理，源码由远端归档标签 `archive/2026-10-16/core-workspace-prototype` 保留；[恢复方法](../../../docs/maintenance/branch-archive.md#回看与恢复)。下列临时网址与本机路径保留为历史体验记录。
 - 原型：[基础工作区完整体验](http://127.0.0.1:4317/foundation.html)，当前版本 `foundation-v3`，保留 v2 交互，更新为第 4 款无竖线标签栏。来源见 [README](/Users/yuexiaoliang/.codex/worktrees/core-workspace-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/core-workspace/README.md)；分支 `codex/core-workspace-prototype`，当前提交 `b4ea509`。原 [A／B／C 布局比较](http://127.0.0.1:4317/?variant=A) 仍可使用。
 - 覆盖范围：单一目标输入、网站识别与任务内补问的模拟交互；标签与 header 合并、悬浮恢复提示；网页登录、独立对话、收起重开及原有恢复和失败场景。AI 入口只覆盖交互提案，实际能力属于后续 02／03。
 - 确认记录：2026-10-14，用户明确“原型确认，是否需要进行 UI 设计？”，确认 `foundation-v2`（来源提交 `c9a7a98`）上述范围内的交互与布局，可作为对应真实实现的设计依据。当前讨论视觉细化，尚未开始正式实现；本次确认不扩展为全部实现事项的原型批准。
