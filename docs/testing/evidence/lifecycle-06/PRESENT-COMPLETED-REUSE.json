@@ -1,0 +1,128 @@
+{
+  "checkedAt": "2026-10-20T06:10:49.723918+00:00",
+  "source": "lifecycle-06-input-present",
+  "sourceFiles": {
+    "result.json": "b2f3a57684e18aed989fcd0a4ffaeadbe8d0fbcd78d8791aaf03290d3e15982d",
+    "context.json": "4431de5ccaa0a7897c1862cb5ff042b51df7515bf63d129f70cb3c61ee2eed18",
+    "ids.json": "3dfacecbe3c45e19831d34e281786d6cddb82a0f3e80d18eb7eeaf4c833aad93",
+    "snapshot.json": "dcd3fcc884dcf6f58707a7595f5819ebddf259474acbc58c1aa91c473189b044"
+  },
+  "profileFiles": {
+    "workspace.sqlite": "a8ded744d59a6797d3c07d646ffd8fcc072b930e0f2556f996f279a64ccc9696"
+  },
+  "initialCounts": {
+    "A": 2,
+    "B": 2
+  },
+  "parentResultSHA256": "8286524ce2284caef790bf1a23d66639e193bbf3c8221c7653a3bc9503a5956b",
+  "nativeTraceSHA256": "9b78cd66ce86af6c1c06219d2bba585d3fea0e8d92c9f2ef2a77cdfaa0f19814",
+  "audit": {
+    "method": "read-only immutable SQLite; no credential ciphertext read",
+    "counts": {
+      "tasks": 2,
+      "task_executions": 2,
+      "model_calls": 13,
+      "model_settings": 6
+    },
+    "matchesSnapshot": true,
+    "taskDifferences": [],
+    "matchesExecutionSnapshot": true,
+    "publicModelSettings": {
+      "endpoint": "http://127.0.0.1:58400/v1",
+      "model": "controlled-local-04",
+      "version": 6
+    }
+  },
+  "independentExit": {
+    "at": "2026-10-20T06:05:24.806312+00:00",
+    "method": "independent /bin/ps after manager completion",
+    "knownProcessTree": [
+      {
+        "pid": 96422,
+        "parent": 96418,
+        "group": 96422
+      },
+      {
+        "pid": 96425,
+        "parent": 96422,
+        "group": 96418
+      },
+      {
+        "pid": 96426,
+        "parent": 96422,
+        "group": 96418
+      },
+      {
+        "pid": 96427,
+        "parent": 96422,
+        "group": 96427
+      },
+      {
+        "pid": 96428,
+        "parent": 96422,
+        "group": 96422
+      },
+      {
+        "pid": 96429,
+        "parent": 96427,
+        "group": 96429
+      },
+      {
+        "pid": 96439,
+        "parent": 96429,
+        "group": 96429
+      },
+      {
+        "pid": 96440,
+        "parent": 96429,
+        "group": 96429
+      },
+      {
+        "pid": 96441,
+        "parent": 96429,
+        "group": 96429
+      },
+      {
+        "pid": 96442,
+        "parent": 96429,
+        "group": 96429
+      },
+      {
+        "pid": 96443,
+        "parent": 96429,
+        "group": 96429
+      },
+      {
+        "pid": 96446,
+        "parent": 96429,
+        "group": 96429
+      },
+      {
+        "pid": 96447,
+        "parent": 96429,
+        "group": 96429
+      },
+      {
+        "pid": 96448,
+        "parent": 96429,
+        "group": 96429
+      },
+      {
+        "pid": 96449,
+        "parent": 96429,
+        "group": 96429
+      }
+    ],
+    "knownPidCount": 15,
+    "ownedGroups": [
+      96422,
+      96427,
+      96429
+    ],
+    "survivors": [],
+    "allCleared": true,
+    "normalExit": true,
+    "finished": "2026-10-20T06:05:16.503Z"
+  },
+  "scope": "Both original tasks already complete; reuse only for native readiness and performance; never grant new execution, request models, create tasks, or repeat website effects"
+}

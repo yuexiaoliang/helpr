@@ -1,0 +1,93 @@
+{
+  "at": "2026-10-20T06:23:39.613677+00:00",
+  "sourceCommit": "d177c0b",
+  "actualStartNotYetUsed": 88,
+  "actualBudget": {
+    "builds": 34,
+    "installs": 8,
+    "starts": 87,
+    "faults": 37,
+    "cleanups": 16
+  },
+  "candidate": {
+    "build": 34,
+    "archive": "de92eb195d79e528e76ea4e35fdd38e93c11c7452d72a74821601b73eead1dcd",
+    "certificateSHA256": "5bd4c2c1f28a99910837bb31ba404f3043378c54463bdc8a8bdf04ce75d2f119",
+    "signedImages": 54,
+    "hashesAndSignatureRechecked": true
+  },
+  "nativeConnection": {
+    "inventory": "success",
+    "FinderAX": "success",
+    "targetHelpr": "not running; one bounded attachment to be attempted only after managed start",
+    "userReply": "再试试",
+    "serviceRestartConfirmed": false
+  },
+  "carryPreflight": {
+    "round": "lifecycle-06-input-present",
+    "counts": {
+      "effects": 8,
+      "inputs": 328,
+      "models": 35,
+      "tasks": 8
+    },
+    "maximum": {
+      "effects": 8,
+      "inputs": 1024,
+      "models": 80,
+      "tasks": 8
+    },
+    "remaining": {
+      "effects": 0,
+      "inputs": 696,
+      "models": 45,
+      "tasks": 0
+    },
+    "reusedTasks": 2,
+    "performanceOnly": true,
+    "roundLimits": {
+      "tasks": 0,
+      "models": 0,
+      "effects": 0,
+      "inputs": 696
+    }
+  },
+  "offlineChecks": {
+    "file": "FULL-VALIDATOR-PERFORMANCE-CHECK.json",
+    "scenarios": 53,
+    "allPassed": true,
+    "sourceSHA256": "586a0fc97973c0893e411041a87ad13b2a4247c2d248e442b2c87ed1a6ba927b",
+    "completedHelperSHA256": "a2ee7853ddd023f197c3e73fb1617f577f28ff1cc7803dcbed743843eff84e7e",
+    "harnessSHA256": "756704c716e4e91e38a5a412ce1e6691d16c46df49211c25c3dd677e8cbd3b45"
+  },
+  "initialIncompleteCheck": "FULL-VALIDATOR-PERFORMANCE-INITIAL-CHECK.json",
+  "reviewCorrections": {
+    "findings": 2,
+    "resolved": 2,
+    "details": [
+      "Mutually exclusive command branch checks, mixed fields rejected",
+      "Exact original A/B IDs before comparing executions"
+    ]
+  },
+  "redExamples": [
+    {
+      "log": ".local/workspace-validation/lifecycle-06-performance-mixed-red.log",
+      "sha256": "4164debfb531a1eab1cf1b47c962b30c326394870a4354d5af66c63399d2f440",
+      "exitCode": 1,
+      "scope": "offline explicit stubs only; no actual app or budget",
+      "reason": "Mixed command was incorrectly accepted; test expecting PERFORMANCE_COMMAND_DENIED failed"
+    },
+    {
+      "log": ".local/workspace-validation/lifecycle-06-performance-identity-red.log",
+      "sha256": "3eb98069f19035e50a9ef6c6fdba9fcd6383e10cd22f2b8d7c503cdc5c317690",
+      "exitCode": 1,
+      "scope": "offline explicit stubs only; no actual app or budget",
+      "reason": "Unknown ID without execution incorrectly passed; test expecting identity rejection failed"
+    }
+  ],
+  "remainingAcceptance": [
+    6,
+    10
+  ],
+  "actualAcceptanceCredit": false
+}

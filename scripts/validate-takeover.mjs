@@ -9,6 +9,7 @@ import { createRequire } from 'node:module';
 import { spend, validationRoot } from './workspace-budget.mjs';
 import { verifyDevelopmentSignature } from './development-signing.mjs';
 import { readLifecycleProgress } from './lifecycle-progress-reuse.mjs';
+import { readLifecycleCompleted } from './lifecycle-completed-reuse.mjs';
 
 const lifecycle = process.argv.includes('--lifecycle');
 const label = lifecycle ? '06' : '04';
@@ -47,6 +48,8 @@ for (const [file, hash] of Object.entries(manifest.hashes))
 const carryName = process.argv.find((arg) => arg.startsWith('--carry='))?.slice(8);
 const reuseInputPreparation = process.argv.includes('--reuse-input-preparation');
 const reuseInputProgress = process.argv.includes('--reuse-input-progress');
+const performanceOnly = process.argv.includes('--reuse-completed-performance');
+assert(!performanceOnly || (lifecycle && !reuseInputPreparation && !reuseInputProgress && carryName==='lifecycle-06-input-present'),'COMPLETED_PERFORMANCE_REQUIRES_SOURCE');
 assert(!reuseInputProgress || (lifecycle && !reuseInputPreparation && ['lifecycle-06-input-verified','lifecycle-06-input-resume','lifecycle-06-input-closure','lifecycle-06-input-known'].includes(carryName)),'INPUT_PROGRESS_REUSE_REQUIRES_SOURCE');
 const requireImeProbe=reuseInputProgress && ['lifecycle-06-input-resume','lifecycle-06-input-closure','lifecycle-06-input-known'].includes(carryName);
 assert(!reuseInputPreparation || (lifecycle && ['lifecycle-06-input-final','lifecycle-06-input-ready'].includes(carryName)), 'INPUT_PREPARATION_REUSE_REQUIRES_SOURCE');
@@ -55,10 +58,10 @@ const taskLimit = Number(process.argv.find((arg) => arg.startsWith('--task-limit
 assert((lifecycle && (taskLimit === 4 || ([6,8].includes(taskLimit) && carryName))) || (!lifecycle && [12,14,16,18,20,22,24,26].includes(taskLimit)), 'INVALID_TASK_LIMIT');
 const lifecycleInputArgument = process.argv.find((arg) => arg.startsWith('--lifecycle-input-limit='))?.slice(24);
 const lifecycleInputs = Number(lifecycleInputArgument ?? 16);
-assert(lifecycleInputArgument === undefined || (lifecycle && carryName && ([160,224].includes(lifecycleInputs) || (requireImeProbe && [288,1024].includes(lifecycleInputs)))), 'LIFECYCLE_INPUT_EXTENSION_REQUIRES_CARRY');
+assert(lifecycleInputArgument === undefined || (lifecycle && carryName && ([160,224].includes(lifecycleInputs) || (requireImeProbe && [288,1024].includes(lifecycleInputs)) || (performanceOnly && lifecycleInputs===1024))), 'LIFECYCLE_INPUT_EXTENSION_REQUIRES_CARRY');
 const lifecycleModelArgument = process.argv.find((arg) => arg.startsWith('--lifecycle-model-limit='))?.slice(24);
 const lifecycleModels = Number(lifecycleModelArgument ?? 24);
-assert(lifecycleModelArgument === undefined || (lifecycle && carryName && (lifecycleModels === 32 || (requireImeProbe && [35,80].includes(lifecycleModels)))), 'LIFECYCLE_MODEL_EXTENSION_REQUIRES_CARRY');
+assert(lifecycleModelArgument === undefined || (lifecycle && carryName && (lifecycleModels === 32 || (requireImeProbe && [35,80].includes(lifecycleModels)) || (performanceOnly && lifecycleModels===80))), 'LIFECYCLE_MODEL_EXTENSION_REQUIRES_CARRY');
 const maximum = lifecycle ? {effects:8, inputs:lifecycleInputs, models:lifecycleModels, tasks:taskLimit} : { effects: 24, inputs: 160, models: 64, tasks: taskLimit };
 assert(lifecycle || taskLimit === 12 || carryName !== undefined, 'EXTENDED_TASK_LIMIT_REQUIRES_CARRY');
 const repairOf = process.argv.find((arg) => arg.startsWith('--repair-of='))?.slice(12);
@@ -136,9 +139,10 @@ if (reuseInputPreparation) {
   preparationReuse={source:carryName,resultSHA256:databaseProof.sourceFiles?.['result.json'] ?? proof.resultSHA256,parentResultSHA256:proof.resultSHA256,profile:context.profile,base:context.base,ids:previousIds};
 }
 if(reuseInputProgress) preparationReuse=readLifecycleProgress({root:validationRoot,source:carryName,build,built,archive:manifest.hashes['Contents/Resources/app.asar']});
+if(performanceOnly) preparationReuse=readLifecycleCompleted({root:validationRoot,source:carryName,build,built,archive:manifest.hashes['Contents/Resources/app.asar']});
 if (process.argv.includes('--check-carry')) {
   assert(carry, 'CARRY_ROUND_REQUIRED');
-  console.log(JSON.stringify({...carry,maximum,remaining:Object.fromEntries(Object.entries(maximum).map(([kind,total])=>[kind,total-carry.counts[kind]])),reusedTasks:preparationReuse?2:0}));
+  console.log(JSON.stringify({...carry,maximum,remaining:Object.fromEntries(Object.entries(maximum).map(([kind,total])=>[kind,total-carry.counts[kind]])),reusedTasks:preparationReuse?2:0,...(performanceOnly?{performanceOnly:true,roundLimits:{tasks:0,models:0,effects:0,inputs:maximum.inputs-carry.counts.inputs}}:{})}));
   process.exit(0);
 }
 execFileSync(process.execPath, ['scripts/validate-workspace.mjs', '--preflight'], { stdio: 'pipe' });
@@ -158,6 +162,7 @@ const evidence = {
   limits: { minutes: 20, ...Object.fromEntries(Object.entries(maximum).map(([kind, total]) => [kind, total - (carry?.counts[kind] ?? 0)])) },
   realModelCalls: 0, remoteWrites: 0, taskAttempts: 0, effects: [], inputs: [], models: [], checkpoints: [], checks: [], deferred: {},
 };
+if(performanceOnly) {Object.assign(evidence.limits,{tasks:0,models:0,effects:0});evidence.scope='Native readiness and performance only; original completed tasks; no new models or website effects';}
 const write = (file, value) => {
   const target = path.join(out, file), temporary = target + '.tmp';
   fs.writeFileSync(temporary, JSON.stringify(value, null, 2) + '\n', { mode: 0o600 });
@@ -400,13 +405,17 @@ try {
   gate = createRequire(import.meta.url)(path.join(built, 'Contents/Resources/input-bridge.node'));
   gate.open(path.join(profile, files[0]), false);
   // 只保存公开虚构哨兵；不再让接管测试依赖真人系统授权。
-  evidence.phase = 'saving-local-fixture-configuration'; save();
-  console.log('SAVING_LOCAL_FIXTURE_CONFIGURATION ' + out);
+  evidence.phase = performanceOnly?'checking-completed-source':'saving-local-fixture-configuration'; save();
+  console.log((performanceOnly?'CHECKING_COMPLETED_SOURCE ':'SAVING_LOCAL_FIXTURE_CONFIGURATION ') + out);
   const configurationVersion=preparationReuse?(await snapshot()).modelSettings?.version:0;
-  await request({ kind: 'model-save', requestId: randomUUID(), expectedVersion: configurationVersion, protocol: 'chat-completions', endpoint: base + '/v1', model: 'controlled-local-04', apiKey: 'local-fixture-not-a-secret' }, 10000);
+  if(!performanceOnly) await request({ kind: 'model-save', requestId: randomUUID(), expectedVersion: configurationVersion, protocol: 'chat-completions', endpoint: base + '/v1', model: 'controlled-local-04', apiKey: 'local-fixture-not-a-secret' }, 10000);
   if(preparationReuse) {
     const restored=await snapshot();
-    if(preparationReuse.progress) {
+    if(performanceOnly) {
+      assert(restored.tasks.length===2 && restored.modelSettings?.version===preparationReuse.configurationVersion && restored.modelSettings.endpoint===base+'/v1' && restored.modelSettings.model==='controlled-local-04' && restored.modelSettings.hasCredential && evidence.models.length===0 && evidence.effects.length===0,'COMPLETED_RESTORE_MUST_REMAIN_IDLE');
+      assert.deepEqual(restored.tasks.map(task=>task.id).sort(),Object.values(preparationReuse.ids).sort(),'COMPLETED_RESTORE_IDENTITIES_CHANGED');
+      for(const task of restored.tasks) assert.deepEqual(task.execution,preparationReuse.executions[task.id],'COMPLETED_RESTORE_EXECUTION_CHANGED');
+    } else if(preparationReuse.progress) {
       const taskA=restored.tasks.find(task=>task.id===ids.A),a=taskA?.execution,b=restored.tasks.find(task=>task.id===ids.B)?.execution;
       const savedPause=preparationReuse.pauseReason ?? 'takeover';
       let freshUnknown;
@@ -636,6 +645,7 @@ poll = setInterval(async () => {
   busy = true; let job;
   try {
     job = JSON.parse(fs.readFileSync(path.join(out, 'command.json'))); fs.unlinkSync(path.join(out, 'command.json'));
+    assert(!performanceOnly || (job.kind===undefined?['select','show','snapshot','inspect','observe','capture'].includes(job.command?.kind):job.command===undefined && ['state','finish','checkpoint','check','performance-stage','native-check'].includes(job.kind)),'PERFORMANCE_COMMAND_DENIED');
     assert(!evidence.awaitingFailureClose || ['state','finish'].includes(job.kind),'HUMAN_FAILURE_REQUIRES_CLOSURE');
     assert(!activeHuman || ['state','finish'].includes(job.kind), 'HUMAN_STEP_STILL_RUNNING');
     let value;

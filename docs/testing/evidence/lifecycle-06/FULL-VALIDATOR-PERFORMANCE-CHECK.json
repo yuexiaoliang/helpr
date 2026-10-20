@@ -1,0 +1,368 @@
+{
+  "checkedAt": "2026-10-20T06:22:06.495Z",
+  "harnessSHA256": "756704c716e4e91e38a5a412ce1e6691d16c46df49211c25c3dd677e8cbd3b45",
+  "completedHelperSHA256": "a2ee7853ddd023f197c3e73fb1617f577f28ff1cc7803dcbed743843eff84e7e",
+  "sourceHelperSHA256": "be059109e7fd4a6012842f3c88aff709c74ddd269e5b3e19ecb2270c2a208bc8",
+  "sourceSHA256": "586a0fc97973c0893e411041a87ad13b2a4247c2d248e442b2c87ed1a6ba927b",
+  "scope": "Complete actual validator source with stubbed spawn/public IPC/native input; actual loopback HTTP, commands, gate selection, synthetic database bytes/proof with preserved source chain, limits, human observer, and cleanup; no app, browser, global budget or human acceptance",
+  "cases": [
+    {
+      "scenario": "completed-denied-mixed",
+      "passed": true,
+      "startsStubbed": 1,
+      "models": 0,
+      "effects": 0
+    },
+    {
+      "scenario": "completed-denied-mixed-input",
+      "passed": true,
+      "startsStubbed": 1,
+      "models": 0,
+      "effects": 0
+    },
+    {
+      "scenario": "completed-denied-mixed-state",
+      "passed": true,
+      "startsStubbed": 1,
+      "models": 0,
+      "effects": 0
+    },
+    {
+      "scenario": "completed-restored-unknown-id",
+      "passed": true,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "completed-restored-duplicate-id",
+      "passed": true,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "completed-idle",
+      "passed": true,
+      "startsStubbed": 1,
+      "models": 0,
+      "effects": 0
+    },
+    {
+      "scenario": "completed-denied-intent",
+      "passed": true,
+      "startsStubbed": 1,
+      "models": 0,
+      "effects": 0
+    },
+    {
+      "scenario": "completed-denied-human",
+      "passed": true,
+      "startsStubbed": 1,
+      "models": 0,
+      "effects": 0
+    },
+    {
+      "scenario": "completed-database-changed",
+      "passed": true,
+      "startsStubbed": 0
+    },
+    {
+      "scenario": "completed-parent-changed",
+      "passed": true,
+      "startsStubbed": 0
+    },
+    {
+      "scenario": "completed-restored-execution-changed",
+      "passed": true,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "completed-model-limit",
+      "passed": true,
+      "startsStubbed": 1,
+      "models": 1,
+      "effects": 0
+    },
+    {
+      "scenario": "completed-effect-limit",
+      "passed": true,
+      "startsStubbed": 1,
+      "models": 0,
+      "effects": 1
+    },
+    {
+      "scenario": "complete-ime-paste-final-quit",
+      "passed": true,
+      "models": 8,
+      "effects": 4,
+      "inputs": 7,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "complete-ime-without-key-marker",
+      "passed": true,
+      "models": 8,
+      "effects": 4,
+      "inputs": 7,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "ime-229-with-composition-start",
+      "passed": true,
+      "models": 8,
+      "effects": 4,
+      "inputs": 8,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "ime-no-composition",
+      "passed": true,
+      "expectedRejection": "HUMAN_IME_FIRST_OPERATION_REQUIRED",
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "ime-229-alone",
+      "passed": true,
+      "expectedRejection": "HUMAN_IME_FIRST_OPERATION_REQUIRED",
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "ime-ambiguous-prefix",
+      "passed": true,
+      "expectedRejection": "HUMAN_NATIVE_DELIVERY_REQUIRED",
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "ime-handoff-after-dom",
+      "passed": true,
+      "expectedRejection": "HUMAN_NATIVE_ORDER_REQUIRED",
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "missing-visible-ack",
+      "passed": true,
+      "models": 0,
+      "effects": 0,
+      "inputs": 0,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "cleanup-during-preparation",
+      "passed": true,
+      "models": 0,
+      "effects": 0,
+      "inputs": 0,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "wrong-model-version",
+      "passed": true,
+      "models": 0,
+      "effects": 0,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "changed-database",
+      "passed": true,
+      "startsStubbed": 0
+    },
+    {
+      "scenario": "old-gate-only",
+      "passed": true,
+      "models": 0,
+      "effects": 0,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "multiple-new-gates",
+      "passed": true,
+      "models": 0,
+      "effects": 0,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "progress-ime-paste-final-quit",
+      "passed": true,
+      "models": 6,
+      "effects": 2,
+      "inputs": 7,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "progress-composition",
+      "passed": true,
+      "models": 6,
+      "effects": 2,
+      "inputs": 7,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "progress-changed-database",
+      "passed": true,
+      "startsStubbed": 0
+    },
+    {
+      "scenario": "progress-changed-site",
+      "passed": true,
+      "startsStubbed": 0
+    },
+    {
+      "scenario": "progress-restored-execution-changed",
+      "passed": true,
+      "models": 0,
+      "effects": 0,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "clock-origin-behind",
+      "passed": true,
+      "models": 8,
+      "effects": 4,
+      "inputs": 7,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "ime-ascii-then-composition",
+      "passed": true,
+      "expectedRejection": "HUMAN_IME_FIRST_OPERATION_REQUIRED",
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "cancel-reason-timeout",
+      "passed": true,
+      "expectedRejection": "HUMAN_INPUT_CANCELLED_CALL_REQUIRED",
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "resume-probe",
+      "passed": true,
+      "models": 6,
+      "effects": 2,
+      "inputs": 10,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "resume-probe-composition",
+      "passed": true,
+      "models": 6,
+      "effects": 2,
+      "inputs": 10,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "resume-probe-latin-and-uncommitted",
+      "passed": true,
+      "models": 6,
+      "effects": 2,
+      "inputs": 11,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "resume-changed-database",
+      "passed": true,
+      "startsStubbed": 0
+    },
+    {
+      "scenario": "resume-changed-parent",
+      "passed": true,
+      "startsStubbed": 0
+    },
+    {
+      "scenario": "resume-restored-execution-changed",
+      "passed": true,
+      "models": 0,
+      "effects": 0,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "resume-probe-untrusted-end",
+      "passed": true,
+      "models": 6,
+      "effects": 2,
+      "inputs": 10,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "resume-probe-untrusted-end-no-chinese",
+      "passed": true,
+      "models": 6,
+      "effects": 2,
+      "inputs": 12,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "resume-ime-ascii-failure-awaits-close",
+      "passed": true,
+      "expectedRejection": "HUMAN_IME_FIRST_OPERATION_REQUIRED",
+      "windowRetainedUntilFinish": true,
+      "otherCommandsRejected": true,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "resume-ime-failure-deadline",
+      "passed": true,
+      "expectedRejection": "HUMAN_IME_FIRST_OPERATION_REQUIRED",
+      "windowRetainedUntilFinish": true,
+      "otherCommandsRejected": true,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "closure-unknown-resume",
+      "passed": true,
+      "models": 6,
+      "effects": 2,
+      "inputs": 10,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "closure-unknown-audit-changed",
+      "passed": true,
+      "startsStubbed": 0
+    },
+    {
+      "scenario": "closure-unknown-trace-changed",
+      "passed": true,
+      "startsStubbed": 0
+    },
+    {
+      "scenario": "closure-unknown-reason-changed",
+      "passed": true,
+      "models": 0,
+      "effects": 0,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "known-ready-resume",
+      "passed": true,
+      "models": 6,
+      "effects": 2,
+      "inputs": 10,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "known-ready-database-changed",
+      "passed": true,
+      "startsStubbed": 0
+    },
+    {
+      "scenario": "known-ready-no-ack",
+      "passed": true,
+      "models": 0,
+      "effects": 0,
+      "inputs": 0,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "known-ready-fresh-unknown",
+      "passed": true,
+      "models": 6,
+      "effects": 2,
+      "inputs": 10,
+      "startsStubbed": 1
+    },
+    {
+      "scenario": "known-ready-unproved-unknown",
+      "passed": true,
+      "models": 0,
+      "effects": 0,
+      "startsStubbed": 1
+    }
+  ]
+}
