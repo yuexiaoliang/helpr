@@ -8,6 +8,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { spend, validationRoot } from './workspace-budget.mjs';
 import { verifyDevelopmentSignature } from './development-signing.mjs';
+import { readLifecycleProgress } from './lifecycle-progress-reuse.mjs';
 
 const lifecycle = process.argv.includes('--lifecycle');
 const label = lifecycle ? '06' : '04';
@@ -45,6 +46,8 @@ for (const [file, hash] of Object.entries(manifest.hashes))
   assert.equal(createHash('sha256').update(fs.readFileSync(path.join(built, file))).digest('hex'), hash);
 const carryName = process.argv.find((arg) => arg.startsWith('--carry='))?.slice(8);
 const reuseInputPreparation = process.argv.includes('--reuse-input-preparation');
+const reuseInputProgress = process.argv.includes('--reuse-input-progress');
+assert(!reuseInputProgress || (lifecycle && !reuseInputPreparation && carryName==='lifecycle-06-input-verified'),'INPUT_PROGRESS_REUSE_REQUIRES_SOURCE');
 assert(!reuseInputPreparation || (lifecycle && ['lifecycle-06-input-final','lifecycle-06-input-ready'].includes(carryName)), 'INPUT_PREPARATION_REUSE_REQUIRES_SOURCE');
 let preparationReuse;
 const taskLimit = Number(process.argv.find((arg) => arg.startsWith('--task-limit='))?.slice(13) ?? (lifecycle ? 4 : 12));
@@ -131,6 +134,7 @@ if (reuseInputPreparation) {
   assert(previousState.modelSettings?.endpoint===context.base+'/v1' && previousState.modelSettings.model==='controlled-local-04' && previousState.modelSettings.hasCredential && previousState.modelSettings.version>=1,'INPUT_PREPARATION_CONFIGURATION_REQUIRED');
   preparationReuse={source:carryName,resultSHA256:databaseProof.sourceFiles?.['result.json'] ?? proof.resultSHA256,parentResultSHA256:proof.resultSHA256,profile:context.profile,base:context.base,ids:previousIds};
 }
+if(reuseInputProgress) preparationReuse=readLifecycleProgress({root:validationRoot,source:carryName,build,built,archive:manifest.hashes['Contents/Resources/app.asar']});
 if (process.argv.includes('--check-carry')) {
   assert(carry, 'CARRY_ROUND_REQUIRED');
   console.log(JSON.stringify({...carry,maximum,remaining:Object.fromEntries(Object.entries(maximum).map(([kind,total])=>[kind,total-carry.counts[kind]])),reusedTasks:preparationReuse?2:0}));
@@ -162,7 +166,7 @@ const save = () => write('result.json', evidence);
 if (candidateReview) write('candidate.json', {...manifest,review:candidateReview});
 const ownedGroups = new Set();
 const ids = {}, held = [], holds = new Map(), pending = new Map(), pids = new Set(), humanSignals = new Map();
-if(preparationReuse) {Object.assign(ids,preparationReuse.ids);for(const name of Object.keys(ids))holds.set(name,0);write('ids.json',ids);}
+if(preparationReuse) {Object.assign(ids,preparationReuse.ids);for(const name of Object.keys(ids))holds.set(name,preparationReuse.initialCounts?.[name] ?? 0);write('ids.json',ids);}
 let activeHuman, humanRun, humanAbort;
 let storageReader, resourceTimer;
 if (lifecycle) evidence.performance = {scope:"OS RSS sums and public IPC round trips; not paint latency",samples:[],commands:[]};
@@ -249,9 +253,11 @@ const server = http.createServer(async (req, res) => {
     const match = url.pathname.match(/^\/page\/([A-Z])$/);
     if (req.method === 'GET' && match) {
       const name = match[1];
+      const initialCount=preparationReuse?.initialCounts?.[name] ?? 0;
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.end(`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>${label} 任务 ${name}</title><style>body{font:20px -apple-system;padding:36px;color:#244135;background:#f4f8f5}button,input,a{font:inherit;padding:12px;margin:10px 0;display:block}input{width:400px}iframe{height:120px;width:440px}</style><h1>${label} 任务 ${name}</h1><p id="progress">${name} 自动完成 0</p><button id="advance">自动推进 ${name}</button><button id="manual">手动接管 ${name}</button>${lifecycle ? '<p id="human-status" role="status" style="max-width:520px"></p>' : ''}<input aria-label="人工文字" placeholder="接管后文字应保留"><button id="frame">加载子页面 ${name}</button><a id="popup" href="/popup/${name}" target="_blank">打开所属弹窗 ${name}</a><div id="slot"></div><p>本机虚构页面；不使用真实网站、账号或模型。</p><script>
-      let count=0;const name=${JSON.stringify(name)};
+      let count=${initialCount};const name=${JSON.stringify(name)};
+      document.querySelector('#progress').textContent=name+' 自动完成 '+count;
       ${lifecycle ? `setInterval(async()=>{try{const s=await(await fetch('/human-stage/'+name,{cache:'no-store'})).json();const el=document.querySelector('#human-status');if(el.textContent!==s.text){el.textContent=s.text;el.style.color=s.phase==='armed'?'#087b32':'#5c665e';}}catch{}},250);` : ''}
       const clock=(async()=>{const sent=performance.timeOrigin+performance.now();const response=await fetch('/clock');const value=await response.json();return{sent,server:value.at,received:performance.timeOrigin+performance.now()};})();
       const send=async(route,data)=>{const clientWallAt=Date.now(),clientAt=performance.timeOrigin+performance.now();return fetch(route,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,clientAt,clientWallAt,...data,clock:await clock})});};
@@ -289,10 +295,11 @@ const server = http.createServer(async (req, res) => {
       assert(evidence.models.length <= evidence.limits.models, 'MODEL_FIXTURE_LIMIT');
       assert(!finishing, 'ROUND_CLOSING');
       const input = await body(req);
-      const plan = input.messages.map((m) => { try { return JSON.parse(m.content); } catch { return null; } }).find((m) => m?.goal);
+      const plan = input.messages.map((m) => { try { return JSON.parse(m.content); } catch { return null; } }).findLast((m) => m?.goal);
       const name = plan?.goal.match(new RegExp(label + ' ([A-Z])'))?.[1];
       assert(name && ids[name], 'PLANNING_ONLY');
-      const text = input.messages.filter((m) => m.role === 'user').map((m) => m.content).join('\n');
+      const text = input.messages.findLast(m=>m.role==='user' && m.content.startsWith('当前任务：') && m.content.includes('\n页面观察（'))?.content;
+      assert(typeof text==='string','CURRENT_OBSERVATION_REQUIRED');
       const count = Number(text.match(new RegExp(name + ' 自动完成 (\\d+)'))?.[1]);
       assert(Number.isFinite(count) && count <= 2, 'OBSERVATION_REQUIRED');
       const fact = name + ' 自动完成 ' + count;
@@ -392,7 +399,10 @@ try {
   await request({ kind: 'model-save', requestId: randomUUID(), expectedVersion: configurationVersion, protocol: 'chat-completions', endpoint: base + '/v1', model: 'controlled-local-04', apiKey: 'local-fixture-not-a-secret' }, 10000);
   if(preparationReuse) {
     const restored=await snapshot();
-    assert(restored.tasks.length===2 && Object.values(ids).every(id=>restored.tasks.some(task=>task.id===id && !task.execution)) && evidence.models.length===0 && evidence.effects.length===0,'INPUT_PREPARATION_RESTORE_MUST_REMAIN_MANUAL');
+    if(preparationReuse.progress) {
+      const a=restored.tasks.find(task=>task.id===ids.A)?.execution,b=restored.tasks.find(task=>task.id===ids.B)?.execution;
+      assert(restored.tasks.length===2 && a?.phase==='paused' && a.pauseReason==='takeover' && a.intent==='automatic' && a.actions.length===0 && b?.phase==='complete' && b.actions.length===2 && b.actions.every(action=>action.status==='confirmed') && !a.recoveryPending && !b.recoveryPending && evidence.models.length===0 && evidence.effects.length===0,'INPUT_PROGRESS_RESTORE_MUST_PRESERVE_EXECUTIONS');
+    } else assert(restored.tasks.length===2 && Object.values(ids).every(id=>restored.tasks.some(task=>task.id===id && !task.execution)) && evidence.models.length===0 && evidence.effects.length===0,'INPUT_PREPARATION_RESTORE_MUST_REMAIN_MANUAL');
   }
   evidence.phase = 'ready'; evidence.validationStarted = new Date().toISOString(); save();
   deadline = setTimeout(() => { expired = true; evidence.failure = 'ROUND_TIME_LIMIT'; save(); void finish(); }, evidence.limits.minutes * 60000);
@@ -523,12 +533,12 @@ function beginHuman(job) {
       if(job.input==='ime') assert(!rows.some(row=>row.kind==='paste'), 'HUMAN_IME_WAS_PASTE');
       const first=rows.find(row=>!row.modifierOnly && ['keydown','beforeinput','paste','input'].includes(row.kind));
       if(!first) {
-        const native=gate.traceRead().rows.find(row=>row.owner==='web:'+ids[job.name] && row.stage==='identified' && row.at>=step.armedAt);
+        const native=gate.traceRead().rows.slice(step.qualified.traceLength).find(row=>row.owner==='web:'+ids[job.name] && row.stage==='identified');
         // 正确的原生阻断会先取消模型，网页收件随后异步到达；不能把这段先后窗口误判为失败。
         if(native) assert(Date.now()-native.at<3000, 'HUMAN_WEB_RECEIPT_MISSING');
         else {
           const live=own(await read()), call=live?.messages.findLast(message=>message.call)?.call;
-          const afterSnapshot=gate.traceRead().rows.some(row=>row.owner==='web:'+ids[job.name] && row.stage==='identified' && row.at>=step.armedAt);
+          const afterSnapshot=gate.traceRead().rows.slice(step.qualified.traceLength).some(row=>row.owner==='web:'+ids[job.name] && row.stage==='identified');
           assert(afterSnapshot || (live?.execution?.phase==='checking' && live.execution.intentId===step.intentId && call?.id===step.callId && call.phase==='sending' && !model.res.destroyed && !model.receipt.closedAt), 'HUMAN_MODEL_NO_LONGER_LIVE');
         }
       }
@@ -549,7 +559,7 @@ function beginHuman(job) {
     // AppKit 不把单独的修饰键视为接管；Electron仍为每个keyDown写一个收件记号。
     // 只逐个跳过网页已证实的前置修饰键，首个真正操作缺少阻断仍必须失败。
     const modifierCount=step.receipts.slice(0,step.receipts.indexOf(first)).filter(row=>row.kind==='keydown' && row.modifierOnly).length;
-    const prefix=rows.slice(step.qualified.traceLength).filter(row=>row.owner==='web:'+ids[job.name] && row.at>=step.armedAt);
+    const prefix=rows.slice(step.qualified.traceLength).filter(row=>row.owner==='web:'+ids[job.name]);
     const delivered=prefix.filter(row=>row.stage==='web-before-input')[modifierCount];
     // 输入法可能绕过Electron的keyDown标记。仅首个真实操作明确属于组合输入、
     // 且首条网页收件前恰有唯一原生事件时采用AppKit交付证据；不挑后续合格事件。
@@ -562,7 +572,7 @@ function beginHuman(job) {
     const blocked=rows.find(row=>row.owner===identified?.owner && row.serial===identified.serial && row.stage==='blocked');
     const handoff=rows.find(row=>row.owner===identified?.owner && row.serial===identified.serial && row.stage==='handoff');
     const deliveryAt=delivered?.at ?? first.clientWallAt;
-    assert(Number.isFinite(deliveryAt) && identified && blocked && handoff && identified.at>=step.armedAt && identified.at<=blocked.at && blocked.at<=handoff.at && handoff.at<deliveryAt && blocked.epoch>step.qualified.gates[job.name].epoch && first.gates[job.name].blocked, 'HUMAN_NATIVE_ORDER_REQUIRED');
+    assert(Number.isFinite(deliveryAt) && identified && prefix.includes(identified) && blocked && handoff && identified.at<=blocked.at && blocked.at<=handoff.at && handoff.at<deliveryAt && blocked.epoch>step.qualified.gates[job.name].epoch && first.gates[job.name].blocked, 'HUMAN_NATIVE_ORDER_REQUIRED');
     assert(!model.receipt.closedAt || model.receipt.closedAt>=identified.at, 'HUMAN_MODEL_CLOSED_BEFORE_INPUT');
     step.nativeOrder={identified,blocked,handoff,...(delivered?{delivered}:{compositionReceipt:{kind:first.kind,at:first.at,clientWallAt:first.clientWallAt,traceLength:first.traceLength,keyCode:first.keyCode,isComposing:first.isComposing,inputType:first.inputType},method:'unique-AppKit-handoff-and-trusted-composition-receipt'})};
     step.after={at:Date.now(),snapshot:await read(),gates:gates(),traceLength:trace()};

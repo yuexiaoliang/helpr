@@ -320,6 +320,117 @@ test('领取已提交但回执在锁屏后才到达，解锁仍重新核对，�
   }
 });
 
+for (const interruption of ['stop', 'takeover', 'screen-locked'] as const) {
+  test(`系统恢复核对中收到${interruption}，旧模型动作迟到也不能派发`, async () => {
+    const records = workspace(),
+      a = task(records, 'A');
+    let release: ((step: NextStep) => void) | undefined,
+      requests = 0;
+    const complete: NextStep = {
+      decision: 'complete',
+      summary: '完成',
+      evidence: ['本次完成'],
+      previous: null,
+      action: null,
+    };
+    const { service, current } = fixture(records, {
+      propose: () => {
+        requests++;
+        return requests === 1
+          ? new Promise<NextStep>((resolve) => {
+              release = resolve;
+            })
+          : Promise.resolve(complete);
+      },
+    });
+    try {
+      await service.setSystemCondition('screen-locked', true);
+      await service.setSystemCondition('screen-locked', false);
+      await until(() => !!release);
+      if (interruption === 'stop')
+        await service.intent({
+          kind: 'execution-intent',
+          taskId: a,
+          requestId: 'new-stop',
+          intent: 'stop',
+        });
+      else if (interruption === 'takeover')
+        await service.suspend(a, 'takeover', 'new-native-input');
+      else await service.setSystemCondition('screen-locked', true);
+      release!({
+        decision: 'act',
+        summary: '旧核对尝试推进',
+        evidence: ['本次完成'],
+        previous: null,
+        action: {
+          kind: 'click',
+          target: { role: 'button', name: '推进', exact: true },
+        },
+      });
+      await service.settled();
+      expect(current().tasks[0]?.execution?.actions).toEqual([]);
+      expect(requests).toBe(1);
+      if (interruption === 'stop')
+        expect(current().tasks[0]?.execution).toMatchObject({
+          intent: 'stopped',
+          phase: 'stopped',
+        });
+      else if (interruption === 'takeover')
+        expect(current().tasks[0]?.execution).toMatchObject({
+          phase: 'paused',
+          pauseReason: 'takeover',
+        });
+      await service.setSystemCondition('screen-locked', true);
+      await service.setSystemCondition('screen-locked', false);
+      await service.setSystemCondition('screen-locked', false);
+      await service.settled();
+      expect(current().tasks[0]?.execution?.actions).toEqual([]);
+      expect(requests).toBe(interruption === 'screen-locked' ? 2 : 1);
+      expect(current().tasks[0]?.execution?.phase).toBe(
+        interruption === 'screen-locked'
+          ? 'complete'
+          : interruption === 'stop'
+            ? 'stopped'
+            : 'paused',
+      );
+    } finally {
+      release?.(complete);
+      await service.stopAll();
+      records.close();
+    }
+  });
+}
+
+test('系统恢复核对失败后保持暂停，重复解除通知不重试或默认放行', async () => {
+  const records = workspace();
+  task(records, 'A');
+  let requests = 0;
+  const { service, current } = fixture(records, {
+    propose: () => {
+      requests++;
+      return Promise.reject(Error('CHECK_FAILED'));
+    },
+  });
+  try {
+    await service.setSystemCondition('screen-locked', true);
+    await service.setSystemCondition('screen-locked', false);
+    await service.settled();
+    expect(current().tasks[0]?.execution).toMatchObject({
+      phase: 'paused',
+      actions: [],
+    });
+    await service.setSystemCondition('screen-locked', false);
+    await service.setSystemCondition('sleeping', false);
+    service.refresh();
+    await service.settled();
+    expect(requests).toBe(1);
+    expect(current().tasks[0]?.execution?.phase).toBe('paused');
+  } finally {
+    await service.stopAll();
+    records.close();
+  }
+});
+
 test('继续的原生准备期间锁屏，迟到准备不能重新开放资格，解锁后仍先核对', async () => {
   const records = workspace(),
     a = task(records, 'A');
