@@ -10,30 +10,33 @@ import { spend, validationRoot } from './workspace-budget.mjs';
 // 唯一受管入口；只准备虚构任务、切换独立版本服务的案例并读取公开状态。
 // 检查、提醒、设置及下载入口的产品交互由CUA完成。
 const args=process.argv.slice(2);
-assert(args.length===1&&args[0]==='--candidate=version-08','FIXED_CANDIDATE_REQUIRED');
+const resume=args.length===2&&args[1]==='--resume';
+assert(args[0]==='--candidate=version-08'&&(args.length===1||resume),'FIXED_CANDIDATE_REQUIRED');
 execFileSync(process.execPath,['scripts/validate-workspace.mjs','--preflight'],{stdio:'inherit',timeout:65000});
 const manifest=JSON.parse(fs.readFileSync(path.join(validationRoot,'build-36.json'),'utf8'));
 assert.equal(manifest.build,36);assert.equal(manifest.prepared,true);
 const appPath=path.resolve('dist/candidates/version-08/mac-arm64/helpr.app');
 for(const [file,sha] of Object.entries(manifest.hashes))assert.equal(createHash('sha256').update(fs.readFileSync(path.join(appPath,file))).digest('hex'),sha,file);
-const root=path.join(validationRoot,'version-08-'+Date.now());fs.mkdirSync(root,{recursive:true,mode:0o700});
+const prior=resume?JSON.parse(fs.readFileSync(path.join(validationRoot,'version-08-batch.json'),'utf8')):null;
+if(resume){assert(prior.start===93&&prior.requests===0&&prior.tasks===0&&prior.error==='STEP_TIMEOUT','EXACT_FIRST_FAILURE_REQUIRED');assert(prior.root.startsWith(validationRoot+'/version-08-'));const original=JSON.parse(fs.readFileSync(path.join(prior.root,'result.json'),'utf8'));assert(original.remaining.length===0&&original.exit.code===0);assert(Date.now()-prior.started<20*60*1000,'ORIGINAL_DEADLINE');fs.writeFileSync(path.join(prior.root,'resume-started'),'94\n',{flag:'wx',mode:0o600});}
+const root=resume?prior.root:path.join(validationRoot,'version-08-'+Date.now());fs.mkdirSync(root,{recursive:true,mode:0o700});
 const profileBase=`/private/tmp/helpr-workspace-validation-${process.getuid()}`;fs.mkdirSync(profileBase,{recursive:true,mode:0o700});assert.equal(fs.realpathSync(profileBase),profileBase);
 const batchFile=path.join(validationRoot,'version-08-batch.json');
 // 同一事项的批次身份持久保留；不允许换目录或重启此入口清零。
-fs.writeFileSync(batchFile,JSON.stringify({root,phase:'preparing',started:Date.now()})+'\n',{flag:'wx',mode:0o600});
-const profile=fs.mkdtempSync(path.join(profileBase,'version-08-'));
+if(!resume)fs.writeFileSync(batchFile,JSON.stringify({root,phase:'preparing',started:Date.now()})+'\n',{flag:'wx',mode:0o600});
+const profile=resume?prior.profile:fs.mkdtempSync(path.join(profileBase,'version-08-'));assert.equal(fs.realpathSync(profile),profile);assert(profile.startsWith(profileBase+'/version-08-'));
 const write=(name,value)=>fs.writeFileSync(path.join(root,name),JSON.stringify(value,null,2)+'\n',{mode:0o600});
-const report={started:Date.now(),build:36,appPath,profile,requests:[],captures:[],opened:[],tasks:[],processes:[],groups:[],passed:false};
+const report={started:resume?prior.started:Date.now(),resumedFrom:resume?93:null,build:36,appPath,profile,requests:[],captures:[],opened:[],tasks:[],processes:[],groups:[],passed:false};
 write('private-context.json',{profile});
 const key=path.join(root,'key.pem'),certFile=path.join(root,'cert.pem');
-execFileSync('openssl',['req','-x509','-newkey','rsa:2048','-nodes','-keyout',key,'-out',certFile,'-days','1','-subj','/CN=127.0.0.1','-addext','subjectAltName=IP:127.0.0.1'],{stdio:'ignore',timeout:10000});
+if(!resume)execFileSync('openssl',['req','-x509','-newkey','rsa:2048','-nodes','-keyout',key,'-out',certFile,'-days','1','-subj','/CN=127.0.0.1','-addext','subjectAltName=IP:127.0.0.1'],{stdio:'ignore',timeout:10000});
 fs.chmodSync(key,0o600);
 const base={schema:1,version:'0.2.0',platform:'darwin',arch:'arm64',minOS:'14.0.0',dataFormats:[6],stateModels:[1],notes:['08隔离验证的虚构新版，不代表实际Release。'],downloadURL:'https://github.com/yuexiaoliang/helpr/releases/tag/v0.2.0'};
 const cases={latest:{version:'0.1.0',downloadURL:null},available:{},offline:{},source:{},format:{},architecture:{arch:'x64'},system:{minOS:'99.0.0'},data:{dataFormats:[7]},link:{downloadURL:'https://example.invalid/denied'},timeout:{}};
 let mode='latest',failed=null,child,exit=null,ready=null,baseline=null,seq=0,finished=false;
 const pending=new Map(),pids=new Set(),groups=new Set();
 const facts=s=>({active:s.active,tasks:s.tasks.map(t=>[t.id,t.goal,t.url,t.draft,t.messages,t.hidden,t.minimized,t.execution?.intent??null,t.execution?.actions??null])});
-const save=()=>{write('result.json',report);fs.writeFileSync(batchFile,JSON.stringify({root,profile,started:report.started,ended:report.ended??null,start:report.start??null,requests:report.requests.length,tasks:report.tasks.length,passed:report.passed,error:report.error??null})+'\n',{mode:0o600});};
+const save=()=>{write(resume?'result-94.json':'result.json',report);fs.writeFileSync(batchFile,JSON.stringify({root,profile,started:report.started,ended:report.ended??null,start:report.start??null,requests:report.requests.length,tasks:report.tasks.length,passed:report.passed,error:report.error??null})+'\n',{mode:0o600});};
 const website=createHTTPServer((req,res)=>{if(req.method!=='GET'){failed='UNEXPECTED_WEB_WRITE';res.statusCode=405;}res.setHeader('content-type','text/html;charset=utf-8');res.end('<!doctype html><html lang="zh-CN"><title>08版本检查隔离网页</title><h1>任务网页保持</h1><p>这里不提供写入操作，也不调用模型。</p></html>');});
 const versions=createServer({key:fs.readFileSync(key),cert:fs.readFileSync(certFile)},(req,res)=>{
  report.requests.push({at:Date.now(),mode,method:req.method,url:req.url,headers:req.headers});save();
@@ -53,7 +56,7 @@ function limited(){if(failed)throw Error(failed);if(Date.now()-report.started>20
 async function until(fn,milliseconds=10000,cleanup=false){const end=Date.now()+milliseconds;while(Date.now()<end){if(!cleanup)limited();if(await fn())return;await delay(100);}throw Error('STEP_TIMEOUT');}
 function rpc(command){return new Promise((resolve,reject)=>{if(!child?.connected){reject(Error('APPLICATION_DISCONNECTED'));return;}const id=++seq,timer=setTimeout(()=>{pending.delete(id);reject(Error('RPC_TIMEOUT'));},command.kind==='quit'?20000:10000);pending.set(id,{resolve,reject,timer});child.send({id,command});});}
 async function quit(){if(!exit)await rpc({kind:'quit'}).catch(error=>{if(!['APPLICATION_EXITED','APPLICATION_EXITING','APPLICATION_DISCONNECTED'].includes(error.message))throw error;});await until(()=>exit,20000,true);await until(()=>owned().length===0,8000,true);assert.equal(exit.code,0);}
-const deadline=setTimeout(()=>{failed='ROUND_TIME_LIMIT';},20*60*1000);
+const deadline=setTimeout(()=>{failed='ROUND_TIME_LIMIT';},Math.max(1,report.started+20*60*1000-Date.now()));
 process.on('SIGINT',()=>{failed='INTERRUPTED';});process.on('SIGTERM',()=>{failed='INTERRUPTED';});
 try{
  await listen(website);await listen(versions);
@@ -69,7 +72,9 @@ try{
   const entry=pending.get(message.id);if(entry){clearTimeout(entry.timer);pending.delete(message.id);message.error?entry.reject(Error(message.error)):entry.resolve(message.value);}
  });
  child.on('exit',(code,signal)=>{exit={code,signal};report.exit=exit;for(const entry of pending.values()){clearTimeout(entry.timer);entry.reject(Error('APPLICATION_EXITED'));}pending.clear();});
- await until(()=>{owned();return ready||exit;},15000);assert(ready&&!exit,'APPLICATION_NOT_READY');
+ const readyDeadline=Date.now()+15000;
+ if(resume){await delay(1500);write('pre-show.json',await rpc({kind:'inspect'}));await rpc({kind:'show'});}
+ await until(()=>{owned();return ready||exit;},Math.max(1,readyDeadline-Date.now()));assert(ready&&!exit,'APPLICATION_NOT_READY');
  await until(async()=>(await rpc({kind:'version-status'})).phase==='done');
  assert.equal((await rpc({kind:'version-status'})).result.kind,'latest');
  write('ready.json',ready);save();console.log('VERSION_READY '+JSON.stringify({root,start:report.start,hostApp:path.join(appPath,'Contents/Frameworks/helpr Workspace.app')}));
