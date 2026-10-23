@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { backupUICommandSchema } from './backup';
+import { versionUICommandSchema, type VersionStatus } from './version';
 import { websiteURL } from './url-policy';
 import {
   executionSchema,
@@ -144,6 +145,7 @@ export const panelSchema = z.strictObject({
     'close-task',
     'settings',
     'backup',
+    'version',
   ]),
   taskId: id.optional(),
   x: z.number().min(0).max(10000).optional(),
@@ -152,6 +154,7 @@ export const panelSchema = z.strictObject({
 });
 export const uiCommandSchema = z.union([
   backupUICommandSchema,
+  versionUICommandSchema,
   modelUICommandSchema,
   executionIntentSchema,
   recordCommandSchema.refine((command) => command.kind !== 'page'),
@@ -165,6 +168,8 @@ export const uiCommandSchema = z.union([
 ]);
 export type UICommand = z.infer<typeof uiCommandSchema>;
 export type WorkspaceEvent = {
+  version?: VersionStatus;
+  versionNotice?: boolean;
   state?: WorkspaceSnapshot;
   notice?: string;
   panel?: z.infer<typeof panelSchema>;

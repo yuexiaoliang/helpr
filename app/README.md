@@ -8,6 +8,8 @@
 
 ## 开发入口
 
+08 按已确认 `version-check-v1` 增加「关于与新版」：启动及持续运行每24小时从固定HTTPS渠道只读检查，后台提醒与设置状态独立于任务。用户可手动再查、稍后处理或打开与该版关联的可信下载页，不会自动下载或准备退出。网络失败、超时、来源、格式及兼容异常分别说明，旧成功不能冒充本次成功。渠道维护见[版本渠道](../docs/maintenance/version-channel.md)，当前实现及实际包验证进度见[08方案](../docs/testing/version-08-plan.md)；真实手动换装归09。
+
 使用 `.node-version` 中的 Node 24.18.0 和 `packageManager` 中的 pnpm 11.7.0。
 
 ```sh

@@ -5,8 +5,11 @@ import {
   type WorkspaceSnapshot,
   type UICommand,
 } from '../shared/contracts';
+import { versionStatusSchema, type VersionStatus } from '../shared/version';
 
 const labels: Record<string, string> = {
+  VERSION_LINK_UNAVAILABLE:
+    '版本结果已经变化，当前没有经本次确认可用的下载入口。请重新查看或检查。',
   BACKUP_REVIEW_REQUIRED: '恢复资料后先核对实际结果，再选择继续本项任务。',
   BACKUP_BUSY: '备份或恢复仍在进行，请先等候本次结果。停止仍可立即生效。',
   BACKUP_PENDING: '先核对本次操作的可靠回执，暂不另建备份或重复恢复。',
@@ -70,6 +73,8 @@ const labels: Record<string, string> = {
 export const modelErrorLabel = (code: string): string =>
   labels[code] ?? '模型请求未完成，请核对后重新发送。';
 export type WorkspaceView = {
+  version: VersionStatus | null;
+  versionNotice: boolean;
   state: WorkspaceSnapshot;
   notice: string;
   panel: NonNullable<WorkspaceEvent['panel']>;
@@ -94,6 +99,8 @@ export class WorkspaceStore {
     initial: WorkspaceSnapshot = { revision: 0, active: null, tasks: [] },
   ) {
     this.view = {
+      version: null,
+      versionNotice: false,
       state: initial,
       notice: '',
       panel: { kind: 'panel', panel: 'none' },
@@ -105,6 +112,12 @@ export class WorkspaceStore {
         state = snapshotSchema.parse(event.state);
       this.update({
         ...this.view,
+        version:
+          event.version &&
+          event.version.revision >= (this.view.version?.revision ?? -1)
+            ? versionStatusSchema.parse(event.version)
+            : this.view.version,
+        versionNotice: event.versionNotice ?? this.view.versionNotice,
         state,
         notice: event.notice ?? this.view.notice,
         panel: event.panel ?? this.view.panel,
@@ -127,6 +140,12 @@ export class WorkspaceStore {
     this.update({ ...this.view, saving: this.view.saving + 1 });
     try {
       const result = await this.bridge.request(command);
+      const version = versionStatusSchema.safeParse(result);
+      if (
+        version.success &&
+        version.data.revision >= (this.view.version?.revision ?? -1)
+      )
+        this.update({ ...this.view, version: version.data });
       const direct = snapshotSchema.safeParse(result);
       const nested = snapshotSchema.safeParse(
         (result as { state?: unknown } | null)?.state,

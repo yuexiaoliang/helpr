@@ -15,6 +15,10 @@ import { backupArchiveSchema, type BackupArchive } from '../shared/backup';
 import * as schema from './schema';
 import { pauseForBackup } from './execution';
 import { websiteURL } from '../shared/url-policy';
+import {
+  CURRENT_DATA_FORMAT,
+  CURRENT_STATE_MODEL,
+} from '../shared/record-format';
 
 const request = z.strictObject({
   kind: z.literal('create'),
@@ -52,8 +56,8 @@ export type BackupPayload = z.infer<typeof backupPayloadSchema>;
 const envelope = z.strictObject({
   format: z.literal('helpr-backup'),
   version: z.literal(1),
-  dataVersion: z.literal(6),
-  stateModel: z.literal(1),
+  dataVersion: z.literal(CURRENT_DATA_FORMAT),
+  stateModel: z.literal(CURRENT_STATE_MODEL),
   id: z.string().min(1).max(100),
   created: z.number().int().nonnegative(),
   files: z.tuple([
@@ -355,8 +359,8 @@ export class BackupRecords {
         envelope.parse({
           format: 'helpr-backup',
           version: 1,
-          dataVersion: 6,
-          stateModel: 1,
+          dataVersion: CURRENT_DATA_FORMAT,
+          stateModel: CURRENT_STATE_MODEL,
           id: command.requestId,
           created,
           files: [

@@ -16,6 +16,7 @@ import type { Task, UICommand, WorkspaceSnapshot } from '../shared/contracts';
 import { WorkspaceStore, modelErrorLabel } from './store';
 import { ModelSettings } from './ModelSettings';
 import { BackupSettings } from './BackupSettings';
+import { VersionSettings } from './VersionSettings';
 import { activeModelCall } from '../shared/model';
 import type { ExecutionIntent } from '../shared/execution';
 import { pauseDescription, systemConditionLabel } from '../shared/execution';
@@ -86,14 +87,37 @@ export function App({
   if (surface === 'panel') return <Panel store={store} />;
   if (surface === 'toast')
     return (
-      <div className={styles.toast} role="status">
-        {view.notice}
-        <button
-          aria-label="收起提示"
-          onClick={() => send({ kind: 'dismiss-notice' })}
-        >
-          ×
-        </button>
+      <div
+        className={
+          view.versionNotice
+            ? `${styles.toast} ${styles.versionToast}`
+            : styles.toast
+        }
+        role="status"
+      >
+        {view.versionNotice && view.version?.noticeVisible ? (
+          <>
+            <span>
+              helpr {view.version.result?.release?.version} 可用，当前任务继续。
+            </span>
+            <button onClick={() => send({ kind: 'panel', panel: 'version' })}>
+              查看新版
+            </button>
+            <button onClick={() => send({ kind: 'version-dismiss' })}>
+              稍后
+            </button>
+          </>
+        ) : (
+          <>
+            {view.notice}
+            <button
+              aria-label="收起提示"
+              onClick={() => send({ kind: 'dismiss-notice' })}
+            >
+              ×
+            </button>
+          </>
+        )}
       </div>
     );
   return (
@@ -120,6 +144,16 @@ export function App({
           <Icon src={plus} />
         </button>
         <div className={styles.tools}>
+          <button
+            onClick={() => send({ kind: 'panel', panel: 'version' })}
+            aria-label="关于与新版"
+          >
+            关于与新版
+            {view.version?.phase === 'done' &&
+            view.version.result?.kind === 'available'
+              ? ' · 有新版'
+              : ''}
+          </button>
           <button
             onClick={() => send({ kind: 'panel', panel: 'backup' })}
             aria-label="备份与恢复"
@@ -775,11 +809,13 @@ function Panel({ store }: { store: WorkspaceStore }) {
               ? '模型设置'
               : view.panel.panel === 'backup'
                 ? '备份与恢复'
-                : view.panel.panel === 'new'
-                  ? '新建任务'
-                  : view.panel.panel === 'tasks'
-                    ? '全部任务'
-                    : '退出 helpr'
+                : view.panel.panel === 'version'
+                  ? '关于与新版'
+                  : view.panel.panel === 'new'
+                    ? '新建任务'
+                    : view.panel.panel === 'tasks'
+                      ? '全部任务'
+                      : '退出 helpr'
           }
         >
           <button
@@ -794,6 +830,8 @@ function Panel({ store }: { store: WorkspaceStore }) {
             <ModelSettings store={store} saved={view.state.modelSettings} />
           ) : view.panel.panel === 'backup' ? (
             <BackupSettings store={store} state={view.state} />
+          ) : view.panel.panel === 'version' ? (
+            <VersionSettings store={store} />
           ) : view.panel.panel === 'new' ? (
             <NewTask store={store} close={closePanel} />
           ) : view.panel.panel === 'tasks' ? (

@@ -33,6 +33,7 @@ import { resolveStartup, debuggingSwitches, runtimeImages } from './startup';
 import { InputGate } from './input-gate';
 import type { ExecutionPauseReason } from '../shared/execution';
 import { LocalFixture } from './local-fixture';
+import { versionStatusSchema, type VersionStatus } from '../shared/version';
 
 const images = runtimeImages(process.execPath, app.isPackaged);
 const startup = resolveStartup({
@@ -98,6 +99,8 @@ const controller = new ProcessClient({
 });
 let state: WorkspaceSnapshot = { revision: 0, active: null, tasks: [] };
 let panel: z.infer<typeof panelSchema> = { kind: 'panel', panel: 'none' };
+let version: VersionStatus | null = null;
+let versionNotice = false;
 let win: BrowserWindow;
 let overlay: WebContentsView;
 let toast: WebContentsView;
@@ -252,10 +255,11 @@ function broadcast(event: WorkspaceEvent): void {
 }
 function emit(event: WorkspaceEvent): void {
   if (event.notice && toast) {
+    versionNotice = false;
     stageNotice();
     nativeBindings();
   }
-  broadcast(event);
+  broadcast({ ...event, versionNotice });
 }
 function loadUI(
   contents: WebContents,
@@ -267,7 +271,12 @@ function loadUI(
   contents.on('will-attach-webview', (event) => event.preventDefault());
   contents.setWindowOpenHandler(() => ({ action: 'deny' }));
   contents.on('did-finish-load', () =>
-    contents.send('workspace-event', { state, panel }),
+    contents.send('workspace-event', {
+      state,
+      panel,
+      ...(version ? { version } : {}),
+      versionNotice,
+    }),
   );
   contents.on('destroyed', () => trusted.delete(contents.id));
   const query = new URLSearchParams({
@@ -751,14 +760,21 @@ ipcMain.handle('workspace-request', (event, input: unknown) => {
   const command = uiCommandSchema.parse(input);
   if (
     binding.role === 'toast' &&
-    !['snapshot', 'dismiss-notice'].includes(command.kind)
+    ![
+      'snapshot',
+      'dismiss-notice',
+      'version-status',
+      'version-dismiss',
+    ].includes(command.kind) &&
+    !(command.kind === 'panel' && command.panel === 'version')
   )
     throw new Error('HOST_REQUEST_DENIED');
   if (
     binding.role === 'chat' &&
     command.kind !== 'snapshot' &&
     !(
-      command.kind === 'panel' && ['settings', 'backup'].includes(command.panel)
+      command.kind === 'panel' &&
+      ['settings', 'backup', 'version'].includes(command.panel)
     )
   ) {
     if (
@@ -781,6 +797,21 @@ ipcMain.handle('workspace-request', (event, input: unknown) => {
     binding.role !== 'panel'
   )
     throw new Error('HOST_REQUEST_DENIED');
+  if (
+    command.kind.startsWith('version-') &&
+    binding.role !== 'panel' &&
+    !['version-status', 'version-dismiss'].includes(command.kind)
+  )
+    throw new Error('HOST_REQUEST_DENIED');
+  if (
+    command.kind === 'panel' &&
+    command.panel === 'version' &&
+    versionNotice
+  ) {
+    toast.setVisible(false);
+    versionNotice = false;
+    broadcast({ versionNotice });
+  }
   if (command.kind === 'snapshot') return state;
   return controller.request(
     command,
@@ -792,6 +823,33 @@ ipcMain.handle('workspace-request', (event, input: unknown) => {
   );
 });
 process.on('message', (input: unknown) => {
+  const versionUpdate = z
+    .object({ version: versionStatusSchema })
+    .safeParse(input);
+  if (versionUpdate.success) {
+    if (version && versionUpdate.data.version.revision < version.revision)
+      return;
+    version = versionUpdate.data.version;
+    if (!version.noticeVisible && versionNotice) {
+      toast?.setVisible(false);
+      versionNotice = false;
+    }
+    if (version.noticeVisible && toast && !toast.getVisible()) {
+      clearTimeout(noticeTimer);
+      const [width = 800] = win.getContentSize();
+      toast.setBounds({
+        x: Math.max(8, Math.round((width - 520) / 2)),
+        y: 98,
+        width: Math.min(520, width - 16),
+        height: 96,
+      });
+      toast.setVisible(true);
+      versionNotice = true;
+      nativeBindings();
+    }
+    broadcast({ version, versionNotice });
+    return;
+  }
   const update = z.object({ state: snapshotSchema }).safeParse(input);
   if (update.success && update.data.state.revision >= state.revision) {
     state = update.data.state;

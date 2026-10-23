@@ -17,10 +17,10 @@ User stories: 62
 
 ## 原型确认
 
-- 状态：待确认。
+- 状态：已确认。
 - 原型：`version-check-v1`，2026-10-23；来源分支 `codex/version-check-prototype`，固定源码提交 `23d3ecdbc345f31e44decdc3516260213b9c57c2`。[内置浏览器临时体验](http://127.0.0.1:4320/version-check-prototype.html)、[可直接双击的单文件原型](/Users/yuexiaoliang/.codex/worktrees/version-check-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/version-check/version-check-prototype.html)、[范围与走查说明](/Users/yuexiaoliang/.codex/worktrees/version-check-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/version-check/README.md)。临时服务仅本机监听，2026-10-23约16:34（Asia/Shanghai）到期；HTML入口不依赖服务。来源与恢复方法见[分支索引](../../../docs/maintenance/branch-archive.md#08-当前新版检查原型)。
 - 覆盖范围：沿用工作区的关于与新版入口；自动／手动检查与检查中状态；后台非抢焦点提醒及详情；当前版本、示例新版说明、来源与兼容信息；手动下载入口与升级准备的区分；稍后处理在当前会话抑制相同版本重复提醒；网络、超时、来源、格式、架构、系统、资料兼容及下载入口异常；历史结果保留但不冒充本次成功；提醒显示失败的设置入口；A/B独立任务和草稿保留。拟议自动检查频率为启动后及持续运行每24小时，失败等待下一次或手动重试，本项确认将包含该行为。
-- 确认记录：用户在建议“先制作08交互原型、确认后再实现”后回复“那就做吧”，据此制作并交付本版本。该指令没有指向已经可体验的08版本；当前尚未取得将本版及上述范围作为正式实现依据的明确同意，保持待确认。
+- 确认记录：用户先回复“那就做吧”要求制作原型；交付 `version-check-v1`（`23d3ecd`）及上述范围、恢复体验服务后，2026-10-23明确回复“可以，开始实现吧”，据此确认本版及本节范围为08正式实现依据。用户同时要求CUA尽可能后台静默，确需前台时直接操作，无需再次征求同意；该偏好沿用本轮，仍遵守既有验证预算和自有进程清理要求。
 - 模拟边界：所有版本、网络返回、来源、兼容结论、下载页面和任务效果均为内存演示；`example.invalid`是明确不可用的占位，不是已确定的版本服务。不发真实请求、不导航外站、不下载或安装、不改产品资料。正式HTTPS来源、校验和隐私须在08实现时落实并实际验证。升级准备、备份、退出和跨版密钥／有效登录延续属于09；不将本原型算作任何正式能力或验收通过。
 - 前置说明：本轮为原型准备，不把02尚余整体条件或09前置提前关闭；原事项依赖与验收复选保持。
 

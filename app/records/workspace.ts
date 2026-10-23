@@ -27,6 +27,10 @@ import { ModelRecords } from './model';
 import { ExecutionRecords } from './execution';
 import { executionSchema } from '../shared/execution';
 import { BackupRecords } from './backup';
+import {
+  CURRENT_DATA_FORMAT,
+  CURRENT_STATE_MODEL,
+} from '../shared/record-format';
 
 // 本项只有手动网页状态；计算转换不启动 actor、invocation 或网页动作。
 const lifecycle = createMachine({
@@ -114,7 +118,7 @@ export class WorkspaceRecords {
           body &&
           typeof body === 'object' &&
           'modelVersion' in body &&
-          body.modelVersion !== 1
+          body.modelVersion !== CURRENT_STATE_MODEL
         )
           throw Error('STATE_MODEL_UNSUPPORTED');
         if (!executionSchema.safeParse(body).success)
@@ -122,7 +126,12 @@ export class WorkspaceRecords {
       }
       this.db
         .insert(schema.workspace)
-        .values({ id: 1, active: null, revision: 0, schemaVersion: 6 })
+        .values({
+          id: 1,
+          active: null,
+          revision: 0,
+          schemaVersion: CURRENT_DATA_FORMAT,
+        })
         .onConflictDoNothing()
         .run();
       const version = this.db
@@ -135,11 +144,14 @@ export class WorkspaceRecords {
         version !== 3 &&
         version !== 4 &&
         version !== 5 &&
-        version !== 6
+        version !== CURRENT_DATA_FORMAT
       )
         throw new Error('DATA_VERSION_UNSUPPORTED');
-      if (version !== 6)
-        this.db.update(schema.workspace).set({ schemaVersion: 6 }).run();
+      if (version !== CURRENT_DATA_FORMAT)
+        this.db
+          .update(schema.workspace)
+          .set({ schemaVersion: CURRENT_DATA_FORMAT })
+          .run();
       this.models = new ModelRecords(this.db);
       this.executions = new ExecutionRecords(this.db);
       this.backups = new BackupRecords(this.db, () => this.snapshot(), folder);

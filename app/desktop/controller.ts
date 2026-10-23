@@ -6,6 +6,7 @@ import {
   nativeImage,
   safeStorage,
   powerMonitor,
+  shell,
 } from 'electron';
 import { spawn } from 'node:child_process';
 import path from 'node:path';
@@ -39,6 +40,12 @@ import { ValidationBarriers } from './validation-barriers';
 import { LocalFixture } from './local-fixture';
 import { acquireRuntimeOwnership } from './runtime-ownership';
 import { BackupService } from './backup-service';
+import { VersionService } from './version-service';
+import { versionFixture } from './version-fixture';
+import {
+  CURRENT_DATA_FORMAT,
+  CURRENT_STATE_MODEL,
+} from '../shared/record-format';
 
 export async function startController(
   folder: string,
@@ -428,6 +435,25 @@ export async function startController(
     },
   });
 
+  const versions = new VersionService({
+    current: {
+      version: app.getVersion(),
+      platform: process.platform,
+      arch: process.arch,
+      osVersion: process.getSystemVersion(),
+      dataFormat: CURRENT_DATA_FORMAT,
+      stateModel: CURRENT_STATE_MODEL,
+    },
+    ...versionFixture(validation, folder),
+    publish: (version) => {
+      if (host.connected) host.send({ version });
+    },
+    open: async (url) => {
+      await shell.openExternal(url, { activate: false });
+      if (validation) process.send?.({ versionExternalOpen: url });
+    },
+  });
+
   systemSink.notify = (condition, blocked) => {
     void executions.setSystemCondition(condition, blocked).catch((error) => {
       log.event('failure', { code: errorCode(error) });
@@ -520,6 +546,7 @@ export async function startController(
       if (command.apiKey !== undefined) fixture.protect(command.apiKey);
     }
     if (command.kind === 'snapshot') return executions.decorate(state);
+    if (command.kind.startsWith('version-')) return versions.handle(command);
     if (
       command.kind === 'backup-review' &&
       (!recordsAvailable || !workspace.canExit())
@@ -713,6 +740,7 @@ export async function startController(
         });
   });
   function onWorkspaceExit() {
+    versions.dispose();
     models.disable();
     executions.disable();
     webExecutor.dispose();
@@ -821,6 +849,7 @@ export async function startController(
         });
       throw error;
     }
+    versions.dispose();
     broker.dispose();
     workers.forEach((worker) => worker.kill());
     try {
@@ -890,6 +919,7 @@ export async function startController(
       })
       .safeParse(input);
     if (!ready.success) return;
+    versions.start();
     publish();
     log.event('ready');
     if (validation)
