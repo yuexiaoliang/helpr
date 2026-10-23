@@ -30,7 +30,7 @@ function setup() {
       stateModel: 1,
     },
     source:
-      'https://raw.githubusercontent.com/yuexiaoliang/helpr/refs/heads/updates/stable/macos-arm64.json',
+      'https://raw.githubusercontent.com/yuexiaoliang/helpr/refs/heads/codex/updates-stable/macos-arm64.json',
     phase: 'done',
     origin: 'automatic',
     checkedAt: 1000,

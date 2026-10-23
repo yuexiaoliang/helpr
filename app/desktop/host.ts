@@ -722,6 +722,7 @@ async function perform(input: unknown): Promise<unknown> {
   }
   if (command.kind === 'inspect')
     return {
+      nativeInputAvailable: nativeAvailable,
       pids: app.getAppMetrics().map((p) => ({
         pid: p.pid,
         type: p.type,
@@ -841,7 +842,7 @@ process.on('message', (input: unknown) => {
         x: Math.max(8, Math.round((width - 520) / 2)),
         y: 98,
         width: Math.min(520, width - 16),
-        height: 96,
+        height: 74,
       });
       toast.setVisible(true);
       versionNotice = true;

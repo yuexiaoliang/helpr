@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const VERSION_SOURCE =
-  'https://raw.githubusercontent.com/yuexiaoliang/helpr/refs/heads/updates/stable/macos-arm64.json';
+  'https://raw.githubusercontent.com/yuexiaoliang/helpr/refs/heads/codex/updates-stable/macos-arm64.json';
 export const versionNumber = z
   .string()
   .regex(/^(0|[1-9]\d{0,5})\.(0|[1-9]\d{0,5})\.(0|[1-9]\d{0,5})$/);

@@ -18,6 +18,9 @@ const appPath=path.resolve('dist/candidates/version-08/mac-arm64/helpr.app');
 for(const [file,sha] of Object.entries(manifest.hashes))assert.equal(createHash('sha256').update(fs.readFileSync(path.join(appPath,file))).digest('hex'),sha,file);
 const root=path.join(validationRoot,'version-08-'+Date.now());fs.mkdirSync(root,{recursive:true,mode:0o700});
 const profileBase=`/private/tmp/helpr-workspace-validation-${process.getuid()}`;fs.mkdirSync(profileBase,{recursive:true,mode:0o700});assert.equal(fs.realpathSync(profileBase),profileBase);
+const batchFile=path.join(validationRoot,'version-08-batch.json');
+// 同一事项的批次身份持久保留；不允许换目录或重启此入口清零。
+fs.writeFileSync(batchFile,JSON.stringify({root,phase:'preparing',started:Date.now()})+'\n',{flag:'wx',mode:0o600});
 const profile=fs.mkdtempSync(path.join(profileBase,'version-08-'));
 const write=(name,value)=>fs.writeFileSync(path.join(root,name),JSON.stringify(value,null,2)+'\n',{mode:0o600});
 const report={started:Date.now(),build:36,appPath,profile,requests:[],captures:[],opened:[],tasks:[],processes:[],groups:[],passed:false};
@@ -30,7 +33,7 @@ const cases={latest:{version:'0.1.0',downloadURL:null},available:{},offline:{},s
 let mode='latest',failed=null,child,exit=null,ready=null,baseline=null,seq=0,finished=false;
 const pending=new Map(),pids=new Set(),groups=new Set();
 const facts=s=>({active:s.active,tasks:s.tasks.map(t=>[t.id,t.goal,t.url,t.draft,t.messages,t.hidden,t.minimized,t.execution?.intent??null,t.execution?.actions??null])});
-const save=()=>write('result.json',report);
+const save=()=>{write('result.json',report);fs.writeFileSync(batchFile,JSON.stringify({root,profile,started:report.started,ended:report.ended??null,start:report.start??null,requests:report.requests.length,tasks:report.tasks.length,passed:report.passed,error:report.error??null})+'\n',{mode:0o600});};
 const website=createHTTPServer((req,res)=>{if(req.method!=='GET'){failed='UNEXPECTED_WEB_WRITE';res.statusCode=405;}res.setHeader('content-type','text/html;charset=utf-8');res.end('<!doctype html><html lang="zh-CN"><title>08版本检查隔离网页</title><h1>任务网页保持</h1><p>这里不提供写入操作，也不调用模型。</p></html>');});
 const versions=createServer({key:fs.readFileSync(key),cert:fs.readFileSync(certFile)},(req,res)=>{
  report.requests.push({at:Date.now(),mode,method:req.method,url:req.url,headers:req.headers});save();
@@ -74,13 +77,13 @@ try{
   if(fs.existsSync(commandFile)){const command=JSON.parse(fs.readFileSync(commandFile));fs.unlinkSync(commandFile);let value;
    try{
     if(command.op==='setup'){
-     assert(!baseline,'SETUP_ONCE');for(const name of ['A','B']){const created=await rpc({kind:'create',requestId:'version-08-'+name,goal:'08 '+name+' · 保留任务与草稿'});report.tasks.push(created.taskId);await rpc({kind:'navigate',taskId:created.taskId,requestId:'version-nav-'+name,url:origin+'/'+name});await until(async()=>(await rpc({kind:'snapshot'})).tasks.find(t=>t.id===created.taskId)?.phase==='manual');await rpc({kind:'draft',taskId:created.taskId,requestId:'version-draft-'+name,text:name+' 的未发送文字'});}await rpc({kind:'select',requestId:'version-select-a',taskId:report.tasks[0]});baseline=facts(await rpc({kind:'snapshot'}));write('baseline.json',baseline);value=baseline;
+     assert(!baseline,'SETUP_ONCE');await rpc({kind:'resize',width:800,height:600});for(const name of ['A','B']){const created=await rpc({kind:'create',requestId:'version-08-'+name,goal:'08 '+name+' · 保留任务与草稿'});report.tasks.push(created.taskId);await rpc({kind:'navigate',taskId:created.taskId,requestId:'version-nav-'+name,url:origin+'/'+name});await until(async()=>(await rpc({kind:'snapshot'})).tasks.find(t=>t.id===created.taskId)?.phase==='manual');await rpc({kind:'draft',taskId:created.taskId,requestId:'version-draft-'+name,text:name+' 的未发送文字'});}await rpc({kind:'select',requestId:'version-select-a',taskId:report.tasks[0]});baseline=facts(await rpc({kind:'snapshot'}));write('baseline.json',baseline);value=baseline;
     }else if(command.op==='case'){
      assert(Object.hasOwn(cases,command.name),'UNKNOWN_CASE');mode=command.name;value={mode};
     }else if(command.op==='capture'){
-     assert(baseline,'SETUP_REQUIRED');const state=await rpc({kind:'snapshot'}),status=await rpc({kind:'version-status'});assert.equal(status.phase,'done');assert.equal(status.result.kind,mode);assert.deepEqual(facts(state),baseline,'TASK_OR_DRAFT_CHANGED');assert(report.requests.every(r=>r.url==='/stable.json'&&r.method==='GET'));const data={mode,status,state,requests:report.requests.length};write('capture-'+mode+'.json',data);report.captures.push(mode);value={mode,status,requests:report.requests.length};
+     assert(baseline,'SETUP_REQUIRED');const state=await rpc({kind:'snapshot'}),status=await rpc({kind:'version-status'}),inspection=await rpc({kind:'inspect'});assert.equal(inspection.nativeInputAvailable,true,'NATIVE_INPUT_MUST_REMAIN_AVAILABLE');assert.equal(status.phase,'done');assert.equal(status.result.kind,mode);assert.deepEqual(facts(state),baseline,'TASK_OR_DRAFT_CHANGED');assert(report.requests.every(r=>r.url==='/stable.json'&&r.method==='GET'));const data={mode,status,state,inspection,requests:report.requests.length};write('capture-'+mode+'.json',data);report.captures.push(mode);value={mode,status,requests:report.requests.length};
     }else if(command.op==='finish'){
-     assert(['latest','available','offline','source','format','architecture','system','data','link','timeout'].every(name=>report.captures.includes(name)),'ALL_CASES_REQUIRED');await quit();finished=true;value={finished:true};
+     assert(['latest','available','offline','source','format','architecture','system','data','link','timeout'].every(name=>report.captures.includes(name)),'ALL_CASES_REQUIRED');assert.deepEqual(report.opened,[base.downloadURL],'ONE_USER_OPEN_REQUIRED');await quit();finished=true;value={finished:true};
     }else throw Error(command.op==='abort'?'CUA_ABORTED':'UNKNOWN_COMMAND');
     write('command-result.json',{nonce:command.nonce,ok:true,value});save();
    }catch(error){write('command-result.json',{nonce:command.nonce,ok:false,error:error.message});throw error;}
@@ -92,8 +95,8 @@ try{
 finally{
  clearTimeout(deadline);
  if(child&&owned().length){try{await quit();}catch(error){report.cleanupError=error.message;}}
- if(child&&owned().length){spend('cleanups');for(const group of groups)try{process.kill(-group,'SIGTERM');}catch{}for(const pid of pids)if(owned().some(row=>row.pid===pid))try{process.kill(pid,'SIGTERM');}catch{}try{await until(()=>owned().length===0,5000,true);}catch{for(const group of groups)try{process.kill(-group,'SIGKILL');}catch{}await delay(500);}}
- report.remaining=child?owned():[];if(report.remaining.length)report.passed=false;
+ if(child&&owned().length){spend('cleanups');for(const group of groups)try{process.kill(-group,'SIGTERM');}catch{}for(const pid of pids)if(owned().some(row=>row.pid===pid))try{process.kill(pid,'SIGTERM');}catch{}try{await until(()=>owned().length===0,5000,true);}catch{for(const group of groups)try{process.kill(-group,'SIGKILL');}catch{}for(const row of owned())if(pids.has(row.pid))try{process.kill(row.pid,'SIGKILL');}catch{}await delay(500);}}
+ report.remaining=child?owned():[];if(report.remaining.length){report.passed=false;report.error??='OWNED_PROCESSES_REMAIN';process.exitCode=1;if(child.connected)child.disconnect();}
  website.closeAllConnections();versions.closeAllConnections();await Promise.all([new Promise(resolve=>website.close(resolve)),new Promise(resolve=>versions.close(resolve))]);
  report.ended=Date.now();save();console.log('VERSION_RESULT '+JSON.stringify({root,passed:report.passed,error:report.error,remaining:report.remaining}));
 }

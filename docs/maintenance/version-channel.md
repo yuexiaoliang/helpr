@@ -1,6 +1,6 @@
 # 自用版本渠道
 
-08固定读取 `https://raw.githubusercontent.com/yuexiaoliang/helpr/refs/heads/updates/stable/macos-arm64.json`。仓库为公开仓库，渠道分支只放版本元数据，不随本机未发布产品代码一起推送，也不包含任务、素材、凭据或安装包。`releases/macos-arm64.json`保存主分支上的维护副本。
+08固定读取 `https://raw.githubusercontent.com/yuexiaoliang/helpr/refs/heads/codex/updates-stable/macos-arm64.json`。仓库为公开仓库，渠道分支只放版本元数据，不随本机未发布产品代码一起推送，也不包含任务、素材、凭据或安装包。`releases/macos-arm64.json`保存主分支上的维护副本。
 
 当前版本为0.1.0，尚无可手动换装的新版包，因此下载入口为null。本机同版核对显示已是最新，不伪造0.2.0发布或实际包已可下载。09取得真实两版安装证据时，再发布实际包及对应版本信息。
 
