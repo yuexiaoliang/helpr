@@ -1,0 +1,117 @@
+- strong: PROTOTYPE · 08 / version-check-v1
+- generic: 发现新版时，如何说明检查结果，让当前任务继续？全部为内存模拟。
+- button "收起体验指南"
+- main "helpr 模拟工作区":
+  - generic: helpr
+  - tablist "任务标签页":
+    - tab "A · 周报备注 自动执行" [selected]:
+      - generic: A · 周报备注
+      - generic: 自动执行
+    - tab "B · 项目备注 自动执行":
+      - generic: B · 项目备注
+      - generic: 自动执行
+  - button "关于与新版"
+  - generic: ↻
+  - generic: 演示后台 / A / 周报备注
+  - generic: 模拟
+  - generic: 模拟网页 · 独立任务 A
+  - heading "周报备注" [level=1]
+  - paragraph: 让系统完成当前网页工作。关于新版的提醒不会改变这项任务的意图。
+  - article:
+    - heading "当前执行进度" [level=2]
+    - generic: 自动执行
+    - generic: 1 次模拟备注已完成
+    - paragraph: 这是演示页面，没有真实网页写入。
+    - table:
+      - rowgroup:
+        - row "任务 状态 进度":
+          - columnheader "任务"
+          - columnheader "状态"
+          - columnheader "进度"
+        - row "A · 周报备注 自动执行 1 次":
+          - cell "A · 周报备注"
+          - cell "自动执行"
+          - cell "1 次"
+        - row "B · 项目备注 自动执行 1 次":
+          - cell "B · 项目备注"
+          - cell "自动执行"
+          - cell "1 次"
+    - button "模拟推进 A"
+    - button "停止 A"
+  - complementary "所属任务对话":
+    - generic: h
+    - strong: helpr
+    - generic: 任务 A · 自动执行
+    - generic: 我会按当前委托继续工作。你可以先处理其它事，稍后再查看新版。
+    - text: 未发送的任务草稿
+    - textbox "未发送的任务草稿":
+      - /placeholder: 在这里留下文字，切换后仍保留…
+    - text: 演示只保留草稿，不发送模型请求。
+- complementary "原型体验指南":
+  - generic: 状态演练 · 不连接真实版本服务
+  - heading "知道有新版， 手里的工作继续。" [level=2]:
+    - text: 知道有新版，
+    - text: 手里的工作继续。
+  - paragraph: 点击场景重置演示，再按引导逐步体验。左侧是拟议产品交互；右侧按钮模拟后台事件，也可以展开自由操作。
+  - tablist "演练场景":
+    - tab "后台发现新版" [selected]
+    - tab "稍后再处理"
+    - tab "已是最新"
+    - tab "网络失败与重试"
+    - tab "检查超时"
+    - tab "来源无法验证"
+    - tab "版本信息损坏"
+    - tab "架构与系统"
+    - tab "资料不兼容"
+    - tab "下载入口异常"
+    - tab "旧结果与新失败"
+    - tab "提醒显示失败"
+  - region "当前引导演练":
+    - heading "后台发现新版" [level=3]
+    - paragraph: 先留在任务 A。新版出现时不自动进入设置，任务 B 仍可推进；你决定何时查看。
+    - button "1. 模拟后台自动检查"
+    - button "重新体验此场景"
+  - heading "当前状态 · 每次操作后更新" [level=3]
+  - generic: 查看位置
+  - generic: 任务 A
+  - generic: 检查状态
+  - generic: 尚未开始
+  - generic: 模拟检查
+  - generic: 开始 0 次 / 完成 0 次
+  - generic: 提醒
+  - generic: 未显示
+  - generic: 下载入口
+  - generic: 当前不可用
+  - generic: 打开 / 下载
+  - generic: 0 次模拟打开 / 0 次下载
+  - generic: 升级准备
+  - generic: 未开始；没有暂停或退出
+  - generic: 任务 A
+  - generic: 自动执行 · 1 次 · 草稿为空
+  - generic: 任务 B
+  - generic: 自动执行 · 1 次 · 草稿为空
+  - generic "自由操作与模拟结果"
+  - generic: 后台与任务
+  - button "后台自动检查"
+  - button "手动检查"
+  - button "查看结果"
+  - button "模拟提醒失败"
+  - button "恢复提醒显示"
+  - button "推进 A"
+  - button "推进 B"
+  - generic: 返回一种模拟检查结果（先开始检查）
+  - button "发现新版"
+  - button "已是最新"
+  - button "来源版本较早"
+  - button "网络不可用"
+  - button "请求超时"
+  - button "来源无法验证"
+  - button "信息损坏"
+  - button "架构不适用"
+  - button "系统不兼容"
+  - button "资料不兼容"
+  - button "下载入口异常"
+  - generic "本版范围与模拟边界"
+  - heading "刚刚发生" [level=3]
+  - list:
+    - listitem: 演示已就绪。两项虚构任务独立运行；新版检查尚未开始。

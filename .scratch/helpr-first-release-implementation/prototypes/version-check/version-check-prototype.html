@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>helpr · 新版检查原型</title>
+<style>
+/* PROTOTYPE version-check-v1. Memory only; no requests, downloads or installation. */
+*{box-sizing:border-box}[hidden]{display:none!important}
+:root{--ink:#293e34;--muted:#6b7c70;--green:#2b594b;--line:#dfe6dc;--soft:#f1f5ed;--amber:#86602b}
+body{margin:0;background:#f4f6f2;color:var(--ink);font:14px/1.65 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}
+button.primary:hover:not(:disabled){background:#244c40;color:white}
+button,textarea{font:inherit;color:inherit}button{cursor:pointer;background:white;border:1px solid var(--line);border-radius:8px;padding:8px 12px;line-height:1.4}button:hover:not(:disabled){background:#edf3e9}button:disabled{opacity:.45;cursor:default}button:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid #547d64;outline-offset:3px}button.primary{background:var(--green);color:white;border-color:var(--green)}button.small{padding:5px 9px;font-size:12px}.muted{color:var(--muted)}.tiny{font-size:11px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.grow{flex:1;min-width:0}h1,h2,h3,p{margin:0 0 12px}h1{font-size:27px;letter-spacing:-.8px}h2{font-size:18px}h3{font-size:14px}p{font-size:13px}.eyebrow{font-size:11px;letter-spacing:.6px;color:var(--muted);margin-bottom:5px}
+.lab{min-height:42px;display:flex;align-items:center;gap:16px;padding:9px 18px;background:#263f33;color:#edf4eb;font-size:11px}.lab span{color:#d0dccc}.lab button{margin-left:auto;background:none;color:white;border:1px solid #718776;padding:4px 10px;white-space:nowrap}.layout{display:grid;grid-template-columns:minmax(0,1fr) 342px;height:calc(100dvh - 42px);min-height:600px}.layout.guide-closed{grid-template-columns:minmax(0,1fr)}.workspace{position:relative;display:flex;flex-direction:column;min-width:0;overflow:hidden;background:white}.header{min-height:58px;display:flex;align-items:stretch;background:#eaf0e9;padding:0 18px;gap:18px;flex:none}.lights{display:flex;align-items:center;gap:5px}.lights i{width:10px;height:10px;border-radius:50%;background:#ea776a}.lights i:nth-child(2){background:#e2bf68}.lights i:nth-child(3){background:#8cb47f}.brand{align-self:center;font-size:25px;font-weight:780;color:var(--green);letter-spacing:-1.2px}.tabs{display:flex;align-items:flex-end;gap:8px;flex:1;min-width:0}.task-tab{height:47px;min-width:0;flex:1;max-width:330px;border:0;border-radius:12px 12px 0 0;background:none;text-align:left;padding:0 13px;display:flex;gap:9px;align-items:center}.task-tab[aria-selected=true]{background:white}.task-tab span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}.task-tab small{font-size:10px;color:var(--green);margin-left:auto;white-space:nowrap}.settings-button{align-self:center;white-space:nowrap;background:none;border:0;font-size:12px;padding:6px}.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#3b7a5a;vertical-align:middle;margin-right:5px}.browserbar{min-height:35px;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 22px;gap:12px;font-size:11px;color:var(--muted);flex:none}.browserbar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.body{flex:1;min-height:0;overflow:auto;background:#f7f8f5}.content{max-width:900px;margin:auto;padding:32px 28px 40px}.lead{color:var(--muted);max-width:620px}.card{padding:22px;background:white;border:1px solid var(--line);border-radius:12px;margin:16px 0}.card-head{display:flex;align-items:start;justify-content:space-between;gap:14px}.pill{border-radius:5px;padding:4px 8px;background:#eef3e9;color:#52734b;font-size:11px;display:inline-block;white-space:nowrap}.notice{padding:13px 15px;background:#f0f5ea;border:1px solid #dce6d3;border-radius:9px;font-size:12px;margin:14px 0;overflow-wrap:anywhere}.notice.warn{background:#faf4e8;border-color:#e9dcc2;color:#785a2b}.notice.error{background:#fbefec;border-color:#e7d4cd;color:#8a4e3c}.notice strong{display:block;margin-bottom:4px}.version{font-size:34px;letter-spacing:-1px;line-height:1.4;margin:6px 0 12px}.version small{font-size:12px;letter-spacing:0;color:var(--muted);font-weight:400}.meta{display:grid;grid-template-columns:90px minmax(0,1fr);gap:8px;font-size:12px}.meta dt{color:var(--muted)}.meta dd{margin:0;overflow-wrap:anywhere}.meta code{font-size:11px}.divider{border:0;border-top:1px solid var(--line);margin:20px 0}.footnote{font-size:11px;color:var(--muted);line-height:1.8;margin-top:14px}.release-list{padding-left:18px;font-size:12px;line-height:2}.text-button{border:0;padding:5px;background:transparent;font-size:12px;color:var(--green)}.toast{margin:14px 20px 0;padding:12px 15px;border:1px solid #cfdfc8;border-radius:10px;background:#f1f7ec;font-size:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;flex:none}.toast p{margin:0;font-size:12px}.toast strong{font-size:13px}.toast button{font-size:12px;padding:6px 10px}.page-grid{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:20px}.web-count{font-size:44px;font-weight:650;letter-spacing:-2px;margin:10px 0}.web-count small{font-size:12px;letter-spacing:0;font-weight:400}.mock-table{border-collapse:collapse;width:100%;font-size:12px;margin-top:15px}.mock-table td,.mock-table th{text-align:left;padding:10px 4px;border-bottom:1px solid var(--line)}.chat{background:white;border:1px solid #cedac8;border-radius:13px;overflow:hidden;height:max-content;box-shadow:0 9px 32px #2b402512}.chat-head{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center}.avatar{height:29px;width:29px;border-radius:9px;background:#e9f0e4;display:grid;place-items:center;font-weight:600}.chat-feed{padding:17px;font-size:12px;min-height:100px}.composer{padding:12px;border-top:1px solid var(--line)}textarea{display:block;width:100%;resize:vertical;min-height:70px;border:1px solid #d7e1d1;border-radius:7px;background:#fbfcf9;padding:9px;font-size:12px;margin-bottom:9px}.guide{border-left:1px solid #d5e0cf;background:#fcfdf9;overflow:auto;padding:22px 18px}.guide h2{font-size:21px}.guide .intro{font-size:12px;color:var(--muted)}.scenarios{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin:14px 0}.scenarios button{font-size:11px;padding:8px 5px}.scenarios button[aria-selected=true]{background:var(--green);color:white;border-color:var(--green)}.walk{background:#edf3e8;border-radius:10px;padding:14px}.walk p{font-size:12px;color:var(--muted)}.walk button{font-size:12px;width:100%;text-align:left}.done-label{font-size:12px;color:var(--green)}.dots{display:flex;gap:4px;margin-bottom:13px}.dots i{height:3px;flex:1;background:#d4dfcc}.dots i.done{background:#588264}.state-title{margin:20px 0 8px;font-size:12px}.state-row{font-size:11px;border-radius:7px;background:#f0f3ec;padding:9px;margin:6px 0;display:grid;grid-template-columns:70px minmax(0,1fr);gap:7px}.state-row b{color:#52734b}.state-row span{overflow-wrap:anywhere}.log{font-size:11px;color:var(--muted);padding-left:17px}.log li{margin:5px 0}.tools,.scope{margin-top:16px;font-size:11px}.tools{border-top:1px solid var(--line);padding-top:13px}.tools summary,.scope summary{cursor:pointer;font-weight:600}.tool-group{margin:12px 0}.tool-group label{display:block;margin-bottom:6px;color:var(--muted)}.buttons{display:flex;flex-wrap:wrap;gap:5px}.buttons button{font-size:11px;padding:6px 8px}.scope{background:#f5f2e9;border-radius:8px;padding:11px;color:#746b54}.scope p{font-size:11px;margin:9px 0 0}.compat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0}.compat span{background:#f5f8f1;padding:9px;border-radius:7px;font-size:11px}
+@media(min-width:1600px){.layout{grid-template-columns:minmax(0,1fr) 380px}.guide{padding:26px}.content{padding-top:40px}}
+@media(max-width:1150px){.layout{grid-template-columns:minmax(0,1fr) 310px}.header{gap:10px;padding:0 12px}.lights{display:none}.task-tab{padding:0 8px}.task-tab small{display:none}.content{padding:24px 20px}.page-grid{grid-template-columns:minmax(0,1fr)}.chat{max-width:440px}.card{padding:17px}.toast{margin:12px 14px 0}}
+@media(max-width:900px){.layout{display:flex;flex-direction:column;height:auto;min-height:calc(100dvh - 42px)}.workspace{min-height:680px;height:calc(100dvh - 42px)}.guide{border-left:0;border-top:1px solid var(--line);overflow:visible;padding:24px}.scenarios{grid-template-columns:repeat(3,1fr)}.layout.guide-closed .guide{display:none}.task-tab span{font-size:11px}.header{gap:6px}.settings-button{font-size:11px}.brand{font-size:23px}.lab span{display:none}.content{max-width:730px}}
+@media(max-width:520px){.header{padding:0 8px;gap:4px}.brand{font-size:21px}.task-tab{padding:0 6px}.settings-button{padding:4px;font-size:10px}.content{padding:20px 14px}.card-head{flex-direction:column}.row button{font-size:12px}.scenarios{grid-template-columns:repeat(2,1fr)}.meta{grid-template-columns:75px minmax(0,1fr)}.lab{padding:9px 12px}.compat{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<div class="lab"><strong>PROTOTYPE · 08 / version-check-v1</strong><span>发现新版时，如何说明检查结果，让当前任务继续？全部为内存模拟。</span><button id="toggle-guide">收起体验指南</button></div>
+<div id="layout" class="layout">
+<main class="workspace" aria-label="helpr 模拟工作区">
+<header class="header"><div class="lights" aria-hidden="true"><i></i><i></i><i></i></div><span class="brand">helpr</span><div id="task-tabs" class="tabs" role="tablist" aria-label="任务标签页"></div><button id="open-settings" class="settings-button">关于与新版</button></header>
+<div class="browserbar"><span aria-hidden="true">↻</span><span id="address" class="grow"></span><span>模拟</span></div>
+<section id="toast" class="toast" role="status" aria-label="新版提醒" hidden></section>
+<div class="body"><section id="content" class="content"></section></div>
+</main>
+<aside id="guide" class="guide" aria-label="原型体验指南">
+<div class="eyebrow">状态演练 · 不连接真实版本服务</div><h2>知道有新版，<br>手里的工作继续。</h2>
+<p class="intro">点击场景重置演示，再按引导逐步体验。左侧是拟议产品交互；右侧按钮模拟后台事件，也可以展开自由操作。</p>
+<div id="scenarios" class="scenarios" role="tablist" aria-label="演练场景"></div>
+<section id="walk" class="walk" aria-label="当前引导演练"></section>
+<h3 class="state-title">当前状态 · 每次操作后更新</h3><div id="state-panel"></div>
+<details class="tools"><summary>自由操作与模拟结果</summary><div class="tool-group"><label>后台与任务</label><div id="free-actions" class="buttons"></div></div><div class="tool-group"><label>返回一种模拟检查结果（先开始检查）</label><div id="free-results" class="buttons"></div></div></details>
+<details class="scope"><summary>本版范围与模拟边界</summary><p>覆盖后台自动检查与手动检查、非抢焦点提醒、版本详情、稍后处理、可信手动下载入口，以及网络／来源／格式／架构／系统／资料兼容异常。拟议自动检查为启动后及持续运行每24小时，失败等待下次或手动重试。</p><p>版本、地址、兼容结论、网络和两项任务均为虚构。没有网络请求、真实下载、安装或产品资料写入。“下载页”只在演示内显示。真实HTTPS来源、校验与请求隐私须在08实现时验证；升级准备、备份与退出交互属于09。</p></details>
+<h3 class="state-title">刚刚发生</h3><ol id="events" class="log" aria-live="polite"></ol>
+</aside>
+</div>
+<script>
+/* Pure, portable state model; no DOM, network, storage, timer or file access. */
+const VersionDemo=(()=>{
+ const SOURCE='https://updates.example.invalid/helpr/stable/macos-arm64.json';
+ const DOWNLOAD='https://downloads.example.invalid/helpr/0.2.0/mac-arm64/';
+ const results={
+  available:{name:'发现新版',title:'发现可用新版',detail:'新版 0.2.0 适用于这台 Mac。你可以先继续任务，方便时再手动下载。',version:'0.2.0',tone:'ok',eligible:true},
+  latest:{name:'已是最新',title:'已是最新版本',detail:'可信版本信息中的最新适用版本为 0.1.0，本机已安装。',version:'0.1.0',tone:'ok'},
+  older:{name:'来源版本较早',title:'当前版本无需更新',detail:'版本来源列出 0.0.9，早于本机 0.1.0。保留当前版本，不提供降级入口。',version:'0.0.9',tone:'ok'},
+  offline:{name:'网络不可用',title:'未能检查新版',detail:'暂时无法连接版本来源。当前版本是否最新尚未确认；任务可以继续，网络恢复后再试。',tone:'warn'},
+  timeout:{name:'请求超时',title:'新版检查超时',detail:'没有在规定时间内取得版本信息。当前版本是否最新尚未确认；不会立即循环重试。',tone:'warn'},
+  source:{name:'来源无法验证',title:'无法验证版本来源',detail:'连接或来源校验未通过，本次结果不可使用。任务继续，不提供下载入口。',tone:'error'},
+  broken:{name:'信息损坏',title:'版本信息无法识别',detail:'返回的信息不完整或格式损坏，无法确认版本与兼容性。保留本机版本，稍后重新检查。',tone:'error'},
+  architecture:{name:'架构不适用',title:'该版本不适用于这台 Mac',detail:'来源只有 Intel 版本；本机为 Apple Silicon。不把它作为可下载更新。',version:'0.2.0',tone:'warn'},
+  system:{name:'系统不兼容',title:'新版需要更高的 macOS',detail:'0.2.0 要求 macOS 15 或以上；本机为 macOS 14.8.3，暂不提供下载入口。',version:'0.2.0',tone:'warn'},
+  data:{name:'资料不兼容',title:'新版暂不能接续当前资料',detail:'新版尚未声明支持当前资料格式和任务状态。不建议更换，原资料和工作保持。',version:'0.2.0',tone:'warn'},
+  link:{name:'下载入口异常',title:'下载入口未通过校验',detail:'版本信息指向未受信任的下载位置。保留检查说明，不提供可打开的链接。',version:'0.2.0',tone:'error'}
+ };
+ const copy=x=>JSON.parse(JSON.stringify(x));
+ const initial=()=>({active:'A',view:'task',tasks:{A:{name:'周报备注',phase:'自动执行',count:1,draft:''},B:{name:'项目备注',phase:'自动执行',count:1,draft:''}},check:{phase:'idle',origin:null,finishedOrigin:null,result:null,lastGood:null,request:0,finished:0},toast:false,noticeWorking:true,dismissed:null,pageOpened:false,opens:0,downloads:0,prepared:false,message:'',events:['演示已就绪。两项虚构任务独立运行；新版检查尚未开始。']});
+ function act(previous,a){
+  const s=copy(previous),c=s.check;const log=m=>{s.events.unshift(m);s.events=s.events.slice(0,7);};
+  switch(a.type){
+   case 'tab':s.active=a.task;s.view='task';s.pageOpened=false;log('查看任务 '+a.task+'，没有改变执行状态。');break;
+   case 'settings':s.view='settings';s.pageOpened=false;log('查看关于与新版；当前任务 '+s.active+' 的页面与草稿保留。');break;
+   case 'back':s.view='task';s.pageOpened=false;log('返回任务 '+s.active+'，任务和草稿保留。');break;
+   case 'start':if(c.phase==='checking'){log('已有检查进行中，不重复开始。');break;}c.phase='checking';c.origin=a.origin||'manual';c.request++;s.message='';s.pageOpened=false;s.toast=false;log(c.origin==='automatic'?'后台开始模拟自动检查，没有切换当前任务或打开设置。':'开始模拟手动检查；没有下载、暂停或退出。');break;
+   case 'result':if(c.phase!=='checking'){log('尚未开始检查，此结果未被接受。');break;}if(!results[a.result])break;c.phase='done';c.result=a.result;c.finished=c.request;c.finishedOrigin=c.origin;
+    if(results[a.result].tone==='ok')c.lastGood=a.result;
+    s.toast=!!results[a.result].eligible&&s.noticeWorking&&s.dismissed!==results[a.result].version;
+    log(results[a.result].title+'。任务 '+s.active+' 仍在原页面；没有下载或准备升级。');
+    if(results[a.result].eligible&&!s.noticeWorking)log('模拟提醒显示失败：关于与新版仍保留新版标记和可查看结果。');break;
+   case 'dismiss':s.toast=false;s.dismissed=results[c.result]?.version||s.dismissed;log('本次会话稍后处理该版本；相同版本不重复弹出，设置中的结果保留。');break;
+   case 'details':s.toast=false;s.view='settings';s.pageOpened=false;log('你主动查看新版详情，任务 '+s.active+' 和草稿保留。');break;
+   case 'openDownload':if(c.phase!=='done'||!results[c.result]?.eligible){s.message='当前没有经本次检查确认可用的下载入口。';log(s.message);break;}s.pageOpened=true;s.opens++;s.toast=false;log('仅模拟打开可信下载说明页；尚未下载，不暂停任务、不准备退出或安装。');break;
+   case 'closeDownload':s.pageOpened=false;log('关闭模拟下载说明页，回到原版本结果。');break;
+   case 'advance':{const t=s.tasks[a.task||s.active];if(t.phase==='已停止'){log('任务 '+(a.task||s.active)+' 保持停止；版本检查不能放行。');break;}t.count++;log('仅任务 '+(a.task||s.active)+' 模拟推进一步，已完成 '+t.count+' 次。');break;}
+   case 'stop':s.tasks[a.task||s.active].phase='已停止';log('仅任务 '+(a.task||s.active)+' 已停止；新版检查不改变这个决定。');break;
+   case 'draft':s.tasks[a.task||s.active].draft=a.value;break;
+   case 'noticeFail':s.noticeWorking=false;s.toast=false;log('已模拟提醒显示不可用；后台结果仍可从关于与新版查看。');break;
+   case 'noticeRestore':s.noticeWorking=true;log('模拟提醒显示已恢复；不会自行打开设置或切换任务。');break;
+  }
+  return s;
+ }
+ return {initial,act,results,SOURCE,DOWNLOAD};
+})();
+</script>
+<script>
+const $=id=>document.getElementById(id),esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const step=(label,type,extra={})=>({label,action:{type,...extra}}),begin=()=>step('模拟后台自动检查','start',{origin:'automatic'}),result=id=>step('返回：'+VersionDemo.results[id].name,'result',{result:id}),check=id=>[begin(),result(id)],details=()=>step('主动查看检查结果','settings');
+const scenarios=[
+ {id:'new',title:'后台发现新版',desc:'先留在任务 A。新版出现时不自动进入设置，任务 B 仍可推进；你决定何时查看。',steps:[begin(),step('检查中让 B 推进一步','advance',{task:'B'}),result('available'),step('主动查看新版详情','details'),step('模拟打开手动下载页','openDownload'),step('返回任务 A','back')]},
+ {id:'later',title:'稍后再处理',desc:'暂时收起提醒，同一会话不反复提示该版本。关于与新版仍保留入口，停止的任务不被检查恢复。',steps:[...check('available'),step('这次先稍后处理','dismiss'),step('停止任务 A','stop',{task:'A'}),...check('available'),details(),step('返回 A，原停止仍保留','back')]},
+ {id:'latest',title:'已是最新',desc:'只有可信检查成功才能说已是最新；来源版本早于本机时，不提示降级。',steps:[...check('latest'),details(),step('再次手动检查','start'),result('older')]},
+ {id:'offline',title:'网络失败与重试',desc:'无法连接与已是最新分开显示。失败不打断任务，也不自动循环重试；手动再查后才取得新结论。',steps:[...check('offline'),details(),step('网络恢复后手动重试','start'),result('available')]},
+ {id:'timeout',title:'检查超时',desc:'超时不改变任务。进行中的重复检查不会产生第二次请求，之后可以主动重试。',steps:[begin(),step('再按一次检查，保持原请求','start'),result('timeout'),details(),step('A 仍可推进','advance',{task:'A'})]},
+ {id:'trust',title:'来源无法验证',desc:'校验未通过，不能使用本次版本信息或下载位置。检查失败不让任务停止。',steps:[...check('source'),details(),step('尝试打开入口，保持拒绝','openDownload'),step('B 仍可推进','advance',{task:'B'})]},
+ {id:'broken',title:'版本信息损坏',desc:'损坏或缺字段不能显示为最新版本，也不能拼出一个下载地址。',steps:[...check('broken'),details(),step('尝试打开入口，保持拒绝','openDownload')]},
+ {id:'architecture',title:'架构与系统',desc:'区分有新版本与这台 Mac 能否使用。Intel 版本或更高系统要求均不出现可用下载按钮。',steps:[...check('architecture'),details(),step('再次手动检查','start'),result('system')]},
+ {id:'data',title:'资料不兼容',desc:'即使版本号更新，也要说明资料接续限制。检查本身不改资料、不暂停工作。',steps:[...check('data'),details(),step('尝试打开入口，保持拒绝','openDownload'),step('A 仍可推进','advance',{task:'A'})]},
+ {id:'link',title:'下载入口异常',desc:'下载入口须关联这次可信且适用的版本信息；被替换的地址不提供可点击链接。',steps:[...check('link'),details(),step('尝试打开入口，保持拒绝','openDownload')]},
+ {id:'stale',title:'旧结果与新失败',desc:'以前发现过新版，不表示这次检查成功。保留上次记录供回看，当前失败明确说明，重新检查成功后再开放入口。',steps:[...check('available'),step('先稍后处理','dismiss'),...check('offline'),details(),step('旧结果不能批准本次打开','openDownload'),step('重新检查','start'),result('available')]},
+ {id:'notice',title:'提醒显示失败',desc:'即使提醒没出现，后台检查事实仍在设置中。任务 B 的草稿不因检查、查看详情或模拟下载而丢失。',steps:[step('切到任务 B','tab',{task:'B'}),step('在 B 留下演示草稿','draft',{task:'B',value:'请保留这段未发送的文字。'}),step('模拟提醒显示失败','noticeFail'),...check('available'),details(),step('模拟打开下载说明页','openDownload'),step('返回 B 检查草稿','back')]}
+];
+let state=VersionDemo.initial(),scenarioIndex=0,stepIndex=0,guideOpen=true;
+const button=(label,type,extra='',cls='')=>`<button class="${cls}" data-action="${type}" ${extra}>${esc(label)}</button>`;
+function dispatch(a){const focused=document.activeElement;const keepDraft=focused?.id==='draft';const selection=keepDraft?[focused.selectionStart,focused.selectionEnd]:null;state=VersionDemo.act(state,a);render();if(keepDraft&&$('draft')){$('draft').focus();$('draft').setSelectionRange(...selection);}}
+function renderTask(){const t=state.tasks[state.active];return `<div class="eyebrow">模拟网页 · 独立任务 ${state.active}</div><h1>${esc(t.name)}</h1><p class="lead">让系统完成当前网页工作。关于新版的提醒不会改变这项任务的意图。</p><div class="page-grid"><article class="card"><div class="row"><h2 class="grow">当前执行进度</h2><span class="pill">${esc(t.phase)}</span></div><div class="web-count">${t.count} <small>次模拟备注已完成</small></div><p class="muted">这是演示页面，没有真实网页写入。</p><table class="mock-table"><tr><th>任务</th><th>状态</th><th>进度</th></tr>${Object.entries(state.tasks).map(([id,x])=>`<tr><td>${id} · ${esc(x.name)}</td><td>${esc(x.phase)}</td><td>${x.count} 次</td></tr>`).join('')}</table><div class="row" style="margin-top:18px">${button('模拟推进 '+state.active,'advance',`data-task="${state.active}"`)}${button('停止 '+state.active,'stop',`data-task="${state.active}"`)}</div></article><aside class="chat" aria-label="所属任务对话"><div class="chat-head"><span class="avatar">h</span><div><strong>helpr</strong><div class="tiny muted">任务 ${state.active} · ${esc(t.phase)}</div></div></div><div class="chat-feed">我会按当前委托继续工作。你可以先处理其它事，稍后再查看新版。</div><div class="composer"><label class="tiny muted" for="draft">未发送的任务草稿</label><textarea id="draft" placeholder="在这里留下文字，切换后仍保留…">${esc(t.draft)}</textarea><span class="tiny muted">演示只保留草稿，不发送模型请求。</span></div></aside></div>`;}
+function renderSettings(){const c=state.check,r=VersionDemo.results[c.result];const checking=c.phase==='checking';const eligible=c.phase==='done'&&r?.eligible;let status=c.phase==='idle'?'<div class="notice"><strong>尚未检查新版</strong>可以手动检查，或在右侧模拟一次后台检查。</div>':checking?'<div class="notice"><strong>正在检查新版…</strong>正在读取可信版本来源的信息。你可以返回任务，检查在后台完成。</div>':`<div class="notice ${r.tone==='ok'?'':r.tone}"><strong>${esc(r.title)}</strong>${esc(r.detail)}</div>`;
+const history=c.lastGood&&c.lastGood!==c.result&&r?.tone!=='ok'?`<p class="footnote">上次成功检查：${esc(VersionDemo.results[c.lastGood].title)}（${esc(VersionDemo.results[c.lastGood].version)}）。这是历史结果，本次未确认可用下载入口。</p>`:'';
+return `<div class="row"><div class="grow"><div class="eyebrow">应用设置</div><h1>关于与新版</h1></div>${button('返回任务 '+state.active,'back','','small')}</div><p class="lead">运行时自动检查适用新版，发现后提醒。下载与安装由你手动完成。</p><article class="card"><div class="card-head"><div><h2>当前版本</h2><div class="version">0.1.0 <small>本机自用 · 演示</small></div></div><span class="pill">Apple Silicon</span></div><div class="tiny muted">macOS 14.8.3 · 当前任务与设置保留</div><hr class="divider"><div class="row"><h3 class="grow">新版检查</h3><button id="check-now" data-action="start" ${checking?'disabled':''}>${checking?'检查中…':'检查新版'}</button></div><div aria-live="polite">${status}</div>${history}<div class="tiny muted">${c.finished?'最近完成：模拟检查 '+c.finished+' · '+(c.finishedOrigin==='automatic'?'后台自动':'手动发起'):'尚无完成的检查'}${checking?' · 当前第 '+c.request+' 次检查进行中':''}</div><p class="footnote">拟议频率：启动后在后台检查，持续运行每 24 小时再查。失败后等待下次检查，或由你主动重试。</p></article>${eligible?`<article class="card"><div class="card-head"><div><div class="eyebrow">本次确认的适用版本 · 模拟</div><h2>helpr 0.2.0</h2></div><span class="pill">可手动下载</span></div><ul class="release-list"><li>改善任务进度提示与结果查看。</li><li>完善已有资料的兼容性检查。</li></ul><div class="compat"><span>适用架构：Apple Silicon</span><span>最低系统：macOS 14</span><span>当前资料格式：支持接续</span><span>任务状态版本：支持接续</span></div><dl class="meta"><dt>版本来源</dt><dd><code>${VersionDemo.SOURCE}</code></dd><dt>下载入口</dt><dd><code>${VersionDemo.DOWNLOAD}</code></dd></dl>${button('打开手动下载页 ↗','openDownload','','primary')}<p class="footnote">本原型只模拟打开下载说明页。实际使用中会在浏览器打开可信入口，不自动下载、暂停任务或准备退出；安装前的现场保存与备份在09中提供。</p></article>`:''}${state.pageOpened?renderDownload():''}${state.message?`<div class="notice warn" role="status">${esc(state.message)}</div>`:''}<details class="card"><summary>检查发送什么信息？</summary><dl class="meta"><dt>必要信息</dt><dd>当前应用版本 0.1.0、macOS 14.8.3、arm64、资料格式与任务状态兼容版本。</dd><dt>不含</dt><dd>任务内容、素材、网站登录、模型服务地址或模型凭据。</dd><dt>版本来源</dt><dd><code>${VersionDemo.SOURCE}</code>（虚构占位，正式来源待实现时确定）</dd></dl><p class="footnote">这是交互说明。请求隐私与无下载副作用，须由正式产品的实际请求证据验证。</p></details>`;}
+function renderDownload(){return `<article class="card" aria-label="模拟手动下载说明页"><div class="eyebrow">演示内的浏览器下载说明页 · 无网络访问</div><h2>helpr 0.2.0 · Apple Silicon</h2><p>这是与本次版本信息关联的可信下载位置。正式使用时，你在此自行下载，再按应用中的升级准备流程保存现场、备份和退出。</p><div class="notice"><strong>当前仅打开说明页</strong>模拟打开 ${state.opens} 次 · 实际下载 0 · 安装 0 · 升级准备未开始。任务 A、B 保持各自状态。</div>${button('关闭模拟下载说明页','closeDownload')}</article>`;}
+function render(){
+ $('layout').classList.toggle('guide-closed',!guideOpen);$('guide').hidden=!guideOpen;$('toggle-guide').textContent=guideOpen?'收起体验指南':'展开体验指南';
+ $('task-tabs').innerHTML=Object.entries(state.tasks).map(([id,t])=>`<button class="task-tab" role="tab" aria-selected="${id===state.active&&state.view==='task'}" data-action="tab" data-task="${id}"><span>${id} · ${esc(t.name)}</span><small>${esc(t.phase)}</small></button>`).join('');
+ const r=VersionDemo.results[state.check.result],hasNew=state.check.phase==='done'&&r?.eligible;$('open-settings').innerHTML=(hasNew?'<i class="dot" aria-hidden="true"></i>':'')+'关于与新版'+(hasNew?' · 有新版':'');
+ $('address').textContent=state.view==='settings'?'helpr / 关于与新版':'演示后台 / '+state.active+' / '+state.tasks[state.active].name;
+ $('toast').hidden=!state.toast;$('toast').innerHTML=`<div class="grow"><strong>helpr 0.2.0 可用</strong><p>适用于这台 Mac。当前任务继续，方便时再处理。</p></div>${button('查看新版','details')}${button('稍后','dismiss')}`;
+ $('content').innerHTML=state.view==='settings'?renderSettings():renderTask();
+ $('scenarios').innerHTML=scenarios.map((x,i)=>`<button role="tab" aria-selected="${i===scenarioIndex}" data-scenario="${i}">${esc(x.title)}</button>`).join('');
+ const scenario=scenarios[scenarioIndex];$('walk').innerHTML=`<div class="dots" aria-hidden="true">${scenario.steps.map((x,i)=>`<i class="${i<stepIndex?'done':''}"></i>`).join('')}</div><h3>${esc(scenario.title)}</h3><p>${esc(scenario.desc)}</p>${stepIndex<scenario.steps.length?`<button id="walk-next">${stepIndex+1}. ${esc(scenario.steps[stepIndex].label)}</button>`:'<div class="done-label">本场景已走完。可自由操作，或选择另一场景。</div>'}<button id="restart" class="text-button" style="margin-top:8px">重新体验此场景</button>`;
+ const checkLabel=state.check.phase==='idle'?'尚未开始':state.check.phase==='checking'?'检查中（'+(state.check.origin==='automatic'?'后台':'手动')+'）':r.title;
+ const fields=[['查看位置',state.view==='settings'?'关于与新版':'任务 '+state.active],['检查状态',checkLabel],['模拟检查','开始 '+state.check.request+' 次 / 完成 '+state.check.finished+' 次'],['提醒',state.toast?'已显示，未自动切页':!state.noticeWorking?'显示失败，设置结果保留':state.dismissed?'此会话稍后处理 '+state.dismissed:'未显示'],['下载入口',hasNew?'本次可信且适用':state.check.phase==='checking'?'检查中，暂不可用':'当前不可用'],['打开 / 下载',state.opens+' 次模拟打开 / '+state.downloads+' 次下载'],['升级准备',state.prepared?'已开始':'未开始；没有暂停或退出'],...Object.entries(state.tasks).map(([id,t])=>['任务 '+id,t.phase+' · '+t.count+' 次 · 草稿'+(t.draft?'已保留':'为空')])];
+ $('state-panel').innerHTML=fields.map(([key,value])=>`<div class="state-row"><b>${esc(key)}</b><span>${esc(value)}</span></div>`).join('');
+ $('events').innerHTML=state.events.map(e=>`<li>${esc(e)}</li>`).join('');
+ $('free-actions').innerHTML=button('后台自动检查','start','data-origin="automatic"')+button('手动检查','start')+button('查看结果','settings')+button('模拟提醒失败','noticeFail')+button('恢复提醒显示','noticeRestore')+button('推进 A','advance','data-task="A"')+button('推进 B','advance','data-task="B"');
+ $('free-results').innerHTML=Object.entries(VersionDemo.results).map(([id,x])=>button(x.name,'result',`data-result="${id}"`)).join('');
+}
+function selectScenario(index){scenarioIndex=index;stepIndex=0;state=VersionDemo.initial();render();}
+document.addEventListener('click',event=>{
+ const target=event.target.closest('button');if(!target)return;
+ if(target.id==='toggle-guide'){guideOpen=!guideOpen;render();return;}
+ if(target.dataset.scenario!==undefined){selectScenario(Number(target.dataset.scenario));return;}
+ if(target.id==='restart'){selectScenario(scenarioIndex);return;}
+ if(target.id==='walk-next'){const action=scenarios[scenarioIndex].steps[stepIndex++].action;dispatch(action);return;}
+ if(target.id==='open-settings'){dispatch({type:'settings'});return;}
+ if(target.dataset.action)dispatch({type:target.dataset.action,...target.dataset});
+});
+document.addEventListener('input',event=>{if(event.target.id==='draft'){state=VersionDemo.act(state,{type:'draft',value:event.target.value});/* Preserve focus and caret while typing; only the summary changes. */const row=Array.from($('state-panel').children).find(el=>el.firstElementChild.textContent==='任务 '+state.active);if(row)row.lastElementChild.textContent=state.tasks[state.active].phase+' · '+state.tasks[state.active].count+' 次 · 草稿'+(event.target.value?'已保留':'为空');}});
+document.addEventListener('keydown',event=>{const target=event.target.closest('[role="tab"]');if(!target||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;const tabs=Array.from(target.parentElement.querySelectorAll('[role="tab"]'));let index=tabs.indexOf(target);index=event.key==='Home'?0:event.key==='End'?tabs.length-1:(index+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;event.preventDefault();const selector=tabs[index].dataset.scenario!==undefined?`[data-scenario="${tabs[index].dataset.scenario}"]`:`.task-tab[data-task="${tabs[index].dataset.task}"]`;tabs[index].click();document.querySelector(selector)?.focus();});
+render();
+</script>
+</body>
+</html>
