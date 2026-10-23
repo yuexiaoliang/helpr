@@ -75,9 +75,12 @@ export class BackupRecords {
     string,
     Promise<{ archive: BackupArchive; state: WorkspaceSnapshot }>
   >();
-  private restoring: Promise<BackupResult> | null = null;
+  private restoring: {
+    command: z.infer<typeof restoreRequest>;
+    work: Promise<BackupResult>;
+  } | null = null;
   async settled() {
-    if (this.restoring) await this.restoring;
+    if (this.restoring) await this.restoring.work;
     await Promise.all([...this.pending.values()]);
   }
   constructor(
@@ -96,9 +99,15 @@ export class BackupRecords {
           archive: (await readBackup(command.file)).archive,
           state: this.snapshot(),
         };
-      if (this.restoring) throw Error('BACKUP_BUSY');
+      if (this.restoring) {
+        const prior = this.restoring.command;
+        if (prior.requestId !== command.requestId) throw Error('BACKUP_BUSY');
+        if (prior.file !== command.file || prior.checksum !== command.checksum)
+          throw Error('REQUEST_CONTENT_CONFLICT');
+        return await this.restoring.work;
+      }
       const work = this.restore(command);
-      this.restoring = work;
+      this.restoring = { command, work };
       try {
         return await work;
       } finally {

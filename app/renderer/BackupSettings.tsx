@@ -29,6 +29,34 @@ export function BackupSettings({
       active = false;
     };
   }, [store]);
+  useEffect(() => {
+    if (status?.phase !== 'working') return;
+    let active = true;
+    let timer: ReturnType<typeof setTimeout>;
+    async function refresh() {
+      try {
+        const next = backupStatusSchema.parse(
+          await store.perform({ kind: 'backup-status' }),
+        );
+        if (!active) return;
+        setStatus(next);
+        if (next.phase !== 'working') return;
+      } catch {
+        if (active) setError(store.get().notice);
+      }
+      if (active)
+        timer = setTimeout(() => {
+          void refresh();
+        }, 500);
+    }
+    timer = setTimeout(() => {
+      void refresh();
+    }, 500);
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  }, [store, status?.phase]);
   async function run(command: UICommand) {
     if (busy) return;
     setBusy(true);
@@ -57,7 +85,8 @@ export function BackupSettings({
     }
   }
   const requestId = (operation: 'create' | 'restore') =>
-    status?.phase === 'uncertain' && status.operation === operation
+    ['uncertain', 'working'].includes(status?.phase ?? '') &&
+    status?.operation === operation
       ? status.requestId!
       : crypto.randomUUID();
   const unresolved =
@@ -81,6 +110,7 @@ export function BackupSettings({
           className={styles.primary}
           disabled={
             busy ||
+            status?.phase === 'working' ||
             !status?.location ||
             (unresolved && status?.operation !== 'create')
           }
@@ -118,7 +148,11 @@ export function BackupSettings({
           </p>
           <button
             className={styles.primary}
-            disabled={busy || (unresolved && status.operation !== 'restore')}
+            disabled={
+              busy ||
+              status.phase === 'working' ||
+              (unresolved && status.operation !== 'restore')
+            }
             onClick={() => {
               void run({
                 kind: 'backup-restore',

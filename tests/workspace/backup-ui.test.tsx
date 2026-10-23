@@ -14,6 +14,8 @@ import { WorkspaceRecords } from '../../app/records/workspace';
 import { WorkspaceStore } from '../../app/renderer/store';
 import { BackupSettings } from '../../app/renderer/BackupSettings';
 import { BackupService } from '../../app/desktop/backup-service';
+import { randomUUID } from 'node:crypto';
+import type { BackupStatus } from '../../app/shared/backup';
 import type { WorkspaceEvent } from '../../app/shared/contracts';
 
 let dispose = () => {};
@@ -104,4 +106,52 @@ test('备份界面从文件选择到恢复使用公开入口，恢复后明确�
     screen.getByRole<HTMLButtonElement>('button', { name: '核对实际结果' })
       .disabled,
   ).toBe(false);
+});
+
+test('外层回执超时后仍显示原操作进行中，并持续取得完成状态', async () => {
+  const folder = mkdtempSync(path.join(tmpdir(), 'helpr-backup-pending-ui-'));
+  const records = new WorkspaceRecords(folder, 'app/records/migrations');
+  const state = records.snapshot();
+  const requestId = randomUUID();
+  let status: BackupStatus = {
+    location: folder,
+    selection: null,
+    phase: 'working',
+    operation: 'create',
+    requestId,
+    message: '原备份正在保存',
+  };
+  const sent: string[] = [];
+  const store = new WorkspaceStore(
+    {
+      request: (command) => {
+        if (command.kind === 'snapshot') return Promise.resolve(state);
+        if (command.kind === 'backup-status')
+          return Promise.resolve(structuredClone(status));
+        if (command.kind === 'backup-create') {
+          sent.push(command.requestId);
+          return Promise.reject(Error('UNEXPECTED_DUPLICATE'));
+        }
+        return Promise.reject(Error('UNEXPECTED_COMMAND'));
+      },
+      subscribe: () => () => {},
+    },
+    state,
+  );
+  dispose = () => {
+    store.dispose();
+    records.close();
+    rmSync(folder, { recursive: true, force: true });
+  };
+  render(<BackupSettings store={store} state={state} />);
+  await screen.findByText('原备份正在保存');
+  const create = screen.getByRole<HTMLButtonElement>('button', {
+    name: '创建本机备份',
+  });
+  expect(create.disabled).toBe(true);
+  fireEvent.click(create);
+  expect(sent).toEqual([]);
+  status = { ...status, phase: 'complete', message: '原备份已完成' };
+  await screen.findByText('原备份已完成');
+  expect(create.disabled).toBe(false);
 });

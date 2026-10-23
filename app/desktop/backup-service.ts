@@ -150,6 +150,7 @@ export class BackupService {
         'PROCESS_DISCONNECTED',
         'RECORDS_UNAVAILABLE',
         'BACKUP_RECEIPT_UNKNOWN',
+        'BACKUP_BUSY',
       ].includes(code);
       this.view.phase = uncertain ? 'uncertain' : 'error';
       this.view.message = uncertain

@@ -379,6 +379,85 @@ test('应用公开备份入口把丢失回执保留为待核对，跨界面重�
   expect(service.canExit()).toBe(true);
 });
 
+test('恢复回执待核对时，原记录仍忙不能解除暂停；最终核对沿用原身份', async () => {
+  const { folder, value: r } = records();
+  r.execute({ kind: 'create', requestId: 'A', goal: '保留暂停' });
+  const saved = await r.backup({
+    kind: 'create',
+    requestId: 'old',
+    file: path.join(folder, 'old.helpr-backup'),
+  });
+  let attempt = 0,
+    holds = 0,
+    releases = 0;
+  const service = new BackupService({
+    choose: () => Promise.resolve(saved.archive.file),
+    records: (command) => {
+      if ((command as { kind: string }).kind === 'inspect')
+        return Promise.resolve(saved);
+      attempt++;
+      if (attempt === 1) return Promise.reject(Error('REQUEST_TIMEOUT'));
+      if (attempt === 2) return Promise.reject(Error('BACKUP_BUSY'));
+      return Promise.resolve({ ...saved, safety: saved.archive });
+    },
+    current: () => r.snapshot(),
+    publish: () => {},
+    ready: () => true,
+    hold: () => {
+      holds++;
+      return Promise.resolve();
+    },
+    release: () => {
+      releases++;
+      return Promise.resolve();
+    },
+  });
+  const selection = (await service.handle({ kind: 'backup-open' })).selection!
+    .token;
+  const command = {
+    kind: 'backup-restore',
+    requestId: randomUUID(),
+    selection,
+  };
+  await service.handle(command);
+  expect(await service.handle(command)).toMatchObject({
+    phase: 'uncertain',
+    requestId: command.requestId,
+  });
+  expect({ holds, releases, canExit: service.canExit() }).toEqual({
+    holds: 1,
+    releases: 0,
+    canExit: false,
+  });
+  expect(await service.handle(command)).toMatchObject({
+    phase: 'restored',
+    requestId: command.requestId,
+  });
+  expect({ holds, releases }).toEqual({ holds: 1, releases: 1 });
+});
+
+test('记录拥有者把并发重送的相同恢复加入原操作，拒绝内容冲突', async () => {
+  const { folder, value: r } = records();
+  r.execute({ kind: 'create', requestId: 'A', goal: '同一恢复' });
+  const saved = await r.backup({
+    kind: 'create',
+    requestId: 'old',
+    file: path.join(folder, 'old.helpr-backup'),
+  });
+  const command = {
+    kind: 'restore',
+    requestId: 'same',
+    file: saved.archive.file,
+    checksum: saved.archive.checksum,
+  };
+  const first = r.backup(command);
+  await expect(
+    r.backup({ ...command, checksum: '0'.repeat(64) }),
+  ).rejects.toThrow('REQUEST_CONTENT_CONFLICT');
+  const second = r.backup(command);
+  expect(await second).toEqual(await first);
+});
+
 test('备份损坏、旧状态不兼容与当前资料副本保存失败均不覆盖当前任务', async () => {
   const { folder, value: r } = records();
   const a = r.execute({
