@@ -9,12 +9,15 @@ import { pathToFileURL } from 'node:url';
 import assert from 'node:assert/strict';
 import { spend, validationRoot } from './workspace-budget.mjs';
 import { verifyDevelopmentSignature } from './development-signing.mjs';
+import { showInspectableWindow } from './version-window-ready.mjs';
 
 // 唯一受管入口；准备虚构任务或复用获准的原任务，切换独立服务并读取公开状态。
 // 检查、提醒、设置及下载入口的产品交互由CUA完成。
 const args=process.argv.slice(2);
 const resume=args.length===2&&args[1]==='--resume';
-const execution=args.length===2&&args[1]==='--execution-followup';
+const after95=args.length===2&&args[1]==='--execution-after-95';
+const execution=args.length===2&&(args[1]==='--execution-followup'||after95);
+const approvalKey=after95?'version08ExecutionRetry':'version08Execution';
 const checkOnly=args.length===1&&args[0]==='--check-execution';
 const contractFile=path.join(validationRoot,'version-contracts.mjs');
 fs.mkdirSync(validationRoot,{recursive:true,mode:0o700});
@@ -34,8 +37,8 @@ const appPath=path.resolve('dist/candidates/version-08/mac-arm64/helpr.app');
 for(const [file,sha] of Object.entries(manifest.hashes))assert.equal(createHash('sha256').update(fs.readFileSync(path.join(appPath,file))).digest('hex'),sha,file);
 const prior=resume||execution?JSON.parse(fs.readFileSync(path.join(validationRoot,'version-08-batch.json'),'utf8')):null;
 if(resume){assert(prior.start===93&&prior.requests===0&&prior.tasks===0&&prior.error==='STEP_TIMEOUT','EXACT_FIRST_FAILURE_REQUIRED');assert(prior.root.startsWith(validationRoot+'/version-08-'));const original=JSON.parse(fs.readFileSync(path.join(prior.root,'result.json'),'utf8'));assert(original.remaining.length===0&&original.exit.code===0);assert(Date.now()-prior.started<20*60*1000,'ORIGINAL_DEADLINE');fs.writeFileSync(path.join(prior.root,'resume-started'),'94\n',{flag:'wx',mode:0o600});}
-if(execution){verifyDevelopmentSignature(appPath);assert(prior.start===94&&prior.passed&&prior.requests===10&&prior.tasks===2,'EXACT_94_SOURCE_REQUIRED');assert(prior.root===path.join(validationRoot,'version-08-1792741954239'),'FIXED_PRIOR_ROOT');const old=JSON.parse(fs.readFileSync(path.join(prior.root,'result-94.json')));assert(old.passed&&old.exit.code===0&&old.remaining.length===0);const b=JSON.parse(fs.readFileSync(path.join(validationRoot,'budget.json')));assert(b.used.starts===94&&b.limits.starts===95&&b.version08Execution?.approved===true,'EXPLICIT_95_APPROVAL_REQUIRED');}
-const root=execution?path.join(prior.root,'execution-95'):resume?prior.root:path.join(validationRoot,'version-08-'+Date.now());
+if(execution){verifyDevelopmentSignature(appPath);assert(prior.start===94&&prior.passed&&prior.requests===10&&prior.tasks===2,'EXACT_94_SOURCE_REQUIRED');assert(prior.root===path.join(validationRoot,'version-08-1792741954239'),'FIXED_PRIOR_ROOT');const old=JSON.parse(fs.readFileSync(path.join(prior.root,'result-94.json')));assert(old.passed&&old.exit.code===0&&old.remaining.length===0);const b=JSON.parse(fs.readFileSync(path.join(validationRoot,'budget.json')));assert(b.used.starts===(after95?95:94)&&b.limits.starts===(after95?96:95)&&b[approvalKey]?.approved===true,'EXPLICIT_START_APPROVAL_REQUIRED');if(after95){const failed=JSON.parse(fs.readFileSync(path.join(prior.root,'execution-95/result.json')));assert(failed.start===95&&!failed.passed&&failed.error==='RECORDS_UNAVAILABLE'&&failed.requests.length===0&&failed.models.length===0&&failed.tasks.length===0&&failed.exit.code===0&&failed.remaining.length===0,'EXACT_95_FAILURE_REQUIRED');}}
+const root=execution?path.join(prior.root,after95?'execution-96':'execution-95'):resume?prior.root:path.join(validationRoot,'version-08-'+Date.now());
 if(execution)fs.mkdirSync(root,{mode:0o700});else fs.mkdirSync(root,{recursive:true,mode:0o700});
 const profileBase=`/private/tmp/helpr-workspace-validation-${process.getuid()}`;fs.mkdirSync(profileBase,{recursive:true,mode:0o700});assert.equal(fs.realpathSync(profileBase),profileBase);
 const batchFile=path.join(validationRoot,'version-08-batch.json');
@@ -43,7 +46,7 @@ const batchFile=path.join(validationRoot,'version-08-batch.json');
 if(!resume&&!execution)fs.writeFileSync(batchFile,JSON.stringify({root,phase:'preparing',started:Date.now()})+'\n',{flag:'wx',mode:0o600});
 const profile=resume||execution?prior.profile:fs.mkdtempSync(path.join(profileBase,'version-08-'));assert.equal(fs.realpathSync(profile),profile);assert(profile.startsWith(profileBase+'/version-08-'));
 const write=(name,value)=>fs.writeFileSync(path.join(root,name),JSON.stringify(value,null,2)+'\n',{mode:0o600});
-const report={started:resume?prior.started:Date.now(),resumedFrom:execution?94:resume?93:null,models:[],webWrites:0,webGets:[],released:false,build:36,appPath,profile,requests:[],captures:[],opened:[],tasks:[],processes:[],groups:[],passed:false};
+const report={started:resume?prior.started:Date.now(),resumedFrom:after95?95:execution?94:resume?93:null,models:[],webWrites:0,webGets:[],released:false,build:36,appPath,profile,requests:[],captures:[],opened:[],tasks:[],processes:[],groups:[],passed:false};
 write('private-context.json',{profile});
 const tlsRoot=execution?prior.root:root;
 const key=path.join(tlsRoot,'key.pem'),certFile=path.join(tlsRoot,'cert.pem');
@@ -60,7 +63,7 @@ let flight=null,expectedRequests=0,flightDeadline=Infinity,flightTimer=null;
 function sameFlight(state){assert.deepEqual(keep(state),retained,'ORIGINAL_TASK_OR_DRAFT_CHANGED');assert.equal(state.tasks.length,2);for(const t of state.tasks){assert(t.execution?.intent==='automatic'&&['checking','running'].includes(t.execution.phase),'TWO_EXECUTIONS_MUST_BE_IN_FLIGHT');assert(!t.executionControl?.blocked&&!t.execution.pauseReason,'EXECUTION_BLOCKED');assert.equal(t.execution.runId,flight[t.id],'EXECUTION_RUN_CHANGED');assert.equal(t.execution.actions.length,0,'UNEXPECTED_WEB_ACTION');}assert.equal(held.size,2,'TWO_INDEPENDENT_REQUESTS_REQUIRED');assert([...held.values()].every(h=>!h.res.destroyed&&!h.res.writableEnded),'MODEL_CONNECTION_ENDED');}
 function releaseHeld(){clearTimeout(flightTimer);for(const [name,h] of held){assert(!h.res.destroyed&&!h.res.writableEnded,'MODEL_CONNECTION_ENDED');h.res.writeHead(200,{'Content-Type':'text/event-stream'});h.res.write('data: '+JSON.stringify({id:'fixture08-'+name,choices:[{index:0,delta:{content:JSON.stringify(reply(name))},finish_reason:null}]})+'\n\n');h.res.end('data: '+JSON.stringify({id:'fixture08-'+name,choices:[{index:0,delta:{},finish_reason:'stop'}],usage:{prompt_tokens:1,completion_tokens:1,total_tokens:2}})+'\n\ndata: [DONE]\n\n');h.row.releasedAt=Date.now();}report.released=true;}
 const facts=s=>({active:s.active,tasks:s.tasks.map(t=>[t.id,t.goal,t.url,t.draft,t.messages,t.hidden,t.minimized,t.execution?.intent??null,t.execution?.actions??null])});
-const save=()=>{write(resume?'result-94.json':'result.json',report);if(execution){const file=path.join(validationRoot,'budget.json'),b=JSON.parse(fs.readFileSync(file));b.version08Execution.used={starts:report.start?1:0,localModels:report.models.length,versionRequests:report.requests.length};b.version08Execution.run={root,started:report.started,ended:report.ended??null,passed:report.passed,error:report.error??null};fs.writeFileSync(file,JSON.stringify(b,null,2)+'\n',{mode:0o600});return;}fs.writeFileSync(batchFile,JSON.stringify({root,profile,started:report.started,ended:report.ended??null,start:report.start??null,requests:report.requests.length,tasks:report.tasks.length,passed:report.passed,error:report.error??null})+'\n',{mode:0o600});};
+const save=()=>{write(resume?'result-94.json':'result.json',report);if(execution){const file=path.join(validationRoot,'budget.json'),b=JSON.parse(fs.readFileSync(file));b[approvalKey].used={starts:report.start?1:0,localModels:report.models.length,versionRequests:report.requests.length};b[approvalKey].run={root,started:report.started,ended:report.ended??null,passed:report.passed,error:report.error??null};fs.writeFileSync(file,JSON.stringify(b,null,2)+'\n',{mode:0o600});return;}fs.writeFileSync(batchFile,JSON.stringify({root,profile,started:report.started,ended:report.ended??null,start:report.start??null,requests:report.requests.length,tasks:report.tasks.length,passed:report.passed,error:report.error??null})+'\n',{mode:0o600});};
 const website=createHTTPServer(async(req,res)=>{try{
  if(execution&&req.method==='POST'&&req.url==='/v1/chat/completions'){
   limited();assert(report.models.length<4,'LOCAL_MODEL_LIMIT');const row={at:Date.now(),closed:false};if(report.models.length===0){flightDeadline=row.at+50000;flightTimer=setTimeout(()=>{failed??='MODEL_HOLD_DEADLINE';},50000);}report.models.push(row);save();
@@ -94,11 +97,11 @@ async function quit(){if(!exit)await rpc({kind:'quit'}).catch(error=>{if(!['APPL
 const deadline=setTimeout(()=>{failed='ROUND_TIME_LIMIT';},Math.max(1,report.started+(execution?12:20)*60*1000-Date.now()));
 process.on('SIGINT',()=>{failed='INTERRUPTED';});process.on('SIGTERM',()=>{failed='INTERRUPTED';});
 try{
- if(execution){const rows=ps();assert(!rows.some(row=>row.pid!==process.pid&&(/^(?:\S*\/)?node scripts\/validate-/.test(row.command)||/^\/.*\/helpr(?: Workspace)?\.app\/Contents\/MacOS\//.test(row.command))),'OTHER_VALIDATION_RUNNING');const old=JSON.parse(fs.readFileSync(path.join(prior.root,'result-94.json')));assert(!rows.some(row=>old.pids.includes(row.pid)||old.groups.includes(row.group)),'PREVIOUS_NOT_CLEARED');}
+ if(execution){const rows=ps();assert(!rows.some(row=>row.pid!==process.pid&&(/^(?:\S*\/)?node scripts\/validate-/.test(row.command)||/^\/.*\/helpr(?: Workspace)?\.app\/Contents\/MacOS\//.test(row.command))),'OTHER_VALIDATION_RUNNING');for(const name of ['result-94.json',...(after95?['execution-95/result.json']:[])]){const old=JSON.parse(fs.readFileSync(path.join(prior.root,name)));assert(!rows.some(row=>old.pids.includes(row.pid)||old.groups.includes(row.group)),'PREVIOUS_NOT_CLEARED');}}
  await listen(website,execution?58902:0);await listen(versions);
  const origin=`http://127.0.0.1:${website.address().port}`;
  fs.writeFileSync(path.join(profile,'version-fixture.json'),JSON.stringify({source:`https://127.0.0.1:${versions.address().port}/stable.json`,ca:fs.readFileSync(certFile,'utf8')}),{mode:0o600});
- const budget=spend('starts');report.start=budget.used.starts;assert.equal(report.start,execution?95:resume?94:93);save();
+ const budget=spend('starts');report.start=budget.used.starts;assert.equal(report.start,after95?96:execution?95:resume?94:93);save();
  const env=Object.fromEntries(['HOME','PATH','TMPDIR','LANG'].filter(k=>process.env[k]).map(k=>[k,process.env[k]]));
  child=spawn(path.join(appPath,'Contents/MacOS/helpr'),['--workspace-validation','--workspace-fixture'],{env:{...env,HELPR_VALIDATION_DATA:profile,HELPR_FIXTURE_ORIGIN:origin},stdio:['ignore','ignore',fs.openSync(path.join(root,'stderr.log'),'a',0o600),'ipc']});pids.add(child.pid);
  child.on('message',message=>{
@@ -111,7 +114,7 @@ try{
  child.on('exit',(code,signal)=>{exit={code,signal};report.exit=exit;for(const entry of pending.values()){clearTimeout(entry.timer);entry.reject(Error('APPLICATION_EXITED'));}pending.clear();});
  const readyDeadline=Date.now()+15000;
  const readyTime=()=>{const left=readyDeadline-Date.now();assert(left>0,'READY_DEADLINE');return left;};
- if(resume||execution){await delay(1500);write('pre-show.json',await rpc({kind:'inspect'},readyTime()));await rpc({kind:'show'},readyTime());}
+ if(resume||execution){await delay(1500);report.step='waiting-for-window';report.startupObservations=[];const inspection=await showInspectableWindow({request:rpc,ready:()=>Boolean(ready),deadline:readyDeadline,observe:row=>{report.startupObservations.push(row);save();}});write('pre-show.json',inspection);report.step='waiting-for-host-ready';}
  await until(()=>{owned();return ready||exit;},readyTime());assert(ready&&!exit,'APPLICATION_NOT_READY');
  await until(async()=>(await rpc({kind:'version-status'})).phase==='done');
  assert.equal((await rpc({kind:'version-status'})).result.kind,'latest');
