@@ -82,3 +82,18 @@ export const executionRequests = sqliteTable('execution_requests', {
     .notNull()
     .references(() => tasks.id),
 });
+
+// 业务备份保留模型用量和会话事实，不携带原服务配置或受保护凭据。
+export const archivedModelCalls = sqliteTable('archived_model_calls', {
+  id: text('id').primaryKey(),
+  taskId: text('task_id')
+    .notNull()
+    .references(() => tasks.id),
+  hash: text('hash').notNull(),
+  body: text('body', { mode: 'json' }).notNull(),
+});
+export const backupReceipts = sqliteTable('backup_receipts', {
+  id: text('id').primaryKey(),
+  file: text('file').notNull(),
+  archive: text('archive', { mode: 'json' }).notNull(),
+});

@@ -9,6 +9,7 @@ import {
   executionPhaseSchema,
   webActionSchema,
   pageBindingSchema,
+  nextStepSchema,
   executionPauseReasonSchema,
   pauseDescription,
   type TaskExecution,
@@ -45,6 +46,7 @@ const lifecycle = createMachine(
       failed: {},
     },
     on: {
+      REVIEW_COMPLETE: { target: '.complete', guard: 'automatic' },
       QUEUE: { target: '.queued', guard: 'automatic' },
       STOP: { target: '.stopped', guard: 'stopped' },
       SUSPEND: { target: '.paused', guard: 'automatic' },
@@ -58,6 +60,7 @@ const lifecycle = createMachine(
   },
 );
 type PhaseEvent =
+  | 'REVIEW_COMPLETE'
   | 'QUEUE'
   | 'CLAIM'
   | 'DISPATCH'
@@ -83,6 +86,18 @@ const intentSchema = executionIntentSchema.extend({
   controlSequence: z.number().int().positive().optional(),
 });
 const commandSchema = z.discriminatedUnion('kind', [
+  z.strictObject({
+    kind: z.literal('backup-pause'),
+    taskId: z.string(),
+    expectedVersion: z.number().int().positive().optional(),
+  }),
+  z.strictObject({
+    kind: z.literal('backup-review-result'),
+    taskId: z.string(),
+    expectedVersion: z.number().int().positive(),
+    source: observation,
+    step: nextStepSchema,
+  }),
   intentSchema,
   z.strictObject({
     kind: z.literal('recover'),
@@ -155,6 +170,28 @@ function queueRecovery(e: TaskExecution, url: string, summary: string) {
       action.status = 'unknown';
   }
 }
+export function pauseForBackup(e: TaskExecution): TaskExecution {
+  const next = executionSchema.parse(structuredClone(e));
+  next.version++;
+  next.runId = null;
+  next.restoreReview = 'required';
+  delete next.recoveryPending;
+  delete next.recoverySource;
+  next.pauseReason ??= 'backup-restore';
+  move(next, next.intent === 'stopped' ? 'STOP' : 'SUSPEND');
+  for (const action of next.actions) {
+    if (
+      action.status === 'reserved' &&
+      action.dispatchState === 'not-dispatched'
+    )
+      action.status = 'cancelled';
+    else if (action.status === 'reserved' || action.status === 'dispatched')
+      action.status = 'unknown';
+  }
+  next.summary =
+    '资料恢复后自动工作保持暂停。先核对实际结果，再逐项选择继续；原停止与已有结果保留。';
+  return next;
+}
 /** 唯一记录拥有者中计算纯转换；提交不执行网页或模型。 */
 export class ExecutionRecords {
   // 同一控制者/记录进程生命周期的消息次序；不作为跨重启的业务事实。
@@ -211,6 +248,64 @@ export class ExecutionRecords {
         .get();
       if (!task) throw new Error('TASK_NOT_FOUND');
       let e = this.get(c.taskId);
+      if (c.kind === 'backup-pause') {
+        if (!e) return { recorded: false };
+        if (c.expectedVersion !== undefined && c.expectedVersion !== e.version)
+          return { recorded: false };
+        this.save(task.id, pauseForBackup(e));
+        return { recorded: true };
+      }
+      if (c.kind === 'backup-review-result') {
+        if (!e?.restoreReview || e.version !== c.expectedVersion)
+          return { reviewed: false };
+        if (
+          c.source.url !== task.url ||
+          !c.step.evidence.every((text) => c.source.text.includes(text))
+        )
+          throw Error('EXECUTION_EVIDENCE_MISSING');
+        const pending = e.actions.find((a) =>
+          ['reserved', 'dispatched', 'unknown'].includes(a.status),
+        );
+        if (
+          pending &&
+          c.step.previous?.id === pending.id &&
+          c.step.previous.status === 'confirmed' &&
+          c.step.previous.evidence.every((text) => c.source.text.includes(text))
+        ) {
+          pending.status = 'confirmed';
+          pending.evidence = c.step.previous.evidence;
+          pending.resultSource = pageSourceSchema.strip().parse(c.source);
+        }
+        const unknown = e.actions.some((a) =>
+          ['reserved', 'dispatched', 'unknown'].includes(a.status),
+        );
+        e.restoreReview =
+          unknown || c.step.decision === 'wait'
+            ? 'unknown'
+            : c.step.decision === 'complete'
+              ? 'complete'
+              : 'ready';
+        if (e.restoreReview === 'complete') {
+          e.result = {
+            goalVersion: e.goalVersion,
+            source: pageSourceSchema.strip().parse(c.source),
+            evidence: c.step.evidence,
+          };
+          if (e.intent === 'automatic') {
+            delete e.pauseReason;
+            move(e, 'REVIEW_COMPLETE');
+          }
+        }
+        e.version++;
+        e.summary =
+          e.restoreReview === 'unknown'
+            ? '实际结果仍不明，自动工作保持暂停，不重新发送。'
+            : e.restoreReview === 'complete'
+              ? '网站实际结果已核对完成，无需重复操作；原停止保留。'
+              : '实际进度已核对，原意图保持。由你选择是否继续本项任务。';
+        this.save(task.id, e);
+        return { reviewed: true };
+      }
       if (c.kind === 'system-interrupt') {
         if (
           !e ||
@@ -285,6 +380,11 @@ export class ExecutionRecords {
           .insert(schema.executionRequests)
           .values({ id: c.requestId, taskId: task.id, hash })
           .run();
+        if (e?.restoreReview) {
+          e.restoreReview = 'required';
+          e.version++;
+          this.save(task.id, e);
+        }
         if (!e || e.intent === 'stopped' || e.phase === 'complete')
           return { recorded: true };
         e.version++;
@@ -322,6 +422,12 @@ export class ExecutionRecords {
             created: false,
             current: e?.intentId === c.requestId && !e.pauseReason,
           };
+        }
+        if (e?.restoreReview && ['start', 'continue'].includes(c.intent)) {
+          if (e.restoreReview === 'complete')
+            return { created: false, current: false };
+          if (e.restoreReview !== 'ready')
+            throw Error('BACKUP_REVIEW_REQUIRED');
         }
         if (
           controlSequence !== undefined &&
@@ -362,6 +468,9 @@ export class ExecutionRecords {
             .run();
         }
         e.version++;
+        if (e.restoreReview && ['stop', 'revise'].includes(c.intent))
+          e.restoreReview = 'required';
+        else if (e.restoreReview === 'ready') delete e.restoreReview;
         delete e.recoveryPending;
         delete e.recoverySource;
         e.intentId = c.requestId;
@@ -546,7 +655,8 @@ export class ExecutionRecords {
         !e ||
         e.intent !== 'automatic' ||
         e.phase !== 'queued' ||
-        e.recoveryPending
+        e.recoveryPending ||
+        e.restoreReview
       )
         return { claimed: false };
       if (!task.url || task.phase === 'loading' || task.phase === 'error')

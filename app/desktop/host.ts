@@ -612,6 +612,28 @@ async function perform(input: unknown): Promise<unknown> {
     win.focus();
     return null;
   }
+  if (command.kind === 'choose-backup') {
+    const { mode } = z
+      .strictObject({
+        kind: z.literal('choose-backup'),
+        mode: z.enum(['directory', 'file']),
+      })
+      .parse(input);
+    const result = await dialog.showOpenDialog(
+      win,
+      mode === 'directory'
+        ? {
+            title: '选择本机备份位置',
+            properties: ['openDirectory', 'createDirectory'],
+          }
+        : {
+            title: '选择 helpr 备份',
+            properties: ['openFile'],
+            filters: [{ name: 'helpr 备份', extensions: ['helpr-backup'] }],
+          },
+    );
+    return { file: result.canceled ? null : (result.filePaths[0] ?? null) };
+  }
   if (command.kind === 'verify-input') {
     const { taskId } = z.object({ taskId: z.string() }).parse(input);
     nativeBindings();
@@ -735,7 +757,9 @@ ipcMain.handle('workspace-request', (event, input: unknown) => {
   if (
     binding.role === 'chat' &&
     command.kind !== 'snapshot' &&
-    !(command.kind === 'panel' && command.panel === 'settings')
+    !(
+      command.kind === 'panel' && ['settings', 'backup'].includes(command.panel)
+    )
   ) {
     if (
       ![
@@ -751,12 +775,21 @@ ipcMain.handle('workspace-request', (event, input: unknown) => {
       throw new Error('TASK_NOT_OWNED');
   }
   if (
-    ['model-save', 'model-test'].includes(command.kind) &&
+    (['model-save', 'model-test'].includes(command.kind) ||
+      (command.kind.startsWith('backup-') &&
+        command.kind !== 'backup-status')) &&
     binding.role !== 'panel'
   )
     throw new Error('HOST_REQUEST_DENIED');
   if (command.kind === 'snapshot') return state;
-  return controller.request(command);
+  return controller.request(
+    command,
+    ['backup-location', 'backup-open'].includes(command.kind)
+      ? 180000
+      : command.kind === 'backup-review'
+        ? 70000
+        : 10000,
+  );
 });
 process.on('message', (input: unknown) => {
   const update = z.object({ state: snapshotSchema }).safeParse(input);

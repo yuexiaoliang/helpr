@@ -10,6 +10,7 @@ import {
   modelUsageSchema,
   pageSourceSchema,
   MODEL_LIMITS,
+  archivedModelCallSchema,
 } from '../shared/model';
 import * as schema from './schema';
 
@@ -103,6 +104,13 @@ export class ModelRecords {
       .where(eq(schema.workspace.id, 1))
       .run();
   }
+  private archived() {
+    return this.db
+      .select()
+      .from(schema.archivedModelCalls)
+      .all()
+      .map((row) => archivedModelCallSchema.parse(row.body));
+  }
   settings() {
     const row = this.db
       .select()
@@ -120,14 +128,26 @@ export class ModelRecords {
       : null;
   }
   messages(taskId: string) {
-    const calls = new Map(
-      this.db
+    const calls = new Map([
+      ...this.archived()
+        .filter((saved) => saved.call.taskId === taskId)
+        .map(
+          (saved) =>
+            [saved.call.id, { ...saved.call, output: saved.output }] as const,
+        ),
+      ...this.db
         .select()
         .from(schema.modelCalls)
         .where(eq(schema.modelCalls.taskId, taskId))
         .all()
-        .map((call) => [call.id, call]),
-    );
+        .map(
+          (call) =>
+            [
+              call.id,
+              { ...modelCallSchema.strip().parse(call), output: call.output },
+            ] as const,
+        ),
+    ]);
     return this.db
       .select()
       .from(schema.messages)
@@ -139,7 +159,7 @@ export class ModelRecords {
         return {
           role: message.role,
           text: call ? call.output : message.text,
-          ...(call ? { call: modelCallSchema.parse(callView(call)) } : {}),
+          ...(call ? { call: modelCallSchema.strip().parse(call) } : {}),
         };
       });
   }
@@ -214,6 +234,13 @@ export class ModelRecords {
             .from(schema.modelCalls)
             .where(eq(schema.modelCalls.id, command.id))
             .get();
+          const archived = this.archived().find(
+            (saved) => saved.call.id === command.id,
+          );
+          if (archived) {
+            if (archived.hash !== hash) throw Error('REQUEST_CONTENT_CONFLICT');
+            return { created: false, call: archived.call };
+          }
           if (previous) {
             if (previous.hash !== hash)
               throw new Error('REQUEST_CONTENT_CONFLICT');
@@ -308,7 +335,13 @@ export class ModelRecords {
           .from(schema.modelCalls)
           .where(eq(schema.modelCalls.id, command.id))
           .get();
-        if (!call) throw new Error('MODEL_NOT_FOUND');
+        if (!call) {
+          const archived = this.archived().find(
+            (saved) => saved.call.id === command.id,
+          );
+          if (archived) return { created: false, call: archived.call };
+          throw new Error('MODEL_NOT_FOUND');
+        }
         if (!active.includes(call.phase))
           return { created: false, call: callView(call) };
         const event =
@@ -332,16 +365,24 @@ export class ModelRecords {
           phase: modelCallSchema.shape.phase.parse(next.value),
         };
         if (command.kind === 'dispatch') {
-          const history = this.db
-            .select()
-            .from(schema.modelCalls)
-            .where(
-              and(
-                eq(schema.modelCalls.taskId, call.taskId),
-                eq(schema.modelCalls.dispatched, true),
+          const history = [
+            ...this.archived()
+              .map((saved) => saved.call)
+              .filter(
+                (archived) =>
+                  archived.taskId === call.taskId && archived.dispatched,
               ),
-            )
-            .all();
+            ...this.db
+              .select()
+              .from(schema.modelCalls)
+              .where(
+                and(
+                  eq(schema.modelCalls.taskId, call.taskId),
+                  eq(schema.modelCalls.dispatched, true),
+                ),
+              )
+              .all(),
+          ];
           const consumed = history.reduce(
             (sum, row) => sum + (row.totalTokens ?? row.reservedTokens),
             0,

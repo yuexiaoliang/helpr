@@ -107,9 +107,15 @@ export const executionPauseReasonSchema = z.enum([
   'ownership-unknown',
   'native-unavailable',
   'record-unavailable',
+  'backup-restore',
 ]);
 export type ExecutionPauseReason = z.infer<typeof executionPauseReasonSchema>;
 export const pauseDescription = {
+  'backup-restore': {
+    label: '恢复资料 · 等待核对',
+    message:
+      '资料已恢复，自动工作保持暂停。先核对实际结果，再选择继续哪些任务。',
+  },
   takeover: {
     label: '已让出操作',
     message:
@@ -137,6 +143,9 @@ export const pauseDescription = {
   },
 } satisfies Record<ExecutionPauseReason, { label: string; message: string }>;
 export const executionSchema = z.strictObject({
+  restoreReview: z
+    .enum(['required', 'ready', 'unknown', 'complete'])
+    .optional(),
   modelVersion: z.literal(1).default(1),
   recoveryPending: z.boolean().optional(),
   recoverySource: z

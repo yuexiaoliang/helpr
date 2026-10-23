@@ -31,14 +31,14 @@ export class ProcessClient {
     if (reply.error) pending.reject(new Error(reply.error));
     else pending.resolve(reply.value);
   }
-  request(command: unknown): Promise<unknown> {
+  request(command: unknown, timeoutMs = 10000): Promise<unknown> {
     if (this.closed) return Promise.reject(new Error('PROCESS_DISCONNECTED'));
     const id = ++this.sequence;
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
         this.pending.delete(id);
         reject(new Error('REQUEST_TIMEOUT'));
-      }, 10000);
+      }, timeoutMs);
       this.pending.set(id, { resolve, reject, timer });
       try {
         this.channel.send({ id, command });

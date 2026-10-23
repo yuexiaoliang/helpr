@@ -83,6 +83,11 @@ export class ExecutionService {
   private workspaceUnsettled = new Set<string>();
   private readonly systemConditions = new Set<SystemCondition>();
   private systemGeneration = 0;
+  private restoring = false;
+  private readonly reviews = new Map<
+    string,
+    { abort: AbortController; work: Promise<void>; epoch?: number }
+  >();
   private readonly interruptions = new Set<Promise<unknown>>();
   constructor(
     private readonly ports: {
@@ -111,6 +116,7 @@ export class ExecutionService {
   canExit() {
     return (
       this.pendingIntents.size === 0 &&
+      this.reviews.size === 0 &&
       this.interruptions.size === 0 &&
       this.workspaceUnsettled.size === 0 &&
       ![...this.blocked.values()].some((b) => !b.saved)
@@ -167,6 +173,7 @@ export class ExecutionService {
       const tasks = this.ports.current().tasks;
       // 在任何等待之前撤权，记录进程迟滞不能延长旧派发资格。
       for (const task of tasks) {
+        this.reviews.get(task.id)?.abort.abort();
         this.ports.input?.block(task.id);
         this.jobs.get(task.id)?.abort.abort(Error('SYSTEM_SUSPENDED'));
         this.ports.revoke(task.id);
@@ -202,7 +209,11 @@ export class ExecutionService {
     this.pump();
   }
   systemReady() {
-    return this.systemConditions.size === 0 && this.interruptions.size === 0;
+    return (
+      !this.restoring &&
+      this.systemConditions.size === 0 &&
+      this.interruptions.size === 0
+    );
   }
   private async record(command: unknown) {
     const sequence = ++this.recordSequence;
@@ -227,6 +238,7 @@ export class ExecutionService {
           'EXECUTION_PAGE_CHANGED',
           'EXECUTION_LIMIT',
           'EXECUTION_EVIDENCE_MISSING',
+          'BACKUP_REVIEW_REQUIRED',
         ].includes(code)
       ) {
         this.latestRecordFailure = Math.max(this.latestRecordFailure, sequence);
@@ -236,6 +248,7 @@ export class ExecutionService {
     }
   }
   private stopImmediately(taskId: string, message: string, saved = false) {
+    this.reviews.get(taskId)?.abort.abort();
     this.ports.input?.block(taskId);
     this.blocked.set(taskId, { saved, message });
     this.jobs.get(taskId)?.abort.abort(new Error('EXECUTION_STOPPED'));
@@ -301,6 +314,12 @@ export class ExecutionService {
   }
   async intent(input: ExecutionIntent): Promise<WorkspaceSnapshot> {
     const command = executionIntentSchema.parse(input);
+    if (
+      ['start', 'continue'].includes(command.intent) &&
+      this.ports.current().tasks.find((t) => t.id === command.taskId)?.execution
+        ?.restoreReview === 'complete'
+    )
+      return this.decorate(this.ports.current());
     const priorBlock = this.blocked.get(command.taskId);
     let recordStarted = false;
     if (this.closing) throw Error('APPLICATION_EXITING');
@@ -459,6 +478,130 @@ export class ExecutionService {
   }
   refresh() {
     this.pump();
+  }
+  async beginRestore() {
+    if (this.restoring) throw Error('BACKUP_BUSY');
+    this.restoring = true;
+    this.systemGeneration++;
+    for (const task of this.ports.current().tasks)
+      this.stopImmediately(task.id, '正在恢复资料，自动操作已暂停。', true);
+    await this.settled();
+    for (const task of this.ports.current().tasks)
+      await this.record({ kind: 'backup-pause', taskId: task.id });
+  }
+  async endRestore(state: WorkspaceSnapshot) {
+    this.restoring = false;
+    await this.recordsRestored(state);
+  }
+  async reviewRestored(taskId: string): Promise<WorkspaceSnapshot> {
+    if (this.reviews.has(taskId)) throw Error('MODEL_BUSY');
+    if (!this.available || this.closing || !this.systemReady())
+      throw Error('SYSTEM_SUSPENDED');
+    const task = this.ports.current().tasks.find((t) => t.id === taskId),
+      e = task?.execution;
+    if (!e?.restoreReview) throw Error('BACKUP_REVIEW_REQUIRED');
+    const version = e.version,
+      generation = this.systemGeneration;
+    const job: { abort: AbortController; work: Promise<void>; epoch?: number } =
+      { abort: new AbortController(), work: Promise.resolve() };
+    this.reviews.set(taskId, job);
+    const sameIntent = () =>
+      !job.abort.signal.aborted &&
+      this.available &&
+      !this.closing &&
+      this.systemReady() &&
+      this.systemGeneration === generation &&
+      this.ports.current().tasks.find((t) => t.id === taskId)?.execution
+        ?.version === version;
+    const current = () =>
+      sameIntent() &&
+      (!this.ports.input ||
+        (job.epoch !== undefined && this.ports.input.valid(taskId, job.epoch)));
+    job.work = (async () => {
+      job.epoch = await this.ports.input?.prepare(taskId);
+      if (!sameIntent()) throw Error('EXECUTION_STOPPED');
+      // 本次明确核对仅授予只读观察／模型发送资格，执行状态仍暂停，不建立网页动作工作者。
+      if (
+        this.ports.input &&
+        (job.epoch === undefined || !this.ports.input.allow(taskId, job.epoch))
+      )
+        throw Error('INPUT_CHANGED_DURING_CONTINUE');
+      const observed = await this.abortable(
+        () => this.ports.observe(taskId, job.abort.signal),
+        job.abort.signal,
+      );
+      if (!current()) throw Error('EXECUTION_STOPPED');
+      const step = await this.abortable(
+        () =>
+          this.ports.propose({
+            taskId,
+            runId: randomUUID(),
+            goal: e.goal,
+            observation: observed.observation,
+            pending:
+              e.actions.find((a) =>
+                ['reserved', 'dispatched', 'unknown'].includes(a.status),
+              ) ?? null,
+            history: e.actions,
+            signal: job.abort.signal,
+            permit: (send) => {
+              if (!current()) throw Error('EXECUTION_STOPPED');
+              return this.ports.input
+                ? this.ports.input.permit(taskId, job.epoch!, send)
+                : send();
+            },
+          }),
+        job.abort.signal,
+      );
+      if (!current()) throw Error('EXECUTION_STOPPED');
+      const accepted = await this.record({
+        kind: 'backup-review-result',
+        taskId,
+        expectedVersion: version,
+        source: observed.observation,
+        step,
+      });
+      if (
+        this.ports.input &&
+        job.epoch !== undefined &&
+        !this.ports.input.valid(taskId, job.epoch)
+      ) {
+        const execution = accepted.state.tasks.find(
+          (task) => task.id === taskId,
+        )?.execution;
+        if (execution)
+          await this.record({
+            kind: 'backup-pause',
+            taskId,
+            expectedVersion: execution.version,
+          });
+        throw Error('EXECUTION_STOPPED');
+      }
+      const completed = this.ports
+        .current()
+        .tasks.find((task) => task.id === taskId)?.execution;
+      if (
+        !job.abort.signal.aborted &&
+        completed?.intent === 'automatic' &&
+        completed.version === version + 1 &&
+        completed.restoreReview === 'complete'
+      ) {
+        this.blocked.delete(taskId);
+        this.publish();
+      }
+    })();
+    try {
+      await job.work;
+      return this.decorate(this.ports.current());
+    } finally {
+      if (this.reviews.get(taskId) === job) this.reviews.delete(taskId);
+      if (
+        this.ports.input &&
+        job.epoch !== undefined &&
+        this.ports.input.epoch(taskId) === job.epoch
+      )
+        this.ports.input.block(taskId);
+    }
   }
   private pump() {
     if (!this.available || this.closing || !this.systemReady()) return;
@@ -739,6 +882,7 @@ export class ExecutionService {
     });
   }
   async settled() {
+    await Promise.allSettled([...this.reviews.values()].map((r) => r.work));
     for (;;) {
       const pump = this.pumping;
       await Promise.allSettled([...this.interruptions]);

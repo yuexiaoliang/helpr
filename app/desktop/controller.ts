@@ -38,6 +38,7 @@ import {
 import { ValidationBarriers } from './validation-barriers';
 import { LocalFixture } from './local-fixture';
 import { acquireRuntimeOwnership } from './runtime-ownership';
+import { BackupService } from './backup-service';
 
 export async function startController(
   folder: string,
@@ -395,6 +396,37 @@ export async function startController(
       permit: (taskId, epoch, send) => inputGate.permit(taskId, epoch, send),
     },
   });
+  const backups = new BackupService({
+    choose: async (kind) => {
+      const result = z
+        .strictObject({ file: z.string().nullable() })
+        .parse(
+          await hostClient.request(
+            { kind: 'choose-backup', mode: kind },
+            180000,
+          ),
+        );
+      return result.file;
+    },
+    records: (command) => recordClient.request({ kind: 'backup', command }),
+    current: () => state,
+    publish: (next) => {
+      if (next.revision >= state.revision) {
+        state = next;
+        publish();
+      }
+    },
+    ready: () =>
+      recordsAvailable && workspace.canExit() && executions.canExit(),
+    hold: async () => {
+      await executions.beginRestore();
+      await models.stopAll();
+    },
+    release: async (next) => {
+      models.cancelExit();
+      await executions.endRestore(next);
+    },
+  });
 
   systemSink.notify = (condition, blocked) => {
     void executions.setSystemCondition(condition, blocked).catch((error) => {
@@ -488,6 +520,14 @@ export async function startController(
       if (command.apiKey !== undefined) fixture.protect(command.apiKey);
     }
     if (command.kind === 'snapshot') return executions.decorate(state);
+    if (
+      command.kind === 'backup-review' &&
+      (!recordsAvailable || !workspace.canExit())
+    )
+      throw Error('UNSAVED_CHANGES');
+    if (command.kind === 'backup-review')
+      return { state: await executions.reviewRestored(command.taskId) };
+    if (command.kind.startsWith('backup-')) return backups.handle(command);
     if (command.kind === 'execution-intent') {
       if (
         command.intent !== 'stop' &&
@@ -535,7 +575,12 @@ export async function startController(
       return { state: await models.ask(command) };
     }
     if (command.kind === 'quit') {
-      if (!recordsAvailable || !workspace.canExit() || !executions.canExit())
+      if (
+        !recordsAvailable ||
+        !workspace.canExit() ||
+        !executions.canExit() ||
+        !backups.canExit()
+      )
         throw new Error('UNSAVED_CHANGES');
       await quit();
       return null;

@@ -127,6 +127,56 @@ test('丢失创建回执后重开另一进程重试，仍只有原任务且不�
   ).toHaveLength(1);
   await records.close();
 });
+
+test('独立记录进程通过备份入口接受并发停止，恢复与冷重开仍不派发旧工作', async () => {
+  const dir = folder();
+  let records = await open(dir);
+  const { taskId } = (await records.client.request({
+    kind: 'create',
+    requestId: 'A',
+    goal: '核对 https://example.com/A',
+  })) as { taskId: string };
+  await records.client.request({
+    kind: 'execution',
+    command: { kind: 'intent', requestId: 'start', taskId, intent: 'start' },
+  });
+  const file = path.join(dir, 'snapshot.helpr-backup');
+  const creating = records.client.request({
+    kind: 'backup',
+    command: { kind: 'create', requestId: 'backup', file },
+  });
+  await records.client.request({
+    kind: 'execution',
+    command: { kind: 'intent', requestId: 'stop', taskId, intent: 'stop' },
+  });
+  const { archive } = (await creating) as { archive: { checksum: string } };
+  await records.client.request({
+    kind: 'backup',
+    command: {
+      kind: 'restore',
+      requestId: 'restore',
+      file,
+      checksum: archive.checksum,
+    },
+  });
+  await records.close();
+  records = await open(dir);
+  const state = snapshotSchema.parse(
+    await records.client.request({ kind: 'snapshot' }),
+  );
+  expect(state.tasks[0]?.execution).toMatchObject({
+    intent: 'stopped',
+    intentId: 'stop',
+    restoreReview: 'required',
+  });
+  expect(
+    await records.client.request({
+      kind: 'execution',
+      command: { kind: 'claim', taskId, runId: 'old' },
+    }),
+  ).toMatchObject({ claimed: false });
+  await records.close();
+});
 test('危险地址、旧版本与实际保存失败均保留已有资料，恢复保存后可重试', async () => {
   const dir = folder();
   const records = await open(dir);

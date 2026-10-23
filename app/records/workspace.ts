@@ -26,6 +26,7 @@ import * as schema from './schema';
 import { ModelRecords } from './model';
 import { ExecutionRecords } from './execution';
 import { executionSchema } from '../shared/execution';
+import { BackupRecords } from './backup';
 
 // 本项只有手动网页状态；计算转换不启动 actor、invocation 或网页动作。
 const lifecycle = createMachine({
@@ -52,6 +53,7 @@ export class WorkspaceRecords {
   private readonly executions: ExecutionRecords;
   private readonly sqlite: Database.Database;
   private readonly db: ReturnType<typeof drizzle<typeof schema>>;
+  private readonly backups: BackupRecords;
   constructor(folder: string, migrations: string, validation = false) {
     mkdirSync(folder, { recursive: true, mode: 0o700 });
     const marker = path.join(folder, '.workspace-records');
@@ -90,13 +92,17 @@ export class WorkspaceRecords {
               'SELECT schema_version FROM workspace WHERE id=1',
             )
             .get()?.schema_version
-        : 5;
-      if (!priorVersion || ![1, 2, 3, 4, 5].includes(priorVersion))
+        : 6;
+      if (!priorVersion || ![1, 2, 3, 4, 5, 6].includes(priorVersion))
         throw Error('DATA_VERSION_UNSUPPORTED');
-      if (legacy && priorVersion !== 5) {
+      if (legacy && priorVersion !== 6) {
         const backup = path.join(
           folder,
-          'workspace-before-recovery-05-' + randomUUID() + '.sqlite',
+          (priorVersion === 5
+            ? 'workspace-before-backup-07-'
+            : 'workspace-before-recovery-05-') +
+            randomUUID() +
+            '.sqlite',
         );
         this.sqlite.prepare('VACUUM INTO ?').run(backup);
         chmodSync(backup, 0o600);
@@ -116,7 +122,7 @@ export class WorkspaceRecords {
       }
       this.db
         .insert(schema.workspace)
-        .values({ id: 1, active: null, revision: 0, schemaVersion: 5 })
+        .values({ id: 1, active: null, revision: 0, schemaVersion: 6 })
         .onConflictDoNothing()
         .run();
       const version = this.db
@@ -128,13 +134,15 @@ export class WorkspaceRecords {
         version !== 2 &&
         version !== 3 &&
         version !== 4 &&
-        version !== 5
+        version !== 5 &&
+        version !== 6
       )
         throw new Error('DATA_VERSION_UNSUPPORTED');
-      if (version !== 5)
-        this.db.update(schema.workspace).set({ schemaVersion: 5 }).run();
+      if (version !== 6)
+        this.db.update(schema.workspace).set({ schemaVersion: 6 }).run();
       this.models = new ModelRecords(this.db);
       this.executions = new ExecutionRecords(this.db);
+      this.backups = new BackupRecords(this.db, () => this.snapshot(), folder);
       if (!existsSync(marker)) {
         const fd = openSync(marker, 'wx', 0o600);
         try {
@@ -348,6 +356,12 @@ export class WorkspaceRecords {
   }
   close(): void {
     this.sqlite.close();
+  }
+  backup(input: unknown) {
+    return this.backups.execute(input);
+  }
+  async settleBackups() {
+    await this.backups.settled();
   }
   checkpoint(): WorkspaceSnapshot {
     this.db.transaction(() => {

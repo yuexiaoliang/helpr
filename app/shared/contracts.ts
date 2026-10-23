@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { backupUICommandSchema } from './backup';
 import { websiteURL } from './url-policy';
 import {
   executionSchema,
@@ -142,6 +143,7 @@ export const panelSchema = z.strictObject({
     'preview',
     'close-task',
     'settings',
+    'backup',
   ]),
   taskId: id.optional(),
   x: z.number().min(0).max(10000).optional(),
@@ -149,6 +151,7 @@ export const panelSchema = z.strictObject({
   delayed: z.boolean().optional(),
 });
 export const uiCommandSchema = z.union([
+  backupUICommandSchema,
   modelUICommandSchema,
   executionIntentSchema,
   recordCommandSchema.refine((command) => command.kind !== 'page'),

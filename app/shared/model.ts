@@ -74,6 +74,11 @@ export const modelCallSchema = z.strictObject({
   error: modelErrorSchema.nullable(),
 });
 export type ModelCall = z.infer<typeof modelCallSchema>;
+export const archivedModelCallSchema = z.strictObject({
+  call: modelCallSchema,
+  output: z.string(),
+  hash: z.string(),
+});
 export const modelUsageSchema = z.strictObject({
   inputTokens: z.number().int().nonnegative(),
   outputTokens: z.number().int().nonnegative(),

@@ -26,32 +26,38 @@ try {
   log.close();
   process.exit(1);
 }
-function handle(input: unknown): void {
+async function handle(input: unknown): Promise<void> {
   const parsed = rpcRequestSchema.safeParse(input);
   if (!parsed.success) return;
   const { id, command } = parsed.data;
   try {
     const kind = z.object({ kind: z.string() }).parse(command).kind;
+    if (kind === 'close' || kind === 'checkpoint')
+      await records.settleBackups();
     const value =
-      kind === 'snapshot'
-        ? records.snapshot()
-        : kind === 'checkpoint'
-          ? records.checkpoint()
-          : kind === 'execution'
-            ? records.execution(
-                z.object({ command: z.unknown() }).parse(command).command,
-              )
-            : kind === 'model'
-              ? records.model(
+      kind === 'backup'
+        ? await records.backup(
+            z.object({ command: z.unknown() }).parse(command).command,
+          )
+        : kind === 'snapshot'
+          ? records.snapshot()
+          : kind === 'checkpoint'
+            ? records.checkpoint()
+            : kind === 'execution'
+              ? records.execution(
                   z.object({ command: z.unknown() }).parse(command).command,
                 )
-              : kind === 'lookup'
-                ? records.lookupRequest(
+              : kind === 'model'
+                ? records.model(
                     z.object({ command: z.unknown() }).parse(command).command,
                   )
-                : kind === 'close'
-                  ? null
-                  : records.execute(command);
+                : kind === 'lookup'
+                  ? records.lookupRequest(
+                      z.object({ command: z.unknown() }).parse(command).command,
+                    )
+                  : kind === 'close'
+                    ? null
+                    : records.execute(command);
     send({ id, value });
     log.event('command');
     if (kind === 'close') {
@@ -64,8 +70,14 @@ function handle(input: unknown): void {
     log.event('failure', { code: errorCode(error) });
   }
 }
-if (port) port.on('message', ({ data }: { data: unknown }) => handle(data));
-else process.on('message', handle);
+if (port)
+  port.on('message', ({ data }: { data: unknown }) => {
+    void handle(data);
+  });
+else
+  process.on('message', (input) => {
+    void handle(input);
+  });
 process.on('disconnect', () => {
   records.close();
   log.close();

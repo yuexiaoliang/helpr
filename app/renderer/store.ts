@@ -7,6 +7,22 @@ import {
 } from '../shared/contracts';
 
 const labels: Record<string, string> = {
+  BACKUP_REVIEW_REQUIRED: '恢复资料后先核对实际结果，再选择继续本项任务。',
+  BACKUP_BUSY: '备份或恢复仍在进行，请先等候本次结果。停止仍可立即生效。',
+  BACKUP_PENDING: '先核对本次操作的可靠回执，暂不另建备份或重复恢复。',
+  BACKUP_INVALID: '备份不完整或校验不通过，当前资料已保留，未恢复。',
+  BACKUP_INCOMPATIBLE:
+    '备份格式或状态版本不兼容，当前资料已保留。请使用兼容版本。',
+  BACKUP_CHANGED: '所选备份在检查后发生变化，请重新选择并检查。',
+  BACKUP_LOCATION_REQUIRED: '请先选择本机备份位置。',
+  BACKUP_SELECTION_REQUIRED: '请先选择并检查要恢复的备份。',
+  BACKUP_TOO_LARGE:
+    '当前备份超过本版支持的 64 MiB，未生成成功备份，原资料保留。',
+  BACKUP_STORAGE_FULL:
+    '备份位置空间不足，本次没有生成可用备份。原资料和其它文件保留。',
+  BACKUP_FILE_MISSING: '找不到所选备份或保存目录。原资料保留，请重新选择。',
+  BACKUP_STORAGE_UNAVAILABLE:
+    '无法读写所选本机位置。请检查访问权限和文件类型，原资料保留。',
   EXECUTION_STOPPED: '这项任务已停止。明确继续后会先核对，再处理剩余工作。',
   EXECUTION_CONTINUE_REQUIRED:
     '这项任务已让出或暂停。请明确说“继续”，我会先核对当前网页。',

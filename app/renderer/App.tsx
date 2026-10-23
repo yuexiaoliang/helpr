@@ -15,6 +15,7 @@ import {
 import type { Task, UICommand, WorkspaceSnapshot } from '../shared/contracts';
 import { WorkspaceStore, modelErrorLabel } from './store';
 import { ModelSettings } from './ModelSettings';
+import { BackupSettings } from './BackupSettings';
 import { activeModelCall } from '../shared/model';
 import type { ExecutionIntent } from '../shared/execution';
 import { pauseDescription, systemConditionLabel } from '../shared/execution';
@@ -119,6 +120,12 @@ export function App({
           <Icon src={plus} />
         </button>
         <div className={styles.tools}>
+          <button
+            onClick={() => send({ kind: 'panel', panel: 'backup' })}
+            aria-label="备份与恢复"
+          >
+            备份与恢复
+          </button>
           <button
             onClick={() => send({ kind: 'panel', panel: 'settings' })}
             aria-label="模型设置"
@@ -766,11 +773,13 @@ function Panel({ store }: { store: WorkspaceStore }) {
           aria-label={
             view.panel.panel === 'settings'
               ? '模型设置'
-              : view.panel.panel === 'new'
-                ? '新建任务'
-                : view.panel.panel === 'tasks'
-                  ? '全部任务'
-                  : '退出 helpr'
+              : view.panel.panel === 'backup'
+                ? '备份与恢复'
+                : view.panel.panel === 'new'
+                  ? '新建任务'
+                  : view.panel.panel === 'tasks'
+                    ? '全部任务'
+                    : '退出 helpr'
           }
         >
           <button
@@ -783,6 +792,8 @@ function Panel({ store }: { store: WorkspaceStore }) {
           </button>
           {view.panel.panel === 'settings' ? (
             <ModelSettings store={store} saved={view.state.modelSettings} />
+          ) : view.panel.panel === 'backup' ? (
+            <BackupSettings store={store} state={view.state} />
           ) : view.panel.panel === 'new' ? (
             <NewTask store={store} close={closePanel} />
           ) : view.panel.panel === 'tasks' ? (
