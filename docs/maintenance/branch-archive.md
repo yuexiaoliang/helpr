@@ -8,6 +8,7 @@
 - 原型源码使用下表归档标签回看。旧分支名、4317／4318／4319临时预览和已移除的本机路径不再作为当前入口；事项中的原体验记录保留历史含义。
 - 01–04原型使用`archive/2026-10-16/core-workspace-prototype`，05使用`archive/2026-10-20/recovery-prototype`，06使用`archive/2026-10-20/lifecycle-prototype`。
 - 本次只推送05、06两个新增归档标签，没有推送`main`中的本地实现提交。
+- 2026-10-23新增08的本地`codex/version-check-prototype`及本聊天附属工作副本，版本待确认；[当前入口](#08-当前新版检查原型)独立保留，未推送或合入产品。
 
 ## 已保留的来源
 
@@ -53,3 +54,13 @@ git worktree add --detach ../helpr-lifecycle-archive archive/2026-10-20/lifecycl
 - [07事项](../../.scratch/helpr-first-release-implementation/issues/07-local-backup-and-restore.md#原型确认)记录已确认范围与实现／验收状态。若以后移除副本，可从上述固定提交以Git恢复`.scratch/helpr-first-release-implementation/prototypes/backup/`，不依赖临时服务。
 
 本次主工作区只登记来源和范围，不合入原型HTML或其模拟逻辑。历史归档标签及05／06验收结论保持。
+
+## 08 当前新版检查原型
+
+2026-10-23按用户“那就做吧”制作`version-check-v1`，来源分支`codex/version-check-prototype`，固定源码`23d3ecdbc345f31e44decdc3516260213b9c57c2`。当前待用户体验并明确确认，没有开始08正式实现。
+
+- 工作副本：`/Users/yuexiaoliang/.codex/worktrees/version-check-prototype/helpr`，本聊天附属的受管工作区。
+- [单文件入口](/Users/yuexiaoliang/.codex/worktrees/version-check-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/version-check/version-check-prototype.html)，可直接双击；[范围与走查说明](/Users/yuexiaoliang/.codex/worktrees/version-check-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/version-check/README.md)。
+- 内置浏览器临时预览使用`http://127.0.0.1:4320/version-check-prototype.html`，本机服务在2026-10-23约16:34（Asia/Shanghai）独立到期；到期不影响HTML。
+- [08事项](../../.scratch/helpr-first-release-implementation/issues/08-version-check-and-download-notice.md#原型确认)列出拟确认范围，包括拟议检查频率、当前会话稍后处理和各种异常；12场景／69分步及修正证据只保存在原型分支。
+- 原型所有网络、下载和任务均为模拟；版本与下载来源仍待正式实现时确定。没有把原型合入主工作区产品代码，也没有推送分支或新标签。以后移除副本时，可从固定提交恢复`.scratch/helpr-first-release-implementation/prototypes/version-check/`。
