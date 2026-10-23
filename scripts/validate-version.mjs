@@ -54,7 +54,7 @@ function owned(){const rows=ps();let more=true;while(more){more=false;for(const 
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 function limited(){if(failed)throw Error(failed);if(Date.now()-report.started>20*60*1000)throw Error('ROUND_TIME_LIMIT');}
 async function until(fn,milliseconds=10000,cleanup=false){const end=Date.now()+milliseconds;while(Date.now()<end){if(!cleanup)limited();if(await fn())return;await delay(100);}throw Error('STEP_TIMEOUT');}
-function rpc(command){return new Promise((resolve,reject)=>{if(!child?.connected){reject(Error('APPLICATION_DISCONNECTED'));return;}const id=++seq,timer=setTimeout(()=>{pending.delete(id);reject(Error('RPC_TIMEOUT'));},command.kind==='quit'?20000:10000);pending.set(id,{resolve,reject,timer});child.send({id,command});});}
+function rpc(command,maximum=10000){return new Promise((resolve,reject)=>{if(!child?.connected){reject(Error('APPLICATION_DISCONNECTED'));return;}const id=++seq,timer=setTimeout(()=>{pending.delete(id);reject(Error('RPC_TIMEOUT'));},Math.min(command.kind==='quit'?20000:10000,maximum));pending.set(id,{resolve,reject,timer});child.send({id,command});});}
 async function quit(){if(!exit)await rpc({kind:'quit'}).catch(error=>{if(!['APPLICATION_EXITED','APPLICATION_EXITING','APPLICATION_DISCONNECTED'].includes(error.message))throw error;});await until(()=>exit,20000,true);await until(()=>owned().length===0,8000,true);assert.equal(exit.code,0);}
 const deadline=setTimeout(()=>{failed='ROUND_TIME_LIMIT';},Math.max(1,report.started+20*60*1000-Date.now()));
 process.on('SIGINT',()=>{failed='INTERRUPTED';});process.on('SIGTERM',()=>{failed='INTERRUPTED';});
@@ -73,8 +73,9 @@ try{
  });
  child.on('exit',(code,signal)=>{exit={code,signal};report.exit=exit;for(const entry of pending.values()){clearTimeout(entry.timer);entry.reject(Error('APPLICATION_EXITED'));}pending.clear();});
  const readyDeadline=Date.now()+15000;
- if(resume){await delay(1500);write('pre-show.json',await rpc({kind:'inspect'}));await rpc({kind:'show'});}
- await until(()=>{owned();return ready||exit;},Math.max(1,readyDeadline-Date.now()));assert(ready&&!exit,'APPLICATION_NOT_READY');
+ const readyTime=()=>{const left=readyDeadline-Date.now();assert(left>0,'READY_DEADLINE');return left;};
+ if(resume){await delay(1500);write('pre-show.json',await rpc({kind:'inspect'},readyTime()));await rpc({kind:'show'},readyTime());}
+ await until(()=>{owned();return ready||exit;},readyTime());assert(ready&&!exit,'APPLICATION_NOT_READY');
  await until(async()=>(await rpc({kind:'version-status'})).phase==='done');
  assert.equal((await rpc({kind:'version-status'})).result.kind,'latest');
  write('ready.json',ready);save();console.log('VERSION_READY '+JSON.stringify({root,start:report.start,hostApp:path.join(appPath,'Contents/Frameworks/helpr Workspace.app')}));
