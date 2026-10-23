@@ -1,0 +1,74 @@
+Window: "helpr", App: helpr.
+0 standard window helpr, Secondary Actions: Raise
+	1 container helpr
+		2 container
+			3 HTML content helpr, URL: helpr://workspace/index.html?surface=chrome
+				4 container
+					5 text helpr
+					6 container 任务标签页
+						7 container
+							8 button 08 A · 保留任务与草稿 先核对再继续
+								9 text 08 A · 保留任务与草稿
+								10 text 先核对再继续
+							11 button 收起任务 08 A · 保留任务与草稿
+						12 container
+							13 button 08 B · 保留任务与草稿 先核对再继续
+								14 text 08 B · 保留任务与草稿
+								15 text 先核对再继续
+							16 button 收起任务 08 B · 保留任务与草稿
+					17 button 新建任务
+					18 button 关于与新版
+						19 text 关于与新版
+						20 text  · 有新版
+					21 button 备份与恢复
+					22 button 模型设置
+						23 text ⚙
+						24 text 模型设置
+					25 button 查看全部任务
+						26 text 任务 
+						27 text 2
+					28 button 退出 helpr
+					29 button 重新打开网页
+					30 text field (settable) Description: 网站地址, Value: http://127.0.0.1:58902/A, Placeholder: 输入网站地址
+					31 button 打开
+					32 container 关闭主窗口仅收起，任务和网页保留；遵循 Mac 休眠设置，休眠期间不保证按时执行。
+						33 text 先核对再继续  · 休眠期间不保证按时执行
+			34 HTML content 08版本检查隔离网页, URL: 127.0.0.1:58902/A
+				35 heading 任务网页保持, Value: 1
+					36 text 任务网页保持
+				37 text 这里不提供写入操作，也不调用模型。
+			38 HTML content helpr, URL: helpr://workspace/index.html?surface=chat&taskId=907720f2-0c08-4f2d-837c-d1b2a005f5ba
+				39 container 任务 08 A · 保留任务与草稿 的独立对话
+					40 container
+						41 text 0 08 A · 保留任务与草稿 本次：local-fixture-08
+						42 button 停止本任务
+						43 button 收起对话
+					44 container
+						45 text 先核对再继续 正在核对当前页面与已有结果。
+					46 container 对话记录
+						47 text 08 A · 保留任务与草稿
+						48 text 目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。
+						49 text 开始执行
+						50 text 正在读取这项任务的页面…
+						51 container
+							52 text 依据： 08版本检查隔离网页 4:59:22 PM ·  local-fixture-08  · 仅依据当时页面，后续变化未持续核对 实际消耗未知
+					53 button (disabled) 继续
+					54 button 查看结果
+					55 container
+						56 text entry area (settable) Description: 给这项任务的要求, Value: A 的未发送文字, Placeholder: 询问当前网页…
+						57 text 已保存
+						58 button 停止回复
+			59 HTML content helpr, URL: helpr://workspace/index.html?surface=panel
+			60 HTML content helpr, URL: helpr://workspace/index.html?surface=toast
+				61 container
+					62 text helpr  0.2.0  可用，当前任务继续。
+					63 button 查看新版
+					64 button 稍后
+	65 close button
+	66 full screen button Help: this button also has an action to zoom the window, Secondary Actions: zoom the window
+	67 minimize button
+68 menu bar
+	69 helpr
+	70 编辑
+
+The focused UI element is 18 button 关于与新版

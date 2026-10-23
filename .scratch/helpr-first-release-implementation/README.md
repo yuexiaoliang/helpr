@@ -23,7 +23,7 @@
 | [05 退出、意外退出与冷重开核对](issues/05-quit-crash-and-cold-recovery.md)（已验收） | [04](issues/04-native-takeover-and-page-ownership.md) |
 | [06 收起运行、锁屏与休眠恢复](issues/06-hide-lock-sleep-and-resume.md)（已验收） | [05](issues/05-quit-crash-and-cold-recovery.md) |
 | [07 本机备份与旧备份恢复](issues/07-local-backup-and-restore.md)（已验收） | [05](issues/05-quit-crash-and-cold-recovery.md) |
-| [08 自动检查新版与可信下载提醒](issues/08-version-check-and-download-notice.md) | [02](issues/02-model-settings-and-page-understanding.md) |
+| [08 自动检查新版与可信下载提醒](issues/08-version-check-and-download-notice.md)（已验收） | [02](issues/02-model-settings-and-page-understanding.md) |
 | [09 手动换版保留资料、原密钥和有效登录](issues/09-manual-upgrade-and-credential-continuity.md) | [06](issues/06-hide-lock-sleep-and-resume.md)、[07](issues/07-local-backup-and-restore.md)、[08](issues/08-version-check-and-download-notice.md) |
 | [10 参与请求、确认与全局可操作提醒](issues/10-participation-and-actionable-notifications.md) | [03](issues/03-parallel-execution-stop-and-continue.md) |
 | [11 任务组、收起、关闭与历史返回](issues/11-task-groups-history-and-close.md) | [04](issues/04-native-takeover-and-page-ownership.md)、[10](issues/10-participation-and-actionable-notifications.md) |
@@ -152,3 +152,5 @@
 2026-10-23，用户确认08原型并要求开始实现，已完成正式代码、105正式／25旧回归及双轴实现修正。候选36以实际CUA界面和独立HTTPS服务通过10类检查，任务和草稿保持、隐私／只读边界及明确外链派发有证据；原93超时、94续接和缩放准备异常保持。当前08为6/7条，仍缺执行中任务与版本故障的组合证据，09对08依赖未解除。累计构建36/36、启动94/94，已正常退出并独立清空自有进程；只追加1次启动的具体补验方案尚待确认，详见[08当前报告](../../docs/testing/evidence/version-08/REPORT.md)。
 
 2026-10-23，用户同意08单次启动95补验。95在窗口准备查询时失败，尚无版本或模型请求；正常退出且7PID／3组／夹具监听空。仅离线修验证器过早查询窗口的有界等待，5个协议案例通过，未改变产品或再启动。当前08仍6/7，启动95/95，09依赖保持；只追加1启动至96并复用原候选／资料／业务剩余额度的方案待确认，见[95失败与修正边界](../../docs/testing/evidence/version-08/REPORT.md#获准的启动95准备失败未形成第7条证据)。
+
+2026-10-23，用户明确继续96方案并手动解锁后，08在候选36补齐两个真实执行等待受控模型时的新版提醒／稍后／503／超时组合，7/7验收完成。只新增2本机模型／4版本请求，无真实模型、网页写入、安装或包下载；两任务完成、草稿保留，正常退出且15PID／3组及夹具监听空。原准备失败和缩放异常完整保留，详见[08最终验收](../../docs/testing/evidence/version-08/FINAL-ACCEPTANCE.md)。09对08的前置现已满足，09自身原型及真实两版换装、23固定候选复验保持；本轮未开始09实现。
