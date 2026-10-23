@@ -22,9 +22,10 @@ createRequire(import.meta.resolve('vite'))('esbuild').buildSync({stdin:{contents
 const {uiCommandSchema,nextStepSchema}=await import(pathToFileURL(contractFile).href);
 const configure=(origin,state)=>({kind:'model-save',requestId:randomUUID(),expectedVersion:state.modelSettings?.version??0,protocol:'chat-completions',endpoint:origin+'/v1',model:'local-fixture-08',apiKey:'local-fixture-not-a-secret'});
 const startTask=taskId=>({kind:'execution-intent',requestId:randomUUID(),taskId,intent:'start'});
+const fixtureHTML='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>08版本检查隔离网页</title><h1>任务网页保持</h1><p>这里不提供写入操作，也不调用模型。</p></html>';
 const reply=name=>nextStepSchema.parse({decision:'complete',summary:'已只读核对'+name+'任务网页，保留原任务及草稿。',evidence:['任务网页保持','这里不提供写入操作，也不调用模型。'],previous:null,action:null});
 uiCommandSchema.parse(configure('http://127.0.0.1:58902',{}));uiCommandSchema.parse(startTask('fixture-task'));reply('A');reply('B');
-if(checkOnly){console.log(JSON.stringify({valid:true,appStarts:0,models:0,effects:0,requiredCases:['available','available-dismissed','offline','timeout']}));process.exit(0);}
+if(checkOnly){for(const name of ['A','B'])assert(reply(name).evidence.every(text=>fixtureHTML.includes(text)),'FIXTURE_EVIDENCE_NOT_IN_PAGE');console.log(JSON.stringify({valid:true,appStarts:0,models:0,effects:0,requiredCases:['available','available-dismissed','offline','timeout']}));process.exit(0);}
 assert(args[0]==='--candidate=version-08'&&(args.length===1||resume||execution),'FIXED_CANDIDATE_REQUIRED');
 execFileSync(process.execPath,['scripts/validate-workspace.mjs','--preflight'],{stdio:'inherit',timeout:65000});
 const manifest=JSON.parse(fs.readFileSync(path.join(validationRoot,'build-36.json'),'utf8'));
@@ -70,7 +71,7 @@ const website=createHTTPServer(async(req,res)=>{try{
  }
  if(req.method!=='GET'){report.webWrites++;throw Error('UNEXPECTED_WEB_WRITE');}
  report.webGets.push({at:Date.now(),url:req.url});save();assert(['/A','/B','/favicon.ico'].includes(req.url),'UNEXPECTED_PAGE_PATH');
- res.setHeader('content-type','text/html;charset=utf-8');res.end('<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>08版本检查隔离网页</title><h1>任务网页保持</h1><p>这里不提供写入操作，也不调用模型。</p></html>');
+ res.setHeader('content-type','text/html;charset=utf-8');res.end(fixtureHTML);
  }catch(error){failed??=error.message;save();if(!res.headersSent)res.writeHead(400);res.end('FIXTURE_REJECTED');}});
 const versions=createServer({key:fs.readFileSync(key),cert:fs.readFileSync(certFile)},(req,res)=>{
  report.requests.push({at:Date.now(),mode,method:req.method,url:req.url,headers:req.headers});save();
