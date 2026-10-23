@@ -4,7 +4,7 @@
 
 ## 当前入口
 
-- 本地和远端均只保留`main`分支；当前只有主工作区，没有原型活动工作副本。
+- 2026-10-20清理时，本地和远端均只保留`main`。2026-10-23新增本地`codex/backup-prototype`及活动工作副本，用于待确认的07原型；未推送该分支，详见[当前入口](#07-当前备份恢复原型)。
 - 原型源码使用下表归档标签回看。旧分支名、4317／4318／4319临时预览和已移除的本机路径不再作为当前入口；事项中的原体验记录保留历史含义。
 - 01–04原型使用`archive/2026-10-16/core-workspace-prototype`，05使用`archive/2026-10-20/recovery-prototype`，06使用`archive/2026-10-20/lifecycle-prototype`。
 - 本次只推送05、06两个新增归档标签，没有推送`main`中的本地实现提交。
@@ -42,3 +42,14 @@ git worktree add --detach ../helpr-lifecycle-archive archive/2026-10-20/lifecycl
 06已通过[最终验收](../testing/evidence/lifecycle-06/FINAL-ACCEPTANCE.md)。其原型副本先尝试Codex归档，两次均只返回queued且目录未移除；随后用户确认删除，核对副本无未提交、未跟踪或忽略文件后，用Git正常移除副本与工作区登记。原应用15PID／3组及旧4319预览端口均无残留。
 
 旧路径`/Users/yuexiaoliang/.codex/worktrees/lifecycle-prototype/helpr`已不存在。Codex接口仍列出旧附件元数据，不能据此认定目录仍在，也不能称原生归档已成功；未修改应用内部元数据。源码现由远端归档标签保留，恢复方式见上文。[收尾状态](../testing/evidence/lifecycle-06/CLOSEOUT.json)区分磁盘／Git清理与附件元数据状态。
+
+## 07 当前备份恢复原型
+
+2026-10-23按用户请求新增`backup-v1`，来源分支`codex/backup-prototype`，固定源码`9bca8026274eb0358a84a88397a3068cb053c82e`。当前是等待用户确认的活动原型，尚未归档或合入产品。
+
+- 工作副本：`/Users/yuexiaoliang/.codex/worktrees/backup-prototype/helpr`。
+- [单文件入口](/Users/yuexiaoliang/.codex/worktrees/backup-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/backup/backup-prototype.html)，可直接双击；[范围与走查说明](/Users/yuexiaoliang/.codex/worktrees/backup-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/backup/README.md)。
+- [临时内置浏览器预览](http://127.0.0.1:4320/backup-prototype.html)至2026-10-23 12:29（Asia/Shanghai）自动结束；原型文件保留。
+- [07事项](../../.scratch/helpr-first-release-implementation/issues/07-local-backup-and-restore.md#原型确认)记录待确认范围。若以后移除副本，可从上述固定提交以Git恢复`.scratch/helpr-first-release-implementation/prototypes/backup/`，不依赖临时服务。
+
+本次主工作区只登记来源和范围，不合入原型HTML或其模拟逻辑。历史归档标签及05／06验收结论保持。
