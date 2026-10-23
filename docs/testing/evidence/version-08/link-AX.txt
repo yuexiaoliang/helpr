@@ -1,0 +1,80 @@
+Window: "helpr", App: helpr.
+0 standard window helpr, Secondary Actions: Raise
+	1 container helpr
+		2 container
+			3 HTML content helpr, URL: helpr://workspace/index.html?surface=chrome
+				4 container
+					5 text helpr
+					6 container 任务标签页
+						7 container
+							8 button 08 A · 保留任务与草稿 可手动操作
+								9 text 08 A · 保留任务与草稿
+								10 text 可手动操作
+							11 button 收起任务 08 A · 保留任务与草稿
+						12 container
+							13 button 08 B · 保留任务与草稿 可手动操作
+								14 text 08 B · 保留任务与草稿
+								15 text 可手动操作
+							16 button 收起任务 08 B · 保留任务与草稿
+					17 button 新建任务
+					18 button 关于与新版
+					19 button 备份与恢复
+					20 button 模型设置
+					21 button 查看全部任务
+					22 button 退出 helpr
+					23 button 重新打开网页
+					24 text field (settable) Description: 网站地址, Value: http://127.0.0.1:58902/A, Placeholder: 输入网站地址
+					25 button 打开
+					26 container 关闭主窗口仅收起，任务和网页保留；遵循 Mac 休眠设置，休眠期间不保证按时执行。
+						27 text 手动工作区  · 休眠期间不保证按时执行
+			28 HTML content 08版本检查隔离网页, URL: 127.0.0.1:58902/A
+				29 heading 任务网页保持, Value: 1
+					30 text 任务网页保持
+				31 text 这里不提供写入操作，也不调用模型。
+			32 HTML content helpr, URL: helpr://workspace/index.html?surface=chat&taskId=907720f2-0c08-4f2d-837c-d1b2a005f5ba
+				33 container 任务 08 A · 保留任务与草稿 的独立对话
+					34 container
+						35 text 0 08 A · 保留任务与草稿 尚未配置模型
+						36 button 收起对话
+					37 container 对话记录
+						38 text 08 A · 保留任务与草稿
+						39 text 目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。
+					40 button (disabled) 开始执行
+					41 button (disabled) 查看结果
+					42 container
+						43 text 先配置模型，再一起看看这个网页。
+						44 button 配置模型
+					45 container
+						46 text entry area (settable) Description: 给这项任务的要求, Value: A 的未发送文字, Placeholder: 可以先写下问题，配置后再发送
+						47 text 已保存
+						48 button (disabled) 发送
+			49 HTML content helpr, URL: helpr://workspace/index.html?surface=panel
+				50 container
+					51 button Dismiss
+					52 container 关于与新版
+						53 button 关闭弹窗
+						54 container
+							55 heading 关于与新版, Value: 2
+								56 text 关于与新版
+							57 text 运行时自动检查适用新版，发现后提醒。下载与安装由你手动完成。
+							58 heading 当前版本 0.1.0, Value: 3
+								59 text 当前版本  0.1.0
+							60 text macOS  14.8.3  · Apple Silicon · 本机自用
+							61 button 检查新版
+							62 text 下载入口未通过校验
+							63 text 下载位置与可信版本不匹配，不提供可打开的链接。
+							64 text 最近完成： 2026/10/23 16:05:32 上次成功检查： 0.2.0 。这是历史结果，本次未确认可用入口。 启动后后台检查，持续运行每24小时再查。失败不立即循环重试，也可以主动再查。
+							65 disclosure triangle 检查发送什么信息？
+								66 text 检查发送什么信息？
+			67 HTML content helpr, URL: helpr://workspace/index.html?surface=toast
+				68 container
+					69 text 本机输入识别已恢复。任务不会自动续做，需要时请明确继续。
+					70 button 收起提示
+	71 close button
+	72 full screen button Help: this button also has an action to zoom the window, Secondary Actions: zoom the window
+	73 minimize button
+74 menu bar
+	75 helpr
+	76 编辑
+
+The focused UI element is 49 HTML content helpr, URL: helpr://workspace/index.html?surface=panel
