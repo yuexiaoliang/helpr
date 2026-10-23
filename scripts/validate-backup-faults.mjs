@@ -22,7 +22,7 @@ const fakeRoot='/private/tmp/backup-check';const fakeMount=`/private/tmp/helpr-w
 const safe={root:fakeRoot,image:fakeRoot+'/capacity.dmg',mount:fakeMount,actualImage:fakeRoot+'/capacity.dmg',actualMount:fakeMount,volumeBytes:16*1024*1024,volumeDevice:2,hostDevice:1};
 guardCapacity(safe);assert.throws(()=>guardCapacity({...safe,volumeDevice:1}));assert.throws(()=>guardCapacity({...safe,volumeBytes:64*1024*1024}));assert.throws(()=>guardCapacity({...safe,actualImage:'/other/image.dmg'}));assert.throws(()=>parseControl({op:'rpc',nonce:'bad',command:{kind:'create'}}));
 if(process.argv.length===3&&process.argv[2]==='--check'){console.log(JSON.stringify({valid:true,appStarts:0,faults:0,models:0,effects:0,hostVolumeRejected:true,oversizedVolumeRejected:true}));process.exit(0);}
-const args=process.argv.slice(2);const preflight=args.at(-1)==='--preflight';if(preflight)args.pop();const build=Number(args[0]?.match(/^--build=(35|36)$/)?.[1]);assert(args.length===1&&build,'FIXED_BUILD_REQUIRED');
+const args=process.argv.slice(2);const preflight=args.at(-1)==='--preflight';if(preflight)args.pop();const preparationRetry=args.at(-1)==='--preparation-retry';if(preparationRetry)args.pop();const build=Number(args[0]?.match(/^--build=(35|36)$/)?.[1]);assert(args.length===1&&build,'FIXED_BUILD_REQUIRED');
 const sourceRoot=path.join(validationRoot,'backup-07-35'),sourceCold=sourceRoot+'-cold';
 const source=JSON.parse(fs.readFileSync(path.join(sourceCold,'result.json')));
 assert(source.passed&&source.build===35&&source.starts.length===2&&source.models.length===6&&source.effects.length===2&&source.counts.A===1&&source.counts.B===1,'VERIFIED_SOURCE_REQUIRED');
@@ -44,7 +44,8 @@ const readBudget=()=>JSON.parse(fs.readFileSync(budgetFile));const initialBudget
 assert(campaign?.basis.includes('增加')&&campaign.baseline.starts===90&&campaign.baseline.faults===37,'APPROVED_CLOSEOUT_REQUIRED');
 assert(initialBudget.used.starts+2<=initialBudget.limits.starts&&initialBudget.used.faults+5<=initialBudget.limits.faults&&initialBudget.used.cleanups+1<=initialBudget.limits.cleanups,'PRIMARY_BUDGET_REQUIRED');
 assert(campaign.activeMilliseconds<campaign.limits.activeMilliseconds,'CAMPAIGN_TIME_EXHAUSTED');
-const root=path.join(validationRoot,'backup-07-closeout-1');assert(!fs.existsSync(root),'ROUND_ALREADY_EXISTS');
+if(preparationRetry){const prior=JSON.parse(fs.readFileSync(path.join(validationRoot,'backup-07-closeout-1/result.json')));assert(prior.error==='HELPER_FAILED:hdiutil'&&prior.starts.length===0&&prior.faults.length===0&&prior.storage.reclaimed&&prior.remainingHelperProcesses.length===0&&prior.helpers[0].stderr.includes('-format requires'),'DIAGNOSED_PREPARATION_FAILURE_REQUIRED');}
+const root=path.join(validationRoot,preparationRetry?'backup-07-closeout-2':'backup-07-closeout-1');assert(!fs.existsSync(root),'ROUND_ALREADY_EXISTS');
 if(preflight){console.log(JSON.stringify({preflight:true,build,profile:'original',primaryStarts:2,primaryFaults:5,maximumImageMiB:32,newTasks:0,models:0,effects:0,appStarts:0}));process.exit(0);}
 fs.mkdirSync(root,{mode:0o700});
 {const b=readBudget();b.backup07Closeout.runs.push({root,started:Date.now(),candidate:build,commit:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim()});fs.writeFileSync(budgetFile,JSON.stringify(b,null,2)+'\n',{mode:0o600});}

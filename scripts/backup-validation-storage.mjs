@@ -50,7 +50,7 @@ export async function capacityVolume({ root, profileRoot, run, fault, save, emer
     save(state);
   }
   try {
-    await run('/usr/bin/hdiutil', ['create','-size','16m','-fs','HFS+','-volname','helpr-backup-07','-format','UDRW','-nospotlight',image]);
+    await run('/usr/bin/hdiutil', ['create','-size','16m','-fs','HFS+','-volname','helpr-backup-07','-type','UDIF','-nospotlight',image]);
     assert(fs.statSync(image).size <= 32*1024*1024, 'IMAGE_SIZE_BOUND');
     await run('/usr/bin/hdiutil', ['attach',image,'-nobrowse','-noautoopen','-mountpoint',mount,'-plist']);
     await identify();
