@@ -1,0 +1,286 @@
+{
+  "date": "2026-10-23",
+  "status": "passed",
+  "sourceCommit": "a293947bf3e001f6ad45436e345c007241d114a5",
+  "candidate": 35,
+  "appArchiveSHA256": "4be0fc58dde4d8faaf4ef82a5425c7e31edd6c357ddbcfc5ac406f175a4ff561",
+  "certificateSHA256": "5bd4c2c1f28a99910837bb31ba404f3043378c54463bdc8a8bdf04ce75d2f119",
+  "sourceReportSHA256": "d8f1196955cd967ad068eab4fe5f11171c207d2122db47022a9b832ad536f943",
+  "sourceMainColdSHA256": "eaa353922137e2b121904931a14fefa8ccfb0a5613328d85e85383c6bf342b4b",
+  "authorization": "用户对最多4次新增启动、6次故障与1次额外清理预留的明确方案回复“增加”",
+  "spent": {
+    "builds": 0,
+    "installs": 0,
+    "starts": 2,
+    "faults": 5,
+    "emergencyCleanups": 0,
+    "models": 0,
+    "effects": 0,
+    "pageInputs": 0,
+    "newTasks": 0
+  },
+  "cumulative": {
+    "builds": 35,
+    "installs": 8,
+    "starts": 92,
+    "faults": 42,
+    "cleanups": 17
+  },
+  "limits": {
+    "builds": 36,
+    "installs": 10,
+    "starts": 94,
+    "faults": 43,
+    "cleanups": 19
+  },
+  "activeMillisecondsIncludingFailedPreparation": 460994,
+  "rounds": [
+    {
+      "kind": "faults",
+      "started": 1792735536208,
+      "deadline": 1792736736208,
+      "ended": 1792735934637
+    },
+    {
+      "kind": "cold",
+      "started": 1792735934637,
+      "deadline": 1792737134637,
+      "ended": 1792735996533
+    }
+  ],
+  "starts": [
+    {
+      "start": 91,
+      "round": "faults",
+      "pid": 32803,
+      "pids": [
+        32803,
+        32811,
+        32813,
+        32815,
+        32816,
+        32817,
+        32828,
+        32829,
+        32832,
+        32833,
+        32834,
+        32840,
+        32841,
+        32842,
+        32843,
+        34268
+      ],
+      "groups": [
+        32803,
+        32815,
+        32817
+      ],
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "remaining": []
+    },
+    {
+      "start": 92,
+      "round": "cold",
+      "pid": 34591,
+      "pids": [
+        34591,
+        34598,
+        34599,
+        34601,
+        34602,
+        34603,
+        34621,
+        34622,
+        34625,
+        34626,
+        34627,
+        34631,
+        34632,
+        34633,
+        34634
+      ],
+      "groups": [
+        34591,
+        34601,
+        34603
+      ],
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "remaining": []
+    }
+  ],
+  "faults": [
+    {
+      "kind": "isolated-storage-full",
+      "at": 1792735537795,
+      "global": 38,
+      "mount": "/private/tmp/helpr-workspace-validation-501/backup07-volume-itry6x",
+      "device": "/dev/disk9s1"
+    },
+    {
+      "kind": "receipt-commit-shared-reader",
+      "at": 1792735679797,
+      "global": 39
+    },
+    {
+      "kind": "restore-current-copy-directory-readonly",
+      "at": 1792735787300,
+      "global": 40
+    },
+    {
+      "kind": "restore-copy-record-stop-armed",
+      "at": 1792735829941,
+      "global": 41,
+      "pid": 32816,
+      "parent": 32803,
+      "group": 32803,
+      "signal": "SIGSTOP"
+    },
+    {
+      "kind": "restore-copy-writing-record-killed",
+      "at": 1792735836447,
+      "global": 42,
+      "pid": 32816,
+      "parent": 32803,
+      "group": 32803,
+      "signal": "SIGKILL"
+    }
+  ],
+  "checks": [
+    "full-volume-keeps-records-and-no-success",
+    "native-old-ticket-denied-before-stop-save",
+    "archive-published-before-receipt-and-stop-immediate",
+    "new-goal-retained",
+    "new-stop-retained",
+    "old-archive-and-original-safety-unchanged",
+    "retry-original-archive-without-new-file",
+    "failed-current-copy-does-not-restore",
+    "restore-cut-before-switch-commit",
+    "restore-reconciled-paused-and-safety-valid",
+    "one-safety-for-original-restore",
+    "fault-cold-retains-goals-stops-and-review",
+    "no-new-model-effect-or-task"
+  ],
+  "stages": [
+    "space",
+    "receipt",
+    "readonly",
+    "restore",
+    "cold"
+  ],
+  "space": {
+    "code": "BACKUP_STORAGE_FULL",
+    "volumeBytes": 16736256,
+    "written": 16347136,
+    "remainingBytes": 0,
+    "detached": true,
+    "reclaimed": true,
+    "screen": "closeout/space.png"
+  },
+  "receipt": {
+    "requestId": "18a15b7e-ba91-4199-b1a2-dcad574a20d3",
+    "archiveSHA256": "c55ac7e01de5a05fa1c962737ab195d63c1e20e15e44ae0a93784179e5bb12a4",
+    "sameIdentityAndFile": true,
+    "canonicalFiles": 1,
+    "readerEvents": [
+      {
+        "stage": "reader-held",
+        "at": 1792735679893.749
+      },
+      {
+        "stage": "writer-waiting",
+        "at": 1792735684683.393,
+        "independentReaderBusy": true
+      },
+      {
+        "stage": "reader-released",
+        "at": 1792735699005.638
+      }
+    ],
+    "readerExit": {
+      "code": 0,
+      "signal": null
+    }
+  },
+  "nativeStop": {
+    "beforeSave": {
+      "blocked": true,
+      "stopSaved": false,
+      "message": "已阻断新操作，正在保存停止记录。"
+    },
+    "previousIntent": "automatic",
+    "writerWaiting": true,
+    "oldEpoch": 1,
+    "current": {
+      "epoch": 2,
+      "available": true,
+      "blocked": true
+    },
+    "sent": 0,
+    "scope": "实际输入gate拒绝旧epoch，回调计数0；无活跃AI竞争请求，不扩大为新增完整并发能力验收"
+  },
+  "preservationFailure": {
+    "code": "BACKUP_STORAGE_UNAVAILABLE",
+    "currentGoalAndStopKept": true,
+    "restoreReview": "required"
+  },
+  "restore": {
+    "requestId": "d1f6b5bf-c2a1-4ea2-9ab9-8e166c62ff36",
+    "selectionToken": "d82b7300-4c79-4f2a-95de-42ba69b1d174",
+    "pendingPhase": "working",
+    "recordReconnected": true,
+    "beforeVersion": 9,
+    "reopenedVersion": 10,
+    "beforeSwitchCommit": true,
+    "sameIdentityRetry": true,
+    "safetyFile": "before-restore-f03ae069d473ede4f3ac1f4b0700ec2fabac3bcc96177e824744f18ef3045ed9.helpr-backup",
+    "safetySHA256": "48849ca7ba13bd9d9f2e98b623bab14e79a56626c0b838eb1e60231e9a1afcc2",
+    "canonicalSafetyFilesForOperation": 1,
+    "newGoalAndStopKept": true,
+    "allRestoreReview": "required",
+    "coldFactsUnchanged": true
+  },
+  "cleanup": {
+    "remainingOwnedProcesses": [],
+    "attachedOwnImages": 0,
+    "imageExists": false,
+    "mountExists": false
+  },
+  "cleanupReceiptSHA256": "0801e4777aa90cf78bb03ac96b16e0183ced132c9b84e664ebf456f3e5ccb811",
+  "retainedPreparationFailure": {
+    "error": "HELPER_FAILED:hdiutil",
+    "sourceReportSHA256": "ca1b23e25d764c4d08de74f771f13ac185f772e4a3fd4e39005e297989ed9527",
+    "starts": 0,
+    "faults": 0,
+    "remainingHelpers": [],
+    "storageReclaimed": true,
+    "cause": "空白映像误用仅支持srcfolder/srcdevice的-format；按本机帮助改为-type UDIF后有限重试一次"
+  },
+  "sourceChecks": {
+    "command": "pnpm check",
+    "exitCode": 0,
+    "formal": 94,
+    "legacy": 25,
+    "syntaxFiles": 202,
+    "typecheck": true,
+    "lint": true,
+    "format": true
+  },
+  "boundary": "复用原两项虚构任务、原本机网页效果A1/B1和旧备份；新接收端拒绝全部POST。CUA操作实际Electron及原生文件选择，公开RPC仅取证和生命周期。无真实模型、凭据、远程写入或安装。",
+  "screenshots": {
+    "space.png": "2aee1768d6f4b09137fd85aa19cb0f9f20ea42f7d8c674a08d41a12f05efe61a",
+    "receipt-stop.png": "7c77a2ed798f440f74746282ce4e87ff4a78ce6818d26cdc0064cbc0a17dd2ea",
+    "receipt.png": "f141521ced508960df4c722b92595d4440d7b51fff8fb35499e28faf8ffb6480",
+    "readonly.png": "d7f4e16ceda1d31a8108fa64110265889b218f21c330bda14df5ba9141cf74d3",
+    "interrupted.png": "dfa68c485aca0a35966bd6d3d5cbc311b7f223d432df1eb2c34fe11f892b32c2",
+    "restored.png": "3a8f1715b7fce805f617e0777b5e710bb239b9afe8bf4df77c639d867ffe863f",
+    "cold.png": "0c8b8620ee44dedef1d7d20a6f7816f8bc32097be4de17bb632909fe9e166999"
+  },
+  "rawEvidence": ".local/workspace-validation/backup-07-closeout-1/ and backup-07-closeout-2/"
+}

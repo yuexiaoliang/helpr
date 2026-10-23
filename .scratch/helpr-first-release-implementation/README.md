@@ -6,7 +6,7 @@
 
 23 项均遵循[原型确认与实现](../../docs/agents/issue-tracker.md#原型确认与实现)。规格与拆分的批准保留其原意；各功能取得对应原型确认后，才进入正式实现。
 
-原型与研究来源的当前入口、固定提交和恢复方式见[分支归档索引](../../docs/maintenance/branch-archive.md)。01–06原型与已结束的研究来源以远端归档标签保存；2026-10-23新增07备份恢复原型的独立活动工作副本，已获确认并据此实现，异常组合验收仍待补齐。不将模拟或历史调研并入正式产品代码。
+原型与研究来源的当前入口、固定提交和恢复方式见[分支归档索引](../../docs/maintenance/branch-archive.md)。01–06原型与已结束的研究来源以远端归档标签保存；2026-10-23新增07备份恢复原型的独立活动工作副本，已获确认并据此实现，现有任务资料范围的正式验收已完成。不将模拟或历史调研并入正式产品代码。
 
 原规划事项 01–26 仍保存在首版规划目录，记录已解决的设计问题；本目录重新从 01 编号，记录待实现的产品行为。两套编号不可混用，父规格与原规划事项保持原状。
 
@@ -22,7 +22,7 @@
 | [04 直接接管网页与页面变化后的归属](issues/04-native-takeover-and-page-ownership.md)（已验收） | [03](issues/03-parallel-execution-stop-and-continue.md) |
 | [05 退出、意外退出与冷重开核对](issues/05-quit-crash-and-cold-recovery.md)（已验收） | [04](issues/04-native-takeover-and-page-ownership.md) |
 | [06 收起运行、锁屏与休眠恢复](issues/06-hide-lock-sleep-and-resume.md)（已验收） | [05](issues/05-quit-crash-and-cold-recovery.md) |
-| [07 本机备份与旧备份恢复](issues/07-local-backup-and-restore.md) | [05](issues/05-quit-crash-and-cold-recovery.md) |
+| [07 本机备份与旧备份恢复](issues/07-local-backup-and-restore.md)（已验收） | [05](issues/05-quit-crash-and-cold-recovery.md) |
 | [08 自动检查新版与可信下载提醒](issues/08-version-check-and-download-notice.md) | [02](issues/02-model-settings-and-page-understanding.md) |
 | [09 手动换版保留资料、原密钥和有效登录](issues/09-manual-upgrade-and-credential-continuity.md) | [06](issues/06-hide-lock-sleep-and-resume.md)、[07](issues/07-local-backup-and-restore.md)、[08](issues/08-version-check-and-download-notice.md) |
 | [10 参与请求、确认与全局可操作提醒](issues/10-participation-and-actionable-notifications.md) | [03](issues/03-parallel-execution-stop-and-continue.md) |
@@ -144,3 +144,5 @@
 2026-10-23，用户在下一步建议后要求制作 [07 本机备份与旧备份恢复原型](issues/07-local-backup-and-restore.md#原型确认)。`backup-v1`（`9bca802`）已完成 12 场景内置浏览器走查、位置输入定向修正及桌面／窄窗口检查，独立保存在 `codex/backup-prototype`，入口与覆盖范围已登记。当前待用户体验并明确确认，未开始 07 正式实现，不把原型模拟计作产品备份或恢复验收；05 前置完成结论保持。
 
 2026-10-23，用户确认 `backup-v1` 后，07 已完成正式实现、两轴修正和 94 正式／25 旧回归。签名候选 35 的原生备份／恢复、较新停止和目标保护、只读核对、仅 A 继续与冷重开通过，A/B 各一真实本机网页效果，6 本机受控模型；89 的正常退出验证器误判保留，限定冷补 90 通过，所有自有 PID／组清空。累计启动／故障上限已到；慢保存、空间不足及中断的实包界面组合仍保留，07 为 6/9 条，09／22 依赖不解除。见[07 检查与收尾提案](../../docs/testing/backup-07-plan.md)。
+
+2026-10-23，用户确认异常收尾增量后，07 已补齐空间不足、慢保存停止、当前副本失败、记录／恢复中断、原身份核对和冷启动，9/9 验收关闭。候选 35 仅新增启动 91／92、5 次故障，0 新模型／网页写入／任务；自有进程、挂载卷和映像已清空，初次映像准备失败保留。最终 94 正式／25 旧回归、两轴审阅及证据范围见[07 最终验收](../../docs/testing/evidence/backup-07/FINAL-ACCEPTANCE.md)。09／22 对 07 的前置满足，其余前置和原型流程保持。

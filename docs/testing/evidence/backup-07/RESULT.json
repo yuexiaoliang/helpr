@@ -1,6 +1,6 @@
 {
   "date": "2026-10-23",
-  "status": "implementation-and-main-path-passed; packaged-fault-combinations-pending",
+  "status": "accepted-current-supported-task-data",
   "base": "27be3b7d99a19fcae52e9e8484604fa1697b76cb",
   "productionCommit": "9435af5",
   "prototype": "backup-v1 / 9bca8026274eb0358a84a88397a3068cb053c82e",
@@ -156,16 +156,29 @@
       "cleanups": 18
     }
   },
-  "pending": [
-    "packaged slow backup with native stop and pending feedback",
-    "packaged storage full / preservation failure feedback",
-    "packaged record interruption and restore interruption with original-operation reconciliation"
-  ],
+  "pending": [],
   "rawEvidence": ".local/workspace-validation/backup-07-35/ and backup-07-35-cold/",
   "screenshots": {
     "completed.png": "7e34937f3e458b13815eb91ae4191046783369f57e229b58dd3a3022553302ba",
     "cold.png": "109efd6dd4904cb164a93c8d3d924eecc7eab8b815c41d00836cb9fe377e8af1",
     "reviewed.png": "323446758ad6691fe69cc7755e662737a1f09c897f1d6194443d27f8c5d99d80",
     "native-file.png": "b2310bec58596f6670ab3ca83d89a9cb8d4b244ab7c285e68f6d0c44b9e66ca3"
+  },
+  "acceptance": {
+    "passed": 9,
+    "total": 9,
+    "report": "FINAL-ACCEPTANCE.md",
+    "closeout": "CLOSEOUT.json"
+  },
+  "closeout": {
+    "report": "CLOSEOUT.json",
+    "sha256": "94456f3b8a27e39d0225313d14b30e43af7fa6a149adddec394634532b0bc8bd",
+    "starts": [
+      91,
+      92
+    ],
+    "faults": 5,
+    "newModels": 0,
+    "newEffects": 0
   }
 }
