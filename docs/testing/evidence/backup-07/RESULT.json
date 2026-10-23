@@ -1,0 +1,171 @@
+{
+  "date": "2026-10-23",
+  "status": "implementation-and-main-path-passed; packaged-fault-combinations-pending",
+  "base": "27be3b7d99a19fcae52e9e8484604fa1697b76cb",
+  "productionCommit": "9435af5",
+  "prototype": "backup-v1 / 9bca8026274eb0358a84a88397a3068cb053c82e",
+  "candidate": 35,
+  "appArchiveSHA256": "4be0fc58dde4d8faaf4ef82a5425c7e31edd6c357ddbcfc5ac406f175a4ff561",
+  "certificateSHA256": "5bd4c2c1f28a99910837bb31ba404f3043378c54463bdc8a8bdf04ce75d2f119",
+  "sourceChecks": {
+    "formal": 94,
+    "legacy": 25,
+    "typecheck": true,
+    "lint": true,
+    "format": true,
+    "processBackupInterruptions": "real Node records + temporary SQLite/files; actual IPC drop counted; read-only SHARED lock holds pre-commit, disconnected restore pending and unchanged version confirmed; not Electron fault acceptance",
+    "unknownDispatchedAction": "restored to fresh records; unconfirmed cannot continue; confirmed complete cannot reissue",
+    "verificationLogSHA256": "82c829fbb161b297fc1be71956a3d3c1c8cd11c85249b54c6793f09fc4115d4c"
+  },
+  "review": {
+    "standards": "P1 same restore pending BUSY released barrier; fixed and regression passed",
+    "spec": "P2 working UI could create new request identity; fixed and regression passed",
+    "validator": "signal cleanup, concurrent reservation, stage ordering and normal-quit races corrected"
+  },
+  "packaged": {
+    "checks": [
+      "two-tasks-wait-without-effects",
+      "selected-logical-backup-and-exclusions",
+      "new-stop-and-goal-preserved",
+      "safety-preserves-current-goal",
+      "restore-paused-all-and-no-repeated-result",
+      "readonly-review-does-not-write",
+      "only-selected-A-continues-once",
+      "cold-retains-current-intent-goal-and-history",
+      "cold-no-model-or-effect",
+      "owned-processes-cleared-18462"
+    ],
+    "stages": [
+      "backup",
+      "restored",
+      "reviewed",
+      "completed"
+    ],
+    "localModelResponses": 6,
+    "modelsByPhase": {
+      "initial": 2,
+      "readonlyReview": 2,
+      "explicitContinueA": 2,
+      "cold": 0
+    },
+    "effects": {
+      "A": 1,
+      "B": 1
+    },
+    "pageInputReceipts": 2,
+    "realModels": 0,
+    "remoteWrites": 0,
+    "installations": 0,
+    "injectedFaults": 0,
+    "starts": [
+      {
+        "start": 89,
+        "pid": 15418,
+        "pids": [
+          15418,
+          15449,
+          15450,
+          15452,
+          15453,
+          15454,
+          15462,
+          15463,
+          15465,
+          15466,
+          15467,
+          15529,
+          15530,
+          15531,
+          15532,
+          17319
+        ],
+        "groups": [
+          15418,
+          15452,
+          15454
+        ],
+        "exit": {
+          "code": 0,
+          "signal": null
+        }
+      },
+      {
+        "start": 90,
+        "pid": 18462,
+        "pids": [
+          18462,
+          18468,
+          18469,
+          18470,
+          18471,
+          18472,
+          18481,
+          18482,
+          18484,
+          18485,
+          18486,
+          18490,
+          18491,
+          18492,
+          18493
+        ],
+        "groups": [
+          18462,
+          18470,
+          18472
+        ],
+        "exit": {
+          "code": 0,
+          "signal": null
+        }
+      }
+    ],
+    "independentOSRemaining": [],
+    "started": "2026-10-23T03:45:17.327Z",
+    "ended": "2026-10-23T03:57:40.224Z",
+    "fixtureBoundary": "real packaged web actions against local fictional pages; controlled next-step responses; no assertion about new website/model understanding or credential continuity"
+  },
+  "retainedFailure": {
+    "start": 89,
+    "error": "APPLICATION_EXITING",
+    "cause": "validator treated expected APPLICATION_EXITING during UI normal quit as failure; product exited code 0",
+    "originalReportSHA256": "6d2e10c97a3bfb6dc6aee4a79d76bb35b2d103056b9886fac7fe972fa9a4d9c1",
+    "followup": "start 90 only; original profile, port and counters, original 20 minute deadline; fixture receiver restarted with prior effect counts; no new model/effect",
+    "cleanupBudgetSpent": 1
+  },
+  "budget": {
+    "before": {
+      "builds": 34,
+      "installs": 8,
+      "starts": 88,
+      "faults": 37,
+      "cleanups": 16
+    },
+    "after": {
+      "builds": 35,
+      "installs": 8,
+      "starts": 90,
+      "faults": 37,
+      "cleanups": 17
+    },
+    "limits": {
+      "builds": 36,
+      "installs": 10,
+      "starts": 90,
+      "faults": 37,
+      "cleanups": 18
+    }
+  },
+  "pending": [
+    "packaged slow backup with native stop and pending feedback",
+    "packaged storage full / preservation failure feedback",
+    "packaged record interruption and restore interruption with original-operation reconciliation"
+  ],
+  "rawEvidence": ".local/workspace-validation/backup-07-35/ and backup-07-35-cold/",
+  "screenshots": {
+    "completed.png": "7e34937f3e458b13815eb91ae4191046783369f57e229b58dd3a3022553302ba",
+    "cold.png": "109efd6dd4904cb164a93c8d3d924eecc7eab8b815c41d00836cb9fe377e8af1",
+    "reviewed.png": "323446758ad6691fe69cc7755e662737a1f09c897f1d6194443d27f8c5d99d80",
+    "native-file.png": "b2310bec58596f6670ab3ca83d89a9cb8d4b244ab7c285e68f6d0c44b9e66ca3"
+  }
+}

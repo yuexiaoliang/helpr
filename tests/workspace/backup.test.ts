@@ -339,6 +339,132 @@ test('恢复后只读核对不派发动作；较新的停止使迟到核对失�
   expect(actions).toBe(0);
 });
 
+test('新环境恢复已派发但未知的网页动作，只读核对未确认时不能继续或重发', async () => {
+  const { folder, value: r } = records();
+  const taskId = r.execute({
+    kind: 'create',
+    requestId: 'A',
+    goal: '核对 https://example.com/A',
+  }).taskId;
+  r.execute({
+    kind: 'page',
+    requestId: 'page',
+    taskId,
+    url: 'https://example.com/A',
+    phase: 'manual',
+  });
+  r.execution({ kind: 'intent', requestId: 'start', taskId, intent: 'start' });
+  r.execution({ kind: 'claim', taskId, runId: 'original' });
+  const source = {
+    url: 'https://example.com/A',
+    title: 'A',
+    fingerprint: 'before',
+    generation: 1,
+    observedAt: 1,
+    truncated: false,
+    text: '写入备注',
+  };
+  r.execution({
+    kind: 'reserve',
+    taskId,
+    runId: 'original',
+    id: 'pending-action',
+    summary: '写入备注',
+    action: { kind: 'click', target: { role: 'button', name: '写入备注' } },
+    source,
+    binding: { targetId: 'A', generation: 1 },
+  });
+  expect(
+    r.execution({
+      kind: 'dispatch',
+      taskId,
+      runId: 'original',
+      id: 'pending-action',
+    }),
+  ).toMatchObject({ permitted: true });
+  const saved = await r.backup({
+    kind: 'create',
+    requestId: 'pending',
+    file: path.join(folder, 'pending.helpr-backup'),
+  });
+  const fresh = records().value;
+  await fresh.backup({
+    kind: 'restore',
+    requestId: 'import',
+    file: saved.archive.file,
+    checksum: saved.archive.checksum,
+  });
+  const current = () => fresh.snapshot().tasks[0]!.execution!;
+  expect(current()).toMatchObject({
+    restoreReview: 'required',
+    actions: [
+      { id: 'pending-action', status: 'unknown', dispatchState: 'possible' },
+    ],
+  });
+  fresh.execution({
+    kind: 'backup-review-result',
+    taskId,
+    expectedVersion: current().version,
+    source,
+    step: {
+      decision: 'act',
+      summary: '页面没有可确认结果',
+      evidence: ['写入备注'],
+      previous: {
+        id: 'pending-action',
+        status: 'unknown',
+        evidence: ['写入备注'],
+      },
+      action: { kind: 'click', target: { role: 'button', name: '写入备注' } },
+    },
+  });
+  expect(current().restoreReview).toBe('unknown');
+  expect(() =>
+    fresh.execution({
+      kind: 'intent',
+      requestId: 'cannot-continue',
+      taskId,
+      intent: 'continue',
+    }),
+  ).toThrow('BACKUP_REVIEW_REQUIRED');
+  expect(
+    fresh.execution({ kind: 'claim', taskId, runId: 'new' }),
+  ).toMatchObject({ claimed: false });
+  const completed = { ...source, text: '备注已完成', fingerprint: 'after' };
+  fresh.execution({
+    kind: 'backup-review-result',
+    taskId,
+    expectedVersion: current().version,
+    source: completed,
+    step: {
+      decision: 'complete',
+      summary: '已有结果已确认',
+      evidence: ['备注已完成'],
+      previous: {
+        id: 'pending-action',
+        status: 'confirmed',
+        evidence: ['备注已完成'],
+      },
+      action: null,
+    },
+  });
+  expect(current()).toMatchObject({
+    restoreReview: 'complete',
+    actions: [{ id: 'pending-action', status: 'confirmed' }],
+  });
+  expect(
+    fresh.execution({
+      kind: 'intent',
+      requestId: 'already-done',
+      taskId,
+      intent: 'continue',
+    }),
+  ).toMatchObject({ created: false, current: false });
+  expect(
+    fresh.execution({ kind: 'claim', taskId, runId: 'repeat' }),
+  ).toMatchObject({ claimed: false });
+});
+
 test('应用公开备份入口把丢失回执保留为待核对，跨界面重试仍核对原文件', async () => {
   const { folder, value: r } = records();
   r.execute({ kind: 'create', requestId: 'A', goal: '当前任务' });

@@ -1,6 +1,14 @@
 import { afterEach, expect, test } from 'vitest';
 import { fork, spawn, type ChildProcess } from 'node:child_process';
-import { mkdtempSync, rmSync, chmodSync } from 'node:fs';
+import {
+  mkdtempSync,
+  rmSync,
+  chmodSync,
+  readFileSync,
+  mkdirSync,
+  watch,
+  readdirSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { ProcessClient } from '../../app/shared/rpc';
@@ -17,7 +25,10 @@ afterEach(() => {
   });
   children.length = folders.length = 0;
 });
-async function open(folder: string) {
+async function open(
+  folder: string,
+  dropResponse?: (input: unknown) => boolean,
+) {
   const child = fork(
     'dist/main/records.cjs',
     [folder, path.resolve('app/records/migrations')],
@@ -28,7 +39,10 @@ async function open(folder: string) {
     send: (message) => {
       child.send(message as object);
     },
-    listen: (listener) => child.on('message', listener),
+    listen: (listener) =>
+      child.on('message', (input) => {
+        if (!dropResponse?.(input)) listener(input);
+      }),
     onExit: (listener) => child.once('exit', listener),
   });
   await new Promise<void>((resolve, reject) => {
@@ -39,6 +53,13 @@ async function open(folder: string) {
   });
   return {
     client,
+    crash: async () => {
+      const exited = new Promise<void>((resolve) =>
+        child.once('exit', () => resolve()),
+      );
+      child.kill('SIGKILL');
+      await exited;
+    },
     close: async () => {
       await client.request({ kind: 'close' });
       await new Promise<void>((resolve) => {
@@ -177,6 +198,198 @@ test('独立记录进程通过备份入口接受并发停止，恢复与冷重�
   ).toMatchObject({ claimed: false });
   await records.close();
 });
+test('实际备份回执在 IPC 边界丢失，记录进程终止后仍按原身份返回原文件', async () => {
+  const dir = folder();
+  let dropped = 0;
+  let records = await open(dir, (input) => {
+    const matched = Boolean(
+      input &&
+      typeof input === 'object' &&
+      'value' in input &&
+      input.value &&
+      typeof input.value === 'object' &&
+      'archive' in input.value,
+    );
+    if (matched) dropped++;
+    return matched;
+  });
+  const { taskId } = (await records.client.request({
+    kind: 'create',
+    requestId: 'A',
+    goal: '回执丢失前的任务',
+  })) as { taskId: string };
+  const command = {
+    kind: 'backup',
+    command: {
+      kind: 'create',
+      requestId: 'original-backup',
+      file: path.join(dir, 'original.helpr-backup'),
+    },
+  };
+  await expect(records.client.request(command, 1000)).rejects.toThrow(
+    'REQUEST_TIMEOUT',
+  );
+  expect(dropped).toBe(1);
+  const original = readFileSync(command.command.file, 'utf8');
+  await records.client.request({
+    kind: 'draft',
+    requestId: 'later',
+    taskId,
+    text: '备份后的草稿',
+  });
+  await records.crash();
+  records = await open(dir);
+  expect(await records.client.request(command)).toMatchObject({
+    archive: { id: 'original-backup', tasks: 1 },
+  });
+  expect(readFileSync(command.command.file, 'utf8')).toBe(original);
+  expect(original).not.toContain('备份后的草稿');
+  expect(
+    snapshotSchema.parse(await records.client.request({ kind: 'snapshot' }))
+      .tasks[0]?.draft,
+  ).toBe('备份后的草稿');
+  await records.close();
+});
+
+test('恢复保留副本写入阶段终止记录进程，重开核对仍保留新停止和原恢复身份', async () => {
+  const dir = mkdtempSync(validationDirectory() + '/backup-interrupt-');
+  folders.push(dir);
+  let records = await open(dir);
+  const { taskId } = (await records.client.request({
+    kind: 'create',
+    requestId: 'A',
+    goal: '原目标 https://example.com/A',
+  })) as { taskId: string };
+  const execution = (command: unknown) =>
+    records.client.request({ kind: 'execution', command });
+  await execution({
+    kind: 'intent',
+    requestId: 'start',
+    taskId,
+    intent: 'start',
+  });
+  const file = path.join(dir, 'old.helpr-backup');
+  const saved = (await records.client.request({
+    kind: 'backup',
+    command: { kind: 'create', requestId: 'old', file },
+  })) as { archive: { checksum: string } };
+  await execution({
+    kind: 'intent',
+    requestId: 'stop',
+    taskId,
+    intent: 'stop',
+  });
+  await execution({
+    kind: 'intent',
+    requestId: 'revise',
+    taskId,
+    intent: 'revise',
+    text: '中断后仍保留的新目标',
+  });
+  await execution({ kind: 'backup-pause', taskId });
+  const originalVersion = snapshotSchema.parse(
+    await records.client.request({ kind: 'snapshot' }),
+  ).tasks[0]!.execution!.version;
+  // 只读 SHARED 锁使安全副本回执无法提交；不会改产品资料，也不让切换抢先完成。
+  const reader = spawn(
+    'python3',
+    ['scripts/takeover-storage-reader.py', path.join(dir, 'workspace.sqlite')],
+    { stdio: ['pipe', 'pipe', 'pipe'] },
+  );
+  children.push(reader);
+  const readerExited = new Promise<void>((resolve) =>
+    reader.once('exit', () => resolve()),
+  );
+  await new Promise<void>((resolve, reject) => {
+    const timer = setTimeout(() => reject(Error('READER_NOT_READY')), 1500);
+    let output = '';
+    reader.stdout.on('data', (chunk) => {
+      output += String(chunk);
+      if (output.includes('reader-held')) {
+        clearTimeout(timer);
+        resolve();
+      }
+    });
+    reader.once('exit', () => {
+      clearTimeout(timer);
+      reject(Error('READER_EXITED'));
+    });
+  });
+  const directory = path.join(dir, 'backups');
+  mkdirSync(directory);
+  let crash: Promise<void> | undefined;
+  let observed = false;
+  const watcher = watch(directory);
+  const reached = new Promise<void>((resolve, reject) => {
+    const timer = setTimeout(
+      () => reject(Error('BACKUP_WRITE_NOT_OBSERVED')),
+      2000,
+    );
+    watcher.on('change', (_kind, name) => {
+      if (!observed && name?.toString().endsWith('.partial')) {
+        observed = true;
+        clearTimeout(timer);
+        crash = records.crash();
+        resolve();
+      }
+    });
+  });
+  const command = {
+    kind: 'backup',
+    command: {
+      kind: 'restore',
+      requestId: 'same-restore',
+      file,
+      checksum: saved.archive.checksum,
+    },
+  };
+  const pending = records.client.request(command).then(
+    () => 'received',
+    (error: unknown) =>
+      error instanceof Error ? error.message : String(error),
+  );
+  try {
+    await reached;
+    await crash;
+    expect(await pending).toBe('PROCESS_DISCONNECTED');
+  } finally {
+    watcher.close();
+    reader.stdin.end('release\n');
+    await readerExited;
+  }
+  records = await open(dir);
+  const before = snapshotSchema.parse(
+    await records.client.request({ kind: 'snapshot' }),
+  );
+  expect(before.tasks).toHaveLength(1);
+  expect(before.tasks[0]?.execution?.version).toBe(originalVersion);
+  expect(before.tasks[0]).toMatchObject({
+    goal: '中断后仍保留的新目标',
+    execution: { intent: 'stopped', restoreReview: 'required' },
+  });
+  const result = (await records.client.request(command)) as {
+    state: unknown;
+    safety: { file: string };
+  };
+  const restored = snapshotSchema.parse(result.state);
+  expect(restored.tasks[0]).toMatchObject({
+    goal: '中断后仍保留的新目标',
+    execution: { intent: 'stopped', restoreReview: 'required' },
+  });
+  expect(readFileSync(result.safety.file, 'utf8')).toContain(
+    '中断后仍保留的新目标',
+  );
+  const again = (await records.client.request(command)) as { state: unknown };
+  expect(snapshotSchema.parse(again.state).revision).toBe(restored.revision);
+  expect(
+    readdirSync(directory).filter((name) => name.endsWith('.helpr-backup')),
+  ).toHaveLength(1);
+  expect(
+    await execution({ kind: 'claim', taskId, runId: 'stale' }),
+  ).toMatchObject({ claimed: false });
+  await records.close();
+});
+
 test('危险地址、旧版本与实际保存失败均保留已有资料，恢复保存后可重试', async () => {
   const dir = folder();
   const records = await open(dir);
