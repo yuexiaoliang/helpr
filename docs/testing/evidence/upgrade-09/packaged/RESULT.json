@@ -1,0 +1,472 @@
+{
+  "date": "2026-10-27",
+  "scope": "early actual-package validation with local website and model-list server; not full issue09 acceptance",
+  "passed": true,
+  "productLogicCommit": "852e7c3",
+  "candidate": {
+    "build": 37,
+    "version": "0.2.0",
+    "dataFormat": 7,
+    "archive": "9a096bbc23f2e5c7f70825a39dec98bdf9b03ff4fb42a732fa544eb9374a4b71",
+    "certificateSha256": "5bd4c2c1f28a99910837bb31ba404f3043378c54463bdc8a8bdf04ce75d2f119",
+    "signedImages": 54,
+    "hostAndFusesVerified": true
+  },
+  "oldCandidate": {
+    "build": 36,
+    "version": "0.1.0",
+    "dataFormat": 6
+  },
+  "timeline": {
+    "originalStarted": 1793074165262,
+    "originalDeadline": 1793079565262,
+    "extension": {
+      "approved": true,
+      "approvedAt": 1793079950541,
+      "originalDeadline": 1793079565262,
+      "deadline": 1793083550541,
+      "basis": "用户对明确的一次60分钟续验时限回复“批准延长 60 分钟”；其它额度和原用量不变"
+    },
+    "firstSuccessfulStart": 1793079971219,
+    "ended": 1793081115775,
+    "successfulStagesMinutes": 19.07593333333333
+  },
+  "starts": [
+    {
+      "start": 97,
+      "build": 36,
+      "at": 1793074286724,
+      "pids": [
+        20612,
+        20619,
+        20620,
+        20621,
+        20622,
+        20623
+      ],
+      "groups": [
+        20612,
+        20621,
+        20623
+      ],
+      "ready": false,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "remaining": [],
+      "preparation": [
+        {
+          "attempt": 1,
+          "error": "RECORDS_UNAVAILABLE",
+          "at": 1793074291109
+        },
+        {
+          "attempt": 2,
+          "error": "REQUEST_TIMEOUT",
+          "at": 1793074301213
+        }
+      ],
+      "failure": "REQUEST_TIMEOUT"
+    },
+    {
+      "start": 98,
+      "build": 36,
+      "at": 1793079971219,
+      "pids": [
+        31250,
+        31253,
+        31254,
+        31255,
+        31256,
+        31257,
+        31263,
+        31264,
+        31265,
+        31266,
+        31267,
+        31448,
+        31472,
+        31474,
+        31475
+      ],
+      "groups": [
+        31250,
+        31255,
+        31257
+      ],
+      "ready": true,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "remaining": [],
+      "preparation": [
+        {
+          "attempt": 1,
+          "method": "show",
+          "error": "RECORDS_UNAVAILABLE",
+          "at": 1793079972683
+        }
+      ],
+      "failure": null
+    },
+    {
+      "start": 99,
+      "build": 37,
+      "at": 1793080344104,
+      "pids": [
+        34177,
+        34199,
+        34200,
+        34201,
+        34202,
+        34203,
+        34209,
+        34210,
+        34211,
+        34212,
+        34213,
+        34225,
+        34293,
+        34294,
+        34295
+      ],
+      "groups": [
+        34177,
+        34201,
+        34203
+      ],
+      "ready": true,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "remaining": [],
+      "preparation": [
+        {
+          "attempt": 1,
+          "method": "show",
+          "error": "RECORDS_UNAVAILABLE",
+          "at": 1793080348329
+        }
+      ],
+      "failure": null
+    },
+    {
+      "start": 100,
+      "build": 37,
+      "at": 1793080954392,
+      "pids": [
+        37648,
+        37650,
+        37651,
+        37652,
+        37653,
+        37654,
+        37660,
+        37661,
+        37662,
+        37663,
+        37664,
+        37938,
+        37944,
+        37945,
+        37946
+      ],
+      "groups": [
+        37648,
+        37652,
+        37653
+      ],
+      "ready": true,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "remaining": [],
+      "preparation": [
+        {
+          "attempt": 1,
+          "method": "show",
+          "error": "RECORDS_UNAVAILABLE",
+          "at": 1793080955311
+        }
+      ],
+      "failure": null
+    }
+  ],
+  "installs": [
+    {
+      "number": 9,
+      "build": 36
+    },
+    {
+      "number": 10,
+      "build": 37
+    }
+  ],
+  "credential": {
+    "configurationVersion": 1,
+    "saves": 1,
+    "realSafeStorage": true,
+    "fixtureProtectionEnabled": false,
+    "independentRequests": [
+      {
+        "at": 1793080101024,
+        "start": 98,
+        "method": "GET",
+        "path": "/v1/models",
+        "originalKeyMatched": true
+      },
+      {
+        "at": 1793080450711,
+        "start": 99,
+        "method": "GET",
+        "path": "/v1/models",
+        "originalKeyMatched": true
+      },
+      {
+        "at": 1793081078486,
+        "start": 100,
+        "method": "GET",
+        "path": "/v1/models",
+        "originalKeyMatched": true
+      }
+    ],
+    "systemPromptsObserved": 0,
+    "noCredentialValueExported": true
+  },
+  "session": {
+    "initialLogins": [
+      {
+        "at": 1793080078464,
+        "expires": 1793087170,
+        "start": 98
+      }
+    ],
+    "authenticatedRequests": [
+      {
+        "start": 98,
+        "name": "A",
+        "at": 1793080078487,
+        "expires": 1793087170
+      },
+      {
+        "start": 98,
+        "name": "B",
+        "at": 1793080254272,
+        "expires": 1793087170
+      },
+      {
+        "start": 99,
+        "name": "A",
+        "at": 1793080355223,
+        "expires": 1793087170
+      },
+      {
+        "start": 99,
+        "name": "B",
+        "at": 1793080355226,
+        "expires": 1793087170
+      },
+      {
+        "start": 100,
+        "name": "A",
+        "at": 1793080956547,
+        "expires": 1793087170
+      },
+      {
+        "start": 100,
+        "name": "B",
+        "at": 1793080956549,
+        "expires": 1793087170
+      }
+    ],
+    "reloginCount": 0,
+    "scope": "one real persistent browser session at local controlled website"
+  },
+  "webEffects": [
+    {
+      "at": 1793080583422,
+      "start": 99,
+      "name": "A",
+      "textHash": "fe971750308a2ab391cb3970f8d692e6b9a8702fb517ec471d858480194e0925",
+      "bytes": 31,
+      "count": 1
+    },
+    {
+      "at": 1793080650690,
+      "start": 99,
+      "name": "B",
+      "textHash": "14cf74083eb48a30a90e6ec0795db289df7125c0dbb7ed0e3100da8f4a1f3177",
+      "bytes": 31,
+      "count": 1
+    }
+  ],
+  "versionRequests": [
+    {
+      "at": 1793079973373,
+      "start": 98,
+      "futureVersion": false
+    },
+    {
+      "at": 1793080349950,
+      "start": 99,
+      "futureVersion": false
+    },
+    {
+      "at": 1793080520790,
+      "start": 99,
+      "futureVersion": true
+    },
+    {
+      "at": 1793080956563,
+      "start": 100,
+      "futureVersion": true
+    }
+  ],
+  "originalDatabase": {
+    "sha256": "dbecff313714237686bfc27898aff555c075f3eb46de6bd1db9cbf5ae6ff6032",
+    "bytes": 90112
+  },
+  "originalBackup": {
+    "sha256": "81650bf0d79ef4261d9e6c13e1789ca8f0870693ae75b44d715fb8632b2c764f",
+    "bytes": 5516,
+    "dataVersion": 6
+  },
+  "checks": [
+    "owned-processes-cleared-98",
+    "old-baseline-normal-exit",
+    "original-task-records-retained",
+    "internal-format6-copy-retained",
+    "owned-processes-cleared-99",
+    "same-version-reopen-keeps-task-records",
+    "owned-processes-cleared-100",
+    "original-login-not-recreated",
+    "original-key-served-in-both-real-packages",
+    "website-authenticated-after-upgrade",
+    "cold-original-key-and-login"
+  ],
+  "captures": [
+    {
+      "label": "old-backup",
+      "sha256": "a2dc3c3636da454fab7022adb0fc8b50a60003b0f11a8dcdd8a9944c87c9a560",
+      "bytes": 66335,
+      "scope": "host chrome only; not UI outcome evidence"
+    },
+    {
+      "label": "upgrade-unrecorded",
+      "sha256": "716ed0eff720b50dd4bd7889ded5e0467300f7fa9b58316f1e3f6f8419f87218",
+      "bytes": 67438,
+      "scope": "host chrome only; not UI outcome evidence"
+    },
+    {
+      "label": "upgrade-blocked",
+      "sha256": "4d58028c23c584fa342f9b26e1cb94a299f24fb00f63a63ff6a16cfc54bb45a1",
+      "bytes": 69766,
+      "scope": "host chrome only; not UI outcome evidence"
+    },
+    {
+      "label": "upgrade-ready",
+      "sha256": "265a94d8b7ee3129f5d00e7b78bc44566536d9c249f30d91ffa7d34273d8424d",
+      "bytes": 68940,
+      "scope": "host chrome only; not UI outcome evidence"
+    },
+    {
+      "label": "upgrade-cancelled",
+      "sha256": "265a94d8b7ee3129f5d00e7b78bc44566536d9c249f30d91ffa7d34273d8424d",
+      "bytes": 68940,
+      "scope": "host chrome only; not UI outcome evidence"
+    },
+    {
+      "label": "cold-checked",
+      "sha256": "fd1a7a264adbfbf53c34a04e9cb5ece4caa98ede148aac705b8ae6367727a8e4",
+      "bytes": 69173,
+      "scope": "host chrome only; not UI outcome evidence"
+    },
+    {
+      "label": "cold-key",
+      "sha256": "fd1a7a264adbfbf53c34a04e9cb5ece4caa98ede148aac705b8ae6367727a8e4",
+      "bytes": 69173,
+      "scope": "host chrome only; not UI outcome evidence"
+    }
+  ],
+  "privateEvidenceHashes": {
+    "old-baseline.json": "c2425c7463d47419b6ecbed5f4f4bd86440d055dba242c662917b18fb46f4d7e",
+    "after-a-only.json": "e84a400be8b5145574f3f93eb4c368299f7d3e7e02112e6adca2e98b0a0a4328",
+    "first-prepared.json": "5ed4cfc5805e5480f568c21a1286451edab8698540454c9c01acb333ef630421",
+    "cancelled.json": "93b542d3209672b7e128b5aa73d2e7f4e6ab9b07022c16942f2de4b4e29c1d35",
+    "second-prepared.json": "56020c2eda80aa5a149bed1d58332eaf84ff4b0a11204bd76c50b7f04fbaca19",
+    "cold-checked.json": "6f0cb5798a6302c6d157aa8f79b0529fa64b3834880107510a820562b843b7a7",
+    "final-inspection.json": "355bcbeb9f4bf9f9dbae5a0cda6e69312866429a48ee2c62bd4fd4654a11bb34"
+  },
+  "rawResultSha256": "3493feb3e0e19dc369d48b44a89c8d028bd162abce1d3b37bf862d043c70fc93",
+  "budget": {
+    "used": {
+      "builds": 37,
+      "installs": 10,
+      "starts": 100,
+      "faults": 42,
+      "cleanups": 17
+    },
+    "limits": {
+      "builds": 37,
+      "installs": 10,
+      "starts": 100,
+      "faults": 43,
+      "cleanups": 19
+    },
+    "added": {
+      "builds": 1,
+      "installs": 2,
+      "starts": 4,
+      "faults": 0,
+      "cleanups": 0,
+      "realModels": 0,
+      "remoteBusinessWrites": 0
+    },
+    "localModelListRequests": 3,
+    "localTextModelRequests": 0,
+    "localWebSaves": 2
+  },
+  "cleanup": {
+    "all51PidsAnd12GroupsIndependentlyEmpty": true,
+    "fixtureListenersIndependentlyEmpty": true,
+    "forcedCleanup": false
+  },
+  "notCovered": [
+    "actual trusted release download",
+    "prepared cross-version upgrade from a version already containing09",
+    "active automatic tasks or pending confirmations during preparation",
+    "actual authorization cancellation or repeated prompt",
+    "actual wrong package, migration interruption or storage failure",
+    "physical power loss",
+    "full material/workflow/schedule data matrix"
+  ],
+  "notes": [
+    "97 remains a failed preparation;98/99/100 succeeded",
+    "0.3.0 is only local version metadata; no release published or opened",
+    "cold100 is same-version reopen, not an additional cross-version success"
+  ],
+  "hostCaptureLimitation": {
+    "scope": "BrowserWindow.capturePage captured only chrome; child WebContentsViews and dialogs are absent; these files do not prove UI outcomes",
+    "sample": "host-capture-limitation.png",
+    "cuAObservation": "actual CUA AX and screenshots were inspected in the current chat; no complete CUA screenshot was exported into this repository"
+  },
+  "uiChecksSource": "CUA-WALKTHROUGH.md plus public-states.json; original CUA results remain in this chat",
+  "acceptance": {
+    "closed": [
+      5,
+      9
+    ],
+    "total": 10,
+    "overallComplete": false
+  },
+  "afterRuntimeFix": {
+    "commit": "ea5cb08",
+    "issue": "stale continuity statement before this check completed",
+    "sourceChecks": "../source-after-ui-fix.json",
+    "includedInBuild37": false
+  }
+}
