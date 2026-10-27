@@ -1012,11 +1012,13 @@ export class ExecutionService {
   }
   async stopAll() {
     this.closing = true;
-    for (const t of this.ports.current().tasks) {
-      const prior = this.blocked.get(t.id);
-      this.stopImmediately(t.id, '应用正在退出，已阻断新的自动操作。', true);
-      if (prior) this.blocked.set(t.id, prior);
-    }
+    // 升级暂停已经撤权；重复 trip 会改变已核对的原生现场代次。
+    if (!this.upgradeHeld)
+      for (const t of this.ports.current().tasks) {
+        const prior = this.blocked.get(t.id);
+        this.stopImmediately(t.id, '应用正在退出，已阻断新的自动操作。', true);
+        if (prior) this.blocked.set(t.id, prior);
+      }
     await this.settled();
   }
   cancelExit() {

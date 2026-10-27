@@ -31,6 +31,74 @@ afterEach(() =>
   folders.splice(0).forEach((p) => rmSync(p, { recursive: true, force: true })),
 );
 
+test.skipIf(process.platform !== 'darwin')(
+  '升级暂停后退出保持原生现场代次，仍阻断派发并保存原自动意图',
+  async () => {
+    const { ExecutionService } =
+      await import('../../app/desktop/execution-service');
+    const folder = mkdtempSync(path.join(tmpdir(), 'helpr-upgrade-gate-'));
+    folders.push(folder);
+    const records = new WorkspaceRecords(folder, 'app/records/migrations');
+    const taskId = records.execute({
+      kind: 'create',
+      requestId: 'create',
+      goal: '核对 https://example.com/list',
+    }).taskId;
+    records.execute({
+      kind: 'page',
+      requestId: 'ready',
+      taskId,
+      url: 'https://example.com/list',
+      phase: 'manual',
+    });
+    let state = records.execution({
+      kind: 'intent',
+      requestId: 'start',
+      taskId,
+      intent: 'start',
+    }).state;
+    const gate = nativeGate();
+    const service = new ExecutionService({
+      current: () => state,
+      publish: (next) => {
+        state = next;
+      },
+      records: (c) => Promise.resolve(records.execution(c)),
+      observe: () => Promise.reject(Error('UNEXPECTED_DISPATCH')),
+      propose: () => Promise.reject(Error('UNEXPECTED_DISPATCH')),
+      perform: () => Promise.reject(Error('UNEXPECTED_DISPATCH')),
+      revoke: () => {},
+      stopModels: () => {},
+      input: {
+        prepare: (id) => Promise.resolve(gate.state(id).epoch),
+        block: (id) => gate.block(id),
+        allow: (id, epoch) => gate.allow(id, epoch),
+        epoch: (id) => gate.state(id).epoch,
+        valid: (id, epoch) => gate.valid(id, epoch),
+        permit: (id, epoch, send) => gate.permit(id, epoch, send),
+      },
+    });
+    try {
+      expect(gate.failureCode).toBeUndefined();
+      await service.holdUpgrade();
+      const preparedEpoch = gate.state(taskId).epoch;
+      await service.stopAll();
+      expect(gate.state(taskId)).toMatchObject({
+        epoch: preparedEpoch,
+        blocked: true,
+      });
+      expect(records.snapshot().tasks[0]?.execution).toMatchObject({
+        intent: 'automatic',
+        recoveryPending: true,
+      });
+      expect(service.canExit()).toBe(true);
+    } finally {
+      service.disable();
+      records.close();
+    }
+  },
+);
+
 test('停止后修正目标保持停止，明确继续才领取新执行', () => {
   const folder = mkdtempSync(path.join(tmpdir(), 'helpr-execution-'));
   folders.push(folder);
