@@ -41,6 +41,10 @@ assert(!ps().some(row => row.pid !== process.pid && (/\/helpr\.app\/Contents\/Ma
 execFileSync(process.execPath, ['scripts/validate-workspace.mjs', '--preflight'], { stdio: 'inherit', timeout: 65000 });
 const budget = JSON.parse(fs.readFileSync(budgetFile));
 assert(budget.upgrade09?.approved && budget.limits.builds === 37 && budget.limits.starts === 100, 'EXPLICIT_APPROVAL_REQUIRED');
+const originalDeadline = budget.upgrade09.runtimeStartedAt + 90 * 60000;
+const extraTime = budget.upgrade09.after97Time;
+if (extraTime) assert(after97 && extraTime.approved === true && extraTime.originalDeadline === originalDeadline && Number.isSafeInteger(extraTime.approvedAt) && extraTime.deadline === extraTime.approvedAt + 60 * 60000, 'EXACT_TIME_EXTENSION_APPROVAL_REQUIRED');
+const batchDeadline = extraTime?.deadline ?? originalDeadline;
 assert(budget.used.starts === (after97 ? 97 : 96) && budget.used.installs === (after97 ? 9 : 8) && budget.used.faults === 42 && budget.used.cleanups === 17, 'ORIGINAL_BUDGET_REQUIRED');
 assert(after97 ? fs.existsSync(batchFile) && fs.existsSync(root) : !fs.existsSync(batchFile) && !fs.existsSync(root), 'BATCH_IDENTITY_REQUIRED');
 const previous = after97 ? JSON.parse(fs.readFileSync(path.join(root, 'result.json'))) : null;
@@ -65,11 +69,11 @@ const fresh = JSON.parse(fs.readFileSync(path.join(validationRoot, 'build-37.jso
 assert(fresh.build === 37 && fresh.prepared && fresh.app === path.resolve('dist/candidates/manual-upgrade-09/mac-arm64/helpr.app'), 'FIXED_NEW_CANDIDATE_REQUIRED');
 assert.equal(verify(fresh).certificateSha256, verify(old).certificateSha256, 'PUBLISHER_CHANGED');
 assert.notEqual(fresh.hashes['Contents/Resources/app.asar'], old.hashes['Contents/Resources/app.asar'], 'DISTINCT_REAL_PACKAGES_REQUIRED');
-assert(Number.isSafeInteger(budget.upgrade09.runtimeStartedAt) && Date.now() < budget.upgrade09.runtimeStartedAt + 90 * 60000, 'ORIGINAL_BATCH_DEADLINE_REQUIRED');
+assert(Number.isSafeInteger(budget.upgrade09.runtimeStartedAt) && Date.now() < batchDeadline, 'ORIGINAL_BATCH_DEADLINE_REQUIRED');
 if (mode === '--check-after-97') {
   assert(!fs.existsSync(path.join(root, 'after-97-once')), 'CONTINUATION_ALREADY_USED');
   assert(fs.realpathSync(budget.upgrade09.run.profile) === budget.upgrade09.run.profile, 'ORIGINAL_PROFILE_REQUIRED');
-  console.log(JSON.stringify({ valid: true, appStarts: 0, carriedStart: 97, used: budget.used, remainingStarts: 3, originalDeadline: budget.upgrade09.runtimeDeadline }));
+  console.log(JSON.stringify({ valid: true, appStarts: 0, carriedStart: 97, used: budget.used, remainingStarts: 3, originalDeadline, approvedDeadline: batchDeadline }));
   process.exit(0);
 }
 if (after97) {
@@ -90,7 +94,7 @@ if (!after97) fs.mkdirSync(backupDirectory, { mode: 0o700 });
 const apiKey = 'upgrade09-test-' + randomUUID();
 const sessionToken = randomUUID();
 const expires = Math.floor(Date.now() / 1000) + 7200;
-const report = { scope: 'early real-package upgrade; real safeStorage and persistent browser; local fixtures only', started: budget.upgrade09.runtimeStartedAt, builds: [36, 37], limits: budget.upgrade09.limits, installs: [], starts: [], tasks: [], checks: [], models: [], logins: [], pages: [], effects: [], versionRequests: [], captures: [], realModels: 0, remoteBusinessWrites: 0, passed: false };
+const report = { scope: 'early real-package upgrade; real safeStorage and persistent browser; local fixtures only', started: budget.upgrade09.runtimeStartedAt, originalDeadline, approvedDeadline: batchDeadline, builds: [36, 37], limits: budget.upgrade09.limits, installs: [], starts: [], tasks: [], checks: [], models: [], logins: [], pages: [], effects: [], versionRequests: [], captures: [], realModels: 0, remoteBusinessWrites: 0, passed: false };
 if (previous) Object.assign(report, { installs: previous.installs, starts: previous.starts, priorFailure: { start: 97, error: previous.error, sha256: hash(fs.readFileSync(path.join(root, 'result-97.json'))), originalStarted: previous.started }, continuation: 'one corrected readiness retry; no fault reserved' });
 const oldStart = after97 ? 98 : 97, newStart = oldStart + 1, coldStart = oldStart + 2;
 const write = (name, value) => fs.writeFileSync(path.join(root, name), JSON.stringify(value, null, 2) + '\n', { mode: 0o600 });
@@ -103,7 +107,7 @@ const save = () => {
 };
 const safeSave = () => { try { save(); } catch (error) { report.persistenceError ??= error.code ?? error.message; report.passed = false; failure ??= 'EVIDENCE_WRITE_FAILED'; } };
 let failure, current, finished = false, setupUsed = false, baseline, newInstalled = false;
-const deadline = report.started + 90 * 60000;
+const deadline = batchDeadline;
 const check = (name, condition) => { assert(condition, name); if (!report.checks.includes(name)) report.checks.push(name); save(); };
 function limited() {
   if (failure) throw Error(failure);
