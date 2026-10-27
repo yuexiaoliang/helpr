@@ -187,6 +187,7 @@ export class UpgradeRecords {
           )
             throw Error('UPGRADE_CHANGED');
           s.error = '';
+          s.reopening = false;
           s.continuity = c.continuity;
           move('FINISH');
         }

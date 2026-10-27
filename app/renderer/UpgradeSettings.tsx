@@ -1,4 +1,4 @@
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 import { WorkspaceStore } from './store';
 import type { UICommand } from '../shared/contracts';
 import styles from './Workspace.module.css';
@@ -6,7 +6,6 @@ import styles from './Workspace.module.css';
 export function UpgradeSettings({ store }: { store: WorkspaceStore }) {
   const view = useSyncExternalStore(store.subscribe, store.get);
   const status = view.upgrade;
-  const [requestId] = useState(() => crypto.randomUUID());
   useEffect(() => {
     void store.perform({ kind: 'upgrade-status' }).catch(() => {});
   }, [store]);
@@ -54,7 +53,9 @@ export function UpgradeSettings({ store }: { store: WorkspaceStore }) {
       </div>
       <p>
         当前 {status.installedVersion ?? '待核对'}
-        {status.target ? ` · 准备安装 ${status.target}` : ''}
+        {status.target
+          ? ` · ${status.phase === 'complete' ? '上次目标' : '准备安装'} ${status.target}`
+          : ''}
       </p>
       {status.continuity === 'retained' && (
         <p>
@@ -118,7 +119,9 @@ export function UpgradeSettings({ store }: { store: WorkspaceStore }) {
             onClick={() =>
               send({
                 kind: 'upgrade-prepare',
-                requestId: status.requestId ?? requestId,
+                requestId: preparing
+                  ? (status.requestId ?? crypto.randomUUID())
+                  : crypto.randomUUID(),
                 versionRevision: version.revision,
               })
             }

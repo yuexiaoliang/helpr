@@ -1,6 +1,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
-export const validationRoot = path.resolve('.local/workspace-validation');
+import { execFileSync } from 'node:child_process';
+// 所有Git工作副本共用累计账本；创建工作副本不能得到一份新的默认额度。
+const commonGitDirectory = execFileSync(
+  'git',
+  ['rev-parse', '--path-format=absolute', '--git-common-dir'],
+  { encoding: 'utf8', timeout: 5000 },
+).trim();
+export const validationRoot = path.join(
+  path.dirname(commonGitDirectory),
+  '.local/workspace-validation',
+);
 export function spend(kind) {
   fs.mkdirSync(validationRoot, { recursive: true, mode: 0o700 });
   const file = path.join(validationRoot, 'budget.json');

@@ -17,6 +17,82 @@ afterEach(() => {
   cleanup();
   dispose();
 });
+
+test('完成一次核对后为后续新版建立新准备身份，而不是重用旧回执', async () => {
+  const status: UpgradeStatus = {
+    revision: 8,
+    recordRevision: 6,
+    reopening: false,
+    phase: 'complete',
+    installedVersion: '0.2.0',
+    fromVersion: '0.1.0',
+    target: '0.2.0',
+    requestId: 'old-preparation',
+    fingerprint: null,
+    backup: null,
+    error: '',
+    continuity: 'retained',
+    dirtyTasks: [],
+    pages: [],
+    message: '已完成基础核对。',
+    working: false,
+  };
+  const commands: UICommand[] = [];
+  const store = new WorkspaceStore({
+    subscribe: () => () => {},
+    request: (c) => {
+      commands.push(c);
+      if (c.kind === 'snapshot')
+        return Promise.resolve({ revision: 0, active: null, tasks: [] });
+      if (c.kind === 'version-status')
+        return Promise.resolve({
+          revision: 9,
+          current: {
+            version: '0.2.0',
+            platform: 'darwin',
+            arch: 'arm64',
+            osVersion: '14.8.3',
+            dataFormat: 7,
+            stateModel: 1,
+          },
+          source: 'https://example.com/version.json',
+          phase: 'done',
+          origin: 'manual',
+          result: {
+            kind: 'available',
+            release: {
+              schema: 1,
+              version: '0.3.0',
+              platform: 'darwin',
+              arch: 'arm64',
+              minOS: '14.0.0',
+              dataFormats: [7],
+              stateModels: [1],
+              notes: [],
+              downloadURL:
+                'https://github.com/yuexiaoliang/helpr/releases/tag/v0.3.0',
+            },
+          },
+          checkedAt: 1,
+          lastSuccess: null,
+          noticeVisible: false,
+          openFailed: false,
+        });
+      return Promise.resolve(status);
+    },
+  });
+  dispose = () => store.dispose();
+  await store.perform({ kind: 'version-status' });
+  render(<UpgradeSettings store={store} />);
+  fireEvent.click(await screen.findByRole('button', { name: '准备升级' }));
+  await waitFor(() =>
+    expect(commands.some((c) => c.kind === 'upgrade-prepare')).toBe(true),
+  );
+  const sent = commands.find((c) => c.kind === 'upgrade-prepare');
+  expect(sent).toMatchObject({ versionRevision: 9 });
+  if (sent?.kind === 'upgrade-prepare')
+    expect(sent.requestId).not.toBe('old-preparation');
+});
 test('两项网页现场分别确认，A的回答不清除B，也不出现可退出按钮', async () => {
   let status: UpgradeStatus = {
     revision: 3,

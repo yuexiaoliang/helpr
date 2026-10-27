@@ -1,6 +1,5 @@
 import path from 'node:path';
 import { z } from 'zod';
-import type { WorkspaceSnapshot } from '../shared/contracts';
 import type { BackupArchive } from '../shared/backup';
 import {
   upgradeLedgerSchema,
@@ -29,6 +28,8 @@ const messages: Record<string, string> = {
     '准备或核对期间任务、草稿或网页发生变化。已保留较新决定，请重新准备或核对。',
   UPGRADE_VERSION_MISMATCH:
     '实际应用版本与升级约定不符。保留资料，先核对安装来源。',
+  UPGRADE_PACKAGE_UNVERIFIED:
+    '实际应用包的签名、发布者身份或架构未通过核对。保留资料，不恢复自动工作。',
   UPGRADE_CREDENTIAL_CHANGED:
     '原模型凭据发生变化或缺失，不能将重新配置记作原密钥延续成功。',
   MODEL_CREDENTIAL_UNAVAILABLE:
@@ -55,7 +56,6 @@ export class UpgradeService {
     private readonly ports: {
       version: string;
       records: (command: unknown) => Promise<unknown>;
-      current: () => WorkspaceSnapshot;
       versions: () => Versions;
       hold: () => Promise<void>;
       release: () => Promise<void>;
@@ -70,6 +70,8 @@ export class UpgradeService {
       choose: () => Promise<string | null>;
       backup: (requestId: string, file: string) => Promise<BackupArchive>;
       closePages: (proof: UpgradeProof) => Promise<void>;
+      checkpoint: () => Promise<void>;
+      cancelExit: () => Promise<void>;
       quit: () => Promise<void>;
       publish: (status: UpgradeStatus) => void;
     },
@@ -136,6 +138,17 @@ export class UpgradeService {
     this.dirtyTasks = proof.pages.filter((p) => p.dirty).map((p) => p.taskId);
     return proof;
   }
+  private targetVersion(revision: number) {
+    const v = this.ports.versions();
+    if (
+      v.revision !== revision ||
+      v.phase !== 'done' ||
+      v.result?.kind !== 'available' ||
+      !v.result.release
+    )
+      throw Error('UPGRADE_VERSION_MISMATCH');
+    return v.result.release.version;
+  }
   async handle(input: unknown): Promise<UpgradeStatus> {
     const c = upgradeUICommandSchema.parse(input);
     if (c.kind === 'upgrade-status') {
@@ -150,14 +163,7 @@ export class UpgradeService {
     }
     if (this.pending) throw Error('UPGRADE_PENDING');
     if (c.kind === 'upgrade-prepare') {
-      const v = this.ports.versions();
-      if (
-        v.revision !== c.versionRevision ||
-        v.phase !== 'done' ||
-        v.result?.kind !== 'available' ||
-        !v.result.release
-      )
-        throw Error('UPGRADE_VERSION_MISMATCH');
+      this.targetVersion(c.versionRevision);
     }
     if (c.kind === 'upgrade-page-saved') {
       await this.ports.acknowledge(c.taskId, c.generation, c.epoch);
@@ -210,35 +216,35 @@ export class UpgradeService {
       !this.ports.ready()
     )
       throw Error('UPGRADE_CHANGED');
-    const current = await this.capture();
-    if (
-      !current.nativeReady ||
-      JSON.stringify(current.pages) !== JSON.stringify(s.proof.pages)
-    )
-      throw Error('UPGRADE_CHANGED');
-    await this.ports.closePages(s.proof);
-    const final = await this.record({ kind: 'status' });
-    if (
-      final.revision !== s.revision ||
-      final.currentFingerprint !== s.fingerprint
-    )
-      throw Error('UPGRADE_CHANGED');
-    await this.ports.quit();
+    try {
+      await this.ports.checkpoint();
+      const current = await this.capture();
+      if (
+        !current.nativeReady ||
+        JSON.stringify(current) !== JSON.stringify(s.proof)
+      )
+        throw Error('UPGRADE_CHANGED');
+      const final = await this.record({ kind: 'status' });
+      if (
+        final.revision !== s.revision ||
+        final.currentFingerprint !== s.fingerprint
+      )
+        throw Error('UPGRADE_CHANGED');
+      // 关闭网页之后不再执行可能失败的保存或核对；退出检查点已可靠完成。
+      await this.ports.closePages(s.proof);
+      await this.ports.quit();
+    } catch (error) {
+      await this.ports.cancelExit();
+      throw error;
+    }
   }
   private async prepare(requestId: string, revision: number) {
     await this.ports.hold();
-    const version = this.ports.versions();
-    if (
-      version.revision !== revision ||
-      version.phase !== 'done' ||
-      version.result?.kind !== 'available' ||
-      !version.result.release
-    )
-      throw Error('UPGRADE_VERSION_MISMATCH');
+    const target = this.targetVersion(revision);
     const ledger = await this.record({
       kind: 'prepare',
       requestId,
-      target: version.result.release.version,
+      target,
     });
     if (ledger.phase === 'ready') {
       const proof = await this.capture();
@@ -295,6 +301,11 @@ export class UpgradeService {
       ? 'retained'
       : 'unrecorded';
     if (before.proof) {
+      if (
+        JSON.stringify(proof.application) !==
+        JSON.stringify(before.proof.application)
+      )
+        throw Error('UPGRADE_PACKAGE_UNVERIFIED');
       if (proof.credential !== before.proof.credential)
         throw Error('UPGRADE_CREDENTIAL_CHANGED');
       if (proof.profile !== before.proof.profile)

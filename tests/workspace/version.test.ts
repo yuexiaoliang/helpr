@@ -226,6 +226,25 @@ test('当前自用版尚未提供安装包时仍可检查最新，不伪造下�
   ).rejects.toThrow('VERSION_LINK_UNAVAILABLE');
 });
 
+test('本机已升级资料格式后，较早渠道仍显示无需降级，而非误报新版资料不兼容', async () => {
+  const f = await versionFixture();
+  const service = f.service({
+    current: {
+      version: '0.3.0',
+      platform: 'darwin',
+      arch: 'arm64',
+      osVersion: '14.8.3',
+      dataFormat: 7,
+      stateModel: 1,
+    },
+  });
+  const status = await service.check('manual');
+  expect(status.result?.kind).toBe('older');
+  await expect(
+    service.handle({ kind: 'version-open', revision: status.revision }),
+  ).rejects.toThrow('VERSION_LINK_UNAVAILABLE');
+});
+
 test('兼容及异常检查保留具体原因，拒绝可执行协议、其它目标和非本次入口', async () => {
   const f = await versionFixture(),
     opened: string[] = [],

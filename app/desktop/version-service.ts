@@ -139,19 +139,21 @@ export class VersionService {
           release.downloadURL !== downloadURL(release.version)) ||
         (difference > 0 && release.downloadURL === null)
           ? 'link'
-          : release.platform !== current.platform ||
-              release.arch !== current.arch
-            ? 'architecture'
-            : compare(release.minOS, current.osVersion) > 0
-              ? 'system'
-              : !release.dataFormats.includes(current.dataFormat) ||
-                  !release.stateModels.includes(current.stateModel)
-                ? 'data'
-                : difference > 0
-                  ? 'available'
-                  : difference === 0
-                    ? 'latest'
-                    : 'older';
+          : difference < 0
+            ? 'older'
+            : release.platform !== current.platform ||
+                release.arch !== current.arch
+              ? 'architecture'
+              : compare(release.minOS, current.osVersion) > 0
+                ? 'system'
+                : !release.dataFormats.includes(current.dataFormat) ||
+                    !release.stateModels.includes(current.stateModel)
+                  ? 'data'
+                  : difference > 0
+                    ? 'available'
+                    : difference === 0
+                      ? 'latest'
+                      : 'older';
       result = { kind, release };
     } catch (error) {
       const code = error instanceof Error ? error.message : '';

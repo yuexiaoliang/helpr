@@ -32,6 +32,17 @@ test.each([
   { change: { profile: 'f'.repeat(64) }, error: 'UPGRADE_LOGIN_CHANGED' },
   { change: { cookies: [] }, error: 'UPGRADE_LOGIN_CHANGED' },
   { change: { nativeReady: false }, error: 'UPGRADE_CONTROL_UNAVAILABLE' },
+  {
+    change: {
+      application: {
+        platform: 'darwin' as const,
+        arch: 'arm64' as const,
+        identifier: 'local.helpr.desktop' as const,
+        requirement: 'f'.repeat(64),
+      },
+    },
+    error: 'UPGRADE_PACKAGE_UNVERIFIED',
+  },
 ])(
   '换版后的依据变化保持暂停，不以重新填写充抵原延续：$error',
   async ({ change, error }) => {
@@ -84,6 +95,12 @@ async function preparedUpgrade() {
   closeOwners.push(() => records.close());
   let proof: UpgradeProof = {
     credential: 'b'.repeat(64),
+    application: {
+      platform: 'darwin',
+      arch: 'arm64',
+      identifier: 'local.helpr.desktop',
+      requirement: 'e'.repeat(64),
+    },
     profile: 'a'.repeat(64),
     cookies: [
       {
@@ -96,11 +113,12 @@ async function preparedUpgrade() {
     nativeReady: true,
   };
   let failure = '';
+  let checkpointFailure = '';
+  let pagesOpen = true;
   const make = (version: string) =>
     new UpgradeService({
       version,
       records: (c) => Promise.resolve(records.upgrade(c)),
-      current: () => records.snapshot(),
       hold: () => Promise.resolve(),
       release: () => Promise.resolve(),
       ready: () => true,
@@ -120,7 +138,15 @@ async function preparedUpgrade() {
       }),
       publish: () => {},
       quit: () => Promise.resolve(),
-      closePages: () => Promise.resolve(),
+      closePages: () => {
+        pagesOpen = false;
+        return Promise.resolve();
+      },
+      checkpoint: () =>
+        checkpointFailure
+          ? Promise.reject(Error(checkpointFailure))
+          : Promise.resolve(),
+      cancelExit: () => Promise.resolve(),
     });
   const old = make('0.1.0');
   await old.initialize();
@@ -131,6 +157,13 @@ async function preparedUpgrade() {
   });
   expect(prepared.phase).toBe('ready');
   return {
+    service: old,
+    get pagesOpen() {
+      return pagesOpen;
+    },
+    setCheckpointFailure: (code: string) => {
+      checkpointFailure = code;
+    },
     get records() {
       return records;
     },
@@ -149,6 +182,20 @@ async function preparedUpgrade() {
     },
   };
 }
+
+test('取消本次准备后仍可再次准备，保留旧备份并生成新的操作身份', async () => {
+  const h = await preparedUpgrade();
+  const before = h.records.upgrade({ kind: 'status' });
+  const cancelled = await h.service.handle({ kind: 'upgrade-cancel' });
+  expect(cancelled).toMatchObject({ phase: 'complete', reopening: false });
+  const next = await h.service.handle({
+    kind: 'upgrade-prepare',
+    requestId: randomUUID(),
+    versionRevision: 2,
+  });
+  expect(next.phase).toBe('ready');
+  expect(next.requestId).not.toBe(before.requestId);
+});
 
 test('跨进程重新打开后，取消原密钥授权保持暂停，恢复原授权再检查而不重填密钥', async () => {
   const h = await preparedUpgrade();
@@ -170,6 +217,16 @@ test('跨进程重新打开后，取消原密钥授权保持暂停，恢复原�
   });
 });
 
+test('升级退出的可靠检查点失败时，网页关闭边界尚未触发，原文字仍在', async () => {
+  const h = await preparedUpgrade();
+  h.setCheckpointFailure('UNSAVED_CHANGES');
+  const ledger = h.records.upgrade({ kind: 'status' });
+  expect(
+    await h.service.handle({ kind: 'upgrade-exit', revision: ledger.revision }),
+  ).toMatchObject({ phase: 'blocked', error: 'UNSAVED_CHANGES' });
+  expect(h.pagesOpen).toBe(true);
+});
+
 test('原生现场分别核对后才生成真实业务备份，新停止使退出资格失效', async () => {
   const folder = mkdtempSync(path.join(tmpdir(), 'helpr-upgrade-service-'));
   folders.push(folder);
@@ -183,6 +240,12 @@ test('原生现场分别核对后才生成真实业务备份，新停止使退�
   let dirty = true;
   const proof = () => ({
     credential: null,
+    application: {
+      platform: 'darwin' as const,
+      arch: 'arm64' as const,
+      identifier: 'local.helpr.desktop' as const,
+      requirement: 'e'.repeat(64),
+    },
     profile: 'a'.repeat(64),
     cookies: [],
     pages: [{ taskId: a, generation: 1, epoch: 2, dirty }],
@@ -191,7 +254,6 @@ test('原生现场分别核对后才生成真实业务备份，新停止使退�
   const service = new UpgradeService({
     version: '0.1.0',
     records: (c) => Promise.resolve(records.upgrade(c)),
-    current: () => records.snapshot(),
     release: () => Promise.resolve(),
     hold: () => Promise.resolve(),
     ready: () => true,
@@ -212,6 +274,8 @@ test('原生现场分别核对后才生成真实业务备份，新停止使退�
     publish: () => {},
     quit: () => Promise.resolve(),
     closePages: () => Promise.resolve(),
+    checkpoint: () => Promise.resolve(),
+    cancelExit: () => Promise.resolve(),
   });
   try {
     await service.initialize();

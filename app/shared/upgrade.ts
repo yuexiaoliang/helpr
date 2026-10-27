@@ -10,6 +10,12 @@ export const upgradeSiteSchema = z.strictObject({
   dirty: z.boolean(),
 });
 export const upgradeProofSchema = z.strictObject({
+  application: z.strictObject({
+    platform: z.literal('darwin'),
+    arch: z.literal('arm64'),
+    identifier: z.literal('local.helpr.desktop'),
+    requirement: digest,
+  }),
   nativeReady: z.boolean(),
   credential: digest.nullable(),
   profile: digest,

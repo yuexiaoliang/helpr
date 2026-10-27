@@ -42,6 +42,7 @@ import { acquireRuntimeOwnership } from './runtime-ownership';
 import { BackupService } from './backup-service';
 import { VersionService } from './version-service';
 import { UpgradeService } from './upgrade-service';
+import { verifyPackageIdentity } from './package-identity';
 import { upgradeProofSchema, upgradeSiteSchema } from '../shared/upgrade';
 import { backupArchiveSchema } from '../shared/backup';
 import { versionFixture } from './version-fixture';
@@ -461,7 +462,6 @@ export async function startController(
   const upgrades = new UpgradeService({
     version: app.getVersion(),
     records: (command) => recordClient.request({ kind: 'upgrade', command }),
-    current: () => state,
     versions: () => versions.get(),
     hold: async () => {
       await executions.holdUpgrade();
@@ -478,11 +478,15 @@ export async function startController(
       executions.canExit() &&
       backups.canExit(),
     capture: async () => {
+      if (!app.isPackaged) throw Error('UPGRADE_PACKAGE_UNVERIFIED');
+      const application = await verifyPackageIdentity(
+        path.resolve(process.execPath, '../../..'),
+      );
       const credential = await models.credentialProof();
       const site = upgradeProofSchema
-        .omit({ credential: true })
+        .omit({ credential: true, application: true })
         .parse(await hostClient.request({ kind: 'upgrade-site-state' }));
-      return { ...site, credential };
+      return { ...site, credential, application };
     },
     pages: async () =>
       z
@@ -522,7 +526,12 @@ export async function startController(
     closePages: async (proof) => {
       await hostClient.request({ kind: 'upgrade-close-pages', proof }, 45000);
     },
-    quit: () => quit(),
+    checkpoint: () => checkpointExit(),
+    cancelExit: () => {
+      cancelExit();
+      return Promise.resolve();
+    },
+    quit: () => quit(true),
   });
   await upgrades.initialize();
 
@@ -901,8 +910,20 @@ export async function startController(
       workers.delete(worker);
     }
   }
-  async function quit(): Promise<void> {
-    if (quitting) return;
+  function cancelExit() {
+    quitting = false;
+    executions.cancelExit();
+    models.cancelExit();
+  }
+  async function checkpointExit(): Promise<void> {
+    if (quitting) throw Error('APPLICATION_EXITING');
+    if (
+      !recordsAvailable ||
+      !workspace.canExit() ||
+      !executions.canExit() ||
+      !backups.canExit()
+    )
+      throw Error('UNSAVED_CHANGES');
     quitting = true;
     try {
       await executions.stopAll();
@@ -912,9 +933,7 @@ export async function startController(
         await recordClient.request({ kind: 'checkpoint' }),
       );
     } catch (error) {
-      quitting = false;
-      executions.cancelExit();
-      models.cancelExit();
+      cancelExit();
       if (!recordsAvailable) restoreRecordConnection();
       if (host.connected)
         host.send({
@@ -922,6 +941,12 @@ export async function startController(
             '退出前的必要事实尚未可靠保存，已保留现场并阻止新操作。请恢复保存条件后重试退出。',
         });
       throw error;
+    }
+  }
+  async function quit(checkpointSaved = false): Promise<void> {
+    if (!checkpointSaved) {
+      if (quitting) return;
+      await checkpointExit();
     }
     versions.dispose();
     broker.dispose();

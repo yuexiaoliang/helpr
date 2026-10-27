@@ -148,6 +148,7 @@ const prefs = {
 const renderer = path.join(__dirname, '../renderer');
 const preload = path.join(__dirname, '../preload/preload.cjs');
 function suspend(taskId: string | null, reason: ExecutionPauseReason) {
+  if (upgradeClosing) return;
   inputGate.block(taskId ?? '*');
   notify({
     suspension: {
@@ -578,7 +579,9 @@ async function perform(input: unknown): Promise<unknown> {
   const command = z.object({ kind: z.string() }).parse(input);
   if (command.kind === 'upgrade-page-state')
     return [...pages.entries()]
-      .filter(([, p]) => !p.view.webContents.isDestroyed())
+      .filter(
+        ([, p]) => p.view.webContents && !p.view.webContents.isDestroyed(),
+      )
       .map(([taskId, p]) => ({
         taskId,
         generation: p.generation,
@@ -609,7 +612,9 @@ async function perform(input: unknown): Promise<unknown> {
           .filter((t) => t.url)
           .every((t) => {
             const p = pages.get(t.id);
-            return p && !p.view.webContents.isDestroyed();
+            return (
+              p && !!p.view.webContents && !p.view.webContents.isDestroyed()
+            );
           }),
       pages: await perform({ kind: 'upgrade-page-state' }),
     };
@@ -626,6 +631,7 @@ async function perform(input: unknown): Promise<unknown> {
     const p = pages.get(c.taskId);
     if (
       !p ||
+      !p.view.webContents ||
       p.view.webContents.isDestroyed() ||
       p.generation !== c.generation ||
       inputGate.state(c.taskId).epoch !== c.epoch
@@ -637,7 +643,7 @@ async function perform(input: unknown): Promise<unknown> {
   if (command.kind === 'upgrade-close-pages') {
     const expected = z.object({ proof: upgradeProofSchema }).parse(input).proof;
     const fresh = upgradeProofSchema
-      .omit({ credential: true })
+      .omit({ credential: true, application: true })
       .parse(await perform({ kind: 'upgrade-site-state' }));
     if (
       !fresh.nativeReady ||
@@ -652,7 +658,7 @@ async function perform(input: unknown): Promise<unknown> {
       ];
       for (const view of views) {
         const wc = view.webContents;
-        if (wc.isDestroyed()) continue;
+        if (!wc || wc.isDestroyed()) continue;
         await new Promise<void>((resolve, reject) => {
           const clean = () => {
             clearTimeout(timer);
@@ -679,7 +685,14 @@ async function perform(input: unknown): Promise<unknown> {
     } catch (error) {
       upgradeClosing = false;
       for (const p of pages.values())
-        if (p.view.webContents.isDestroyed()) p.rebuild();
+        if (!p.view.webContents || p.view.webContents.isDestroyed()) {
+          p.rebuild();
+          const task = state.tasks.find((t) => pages.get(t.id) === p);
+          if (task?.url)
+            void p.view.webContents
+              .loadURL(websiteURL(task.url))
+              .catch(() => {});
+        }
       throw error;
     }
     return null;
