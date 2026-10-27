@@ -67,10 +67,16 @@ git worktree add --detach ../helpr-lifecycle-archive archive/2026-10-20/lifecycl
 
 ## 09 当前手动升级原型
 
-2026-10-27按用户「那就开始做吧」制作 `manual-upgrade-v1` 初稿（`2747a993dbf64f7284834dfe0d7a185b8a3af163`）；用户随后明确选择「先继续完善和检查原型」，更新为 `manual-upgrade-v2`。当前来源分支 `codex/manual-upgrade-prototype`，固定提交 `d7f8057deb1cda198f6947daac29d3494a79d961`。两版均独立保留，尚未确认正式实现。
+2026-10-27按用户「那就开始做吧」制作 `manual-upgrade-v1` 初稿（`2747a993dbf64f7284834dfe0d7a185b8a3af163`）；用户随后明确选择「先继续完善和检查原型」，更新为 `manual-upgrade-v2`。当前来源分支 `codex/manual-upgrade-prototype`，固定提交 `d7f8057deb1cda198f6947daac29d3494a79d961`。两版均独立保留。用户在v2交付后要求“继续下一步实现”，已按具体版本及范围登记确认，正式实现入口见下节。
 
 - 工作副本：`/Users/yuexiaoliang/.codex/worktrees/manual-upgrade-prototype/helpr`，本聊天附属受管工作区。
 - [单文件入口](/Users/yuexiaoliang/.codex/worktrees/manual-upgrade-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/manual-upgrade/manual-upgrade-prototype.html)，可直接双击；[体验、范围和阻碍](/Users/yuexiaoliang/.codex/worktrees/manual-upgrade-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/manual-upgrade/README.md)独立保留。没有运行临时网页服务。
-- [09事项](../../.scratch/helpr-first-release-implementation/issues/09-manual-upgrade-and-credential-continuity.md#原型确认)记录待确认范围；v2的19个引导场景和自由操作全为内存模拟。19场景／276离线纯状态动作及6组v1／v2反例轨迹由 `STATE-REHEARSAL.json` 保留；语法检查通过。原始 `file:` 拒绝仍保留在 `CHECKS-v1.json`，v2的 `CHECKS.json` 明示本轮未进行浏览器导航、交互、输入或布局走查，没有截图。纯状态演练没有执行DOM，不替代浏览器或产品证据。
+- [09事项](../../.scratch/helpr-first-release-implementation/issues/09-manual-upgrade-and-credential-continuity.md#原型确认)记录已确认范围；v2的19个引导场景和自由操作全为内存模拟。19场景／276离线纯状态动作及6组v1／v2反例轨迹由 `STATE-REHEARSAL.json` 保留；语法检查通过。原始 `file:` 拒绝仍保留在 `CHECKS-v1.json`，v2的 `CHECKS.json` 明示本轮未进行浏览器导航、交互、输入或布局走查，没有截图。纯状态演练没有执行DOM，不替代浏览器或产品证据。
 - 已关闭失败创建的自有空白标签，最终本聊天内置浏览器标签为空。没有启动正式应用、下载或安装包、访问凭据、执行迁移或写入网页，不勾选09验收，不提前解除23依赖。
 - 原型未合入产品、未推送。将来移除副本后，可从上述固定提交恢复 `.scratch/helpr-first-release-implementation/prototypes/manual-upgrade/`；无需恢复真实产品资料。
+
+## 09 当前正式实现
+
+2026-10-27，正式实现单独保存在 `codex/manual-upgrade`，受管工作副本为 `/Users/yuexiaoliang/.codex/worktrees/manual-upgrade/helpr`。基点 `246eabe`，产品实现及修正为 `04472bf`、`7ece508`、`852e7c3`；原型HTML和模拟代码未合入。此分支尚未合入主仓库 `main`、未推送；原型副本继续保留，不归档正在使用的实现工作树。
+
+[源码报告](../testing/evidence/upgrade-09/REPORT.md)记录122正式／25旧回归及两轴实现复核结果；实际验收0/10、预算未增。以后继续代码或实包验证时使用该工作副本，不从原型分支重做实现或获得新的运行额度。

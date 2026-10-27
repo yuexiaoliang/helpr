@@ -62,7 +62,7 @@ test.each([
   },
 );
 
-test('真实到期与丢失有效登录分开，用户重新登录后保留到期事实而非改判原登录延续', async () => {
+test('会话到期与丢失有效登录分开，更新后保留到期事实而非改判原登录延续', async () => {
   vi.useFakeTimers({ toFake: ['Date'] });
   const h = await preparedUpgrade();
   const service = await h.reopen();
@@ -197,7 +197,7 @@ test('取消本次准备后仍可再次准备，保留旧备份并生成新的�
   expect(next.requestId).not.toBe(before.requestId);
 });
 
-test('跨进程重新打开后，取消原密钥授权保持暂停，恢复原授权再检查而不重填密钥', async () => {
+test('记录关闭再打开后，凭据端口拒绝读取时保持暂停，恢复原依据再检查', async () => {
   const h = await preparedUpgrade();
   const service = await h.reopen();
   h.setFailure('MODEL_CREDENTIAL_UNAVAILABLE');
@@ -227,7 +227,7 @@ test('升级退出的可靠检查点失败时，网页关闭边界尚未触发�
   expect(h.pagesOpen).toBe(true);
 });
 
-test('原生现场分别核对后才生成真实业务备份，新停止使退出资格失效', async () => {
+test('逐项现场依据核对后才生成业务备份，新停止使退出资格失效', async () => {
   const folder = mkdtempSync(path.join(tmpdir(), 'helpr-upgrade-service-'));
   folders.push(folder);
   const records = new WorkspaceRecords(folder, 'app/records/migrations');
@@ -410,7 +410,7 @@ test('换版检查失败后不能以另一项升级准备清除原失败和目�
   }
 });
 
-test('真实旧格式库迁移失败保留原副本，修复后原任务草稿可读，格式6业务备份仍可检查', async () => {
+test('构造的格式6库迁移失败保留原副本，修复后原任务草稿可读，格式6业务备份仍可检查', async () => {
   const folder = mkdtempSync(path.join(tmpdir(), 'helpr-upgrade-migration-'));
   folders.push(folder);
   let r = new WorkspaceRecords(folder, 'app/records/migrations');
