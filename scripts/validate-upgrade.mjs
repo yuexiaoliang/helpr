@@ -9,11 +9,11 @@ import { pathToFileURL } from 'node:url';
 import assert from 'node:assert/strict';
 import { spend, validationRoot } from './workspace-budget.mjs';
 import { verifyDevelopmentSignature } from './development-signing.mjs';
-import { showInspectableWindow } from './version-window-ready.mjs';
 
 // 同一受管入口持有全部应用、服务与四次启动；产品交互交由CUA。
 const mode = process.argv.slice(2).join(' ');
-assert(['--check', '--preflight', '--run'].includes(mode), 'EXPLICIT_MODE_REQUIRED');
+assert(['--check', '--preflight', '--run', '--after-97'].includes(mode), 'EXPLICIT_MODE_REQUIRED');
+const after97 = mode === '--after-97';
 const root = path.join(validationRoot, 'manual-upgrade-09');
 const batchFile = path.join(validationRoot, 'manual-upgrade-09-batch.json');
 const budgetFile = path.join(validationRoot, 'budget.json');
@@ -41,8 +41,14 @@ assert(!ps().some(row => row.pid !== process.pid && (/\/helpr\.app\/Contents\/Ma
 execFileSync(process.execPath, ['scripts/validate-workspace.mjs', '--preflight'], { stdio: 'inherit', timeout: 65000 });
 const budget = JSON.parse(fs.readFileSync(budgetFile));
 assert(budget.upgrade09?.approved && budget.limits.builds === 37 && budget.limits.starts === 100, 'EXPLICIT_APPROVAL_REQUIRED');
-assert(budget.used.starts === 96 && budget.used.installs === 8 && budget.used.faults === 42 && budget.used.cleanups === 17, 'ORIGINAL_BUDGET_REQUIRED');
-assert(!fs.existsSync(batchFile) && !fs.existsSync(root), 'BATCH_ALREADY_EXISTS');
+assert(budget.used.starts === (after97 ? 97 : 96) && budget.used.installs === (after97 ? 9 : 8) && budget.used.faults === 42 && budget.used.cleanups === 17, 'ORIGINAL_BUDGET_REQUIRED');
+assert(after97 ? fs.existsSync(batchFile) && fs.existsSync(root) : !fs.existsSync(batchFile) && !fs.existsSync(root), 'BATCH_IDENTITY_REQUIRED');
+const previous = after97 ? JSON.parse(fs.readFileSync(path.join(root, 'result.json'))) : null;
+if (previous) {
+  assert(previous.passed === false && previous.error === 'REQUEST_TIMEOUT' && previous.starts.length === 1 && previous.starts[0].start === 97 && previous.starts[0].build === 36 && previous.starts[0].exit.code === 0 && previous.starts[0].remaining.length === 0, 'EXACT_97_FAILURE_REQUIRED');
+  assert(previous.tasks.length === 0 && previous.models.length === 0 && previous.logins.length === 0 && previous.effects.length === 0 && previous.versionRequests.length === 0 && previous.installs.length === 1 && previous.installs[0].number === 9 && !previous.emergencyCleanupAttempted, 'NO_PRIOR_BUSINESS_WORK_REQUIRED');
+  assert.equal(previous.started, budget.upgrade09.runtimeStartedAt, 'ORIGINAL_DEADLINE_REQUIRED');
+}
 const old = JSON.parse(fs.readFileSync(path.join(validationRoot, 'build-36.json')));
 const expectedOld = '/Users/yuexiaoliang/projects/helpr/dist/candidates/version-08/mac-arm64/helpr.app';
 assert(old.build === 36 && old.prepared && old.app === expectedOld, 'FIXED_OLD_CANDIDATE_REQUIRED');
@@ -60,19 +66,27 @@ assert(fresh.build === 37 && fresh.prepared && fresh.app === path.resolve('dist/
 assert.equal(verify(fresh).certificateSha256, verify(old).certificateSha256, 'PUBLISHER_CHANGED');
 assert.notEqual(fresh.hashes['Contents/Resources/app.asar'], old.hashes['Contents/Resources/app.asar'], 'DISTINCT_REAL_PACKAGES_REQUIRED');
 assert(Number.isSafeInteger(budget.upgrade09.runtimeStartedAt) && Date.now() < budget.upgrade09.runtimeStartedAt + 90 * 60000, 'ORIGINAL_BATCH_DEADLINE_REQUIRED');
-fs.writeFileSync(batchFile, JSON.stringify({ root, pid: process.pid, started: new Date().toISOString() }) + '\n', { flag: 'wx', mode: 0o600 });
-fs.mkdirSync(root, { mode: 0o700 });
+if (after97) {
+  fs.writeFileSync(path.join(root, 'after-97-once'), String(process.pid), { flag: 'wx', mode: 0o600 });
+  fs.copyFileSync(path.join(root, 'result.json'), path.join(root, 'result-97.json'), fs.constants.COPYFILE_EXCL);
+} else {
+  fs.writeFileSync(batchFile, JSON.stringify({ root, pid: process.pid, started: new Date().toISOString() }) + '\n', { flag: 'wx', mode: 0o600 });
+  fs.mkdirSync(root, { mode: 0o700 });
+}
 const profileRoot = `/private/tmp/helpr-workspace-validation-${process.getuid()}`;
 fs.mkdirSync(profileRoot, { recursive: true, mode: 0o700 });
 assert.equal(fs.realpathSync(profileRoot), profileRoot);
-const profile = fs.mkdtempSync(profileRoot + '/upgrade09-');
+const profile = after97 ? budget.upgrade09.run.profile : fs.mkdtempSync(profileRoot + '/upgrade09-');
+assert(profile.startsWith(profileRoot + '/upgrade09-') && fs.realpathSync(profile) === profile, 'ORIGINAL_PROFILE_REQUIRED');
 const installation = path.join(root, 'installation/helpr.app');
 const backupDirectory = path.join(root, 'selected-backups');
-fs.mkdirSync(backupDirectory, { mode: 0o700 });
+if (!after97) fs.mkdirSync(backupDirectory, { mode: 0o700 });
 const apiKey = 'upgrade09-test-' + randomUUID();
 const sessionToken = randomUUID();
 const expires = Math.floor(Date.now() / 1000) + 7200;
 const report = { scope: 'early real-package upgrade; real safeStorage and persistent browser; local fixtures only', started: budget.upgrade09.runtimeStartedAt, builds: [36, 37], limits: budget.upgrade09.limits, installs: [], starts: [], tasks: [], checks: [], models: [], logins: [], pages: [], effects: [], versionRequests: [], captures: [], realModels: 0, remoteBusinessWrites: 0, passed: false };
+if (previous) Object.assign(report, { installs: previous.installs, starts: previous.starts, priorFailure: { start: 97, error: previous.error, sha256: hash(fs.readFileSync(path.join(root, 'result-97.json'))), originalStarted: previous.started }, continuation: 'one corrected readiness retry; no fault reserved' });
+const oldStart = after97 ? 98 : 97, newStart = oldStart + 1, coldStart = oldStart + 2;
 const write = (name, value) => fs.writeFileSync(path.join(root, name), JSON.stringify(value, null, 2) + '\n', { mode: 0o600 });
 const save = () => {
   write('result.json', report);
@@ -173,7 +187,14 @@ async function launch(build) {
   child.once('exit', (code, signal) => { app.exit = { code, signal }; row.exit = app.exit; for (const p of app.pending.values()) { clearTimeout(p.timer); p.reject(Error('APPLICATION_EXITED')); } app.pending.clear(); safeSave(); });
   child.once('error', error => { failure = error.code ?? 'APPLICATION_SPAWN_FAILED'; });
   const readyDeadline = row.at + 30000;
-  await showInspectableWindow({ request: (c, left) => rpc(c, left), ready: () => app.ready, deadline: readyDeadline, observe: value => { row.windowPreparation ??= []; row.windowPreparation.push(value); save(); } });
+  // inspect含同步系统加密探测；先用不读取凭据的show解除隐藏首绘制等待。
+  let shown = false;
+  for (let attempt = 1; attempt <= 20 && Date.now() < readyDeadline; attempt++) {
+    try { await rpc({ kind: 'show' }, readyDeadline - Date.now()); shown = true; break; }
+    catch (error) { row.windowPreparation ??= []; row.windowPreparation.push({ attempt, method: 'show', error: error.message, at: Date.now() }); save(); if (error.message !== 'RECORDS_UNAVAILABLE') throw error; await new Promise(resolve => setTimeout(resolve, 100)); }
+  }
+  assert(shown, 'WINDOW_SHOW_DEADLINE');
+  console.log('UPGRADE_WINDOW ' + JSON.stringify({ start: row.start, hostApp: path.join(installation, 'Contents/Frameworks/helpr Workspace.app') }));
   await until(() => { processes(app); return app.ready || app.exit; }, Math.max(1, readyDeadline - Date.now()));
   assert(app.ready && !app.exit, 'APPLICATION_NOT_READY');
   assert(!row.ready.fixture, 'REAL_CREDENTIAL_PROTECTION_REQUIRED');
@@ -244,7 +265,10 @@ try {
   origin = 'http://127.0.0.1:' + website.address().port;
   await new Promise((resolve, reject) => { versions.once('error', reject); versions.listen(0, '127.0.0.1', resolve); });
   fs.writeFileSync(path.join(profile, 'version-fixture.json'), JSON.stringify({ source: `https://127.0.0.1:${versions.address().port}/stable.json`, ca: fs.readFileSync(certFile, 'utf8') }), { mode: 0o600 });
-  save(); install(old); await launch(36);
+  save();
+  if (!after97) install(old);
+  else for (const [file, expected] of Object.entries(old.hashes)) assert.equal(hash(fs.readFileSync(path.join(installation, file))), expected, 'ORIGINAL_INSTALLED_PACKAGE_REQUIRED');
+  await launch(36);
   while (!finished) {
     limited(); processes(current);
     const file = path.join(root, 'command.json');
@@ -274,7 +298,7 @@ try {
           case 'capture': await capture(c.label); value = { captured: c.label }; break;
           case 'baseline': {
             assert(current.row.build === 36 && report.tasks.length === 2 && report.logins.length === 1, 'OLD_BASELINE_REQUIRED');
-            assert(report.models.some(m => m.start === 97 && m.originalKeyMatched), 'OLD_KEY_PROOF_REQUIRED');
+            assert(report.models.some(m => m.start === oldStart && m.originalKeyMatched), 'OLD_KEY_PROOF_REQUIRED');
             baseline = facts(await snapshot()); write('old-baseline.json', baseline);
             const backup = await rpc({ kind: 'backup-status' });
             assert(backup.phase === 'complete' && backup.archive.file.startsWith(backupDirectory + path.sep), 'OLD_UI_BACKUP_REQUIRED');
@@ -295,22 +319,22 @@ try {
           case 'future': assert(newInstalled, 'NEW_PACKAGE_REQUIRED'); futureVersion = true; value = { fixtureOnly: '0.3.0; not published or downloaded' }; break;
           case 'closed': await gone(); value = { closed: true }; break;
           case 'cold': {
-            assert(newInstalled && current.cleared && report.starts.length === 2, 'SINGLE_COLD_REOPEN_REQUIRED');
+            assert(newInstalled && current.cleared && report.starts.length === (after97 ? 3 : 2), 'SINGLE_COLD_REOPEN_REQUIRED');
             await launch(37); check('same-version-reopen-keeps-task-records', JSON.stringify(facts(await snapshot())) === JSON.stringify(baseline)); value = { reopened: true }; break;
           }
           case 'fault': {
-            assert(report.starts.length === 3 && !report.fault && !current.cleared && !current.exit && processes(current).some(p => p.pid === current.child.pid), 'SINGLE_LIVE_FAULT_REQUIRED');
+            assert(!after97 && report.starts.length === 3 && !report.fault && !current.cleared && !current.exit && processes(current).some(p => p.pid === current.child.pid), 'SINGLE_LIVE_FAULT_REQUIRED');
             spend('faults'); report.fault = { at: Date.now(), pid: current.child.pid, start: current.row.start }; save();
             assert(current.child.kill('SIGKILL'), 'FAULT_SIGNAL_NOT_SENT'); await gone(false); assert.equal(current.exit.signal, 'SIGKILL', 'ACTUAL_FAULT_SIGNAL_REQUIRED'); report.fault.confirmed = true; save(); value = { interrupted: true }; break;
           }
           case 'recover': assert(report.fault?.confirmed && current.cleared && report.starts.length === 3, 'FAULT_RECOVERY_ONLY'); await launch(37); value = { recovered: true }; break;
           case 'finish': {
-            assert(newInstalled && report.starts.length >= 3, 'COLD_EVIDENCE_REQUIRED');
+            assert(newInstalled && report.starts.length >= (after97 ? 4 : 3), 'COLD_EVIDENCE_REQUIRED');
             if (!current.cleared) await quit();
             check('original-login-not-recreated', report.logins.length === 1);
-            check('original-key-served-in-both-real-packages', report.models.some(m => m.start === 97 && m.originalKeyMatched) && report.models.some(m => m.start >= 98 && m.originalKeyMatched));
-            check('website-authenticated-after-upgrade', report.pages.some(p => p.start === 98 && p.authenticated));
-            check('cold-original-key-and-login', report.models.some(m => m.start === 99 && m.originalKeyMatched) && report.pages.some(p => p.start === 99 && p.authenticated));
+            check('original-key-served-in-both-real-packages', report.models.some(m => m.start === oldStart && m.originalKeyMatched) && report.models.some(m => m.start === newStart && m.originalKeyMatched));
+            check('website-authenticated-after-upgrade', report.pages.some(p => p.start === newStart && p.authenticated));
+            check('cold-original-key-and-login', report.models.some(m => m.start === coldStart && m.originalKeyMatched) && report.pages.some(p => p.start === coldStart && p.authenticated));
             assert(['upgrade-ready', 'upgrade-blocked', 'upgrade-cancelled'].every(label => report.captures.includes(label)), 'CUA_FLOW_CAPTURES_REQUIRED');
             finished = true; value = { finished: true }; break;
           }
