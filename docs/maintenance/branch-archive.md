@@ -64,3 +64,13 @@ git worktree add --detach ../helpr-lifecycle-archive archive/2026-10-20/lifecycl
 - 内置浏览器临时预览使用`http://127.0.0.1:4320/version-check-prototype.html`，本机服务在2026-10-23约17:14（Asia/Shanghai）独立到期；到期不影响HTML。
 - [08事项](../../.scratch/helpr-first-release-implementation/issues/08-version-check-and-download-notice.md#原型确认)记录已确认范围，包括检查频率、当前会话稍后处理和各种异常；12场景／69分步及修正证据只保存在原型分支。
 - 原型所有网络、下载和任务均为模拟；正式来源与下载策略现见[版本渠道](version-channel.md)。没有把原型合入主工作区产品代码，也没有推送该原型分支或新标签；独立元数据渠道的推送另有记录。以后移除副本时，可从固定提交恢复`.scratch/helpr-first-release-implementation/prototypes/version-check/`。
+
+## 09 当前手动升级原型
+
+2026-10-27按用户「那就开始做吧」制作 `manual-upgrade-v1` 初稿；来源分支 `codex/manual-upgrade-prototype`，固定提交 `2747a993dbf64f7284834dfe0d7a185b8a3af163`。本轮授权是制作原型，尚未确认正式实现。
+
+- 工作副本：`/Users/yuexiaoliang/.codex/worktrees/manual-upgrade-prototype/helpr`，本聊天附属受管工作区。
+- [单文件入口](/Users/yuexiaoliang/.codex/worktrees/manual-upgrade-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/manual-upgrade/manual-upgrade-prototype.html)，可直接双击；[体验、范围和阻碍](/Users/yuexiaoliang/.codex/worktrees/manual-upgrade-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/manual-upgrade/README.md)独立保留。没有运行临时网页服务。
+- [09事项](../../.scratch/helpr-first-release-implementation/issues/09-manual-upgrade-and-credential-continuity.md#原型确认)记录待确认范围；17个引导场景和自由操作全为内存模拟。两段脚本语法与静态结构检查通过，内置浏览器因拒绝 `file:` 导航而未完成交互、输入或布局走查，没有截图；禁止绕行的原始策略阻碍保存在原型说明和 `CHECKS.json`。
+- 已关闭失败创建的自有空白标签，最终本聊天内置浏览器标签为空。没有启动正式应用、下载或安装包、访问凭据、执行迁移或写入网页，不勾选09验收，不提前解除23依赖。
+- 原型未合入产品、未推送。将来移除副本后，可从上述固定提交恢复 `.scratch/helpr-first-release-implementation/prototypes/manual-upgrade/`；无需恢复真实产品资料。
