@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { backupUICommandSchema } from './backup';
 import { versionUICommandSchema, type VersionStatus } from './version';
+import { upgradeUICommandSchema, type UpgradeStatus } from './upgrade';
 import { websiteURL } from './url-policy';
 import {
   executionSchema,
@@ -155,6 +156,7 @@ export const panelSchema = z.strictObject({
 export const uiCommandSchema = z.union([
   backupUICommandSchema,
   versionUICommandSchema,
+  upgradeUICommandSchema,
   modelUICommandSchema,
   executionIntentSchema,
   recordCommandSchema.refine((command) => command.kind !== 'page'),
@@ -168,6 +170,7 @@ export const uiCommandSchema = z.union([
 ]);
 export type UICommand = z.infer<typeof uiCommandSchema>;
 export type WorkspaceEvent = {
+  upgrade?: UpgradeStatus;
   version?: VersionStatus;
   versionNotice?: boolean;
   state?: WorkspaceSnapshot;

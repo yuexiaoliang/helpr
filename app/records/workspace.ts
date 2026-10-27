@@ -27,6 +27,8 @@ import { ModelRecords } from './model';
 import { ExecutionRecords } from './execution';
 import { executionSchema } from '../shared/execution';
 import { BackupRecords } from './backup';
+import { UpgradeRecords } from './upgrade';
+import { z } from 'zod';
 import {
   CURRENT_DATA_FORMAT,
   CURRENT_STATE_MODEL,
@@ -58,6 +60,7 @@ export class WorkspaceRecords {
   private readonly sqlite: Database.Database;
   private readonly db: ReturnType<typeof drizzle<typeof schema>>;
   private readonly backups: BackupRecords;
+  private readonly upgrades: UpgradeRecords;
   constructor(folder: string, migrations: string, validation = false) {
     mkdirSync(folder, { recursive: true, mode: 0o700 });
     const marker = path.join(folder, '.workspace-records');
@@ -96,15 +99,17 @@ export class WorkspaceRecords {
               'SELECT schema_version FROM workspace WHERE id=1',
             )
             .get()?.schema_version
-        : 6;
-      if (!priorVersion || ![1, 2, 3, 4, 5, 6].includes(priorVersion))
+        : CURRENT_DATA_FORMAT;
+      if (!priorVersion || ![1, 2, 3, 4, 5, 6, 7].includes(priorVersion))
         throw Error('DATA_VERSION_UNSUPPORTED');
-      if (legacy && priorVersion !== 6) {
+      if (legacy && priorVersion !== CURRENT_DATA_FORMAT) {
         const backup = path.join(
           folder,
-          (priorVersion === 5
-            ? 'workspace-before-backup-07-'
-            : 'workspace-before-recovery-05-') +
+          (priorVersion === 6
+            ? 'workspace-before-upgrade-09-'
+            : priorVersion === 5
+              ? 'workspace-before-backup-07-'
+              : 'workspace-before-recovery-05-') +
             randomUUID() +
             '.sqlite',
         );
@@ -144,6 +149,7 @@ export class WorkspaceRecords {
         version !== 3 &&
         version !== 4 &&
         version !== 5 &&
+        version !== 6 &&
         version !== CURRENT_DATA_FORMAT
       )
         throw new Error('DATA_VERSION_UNSUPPORTED');
@@ -155,6 +161,7 @@ export class WorkspaceRecords {
       this.models = new ModelRecords(this.db);
       this.executions = new ExecutionRecords(this.db);
       this.backups = new BackupRecords(this.db, () => this.snapshot(), folder);
+      this.upgrades = new UpgradeRecords(this.db, () => this.snapshot());
       if (!existsSync(marker)) {
         const fd = openSync(marker, 'wx', 0o600);
         try {
@@ -196,12 +203,24 @@ export class WorkspaceRecords {
   model(
     input: unknown,
   ): Record<string, unknown> & { state: WorkspaceSnapshot } {
+    const kind = z.object({ kind: z.string() }).parse(input).kind;
+    if (this.upgrades.held() && ['begin', 'dispatch'].includes(kind))
+      throw Error('UPGRADE_PENDING');
     const result = this.models.execute(input);
     return { ...result, state: this.snapshot() };
   }
   execution(
     input: unknown,
   ): Record<string, unknown> & { state: WorkspaceSnapshot } {
+    const c = z
+      .object({ kind: z.string(), intent: z.string().optional() })
+      .parse(input);
+    if (
+      this.upgrades.held() &&
+      (['claim', 'reserve', 'dispatch'].includes(c.kind) ||
+        (c.kind === 'intent' && ['start', 'continue'].includes(c.intent ?? '')))
+    )
+      throw Error('UPGRADE_PENDING');
     return { ...this.executions.execute(input), state: this.snapshot() };
   }
   lookupRequest(input: unknown): {
@@ -371,6 +390,16 @@ export class WorkspaceRecords {
   }
   backup(input: unknown) {
     return this.backups.execute(input);
+  }
+  upgrade(input: unknown) {
+    return {
+      ...this.upgrades.execute(input),
+      currentFingerprint: this.upgrades.fingerprint(),
+      workspaceRevision: this.snapshot().revision,
+    };
+  }
+  upgradeFingerprint() {
+    return this.upgrades.fingerprint();
   }
   async settleBackups() {
     await this.backups.settled();

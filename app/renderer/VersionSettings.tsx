@@ -3,6 +3,7 @@ import { Heading } from 'react-aria-components';
 import { versionLabels } from '../shared/version';
 import { WorkspaceStore } from './store';
 import styles from './Workspace.module.css';
+import { UpgradeSettings } from './UpgradeSettings';
 
 export function VersionSettings({ store }: { store: WorkspaceStore }) {
   const view = useSyncExternalStore(store.subscribe, store.get);
@@ -96,7 +97,7 @@ export function VersionSettings({ store }: { store: WorkspaceStore }) {
                 打开手动下载页 ↗
               </button>
               <p>
-                仅在浏览器打开可信入口，不自动下载、暂停任务或准备退出。安装前须先保存现场和备份；升级准备由后续功能提供。
+                仅在浏览器打开可信入口，不自动下载或退出。方便时使用下方的升级准备，先处理现场并保存备份。
               </p>
             </>
           )}
@@ -119,6 +120,7 @@ export function VersionSettings({ store }: { store: WorkspaceStore }) {
       ) : (
         <p role="status">正在读取新版检查状态…</p>
       )}
+      <UpgradeSettings store={store} />
     </section>
   );
 }

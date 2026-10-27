@@ -84,6 +84,7 @@ export class ExecutionService {
   private readonly systemConditions = new Set<SystemCondition>();
   private systemGeneration = 0;
   private restoring = false;
+  private upgradeHeld = false;
   private readonly reviews = new Map<
     string,
     { abort: AbortController; work: Promise<void>; epoch?: number }
@@ -103,6 +104,7 @@ export class ExecutionService {
       revoke: (taskId: string) => void;
       stopModels: (taskId: string) => void;
       beforeRecovery?: () => Promise<void>;
+      initialUpgradeHold?: boolean;
       input?: {
         prepare: (taskId: string) => Promise<number>;
         block: (taskId: string) => void;
@@ -112,7 +114,9 @@ export class ExecutionService {
         permit: <T>(taskId: string, epoch: number, send: () => T) => T;
       };
     },
-  ) {}
+  ) {
+    this.upgradeHeld = ports.initialUpgradeHold ?? false;
+  }
   canExit() {
     return (
       this.pendingIntents.size === 0 &&
@@ -151,9 +155,11 @@ export class ExecutionService {
                   blocked: true,
                   stopSaved: true,
                   system: true,
-                  message: this.systemConditions.size
-                    ? `系统暂停：${[...this.systemConditions].map((c) => systemConditionLabel[c]).join('、')}。原任务与网页保留，条件恢复后先核对再续做。`
-                    : '正在可靠保存系统暂停检查点，完成后先核对原任务；没有直接重发。',
+                  message: this.upgradeHeld
+                    ? '正在准备升级或核对换版后的现场，已暂停新的自动操作。原任务意图保留。'
+                    : this.systemConditions.size
+                      ? `系统暂停：${[...this.systemConditions].map((c) => systemConditionLabel[c]).join('、')}。原任务与网页保留，条件恢复后先核对再续做。`
+                      : '正在可靠保存系统暂停检查点，完成后先核对原任务；没有直接重发。',
                 },
               }
             : t;
@@ -211,6 +217,7 @@ export class ExecutionService {
   systemReady() {
     return (
       !this.restoring &&
+      !this.upgradeHeld &&
       this.systemConditions.size === 0 &&
       this.interruptions.size === 0
     );
@@ -480,6 +487,7 @@ export class ExecutionService {
     this.pump();
   }
   async beginRestore() {
+    if (this.upgradeHeld) throw Error('UPGRADE_PENDING');
     if (this.restoring) throw Error('BACKUP_BUSY');
     this.restoring = true;
     this.systemGeneration++;
@@ -492,6 +500,44 @@ export class ExecutionService {
   async endRestore(state: WorkspaceSnapshot) {
     this.restoring = false;
     await this.recordsRestored(state);
+  }
+  async holdUpgrade() {
+    if (this.restoring) throw Error('BACKUP_BUSY');
+    if (!this.upgradeHeld) {
+      this.upgradeHeld = true;
+      this.systemGeneration++;
+      const tasks = this.ports.current().tasks;
+      for (const t of tasks) {
+        this.reviews.get(t.id)?.abort.abort();
+        this.ports.input?.block(t.id);
+        this.jobs.get(t.id)?.abort.abort(Error('UPGRADE_PENDING'));
+        this.ports.revoke(t.id);
+        this.ports.stopModels(t.id);
+      }
+      this.publish();
+    }
+    await this.settled();
+    for (const t of this.ports.current().tasks) {
+      const e = t.execution;
+      if (
+        e &&
+        e.intent === 'automatic' &&
+        !e.recoveryPending &&
+        !e.pauseReason &&
+        ['queued', 'checking', 'running'].includes(e.phase)
+      )
+        await this.record({
+          kind: 'system-interrupt',
+          taskId: t.id,
+          expectedVersion: e.version,
+        });
+    }
+  }
+  releaseUpgrade() {
+    this.upgradeHeld = false;
+    this.systemGeneration++;
+    this.publish();
+    this.pump();
   }
   async reviewRestored(taskId: string): Promise<WorkspaceSnapshot> {
     if (this.reviews.has(taskId)) throw Error('MODEL_BUSY');

@@ -35,29 +35,34 @@ async function handle(input: unknown): Promise<void> {
     if (kind === 'close' || kind === 'checkpoint')
       await records.settleBackups();
     const value =
-      kind === 'backup'
-        ? await records.backup(
+      kind === 'upgrade'
+        ? records.upgrade(
             z.object({ command: z.unknown() }).parse(command).command,
           )
-        : kind === 'snapshot'
-          ? records.snapshot()
-          : kind === 'checkpoint'
-            ? records.checkpoint()
-            : kind === 'execution'
-              ? records.execution(
-                  z.object({ command: z.unknown() }).parse(command).command,
-                )
-              : kind === 'model'
-                ? records.model(
+        : kind === 'backup'
+          ? await records.backup(
+              z.object({ command: z.unknown() }).parse(command).command,
+            )
+          : kind === 'snapshot'
+            ? records.snapshot()
+            : kind === 'checkpoint'
+              ? records.checkpoint()
+              : kind === 'execution'
+                ? records.execution(
                     z.object({ command: z.unknown() }).parse(command).command,
                   )
-                : kind === 'lookup'
-                  ? records.lookupRequest(
+                : kind === 'model'
+                  ? records.model(
                       z.object({ command: z.unknown() }).parse(command).command,
                     )
-                  : kind === 'close'
-                    ? null
-                    : records.execute(command);
+                  : kind === 'lookup'
+                    ? records.lookupRequest(
+                        z.object({ command: z.unknown() }).parse(command)
+                          .command,
+                      )
+                    : kind === 'close'
+                      ? null
+                      : records.execute(command);
     send({ id, value });
     log.event('command');
     if (kind === 'close') {

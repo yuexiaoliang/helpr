@@ -41,6 +41,9 @@ import { LocalFixture } from './local-fixture';
 import { acquireRuntimeOwnership } from './runtime-ownership';
 import { BackupService } from './backup-service';
 import { VersionService } from './version-service';
+import { UpgradeService } from './upgrade-service';
+import { upgradeProofSchema, upgradeSiteSchema } from '../shared/upgrade';
+import { backupArchiveSchema } from '../shared/backup';
 import { versionFixture } from './version-fixture';
 import {
   CURRENT_DATA_FORMAT,
@@ -358,6 +361,7 @@ export async function startController(
   const saveExecution = (command: unknown) =>
     recordClient.request({ kind: 'execution', command });
   const executions: ExecutionService = new ExecutionService({
+    initialUpgradeHold: true,
     records: barriers
       ? async (command) => {
           const delayed = z
@@ -454,6 +458,74 @@ export async function startController(
     },
   });
 
+  const upgrades = new UpgradeService({
+    version: app.getVersion(),
+    records: (command) => recordClient.request({ kind: 'upgrade', command }),
+    current: () => state,
+    versions: () => versions.get(),
+    hold: async () => {
+      await executions.holdUpgrade();
+      await models.stopAll();
+    },
+    release: () => {
+      models.cancelExit();
+      executions.releaseUpgrade();
+      return Promise.resolve();
+    },
+    ready: () =>
+      recordsAvailable &&
+      workspace.canExit() &&
+      executions.canExit() &&
+      backups.canExit(),
+    capture: async () => {
+      const credential = await models.credentialProof();
+      const site = upgradeProofSchema
+        .omit({ credential: true })
+        .parse(await hostClient.request({ kind: 'upgrade-site-state' }));
+      return { ...site, credential };
+    },
+    pages: async () =>
+      z
+        .array(upgradeSiteSchema)
+        .parse(await hostClient.request({ kind: 'upgrade-page-state' })),
+    acknowledge: async (taskId, generation, epoch) => {
+      await hostClient.request({
+        kind: 'upgrade-ack-page',
+        taskId,
+        generation,
+        epoch,
+      });
+    },
+    choose: async () =>
+      z
+        .object({ file: z.string().nullable() })
+        .parse(
+          await hostClient.request(
+            { kind: 'choose-backup', mode: 'directory' },
+            180000,
+          ),
+        ).file,
+    backup: async (requestId, file) =>
+      backupArchiveSchema.parse(
+        z
+          .object({ archive: backupArchiveSchema })
+          .parse(
+            await recordClient.request(
+              { kind: 'backup', command: { kind: 'create', requestId, file } },
+              30000,
+            ),
+          ).archive,
+      ),
+    publish: (upgrade) => {
+      if (host.connected) host.send({ upgrade });
+    },
+    closePages: async (proof) => {
+      await hostClient.request({ kind: 'upgrade-close-pages', proof }, 45000);
+    },
+    quit: () => quit(),
+  });
+  await upgrades.initialize();
+
   systemSink.notify = (condition, blocked) => {
     void executions.setSystemCondition(condition, blocked).catch((error) => {
       log.event('failure', { code: errorCode(error) });
@@ -546,6 +618,7 @@ export async function startController(
       if (command.apiKey !== undefined) fixture.protect(command.apiKey);
     }
     if (command.kind === 'snapshot') return executions.decorate(state);
+    if (command.kind.startsWith('upgrade-')) return upgrades.handle(command);
     if (command.kind.startsWith('version-')) return versions.handle(command);
     if (
       command.kind === 'backup-review' &&
@@ -602,6 +675,7 @@ export async function startController(
       return { state: await models.ask(command) };
     }
     if (command.kind === 'quit') {
+      if (upgrades.held()) throw Error('UPGRADE_PENDING');
       if (
         !recordsAvailable ||
         !workspace.canExit() ||
