@@ -79,4 +79,4 @@ git worktree add --detach ../helpr-lifecycle-archive archive/2026-10-20/lifecycl
 
 2026-10-27，正式实现单独保存在 `codex/manual-upgrade`，受管工作副本为 `/Users/yuexiaoliang/.codex/worktrees/manual-upgrade/helpr`。基点 `246eabe`，产品实现及修正为 `04472bf`、`7ece508`、`852e7c3`；原型HTML和模拟代码未合入。此分支尚未合入主仓库 `main`、未推送；原型副本继续保留，不归档正在使用的实现工作树。
 
-[源码报告](../testing/evidence/upgrade-09/REPORT.md)记录122正式／25旧回归及两轴实现复核结果；实际验收0/10、预算未增。以后继续代码或实包验证时使用该工作副本，不从原型分支重做实现或获得新的运行额度。
+[实现报告](../testing/evidence/upgrade-09/REPORT.md)现记录126正式／25旧回归、候选36→37原密钥及有效登录延续和限定验收2/10。产品状态提示修正 `ea5cb08` 已通过源码检查，未重新打包；37/37构建、10/10安装、100/100启动用量及旧失败保留。以后继续代码或实包验证时使用该工作副本，不从原型分支重做实现或获得新的运行额度。
