@@ -1,0 +1,6540 @@
+{
+  "version": "manual-upgrade-v2",
+  "date": "2026-10-27",
+  "timezone": "Asia/Shanghai",
+  "sourceBefore": "2747a993dbf64f7284834dfe0d7a185b8a3af163",
+  "sourceAfterSha256": "11ca766f11167c2d75ec89e387c54e6020a47fb7d74600a25ac858a216032e01",
+  "scope": "One-time offline pure-state rehearsal. No DOM, browser, native input, screenshots, network, installation, migration or real website effects. No test suite added.",
+  "counterexamples": [
+    {
+      "id": "two-unsaved-pages",
+      "before": [
+        {
+          "action": {
+            "type": "editPage",
+            "task": "A",
+            "value": "A unsaved"
+          },
+          "state": {
+            "phase": "available",
+            "gate": false,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": true,
+            "tasks": {
+              "A": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "A unsaved",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": ""
+          }
+        },
+        {
+          "action": {
+            "type": "editPage",
+            "task": "B",
+            "value": "B unsaved"
+          },
+          "state": {
+            "phase": "available",
+            "gate": false,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": true,
+            "tasks": {
+              "A": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "A unsaved",
+                "result": "known"
+              },
+              "B": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "B unsaved",
+                "result": "known"
+              }
+            },
+            "message": ""
+          }
+        },
+        {
+          "action": {
+            "type": "prepare"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": true,
+            "tasks": {
+              "A": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "A unsaved",
+                "result": "known"
+              },
+              "B": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "B unsaved",
+                "result": "known"
+              }
+            },
+            "message": "开始准备升级：阻止新的自动操作，保留每项任务的原意图；正在进行的操作仍要核对。"
+          }
+        },
+        {
+          "action": {
+            "type": "save"
+          },
+          "state": {
+            "phase": "blocked",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": true,
+            "tasks": {
+              "A": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "A unsaved",
+                "result": "known"
+              },
+              "B": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "B unsaved",
+                "result": "known"
+              }
+            },
+            "message": "任务 B 有尚未保存的手动文字。请返回网页处理，确认可安全重建现场后再准备。"
+          }
+        },
+        {
+          "action": {
+            "type": "pageSaved",
+            "task": "A"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "A unsaved",
+                "result": "known"
+              },
+              "B": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "B unsaved",
+                "result": "known"
+              }
+            },
+            "message": "模拟核对网页已保存手动文字，接管意图保留。仍需重新保存记录并备份。"
+          }
+        },
+        {
+          "action": {
+            "type": "save"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "A unsaved",
+                "result": "known"
+              },
+              "B": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "B unsaved",
+                "result": "known"
+              }
+            },
+            "message": "任务、草稿、原意图及当前已知结果已模拟保存。接下来制作并核对业务资料备份。"
+          }
+        },
+        {
+          "action": {
+            "type": "backup"
+          },
+          "state": {
+            "phase": "ready",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "A unsaved",
+                "result": "known"
+              },
+              "B": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "B unsaved",
+                "result": "known"
+              }
+            },
+            "message": "升级前业务资料备份已模拟生成并核对，现在可以主动退出。原密钥和网站登录不在备份中。"
+          }
+        }
+      ],
+      "after": [
+        {
+          "action": {
+            "type": "editPage",
+            "task": "A",
+            "value": "A unsaved"
+          },
+          "state": {
+            "phase": "available",
+            "gate": false,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": true,
+            "tasks": {
+              "A": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": true,
+                "pageText": "A unsaved",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": ""
+          }
+        },
+        {
+          "action": {
+            "type": "editPage",
+            "task": "B",
+            "value": "B unsaved"
+          },
+          "state": {
+            "phase": "available",
+            "gate": false,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": true,
+            "tasks": {
+              "A": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": true,
+                "pageText": "A unsaved",
+                "result": "known"
+              },
+              "B": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": true,
+                "pageText": "B unsaved",
+                "result": "known"
+              }
+            },
+            "message": ""
+          }
+        },
+        {
+          "action": {
+            "type": "prepare"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": true,
+            "tasks": {
+              "A": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": true,
+                "pageText": "A unsaved",
+                "result": "known"
+              },
+              "B": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": true,
+                "pageText": "B unsaved",
+                "result": "known"
+              }
+            },
+            "message": "开始准备升级：阻止新的自动操作，保留每项任务的原意图；正在进行的操作仍要核对。"
+          }
+        },
+        {
+          "action": {
+            "type": "save"
+          },
+          "state": {
+            "phase": "blocked",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": true,
+            "tasks": {
+              "A": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": true,
+                "pageText": "A unsaved",
+                "result": "known"
+              },
+              "B": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": true,
+                "pageText": "B unsaved",
+                "result": "known"
+              }
+            },
+            "message": "任务 A 有尚未保存的手动文字。请返回网页处理，确认可安全重建现场后再准备。"
+          }
+        },
+        {
+          "action": {
+            "type": "pageSaved",
+            "task": "A"
+          },
+          "state": {
+            "phase": "blocked",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": true,
+            "tasks": {
+              "A": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "A unsaved",
+                "result": "known"
+              },
+              "B": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": true,
+                "pageText": "B unsaved",
+                "result": "known"
+              }
+            },
+            "message": "模拟核对任务 A 的网页文字已保存，接管意图保留。任务 B 仍有未保存文字，不能退出。"
+          }
+        },
+        {
+          "action": {
+            "type": "save"
+          },
+          "state": {
+            "phase": "blocked",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": true,
+            "tasks": {
+              "A": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "A unsaved",
+                "result": "known"
+              },
+              "B": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": true,
+                "pageText": "B unsaved",
+                "result": "known"
+              }
+            },
+            "message": "任务 B 有尚未保存的手动文字。请返回网页处理，确认可安全重建现场后再准备。"
+          }
+        },
+        {
+          "action": {
+            "type": "backup"
+          },
+          "state": {
+            "phase": "blocked",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": true,
+            "tasks": {
+              "A": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "A unsaved",
+                "result": "known"
+              },
+              "B": {
+                "intent": "takeover",
+                "count": 1,
+                "pageDirty": true,
+                "pageText": "B unsaved",
+                "result": "known"
+              }
+            },
+            "message": "保存或现场处理尚未完成，不能把这份备份视为可用。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "new-stop-invalidates-result-review",
+      "before": [
+        {
+          "action": {
+            "type": "prepare"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "开始准备升级：阻止新的自动操作，保留每项任务的原意图；正在进行的操作仍要核对。"
+          }
+        },
+        {
+          "action": {
+            "type": "save"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "任务、草稿、原意图及当前已知结果已模拟保存。接下来制作并核对业务资料备份。"
+          }
+        },
+        {
+          "action": {
+            "type": "backup"
+          },
+          "state": {
+            "phase": "ready",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "升级前业务资料备份已模拟生成并核对，现在可以主动退出。原密钥和网站登录不在备份中。"
+          }
+        },
+        {
+          "action": {
+            "type": "obtainPackage"
+          },
+          "state": {
+            "phase": "ready",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟用户手动取得新版安装包；升级准备仍须单独完成。"
+          }
+        },
+        {
+          "action": {
+            "type": "exit"
+          },
+          "state": {
+            "phase": "exited",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟旧版正常退出，原任务意图保持。请在应用外手动替换为可信新版，再重新打开。"
+          }
+        },
+        {
+          "action": {
+            "type": "install"
+          },
+          "state": {
+            "phase": "installed",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟用户手动替换并打开新版。尚未通过资料、凭据、登录和控制能力检查，任务暂不自动操作。"
+          }
+        },
+        {
+          "action": {
+            "type": "startChecks"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "开始模拟启动检查，自动工作保持暂停；检查通过后仍要核对每项任务的实际结果。"
+          }
+        },
+        {
+          "action": {
+            "type": "verifyInstalled"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": ""
+          }
+        },
+        {
+          "action": {
+            "type": "dataOk"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟核对旧资料与引用完整，已保留迁移前副本。接下来演练资料迁移。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationStart"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟迁移进行中；原资料副本保留，网页和模型自动动作仍被阻止。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationOk"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟资料与任务状态格式迁移完成，原资料副本保留；尚未恢复网页执行。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkAccess"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟原密钥仍可用、原未过期登录仍有效、原生输入与网页控制检查通过。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkResults"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": true,
+            "installedPackage": "not-modeled",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟逐任务核对网站实际结果，保留原停止、人工接管和待确认条件；结果不明的任务仍待核对。"
+          }
+        },
+        {
+          "action": {
+            "type": "stop",
+            "task": "A"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": true,
+            "installedPackage": "not-modeled",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "任务 A 已明确停止；旧回执与本次升级不能覆盖这个较新决定。"
+          }
+        },
+        {
+          "action": {
+            "type": "finish"
+          },
+          "state": {
+            "phase": "complete",
+            "gate": false,
+            "checked": true,
+            "installedPackage": "not-modeled",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟升级后核对完成。仅仍获准且结果明确的任务可自动续做；停止、接管和等待确认的任务保持原状。"
+          }
+        }
+      ],
+      "after": [
+        {
+          "action": {
+            "type": "prepare"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "开始准备升级：阻止新的自动操作，保留每项任务的原意图；正在进行的操作仍要核对。"
+          }
+        },
+        {
+          "action": {
+            "type": "save"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "任务、草稿、原意图及当前已知结果已模拟保存。接下来制作并核对业务资料备份。"
+          }
+        },
+        {
+          "action": {
+            "type": "backup"
+          },
+          "state": {
+            "phase": "ready",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "升级前业务资料备份已模拟生成并核对，现在可以主动退出。原密钥和网站登录不在备份中。"
+          }
+        },
+        {
+          "action": {
+            "type": "obtainPackage"
+          },
+          "state": {
+            "phase": "ready",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟用户手动取得新版安装包；升级准备仍须单独完成。"
+          }
+        },
+        {
+          "action": {
+            "type": "exit"
+          },
+          "state": {
+            "phase": "exited",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟旧版正常退出，原任务意图保持。请在应用外手动替换为可信新版，再重新打开。"
+          }
+        },
+        {
+          "action": {
+            "type": "install"
+          },
+          "state": {
+            "phase": "installed",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟用户手动替换并打开新版。尚未通过资料、凭据、登录和控制能力检查，任务暂不自动操作。"
+          }
+        },
+        {
+          "action": {
+            "type": "startChecks"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "开始模拟启动检查，自动工作保持暂停；检查通过后仍要核对每项任务的实际结果。"
+          }
+        },
+        {
+          "action": {
+            "type": "verifyInstalled"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟实际应用版本、来源和架构与预期一致；尚未放行网页工作。"
+          }
+        },
+        {
+          "action": {
+            "type": "dataOk"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟核对旧资料与引用完整，已保留迁移前副本。接下来演练资料迁移。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationStart"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟迁移进行中；原资料副本保留，网页和模型自动动作仍被阻止。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationOk"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟资料与任务状态格式迁移完成，原资料副本保留；尚未恢复网页执行。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkAccess"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟原密钥仍可用、原未过期登录仍有效、原生输入与网页控制检查通过。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkResults"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": true,
+            "installedPackage": "matching",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟逐任务核对网站实际结果，保留原停止、人工接管和待确认条件；结果不明的任务仍待核对。"
+          }
+        },
+        {
+          "action": {
+            "type": "stop",
+            "task": "A"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "任务 A 已明确停止；旧回执与本次升级不能覆盖这个较新决定。"
+          }
+        },
+        {
+          "action": {
+            "type": "finish"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "启动检查或结果核对尚未完成，不能恢复自动工作。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "expired-login-cannot-become-original-by-checking",
+      "before": [
+        {
+          "action": {
+            "type": "prepare"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "开始准备升级：阻止新的自动操作，保留每项任务的原意图；正在进行的操作仍要核对。"
+          }
+        },
+        {
+          "action": {
+            "type": "save"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "任务、草稿、原意图及当前已知结果已模拟保存。接下来制作并核对业务资料备份。"
+          }
+        },
+        {
+          "action": {
+            "type": "backup"
+          },
+          "state": {
+            "phase": "ready",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "升级前业务资料备份已模拟生成并核对，现在可以主动退出。原密钥和网站登录不在备份中。"
+          }
+        },
+        {
+          "action": {
+            "type": "obtainPackage"
+          },
+          "state": {
+            "phase": "ready",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟用户手动取得新版安装包；升级准备仍须单独完成。"
+          }
+        },
+        {
+          "action": {
+            "type": "exit"
+          },
+          "state": {
+            "phase": "exited",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟旧版正常退出，原任务意图保持。请在应用外手动替换为可信新版，再重新打开。"
+          }
+        },
+        {
+          "action": {
+            "type": "install"
+          },
+          "state": {
+            "phase": "installed",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟用户手动替换并打开新版。尚未通过资料、凭据、登录和控制能力检查，任务暂不自动操作。"
+          }
+        },
+        {
+          "action": {
+            "type": "startChecks"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "开始模拟启动检查，自动工作保持暂停；检查通过后仍要核对每项任务的实际结果。"
+          }
+        },
+        {
+          "action": {
+            "type": "verifyInstalled"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": ""
+          }
+        },
+        {
+          "action": {
+            "type": "dataOk"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟核对旧资料与引用完整，已保留迁移前副本。接下来演练资料迁移。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationStart"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟迁移进行中；原资料副本保留，网页和模型自动动作仍被阻止。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationOk"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟资料与任务状态格式迁移完成，原资料副本保留；尚未恢复网页执行。"
+          }
+        },
+        {
+          "action": {
+            "type": "loginExpired"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "expired",
+            "continuity": "expired",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟原登录确已到期。需要在该网站重新登录；到期与丢失仍有效登录分别记录，原停止和待确认条件保留。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkAccess"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟原密钥仍可用、原未过期登录仍有效、原生输入与网页控制检查通过。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkResults"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": true,
+            "installedPackage": "not-modeled",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟逐任务核对网站实际结果，保留原停止、人工接管和待确认条件；结果不明的任务仍待核对。"
+          }
+        },
+        {
+          "action": {
+            "type": "finish"
+          },
+          "state": {
+            "phase": "complete",
+            "gate": false,
+            "checked": true,
+            "installedPackage": "not-modeled",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟升级后核对完成。仅仍获准且结果明确的任务可自动续做；停止、接管和等待确认的任务保持原状。"
+          }
+        }
+      ],
+      "after": [
+        {
+          "action": {
+            "type": "prepare"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "开始准备升级：阻止新的自动操作，保留每项任务的原意图；正在进行的操作仍要核对。"
+          }
+        },
+        {
+          "action": {
+            "type": "save"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "任务、草稿、原意图及当前已知结果已模拟保存。接下来制作并核对业务资料备份。"
+          }
+        },
+        {
+          "action": {
+            "type": "backup"
+          },
+          "state": {
+            "phase": "ready",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "升级前业务资料备份已模拟生成并核对，现在可以主动退出。原密钥和网站登录不在备份中。"
+          }
+        },
+        {
+          "action": {
+            "type": "obtainPackage"
+          },
+          "state": {
+            "phase": "ready",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟用户手动取得新版安装包；升级准备仍须单独完成。"
+          }
+        },
+        {
+          "action": {
+            "type": "exit"
+          },
+          "state": {
+            "phase": "exited",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟旧版正常退出，原任务意图保持。请在应用外手动替换为可信新版，再重新打开。"
+          }
+        },
+        {
+          "action": {
+            "type": "install"
+          },
+          "state": {
+            "phase": "installed",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟用户手动替换并打开新版。尚未通过资料、凭据、登录和控制能力检查，任务暂不自动操作。"
+          }
+        },
+        {
+          "action": {
+            "type": "startChecks"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "开始模拟启动检查，自动工作保持暂停；检查通过后仍要核对每项任务的实际结果。"
+          }
+        },
+        {
+          "action": {
+            "type": "verifyInstalled"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟实际应用版本、来源和架构与预期一致；尚未放行网页工作。"
+          }
+        },
+        {
+          "action": {
+            "type": "dataOk"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟核对旧资料与引用完整，已保留迁移前副本。接下来演练资料迁移。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationStart"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟迁移进行中；原资料副本保留，网页和模型自动动作仍被阻止。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationOk"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟资料与任务状态格式迁移完成，原资料副本保留；尚未恢复网页执行。"
+          }
+        },
+        {
+          "action": {
+            "type": "loginExpired"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "expired",
+            "continuity": "expired",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟原登录确已到期。需要在该网站重新登录；到期与丢失仍有效登录分别记录，原停止和待确认条件保留。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkAccess"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "expired",
+            "continuity": "expired",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "原会话确已到期，请先由用户在网站重新登录；重复检查不能使旧会话恢复有效。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkResults"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "expired",
+            "continuity": "expired",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "安装包、资料、原密钥、登录与控制能力尚未全部检查通过，暂不核对恢复。"
+          }
+        },
+        {
+          "action": {
+            "type": "finish"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "expired",
+            "continuity": "expired",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "启动检查或结果核对尚未完成，不能恢复自动工作。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "key-loss-cannot-become-permission-denial",
+      "before": [
+        {
+          "action": {
+            "type": "prepare"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "开始准备升级：阻止新的自动操作，保留每项任务的原意图；正在进行的操作仍要核对。"
+          }
+        },
+        {
+          "action": {
+            "type": "save"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "任务、草稿、原意图及当前已知结果已模拟保存。接下来制作并核对业务资料备份。"
+          }
+        },
+        {
+          "action": {
+            "type": "backup"
+          },
+          "state": {
+            "phase": "ready",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "升级前业务资料备份已模拟生成并核对，现在可以主动退出。原密钥和网站登录不在备份中。"
+          }
+        },
+        {
+          "action": {
+            "type": "obtainPackage"
+          },
+          "state": {
+            "phase": "ready",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟用户手动取得新版安装包；升级准备仍须单独完成。"
+          }
+        },
+        {
+          "action": {
+            "type": "exit"
+          },
+          "state": {
+            "phase": "exited",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟旧版正常退出，原任务意图保持。请在应用外手动替换为可信新版，再重新打开。"
+          }
+        },
+        {
+          "action": {
+            "type": "install"
+          },
+          "state": {
+            "phase": "installed",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟用户手动替换并打开新版。尚未通过资料、凭据、登录和控制能力检查，任务暂不自动操作。"
+          }
+        },
+        {
+          "action": {
+            "type": "startChecks"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "开始模拟启动检查，自动工作保持暂停；检查通过后仍要核对每项任务的实际结果。"
+          }
+        },
+        {
+          "action": {
+            "type": "verifyInstalled"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": ""
+          }
+        },
+        {
+          "action": {
+            "type": "dataOk"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟核对旧资料与引用完整，已保留迁移前副本。接下来演练资料迁移。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationStart"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟迁移进行中；原资料副本保留，网页和模型自动动作仍被阻止。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationOk"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟资料与任务状态格式迁移完成，原资料副本保留；尚未恢复网页执行。"
+          }
+        },
+        {
+          "action": {
+            "type": "keyLost"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "lost",
+            "login": "pending",
+            "continuity": "failed",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟无法找到原密钥。升级延续检查未通过，保留资料；重新输入密钥不能作为本次延续成功。"
+          }
+        },
+        {
+          "action": {
+            "type": "denyAccess"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "denied",
+            "login": "pending",
+            "continuity": "failed",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟你取消系统授权。资料保留，依赖该凭据的工作暂停；可在准备好后主动重试，不改用明文。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkAccess"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟原密钥仍可用、原未过期登录仍有效、原生输入与网页控制检查通过。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkResults"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": true,
+            "installedPackage": "not-modeled",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟逐任务核对网站实际结果，保留原停止、人工接管和待确认条件；结果不明的任务仍待核对。"
+          }
+        },
+        {
+          "action": {
+            "type": "finish"
+          },
+          "state": {
+            "phase": "complete",
+            "gate": false,
+            "checked": true,
+            "installedPackage": "not-modeled",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟升级后核对完成。仅仍获准且结果明确的任务可自动续做；停止、接管和等待确认的任务保持原状。"
+          }
+        }
+      ],
+      "after": [
+        {
+          "action": {
+            "type": "prepare"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "开始准备升级：阻止新的自动操作，保留每项任务的原意图；正在进行的操作仍要核对。"
+          }
+        },
+        {
+          "action": {
+            "type": "save"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "任务、草稿、原意图及当前已知结果已模拟保存。接下来制作并核对业务资料备份。"
+          }
+        },
+        {
+          "action": {
+            "type": "backup"
+          },
+          "state": {
+            "phase": "ready",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "升级前业务资料备份已模拟生成并核对，现在可以主动退出。原密钥和网站登录不在备份中。"
+          }
+        },
+        {
+          "action": {
+            "type": "obtainPackage"
+          },
+          "state": {
+            "phase": "ready",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟用户手动取得新版安装包；升级准备仍须单独完成。"
+          }
+        },
+        {
+          "action": {
+            "type": "exit"
+          },
+          "state": {
+            "phase": "exited",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟旧版正常退出，原任务意图保持。请在应用外手动替换为可信新版，再重新打开。"
+          }
+        },
+        {
+          "action": {
+            "type": "install"
+          },
+          "state": {
+            "phase": "installed",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟用户手动替换并打开新版。尚未通过资料、凭据、登录和控制能力检查，任务暂不自动操作。"
+          }
+        },
+        {
+          "action": {
+            "type": "startChecks"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "开始模拟启动检查，自动工作保持暂停；检查通过后仍要核对每项任务的实际结果。"
+          }
+        },
+        {
+          "action": {
+            "type": "verifyInstalled"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟实际应用版本、来源和架构与预期一致；尚未放行网页工作。"
+          }
+        },
+        {
+          "action": {
+            "type": "dataOk"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟核对旧资料与引用完整，已保留迁移前副本。接下来演练资料迁移。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationStart"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟迁移进行中；原资料副本保留，网页和模型自动动作仍被阻止。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationOk"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟资料与任务状态格式迁移完成，原资料副本保留；尚未恢复网页执行。"
+          }
+        },
+        {
+          "action": {
+            "type": "keyLost"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "lost",
+            "login": "pending",
+            "continuity": "failed",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟无法找到原密钥。升级延续检查未通过，保留资料；重新输入密钥不能作为本次延续成功。"
+          }
+        },
+        {
+          "action": {
+            "type": "denyAccess"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "lost",
+            "login": "pending",
+            "continuity": "failed",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "原密钥缺失的事实仍保留，取消授权不会使其变成可重试的临时授权问题。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkAccess"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "lost",
+            "login": "pending",
+            "continuity": "failed",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "原密钥或有效登录缺失仍未解决，不能由重新填写替代延续成功。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkResults"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "lost",
+            "login": "pending",
+            "continuity": "failed",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "安装包、资料、原密钥、登录与控制能力尚未全部检查通过，暂不核对恢复。"
+          }
+        },
+        {
+          "action": {
+            "type": "finish"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "lost",
+            "login": "pending",
+            "continuity": "failed",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "启动检查或结果核对尚未完成，不能恢复自动工作。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "wrong-package-cannot-be-cleared-by-data-check",
+      "before": [
+        {
+          "action": {
+            "type": "prepare"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "开始准备升级：阻止新的自动操作，保留每项任务的原意图；正在进行的操作仍要核对。"
+          }
+        },
+        {
+          "action": {
+            "type": "save"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "任务、草稿、原意图及当前已知结果已模拟保存。接下来制作并核对业务资料备份。"
+          }
+        },
+        {
+          "action": {
+            "type": "backup"
+          },
+          "state": {
+            "phase": "ready",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "升级前业务资料备份已模拟生成并核对，现在可以主动退出。原密钥和网站登录不在备份中。"
+          }
+        },
+        {
+          "action": {
+            "type": "obtainPackage"
+          },
+          "state": {
+            "phase": "ready",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟用户手动取得新版安装包；升级准备仍须单独完成。"
+          }
+        },
+        {
+          "action": {
+            "type": "exit"
+          },
+          "state": {
+            "phase": "exited",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟旧版正常退出，原任务意图保持。请在应用外手动替换为可信新版，再重新打开。"
+          }
+        },
+        {
+          "action": {
+            "type": "install"
+          },
+          "state": {
+            "phase": "installed",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟用户手动替换并打开新版。尚未通过资料、凭据、登录和控制能力检查，任务暂不自动操作。"
+          }
+        },
+        {
+          "action": {
+            "type": "startChecks"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "开始模拟启动检查，自动工作保持暂停；检查通过后仍要核对每项任务的实际结果。"
+          }
+        },
+        {
+          "action": {
+            "type": "verifyInstalled"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": ""
+          }
+        },
+        {
+          "action": {
+            "type": "dataOk"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟核对旧资料与引用完整，已保留迁移前副本。接下来演练资料迁移。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationStart"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟迁移进行中；原资料副本保留，网页和模型自动动作仍被阻止。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationOk"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟资料与任务状态格式迁移完成，原资料副本保留；尚未恢复网页执行。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkAccess"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟原密钥仍可用、原未过期登录仍有效、原生输入与网页控制检查通过。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkResults"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": true,
+            "installedPackage": "not-modeled",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟逐任务核对网站实际结果，保留原停止、人工接管和待确认条件；结果不明的任务仍待核对。"
+          }
+        },
+        {
+          "action": {
+            "type": "wrongPackage"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": true,
+            "installedPackage": "not-modeled",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟实际安装版本／来源／架构与预期不符。保留资料并暂停，不能只看显示的版本号恢复任务。"
+          }
+        },
+        {
+          "action": {
+            "type": "dataOk"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": true,
+            "installedPackage": "not-modeled",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟核对旧资料与引用完整，已保留迁移前副本。接下来演练资料迁移。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationStart"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": true,
+            "installedPackage": "not-modeled",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟迁移进行中；原资料副本保留，网页和模型自动动作仍被阻止。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationOk"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": true,
+            "installedPackage": "not-modeled",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟资料与任务状态格式迁移完成，原资料副本保留；尚未恢复网页执行。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkAccess"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": true,
+            "installedPackage": "not-modeled",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟原密钥仍可用、原未过期登录仍有效、原生输入与网页控制检查通过。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkResults"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": true,
+            "installedPackage": "not-modeled",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟逐任务核对网站实际结果，保留原停止、人工接管和待确认条件；结果不明的任务仍待核对。"
+          }
+        },
+        {
+          "action": {
+            "type": "finish"
+          },
+          "state": {
+            "phase": "complete",
+            "gate": false,
+            "checked": true,
+            "installedPackage": "not-modeled",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟升级后核对完成。仅仍获准且结果明确的任务可自动续做；停止、接管和等待确认的任务保持原状。"
+          }
+        }
+      ],
+      "after": [
+        {
+          "action": {
+            "type": "prepare"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "开始准备升级：阻止新的自动操作，保留每项任务的原意图；正在进行的操作仍要核对。"
+          }
+        },
+        {
+          "action": {
+            "type": "save"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "任务、草稿、原意图及当前已知结果已模拟保存。接下来制作并核对业务资料备份。"
+          }
+        },
+        {
+          "action": {
+            "type": "backup"
+          },
+          "state": {
+            "phase": "ready",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "升级前业务资料备份已模拟生成并核对，现在可以主动退出。原密钥和网站登录不在备份中。"
+          }
+        },
+        {
+          "action": {
+            "type": "obtainPackage"
+          },
+          "state": {
+            "phase": "ready",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟用户手动取得新版安装包；升级准备仍须单独完成。"
+          }
+        },
+        {
+          "action": {
+            "type": "exit"
+          },
+          "state": {
+            "phase": "exited",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟旧版正常退出，原任务意图保持。请在应用外手动替换为可信新版，再重新打开。"
+          }
+        },
+        {
+          "action": {
+            "type": "install"
+          },
+          "state": {
+            "phase": "installed",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟用户手动替换并打开新版。尚未通过资料、凭据、登录和控制能力检查，任务暂不自动操作。"
+          }
+        },
+        {
+          "action": {
+            "type": "startChecks"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "开始模拟启动检查，自动工作保持暂停；检查通过后仍要核对每项任务的实际结果。"
+          }
+        },
+        {
+          "action": {
+            "type": "verifyInstalled"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟实际应用版本、来源和架构与预期一致；尚未放行网页工作。"
+          }
+        },
+        {
+          "action": {
+            "type": "dataOk"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟核对旧资料与引用完整，已保留迁移前副本。接下来演练资料迁移。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationStart"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟迁移进行中；原资料副本保留，网页和模型自动动作仍被阻止。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationOk"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟资料与任务状态格式迁移完成，原资料副本保留；尚未恢复网页执行。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkAccess"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟原密钥仍可用、原未过期登录仍有效、原生输入与网页控制检查通过。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkResults"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": true,
+            "installedPackage": "matching",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟逐任务核对网站实际结果，保留原停止、人工接管和待确认条件；结果不明的任务仍待核对。"
+          }
+        },
+        {
+          "action": {
+            "type": "wrongPackage"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "mismatch",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟实际安装版本／来源／架构与预期不符。保留资料并暂停，不能只看显示的版本号恢复任务。"
+          }
+        },
+        {
+          "action": {
+            "type": "dataOk"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "mismatch",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "实际安装包尚未核对，或资料已知不兼容；保留原资料与暂停。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationStart"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "mismatch",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "资料与迁移前副本尚未核对，不能开始迁移。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationOk"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "mismatch",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "没有正在进行的迁移。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkAccess"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "mismatch",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "先完成安装包、资料与状态格式检查。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkResults"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "mismatch",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "安装包、资料、原密钥、登录与控制能力尚未全部检查通过，暂不核对恢复。"
+          }
+        },
+        {
+          "action": {
+            "type": "finish"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "mismatch",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "启动检查或结果核对尚未完成，不能恢复自动工作。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "incompatible-data-cannot-be-cleared-by-rechecking",
+      "before": [
+        {
+          "action": {
+            "type": "prepare"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "开始准备升级：阻止新的自动操作，保留每项任务的原意图；正在进行的操作仍要核对。"
+          }
+        },
+        {
+          "action": {
+            "type": "save"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "任务、草稿、原意图及当前已知结果已模拟保存。接下来制作并核对业务资料备份。"
+          }
+        },
+        {
+          "action": {
+            "type": "backup"
+          },
+          "state": {
+            "phase": "ready",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "升级前业务资料备份已模拟生成并核对，现在可以主动退出。原密钥和网站登录不在备份中。"
+          }
+        },
+        {
+          "action": {
+            "type": "obtainPackage"
+          },
+          "state": {
+            "phase": "ready",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟用户手动取得新版安装包；升级准备仍须单独完成。"
+          }
+        },
+        {
+          "action": {
+            "type": "exit"
+          },
+          "state": {
+            "phase": "exited",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟旧版正常退出，原任务意图保持。请在应用外手动替换为可信新版，再重新打开。"
+          }
+        },
+        {
+          "action": {
+            "type": "install"
+          },
+          "state": {
+            "phase": "installed",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟用户手动替换并打开新版。尚未通过资料、凭据、登录和控制能力检查，任务暂不自动操作。"
+          }
+        },
+        {
+          "action": {
+            "type": "startChecks"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "开始模拟启动检查，自动工作保持暂停；检查通过后仍要核对每项任务的实际结果。"
+          }
+        },
+        {
+          "action": {
+            "type": "verifyInstalled"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": ""
+          }
+        },
+        {
+          "action": {
+            "type": "dataOk"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟核对旧资料与引用完整，已保留迁移前副本。接下来演练资料迁移。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationStart"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟迁移进行中；原资料副本保留，网页和模型自动动作仍被阻止。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationOk"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟资料与任务状态格式迁移完成，原资料副本保留；尚未恢复网页执行。"
+          }
+        },
+        {
+          "action": {
+            "type": "badData"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟新版不支持当前资料或任务状态格式。保留原资料，不迁移、不恢复执行。"
+          }
+        },
+        {
+          "action": {
+            "type": "dataOk"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟核对旧资料与引用完整，已保留迁移前副本。接下来演练资料迁移。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationStart"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟迁移进行中；原资料副本保留，网页和模型自动动作仍被阻止。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationOk"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟资料与任务状态格式迁移完成，原资料副本保留；尚未恢复网页执行。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkAccess"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "not-modeled",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟原密钥仍可用、原未过期登录仍有效、原生输入与网页控制检查通过。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkResults"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": true,
+            "installedPackage": "not-modeled",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟逐任务核对网站实际结果，保留原停止、人工接管和待确认条件；结果不明的任务仍待核对。"
+          }
+        },
+        {
+          "action": {
+            "type": "finish"
+          },
+          "state": {
+            "phase": "complete",
+            "gate": false,
+            "checked": true,
+            "installedPackage": "not-modeled",
+            "key": "original",
+            "login": "original",
+            "continuity": "original",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": "not-modeled",
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟升级后核对完成。仅仍获准且结果明确的任务可自动续做；停止、接管和等待确认的任务保持原状。"
+          }
+        }
+      ],
+      "after": [
+        {
+          "action": {
+            "type": "prepare"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "开始准备升级：阻止新的自动操作，保留每项任务的原意图；正在进行的操作仍要核对。"
+          }
+        },
+        {
+          "action": {
+            "type": "save"
+          },
+          "state": {
+            "phase": "preparing",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "任务、草稿、原意图及当前已知结果已模拟保存。接下来制作并核对业务资料备份。"
+          }
+        },
+        {
+          "action": {
+            "type": "backup"
+          },
+          "state": {
+            "phase": "ready",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "升级前业务资料备份已模拟生成并核对，现在可以主动退出。原密钥和网站登录不在备份中。"
+          }
+        },
+        {
+          "action": {
+            "type": "obtainPackage"
+          },
+          "state": {
+            "phase": "ready",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟用户手动取得新版安装包；升级准备仍须单独完成。"
+          }
+        },
+        {
+          "action": {
+            "type": "exit"
+          },
+          "state": {
+            "phase": "exited",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟旧版正常退出，原任务意图保持。请在应用外手动替换为可信新版，再重新打开。"
+          }
+        },
+        {
+          "action": {
+            "type": "install"
+          },
+          "state": {
+            "phase": "installed",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟用户手动替换并打开新版。尚未通过资料、凭据、登录和控制能力检查，任务暂不自动操作。"
+          }
+        },
+        {
+          "action": {
+            "type": "startChecks"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "pending",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "开始模拟启动检查，自动工作保持暂停；检查通过后仍要核对每项任务的实际结果。"
+          }
+        },
+        {
+          "action": {
+            "type": "verifyInstalled"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟实际应用版本、来源和架构与预期一致；尚未放行网页工作。"
+          }
+        },
+        {
+          "action": {
+            "type": "dataOk"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟核对旧资料与引用完整，已保留迁移前副本。接下来演练资料迁移。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationStart"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟迁移进行中；原资料副本保留，网页和模型自动动作仍被阻止。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationOk"
+          },
+          "state": {
+            "phase": "checking",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟资料与任务状态格式迁移完成，原资料副本保留；尚未恢复网页执行。"
+          }
+        },
+        {
+          "action": {
+            "type": "badData"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "模拟新版不支持当前资料或任务状态格式。保留原资料，不迁移、不恢复执行。"
+          }
+        },
+        {
+          "action": {
+            "type": "dataOk"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "实际安装包尚未核对，或资料已知不兼容；保留原资料与暂停。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationStart"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "资料与迁移前副本尚未核对，不能开始迁移。"
+          }
+        },
+        {
+          "action": {
+            "type": "migrationOk"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "没有正在进行的迁移。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkAccess"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "先完成安装包、资料与状态格式检查。"
+          }
+        },
+        {
+          "action": {
+            "type": "checkResults"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "安装包、资料、原密钥、登录与控制能力尚未全部检查通过，暂不核对恢复。"
+          }
+        },
+        {
+          "action": {
+            "type": "finish"
+          },
+          "state": {
+            "phase": "held",
+            "gate": true,
+            "checked": false,
+            "installedPackage": "matching",
+            "key": "pending",
+            "login": "pending",
+            "continuity": "pending",
+            "pagePending": false,
+            "tasks": {
+              "A": {
+                "intent": "automatic",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              },
+              "B": {
+                "intent": "stopped",
+                "count": 1,
+                "pageDirty": false,
+                "pageText": "",
+                "result": "known"
+              }
+            },
+            "message": "启动检查或结果核对尚未完成，不能恢复自动工作。"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "normal",
+      "title": "正常手动升级",
+      "steps": 17,
+      "expectedPhase": "complete",
+      "matchesExpected": true,
+      "state": {
+        "phase": "complete",
+        "gate": false,
+        "checked": true,
+        "installedPackage": "matching",
+        "key": "original",
+        "login": "original",
+        "continuity": "original",
+        "pagePending": false,
+        "tasks": {
+          "A": {
+            "intent": "automatic",
+            "count": 2,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          },
+          "B": {
+            "intent": "stopped",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          }
+        },
+        "message": "查看任务 B，没有改变原来的执行意图。"
+      }
+    },
+    {
+      "id": "manual",
+      "title": "网页文字未保存",
+      "steps": 20,
+      "expectedPhase": "complete",
+      "matchesExpected": true,
+      "state": {
+        "phase": "complete",
+        "gate": false,
+        "checked": true,
+        "installedPackage": "matching",
+        "key": "original",
+        "login": "original",
+        "continuity": "original",
+        "pagePending": false,
+        "tasks": {
+          "A": {
+            "intent": "automatic",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          },
+          "B": {
+            "intent": "automatic",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "这段手动文字还未在网页保存。",
+            "result": "known"
+          }
+        },
+        "message": "模拟用户明确继续，并核对当前现场；仅该任务重新获准推进，保留网页文字。"
+      }
+    },
+    {
+      "id": "inflight",
+      "title": "网站正在处理",
+      "steps": 8,
+      "expectedPhase": "ready",
+      "matchesExpected": true,
+      "state": {
+        "phase": "ready",
+        "gate": true,
+        "checked": false,
+        "installedPackage": "pending",
+        "key": "pending",
+        "login": "pending",
+        "continuity": "pending",
+        "pagePending": false,
+        "tasks": {
+          "A": {
+            "intent": "automatic",
+            "count": 2,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "done"
+          },
+          "B": {
+            "intent": "stopped",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          }
+        },
+        "message": "查看任务 A，没有改变原来的执行意图。"
+      }
+    },
+    {
+      "id": "backup",
+      "title": "备份失败与重试",
+      "steps": 5,
+      "expectedPhase": "ready",
+      "matchesExpected": true,
+      "state": {
+        "phase": "ready",
+        "gate": true,
+        "checked": false,
+        "installedPackage": "pending",
+        "key": "pending",
+        "login": "pending",
+        "continuity": "pending",
+        "pagePending": false,
+        "tasks": {
+          "A": {
+            "intent": "automatic",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          },
+          "B": {
+            "intent": "stopped",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          }
+        },
+        "message": "升级前业务资料备份已模拟生成并核对，现在可以主动退出。原密钥和网站登录不在备份中。"
+      }
+    },
+    {
+      "id": "cancel",
+      "title": "保存失败，返回工作",
+      "steps": 6,
+      "expectedPhase": "cancelled",
+      "matchesExpected": true,
+      "state": {
+        "phase": "cancelled",
+        "gate": false,
+        "checked": false,
+        "installedPackage": "pending",
+        "key": "pending",
+        "login": "pending",
+        "continuity": "pending",
+        "pagePending": false,
+        "tasks": {
+          "A": {
+            "intent": "automatic",
+            "count": 2,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          },
+          "B": {
+            "intent": "stopped",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          }
+        },
+        "message": "任务 B 当前不满足自动操作条件，未新增网页效果。"
+      }
+    },
+    {
+      "id": "stop",
+      "title": "准备中又说停止",
+      "steps": 21,
+      "expectedPhase": "complete",
+      "matchesExpected": true,
+      "state": {
+        "phase": "complete",
+        "gate": false,
+        "checked": true,
+        "installedPackage": "matching",
+        "key": "original",
+        "login": "original",
+        "continuity": "original",
+        "pagePending": false,
+        "tasks": {
+          "A": {
+            "intent": "stopped",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          },
+          "B": {
+            "intent": "stopped",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          }
+        },
+        "message": "任务 A 当前不满足自动操作条件，未新增网页效果。"
+      }
+    },
+    {
+      "id": "waiting",
+      "title": "仍需内容确认",
+      "steps": 19,
+      "expectedPhase": "complete",
+      "matchesExpected": true,
+      "state": {
+        "phase": "complete",
+        "gate": false,
+        "checked": true,
+        "installedPackage": "matching",
+        "key": "original",
+        "login": "original",
+        "continuity": "original",
+        "pagePending": false,
+        "tasks": {
+          "A": {
+            "intent": "automatic",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          },
+          "B": {
+            "intent": "automatic",
+            "count": 2,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          }
+        },
+        "message": "仅任务 B 模拟完成一项剩余操作，累计 2 次。"
+      }
+    },
+    {
+      "id": "unknown",
+      "title": "结果不明，不重发",
+      "steps": 19,
+      "expectedPhase": "complete",
+      "matchesExpected": true,
+      "state": {
+        "phase": "complete",
+        "gate": false,
+        "checked": true,
+        "installedPackage": "matching",
+        "key": "original",
+        "login": "original",
+        "continuity": "original",
+        "pagePending": false,
+        "tasks": {
+          "A": {
+            "intent": "automatic",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "done"
+          },
+          "B": {
+            "intent": "stopped",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          }
+        },
+        "message": "任务已经完成，只显示已有结果，没有重复提交。"
+      }
+    },
+    {
+      "id": "permission",
+      "title": "取消系统授权",
+      "steps": 18,
+      "expectedPhase": "complete",
+      "matchesExpected": true,
+      "state": {
+        "phase": "complete",
+        "gate": false,
+        "checked": true,
+        "installedPackage": "matching",
+        "key": "original",
+        "login": "original",
+        "continuity": "original",
+        "pagePending": false,
+        "tasks": {
+          "A": {
+            "intent": "automatic",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          },
+          "B": {
+            "intent": "stopped",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          }
+        },
+        "message": "模拟升级后核对完成。仅仍获准且结果明确的任务可自动续做；停止、接管和等待确认的任务保持原状。"
+      }
+    },
+    {
+      "id": "credentials",
+      "title": "原密钥或登录缺失",
+      "steps": 19,
+      "expectedPhase": "held",
+      "matchesExpected": true,
+      "state": {
+        "phase": "held",
+        "gate": true,
+        "checked": false,
+        "installedPackage": "matching",
+        "key": "lost",
+        "login": "lost",
+        "continuity": "failed",
+        "pagePending": false,
+        "tasks": {
+          "A": {
+            "intent": "automatic",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          },
+          "B": {
+            "intent": "stopped",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          }
+        },
+        "message": "安装包、原密钥、有效登录或资料兼容问题尚未解决，保留资料与暂停状态。"
+      }
+    },
+    {
+      "id": "expired",
+      "title": "登录确已到期",
+      "steps": 19,
+      "expectedPhase": "complete",
+      "matchesExpected": true,
+      "state": {
+        "phase": "complete",
+        "gate": false,
+        "checked": true,
+        "installedPackage": "matching",
+        "key": "original",
+        "login": "renewed",
+        "continuity": "renewed",
+        "pagePending": false,
+        "tasks": {
+          "A": {
+            "intent": "automatic",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          },
+          "B": {
+            "intent": "stopped",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          }
+        },
+        "message": "查看任务 B，没有改变原来的执行意图。"
+      }
+    },
+    {
+      "id": "migration",
+      "title": "迁移失败与中断",
+      "steps": 17,
+      "expectedPhase": "held",
+      "matchesExpected": true,
+      "state": {
+        "phase": "held",
+        "gate": true,
+        "checked": false,
+        "installedPackage": "matching",
+        "key": "pending",
+        "login": "pending",
+        "continuity": "pending",
+        "pagePending": false,
+        "tasks": {
+          "A": {
+            "intent": "automatic",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          },
+          "B": {
+            "intent": "stopped",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          }
+        },
+        "message": "启动检查或结果核对尚未完成，不能恢复自动工作。"
+      }
+    },
+    {
+      "id": "compatibility",
+      "title": "来源、架构与兼容",
+      "steps": 5,
+      "expectedPhase": "available",
+      "matchesExpected": true,
+      "state": {
+        "phase": "available",
+        "gate": false,
+        "checked": false,
+        "installedPackage": "pending",
+        "key": "pending",
+        "login": "pending",
+        "continuity": "pending",
+        "pagePending": false,
+        "tasks": {
+          "A": {
+            "intent": "automatic",
+            "count": 2,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          },
+          "B": {
+            "intent": "stopped",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          }
+        },
+        "message": "新版来源或架构未通过检查，不能使用该安装包。"
+      }
+    },
+    {
+      "id": "old",
+      "title": "暂不安装，重开旧版",
+      "steps": 13,
+      "expectedPhase": "complete",
+      "matchesExpected": true,
+      "state": {
+        "phase": "complete",
+        "gate": false,
+        "checked": true,
+        "installedPackage": "matching",
+        "key": "original",
+        "login": "original",
+        "continuity": "original",
+        "pagePending": false,
+        "tasks": {
+          "A": {
+            "intent": "automatic",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          },
+          "B": {
+            "intent": "stopped",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          }
+        },
+        "message": "模拟升级后核对完成。仅仍获准且结果明确的任务可自动续做；停止、接管和等待确认的任务保持原状。"
+      }
+    },
+    {
+      "id": "external",
+      "title": "外部强行换版",
+      "steps": 11,
+      "expectedPhase": "complete",
+      "matchesExpected": true,
+      "state": {
+        "phase": "complete",
+        "gate": false,
+        "checked": true,
+        "installedPackage": "matching",
+        "key": "original",
+        "login": "original",
+        "continuity": "original",
+        "pagePending": false,
+        "tasks": {
+          "A": {
+            "intent": "automatic",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "done"
+          },
+          "B": {
+            "intent": "stopped",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          }
+        },
+        "message": "模拟在网站找到原操作已完成的确切结果；只补记，不重复提交。"
+      }
+    },
+    {
+      "id": "postfail",
+      "title": "新版检查未通过",
+      "steps": 18,
+      "expectedPhase": "held",
+      "matchesExpected": true,
+      "state": {
+        "phase": "held",
+        "gate": true,
+        "checked": false,
+        "installedPackage": "mismatch",
+        "key": "pending",
+        "login": "pending",
+        "continuity": "pending",
+        "pagePending": false,
+        "tasks": {
+          "A": {
+            "intent": "automatic",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          },
+          "B": {
+            "intent": "stopped",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          }
+        },
+        "message": "启动检查或结果核对尚未完成，不能恢复自动工作。"
+      }
+    },
+    {
+      "id": "twoPages",
+      "title": "两项网页都有文字",
+      "steps": 9,
+      "expectedPhase": "ready",
+      "matchesExpected": true,
+      "state": {
+        "phase": "ready",
+        "gate": true,
+        "checked": false,
+        "installedPackage": "pending",
+        "key": "pending",
+        "login": "pending",
+        "continuity": "pending",
+        "pagePending": false,
+        "tasks": {
+          "A": {
+            "intent": "takeover",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "A 的手动编辑请保留。",
+            "result": "known"
+          },
+          "B": {
+            "intent": "takeover",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "B 的手动编辑也请保留。",
+            "result": "known"
+          }
+        },
+        "message": "升级前业务资料备份已模拟生成并核对，现在可以主动退出。原密钥和网站登录不在备份中。"
+      }
+    },
+    {
+      "id": "fresh",
+      "title": "重新检查保留新停止",
+      "steps": 19,
+      "expectedPhase": "complete",
+      "matchesExpected": true,
+      "state": {
+        "phase": "complete",
+        "gate": false,
+        "checked": true,
+        "installedPackage": "matching",
+        "key": "original",
+        "login": "original",
+        "continuity": "original",
+        "pagePending": false,
+        "tasks": {
+          "A": {
+            "intent": "stopped",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          },
+          "B": {
+            "intent": "stopped",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          }
+        },
+        "message": "任务 A 当前不满足自动操作条件，未新增网页效果。"
+      }
+    },
+    {
+      "id": "data",
+      "title": "资料格式不兼容",
+      "steps": 13,
+      "expectedPhase": "held",
+      "matchesExpected": true,
+      "state": {
+        "phase": "held",
+        "gate": true,
+        "checked": false,
+        "installedPackage": "matching",
+        "key": "pending",
+        "login": "pending",
+        "continuity": "pending",
+        "pagePending": false,
+        "tasks": {
+          "A": {
+            "intent": "automatic",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          },
+          "B": {
+            "intent": "stopped",
+            "count": 1,
+            "pageDirty": false,
+            "pageText": "",
+            "result": "known"
+          }
+        },
+        "message": "启动检查或结果核对尚未完成，不能恢复自动工作。"
+      }
+    }
+  ],
+  "totalGuidedSteps": 276,
+  "browserWalkthrough": "still not performed",
+  "source_note": "Final shell-only changes after state rehearsal: separate A/B page-save controls and preserve walkthrough keyboard focus. Pure module and declarative scenario data unchanged.",
+  "rehearsedSourceSha256": "2fc1522f8d82e3bf2d995251adfb13276939fccc5c9bcf6ee49e6066e38bb8ce"
+}
