@@ -32,10 +32,10 @@ if (mode === '--check') {
   console.log(JSON.stringify({ valid: true, appStarts: 0, protection: 'real safeStorage; workspace-fixture switch forbidden', reply: reply.decision }));
   process.exit(0);
 }
-const ps = () => execFileSync('/bin/ps', ['-axo', 'pid=,ppid=,pgid=,command='], { encoding: 'utf8', timeout: 5000 }).trim().split('\n').map(line => {
-  const m = line.trim().match(/^(\d+)\s+(\d+)\s+(\d+)\s+(.*)$/);
+const ps = () => execFileSync('/bin/ps', ['-axo', 'pid=,ppid=,pgid=,lstart=,command='], { encoding: 'utf8', timeout: 5000 }).trim().split('\n').map(line => {
+  const m = line.trim().match(/^(\d+)\s+(\d+)\s+(\d+)\s+(\S+\s+\S+\s+\d+\s+\d{2}:\d{2}:\d{2}\s+\d{4})\s+(.*)$/);
   assert(m, 'PROCESS_ROW_INVALID');
-  return { pid: +m[1], parent: +m[2], group: +m[3], command: m[4] };
+  return { pid: +m[1], parent: +m[2], group: +m[3], birth: m[4].replace(/\s+/g, ' '), command: m[5] };
 });
 assert(!ps().some(row => row.pid !== process.pid && (/\/helpr\.app\/Contents\/MacOS\/helpr(?: |$)/.test(row.command) || /helpr Workspace Helper/.test(row.command) || /^(?:\S*\/)?node\s+(?:\S*\/)?validate-\S+\.mjs(?:\s|$)/.test(row.command))), 'OTHER_VALIDATION_RUNNING');
 execFileSync(process.execPath, ['scripts/validate-workspace.mjs', '--preflight'], { stdio: 'inherit', timeout: 65000 });
@@ -81,6 +81,7 @@ const save = () => {
   b.upgrade09.run = { root, profile, passed: report.passed, error: report.error ?? null, started: report.started, ended: report.ended ?? null };
   fs.writeFileSync(budgetFile, JSON.stringify(b, null, 2) + '\n', { mode: 0o600 });
 };
+const safeSave = () => { try { save(); } catch (error) { report.persistenceError ??= error.code ?? error.message; report.passed = false; failure ??= 'EVIDENCE_WRITE_FAILED'; } };
 let failure, current, finished = false, setupUsed = false, baseline, newInstalled = false;
 const deadline = report.started + 90 * 60000;
 const check = (name, condition) => { assert(condition, name); if (!report.checks.includes(name)) report.checks.push(name); save(); };
@@ -95,11 +96,22 @@ async function until(fn, ms = 15000, cleanup = false) {
   throw Error('UPGRADE_WAIT_EXPIRED');
 }
 function processes(app) {
-  const rows = ps(); let added = true;
-  while (added) { added = false; for (const row of rows) if (app.pids.has(row.parent) && !app.pids.has(row.pid)) { app.pids.add(row.pid); added = true; } }
-  for (const row of rows) if (app.pids.has(row.pid) && app.pids.has(row.group)) app.groups.add(row.group);
-  const owned = rows.filter(row => app.pids.has(row.pid) || app.groups.has(row.group));
-  Object.assign(app.row, { pids: [...app.pids], groups: [...app.groups], tree: owned }); save(); return owned;
+  const rows = ps(), byPid = new Map(rows.map(row => [row.pid, row]));
+  const same = row => { const prior = app.identities.get(row?.pid); return prior && row.birth === prior.birth && row.command === prior.command; };
+  const inside = row => row.command.startsWith(installation + '/Contents/');
+  const remember = row => { app.pids.add(row.pid); app.identities.set(row.pid, { birth: row.birth, command: row.command }); };
+  if (!app.identities.size) {
+    const row = byPid.get(app.child.pid);
+    if (row?.parent === process.pid && inside(row)) remember(row);
+  }
+  let added = true;
+  while (added) { added = false; for (const row of rows) if (!same(row) && inside(row) && same(byPid.get(row.parent))) { remember(row); added = true; } }
+  for (const row of rows) if (same(row) && same(byPid.get(row.group))) app.groups.set(row.group, app.identities.get(row.group));
+  const liveGroup = group => { const original = app.groups.get(group), leader = byPid.get(group); return original && (!leader || (leader.birth === original.birth && leader.command === original.command)); };
+  for (const row of rows) if (!same(row) && inside(row) && liveGroup(row.group)) remember(row);
+  const owned = rows.filter(row => same(row) || liveGroup(row.group));
+  Object.assign(app.row, { pids: [...app.pids], identities: Object.fromEntries(app.identities), groups: [...app.groups.keys()], tree: owned });
+  return owned;
 }
 function rpc(command, ms = 15000, cleanup = false) {
   if (!cleanup) limited();
@@ -148,16 +160,17 @@ async function launch(build) {
   report.starts.push(row); save();
   const env = Object.fromEntries(['HOME', 'PATH', 'TMPDIR', 'LANG'].filter(key => process.env[key]).map(key => [key, process.env[key]]));
   const child = spawn(path.join(installation, 'Contents/MacOS/helpr'), ['--workspace-validation'], { env: { ...env, HELPR_VALIDATION_DATA: profile }, stdio: ['ignore', 'ignore', fs.openSync(path.join(root, `stderr-${row.start}.log`), 'a', 0o600), 'ipc'] });
-  const app = { child, row, pids: new Set([child.pid]), groups: new Set(), pending: new Map(), sequence: 0, roundDeadline: row.at + 20 * 60000, ready: false, exit: null, cleared: false };
+  const app = { child, row, pids: new Set(), identities: new Map(), groups: new Map(), pending: new Map(), sequence: 0, roundDeadline: row.at + 20 * 60000, ready: false, exit: null, cleared: false };
   current = app; row.pid = child.pid; save();
+  assert(processes(app).some(p => p.pid === child.pid), 'CHILD_PROCESS_IDENTITY_REQUIRED'); safeSave();
   child.on('message', m => {
     if (m.ready) { app.ready = true; row.ready = m; }
     if (m.startupFailure) row.startupFailure = m.startupFailure;
-    for (const id of [m.hostPid, m.launcherPid, m.recordsPid]) if (Number.isInteger(id)) app.pids.add(id);
+    if (m.ready || m.hostPid || m.launcherPid || m.recordsPid) { try { processes(app); } catch (error) { failure ??= error.message; } safeSave(); }
     const pending = app.pending.get(m.id);
     if (pending) { clearTimeout(pending.timer); app.pending.delete(m.id); m.error ? pending.reject(Error(m.error)) : pending.resolve(m.value); }
   });
-  child.once('exit', (code, signal) => { app.exit = { code, signal }; row.exit = app.exit; for (const p of app.pending.values()) { clearTimeout(p.timer); p.reject(Error('APPLICATION_EXITED')); } app.pending.clear(); save(); });
+  child.once('exit', (code, signal) => { app.exit = { code, signal }; row.exit = app.exit; for (const p of app.pending.values()) { clearTimeout(p.timer); p.reject(Error('APPLICATION_EXITED')); } app.pending.clear(); safeSave(); });
   child.once('error', error => { failure = error.code ?? 'APPLICATION_SPAWN_FAILED'; });
   const readyDeadline = row.at + 30000;
   await showInspectableWindow({ request: (c, left) => rpc(c, left), ready: () => app.ready, deadline: readyDeadline, observe: value => { row.windowPreparation ??= []; row.windowPreparation.push(value); save(); } });
@@ -211,7 +224,7 @@ const website = http.createServer(async (req, res) => {
     }
     if (url.pathname === '/favicon.ico') { res.writeHead(204); res.end(); return; }
     res.writeHead(404); res.end();
-  } catch (error) { failure ??= error.message; save(); if (!res.headersSent) res.writeHead(400); res.end('FIXTURE_REJECTED'); }
+  } catch (error) { failure ??= error.message; safeSave(); if (!res.headersSent) res.writeHead(400); res.end('FIXTURE_REJECTED'); }
 });
 const keyFile = path.join(root, 'tls-key.pem'), certFile = path.join(root, 'tls-cert.pem');
 execFileSync('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', keyFile, '-out', certFile, '-days', '1', '-subj', '/CN=127.0.0.1', '-addext', 'subjectAltName=IP:127.0.0.1'], { stdio: 'ignore', timeout: 10000 });
@@ -222,7 +235,7 @@ const versions = https.createServer({ key: fs.readFileSync(keyFile), cert: fs.re
     limited(); assert(report.versionRequests.length < 16 && req.method === 'GET' && req.url === '/stable.json', 'VERSION_REQUEST_LIMIT');
     report.versionRequests.push({ at: Date.now(), start: current?.row.start, futureVersion }); save();
     res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify({ schema: 1, version: futureVersion ? '0.3.0' : '0.1.0', platform: 'darwin', arch: 'arm64', minOS: '14.0.0', dataFormats: [6, 7], stateModels: [1], notes: ['仅本机交互夹具，不代表真实Release或可下载安装包。'], downloadURL: futureVersion ? 'https://github.com/yuexiaoliang/helpr/releases/tag/v0.3.0' : null }));
-  } catch (error) { failure ??= error.message; save(); res.writeHead(400); res.end(); }
+  } catch (error) { failure ??= error.message; safeSave(); res.writeHead(400); res.end(); }
 });
 let origin;
 for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => { failure ??= 'VALIDATOR_' + signal; });
@@ -263,7 +276,14 @@ try {
             assert(current.row.build === 36 && report.tasks.length === 2 && report.logins.length === 1, 'OLD_BASELINE_REQUIRED');
             assert(report.models.some(m => m.start === 97 && m.originalKeyMatched), 'OLD_KEY_PROOF_REQUIRED');
             baseline = facts(await snapshot()); write('old-baseline.json', baseline);
-            await quit(); check('old-baseline-normal-exit', true); value = { baseline: true }; break;
+            const backup = await rpc({ kind: 'backup-status' });
+            assert(backup.phase === 'complete' && backup.archive.file.startsWith(backupDirectory + path.sep), 'OLD_UI_BACKUP_REQUIRED');
+            const envelope = JSON.parse(fs.readFileSync(backup.archive.file));
+            assert(envelope.dataVersion === 6 && envelope.payload.tasks.length === 2, 'OLD_BACKUP_REQUIRED');
+            assert.equal(envelope.files[0].sha256, hash(JSON.stringify(envelope.payload)));
+            report.oldBackup = { sha256: hash(fs.readFileSync(backup.archive.file)), bytes: fs.statSync(backup.archive.file).size, dataVersion: 6 };
+            await quit(); report.oldDatabase = { sha256: hash(fs.readFileSync(path.join(profile, 'workspace.sqlite'))), bytes: fs.statSync(path.join(profile, 'workspace.sqlite')).size };
+            check('old-baseline-normal-exit', true); value = { baseline: true }; break;
           }
           case 'upgrade': {
             assert(baseline && current.cleared && !newInstalled, 'ONE_REPLACEMENT_REQUIRED');
@@ -279,17 +299,19 @@ try {
             await launch(37); check('same-version-reopen-keeps-task-records', JSON.stringify(facts(await snapshot())) === JSON.stringify(baseline)); value = { reopened: true }; break;
           }
           case 'fault': {
-            assert(report.starts.length === 3 && !report.fault, 'SINGLE_FAULT_RESERVED');
+            assert(report.starts.length === 3 && !report.fault && !current.cleared && !current.exit && processes(current).some(p => p.pid === current.child.pid), 'SINGLE_LIVE_FAULT_REQUIRED');
             spend('faults'); report.fault = { at: Date.now(), pid: current.child.pid, start: current.row.start }; save();
-            processes(current); current.child.kill('SIGKILL'); await gone(false); value = { interrupted: true }; break;
+            assert(current.child.kill('SIGKILL'), 'FAULT_SIGNAL_NOT_SENT'); await gone(false); assert.equal(current.exit.signal, 'SIGKILL', 'ACTUAL_FAULT_SIGNAL_REQUIRED'); report.fault.confirmed = true; save(); value = { interrupted: true }; break;
           }
-          case 'recover': assert(report.fault && current.cleared && report.starts.length === 3, 'FAULT_RECOVERY_ONLY'); await launch(37); value = { recovered: true }; break;
+          case 'recover': assert(report.fault?.confirmed && current.cleared && report.starts.length === 3, 'FAULT_RECOVERY_ONLY'); await launch(37); value = { recovered: true }; break;
           case 'finish': {
             assert(newInstalled && report.starts.length >= 3, 'COLD_EVIDENCE_REQUIRED');
             if (!current.cleared) await quit();
             check('original-login-not-recreated', report.logins.length === 1);
             check('original-key-served-in-both-real-packages', report.models.some(m => m.start === 97 && m.originalKeyMatched) && report.models.some(m => m.start >= 98 && m.originalKeyMatched));
             check('website-authenticated-after-upgrade', report.pages.some(p => p.start === 98 && p.authenticated));
+            check('cold-original-key-and-login', report.models.some(m => m.start === 99 && m.originalKeyMatched) && report.pages.some(p => p.start === 99 && p.authenticated));
+            assert(['upgrade-ready', 'upgrade-blocked', 'upgrade-cancelled'].every(label => report.captures.includes(label)), 'CUA_FLOW_CAPTURES_REQUIRED');
             finished = true; value = { finished: true }; break;
           }
           case 'abort': throw Error('CUA_ROUND_ABORTED');
@@ -302,21 +324,25 @@ try {
     if (!current.cleared && current.exit) await gone();
     await new Promise(resolve => setTimeout(resolve, 300));
   }
-  report.passed = true;
+  report.passed = !report.persistenceError;
 } catch (error) { report.error = error.message; process.exitCode = 1; }
 finally {
   if (current && !current.cleared) {
-    processes(current);
     try { await quit(); } catch (error) { report.normalCleanupError = error.message; }
     if (!current.cleared) {
-      spend('cleanups');
-      const signal = name => { for (const group of current.groups) if (processes(current).some(row => row.group === group)) try { process.kill(-group, name); } catch {} for (const row of processes(current)) if (current.pids.has(row.pid)) try { process.kill(row.pid, name); } catch {} };
-      signal('SIGTERM');
-      try { await until(() => processes(current).length === 0, 5000, true); } catch { signal('SIGKILL'); try { await until(() => processes(current).length === 0, 5000, true); } catch {} }
-      report.cleanupRemaining = processes(current); if (report.cleanupRemaining.length) report.passed = false;
+      // 已批准的必要清理不能依赖可写报告或账本；失败单独保留，不跳过OS检查。
+      report.emergencyCleanupAttempted = true;
+      try { spend('cleanups'); } catch (error) { report.cleanupAccountingError = error.code ?? error.message; }
+      const signal = name => { for (const row of processes(current)) { const identity = current.identities.get(row.pid); if (identity?.birth === row.birth && identity.command === row.command) try { process.kill(row.pid, name); } catch {} } };
+      try {
+        signal('SIGTERM');
+        try { await until(() => processes(current).length === 0, 5000, true); } catch { signal('SIGKILL'); await until(() => processes(current).length === 0, 5000, true); }
+        report.cleanupRemaining = processes(current);
+      } catch (error) { report.cleanupInspectionError = error.message; report.passed = false; }
+      if (report.cleanupRemaining?.length) report.passed = false;
     }
   }
   for (const server of [website, versions]) { server.closeAllConnections(); if (server.listening) await new Promise(resolve => server.close(resolve)); }
-  report.ended = Date.now(); report.counts = counts; save();
+  report.ended = Date.now(); report.counts = counts; safeSave();
   console.log('UPGRADE_RESULT ' + JSON.stringify({ passed: report.passed, error: report.error, root, starts: report.starts.length }));
 }
