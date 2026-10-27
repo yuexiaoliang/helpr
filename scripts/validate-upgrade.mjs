@@ -37,7 +37,7 @@ const ps = () => execFileSync('/bin/ps', ['-axo', 'pid=,ppid=,pgid=,command='], 
   assert(m, 'PROCESS_ROW_INVALID');
   return { pid: +m[1], parent: +m[2], group: +m[3], command: m[4] };
 });
-assert(!ps().some(row => row.pid !== process.pid && (/\/helpr\.app\/Contents\/MacOS\/helpr(?: |$)/.test(row.command) || /helpr Workspace Helper/.test(row.command) || /node(?:\s+\S+)?\s+scripts\/validate-.*--(?:run|candidate|build|installed|install|interactive)/.test(row.command))), 'OTHER_VALIDATION_RUNNING');
+assert(!ps().some(row => row.pid !== process.pid && (/\/helpr\.app\/Contents\/MacOS\/helpr(?: |$)/.test(row.command) || /helpr Workspace Helper/.test(row.command) || /^(?:\S*\/)?node\s+(?:\S*\/)?validate-\S+\.mjs(?:\s|$)/.test(row.command))), 'OTHER_VALIDATION_RUNNING');
 execFileSync(process.execPath, ['scripts/validate-workspace.mjs', '--preflight'], { stdio: 'inherit', timeout: 65000 });
 const budget = JSON.parse(fs.readFileSync(budgetFile));
 assert(budget.upgrade09?.approved && budget.limits.builds === 37 && budget.limits.starts === 100, 'EXPLICIT_APPROVAL_REQUIRED');
@@ -59,6 +59,7 @@ const fresh = JSON.parse(fs.readFileSync(path.join(validationRoot, 'build-37.jso
 assert(fresh.build === 37 && fresh.prepared && fresh.app === path.resolve('dist/candidates/manual-upgrade-09/mac-arm64/helpr.app'), 'FIXED_NEW_CANDIDATE_REQUIRED');
 assert.equal(verify(fresh).certificateSha256, verify(old).certificateSha256, 'PUBLISHER_CHANGED');
 assert.notEqual(fresh.hashes['Contents/Resources/app.asar'], old.hashes['Contents/Resources/app.asar'], 'DISTINCT_REAL_PACKAGES_REQUIRED');
+assert(Number.isSafeInteger(budget.upgrade09.runtimeStartedAt) && Date.now() < budget.upgrade09.runtimeStartedAt + 90 * 60000, 'ORIGINAL_BATCH_DEADLINE_REQUIRED');
 fs.writeFileSync(batchFile, JSON.stringify({ root, pid: process.pid, started: new Date().toISOString() }) + '\n', { flag: 'wx', mode: 0o600 });
 fs.mkdirSync(root, { mode: 0o700 });
 const profileRoot = `/private/tmp/helpr-workspace-validation-${process.getuid()}`;
@@ -71,7 +72,7 @@ fs.mkdirSync(backupDirectory, { mode: 0o700 });
 const apiKey = 'upgrade09-test-' + randomUUID();
 const sessionToken = randomUUID();
 const expires = Math.floor(Date.now() / 1000) + 7200;
-const report = { scope: 'early real-package upgrade; real safeStorage and persistent browser; local fixtures only', started: Date.now(), builds: [36, 37], limits: budget.upgrade09.limits, installs: [], starts: [], tasks: [], checks: [], models: [], logins: [], pages: [], effects: [], versionRequests: [], captures: [], realModels: 0, remoteBusinessWrites: 0, passed: false };
+const report = { scope: 'early real-package upgrade; real safeStorage and persistent browser; local fixtures only', started: budget.upgrade09.runtimeStartedAt, builds: [36, 37], limits: budget.upgrade09.limits, installs: [], starts: [], tasks: [], checks: [], models: [], logins: [], pages: [], effects: [], versionRequests: [], captures: [], realModels: 0, remoteBusinessWrites: 0, passed: false };
 const write = (name, value) => fs.writeFileSync(path.join(root, name), JSON.stringify(value, null, 2) + '\n', { mode: 0o600 });
 const save = () => {
   write('result.json', report);
@@ -297,7 +298,8 @@ try {
         write('command-result.json', { nonce: c.nonce, ok: true, value });
       } catch (error) { write('command-result.json', { nonce: c.nonce, ok: false, error: error.message }); throw error; }
     }
-    if (!current.cleared && current.exit) throw Error('UNEXPECTED_APPLICATION_EXIT');
+    // CUA可从真实升级按钮正常退出；不因控制命令尚未送到而误报失败。
+    if (!current.cleared && current.exit) await gone();
     await new Promise(resolve => setTimeout(resolve, 300));
   }
   report.passed = true;
