@@ -18,6 +18,59 @@ afterEach(() => {
   dispose();
 });
 
+test.each([
+  { phase: 'checking' as const, continuity: 'retained' as const },
+  { phase: 'blocked' as const, continuity: 'retained' as const },
+  { phase: 'checking' as const, continuity: 'renewed' as const },
+  { phase: 'blocked' as const, continuity: 'renewed' as const },
+])(
+  '本轮 $phase 不把上轮 $continuity 显示为当前凭据或登录检查成功',
+  async ({ phase, continuity }) => {
+    const status: UpgradeStatus = {
+      revision: 9,
+      recordRevision: 7,
+      reopening: true,
+      phase,
+      installedVersion: '0.2.0',
+      fromVersion: '0.1.0',
+      target: '0.2.0',
+      requestId: 'old-preparation',
+      fingerprint: null,
+      backup: null,
+      error: phase === 'blocked' ? 'UPGRADE_CREDENTIAL_CHANGED' : '',
+      continuity,
+      dirtyTasks: [],
+      pages: [],
+      message: '本轮基础核对尚未通过。',
+      working: false,
+    };
+    const store = new WorkspaceStore({
+      subscribe: () => () => {},
+      request: (c) =>
+        Promise.resolve(
+          c.kind === 'snapshot'
+            ? { revision: 0, active: null, tasks: [] }
+            : status,
+        ),
+    });
+    dispose = () => store.dispose();
+    render(<UpgradeSettings store={store} />);
+    await screen.findByRole('button', {
+      name: '检查原资料、凭据与网页控制',
+    });
+    expect(
+      screen.queryByText(
+        '原受保护密钥和会话资料摘要保持。网站实际登录与操作结果仍由各任务核对。',
+      ),
+    ).toBeNull();
+    expect(
+      screen.queryByText(
+        '原会话已到期，用户重新登录后继续核对；本次不记作原有效会话延续。',
+      ),
+    ).toBeNull();
+  },
+);
+
 test('完成一次核对后为后续新版建立新准备身份，而不是重用旧回执', async () => {
   const status: UpgradeStatus = {
     revision: 8,

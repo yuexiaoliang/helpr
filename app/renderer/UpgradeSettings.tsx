@@ -32,6 +32,7 @@ export function UpgradeSettings({ store }: { store: WorkspaceStore }) {
   const preparing =
     !status.reopening &&
     ['preparing', 'ready', 'blocked'].includes(status.phase);
+  const continuityChecked = status.phase === 'complete' && !status.error;
   return (
     <section aria-label="手动升级">
       <hr />
@@ -57,12 +58,12 @@ export function UpgradeSettings({ store }: { store: WorkspaceStore }) {
           ? ` · ${status.phase === 'complete' ? '上次目标' : '准备安装'} ${status.target}`
           : ''}
       </p>
-      {status.continuity === 'retained' && (
+      {continuityChecked && status.continuity === 'retained' && (
         <p>
           原受保护密钥和会话资料摘要保持。网站实际登录与操作结果仍由各任务核对。
         </p>
       )}
-      {status.continuity === 'renewed' && (
+      {continuityChecked && status.continuity === 'renewed' && (
         <p>原会话已到期，用户重新登录后继续核对；本次不记作原有效会话延续。</p>
       )}
       {status.dirtyTasks.map((taskId) => {
