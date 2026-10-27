@@ -12,8 +12,8 @@ import { verifyDevelopmentSignature } from './development-signing.mjs';
 
 // 同一受管入口持有全部应用、服务与四次启动；产品交互交由CUA。
 const mode = process.argv.slice(2).join(' ');
-assert(['--check', '--preflight', '--run', '--after-97'].includes(mode), 'EXPLICIT_MODE_REQUIRED');
-const after97 = mode === '--after-97';
+assert(['--check', '--preflight', '--run', '--after-97', '--check-after-97'].includes(mode), 'EXPLICIT_MODE_REQUIRED');
+const after97 = mode === '--after-97' || mode === '--check-after-97';
 const root = path.join(validationRoot, 'manual-upgrade-09');
 const batchFile = path.join(validationRoot, 'manual-upgrade-09-batch.json');
 const budgetFile = path.join(validationRoot, 'budget.json');
@@ -66,6 +66,12 @@ assert(fresh.build === 37 && fresh.prepared && fresh.app === path.resolve('dist/
 assert.equal(verify(fresh).certificateSha256, verify(old).certificateSha256, 'PUBLISHER_CHANGED');
 assert.notEqual(fresh.hashes['Contents/Resources/app.asar'], old.hashes['Contents/Resources/app.asar'], 'DISTINCT_REAL_PACKAGES_REQUIRED');
 assert(Number.isSafeInteger(budget.upgrade09.runtimeStartedAt) && Date.now() < budget.upgrade09.runtimeStartedAt + 90 * 60000, 'ORIGINAL_BATCH_DEADLINE_REQUIRED');
+if (mode === '--check-after-97') {
+  assert(!fs.existsSync(path.join(root, 'after-97-once')), 'CONTINUATION_ALREADY_USED');
+  assert(fs.realpathSync(budget.upgrade09.run.profile) === budget.upgrade09.run.profile, 'ORIGINAL_PROFILE_REQUIRED');
+  console.log(JSON.stringify({ valid: true, appStarts: 0, carriedStart: 97, used: budget.used, remainingStarts: 3, originalDeadline: budget.upgrade09.runtimeDeadline }));
+  process.exit(0);
+}
 if (after97) {
   fs.writeFileSync(path.join(root, 'after-97-once'), String(process.pid), { flag: 'wx', mode: 0o600 });
   fs.copyFileSync(path.join(root, 'result.json'), path.join(root, 'result-97.json'), fs.constants.COPYFILE_EXCL);
