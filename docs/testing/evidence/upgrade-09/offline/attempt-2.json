@@ -1,0 +1,67 @@
+{
+  "scope": "Node source entry + real format-6 database copy + static codesign; no Electron or system authorization",
+  "started": 1793167114832,
+  "deadline": 1793167234677,
+  "sourceDatabaseSha256": "eeca7dba3f7c641966877cf6cb5d45a6d3877608307f0e41cefe599f1813411e",
+  "candidate": 37,
+  "appStarts": 0,
+  "installs": 0,
+  "applicationBuilds": 0,
+  "signing": 0,
+  "realModels": 0,
+  "remoteWrites": 0,
+  "sourceRecordProcessInterruptions": 0,
+  "cases": [
+    {
+      "name": "真实旧库按冻结迁移到7，原任务、对话、中文草稿与停止逐值相同",
+      "started": 1793167115088,
+      "passed": true,
+      "tasksCompared": 2,
+      "independentOldBackup": true,
+      "reopened": true,
+      "ended": 1793167115175
+    },
+    {
+      "name": "不兼容的format明确拒绝且不清空资料",
+      "started": 1793167115175,
+      "passed": true,
+      "code": "DATA_VERSION_UNSUPPORTED",
+      "rejectedCopyUnchanged": true,
+      "ended": 1793167115178
+    },
+    {
+      "name": "不兼容的state明确拒绝且不清空资料",
+      "started": 1793167115178,
+      "passed": true,
+      "code": "STATE_MODEL_UNSUPPORTED",
+      "rejectedCopyUnchanged": true,
+      "ended": 1793167115181
+    },
+    {
+      "name": "旧库遇到故意破坏的迁移SQL时回滚，保留旧副本并可用冻结迁移恢复",
+      "started": 1793167115181,
+      "passed": true,
+      "injectedFault": "invalid SQL only in disposable migration copy",
+      "rollback": true,
+      "recoveredWithFrozenMigration": true,
+      "ended": 1793167115244
+    },
+    {
+      "name": "真实冻结迁移提交受读锁阻挡时中断自有Node记录进程，再开保留原事实",
+      "started": 1793167115244,
+      "passed": false,
+      "error": "MIGRATION_PENDING_COMMIT_NOT_PROVEN",
+      "ended": 1793167117808
+    }
+  ],
+  "passed": false,
+  "error": "MIGRATION_PENDING_COMMIT_NOT_PROVEN",
+  "remainingOwnedProcesses": [],
+  "ownedProcesses": [
+    {
+      "pid": 32383,
+      "row": "32383 32370 32370 Wed Oct 28 13:58:35 2026     /Users/yuexiaoliang/.nvm/versions/node/v24.18.0/bin/node /Users/yuexiaoliang/.codex/worktrees/manual-upgrade/helpr/.local/upgrade09-offline-code/ce0569fd-c9ac-4865-b7f9-abd1ba404548/records.cjs /private/tmp/helpr-workspace-validation-501/upgrade09-offline-P012rq/interrupted-migration /Users/yuexiaoliang/.codex/worktrees/manual-upgrade/helpr/app/records/migrations --workspace-validation"
+    }
+  ],
+  "ended": 1793167117861
+}

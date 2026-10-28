@@ -1,0 +1,42 @@
+{
+  "scope": "static codesign only; no application launch or migration",
+  "started": 1793167282994,
+  "deadline": 1793167402884,
+  "sourceDatabaseSha256": "eeca7dba3f7c641966877cf6cb5d45a6d3877608307f0e41cefe599f1813411e",
+  "candidate": 37,
+  "appStarts": 0,
+  "installs": 0,
+  "applicationBuilds": 0,
+  "signing": 0,
+  "realModels": 0,
+  "remoteWrites": 0,
+  "sourceRecordProcessInterruptions": 0,
+  "cases": [
+    {
+      "name": "现有37签名有效，系统TextEdit被公开包身份入口拒绝",
+      "started": 1793167283173,
+      "passed": true,
+      "identity": {
+        "platform": "darwin",
+        "arch": "arm64",
+        "identifier": "local.helpr.desktop",
+        "requirement": "bd4d1621955c08b7de8b2ebde339eded305e34cc1193b4dfb234254d2ca91ff5"
+      },
+      "wrongIdentifierRejected": true,
+      "ended": 1793167285325
+    },
+    {
+      "name": "破坏签名包的隔离克隆后拒绝，原包保持原哈希",
+      "started": 1793167285325,
+      "passed": true,
+      "damagedSealRejected": true,
+      "originalPackageUnchanged": true,
+      "cloneNotLaunched": true,
+      "ended": 1793167287766
+    }
+  ],
+  "passed": true,
+  "remainingOwnedProcesses": [],
+  "ownedProcesses": [],
+  "ended": 1793167287805
+}

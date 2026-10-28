@@ -513,6 +513,94 @@ async function parallelFixture(inputGate?: InputGate) {
 }
 
 test.skipIf(process.platform !== 'darwin')(
+  '升级暂停在途双任务后保留较新停止，只读核对另一项已发生效果而不重发',
+  async () => {
+    const f = await parallelFixture(nativeGate());
+    try {
+      for (const name of ['A', 'B'])
+        await f.service.intent({
+          kind: 'execution-intent',
+          requestId: 'upgrade-start-' + name,
+          taskId: f.tasks[name]!,
+          intent: 'start',
+        });
+      await expect.poll(() => [...f.received].sort()).toEqual(['A', 'B']);
+      await f.service.holdUpgrade();
+      expect(f.service.systemReady()).toBe(false);
+      for (const name of ['A', 'B'])
+        expect(
+          f.get().tasks.find((t) => t.id === f.tasks[name])?.execution,
+        ).toMatchObject({ intent: 'automatic', recoveryPending: true });
+      await expect(
+        f.service.intent({
+          kind: 'execution-intent',
+          requestId: 'upgrade-start-c',
+          taskId: f.tasks.C!,
+          intent: 'start',
+        }),
+      ).rejects.toThrow('SYSTEM_SUSPENDED');
+      await f.service.intent({
+        kind: 'execution-intent',
+        requestId: 'upgrade-new-stop-a',
+        taskId: f.tasks.A!,
+        intent: 'stop',
+      });
+      f.release('A');
+      f.release('B');
+      f.service.releaseUpgrade();
+      await f.service.settled();
+      expect(
+        f.get().tasks.find((t) => t.id === f.tasks.A)?.execution,
+      ).toMatchObject({ intent: 'stopped', phase: 'stopped' });
+      expect(
+        f.get().tasks.find((t) => t.id === f.tasks.B)?.execution,
+      ).toMatchObject({
+        phase: 'complete',
+        actions: [{ status: 'confirmed' }],
+      });
+      expect([...f.received].sort()).toEqual(['A', 'B']);
+    } finally {
+      await f.close();
+    }
+  },
+);
+
+test.skipIf(process.platform !== 'darwin')(
+  '取消升级保留人工接管，另一项在途结果仍不明时只等待核对而不重发',
+  async () => {
+    const f = await parallelFixture(nativeGate());
+    try {
+      for (const name of ['A', 'B'])
+        await f.service.intent({
+          kind: 'execution-intent',
+          requestId: 'unknown-start-' + name,
+          taskId: f.tasks[name]!,
+          intent: 'start',
+        });
+      await expect.poll(() => [...f.received].sort()).toEqual(['A', 'B']);
+      await f.service.suspend(f.tasks.A!, 'takeover', 'upgrade-takeover-a');
+      await f.service.holdUpgrade();
+      f.service.releaseUpgrade();
+      await f.service.settled();
+      expect(
+        f.get().tasks.find((t) => t.id === f.tasks.A)?.execution,
+      ).toMatchObject({
+        intent: 'automatic',
+        phase: 'paused',
+        pauseReason: 'takeover',
+        actions: [{ status: 'unknown' }],
+      });
+      expect(
+        f.get().tasks.find((t) => t.id === f.tasks.B)?.execution,
+      ).toMatchObject({ phase: 'unknown', actions: [{ status: 'unknown' }] });
+      expect([...f.received].sort()).toEqual(['A', 'B']);
+    } finally {
+      await f.close();
+    }
+  },
+);
+
+test.skipIf(process.platform !== 'darwin')(
   '能力不可用时继续被拒绝仍保留已保存暂停，恢复后只在明确继续时推进',
   async () => {
     const gate = nativeGate();

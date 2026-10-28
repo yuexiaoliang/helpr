@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-28",
+  "productBase": "bd7c33a",
+  "scope": "源码公开入口；真实旧库副本；静态签名。不启动Electron。",
+  "fullCheck": {
+    "workspace": 130,
+    "legacy": 25,
+    "syntaxFiles": 207,
+    "exitCode": 0,
+    "finalAfterScriptCorrections": true
+  },
+  "sourceTestsAdded": 4,
+  "offline": {
+    "distinctCasesPassed": 6,
+    "inconclusive": 1,
+    "fullAttempts": 2,
+    "staticOnlyAttempts": 1,
+    "firstFailure": "no such table: executions",
+    "firstFailureCorrection": "故障输入改用实际task_executions表",
+    "secondFailure": "MIGRATION_PENDING_COMMIT_NOT_PROVEN",
+    "stopped": true,
+    "unreachedStaticCasesRunSeparately": true
+  },
+  "cleanupLimitation": "attempt-2在探针失败后由finally对自有Node记录进程发送SIGKILL并独立确认PID和worker组清空；原代码未把该清理的退出状态写入报告，不能声称取得目标阶段的SIGKILL退出证据。planned sourceRecordProcessInterruptions=0仅表示目标注入未获证明，并非从未终止Node进程。后续脚本已补记录清理信号及退出状态，未重试故障路径。",
+  "sourceOriginalUnchanged": true,
+  "candidate37Unchanged": true,
+  "sharedBudgetUnchanged": true,
+  "applicationBuilds": 0,
+  "applicationStarts": 0,
+  "installs": 0,
+  "realModels": 0,
+  "remoteWrites": 0,
+  "acceptance": "09保持2/10，23依赖保持",
+  "evidence": [
+    {
+      "file": "attempt-1.json",
+      "sha256": "3897c463211a3e2cb537188e18105f7ce2e82348db2a35cbadd1852342197d13"
+    },
+    {
+      "file": "attempt-1-supervisor.json",
+      "sha256": "a62ea653ac491f8b68935abafb2a534a4264ad12238030a4187b7ef3f8398cec"
+    },
+    {
+      "file": "attempt-2.json",
+      "sha256": "6eebaa99d57152286ca0b3effbb6957955f9d8c83dd42e46a72093fe3c08041e"
+    },
+    {
+      "file": "attempt-2-supervisor.json",
+      "sha256": "54a83c4c74ce158540c61579f253c7f70f12c587907bc94ac0a3986260729618"
+    },
+    {
+      "file": "static.json",
+      "sha256": "0fe6038ab5e7944f9e883b34b349bd4a4895ce333a3023d1fe2949c3c4c8713f"
+    },
+    {
+      "file": "static-supervisor.json",
+      "sha256": "3b3c3c4738ab439de66dd8caa2e189db0cb606d621edc6647237eef126756792"
+    }
+  ],
+  "sourceLog": {
+    "file": "source-expanded-final.log",
+    "sha256": "d5b1adb54cbd31efe688c853594d75cc536936f2226995ef3fdcedb761042825",
+    "gitIgnored": true
+  },
+  "priorSourceLog": {
+    "file": "source-expanded.log",
+    "sha256": "5f54c8d0e8bc2470e8e0025941ba9fb7d96ba18c4ec7d3e93f6ebb4ab21bb2b4",
+    "gitIgnored": true
+  }
+}

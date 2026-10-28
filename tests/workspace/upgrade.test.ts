@@ -115,6 +115,8 @@ async function preparedUpgrade() {
   let failure = '';
   let checkpointFailure = '';
   let pagesOpen = true;
+  let backupDirectory = folder;
+  let afterBackup = () => {};
   const make = (version: string) =>
     new UpgradeService({
       version,
@@ -128,9 +130,16 @@ async function preparedUpgrade() {
           : Promise.resolve(structuredClone(proof)),
       pages: () => Promise.resolve(proof.pages),
       acknowledge: () => Promise.resolve(),
-      choose: () => Promise.resolve(folder),
-      backup: async (requestId, file) =>
-        (await records.backup({ kind: 'create', requestId, file })).archive,
+      choose: () => Promise.resolve(backupDirectory),
+      backup: async (requestId, file) => {
+        const { archive } = await records.backup({
+          kind: 'create',
+          requestId,
+          file,
+        });
+        afterBackup();
+        return archive;
+      },
       versions: () => ({
         revision: 2,
         phase: 'done',
@@ -157,7 +166,14 @@ async function preparedUpgrade() {
   });
   expect(prepared.phase).toBe('ready');
   return {
+    folder,
     service: old,
+    setBackupDirectory: (directory: string) => {
+      backupDirectory = directory;
+    },
+    afterBackup: (effect: () => void) => {
+      afterBackup = effect;
+    },
     get pagesOpen() {
       return pagesOpen;
     },
@@ -195,6 +211,63 @@ test('取消本次准备后仍可再次准备，保留旧备份并生成新的�
   });
   expect(next.phase).toBe('ready');
   expect(next.requestId).not.toBe(before.requestId);
+});
+
+test('实际备份位置不可写入时不报告可退出，原任务和旧备份仍可读取', async () => {
+  const h = await preparedUpgrade();
+  const before = h.records.snapshot();
+  const oldBackup = h.records.upgrade({ kind: 'status' }).backup!;
+  const original = readFileSync(oldBackup.file);
+  await h.service.handle({ kind: 'upgrade-cancel' });
+  const regularFile = path.join(h.folder, 'not-a-directory');
+  writeFileSync(regularFile, '保留原文件');
+  h.setBackupDirectory(regularFile);
+  expect(
+    await h.service.handle({
+      kind: 'upgrade-prepare',
+      requestId: randomUUID(),
+      versionRevision: 2,
+    }),
+  ).toMatchObject({
+    phase: 'blocked',
+    error: 'BACKUP_STORAGE_UNAVAILABLE',
+    backup: null,
+  });
+  expect(h.service.held()).toBe(true);
+  expect(h.pagesOpen).toBe(true);
+  expect(h.records.snapshot().tasks).toEqual(before.tasks);
+  expect(readFileSync(oldBackup.file)).toEqual(original);
+  expect(readFileSync(regularFile, 'utf8')).toBe('保留原文件');
+  expect(
+    (await h.records.backup({ kind: 'inspect', file: oldBackup.file })).archive
+      .id,
+  ).toBe(oldBackup.id);
+});
+
+test('真实备份完成期间的新停止使准备失效，保留该停止与已写备份', async () => {
+  const h = await preparedUpgrade();
+  await h.service.handle({ kind: 'upgrade-cancel' });
+  h.afterBackup(() =>
+    h.records.execution({
+      kind: 'intent',
+      taskId: h.records.snapshot().tasks[0]!.id,
+      requestId: 'stop-during-backup',
+      intent: 'stop',
+    }),
+  );
+  expect(
+    await h.service.handle({
+      kind: 'upgrade-prepare',
+      requestId: randomUUID(),
+      versionRevision: 2,
+    }),
+  ).toMatchObject({ phase: 'blocked', error: 'UPGRADE_CHANGED', backup: null });
+  expect(h.records.snapshot().tasks[0]?.execution?.intent).toBe('stopped');
+  expect(h.pagesOpen).toBe(true);
+  expect(h.service.held()).toBe(true);
+  expect(
+    readdirSync(h.folder).filter((file) => file.endsWith('.helpr-backup')),
+  ).toHaveLength(2);
 });
 
 test('记录关闭再打开后，凭据端口拒绝读取时保持暂停，恢复原依据再检查', async () => {
