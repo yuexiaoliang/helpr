@@ -31,6 +31,7 @@ import { websiteURL } from '../shared/url-policy';
 import { diagnostics } from '../shared/diagnostics';
 import { resolveStartup, debuggingSwitches, runtimeImages } from './startup';
 import { InputGate } from './input-gate';
+import { loadProtectedPage } from './page-protection';
 import type { ExecutionPauseReason } from '../shared/execution';
 import { LocalFixture } from './local-fixture';
 import { versionStatusSchema, type VersionStatus } from '../shared/version';
@@ -558,13 +559,26 @@ function bindPage(task: Task): void {
     watch(page.view);
     layout();
   };
-  if (task.url && (fixture || safeStorage.isEncryptionAvailable()))
-    void view.webContents.loadURL(websiteURL(task.url)).catch(() => {});
-  else if (task.url)
-    emit({
-      notice:
-        '系统凭据保护尚不可用。请完成 macOS 授权后重新打开；任务与对话仍保留。',
-    });
+  const url = task.url;
+  if (url)
+    void loadProtectedPage({
+      available: () =>
+        fixture
+          ? Promise.resolve(true)
+          : safeStorage.isAsyncEncryptionAvailable(),
+      current: () =>
+        !closing &&
+        pages.get(task.id)?.view === view &&
+        state.tasks.find((t) => t.id === task.id)?.url === url &&
+        !!view.webContents &&
+        !view.webContents.isDestroyed(),
+      load: () => view.webContents.loadURL(websiteURL(url)),
+      unavailable: () =>
+        emit({
+          notice:
+            '系统凭据保护尚不可用。请完成 macOS 授权后重新打开；任务与对话仍保留。',
+        }),
+    }).catch(() => {});
 }
 function reconcile(): void {
   let added = false;
@@ -830,7 +844,14 @@ async function perform(input: unknown): Promise<unknown> {
       .parse(input);
     const page = pages.get(job.taskId),
       task = state.tasks.find((t) => t.id === job.taskId);
-    if (!page || !task || !(fixture || safeStorage.isEncryptionAvailable()))
+    if (
+      !page ||
+      !task ||
+      !(fixture || (await safeStorage.isAsyncEncryptionAvailable())) ||
+      closing ||
+      pages.get(job.taskId) !== page ||
+      state.tasks.find((t) => t.id === job.taskId) !== task
+    )
       throw new Error('PAGE_NOT_AVAILABLE');
     try {
       // Electron 在销毁后清空此 getter，未必还能调用 isDestroyed()。
@@ -872,7 +893,9 @@ async function perform(input: unknown): Promise<unknown> {
         pid: p.view.webContents?.getOSProcessId() ?? null,
         bounds: p.view.getBounds(),
       })),
-      encryptionAvailable: fixture ? null : safeStorage.isEncryptionAvailable(),
+      encryptionAvailable: fixture
+        ? null
+        : await safeStorage.isAsyncEncryptionAvailable(),
       window: {
         visible: win.isVisible(),
         bounds: win.getBounds(),

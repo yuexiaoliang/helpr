@@ -13,15 +13,18 @@ import { openUpgradeFixture, confirmUpgradeUI, requireUpgradeNativePreflight, re
 
 // 同一受管入口持有全部应用、服务与四次启动；产品交互交由CUA。
 const mode = process.argv.slice(2).join(' ');
-assert(['--check', '--preflight', '--run', '--after-97', '--check-after-97', '--v3-check', '--v3-preflight', '--v3-run', '--v3-check-after101', '--v3-after101', '--repair-check', '--repair-preflight', '--repair-run'].includes(mode), 'EXPLICIT_MODE_REQUIRED');
+assert(['--check', '--preflight', '--run', '--after-97', '--check-after-97', '--v3-check', '--v3-preflight', '--v3-run', '--v3-check-after101', '--v3-after101', '--repair-check', '--repair-preflight', '--repair-run', '--repair-resume', '--repair-replace40', '--repair-resume40'].includes(mode), 'EXPLICIT_MODE_REQUIRED');
 const repair = mode.startsWith('--repair-');
+const repairReplace40 = mode === '--repair-replace40';
+const repair40 = repairReplace40 || mode === '--repair-resume40';
 const next = repair || mode.startsWith('--v3-');
-const oldBuild = repair ? 38 : next ? 37 : 36, newBuild = oldBuild + 1, oldVersion = repair ? '0.2.1' : next ? '0.2.0' : '0.1.0', newVersion = repair ? '0.2.2' : next ? '0.2.1' : '0.2.0';
+const oldBuild = repair ? 38 : next ? 37 : 36, newBuild = repair40 ? 40 : oldBuild + 1, oldVersion = repair ? '0.2.1' : next ? '0.2.0' : '0.1.0', newVersion = repair ? '0.2.2' : next ? '0.2.1' : '0.2.0';
 const section = repair ? 'upgrade09Repair' : next ? 'upgrade09V3' : 'upgrade09';
 const spend = kind => debit(kind, repair ? section : undefined);
 const after97 = mode === '--after-97' || mode === '--check-after-97';
 const after101 = mode === '--v3-after101' || mode === '--v3-check-after101';
-const continuation = after97 || after101;
+const repairResume = mode === '--repair-resume' || repair40;
+const continuation = after97 || after101 || repairResume;
 const batchName = repair ? 'manual-upgrade-repair' : next ? 'manual-upgrade-v3' : 'manual-upgrade-09';
 const root = path.join(validationRoot, batchName);
 const batchFile = path.join(validationRoot, batchName + '-batch.json');
@@ -50,15 +53,23 @@ assert(!ps().some(row => row.pid !== process.pid && (/\/helpr\.app\/Contents\/Ma
 execFileSync(process.execPath, ['scripts/validate-workspace.mjs', '--preflight'], { stdio: 'inherit', timeout: 65000 });
 const budget = JSON.parse(fs.readFileSync(budgetFile));
 assert(budget[section]?.approved && (repair ? budget[section].unlimited === true && budget[section].active === true : budget.limits.builds === newBuild && budget.limits.starts === (next ? 103 : 100)), 'EXPLICIT_APPROVAL_REQUIRED');
-if (repair) assert((mode === '--repair-preflight' ? [38, 39].includes(budget.used.builds) : budget.used.builds === 39) && budget[section].baseUsed?.starts === 103 && budget[section].baseUsed?.installs === 12 && budget[section].baseUsed?.builds === 38, 'EXACT_REPAIR_APPROVAL_REQUIRED');
+if (repair) assert((mode === '--repair-preflight' ? [38, 39, 40].includes(budget.used.builds) : budget.used.builds === newBuild) && budget[section].baseUsed?.starts === 103 && budget[section].baseUsed?.installs === 12 && budget[section].baseUsed?.builds === 38, 'EXACT_REPAIR_APPROVAL_REQUIRED');
 else if (next) assert(budget.limits.installs === 12 && (mode === '--v3-preflight' ? [37, 38].includes(budget.used.builds) : budget.used.builds === 38) && budget[section].baseUsed?.starts === 100 && budget[section].baseUsed?.installs === 10 && budget[section].limits?.starts === 3 && budget[section].limits?.installs === 2, 'EXACT_V3_APPROVAL_REQUIRED');
 const originalDeadline = repair ? null : budget[section].runtimeStartedAt + 90 * 60000;
 const extraTime = next ? null : budget.upgrade09.after97Time;
 if (extraTime) assert(after97 && extraTime.approved === true && extraTime.originalDeadline === originalDeadline && Number.isSafeInteger(extraTime.approvedAt) && extraTime.deadline === extraTime.approvedAt + 60 * 60000, 'EXACT_TIME_EXTENSION_APPROVAL_REQUIRED');
 const batchDeadline = extraTime?.deadline ?? originalDeadline ?? Number.MAX_SAFE_INTEGER;
-assert(budget.used.starts === (repair ? 103 : next ? after101 ? 101 : 100 : after97 ? 97 : 96) && budget.used.installs === (repair ? 12 : next ? after101 ? 11 : 10 : after97 ? 9 : 8) && budget.used.faults === 42 && budget.used.cleanups === (repair ? 18 : 17), 'ORIGINAL_BUDGET_REQUIRED');
+if (!repairResume) assert(budget.used.starts === (repair ? 103 : next ? after101 ? 101 : 100 : after97 ? 97 : 96) && budget.used.installs === (repair ? 12 : next ? after101 ? 11 : 10 : after97 ? 9 : 8) && budget.used.faults === 42 && budget.used.cleanups === (repair ? 18 : 17), 'ORIGINAL_BUDGET_REQUIRED');
 assert(continuation ? fs.existsSync(batchFile) && fs.existsSync(root) : !fs.existsSync(batchFile) && !fs.existsSync(root), 'BATCH_IDENTITY_REQUIRED');
 const previous = continuation ? JSON.parse(fs.readFileSync(path.join(root, 'result.json'))) : null;
+if (repairResume) {
+  assert(previous.passed === false && previous.error && previous.installs.length === (repair40 && !repairReplace40 ? 3 : 2) && previous.tasks.length === 2 && previous.logins.length === 1 && previous.oldBackup && previous.checks.includes('old-upgrade-ui-exit-confirmed') && !previous.emergencyCleanupAttempted, 'REPAIR_CHECKPOINT_REQUIRED');
+  const last = previous.starts.at(-1);
+  assert(last.build === (repairReplace40 ? 39 : newBuild) && last.exit?.code === 0 && last.remaining?.length === 0 && budget.used.starts === last.start && budget.used.installs === previous.installs.at(-1).number, 'REPAIR_PREVIOUS_START_NOT_CLEARED');
+  assert(!ps().some(row => (last.identities[row.pid]?.birth === row.birth && last.identities[row.pid]?.command === row.command) || last.groups.includes(row.group)), 'REPAIR_OWNED_PROCESS_REMAINS');
+  assert(!fs.existsSync(path.join(root, 'resume-after-' + last.start + '-once')), 'CONTINUATION_ALREADY_USED');
+  assert(fs.existsSync(path.join(root, 'private-fixture.json')), 'ORIGINAL_PRIVATE_FIXTURE_REQUIRED');
+}
 if (after97) {
   assert(previous.passed === false && previous.error === 'REQUEST_TIMEOUT' && previous.starts.length === 1 && previous.starts[0].start === 97 && previous.starts[0].build === 36 && previous.starts[0].exit.code === 0 && previous.starts[0].remaining.length === 0, 'EXACT_97_FAILURE_REQUIRED');
   assert(previous.tasks.length === 0 && previous.models.length === 0 && previous.logins.length === 0 && previous.effects.length === 0 && previous.versionRequests.length === 0 && previous.installs.length === 1 && previous.installs[0].number === 9 && !previous.emergencyCleanupAttempted, 'NO_PRIOR_BUSINESS_WORK_REQUIRED');
@@ -89,7 +100,7 @@ if (mode === '--preflight' || mode === '--v3-preflight' || mode === '--repair-pr
   process.exit(0);
 }
 const fresh = JSON.parse(fs.readFileSync(path.join(validationRoot, 'build-' + newBuild + '.json')));
-assert(fresh.build === newBuild && fresh.prepared && fresh.app === path.resolve(repair ? 'dist/candidates/manual-upgrade-repair/mac-arm64/helpr.app' : next ? 'dist/candidates/manual-upgrade-v3/mac-arm64/helpr.app' : 'dist/candidates/manual-upgrade-09/mac-arm64/helpr.app'), 'FIXED_NEW_CANDIDATE_REQUIRED');
+assert(fresh.build === newBuild && fresh.prepared && fresh.app === path.resolve(repair40 ? 'dist/candidates/manual-upgrade-repair-40/mac-arm64/helpr.app' : repair ? 'dist/candidates/manual-upgrade-repair/mac-arm64/helpr.app' : next ? 'dist/candidates/manual-upgrade-v3/mac-arm64/helpr.app' : 'dist/candidates/manual-upgrade-09/mac-arm64/helpr.app'), 'FIXED_NEW_CANDIDATE_REQUIRED');
 assert.equal(verify(fresh).certificateSha256, verify(old).certificateSha256, 'PUBLISHER_CHANGED');
 assert.notEqual(fresh.hashes['Contents/Resources/app.asar'], old.hashes['Contents/Resources/app.asar'], 'DISTINCT_REAL_PACKAGES_REQUIRED');
 assert(Number.isSafeInteger(budget[section].runtimeStartedAt) && Date.now() < batchDeadline, 'ORIGINAL_BATCH_DEADLINE_REQUIRED');
@@ -100,7 +111,11 @@ if (mode === '--check-after-97' || mode === '--v3-check-after101') {
   process.exit(0);
 }
 if (continuation) {
-  if (after101) {
+  if (repairResume) {
+    const last = previous.starts.at(-1).start;
+    fs.writeFileSync(path.join(root, 'resume-after-' + last + '-once'), String(process.pid), {flag:'wx',mode:0o600});
+    fs.copyFileSync(path.join(root,'result.json'),path.join(root,'result-through-' + last + '.json'),fs.constants.COPYFILE_EXCL);
+  } else if (after101) {
     fs.writeFileSync(path.join(root, 'after-101-once'), String(process.pid), { flag: 'wx', mode: 0o600 });
     fs.copyFileSync(path.join(root, 'result.json'), path.join(root, 'result-101.json'), fs.constants.COPYFILE_EXCL);
   } else {
@@ -124,9 +139,18 @@ const apiKey = privateFixture?.state.apiKey ?? 'upgrade09-test-' + randomUUID();
 const sessionToken = privateFixture?.state.sessionToken ?? randomUUID();
 let expires = privateFixture?.state.expires ?? Math.floor(Date.now() / 1000) + 7200;
 const report = { scope: 'early real-package upgrade; real safeStorage and persistent browser; local fixtures only', started: budget[section].runtimeStartedAt, originalDeadline, approvedDeadline: repair ? null : batchDeadline, unlimited: repair, builds: [oldBuild, newBuild], limits: budget[section].limits, installs: [], starts: [], tasks: [], checks: [], models: [], logins: [], pages: [], effects: [], versionRequests: [], captures: [], realModels: 0, remoteBusinessWrites: 0, passed: false };
-if (previous) Object.assign(report, { installs: previous.installs, starts: previous.starts, checks: previous.checks, versionRequests: previous.versionRequests, priorFailure: { start: after101 ? 101 : 97, error: previous.error, sha256: hash(fs.readFileSync(path.join(root, after101 ? 'result-101.json' : 'result-97.json'))), originalStarted: previous.started }, continuation: after101 ? 'native connection recovered; only old-to-new stages within remaining two starts; cold reopen deferred' : 'one corrected readiness retry; no fault reserved' });
+if (previous && !repairResume) Object.assign(report, { installs: previous.installs, starts: previous.starts, checks: previous.checks, versionRequests: previous.versionRequests, priorFailure: { start: after101 ? 101 : 97, error: previous.error, sha256: hash(fs.readFileSync(path.join(root, after101 ? 'result-101.json' : 'result-97.json'))), originalStarted: previous.started }, continuation: after101 ? 'native connection recovered; only old-to-new stages within remaining two starts; cold reopen deferred' : 'one corrected readiness retry; no fault reserved' });
+if (repairResume) {
+  Object.assign(report, previous);
+  report.builds = [...new Set([...previous.builds,newBuild])];
+  report.priorFailures = [...(previous.priorFailures ?? []),{start:previous.starts.at(-1).start,error:previous.error,sha256:hash(fs.readFileSync(path.join(root,'result-through-' + previous.starts.at(-1).start + '.json')))}];
+  delete report.error; delete report.ended; report.passed = false;
+}
 if (after101) Object.assign(report, { scope: 'limited v3 old-to-new continuation only; original failed start retained; cold reopen not covered', coldReopenDeferred: true, originalThreeStagePlanPassed: false });
-const oldStart = repair ? 104 : next ? after101 ? 102 : 101 : after97 ? 98 : 97, newStart = oldStart + 1, coldStart = after101 ? null : oldStart + 2;
+const oldStart = repair ? 104 : next ? after101 ? 102 : 101 : after97 ? 98 : 97;
+const newStart = repairResume ? previous.pendingExit?.normalExitConfirmed ? previous.pendingExit.start : budget.used.starts + 1 : oldStart + 1;
+const coldStart = repairResume && previous.pendingExit?.normalExitConfirmed ? budget.used.starts + 1 : after101 ? null : newStart + 1;
+if (repair) report.repairStages = {oldStart,newStart,coldStart};
 const write = (name, value) => writeUpgradeJSON(path.join(root, name), value);
 const save = () => {
   write('result.json', report);
@@ -137,6 +161,7 @@ const save = () => {
 };
 const safeSave = () => { try { save(); } catch (error) { report.persistenceError ??= error.code ?? error.message; report.passed = false; failure ??= 'EVIDENCE_WRITE_FAILED'; } };
 let failure, current, finished = false, setupUsed = false, baseline, newInstalled = false;
+if (repairResume) { setupUsed = true; baseline = JSON.parse(fs.readFileSync(path.join(root,'old-baseline.json'))); newInstalled = true; }
 const deadline = batchDeadline;
 const check = (name, condition) => { assert(condition, name); if (!report.checks.includes(name)) report.checks.push(name); save(); };
 function limited() {
@@ -238,6 +263,13 @@ async function launch(build) {
   await until(() => { processes(app); return app.ready || app.exit; }, Math.max(1, readyDeadline - Date.now()));
   assert(app.ready && !app.exit, 'APPLICATION_NOT_READY');
   assert(!row.ready.fixture, 'REAL_CREDENTIAL_PROTECTION_REQUIRED');
+  if (repair) {
+    if (process.env.HELPR_REPAIR_SAMPLE_SHOW === '1') {
+      const sample = spawn('/usr/bin/sample', [String(row.ready.hostPid),'3','-file',path.join(root,'host-' + row.start + '-post-ready-sample.txt')], {stdio:'ignore'});
+      sample.on('error', () => {});
+    }
+    await rpc({kind:'show'}); row.shownAfterReadyAt = Date.now(); save();
+  }
   write('context.json', { root, profile, origin, installation, backupDirectory, hostApp: path.join(installation, 'Contents/Frameworks/helpr Workspace.app'), hostPid: row.ready.hostPid, start: row.start });
   console.log('UPGRADE_READY ' + JSON.stringify({ start: row.start, build, root }));
 }
@@ -292,7 +324,7 @@ const website = http.createServer(async (req, res) => {
 const keyFile = path.join(root, 'tls-key.pem'), certFile = path.join(root, 'tls-cert.pem');
 if (!next || !fs.existsSync(keyFile) && !fs.existsSync(certFile)) execFileSync('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', keyFile, '-out', certFile, '-days', '1', '-subj', '/CN=127.0.0.1', '-addext', 'subjectAltName=IP:127.0.0.1'], { stdio: 'ignore', timeout: 10000 });
 fs.chmodSync(keyFile, 0o600);
-let futureVersion = false;
+let futureVersion = repairResume ? previous.versionRequests.at(-1)?.futureVersion ?? false : false;
 const versions = https.createServer({ key: fs.readFileSync(keyFile), cert: fs.readFileSync(certFile) }, (req, res) => {
   try {
     limited(); assert((repair || report.versionRequests.length < 16) && req.method === 'GET' && req.url === '/stable.json', 'VERSION_REQUEST_LIMIT');
@@ -310,8 +342,22 @@ try {
   fs.writeFileSync(path.join(profile, 'version-fixture.json'), JSON.stringify({ source: `https://127.0.0.1:${versions.address().port}/stable.json`, ca: fs.readFileSync(certFile, 'utf8') }), { mode: 0o600 });
   save();
   if (!continuation) install(old);
-  else for (const [file, expected] of Object.entries(old.hashes)) assert.equal(hash(fs.readFileSync(path.join(installation, file))), expected, 'ORIGINAL_INSTALLED_PACKAGE_REQUIRED');
-  await launch(oldBuild);
+  else {
+    const installed = repairReplace40 ? JSON.parse(fs.readFileSync(path.join(validationRoot,'build-39.json'))) : repairResume ? fresh : old;
+    for (const [file, expected] of Object.entries(installed.hashes)) assert.equal(hash(fs.readFileSync(path.join(installation, file))), expected, 'ORIGINAL_INSTALLED_PACKAGE_REQUIRED');
+    if (repairReplace40) {
+      assert.equal(verify(installed).certificateSha256,verify(fresh).certificateSha256,'PUBLISHER_CHANGED');
+      const preserved = path.join(root,'installation/helpr-build39-preserved.app');
+      assert(!fs.existsSync(preserved),'OLD_REPAIR_PACKAGE_ALREADY_PRESERVED');
+      fs.renameSync(installation,preserved);
+      const spent = spend('installs');
+      report.installs.push({number:spent.used.installs,build:newBuild,started:Date.now(),source:fresh.app,replaces:39,preserved}); save();
+      execFileSync('/usr/bin/ditto',[fresh.app,installation],{timeout:120000});
+      for(const [file,expected] of Object.entries(fresh.hashes)) assert.equal(hash(fs.readFileSync(path.join(installation,file))),expected,'REPAIRED_PACKAGE_COPY_REQUIRED');
+    }
+  }
+  await launch(repairResume ? newBuild : oldBuild);
+  if (repairResume) check('resumed-original-task-records-retained-' + current.row.start, JSON.stringify(facts(await snapshot())) === JSON.stringify(baseline));
   while (!finished) {
     limited(); processes(current);
     const file = path.join(root, 'command.json');
@@ -382,7 +428,7 @@ try {
           case 'cold': {
             assert(!after101, 'COLD_REOPEN_DEFERRED_NO_START_BUDGET');
             if (repair) assert(report.pendingExit?.normalExitConfirmed, 'PENDING_EXIT_PROOF_REQUIRED');
-            assert(newInstalled && current.cleared && report.starts.length === (after97 ? 3 : 2), 'SINGLE_COLD_REOPEN_REQUIRED');
+            assert(newInstalled && current.cleared && (repair || report.starts.length === (after97 ? 3 : 2)), 'SINGLE_COLD_REOPEN_REQUIRED');
             await launch(newBuild); check('same-version-reopen-keeps-task-records', JSON.stringify(facts(await snapshot())) === JSON.stringify(baseline));
             if (repair) { const u = await rpc({kind:'upgrade-status'}); check('cold-reopen-retains-pending-review', u.reopening && ['checking','blocked'].includes(u.phase) && !u.working); }
             value = { reopened: true }; break;
