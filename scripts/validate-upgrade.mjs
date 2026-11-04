@@ -12,11 +12,13 @@ import { verifyDevelopmentSignature } from './development-signing.mjs';
 
 // 同一受管入口持有全部应用、服务与四次启动；产品交互交由CUA。
 const mode = process.argv.slice(2).join(' ');
-assert(['--check', '--preflight', '--run', '--after-97', '--check-after-97', '--v3-check', '--v3-preflight', '--v3-run'].includes(mode), 'EXPLICIT_MODE_REQUIRED');
+assert(['--check', '--preflight', '--run', '--after-97', '--check-after-97', '--v3-check', '--v3-preflight', '--v3-run', '--v3-check-after101', '--v3-after101'].includes(mode), 'EXPLICIT_MODE_REQUIRED');
 const next = mode.startsWith('--v3-');
 const oldBuild = next ? 37 : 36, newBuild = next ? 38 : 37, oldVersion = next ? '0.2.0' : '0.1.0', newVersion = next ? '0.2.1' : '0.2.0';
 const section = next ? 'upgrade09V3' : 'upgrade09';
 const after97 = mode === '--after-97' || mode === '--check-after-97';
+const after101 = mode === '--v3-after101' || mode === '--v3-check-after101';
+const continuation = after97 || after101;
 const root = path.join(validationRoot, next ? 'manual-upgrade-v3' : 'manual-upgrade-09');
 const batchFile = path.join(validationRoot, next ? 'manual-upgrade-v3-batch.json' : 'manual-upgrade-09-batch.json');
 const budgetFile = path.join(validationRoot, 'budget.json');
@@ -49,13 +51,22 @@ const originalDeadline = budget[section].runtimeStartedAt + 90 * 60000;
 const extraTime = next ? null : budget.upgrade09.after97Time;
 if (extraTime) assert(after97 && extraTime.approved === true && extraTime.originalDeadline === originalDeadline && Number.isSafeInteger(extraTime.approvedAt) && extraTime.deadline === extraTime.approvedAt + 60 * 60000, 'EXACT_TIME_EXTENSION_APPROVAL_REQUIRED');
 const batchDeadline = extraTime?.deadline ?? originalDeadline;
-assert(budget.used.starts === (next ? 100 : after97 ? 97 : 96) && budget.used.installs === (next ? 10 : after97 ? 9 : 8) && budget.used.faults === 42 && budget.used.cleanups === 17, 'ORIGINAL_BUDGET_REQUIRED');
-assert(after97 ? fs.existsSync(batchFile) && fs.existsSync(root) : !fs.existsSync(batchFile) && !fs.existsSync(root), 'BATCH_IDENTITY_REQUIRED');
-const previous = after97 ? JSON.parse(fs.readFileSync(path.join(root, 'result.json'))) : null;
-if (previous) {
+assert(budget.used.starts === (next ? after101 ? 101 : 100 : after97 ? 97 : 96) && budget.used.installs === (next ? after101 ? 11 : 10 : after97 ? 9 : 8) && budget.used.faults === 42 && budget.used.cleanups === 17, 'ORIGINAL_BUDGET_REQUIRED');
+assert(continuation ? fs.existsSync(batchFile) && fs.existsSync(root) : !fs.existsSync(batchFile) && !fs.existsSync(root), 'BATCH_IDENTITY_REQUIRED');
+const previous = continuation ? JSON.parse(fs.readFileSync(path.join(root, 'result.json'))) : null;
+if (after97) {
   assert(previous.passed === false && previous.error === 'REQUEST_TIMEOUT' && previous.starts.length === 1 && previous.starts[0].start === 97 && previous.starts[0].build === 36 && previous.starts[0].exit.code === 0 && previous.starts[0].remaining.length === 0, 'EXACT_97_FAILURE_REQUIRED');
   assert(previous.tasks.length === 0 && previous.models.length === 0 && previous.logins.length === 0 && previous.effects.length === 0 && previous.versionRequests.length === 0 && previous.installs.length === 1 && previous.installs[0].number === 9 && !previous.emergencyCleanupAttempted, 'NO_PRIOR_BUSINESS_WORK_REQUIRED');
   assert.equal(previous.started, budget[section].runtimeStartedAt, 'ORIGINAL_DEADLINE_REQUIRED');
+}
+if (after101) {
+  assert(previous.passed === false && previous.error === 'CUA_ROUND_ABORTED' && previous.starts.length === 1 && previous.starts[0].start === 101 && previous.starts[0].build === 37 && previous.starts[0].exit.code === 0 && previous.starts[0].remaining.length === 0, 'EXACT_101_FAILURE_REQUIRED');
+  assert(previous.tasks.length === 0 && previous.models.length === 0 && previous.logins.length === 0 && previous.effects.length === 0 && previous.versionRequests.length === 1 && previous.installs.length === 1 && previous.installs[0].number === 11 && !previous.emergencyCleanupAttempted, 'NO_PRIOR_V3_BUSINESS_WORK_REQUIRED');
+  assert.equal(previous.started, budget[section].runtimeStartedAt, 'ORIGINAL_DEADLINE_REQUIRED');
+  const prior = previous.starts[0];
+  assert(!ps().some(row => (prior.identities[row.pid]?.birth === row.birth && prior.identities[row.pid]?.command === row.command) || prior.groups.includes(row.group)), 'PREVIOUS_101_PROCESSES_REMAIN');
+  assert(budget[section].nativeConnectionRecovered === true, 'NATIVE_CONNECTION_RECOVERY_REQUIRED');
+  assert(!fs.existsSync(path.join(root, 'after-101-once')), 'CONTINUATION_ALREADY_USED');
 }
 const old = JSON.parse(fs.readFileSync(path.join(validationRoot, 'build-' + oldBuild + '.json')));
 const expectedOld = next ? path.join(fs.realpathSync(path.join(process.cwd(), '../..')), '.codex/worktrees/manual-upgrade/helpr/dist/candidates/manual-upgrade-09/mac-arm64/helpr.app') : '/Users/yuexiaoliang/projects/helpr/dist/candidates/version-08/mac-arm64/helpr.app';
@@ -76,15 +87,20 @@ assert(fresh.build === newBuild && fresh.prepared && fresh.app === path.resolve(
 assert.equal(verify(fresh).certificateSha256, verify(old).certificateSha256, 'PUBLISHER_CHANGED');
 assert.notEqual(fresh.hashes['Contents/Resources/app.asar'], old.hashes['Contents/Resources/app.asar'], 'DISTINCT_REAL_PACKAGES_REQUIRED');
 assert(Number.isSafeInteger(budget[section].runtimeStartedAt) && Date.now() < batchDeadline, 'ORIGINAL_BATCH_DEADLINE_REQUIRED');
-if (mode === '--check-after-97') {
+if (mode === '--check-after-97' || mode === '--v3-check-after101') {
   assert(!fs.existsSync(path.join(root, 'after-97-once')), 'CONTINUATION_ALREADY_USED');
-  assert(fs.realpathSync(budget.upgrade09.run.profile) === budget.upgrade09.run.profile, 'ORIGINAL_PROFILE_REQUIRED');
-  console.log(JSON.stringify({ valid: true, appStarts: 0, carriedStart: 97, used: budget.used, remainingStarts: 3, originalDeadline, approvedDeadline: batchDeadline }));
+  assert(fs.realpathSync(budget[section].run.profile) === budget[section].run.profile, 'ORIGINAL_PROFILE_REQUIRED');
+  console.log(JSON.stringify({ valid: true, appStarts: 0, carriedStart: after101 ? 101 : 97, used: budget.used, remainingStarts: after101 ? 2 : 3, coldReopenDeferred: after101, originalDeadline, approvedDeadline: batchDeadline }));
   process.exit(0);
 }
-if (after97) {
+if (continuation) {
+  if (after101) {
+    fs.writeFileSync(path.join(root, 'after-101-once'), String(process.pid), { flag: 'wx', mode: 0o600 });
+    fs.copyFileSync(path.join(root, 'result.json'), path.join(root, 'result-101.json'), fs.constants.COPYFILE_EXCL);
+  } else {
   fs.writeFileSync(path.join(root, 'after-97-once'), String(process.pid), { flag: 'wx', mode: 0o600 });
   fs.copyFileSync(path.join(root, 'result.json'), path.join(root, 'result-97.json'), fs.constants.COPYFILE_EXCL);
+  }
 } else {
   fs.writeFileSync(batchFile, JSON.stringify({ root, pid: process.pid, started: new Date().toISOString() }) + '\n', { flag: 'wx', mode: 0o600 });
   fs.mkdirSync(root, { mode: 0o700 });
@@ -92,17 +108,18 @@ if (after97) {
 const profileRoot = `/private/tmp/helpr-workspace-validation-${process.getuid()}`;
 fs.mkdirSync(profileRoot, { recursive: true, mode: 0o700 });
 assert.equal(fs.realpathSync(profileRoot), profileRoot);
-const profile = after97 ? budget.upgrade09.run.profile : fs.mkdtempSync(profileRoot + '/upgrade09-');
+const profile = continuation ? budget[section].run.profile : fs.mkdtempSync(profileRoot + '/upgrade09-');
 assert(profile.startsWith(profileRoot + '/upgrade09-') && fs.realpathSync(profile) === profile, 'ORIGINAL_PROFILE_REQUIRED');
 const installation = path.join(root, 'installation/helpr.app');
 const backupDirectory = path.join(root, 'selected-backups');
-if (!after97) fs.mkdirSync(backupDirectory, { mode: 0o700 });
+if (!continuation) fs.mkdirSync(backupDirectory, { mode: 0o700 });
 const apiKey = 'upgrade09-test-' + randomUUID();
 const sessionToken = randomUUID();
 let expires = next ? 0 : Math.floor(Date.now() / 1000) + 7200;
 const report = { scope: 'early real-package upgrade; real safeStorage and persistent browser; local fixtures only', started: budget[section].runtimeStartedAt, originalDeadline, approvedDeadline: batchDeadline, builds: [oldBuild, newBuild], limits: budget[section].limits, installs: [], starts: [], tasks: [], checks: [], models: [], logins: [], pages: [], effects: [], versionRequests: [], captures: [], realModels: 0, remoteBusinessWrites: 0, passed: false };
-if (previous) Object.assign(report, { installs: previous.installs, starts: previous.starts, priorFailure: { start: 97, error: previous.error, sha256: hash(fs.readFileSync(path.join(root, 'result-97.json'))), originalStarted: previous.started }, continuation: 'one corrected readiness retry; no fault reserved' });
-const oldStart = next ? 101 : after97 ? 98 : 97, newStart = oldStart + 1, coldStart = oldStart + 2;
+if (previous) Object.assign(report, { installs: previous.installs, starts: previous.starts, checks: previous.checks, versionRequests: previous.versionRequests, priorFailure: { start: after101 ? 101 : 97, error: previous.error, sha256: hash(fs.readFileSync(path.join(root, after101 ? 'result-101.json' : 'result-97.json'))), originalStarted: previous.started }, continuation: after101 ? 'native connection recovered; only old-to-new stages within remaining two starts; cold reopen deferred' : 'one corrected readiness retry; no fault reserved' });
+if (after101) Object.assign(report, { scope: 'limited v3 old-to-new continuation only; original failed start retained; cold reopen not covered', coldReopenDeferred: true, originalThreeStagePlanPassed: false });
+const oldStart = next ? after101 ? 102 : 101 : after97 ? 98 : 97, newStart = oldStart + 1, coldStart = after101 ? null : oldStart + 2;
 const write = (name, value) => fs.writeFileSync(path.join(root, name), JSON.stringify(value, null, 2) + '\n', { mode: 0o600 });
 const save = () => {
   write('result.json', report);
@@ -283,7 +300,7 @@ try {
   await new Promise((resolve, reject) => { versions.once('error', reject); versions.listen(0, '127.0.0.1', resolve); });
   fs.writeFileSync(path.join(profile, 'version-fixture.json'), JSON.stringify({ source: `https://127.0.0.1:${versions.address().port}/stable.json`, ca: fs.readFileSync(certFile, 'utf8') }), { mode: 0o600 });
   save();
-  if (!after97) install(old);
+  if (!continuation) install(old);
   else for (const [file, expected] of Object.entries(old.hashes)) assert.equal(hash(fs.readFileSync(path.join(installation, file))), expected, 'ORIGINAL_INSTALLED_PACKAGE_REQUIRED');
   await launch(oldBuild);
   while (!finished) {
@@ -338,6 +355,7 @@ try {
           case 'future': assert(newInstalled || next, 'NEW_PACKAGE_REQUIRED'); futureVersion = true; value = { fixtureOnly: '0.3.0; not published or downloaded' }; break;
           case 'closed': await gone(); if (next && current.row.build === oldBuild) { check('old-upgrade-ui-exit-confirmed', true); report.oldDatabase = {sha256:hash(fs.readFileSync(path.join(profile,'workspace.sqlite'))),bytes:fs.statSync(path.join(profile,'workspace.sqlite')).size}; save(); } value = { closed: true }; break;
           case 'cold': {
+            assert(!after101, 'COLD_REOPEN_DEFERRED_NO_START_BUDGET');
             assert(newInstalled && current.cleared && report.starts.length === (after97 ? 3 : 2), 'SINGLE_COLD_REOPEN_REQUIRED');
             await launch(newBuild); check('same-version-reopen-keeps-task-records', JSON.stringify(facts(await snapshot())) === JSON.stringify(baseline)); value = { reopened: true }; break;
           }
@@ -354,7 +372,7 @@ try {
             check('original-login-not-recreated', report.logins.length === 1);
             check('original-key-served-in-both-real-packages', report.models.some(m => m.start === oldStart && m.originalKeyMatched) && report.models.some(m => m.start === newStart && m.originalKeyMatched));
             check('website-authenticated-after-upgrade', report.pages.some(p => p.start === newStart && p.authenticated));
-            check('cold-original-key-and-login', report.models.some(m => m.start === coldStart && m.originalKeyMatched) && report.pages.some(p => p.start === coldStart && p.authenticated));
+            if (!after101) check('cold-original-key-and-login', report.models.some(m => m.start === coldStart && m.originalKeyMatched) && report.pages.some(p => p.start === coldStart && p.authenticated));
             assert(['upgrade-ready', 'upgrade-blocked', 'upgrade-cancelled'].every(label => report.captures.includes(label)), 'CUA_FLOW_CAPTURES_REQUIRED');
             finished = true; value = { finished: true }; break;
           }
