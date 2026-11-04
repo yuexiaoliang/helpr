@@ -1,0 +1,89 @@
+{
+  "observedAt": "2026-11-04T06:18:53.337Z",
+  "source": "983f899",
+  "rootCause": "Host main thread waits in synchronous keychain access; code has synchronous safeStorage availability checks in page bind/reload/inspect",
+  "scopeLimit": "Does not establish the cause of all earlier Finder/CUA service failures",
+  "failures": [
+    {
+      "start": 105,
+      "build": 39,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "remaining": [],
+      "shownAfterReadyAt": null
+    },
+    {
+      "start": 106,
+      "build": 39,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "remaining": [],
+      "shownAfterReadyAt": null
+    },
+    {
+      "start": 107,
+      "build": 39,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "remaining": [],
+      "shownAfterReadyAt": null
+    },
+    {
+      "start": 108,
+      "build": 39,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "remaining": [],
+      "shownAfterReadyAt": null
+    }
+  ],
+  "sampling": {
+    "start": 108,
+    "seconds": 3,
+    "mainThreadSamples": 2570,
+    "wait": [
+      "SecItemCopyMatching",
+      "SecKeychainItemCopyContent",
+      "SecurityServer::ClientSession::decrypt"
+    ],
+    "sha256": "315b2c5cbcbbe10f1db4528b72f0933af0ce00d260f191879729fd1c3d47fe2f"
+  },
+  "fix": {
+    "asyncAvailability": true,
+    "encryptionRetained": true,
+    "latePageIdentityChecked": true,
+    "sourceOnlyUntilBuild40Verified": false,
+    "realPackage": {
+      "build": 40,
+      "version": "0.2.2",
+      "sourceCommit": "983f899",
+      "nativeWindow109Ms": 263,
+      "nativeWindow110Ms": 299,
+      "mainThreadIdleDuringAuthorization": true,
+      "pendingNormalUIExit": true,
+      "coldReviewThenOriginalKeyGET": true
+    }
+  },
+  "tests": {
+    "formal": 141,
+    "legacy": 25,
+    "syntax": 210,
+    "script": 6,
+    "rawFinalSha256": "eb78504e15175c706e4170baf3e65c0836f0b572028feca5d062657797e72287",
+    "initialLintFailureSha256": "de58f64131b011581e2198053d32cdbfb8e15b55ff43a8b1953d54ec9451e8e3"
+  },
+  "credentials": {
+    "modelSavedOnce": true,
+    "websiteLoggedInOnce": true,
+    "systemInteraction": "User reported 已完成系统授权; security UI neither read nor operated by Computer Use"
+  },
+  "resultSha256": "bb26448c362edc7b2e40b9571706c58f4ad5fa9f0f50a9bfa7cd78d68173dbb3"
+}

@@ -264,10 +264,6 @@ async function launch(build) {
   assert(app.ready && !app.exit, 'APPLICATION_NOT_READY');
   assert(!row.ready.fixture, 'REAL_CREDENTIAL_PROTECTION_REQUIRED');
   if (repair) {
-    if (process.env.HELPR_REPAIR_SAMPLE_SHOW === '1') {
-      const sample = spawn('/usr/bin/sample', [String(row.ready.hostPid),'3','-file',path.join(root,'host-' + row.start + '-post-ready-sample.txt')], {stdio:'ignore'});
-      sample.on('error', () => {});
-    }
     await rpc({kind:'show'}); row.shownAfterReadyAt = Date.now(); save();
   }
   write('context.json', { root, profile, origin, installation, backupDirectory, hostApp: path.join(installation, 'Contents/Frameworks/helpr Workspace.app'), hostPid: row.ready.hostPid, start: row.start });
@@ -358,6 +354,10 @@ try {
   }
   await launch(repairResume ? newBuild : oldBuild);
   if (repairResume) check('resumed-original-task-records-retained-' + current.row.start, JSON.stringify(facts(await snapshot())) === JSON.stringify(baseline));
+  if (repairResume && previous.pendingExit?.normalExitConfirmed) {
+    const u = await rpc({kind:'upgrade-status'});
+    check('cold-reopen-retains-pending-review',u.reopening && ['checking','blocked'].includes(u.phase) && !u.working);
+  }
   while (!finished) {
     limited(); processes(current);
     const file = path.join(root, 'command.json');
@@ -449,7 +449,10 @@ try {
             if (!current.cleared) await quit();
             if (next) check('new-package-v3-dirty-page-check-blocked', !!report.v3PageGuard && report.v3PageGuard.start === newStart);
             check('original-login-not-recreated', report.logins.length === 1);
-            check('original-key-served-in-both-real-packages', report.models.some(m => m.start === oldStart && m.originalKeyMatched) && report.models.some(m => m.start === newStart && m.originalKeyMatched));
+            // 升级暂停会关闭模型服务；原密钥的独立GET在最终主动检查完成后进行。
+            // 仍须是原旧版配置、固定新版进程，不能重填或用同版新配置代替。
+            check('original-key-served-in-both-real-packages', report.models.some(m => m.start === oldStart && m.originalKeyMatched) && report.models.some(m => report.starts.some(s => s.start === m.start && s.build === newBuild) && m.originalKeyMatched));
+            if(repair) report.credentialVerificationOrder = 'Original old-package GET; new-package upgrade review and pending normal exit; same new-package cold reopen still pending, complete review, then original-key GET. No new credential configuration.';
             check('website-authenticated-after-upgrade', report.pages.some(p => p.start === newStart && p.authenticated));
             if (!after101) check('cold-original-key-and-login', report.models.some(m => m.start === coldStart && m.originalKeyMatched) && report.pages.some(p => p.start === coldStart && p.authenticated));
             assert(['upgrade-ready', 'upgrade-blocked', 'upgrade-cancelled'].every(label => report.captures.includes(label)), 'CUA_FLOW_CAPTURES_REQUIRED');
