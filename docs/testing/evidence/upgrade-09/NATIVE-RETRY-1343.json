@@ -1,0 +1,74 @@
+{
+  "date": "2026-11-04",
+  "recordedAt": "2026-11-04T05:48:06.722272+00:00",
+  "observedAround": "2026-11-04 13:43 Asia/Shanghai",
+  "userRequest": "retry native connection",
+  "inventory": {
+    "returned": true,
+    "elapsedMs": 30443.7
+  },
+  "window": {
+    "app": "com.apple.finder",
+    "alreadyRunning": true,
+    "title": "Desktop",
+    "elapsedMs": 329,
+    "read": true
+  },
+  "screenshot": {
+    "elapsedMs": 114,
+    "read": true,
+    "inlineToolRecord": true,
+    "localFileExported": false
+  },
+  "internalRootCauseResolved": false,
+  "boundary": "One successful existing-window observation; no app launch, restart, permission change, installation, or signing build. Fresh preflight required again before any new application round.",
+  "applicationDelta": {
+    "builds": 0,
+    "installs": 0,
+    "starts": 0,
+    "faults": 0,
+    "cleanups": 0
+  },
+  "budget": {
+    "used": {
+      "builds": 38,
+      "installs": 12,
+      "starts": 103,
+      "faults": 42,
+      "cleanups": 18
+    },
+    "limits": {
+      "builds": 38,
+      "installs": 12,
+      "starts": 103,
+      "faults": 43,
+      "cleanups": 19
+    },
+    "originalDeadline": 1793767181470,
+    "originalDeadlineExpired": true,
+    "newBatchApproved": false
+  },
+  "preparedPlan": "docs/testing/upgrade-09-repair-plan.md",
+  "preparedVersions": {
+    "oldBuild": 38,
+    "newBuild": 39,
+    "oldVersion": "0.2.1",
+    "newVersion": "0.2.2"
+  },
+  "checks": {
+    "repairCheck": "passed",
+    "validatorStateTests": 5,
+    "unapprovedPreflight": "EXPLICIT_APPROVAL_REQUIRED",
+    "typecheck": "passed"
+  },
+  "hashes": {
+    "repair-driver-tests.log": "d0d7a43e6922576ca223f1834028ed61534df153fe86e6e13f9f83bddd0f6613",
+    "repair-unapproved-guard.log": "9b47fde2d8d9f54729893281eea09e8111e0f684af7e3ff0c7680d56efee0fab",
+    "repair-typecheck.log": "8366207267355d3e3d5bf3bf6e8c94c5f93f6078c34f08973fa2b38cdda6cc92"
+  },
+  "preparationHashes": {
+    "scripts/validate-upgrade.mjs": "5c08c691797401024f50dded247a68d1e2841b94a7f6dbcdb5d9a003da0c8fa7",
+    "package.json": "1f6e76d41c7d5bc3ad3cb119df14394693d50fe8c437bc9f4acbb18fb06cf7a4",
+    "docs/testing/upgrade-09-repair-plan.md": "9c06e999627b508d01995e3e328feb5ce0ff7228f02eac1085b451e30149213d"
+  }
+}

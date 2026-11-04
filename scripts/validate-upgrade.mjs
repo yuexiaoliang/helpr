@@ -13,15 +13,17 @@ import { openUpgradeFixture, confirmUpgradeUI, requireUpgradeNativePreflight, re
 
 // 同一受管入口持有全部应用、服务与四次启动；产品交互交由CUA。
 const mode = process.argv.slice(2).join(' ');
-assert(['--check', '--preflight', '--run', '--after-97', '--check-after-97', '--v3-check', '--v3-preflight', '--v3-run', '--v3-check-after101', '--v3-after101'].includes(mode), 'EXPLICIT_MODE_REQUIRED');
-const next = mode.startsWith('--v3-');
-const oldBuild = next ? 37 : 36, newBuild = next ? 38 : 37, oldVersion = next ? '0.2.0' : '0.1.0', newVersion = next ? '0.2.1' : '0.2.0';
-const section = next ? 'upgrade09V3' : 'upgrade09';
+assert(['--check', '--preflight', '--run', '--after-97', '--check-after-97', '--v3-check', '--v3-preflight', '--v3-run', '--v3-check-after101', '--v3-after101', '--repair-check', '--repair-preflight', '--repair-run'].includes(mode), 'EXPLICIT_MODE_REQUIRED');
+const repair = mode.startsWith('--repair-');
+const next = repair || mode.startsWith('--v3-');
+const oldBuild = repair ? 38 : next ? 37 : 36, newBuild = oldBuild + 1, oldVersion = repair ? '0.2.1' : next ? '0.2.0' : '0.1.0', newVersion = repair ? '0.2.2' : next ? '0.2.1' : '0.2.0';
+const section = repair ? 'upgrade09Repair' : next ? 'upgrade09V3' : 'upgrade09';
 const after97 = mode === '--after-97' || mode === '--check-after-97';
 const after101 = mode === '--v3-after101' || mode === '--v3-check-after101';
 const continuation = after97 || after101;
-const root = path.join(validationRoot, next ? 'manual-upgrade-v3' : 'manual-upgrade-09');
-const batchFile = path.join(validationRoot, next ? 'manual-upgrade-v3-batch.json' : 'manual-upgrade-09-batch.json');
+const batchName = repair ? 'manual-upgrade-repair' : next ? 'manual-upgrade-v3' : 'manual-upgrade-09';
+const root = path.join(validationRoot, batchName);
+const batchFile = path.join(validationRoot, batchName + '-batch.json');
 const budgetFile = path.join(validationRoot, 'budget.json');
 const contractsFile = path.join(validationRoot, 'upgrade09-contracts.mjs');
 const hash = (bytes) => createHash('sha256').update(bytes).digest('hex');
@@ -34,7 +36,7 @@ const reply = nextStepSchema.parse({ decision: 'complete', summary: '已只读�
 const configure = (origin, key) => uiCommandSchema.parse({ kind: 'model-save', requestId: randomUUID(), expectedVersion: 0, protocol: 'chat-completions', endpoint: origin + '/v1', model: 'local-upgrade-09', apiKey: key });
 configure('http://127.0.0.1:50000', 'not-a-real-key');
 for (const command of [{ kind: 'upgrade-status' }, { kind: 'upgrade-check' }, { kind: 'upgrade-cancel' }, { kind: 'upgrade-exit', revision: 1 }]) uiCommandSchema.parse(command);
-if (mode === '--check' || mode === '--v3-check') {
+if (mode === '--check' || mode === '--v3-check' || mode === '--repair-check') {
   console.log(JSON.stringify({ valid: true, appStarts: 0, protection: 'real safeStorage; workspace-fixture switch forbidden', nativeUIConfirmationPerStart: next, privateFixtureIdentityPersisted: next, reply: reply.decision, oldBuild, newBuild, oldVersion, newVersion, starts: next ? 3 : 4 }));
   process.exit(0);
 }
@@ -46,13 +48,14 @@ const ps = () => execFileSync('/bin/ps', ['-axo', 'pid=,ppid=,pgid=,lstart=,comm
 assert(!ps().some(row => row.pid !== process.pid && (/\/helpr\.app\/Contents\/MacOS\/helpr(?: |$)/.test(row.command) || /helpr Workspace Helper/.test(row.command) || /^(?:\S*\/)?node\s+(?:\S*\/)?validate-\S+\.mjs(?:\s|$)/.test(row.command))), 'OTHER_VALIDATION_RUNNING');
 execFileSync(process.execPath, ['scripts/validate-workspace.mjs', '--preflight'], { stdio: 'inherit', timeout: 65000 });
 const budget = JSON.parse(fs.readFileSync(budgetFile));
-assert(budget[section]?.approved && budget.limits.builds === newBuild && budget.limits.starts === (next ? 103 : 100), 'EXPLICIT_APPROVAL_REQUIRED');
-if (next) assert(budget.limits.installs === 12 && (mode === '--v3-preflight' ? [37, 38].includes(budget.used.builds) : budget.used.builds === 38) && budget[section].baseUsed?.starts === 100 && budget[section].baseUsed?.installs === 10 && budget[section].limits?.starts === 3 && budget[section].limits?.installs === 2, 'EXACT_V3_APPROVAL_REQUIRED');
+assert(budget[section]?.approved && budget.limits.builds === newBuild && budget.limits.starts === (repair ? 106 : next ? 103 : 100), 'EXPLICIT_APPROVAL_REQUIRED');
+if (repair) assert(budget.limits.installs === 14 && (mode === '--repair-preflight' ? [38, 39].includes(budget.used.builds) : budget.used.builds === 39) && budget[section].baseUsed?.starts === 103 && budget[section].baseUsed?.installs === 12 && budget[section].baseUsed?.builds === 38 && budget[section].limits?.starts === 3 && budget[section].limits?.installs === 2 && budget[section].limits?.builds === 1 && budget[section].limits?.faults === 0, 'EXACT_REPAIR_APPROVAL_REQUIRED');
+else if (next) assert(budget.limits.installs === 12 && (mode === '--v3-preflight' ? [37, 38].includes(budget.used.builds) : budget.used.builds === 38) && budget[section].baseUsed?.starts === 100 && budget[section].baseUsed?.installs === 10 && budget[section].limits?.starts === 3 && budget[section].limits?.installs === 2, 'EXACT_V3_APPROVAL_REQUIRED');
 const originalDeadline = budget[section].runtimeStartedAt + 90 * 60000;
 const extraTime = next ? null : budget.upgrade09.after97Time;
 if (extraTime) assert(after97 && extraTime.approved === true && extraTime.originalDeadline === originalDeadline && Number.isSafeInteger(extraTime.approvedAt) && extraTime.deadline === extraTime.approvedAt + 60 * 60000, 'EXACT_TIME_EXTENSION_APPROVAL_REQUIRED');
 const batchDeadline = extraTime?.deadline ?? originalDeadline;
-assert(budget.used.starts === (next ? after101 ? 101 : 100 : after97 ? 97 : 96) && budget.used.installs === (next ? after101 ? 11 : 10 : after97 ? 9 : 8) && budget.used.faults === 42 && budget.used.cleanups === 17, 'ORIGINAL_BUDGET_REQUIRED');
+assert(budget.used.starts === (repair ? 103 : next ? after101 ? 101 : 100 : after97 ? 97 : 96) && budget.used.installs === (repair ? 12 : next ? after101 ? 11 : 10 : after97 ? 9 : 8) && budget.used.faults === 42 && budget.used.cleanups === (repair ? 18 : 17), 'ORIGINAL_BUDGET_REQUIRED');
 assert(continuation ? fs.existsSync(batchFile) && fs.existsSync(root) : !fs.existsSync(batchFile) && !fs.existsSync(root), 'BATCH_IDENTITY_REQUIRED');
 const previous = continuation ? JSON.parse(fs.readFileSync(path.join(root, 'result.json'))) : null;
 if (after97) {
@@ -71,7 +74,7 @@ if (after101) {
 }
 if (next) requireUpgradeNativePreflight(budget[section].nativePreflight);
 const old = JSON.parse(fs.readFileSync(path.join(validationRoot, 'build-' + oldBuild + '.json')));
-const expectedOld = next ? path.join(fs.realpathSync(path.join(process.cwd(), '../..')), '.codex/worktrees/manual-upgrade/helpr/dist/candidates/manual-upgrade-09/mac-arm64/helpr.app') : '/Users/yuexiaoliang/projects/helpr/dist/candidates/version-08/mac-arm64/helpr.app';
+const expectedOld = repair ? path.resolve('dist/candidates/manual-upgrade-v3/mac-arm64/helpr.app') : next ? path.join(fs.realpathSync(path.join(process.cwd(), '../..')), '.codex/worktrees/manual-upgrade/helpr/dist/candidates/manual-upgrade-09/mac-arm64/helpr.app') : '/Users/yuexiaoliang/projects/helpr/dist/candidates/version-08/mac-arm64/helpr.app';
 assert(old.build === oldBuild && old.prepared && old.app === expectedOld, 'FIXED_OLD_CANDIDATE_REQUIRED');
 function verify(manifest) {
   const version = execFileSync('/usr/libexec/PlistBuddy', ['-c', 'Print :CFBundleShortVersionString', path.join(manifest.app, 'Contents/Info.plist')], {encoding:'utf8', timeout:5000}).trim();
@@ -80,12 +83,12 @@ function verify(manifest) {
   return verifyDevelopmentSignature(manifest.app);
 }
 verify(old);
-if (mode === '--preflight' || mode === '--v3-preflight') {
+if (mode === '--preflight' || mode === '--v3-preflight' || mode === '--repair-preflight') {
   console.log(JSON.stringify({ preflight: true, oldBuild, nextBuild: newBuild, oldApp: old.app, appStarts: 0, remainingStarts: next ? 3 : 4, installs: 2, minutes: 90 }));
   process.exit(0);
 }
 const fresh = JSON.parse(fs.readFileSync(path.join(validationRoot, 'build-' + newBuild + '.json')));
-assert(fresh.build === newBuild && fresh.prepared && fresh.app === path.resolve(next ? 'dist/candidates/manual-upgrade-v3/mac-arm64/helpr.app' : 'dist/candidates/manual-upgrade-09/mac-arm64/helpr.app'), 'FIXED_NEW_CANDIDATE_REQUIRED');
+assert(fresh.build === newBuild && fresh.prepared && fresh.app === path.resolve(repair ? 'dist/candidates/manual-upgrade-repair/mac-arm64/helpr.app' : next ? 'dist/candidates/manual-upgrade-v3/mac-arm64/helpr.app' : 'dist/candidates/manual-upgrade-09/mac-arm64/helpr.app'), 'FIXED_NEW_CANDIDATE_REQUIRED');
 assert.equal(verify(fresh).certificateSha256, verify(old).certificateSha256, 'PUBLISHER_CHANGED');
 assert.notEqual(fresh.hashes['Contents/Resources/app.asar'], old.hashes['Contents/Resources/app.asar'], 'DISTINCT_REAL_PACKAGES_REQUIRED');
 assert(Number.isSafeInteger(budget[section].runtimeStartedAt) && Date.now() < batchDeadline, 'ORIGINAL_BATCH_DEADLINE_REQUIRED');
@@ -122,12 +125,12 @@ let expires = privateFixture?.state.expires ?? Math.floor(Date.now() / 1000) + 7
 const report = { scope: 'early real-package upgrade; real safeStorage and persistent browser; local fixtures only', started: budget[section].runtimeStartedAt, originalDeadline, approvedDeadline: batchDeadline, builds: [oldBuild, newBuild], limits: budget[section].limits, installs: [], starts: [], tasks: [], checks: [], models: [], logins: [], pages: [], effects: [], versionRequests: [], captures: [], realModels: 0, remoteBusinessWrites: 0, passed: false };
 if (previous) Object.assign(report, { installs: previous.installs, starts: previous.starts, checks: previous.checks, versionRequests: previous.versionRequests, priorFailure: { start: after101 ? 101 : 97, error: previous.error, sha256: hash(fs.readFileSync(path.join(root, after101 ? 'result-101.json' : 'result-97.json'))), originalStarted: previous.started }, continuation: after101 ? 'native connection recovered; only old-to-new stages within remaining two starts; cold reopen deferred' : 'one corrected readiness retry; no fault reserved' });
 if (after101) Object.assign(report, { scope: 'limited v3 old-to-new continuation only; original failed start retained; cold reopen not covered', coldReopenDeferred: true, originalThreeStagePlanPassed: false });
-const oldStart = next ? after101 ? 102 : 101 : after97 ? 98 : 97, newStart = oldStart + 1, coldStart = after101 ? null : oldStart + 2;
+const oldStart = repair ? 104 : next ? after101 ? 102 : 101 : after97 ? 98 : 97, newStart = oldStart + 1, coldStart = after101 ? null : oldStart + 2;
 const write = (name, value) => writeUpgradeJSON(path.join(root, name), value);
 const save = () => {
   write('result.json', report);
   const b = JSON.parse(fs.readFileSync(budgetFile));
-  b[section].used = { builds: b.used.builds - (next ? 37 : 36), starts: report.starts.length, installs: report.installs.length, faults: report.fault ? 1 : 0, cleanups: b.used.cleanups - 17, localModels: report.models.length, localEffects: report.effects.length, versionRequests: report.versionRequests.length, newTasks: report.tasks.length };
+  b[section].used = { builds: b.used.builds - (repair ? 38 : next ? 37 : 36), starts: report.starts.length, installs: report.installs.length, faults: report.fault ? 1 : 0, cleanups: b.used.cleanups - (repair ? 18 : 17), localModels: report.models.length, localEffects: report.effects.length, versionRequests: report.versionRequests.length, newTasks: report.tasks.length };
   b[section].run = { root, profile, passed: report.passed, error: report.error ?? null, started: report.started, ended: report.ended ?? null };
   writeUpgradeJSON(budgetFile, b);
 };
@@ -338,7 +341,7 @@ try {
           case 'inspect': {
             const s = await snapshot();
             const u = (next || current.row.build === newBuild) ? await rpc({ kind: 'upgrade-status' }) : null;
-            if (next && current.row.build === newBuild && u?.phase === 'blocked' && u.error === 'UPGRADE_PAGE_UNSAVED') report.v3PageGuard = {start:current.row.start,recordRevision:u.recordRevision,dirtyTasks:u.dirtyTasks};
+            if (next && current.row.build === newBuild && u?.phase === 'blocked' && u.error === 'UPGRADE_PAGE_UNSAVED' && u.installedVersion === newVersion && u.dirtyTasks.length > 0 && !u.working) report.v3PageGuard = {start:current.row.start,recordRevision:u.recordRevision,dirtyTasks:u.dirtyTasks};
             const inspection = { state: s, upgrade: u, models: report.models, pages: report.pages, effects: report.effects };
             write('inspection-' + current.row.start + '-' + current.sequence + '.json', inspection);
             write('inspection-' + current.row.start + '.json', inspection);
@@ -367,11 +370,21 @@ try {
             value = { upgraded: true }; break;
           }
           case 'future': assert(newInstalled || next, 'NEW_PACKAGE_REQUIRED'); futureVersion = true; value = { fixtureOnly: '0.3.0; not published or downloaded' }; break;
-          case 'closed': await gone(); if (next && current.row.build === oldBuild) { check('old-upgrade-ui-exit-confirmed', true); report.oldDatabase = {sha256:hash(fs.readFileSync(path.join(profile,'workspace.sqlite'))),bytes:fs.statSync(path.join(profile,'workspace.sqlite')).size}; save(); } value = { closed: true }; break;
+          case 'pending-exit-baseline': {
+            assert(repair && current.row.start === newStart && current.row.nativeUI && !report.pendingExit, 'SINGLE_NEW_PENDING_EXIT_REQUIRED');
+            const u = await rpc({kind:'upgrade-status'});
+            assert(u.reopening && ['checking','blocked'].includes(u.phase) && !u.working, 'UPGRADE_REVIEW_MUST_REMAIN_PENDING');
+            report.pendingExit = {start:current.row.start,phase:u.phase,error:u.error,recordRevision:u.recordRevision};
+            save(); value = {pendingExitRecorded:true}; break;
+          }
+          case 'closed': await gone(); if (next && current.row.build === oldBuild) { check('old-upgrade-ui-exit-confirmed', true); report.oldDatabase = {sha256:hash(fs.readFileSync(path.join(profile,'workspace.sqlite'))),bytes:fs.statSync(path.join(profile,'workspace.sqlite')).size}; save(); } if (repair && report.pendingExit?.start === current.row.start) { report.pendingExit.normalExitConfirmed = true; check('pending-upgrade-normal-ui-exit',true); } value = { closed: true }; break;
           case 'cold': {
             assert(!after101, 'COLD_REOPEN_DEFERRED_NO_START_BUDGET');
+            if (repair) assert(report.pendingExit?.normalExitConfirmed, 'PENDING_EXIT_PROOF_REQUIRED');
             assert(newInstalled && current.cleared && report.starts.length === (after97 ? 3 : 2), 'SINGLE_COLD_REOPEN_REQUIRED');
-            await launch(newBuild); check('same-version-reopen-keeps-task-records', JSON.stringify(facts(await snapshot())) === JSON.stringify(baseline)); value = { reopened: true }; break;
+            await launch(newBuild); check('same-version-reopen-keeps-task-records', JSON.stringify(facts(await snapshot())) === JSON.stringify(baseline));
+            if (repair) { const u = await rpc({kind:'upgrade-status'}); check('cold-reopen-retains-pending-review', u.reopening && ['checking','blocked'].includes(u.phase) && !u.working); }
+            value = { reopened: true }; break;
           }
           case 'fault': {
             assert(!next && !after97 && report.starts.length === 3 && !report.fault && !current.cleared && !current.exit && processes(current).some(p => p.pid === current.child.pid), 'SINGLE_LIVE_FAULT_REQUIRED');
@@ -381,6 +394,11 @@ try {
           case 'recover': assert(!next && report.fault?.confirmed && current.cleared && report.starts.length === 3, 'FAULT_RECOVERY_ONLY'); await launch(newBuild); value = { recovered: true }; break;
           case 'finish': {
             assert(newInstalled && report.starts.length >= (after97 ? 4 : 3), 'COLD_EVIDENCE_REQUIRED');
+            if (repair) {
+              assert(report.pendingExit?.normalExitConfirmed, 'PENDING_EXIT_PROOF_REQUIRED');
+              const u = await rpc({kind:'upgrade-status'});
+              check('cold-upgrade-review-completed', u.phase === 'complete' && !u.error && !u.reopening);
+            }
             if (!current.cleared) await quit();
             if (next) check('new-package-v3-dirty-page-check-blocked', !!report.v3PageGuard && report.v3PageGuard.start === newStart);
             check('original-login-not-recreated', report.logins.length === 1);
