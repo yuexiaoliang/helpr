@@ -1,5 +1,47 @@
 import { expect, test, vi } from 'vitest';
-import { loadProtectedPage } from '../../app/desktop/page-protection';
+import {
+  loadProtectedPage,
+  verifyPageProtection,
+} from '../../app/desktop/page-protection';
+
+test('异步接口已初始化但钥匙串授权被取消时，不得开放原网站资料', async () => {
+  const available = await verifyPageProtection({
+    isAsyncEncryptionAvailable: () => Promise.resolve(true),
+    encryptStringAsync: () => Promise.reject(Error('KEYCHAIN_AUTH_CANCELLED')),
+    decryptStringAsync: () => Promise.resolve({ result: '' }),
+  });
+  const load = vi.fn(async () => {});
+  const unavailable = vi.fn();
+  await loadProtectedPage({
+    available: () => Promise.resolve(available),
+    current: () => true,
+    load,
+    unavailable,
+  });
+  expect(load).not.toHaveBeenCalled();
+  expect(unavailable).toHaveBeenCalledOnce();
+});
+
+test('保护自检不能解回原随机文字时保持网页关闭', async () => {
+  await expect(
+    verifyPageProtection({
+      isAsyncEncryptionAvailable: () => Promise.resolve(true),
+      encryptStringAsync: () => Promise.resolve(Buffer.from('protected-test')),
+      decryptStringAsync: () => Promise.resolve({ result: 'incorrect' }),
+    }),
+  ).resolves.toBe(false);
+});
+
+test('原保护可正常加解密随机自检值时，允许继续核对网页', async () => {
+  await expect(
+    verifyPageProtection({
+      isAsyncEncryptionAvailable: () => Promise.resolve(true),
+      encryptStringAsync: (value) => Promise.resolve(Buffer.from(value)),
+      decryptStringAsync: (value) =>
+        Promise.resolve({ result: value.toString() }),
+    }),
+  ).resolves.toBe(true);
+});
 
 test('等待系统保护授权时不加载网页，事件循环仍可处理其它工作', async () => {
   let authorize: (allowed: boolean) => void = () => {};

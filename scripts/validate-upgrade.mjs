@@ -13,12 +13,14 @@ import { openUpgradeFixture, confirmUpgradeUI, requireUpgradeNativePreflight, re
 
 // 同一受管入口持有全部应用、服务与四次启动；产品交互交由CUA。
 const mode = process.argv.slice(2).join(' ');
-assert(['--check', '--preflight', '--run', '--after-97', '--check-after-97', '--v3-check', '--v3-preflight', '--v3-run', '--v3-check-after101', '--v3-after101', '--repair-check', '--repair-preflight', '--repair-run', '--repair-resume', '--repair-replace40', '--repair-resume40'].includes(mode), 'EXPLICIT_MODE_REQUIRED');
+assert(['--check', '--preflight', '--run', '--after-97', '--check-after-97', '--v3-check', '--v3-preflight', '--v3-run', '--v3-check-after101', '--v3-after101', '--repair-check', '--repair-preflight', '--repair-run', '--repair-resume', '--repair-replace40', '--repair-resume40', '--repair-auth40', '--repair-auth41'].includes(mode), 'EXPLICIT_MODE_REQUIRED');
 const repair = mode.startsWith('--repair-');
+const auth41 = mode === '--repair-auth41';
+const auth40 = mode === '--repair-auth40' || auth41;
 const repairReplace40 = mode === '--repair-replace40';
-const repair40 = repairReplace40 || mode === '--repair-resume40';
+const repair40 = repairReplace40 || mode === '--repair-resume40' || auth40;
 const next = repair || mode.startsWith('--v3-');
-const oldBuild = repair ? 38 : next ? 37 : 36, newBuild = repair40 ? 40 : oldBuild + 1, oldVersion = repair ? '0.2.1' : next ? '0.2.0' : '0.1.0', newVersion = repair ? '0.2.2' : next ? '0.2.1' : '0.2.0';
+const oldBuild = repair ? 38 : next ? 37 : 36, newBuild = auth41 ? 41 : repair40 ? 40 : oldBuild + 1, oldVersion = repair ? '0.2.1' : next ? '0.2.0' : '0.1.0', newVersion = repair ? '0.2.2' : next ? '0.2.1' : '0.2.0';
 const section = repair ? 'upgrade09Repair' : next ? 'upgrade09V3' : 'upgrade09';
 const spend = kind => debit(kind, repair ? section : undefined);
 const after97 = mode === '--after-97' || mode === '--check-after-97';
@@ -63,9 +65,9 @@ if (!repairResume) assert(budget.used.starts === (repair ? 103 : next ? after101
 assert(continuation ? fs.existsSync(batchFile) && fs.existsSync(root) : !fs.existsSync(batchFile) && !fs.existsSync(root), 'BATCH_IDENTITY_REQUIRED');
 const previous = continuation ? JSON.parse(fs.readFileSync(path.join(root, 'result.json'))) : null;
 if (repairResume) {
-  assert(previous.passed === false && previous.error && previous.installs.length === (repair40 && !repairReplace40 ? 3 : 2) && previous.tasks.length === 2 && previous.logins.length === 1 && previous.oldBackup && previous.checks.includes('old-upgrade-ui-exit-confirmed') && !previous.emergencyCleanupAttempted, 'REPAIR_CHECKPOINT_REQUIRED');
+  assert((auth41 ? previous.passed === false && previous.starts.at(-1).start === 111 && previous.error === 'CUA_ROUND_ABORTED' : auth40 ? previous.passed === true && previous.repairStages.coldStart === 110 : previous.passed === false && previous.error) && previous.installs.length === (repair40 && !repairReplace40 ? 3 : 2) && previous.tasks.length === 2 && previous.logins.length === 1 && previous.oldBackup && previous.checks.includes('old-upgrade-ui-exit-confirmed') && !previous.emergencyCleanupAttempted, 'REPAIR_CHECKPOINT_REQUIRED');
   const last = previous.starts.at(-1);
-  assert(last.build === (repairReplace40 ? 39 : newBuild) && last.exit?.code === 0 && last.remaining?.length === 0 && budget.used.starts === last.start && budget.used.installs === previous.installs.at(-1).number, 'REPAIR_PREVIOUS_START_NOT_CLEARED');
+  assert(last.build === (auth41 ? 40 : repairReplace40 ? 39 : newBuild) && last.exit?.code === 0 && last.remaining?.length === 0 && budget.used.starts === last.start && budget.used.installs === previous.installs.at(-1).number, 'REPAIR_PREVIOUS_START_NOT_CLEARED');
   assert(!ps().some(row => (last.identities[row.pid]?.birth === row.birth && last.identities[row.pid]?.command === row.command) || last.groups.includes(row.group)), 'REPAIR_OWNED_PROCESS_REMAINS');
   assert(!fs.existsSync(path.join(root, 'resume-after-' + last.start + '-once')), 'CONTINUATION_ALREADY_USED');
   assert(fs.existsSync(path.join(root, 'private-fixture.json')), 'ORIGINAL_PRIVATE_FIXTURE_REQUIRED');
@@ -100,7 +102,7 @@ if (mode === '--preflight' || mode === '--v3-preflight' || mode === '--repair-pr
   process.exit(0);
 }
 const fresh = JSON.parse(fs.readFileSync(path.join(validationRoot, 'build-' + newBuild + '.json')));
-assert(fresh.build === newBuild && fresh.prepared && fresh.app === path.resolve(repair40 ? 'dist/candidates/manual-upgrade-repair-40/mac-arm64/helpr.app' : repair ? 'dist/candidates/manual-upgrade-repair/mac-arm64/helpr.app' : next ? 'dist/candidates/manual-upgrade-v3/mac-arm64/helpr.app' : 'dist/candidates/manual-upgrade-09/mac-arm64/helpr.app'), 'FIXED_NEW_CANDIDATE_REQUIRED');
+assert(fresh.build === newBuild && fresh.prepared && fresh.app === path.resolve(auth41 ? 'dist/candidates/manual-upgrade-repair-41/mac-arm64/helpr.app' : repair40 ? 'dist/candidates/manual-upgrade-repair-40/mac-arm64/helpr.app' : repair ? 'dist/candidates/manual-upgrade-repair/mac-arm64/helpr.app' : next ? 'dist/candidates/manual-upgrade-v3/mac-arm64/helpr.app' : 'dist/candidates/manual-upgrade-09/mac-arm64/helpr.app'), 'FIXED_NEW_CANDIDATE_REQUIRED');
 assert.equal(verify(fresh).certificateSha256, verify(old).certificateSha256, 'PUBLISHER_CHANGED');
 assert.notEqual(fresh.hashes['Contents/Resources/app.asar'], old.hashes['Contents/Resources/app.asar'], 'DISTINCT_REAL_PACKAGES_REQUIRED');
 assert(Number.isSafeInteger(budget[section].runtimeStartedAt) && Date.now() < batchDeadline, 'ORIGINAL_BATCH_DEADLINE_REQUIRED');
@@ -143,13 +145,14 @@ if (previous && !repairResume) Object.assign(report, { installs: previous.instal
 if (repairResume) {
   Object.assign(report, previous);
   report.builds = [...new Set([...previous.builds,newBuild])];
-  report.priorFailures = [...(previous.priorFailures ?? []),{start:previous.starts.at(-1).start,error:previous.error,sha256:hash(fs.readFileSync(path.join(root,'result-through-' + previous.starts.at(-1).start + '.json')))}];
+  if (auth40) report.authorization = {build:newBuild,priorResultPassed:previous.passed,priorResultSha256:hash(fs.readFileSync(path.join(root,'result-through-' + previous.starts.at(-1).start + '.json'))),started:Date.now(),steps:[]};
+  else report.priorFailures = [...(previous.priorFailures ?? []),{start:previous.starts.at(-1).start,error:previous.error,sha256:hash(fs.readFileSync(path.join(root,'result-through-' + previous.starts.at(-1).start + '.json')))}];
   delete report.error; delete report.ended; report.passed = false;
 }
 if (after101) Object.assign(report, { scope: 'limited v3 old-to-new continuation only; original failed start retained; cold reopen not covered', coldReopenDeferred: true, originalThreeStagePlanPassed: false });
 const oldStart = repair ? 104 : next ? after101 ? 102 : 101 : after97 ? 98 : 97;
 const newStart = repairResume ? previous.pendingExit?.normalExitConfirmed ? previous.pendingExit.start : budget.used.starts + 1 : oldStart + 1;
-const coldStart = repairResume && previous.pendingExit?.normalExitConfirmed ? budget.used.starts + 1 : after101 ? null : newStart + 1;
+const coldStart = auth40 ? previous.repairStages.coldStart : repairResume && previous.pendingExit?.normalExitConfirmed ? budget.used.starts + 1 : after101 ? null : newStart + 1;
 if (repair) report.repairStages = {oldStart,newStart,coldStart};
 const write = (name, value) => writeUpgradeJSON(path.join(root, name), value);
 const save = () => {
@@ -339,22 +342,22 @@ try {
   save();
   if (!continuation) install(old);
   else {
-    const installed = repairReplace40 ? JSON.parse(fs.readFileSync(path.join(validationRoot,'build-39.json'))) : repairResume ? fresh : old;
+    const installed = auth41 ? JSON.parse(fs.readFileSync(path.join(validationRoot,'build-40.json'))) : repairReplace40 ? JSON.parse(fs.readFileSync(path.join(validationRoot,'build-39.json'))) : repairResume ? fresh : old;
     for (const [file, expected] of Object.entries(installed.hashes)) assert.equal(hash(fs.readFileSync(path.join(installation, file))), expected, 'ORIGINAL_INSTALLED_PACKAGE_REQUIRED');
-    if (repairReplace40) {
+    if (repairReplace40 || auth41) {
       assert.equal(verify(installed).certificateSha256,verify(fresh).certificateSha256,'PUBLISHER_CHANGED');
-      const preserved = path.join(root,'installation/helpr-build39-preserved.app');
+      const preserved = path.join(root,'installation/helpr-build' + installed.build + '-preserved.app');
       assert(!fs.existsSync(preserved),'OLD_REPAIR_PACKAGE_ALREADY_PRESERVED');
       fs.renameSync(installation,preserved);
       const spent = spend('installs');
-      report.installs.push({number:spent.used.installs,build:newBuild,started:Date.now(),source:fresh.app,replaces:39,preserved}); save();
+      report.installs.push({number:spent.used.installs,build:newBuild,started:Date.now(),source:fresh.app,replaces:installed.build,preserved}); save();
       execFileSync('/usr/bin/ditto',[fresh.app,installation],{timeout:120000});
       for(const [file,expected] of Object.entries(fresh.hashes)) assert.equal(hash(fs.readFileSync(path.join(installation,file))),expected,'REPAIRED_PACKAGE_COPY_REQUIRED');
     }
   }
   await launch(repairResume ? newBuild : oldBuild);
   if (repairResume) check('resumed-original-task-records-retained-' + current.row.start, JSON.stringify(facts(await snapshot())) === JSON.stringify(baseline));
-  if (repairResume && previous.pendingExit?.normalExitConfirmed) {
+  if (repairResume && !auth40 && previous.pendingExit?.normalExitConfirmed) {
     const u = await rpc({kind:'upgrade-status'});
     check('cold-reopen-retains-pending-review',u.reopening && ['checking','blocked'].includes(u.phase) && !u.working);
   }
@@ -424,6 +427,21 @@ try {
             report.pendingExit = {start:current.row.start,phase:u.phase,error:u.error,recordRevision:u.recordRevision};
             save(); value = {pendingExitRecorded:true}; break;
           }
+          case 'auth-record': {
+            assert(auth40 && current.row.nativeUI && !current.cleared && ['denied','persistent','cold'].includes(c.stage),'AUTH40_CURRENT_NATIVE_STAGE_REQUIRED');
+            const stages=report.authorization.steps;
+            assert(c.stage === ['denied','persistent','cold'][stages.length],'AUTH40_STAGE_ORDER_REQUIRED');
+            assert(JSON.stringify(facts(await snapshot()))===JSON.stringify(baseline),'AUTH40_ORIGINAL_TASKS_CHANGED');
+            if(c.stage!=='denied') {
+              assert(report.models.some(m=>m.start===current.row.start&&m.originalKeyMatched),'AUTH40_ORIGINAL_KEY_REQUIRED');
+              assert(report.pages.some(p=>p.start===current.row.start&&p.authenticated),'AUTH40_ORIGINAL_LOGIN_REQUIRED');
+            }
+            stages.push({stage:c.stage,start:current.row.start,observedAt:Date.now(),operatorObservation:c.observation});save();value={recorded:c.stage};break;
+          }
+          case 'auth-next': {
+            assert(auth40 && current.cleared && report.authorization.steps.length>0 && report.authorization.steps.length<3 && report.authorization.steps.at(-1).start===current.row.start,'AUTH40_NEXT_STAGE_NOT_READY');
+            await launch(newBuild);check('auth40-original-tasks-retained-'+current.row.start,JSON.stringify(facts(await snapshot()))===JSON.stringify(baseline));value={start:current.row.start};break;
+          }
           case 'closed': await gone(); if (next && current.row.build === oldBuild) { check('old-upgrade-ui-exit-confirmed', true); report.oldDatabase = {sha256:hash(fs.readFileSync(path.join(profile,'workspace.sqlite'))),bytes:fs.statSync(path.join(profile,'workspace.sqlite')).size}; save(); } if (repair && report.pendingExit?.start === current.row.start) { report.pendingExit.normalExitConfirmed = true; check('pending-upgrade-normal-ui-exit',true); } value = { closed: true }; break;
           case 'cold': {
             assert(!after101, 'COLD_REOPEN_DEFERRED_NO_START_BUDGET');
@@ -441,6 +459,11 @@ try {
           case 'recover': assert(!next && report.fault?.confirmed && current.cleared && report.starts.length === 3, 'FAULT_RECOVERY_ONLY'); await launch(newBuild); value = { recovered: true }; break;
           case 'finish': {
             assert(newInstalled && report.starts.length >= (after97 ? 4 : 3), 'COLD_EVIDENCE_REQUIRED');
+            if(auth40) {
+              assert(report.authorization.steps.length===3 && report.authorization.steps.at(-1).stage==='cold','AUTH40_THREE_STAGES_REQUIRED');
+              const u=await rpc({kind:'upgrade-status'});assert(u.phase==='complete'&&!u.error&&!u.reopening,'AUTH_FINAL_REVIEW_NOT_COMPLETE');
+              await quit();check('authorization-cancel-persist-cold-complete',true);finished=true;value={finished:true,scope:'authorization regression only; prior repair pass retained separately'};break;
+            }
             if (repair) {
               assert(report.pendingExit?.normalExitConfirmed, 'PENDING_EXIT_PROOF_REQUIRED');
               const u = await rpc({kind:'upgrade-status'});

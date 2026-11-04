@@ -31,7 +31,7 @@ import { websiteURL } from '../shared/url-policy';
 import { diagnostics } from '../shared/diagnostics';
 import { resolveStartup, debuggingSwitches, runtimeImages } from './startup';
 import { InputGate } from './input-gate';
-import { loadProtectedPage } from './page-protection';
+import { loadProtectedPage, verifyPageProtection } from './page-protection';
 import type { ExecutionPauseReason } from '../shared/execution';
 import { LocalFixture } from './local-fixture';
 import { versionStatusSchema, type VersionStatus } from '../shared/version';
@@ -563,9 +563,7 @@ function bindPage(task: Task): void {
   if (url)
     void loadProtectedPage({
       available: () =>
-        fixture
-          ? Promise.resolve(true)
-          : safeStorage.isAsyncEncryptionAvailable(),
+        fixture ? Promise.resolve(true) : verifyPageProtection(safeStorage),
       current: () =>
         !closing &&
         pages.get(task.id)?.view === view &&
@@ -573,11 +571,13 @@ function bindPage(task: Task): void {
         !!view.webContents &&
         !view.webContents.isDestroyed(),
       load: () => view.webContents.loadURL(websiteURL(url)),
-      unavailable: () =>
+      unavailable: () => {
+        suspend(task.id, 'page-change');
         emit({
           notice:
             '系统凭据保护尚不可用。请完成 macOS 授权后重新打开；任务与对话仍保留。',
-        }),
+        });
+      },
     }).catch(() => {});
 }
 function reconcile(): void {
@@ -610,6 +610,8 @@ async function perform(input: unknown): Promise<unknown> {
       }))
       .sort((a, b) => a.taskId.localeCompare(b.taskId));
   if (command.kind === 'upgrade-site-state') {
+    if (!fixture && !(await verifyPageProtection(safeStorage)))
+      throw Error('MODEL_CREDENTIAL_UNAVAILABLE');
     const remote = session.fromPartition(
       fixture?.partition ?? 'persist:helpr-web',
     );
@@ -847,7 +849,7 @@ async function perform(input: unknown): Promise<unknown> {
     if (
       !page ||
       !task ||
-      !(fixture || (await safeStorage.isAsyncEncryptionAvailable())) ||
+      !(fixture || (await verifyPageProtection(safeStorage))) ||
       closing ||
       pages.get(job.taskId) !== page ||
       state.tasks.find((t) => t.id === job.taskId) !== task
@@ -895,7 +897,7 @@ async function perform(input: unknown): Promise<unknown> {
       })),
       encryptionAvailable: fixture
         ? null
-        : await safeStorage.isAsyncEncryptionAvailable(),
+        : await verifyPageProtection(safeStorage),
       window: {
         visible: win.isVisible(),
         bounds: win.getBounds(),
