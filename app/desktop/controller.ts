@@ -41,6 +41,10 @@ import { LocalFixture } from './local-fixture';
 import { acquireRuntimeOwnership } from './runtime-ownership';
 import { BackupService } from './backup-service';
 import { VersionService } from './version-service';
+import { UpgradeService } from './upgrade-service';
+import { verifyPackageIdentity } from './package-identity';
+import { upgradeProofSchema, upgradeSiteSchema } from '../shared/upgrade';
+import { backupArchiveSchema } from '../shared/backup';
 import { versionFixture } from './version-fixture';
 import {
   CURRENT_DATA_FORMAT,
@@ -358,6 +362,7 @@ export async function startController(
   const saveExecution = (command: unknown) =>
     recordClient.request({ kind: 'execution', command });
   const executions: ExecutionService = new ExecutionService({
+    initialUpgradeHold: true,
     records: barriers
       ? async (command) => {
           const delayed = z
@@ -454,6 +459,82 @@ export async function startController(
     },
   });
 
+  const upgrades = new UpgradeService({
+    version: app.getVersion(),
+    records: (command) => recordClient.request({ kind: 'upgrade', command }),
+    versions: () => versions.get(),
+    hold: async () => {
+      await executions.holdUpgrade();
+      await models.stopAll();
+    },
+    release: () => {
+      models.cancelExit();
+      executions.releaseUpgrade();
+      return Promise.resolve();
+    },
+    ready: () =>
+      recordsAvailable &&
+      workspace.canExit() &&
+      executions.canExit() &&
+      backups.canExit(),
+    capture: async () => {
+      if (!app.isPackaged) throw Error('UPGRADE_PACKAGE_UNVERIFIED');
+      const application = await verifyPackageIdentity(
+        path.resolve(process.execPath, '../../..'),
+      );
+      const credential = await models.credentialProof();
+      const site = upgradeProofSchema
+        .omit({ credential: true, application: true })
+        .parse(await hostClient.request({ kind: 'upgrade-site-state' }));
+      return { ...site, credential, application };
+    },
+    pages: async () =>
+      z
+        .array(upgradeSiteSchema)
+        .parse(await hostClient.request({ kind: 'upgrade-page-state' })),
+    acknowledge: async (taskId, generation, epoch) => {
+      await hostClient.request({
+        kind: 'upgrade-ack-page',
+        taskId,
+        generation,
+        epoch,
+      });
+    },
+    choose: async () =>
+      z
+        .object({ file: z.string().nullable() })
+        .parse(
+          await hostClient.request(
+            { kind: 'choose-backup', mode: 'directory' },
+            180000,
+          ),
+        ).file,
+    backup: async (requestId, file) =>
+      backupArchiveSchema.parse(
+        z
+          .object({ archive: backupArchiveSchema })
+          .parse(
+            await recordClient.request(
+              { kind: 'backup', command: { kind: 'create', requestId, file } },
+              30000,
+            ),
+          ).archive,
+      ),
+    publish: (upgrade) => {
+      if (host.connected) host.send({ upgrade });
+    },
+    closePages: async (proof) => {
+      await hostClient.request({ kind: 'upgrade-close-pages', proof }, 45000);
+    },
+    checkpoint: () => checkpointExit(),
+    cancelExit: () => {
+      cancelExit();
+      return Promise.resolve();
+    },
+    quit: () => quit(true),
+  });
+  await upgrades.initialize();
+
   systemSink.notify = (condition, blocked) => {
     void executions.setSystemCondition(condition, blocked).catch((error) => {
       log.event('failure', { code: errorCode(error) });
@@ -546,6 +627,7 @@ export async function startController(
       if (command.apiKey !== undefined) fixture.protect(command.apiKey);
     }
     if (command.kind === 'snapshot') return executions.decorate(state);
+    if (command.kind.startsWith('upgrade-')) return upgrades.handle(command);
     if (command.kind.startsWith('version-')) return versions.handle(command);
     if (
       command.kind === 'backup-review' &&
@@ -602,6 +684,7 @@ export async function startController(
       return { state: await models.ask(command) };
     }
     if (command.kind === 'quit') {
+      if (upgrades.held()) throw Error('UPGRADE_PENDING');
       if (
         !recordsAvailable ||
         !workspace.canExit() ||
@@ -827,8 +910,20 @@ export async function startController(
       workers.delete(worker);
     }
   }
-  async function quit(): Promise<void> {
-    if (quitting) return;
+  function cancelExit() {
+    quitting = false;
+    executions.cancelExit();
+    models.cancelExit();
+  }
+  async function checkpointExit(): Promise<void> {
+    if (quitting) throw Error('APPLICATION_EXITING');
+    if (
+      !recordsAvailable ||
+      !workspace.canExit() ||
+      !executions.canExit() ||
+      !backups.canExit()
+    )
+      throw Error('UNSAVED_CHANGES');
     quitting = true;
     try {
       await executions.stopAll();
@@ -838,9 +933,7 @@ export async function startController(
         await recordClient.request({ kind: 'checkpoint' }),
       );
     } catch (error) {
-      quitting = false;
-      executions.cancelExit();
-      models.cancelExit();
+      cancelExit();
       if (!recordsAvailable) restoreRecordConnection();
       if (host.connected)
         host.send({
@@ -848,6 +941,12 @@ export async function startController(
             '退出前的必要事实尚未可靠保存，已保留现场并阻止新操作。请恢复保存条件后重试退出。',
         });
       throw error;
+    }
+  }
+  async function quit(checkpointSaved = false): Promise<void> {
+    if (!checkpointSaved) {
+      if (quitting) return;
+      await checkpointExit();
     }
     versions.dispose();
     broker.dispose();

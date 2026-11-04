@@ -1,0 +1,73 @@
+{
+  "date": "2026-11-04",
+  "timezone": "Asia/Shanghai",
+  "base": "7d15ba60e3cb87667b3cfc40eddb3ff74b3a4a89",
+  "importedImplementation": "5c280bcd10a0a920f71787f042180512eb836f46",
+  "prototype": "38124d1c543a508614f7e9692a89dbcd1e610efe",
+  "sourceVersion": "0.2.1",
+  "approval": "User explicitly approved v3 and issue 09 implementation scope",
+  "checks": {
+    "compile": true,
+    "typecheck": true,
+    "lint": true,
+    "format": true,
+    "tests": 133,
+    "testFiles": 17,
+    "legacyTests": 25,
+    "syntaxFiles": 207,
+    "targetedTests": 45,
+    "validatorModes": [
+      "--check",
+      "--v3-check"
+    ],
+    "validatorApplicationStarts": 0
+  },
+  "failures": [
+    {
+      "stage": "first full check",
+      "test": "packaged-layout native Node host identity",
+      "result": "Vitest 10000ms timeout; 132 passed, 1 failed",
+      "followup": "Added bounded exit observation and finally cleanup; targeted 1 passed and full rerun passed; unique original cause not established"
+    }
+  ],
+  "logs": {
+    "source-v3-first.log": "d3c0ccb7332851c83dd130921b78bf36e045bff6587eb5a329b3d967b7f24c99",
+    "startup-v3-followup.log": "8c3ac1d6fd92f2a3608bcc1cddc13e376b15772544d046522b770205d9e96504",
+    "source-v3.log": "cf51f3f3f89e1339bf85cdf3bfc128b66631e1448a26bee0456f609680978f79"
+  },
+  "sourceHashes": {
+    "app/desktop/upgrade-service.ts": "b4c73aebb90765db3f4cf3437903d19a185932f97fdfc6c2953bbbb07149475b",
+    "app/desktop/host.ts": "780e019ea1d1147767fa4f2aa65474b21fb4fce6cf0e89647e0522ec05e06b5b",
+    "app/records/upgrade.ts": "f3fd3065f5bde3566e6cc880399cece6f27a2aa8263456c372e85eca0c769e93",
+    "app/shared/upgrade.ts": "0773dc71e021a5ad8682cba794d8181a32a633ae0e09b039d521eed84e2474db",
+    "app/renderer/UpgradeSettings.tsx": "3bc29bd774fee4774c87607de47b0a1cbc17d6cbda06ff7865f362d7aec90593",
+    "tests/workspace/upgrade.test.ts": "e856dff55b39254a4c2c2f2a693b2052a109e19b2c5bfef3aebe2bf4d4a116ab",
+    "tests/workspace/startup.test.ts": "afa5f2e4c5b4c7f19a81af456c86469d0964fd4b7c54e8489e26d142d36503b8",
+    "scripts/validate-upgrade.mjs": "02381f526cdc8cc06ce7614dcc58cd31d803a05e0ebf4da2f9bb0b3faf24f3ac",
+    "package.json": "1c3468c2452991627c0472c088424a681606c52dc243bfee8264faf820d6bcac"
+  },
+  "actualApplicationValidation": {
+    "newSignedBuilds": 0,
+    "newInstalls": 0,
+    "newStarts": 0,
+    "remoteWrites": 0,
+    "cumulativeUsed": {
+      "builds": 37,
+      "installs": 10,
+      "starts": 100,
+      "faults": 42,
+      "cleanups": 17
+    },
+    "cumulativeLimits": {
+      "builds": 37,
+      "installs": 10,
+      "starts": 100,
+      "faults": 43,
+      "cleanups": 19
+    },
+    "acceptanceCompleted": 2,
+    "acceptanceTotal": 10,
+    "newBatchApproved": false
+  },
+  "scope": "Source compilation, temporary Node/SQLite tests, local controlled HTTP tests, static validators; no Electron GUI or package execution in this turn"
+}

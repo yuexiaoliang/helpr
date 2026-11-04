@@ -6,8 +6,15 @@ import {
   type UICommand,
 } from '../shared/contracts';
 import { versionStatusSchema, type VersionStatus } from '../shared/version';
+import { upgradeStatusSchema, type UpgradeStatus } from '../shared/upgrade';
 
 const labels: Record<string, string> = {
+  UPGRADE_PENDING:
+    '升级准备或启动核对尚未完成，请在“关于与新版”处理；任务与现场保留。',
+  UPGRADE_CHANGED: '任务或网页在准备后发生变化，已保留较新决定，请重新核对。',
+  UPGRADE_PAGE_UNSAVED: '网页仍有未保存或未核对的编辑，已保留页面，尚未退出。',
+  UPGRADE_VERSION_MISMATCH:
+    '实际版本与升级约定不符，请核对可信来源和安装版本。',
   VERSION_LINK_UNAVAILABLE:
     '版本结果已经变化，当前没有经本次确认可用的下载入口。请重新查看或检查。',
   BACKUP_REVIEW_REQUIRED: '恢复资料后先核对实际结果，再选择继续本项任务。',
@@ -73,6 +80,7 @@ const labels: Record<string, string> = {
 export const modelErrorLabel = (code: string): string =>
   labels[code] ?? '模型请求未完成，请核对后重新发送。';
 export type WorkspaceView = {
+  upgrade: UpgradeStatus | null;
   version: VersionStatus | null;
   versionNotice: boolean;
   state: WorkspaceSnapshot;
@@ -99,6 +107,7 @@ export class WorkspaceStore {
     initial: WorkspaceSnapshot = { revision: 0, active: null, tasks: [] },
   ) {
     this.view = {
+      upgrade: null,
       version: null,
       versionNotice: false,
       state: initial,
@@ -112,6 +121,11 @@ export class WorkspaceStore {
         state = snapshotSchema.parse(event.state);
       this.update({
         ...this.view,
+        upgrade:
+          event.upgrade &&
+          event.upgrade.revision >= (this.view.upgrade?.revision ?? -1)
+            ? upgradeStatusSchema.parse(event.upgrade)
+            : this.view.upgrade,
         version:
           event.version &&
           event.version.revision >= (this.view.version?.revision ?? -1)
@@ -140,6 +154,12 @@ export class WorkspaceStore {
     this.update({ ...this.view, saving: this.view.saving + 1 });
     try {
       const result = await this.bridge.request(command);
+      const upgrade = upgradeStatusSchema.safeParse(result);
+      if (
+        upgrade.success &&
+        upgrade.data.revision >= (this.view.upgrade?.revision ?? -1)
+      )
+        this.update({ ...this.view, upgrade: upgrade.data });
       const version = versionStatusSchema.safeParse(result);
       if (
         version.success &&

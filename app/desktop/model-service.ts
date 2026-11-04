@@ -53,6 +53,7 @@ export class ModelService {
   private readonly jobs = new Map<string, Job>();
   private available = true;
   private closing = false;
+  private verifiedCiphertext: string | null = null;
   constructor(
     private readonly ports: {
       records: (command: unknown) => Promise<unknown>;
@@ -171,6 +172,21 @@ export class ModelService {
     } catch (error) {
       throw new Error(modelFailure(error));
     }
+  }
+  async credentialProof(): Promise<string | null> {
+    const stored = await this.record({ kind: 'private-settings' });
+    if (!stored.configuration) return null;
+    const config = privateSettings.parse(stored.configuration);
+    if (this.verifiedCiphertext !== config.ciphertext) {
+      try {
+        const value = await this.ports.protection.reveal(config.ciphertext);
+        if (!value) throw Error('EMPTY_CREDENTIAL');
+      } catch {
+        throw Error('MODEL_CREDENTIAL_UNAVAILABLE');
+      }
+      this.verifiedCiphertext = config.ciphertext;
+    }
+    return createHash('sha256').update(config.ciphertext).digest('hex');
   }
   async ask(
     command: Extract<RecordCommand, { kind: 'message' }>,

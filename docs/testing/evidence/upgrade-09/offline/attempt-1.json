@@ -1,0 +1,45 @@
+{
+  "scope": "Node source entry + real format-6 database copy + static codesign; no Electron or system authorization",
+  "started": 1793167028282,
+  "deadline": 1793167148153,
+  "sourceDatabaseSha256": "eeca7dba3f7c641966877cf6cb5d45a6d3877608307f0e41cefe599f1813411e",
+  "candidate": 37,
+  "appStarts": 0,
+  "installs": 0,
+  "applicationBuilds": 0,
+  "signing": 0,
+  "realModels": 0,
+  "remoteWrites": 0,
+  "sourceRecordProcessInterruptions": 0,
+  "cases": [
+    {
+      "name": "真实旧库按冻结迁移到7，原任务、对话、中文草稿与停止逐值相同",
+      "started": 1793167028514,
+      "passed": true,
+      "tasksCompared": 2,
+      "independentOldBackup": true,
+      "reopened": true,
+      "ended": 1793167028575
+    },
+    {
+      "name": "不兼容的format明确拒绝且不清空资料",
+      "started": 1793167028576,
+      "passed": true,
+      "code": "DATA_VERSION_UNSUPPORTED",
+      "rejectedCopyUnchanged": true,
+      "ended": 1793167028578
+    },
+    {
+      "name": "不兼容的state明确拒绝且不清空资料",
+      "started": 1793167028579,
+      "passed": false,
+      "error": "no such table: executions",
+      "ended": 1793167028579
+    }
+  ],
+  "passed": false,
+  "error": "no such table: executions",
+  "remainingOwnedProcesses": [],
+  "ownedProcesses": [],
+  "ended": 1793167028613
+}

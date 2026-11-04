@@ -122,34 +122,60 @@ test.skipIf(process.platform !== 'darwin')(
       ],
       { stdio: ['ignore', 'ignore', 'ignore', 'ipc'] },
     );
-    const result = await new Promise<unknown>((resolve, reject) => {
-      const timer = setTimeout(() => {
-        child.kill('SIGKILL');
-        reject(new Error('DISTINCT_HOST_STARTUP_TIMEOUT'));
-      }, 5000);
-      child.once('message', (message) => {
-        clearTimeout(timer);
-        resolve(message);
+    try {
+      const result = await new Promise<unknown>((resolve, reject) => {
+        const timer = setTimeout(() => {
+          child.kill('SIGKILL');
+          reject(new Error('DISTINCT_HOST_STARTUP_TIMEOUT'));
+        }, 5000);
+        child.once('message', (message) => {
+          clearTimeout(timer);
+          resolve(message);
+        });
+        child.once('exit', () => {
+          clearTimeout(timer);
+          reject(new Error('DISTINCT_HOST_NOT_STARTED'));
+        });
       });
-      child.once('exit', () => {
-        clearTimeout(timer);
-        reject(new Error('DISTINCT_HOST_NOT_STARTED'));
+      expect(result).toEqual({
+        result: { role: 'host', root: production, validation: false },
+        fixture: {
+          role: 'host',
+          root: fixtureProfile,
+          validation: true,
+          fixtureOrigin: 'http://127.0.0.1:43210',
+        },
+        rejected: 'STARTUP_NOT_AUTHORIZED',
       });
-    });
-    expect(result).toEqual({
-      result: { role: 'host', root: production, validation: false },
-      fixture: {
-        role: 'host',
-        root: fixtureProfile,
-        validation: true,
-        fixtureOrigin: 'http://127.0.0.1:43210',
-      },
-      rejected: 'STARTUP_NOT_AUTHORIZED',
-    });
-    await new Promise<void>((resolve) => {
-      if (child.exitCode !== null || child.signalCode !== null) resolve();
-      else child.once('exit', () => resolve());
-    });
+      await new Promise<void>((resolve, reject) => {
+        if (child.exitCode !== null || child.signalCode !== null) {
+          resolve();
+          return;
+        }
+        const timer = setTimeout(
+          () => reject(Error('DISTINCT_HOST_EXIT_TIMEOUT')),
+          2500,
+        );
+        child.once('exit', () => {
+          clearTimeout(timer);
+          resolve();
+        });
+      });
+    } finally {
+      if (child.exitCode === null && child.signalCode === null) {
+        child.kill('SIGTERM');
+        await new Promise<void>((resolve) => {
+          const timer = setTimeout(() => {
+            child.kill('SIGKILL');
+            resolve();
+          }, 1000);
+          child.once('exit', () => {
+            clearTimeout(timer);
+            resolve();
+          });
+        });
+      }
+    }
   },
 );
 

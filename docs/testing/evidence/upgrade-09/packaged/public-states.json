@@ -1,0 +1,621 @@
+{
+  "old-baseline.json": {
+    "settings": {
+      "protocol": "chat-completions",
+      "endpoint": "http://127.0.0.1:52276/v1",
+      "model": "local-upgrade-09",
+      "version": 1,
+      "hasCredential": true
+    },
+    "tasks": [
+      [
+        "7f93f360-9e72-44ac-8781-02dd6d494e51",
+        "核对本机升级验证页面 A http://127.0.0.1:52276/page/A",
+        "原任务A的中文草稿",
+        [
+          {
+            "role": "user",
+            "text": "核对本机升级验证页面 A http://127.0.0.1:52276/page/A"
+          },
+          {
+            "role": "system",
+            "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+          },
+          {
+            "role": "user",
+            "text": "停止"
+          }
+        ],
+        "stopped",
+        "stopped"
+      ],
+      [
+        "d9e2b997-f148-4c3e-abfc-b283cfbbf673",
+        "核对本机升级验证页面 B http://127.0.0.1:52276/page/B",
+        "原任务B的中文草稿",
+        [
+          {
+            "role": "user",
+            "text": "核对本机升级验证页面 B http://127.0.0.1:52276/page/B"
+          },
+          {
+            "role": "system",
+            "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+          },
+          {
+            "role": "user",
+            "text": "停止"
+          }
+        ],
+        "stopped",
+        "stopped"
+      ]
+    ]
+  },
+  "after-a-only.json": {
+    "state": {
+      "settings": {
+        "protocol": "chat-completions",
+        "endpoint": "http://127.0.0.1:52276/v1",
+        "model": "local-upgrade-09",
+        "version": 1,
+        "hasCredential": true
+      },
+      "tasks": [
+        [
+          "7f93f360-9e72-44ac-8781-02dd6d494e51",
+          "核对本机升级验证页面 A http://127.0.0.1:52276/page/A",
+          "原任务A的中文草稿",
+          [
+            {
+              "role": "user",
+              "text": "核对本机升级验证页面 A http://127.0.0.1:52276/page/A"
+            },
+            {
+              "role": "system",
+              "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+            },
+            {
+              "role": "user",
+              "text": "停止"
+            }
+          ],
+          "stopped",
+          "stopped"
+        ],
+        [
+          "d9e2b997-f148-4c3e-abfc-b283cfbbf673",
+          "核对本机升级验证页面 B http://127.0.0.1:52276/page/B",
+          "原任务B的中文草稿",
+          [
+            {
+              "role": "user",
+              "text": "核对本机升级验证页面 B http://127.0.0.1:52276/page/B"
+            },
+            {
+              "role": "system",
+              "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+            },
+            {
+              "role": "user",
+              "text": "停止"
+            }
+          ],
+          "stopped",
+          "stopped"
+        ]
+      ]
+    },
+    "upgrade": {
+      "revision": 29,
+      "phase": "blocked",
+      "installedVersion": "0.2.0",
+      "fromVersion": "0.2.0",
+      "target": "0.3.0",
+      "requestId": "edc0d24e-8d7e-445b-9c63-7a4dec0f82e0",
+      "fingerprint": null,
+      "backup": null,
+      "error": "UPGRADE_PAGE_UNSAVED",
+      "reopening": false,
+      "continuity": "unrecorded",
+      "dirtyTasks": [
+        "d9e2b997-f148-4c3e-abfc-b283cfbbf673"
+      ],
+      "message": "网页有手动操作尚待核对。请逐项回到网页保存，再确认现场已处理。",
+      "working": false,
+      "recordRevision": 4,
+      "pages": [
+        {
+          "taskId": "7f93f360-9e72-44ac-8781-02dd6d494e51",
+          "generation": 1,
+          "epoch": 10,
+          "dirty": false
+        },
+        {
+          "taskId": "d9e2b997-f148-4c3e-abfc-b283cfbbf673",
+          "generation": 1,
+          "epoch": 8,
+          "dirty": true
+        }
+      ]
+    },
+    "models": 2,
+    "effects": 1,
+    "logins": 1
+  },
+  "first-prepared.json": {
+    "state": {
+      "settings": {
+        "protocol": "chat-completions",
+        "endpoint": "http://127.0.0.1:52276/v1",
+        "model": "local-upgrade-09",
+        "version": 1,
+        "hasCredential": true
+      },
+      "tasks": [
+        [
+          "7f93f360-9e72-44ac-8781-02dd6d494e51",
+          "核对本机升级验证页面 A http://127.0.0.1:52276/page/A",
+          "原任务A的中文草稿",
+          [
+            {
+              "role": "user",
+              "text": "核对本机升级验证页面 A http://127.0.0.1:52276/page/A"
+            },
+            {
+              "role": "system",
+              "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+            },
+            {
+              "role": "user",
+              "text": "停止"
+            }
+          ],
+          "stopped",
+          "stopped"
+        ],
+        [
+          "d9e2b997-f148-4c3e-abfc-b283cfbbf673",
+          "核对本机升级验证页面 B http://127.0.0.1:52276/page/B",
+          "原任务B的中文草稿",
+          [
+            {
+              "role": "user",
+              "text": "核对本机升级验证页面 B http://127.0.0.1:52276/page/B"
+            },
+            {
+              "role": "system",
+              "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+            },
+            {
+              "role": "user",
+              "text": "停止"
+            }
+          ],
+          "stopped",
+          "stopped"
+        ]
+      ]
+    },
+    "upgrade": {
+      "revision": 67,
+      "phase": "ready",
+      "installedVersion": "0.2.0",
+      "fromVersion": "0.2.0",
+      "target": "0.3.0",
+      "requestId": "edc0d24e-8d7e-445b-9c63-7a4dec0f82e0",
+      "fingerprint": "6fd000ce8ca1c72a5e9be9c7aa35522265ea0ee67dbb7d18d5927eaf0ed94bd2",
+      "backup": {
+        "id": "edc0d24e-8d7e-445b-9c63-7a4dec0f82e0-6fd000ce8ca1c72a",
+        "created": 1793080717295,
+        "file": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/manual-upgrade-09/selected-backups/helpr-before-upgrade-edc0d24e-8d7e-445b-9c63-7a4dec0f82e0-6fd000ce8ca1c72a.helpr-backup",
+        "checksum": "2446f4e0fb2b569a7870f2612eb83ca3a88e9c23bc435f00afecad9b82772d80",
+        "tasks": 2
+      },
+      "error": "",
+      "reopening": false,
+      "continuity": "unrecorded",
+      "dirtyTasks": [],
+      "message": "记录与升级前业务备份已核对，可以退出供你手动安装。",
+      "working": false,
+      "recordRevision": 5,
+      "pages": [
+        {
+          "taskId": "7f93f360-9e72-44ac-8781-02dd6d494e51",
+          "generation": 1,
+          "epoch": 10,
+          "dirty": false
+        },
+        {
+          "taskId": "d9e2b997-f148-4c3e-abfc-b283cfbbf673",
+          "generation": 1,
+          "epoch": 10,
+          "dirty": false
+        }
+      ]
+    },
+    "models": 2,
+    "effects": 2,
+    "logins": 1
+  },
+  "cancelled.json": {
+    "state": {
+      "settings": {
+        "protocol": "chat-completions",
+        "endpoint": "http://127.0.0.1:52276/v1",
+        "model": "local-upgrade-09",
+        "version": 1,
+        "hasCredential": true
+      },
+      "tasks": [
+        [
+          "7f93f360-9e72-44ac-8781-02dd6d494e51",
+          "核对本机升级验证页面 A http://127.0.0.1:52276/page/A",
+          "原任务A的中文草稿",
+          [
+            {
+              "role": "user",
+              "text": "核对本机升级验证页面 A http://127.0.0.1:52276/page/A"
+            },
+            {
+              "role": "system",
+              "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+            },
+            {
+              "role": "user",
+              "text": "停止"
+            }
+          ],
+          "stopped",
+          "stopped"
+        ],
+        [
+          "d9e2b997-f148-4c3e-abfc-b283cfbbf673",
+          "核对本机升级验证页面 B http://127.0.0.1:52276/page/B",
+          "原任务B的中文草稿",
+          [
+            {
+              "role": "user",
+              "text": "核对本机升级验证页面 B http://127.0.0.1:52276/page/B"
+            },
+            {
+              "role": "system",
+              "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+            },
+            {
+              "role": "user",
+              "text": "停止"
+            }
+          ],
+          "stopped",
+          "stopped"
+        ]
+      ]
+    },
+    "upgrade": {
+      "revision": 74,
+      "phase": "complete",
+      "installedVersion": "0.2.0",
+      "fromVersion": "0.2.0",
+      "target": "0.3.0",
+      "requestId": "edc0d24e-8d7e-445b-9c63-7a4dec0f82e0",
+      "fingerprint": "6fd000ce8ca1c72a5e9be9c7aa35522265ea0ee67dbb7d18d5927eaf0ed94bd2",
+      "backup": {
+        "id": "edc0d24e-8d7e-445b-9c63-7a4dec0f82e0-6fd000ce8ca1c72a",
+        "created": 1793080717295,
+        "file": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/manual-upgrade-09/selected-backups/helpr-before-upgrade-edc0d24e-8d7e-445b-9c63-7a4dec0f82e0-6fd000ce8ca1c72a.helpr-backup",
+        "checksum": "2446f4e0fb2b569a7870f2612eb83ca3a88e9c23bc435f00afecad9b82772d80",
+        "tasks": 2
+      },
+      "error": "",
+      "reopening": false,
+      "continuity": "retained",
+      "dirtyTasks": [],
+      "message": "基础检查完成。原自动任务先核对网站实际结果，停止、接管和待确认条件保留。",
+      "working": false,
+      "recordRevision": 7,
+      "pages": [
+        {
+          "taskId": "7f93f360-9e72-44ac-8781-02dd6d494e51",
+          "generation": 1,
+          "epoch": 10,
+          "dirty": false
+        },
+        {
+          "taskId": "d9e2b997-f148-4c3e-abfc-b283cfbbf673",
+          "generation": 1,
+          "epoch": 10,
+          "dirty": false
+        }
+      ]
+    },
+    "models": 2,
+    "effects": 2,
+    "logins": 1
+  },
+  "second-prepared.json": {
+    "state": {
+      "settings": {
+        "protocol": "chat-completions",
+        "endpoint": "http://127.0.0.1:52276/v1",
+        "model": "local-upgrade-09",
+        "version": 1,
+        "hasCredential": true
+      },
+      "tasks": [
+        [
+          "7f93f360-9e72-44ac-8781-02dd6d494e51",
+          "核对本机升级验证页面 A http://127.0.0.1:52276/page/A",
+          "原任务A的中文草稿",
+          [
+            {
+              "role": "user",
+              "text": "核对本机升级验证页面 A http://127.0.0.1:52276/page/A"
+            },
+            {
+              "role": "system",
+              "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+            },
+            {
+              "role": "user",
+              "text": "停止"
+            }
+          ],
+          "stopped",
+          "stopped"
+        ],
+        [
+          "d9e2b997-f148-4c3e-abfc-b283cfbbf673",
+          "核对本机升级验证页面 B http://127.0.0.1:52276/page/B",
+          "原任务B的中文草稿",
+          [
+            {
+              "role": "user",
+              "text": "核对本机升级验证页面 B http://127.0.0.1:52276/page/B"
+            },
+            {
+              "role": "system",
+              "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+            },
+            {
+              "role": "user",
+              "text": "停止"
+            }
+          ],
+          "stopped",
+          "stopped"
+        ]
+      ]
+    },
+    "upgrade": {
+      "revision": 104,
+      "phase": "ready",
+      "installedVersion": "0.2.0",
+      "fromVersion": "0.2.0",
+      "target": "0.3.0",
+      "requestId": "adde97fc-ed8d-4435-b580-c0bc4eaa7bd9",
+      "fingerprint": "6fd000ce8ca1c72a5e9be9c7aa35522265ea0ee67dbb7d18d5927eaf0ed94bd2",
+      "backup": {
+        "id": "adde97fc-ed8d-4435-b580-c0bc4eaa7bd9-6fd000ce8ca1c72a",
+        "created": 1793080878672,
+        "file": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/manual-upgrade-09/selected-backups/helpr-before-upgrade-adde97fc-ed8d-4435-b580-c0bc4eaa7bd9-6fd000ce8ca1c72a.helpr-backup",
+        "checksum": "2446f4e0fb2b569a7870f2612eb83ca3a88e9c23bc435f00afecad9b82772d80",
+        "tasks": 2
+      },
+      "error": "",
+      "reopening": false,
+      "continuity": "retained",
+      "dirtyTasks": [],
+      "message": "记录与升级前业务备份已核对，可以退出供你手动安装。",
+      "working": false,
+      "recordRevision": 9,
+      "pages": [
+        {
+          "taskId": "7f93f360-9e72-44ac-8781-02dd6d494e51",
+          "generation": 1,
+          "epoch": 11,
+          "dirty": false
+        },
+        {
+          "taskId": "d9e2b997-f148-4c3e-abfc-b283cfbbf673",
+          "generation": 1,
+          "epoch": 11,
+          "dirty": false
+        }
+      ]
+    },
+    "models": 2,
+    "effects": 2,
+    "logins": 1
+  },
+  "cold-checked.json": {
+    "state": {
+      "settings": {
+        "protocol": "chat-completions",
+        "endpoint": "http://127.0.0.1:52276/v1",
+        "model": "local-upgrade-09",
+        "version": 1,
+        "hasCredential": true
+      },
+      "tasks": [
+        [
+          "7f93f360-9e72-44ac-8781-02dd6d494e51",
+          "核对本机升级验证页面 A http://127.0.0.1:52276/page/A",
+          "原任务A的中文草稿",
+          [
+            {
+              "role": "user",
+              "text": "核对本机升级验证页面 A http://127.0.0.1:52276/page/A"
+            },
+            {
+              "role": "system",
+              "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+            },
+            {
+              "role": "user",
+              "text": "停止"
+            }
+          ],
+          "stopped",
+          "stopped"
+        ],
+        [
+          "d9e2b997-f148-4c3e-abfc-b283cfbbf673",
+          "核对本机升级验证页面 B http://127.0.0.1:52276/page/B",
+          "原任务B的中文草稿",
+          [
+            {
+              "role": "user",
+              "text": "核对本机升级验证页面 B http://127.0.0.1:52276/page/B"
+            },
+            {
+              "role": "system",
+              "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+            },
+            {
+              "role": "user",
+              "text": "停止"
+            }
+          ],
+          "stopped",
+          "stopped"
+        ]
+      ]
+    },
+    "upgrade": {
+      "revision": 10,
+      "phase": "complete",
+      "installedVersion": "0.2.0",
+      "fromVersion": "0.2.0",
+      "target": "0.3.0",
+      "requestId": "adde97fc-ed8d-4435-b580-c0bc4eaa7bd9",
+      "fingerprint": "6fd000ce8ca1c72a5e9be9c7aa35522265ea0ee67dbb7d18d5927eaf0ed94bd2",
+      "backup": {
+        "id": "adde97fc-ed8d-4435-b580-c0bc4eaa7bd9-6fd000ce8ca1c72a",
+        "created": 1793080878672,
+        "file": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/manual-upgrade-09/selected-backups/helpr-before-upgrade-adde97fc-ed8d-4435-b580-c0bc4eaa7bd9-6fd000ce8ca1c72a.helpr-backup",
+        "checksum": "2446f4e0fb2b569a7870f2612eb83ca3a88e9c23bc435f00afecad9b82772d80",
+        "tasks": 2
+      },
+      "error": "",
+      "reopening": false,
+      "continuity": "retained",
+      "dirtyTasks": [],
+      "message": "基础检查完成。原自动任务先核对网站实际结果，停止、接管和待确认条件保留。",
+      "working": false,
+      "recordRevision": 11,
+      "pages": [
+        {
+          "taskId": "7f93f360-9e72-44ac-8781-02dd6d494e51",
+          "generation": 1,
+          "epoch": 1,
+          "dirty": false
+        },
+        {
+          "taskId": "d9e2b997-f148-4c3e-abfc-b283cfbbf673",
+          "generation": 1,
+          "epoch": 1,
+          "dirty": false
+        }
+      ]
+    },
+    "models": 2,
+    "effects": 2,
+    "logins": 1
+  },
+  "final-inspection.json": {
+    "state": {
+      "settings": {
+        "protocol": "chat-completions",
+        "endpoint": "http://127.0.0.1:52276/v1",
+        "model": "local-upgrade-09",
+        "version": 1,
+        "hasCredential": true
+      },
+      "tasks": [
+        [
+          "7f93f360-9e72-44ac-8781-02dd6d494e51",
+          "核对本机升级验证页面 A http://127.0.0.1:52276/page/A",
+          "原任务A的中文草稿",
+          [
+            {
+              "role": "user",
+              "text": "核对本机升级验证页面 A http://127.0.0.1:52276/page/A"
+            },
+            {
+              "role": "system",
+              "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+            },
+            {
+              "role": "user",
+              "text": "停止"
+            }
+          ],
+          "stopped",
+          "stopped"
+        ],
+        [
+          "d9e2b997-f148-4c3e-abfc-b283cfbbf673",
+          "核对本机升级验证页面 B http://127.0.0.1:52276/page/B",
+          "原任务B的中文草稿",
+          [
+            {
+              "role": "user",
+              "text": "核对本机升级验证页面 B http://127.0.0.1:52276/page/B"
+            },
+            {
+              "role": "system",
+              "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+            },
+            {
+              "role": "user",
+              "text": "停止"
+            }
+          ],
+          "stopped",
+          "stopped"
+        ]
+      ]
+    },
+    "upgrade": {
+      "revision": 11,
+      "phase": "complete",
+      "installedVersion": "0.2.0",
+      "fromVersion": "0.2.0",
+      "target": "0.3.0",
+      "requestId": "adde97fc-ed8d-4435-b580-c0bc4eaa7bd9",
+      "fingerprint": "6fd000ce8ca1c72a5e9be9c7aa35522265ea0ee67dbb7d18d5927eaf0ed94bd2",
+      "backup": {
+        "id": "adde97fc-ed8d-4435-b580-c0bc4eaa7bd9-6fd000ce8ca1c72a",
+        "created": 1793080878672,
+        "file": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/manual-upgrade-09/selected-backups/helpr-before-upgrade-adde97fc-ed8d-4435-b580-c0bc4eaa7bd9-6fd000ce8ca1c72a.helpr-backup",
+        "checksum": "2446f4e0fb2b569a7870f2612eb83ca3a88e9c23bc435f00afecad9b82772d80",
+        "tasks": 2
+      },
+      "error": "",
+      "reopening": false,
+      "continuity": "retained",
+      "dirtyTasks": [],
+      "message": "基础检查完成。原自动任务先核对网站实际结果，停止、接管和待确认条件保留。",
+      "working": false,
+      "recordRevision": 11,
+      "pages": [
+        {
+          "taskId": "7f93f360-9e72-44ac-8781-02dd6d494e51",
+          "generation": 1,
+          "epoch": 1,
+          "dirty": false
+        },
+        {
+          "taskId": "d9e2b997-f148-4c3e-abfc-b283cfbbf673",
+          "generation": 1,
+          "epoch": 1,
+          "dirty": false
+        }
+      ]
+    },
+    "models": 3,
+    "effects": 2,
+    "logins": 1
+  }
+}

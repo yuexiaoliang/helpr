@@ -14,7 +14,7 @@ import {
 } from 'electron';
 import path from 'node:path';
 import { readFile } from 'node:fs/promises';
-import { randomUUID } from 'node:crypto';
+import { randomUUID, createHash } from 'node:crypto';
 import { z } from 'zod';
 import { ProcessClient } from '../shared/rpc';
 import {
@@ -34,6 +34,11 @@ import { InputGate } from './input-gate';
 import type { ExecutionPauseReason } from '../shared/execution';
 import { LocalFixture } from './local-fixture';
 import { versionStatusSchema, type VersionStatus } from '../shared/version';
+import {
+  upgradeProofSchema,
+  upgradeStatusSchema,
+  type UpgradeStatus,
+} from '../shared/upgrade';
 
 const images = runtimeImages(process.execPath, app.isPackaged);
 const startup = resolveStartup({
@@ -108,6 +113,9 @@ let noticeTimer: ReturnType<typeof setTimeout>;
 let panelTimer: ReturnType<typeof setTimeout>;
 let recovered = false;
 let closing = false;
+let upgradeClosing = false;
+let upgrade: UpgradeStatus | undefined;
+const upgradeDirty = new Set<string>();
 const trusted = new Map<
   number,
   {
@@ -140,6 +148,7 @@ const prefs = {
 const renderer = path.join(__dirname, '../renderer');
 const preload = path.join(__dirname, '../preload/preload.cjs');
 function suspend(taskId: string | null, reason: ExecutionPauseReason) {
+  if (upgradeClosing) return;
   inputGate.block(taskId ?? '*');
   notify({
     suspension: {
@@ -275,6 +284,7 @@ function loadUI(
       state,
       panel,
       ...(version ? { version } : {}),
+      ...(upgrade ? { upgrade } : {}),
       versionNotice,
     }),
   );
@@ -330,6 +340,12 @@ function pageState(
   }
 }
 function bindPage(task: Task): void {
+  if (
+    ['takeover', 'ownership-unknown'].includes(
+      task.execution?.pauseReason ?? '',
+    )
+  )
+    upgradeDirty.add(task.id);
   const remote = session.fromPartition(
     fixture?.partition ?? 'persist:helpr-web',
   );
@@ -510,6 +526,10 @@ function bindPage(task: Task): void {
       };
     });
     wc.on('will-prevent-unload', (event) => {
+      if (upgradeClosing) {
+        upgradeDirty.add(task.id);
+        return;
+      }
       const result = dialog.showMessageBoxSync(win, {
         type: 'warning',
         buttons: ['保留网页', '放弃网页编辑'],
@@ -563,6 +583,126 @@ function reconcile(): void {
 }
 async function perform(input: unknown): Promise<unknown> {
   const command = z.object({ kind: z.string() }).parse(input);
+  if (command.kind === 'upgrade-page-state')
+    return [...pages.entries()]
+      .filter(
+        ([, p]) => p.view.webContents && !p.view.webContents.isDestroyed(),
+      )
+      .map(([taskId, p]) => ({
+        taskId,
+        generation: p.generation,
+        epoch: inputGate.state(taskId).epoch,
+        dirty: upgradeDirty.has(taskId),
+      }))
+      .sort((a, b) => a.taskId.localeCompare(b.taskId));
+  if (command.kind === 'upgrade-site-state') {
+    const remote = session.fromPartition(
+      fixture?.partition ?? 'persist:helpr-web',
+    );
+    remote.flushStorageData();
+    await remote.cookies.flushStore();
+    const hash = (v: string) => createHash('sha256').update(v).digest('hex');
+    const cookies = (await remote.cookies.get({}))
+      .map((c) => ({
+        id: hash(JSON.stringify([c.domain, c.path, c.name])),
+        value: hash(c.value),
+        expires: c.expirationDate ?? null,
+      }))
+      .sort((a, b) => a.id.localeCompare(b.id));
+    return {
+      profile: hash(remote.storagePath ?? ''),
+      cookies,
+      nativeReady:
+        nativeAvailable &&
+        state.tasks
+          .filter((t) => t.url)
+          .every((t) => {
+            const p = pages.get(t.id);
+            return (
+              p && !!p.view.webContents && !p.view.webContents.isDestroyed()
+            );
+          }),
+      pages: await perform({ kind: 'upgrade-page-state' }),
+    };
+  }
+  if (command.kind === 'upgrade-ack-page') {
+    const c = z
+      .strictObject({
+        kind: z.literal('upgrade-ack-page'),
+        taskId: z.string(),
+        generation: z.number().int(),
+        epoch: z.number().int(),
+      })
+      .parse(input);
+    const p = pages.get(c.taskId);
+    if (
+      !p ||
+      !p.view.webContents ||
+      p.view.webContents.isDestroyed() ||
+      p.generation !== c.generation ||
+      inputGate.state(c.taskId).epoch !== c.epoch
+    )
+      throw Error('UPGRADE_CHANGED');
+    upgradeDirty.delete(c.taskId);
+    return null;
+  }
+  if (command.kind === 'upgrade-close-pages') {
+    const expected = z.object({ proof: upgradeProofSchema }).parse(input).proof;
+    const fresh = upgradeProofSchema
+      .omit({ credential: true, application: true })
+      .parse(await perform({ kind: 'upgrade-site-state' }));
+    if (
+      !fresh.nativeReady ||
+      JSON.stringify(fresh.pages) !== JSON.stringify(expected.pages) ||
+      fresh.pages.some((p) => p.dirty)
+    )
+      throw Error('UPGRADE_CHANGED');
+    upgradeClosing = true;
+    try {
+      const views = [
+        ...new Set([...pages.values()].flatMap((p) => [p.view, ...p.stack])),
+      ];
+      for (const view of views) {
+        const wc = view.webContents;
+        if (!wc || wc.isDestroyed()) continue;
+        await new Promise<void>((resolve, reject) => {
+          const clean = () => {
+            clearTimeout(timer);
+            wc.removeListener('destroyed', done);
+            wc.removeListener('will-prevent-unload', blocked);
+          };
+          const done = () => {
+            clean();
+            resolve();
+          };
+          const blocked = () => {
+            clean();
+            reject(Error('UPGRADE_PAGE_UNSAVED'));
+          };
+          const timer = setTimeout(() => {
+            clean();
+            reject(Error('UPGRADE_PAGE_UNSAVED'));
+          }, 3000);
+          wc.once('destroyed', done);
+          wc.once('will-prevent-unload', blocked);
+          wc.close({ waitForBeforeUnload: true });
+        });
+      }
+    } catch (error) {
+      upgradeClosing = false;
+      for (const p of pages.values())
+        if (!p.view.webContents || p.view.webContents.isDestroyed()) {
+          p.rebuild();
+          const task = state.tasks.find((t) => pages.get(t.id) === p);
+          if (task?.url)
+            void p.view.webContents
+              .loadURL(websiteURL(task.url))
+              .catch(() => {});
+        }
+      throw error;
+    }
+    return null;
+  }
   if (startup.validation && command.kind === 'validation-move') {
     const job = z
       .strictObject({
@@ -759,6 +899,8 @@ ipcMain.handle('workspace-request', (event, input: unknown) => {
   )
     throw new Error('HOST_REQUEST_DENIED');
   const command = uiCommandSchema.parse(input);
+  if (command.kind.startsWith('upgrade-') && binding.role !== 'panel')
+    throw Error('HOST_REQUEST_DENIED');
   if (
     binding.role === 'toast' &&
     ![
@@ -816,14 +958,29 @@ ipcMain.handle('workspace-request', (event, input: unknown) => {
   if (command.kind === 'snapshot') return state;
   return controller.request(
     command,
-    ['backup-location', 'backup-open'].includes(command.kind)
+    ['backup-location', 'backup-open', 'upgrade-prepare'].includes(command.kind)
       ? 180000
-      : command.kind === 'backup-review'
+      : [
+            'backup-review',
+            'upgrade-check',
+            'upgrade-cancel',
+            'upgrade-exit',
+          ].includes(command.kind)
         ? 70000
         : 10000,
   );
 });
 process.on('message', (input: unknown) => {
+  const upgradeUpdate = z
+    .object({ upgrade: upgradeStatusSchema })
+    .safeParse(input);
+  if (upgradeUpdate.success) {
+    if (!upgrade || upgradeUpdate.data.upgrade.revision >= upgrade.revision) {
+      upgrade = upgradeUpdate.data.upgrade;
+      broadcast({ upgrade });
+    }
+    return;
+  }
   const versionUpdate = z
     .object({ version: versionStatusSchema })
     .safeParse(input);
@@ -1046,6 +1203,8 @@ void app
         const taskId = event.owner.startsWith('web:')
           ? event.owner.slice(4)
           : null;
+        if (taskId) upgradeDirty.add(taskId);
+        else for (const id of pages.keys()) upgradeDirty.add(id);
         if (!taskId || pages.has(taskId)) {
           notify({
             suspension: {

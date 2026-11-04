@@ -1,5 +1,10 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 
+export const installation = sqliteTable('installation', {
+  id: integer('id').primaryKey(),
+  body: text('body', { mode: 'json' }).notNull(),
+});
+
 export const tasks = sqliteTable('tasks', {
   id: text('id').primaryKey(),
   goal: text('goal').notNull(),
