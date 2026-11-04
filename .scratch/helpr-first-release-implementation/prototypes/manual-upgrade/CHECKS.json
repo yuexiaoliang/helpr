@@ -1,37 +1,37 @@
 {
-  "version": "manual-upgrade-v2",
-  "date": "2026-10-27",
+  "version": "manual-upgrade-v3",
+  "date": "2026-11-04",
   "timezone": "Asia/Shanghai",
-  "html_sha256": "11ca766f11167c2d75ec89e387c54e6020a47fb7d74600a25ac858a216032e01",
+  "html_sha256": "b5b5826b240ff72cf3d5bdb09f67f40a021b3e9fec898acf9b4c5f762452ced5",
   "inline_script_syntax": [
     {
       "script": 1,
-      "exit_code": 0,
-      "error": ""
+      "syntax": "passed"
     },
     {
       "script": 2,
-      "exit_code": 0,
-      "error": ""
+      "syntax": "passed"
     }
   ],
   "duplicate_static_ids": [],
   "external_resources": [],
-  "guided_scenarios": 19,
-  "offline_guided_actions": 276,
-  "offline_scope": "Pure state module and declarative actions only; no DOM or browser execution.",
-  "offline_counterexamples_before_and_after": 6,
+  "guided_scenarios": 22,
+  "offline_guided_actions": 327,
+  "offline_counterexamples_before_and_after": 3,
+  "offline_scope": "Pure state and declarative scenario data only; no DOM execution",
   "offline_evidence": "STATE-REHEARSAL.json",
-  "browser_walkthrough": "not performed; original file-protocol rejection remains",
-  "prior_browser_navigation_attempts": 1,
+  "retained_v2_evidence": [
+    "CHECKS-v2.json",
+    "STATE-REHEARSAL-v2.json"
+  ],
+  "browser_walkthrough": "Not performed. Prior file protocol safety rejection has not been lifted. Current IAB docs and inventory inspected without navigation.",
   "current_turn_browser_navigation_attempts": 0,
+  "current_turn_browser_tabs_created": 0,
   "screenshots": 0,
-  "prior_browser_cleanup": "own about:blank closed; IAB tabs=[]",
-  "current_turn_browser_inventory": "IAB tabs=[]; no tabs created or user Chrome tabs operated",
   "real_application_starts": 0,
   "model_requests": 0,
   "builds": 0,
   "installations": 0,
   "product_code_changed": false,
-  "approval": "User explicitly chose to continue improving/checking the prototype. No implementation approval."
+  "approval": "Awaiting explicit approval of manual-upgrade-v3 and issue 09 scope"
 }
