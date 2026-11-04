@@ -4,11 +4,11 @@
 
 ## 当前入口
 
-- 2026-10-20清理时，本地和远端均只保留`main`。2026-10-23新增本地`codex/backup-prototype`及活动工作副本，保留已确认的07原型；未推送该分支，详见[当前入口](#07-当前备份恢复原型)。
+- 2026-11-04清理后，本地和远端均只保留`main`与`codex/updates-stable`；本地版本渠道已同步远端0.2.2，已合并的升级实现分支、远端预览分支和重复版本分支均已清理。
 - 原型源码使用下表归档标签回看。旧分支名、4317／4318／4319临时预览和已移除的本机路径不再作为当前入口；事项中的原体验记录保留历史含义。
-- 01–04原型使用`archive/2026-10-16/core-workspace-prototype`，05使用`archive/2026-10-20/recovery-prototype`，06使用`archive/2026-10-20/lifecycle-prototype`。
-- 本次只推送05、06两个新增归档标签，没有推送`main`中的本地实现提交。
-- 2026-10-23新增08的本地`codex/version-check-prototype`及本聊天附属工作副本，版本待确认；[当前入口](#08-当前新版检查原型)独立保留，未推送或合入产品。
+- 01–04原型使用`archive/2026-10-16/core-workspace-prototype`，05使用`archive/2026-10-20/recovery-prototype`，06使用`archive/2026-10-20/lifecycle-prototype`；07–09使用下表的`archive/2026-11-04/*`标签。
+- 07–09的三个附注归档标签已发布到`origin`，远端标签对象及解引用后的原始提交均已核对。原型分支与原型工作副本已清理，原型确认和检查边界保持原意。
+- 本次没有推送`main`，没有合入原型模拟代码；`v0.2.2`发布标签保留。包含忽略验证资料的升级正式实现副本保留为固定提交工作树，见[09当前正式实现](#09-当前正式实现)。
 
 ## 已保留的来源
 
@@ -20,6 +20,9 @@
 | `codex/core-workspace-prototype` | `f47b2579a93ca581e643bcd328b15974352fd1fd` | [archive/2026-10-16/core-workspace-prototype](https://github.com/yuexiaoliang/helpr/tree/archive/2026-10-16/core-workspace-prototype) | 01–04已确认原型的一手来源；2026-10-20清理旧分支名 |
 | `codex/recovery-prototype` | `5b39a74f97b3bc68d6d7d400eb5284fd2cdc438c` | [archive/2026-10-20/recovery-prototype](https://github.com/yuexiaoliang/helpr/tree/archive/2026-10-20/recovery-prototype) | 05已验收，源码和确认记录保存后清理分支名 |
 | `codex/lifecycle-prototype` | `980141ccde93fbddda48c371abe0a7d26dd4936c` | [archive/2026-10-20/lifecycle-prototype](https://github.com/yuexiaoliang/helpr/tree/archive/2026-10-20/lifecycle-prototype) | 06十条验收完成，副本已移除，原型保存后清理分支名 |
+| `codex/backup-prototype` | `9bca8026274eb0358a84a88397a3068cb053c82e` | [archive/2026-11-04/backup-prototype](https://github.com/yuexiaoliang/helpr/tree/archive/2026-11-04/backup-prototype) | 07已确认原型及走查证据；2026-11-04归档并清理分支名 |
+| `codex/version-check-prototype` | `23d3ecdbc345f31e44decdc3516260213b9c57c2` | [archive/2026-11-04/version-check-prototype](https://github.com/yuexiaoliang/helpr/tree/archive/2026-11-04/version-check-prototype) | 08已确认原型及走查证据；2026-11-04归档并清理分支名 |
+| `codex/manual-upgrade-prototype` | `38124d1c543a508614f7e9692a89dbcd1e610efe` | [archive/2026-11-04/manual-upgrade-prototype](https://github.com/yuexiaoliang/helpr/tree/archive/2026-11-04/manual-upgrade-prototype) | 09已确认v3及v1/v2历史、离线演练；2026-11-04归档并移除干净副本和分支名 |
 | `codex/participation-state-prototype` | `7d335bcbab09811804391d28c1d000de68eae9cd` | [archive/2026-10-16/participation-state-prototype](https://github.com/yuexiaoliang/helpr/tree/archive/2026-10-16/participation-state-prototype) | 停止与继续等决定已写入main，原型独立归档 |
 | `codex/research-unattended-update-credentials` | `ccf081717c50cbb17621810e7709cd077fe09b2e` | [archive/2026-10-16/unattended-update-credentials](https://github.com/yuexiaoliang/helpr/tree/archive/2026-10-16/unattended-update-credentials) | 自动安装移出首版，保留调研供后续回看 |
 | `research/helpr-model-configuration` | `4fab6200cc1f0477a3c7189ae473ea7852c2d5c8` | [archive/2026-10-16/model-configuration](https://github.com/yuexiaoliang/helpr/tree/archive/2026-10-16/model-configuration) | 接入结论已落地，原始报告独立归档 |
@@ -31,12 +34,14 @@
 
 ```sh
 git fetch origin 'refs/tags/archive/*:refs/tags/archive/*'
-git worktree add --detach ../helpr-lifecycle-archive archive/2026-10-20/lifecycle-prototype
+git worktree add --detach ../helpr-manual-upgrade-archive archive/2026-11-04/manual-upgrade-prototype
 ```
 
-06入口位于新目录的`.scratch/helpr-first-release-implementation/prototypes/lifecycle/lifecycle-prototype.html`，可直接双击。05替换标签为`archive/2026-10-20/recovery-prototype`，入口为`prototypes/recovery/recovery-prototype.html`；01–04使用核心工作区标签及`prototypes/core-workspace/`内原HTML与素材。
+09入口位于新目录的`.scratch/helpr-first-release-implementation/prototypes/manual-upgrade/manual-upgrade-prototype.html`，恢复副本后可直接双击。07、08分别替换为对应归档标签，目录为同层的`backup/`与`version-check/`。06使用生命周期标签及同层`lifecycle/`目录；05入口为`prototypes/recovery/recovery-prototype.html`；01–04使用核心工作区标签及`prototypes/core-workspace/`内原HTML与素材。
 
 2026-10-16整理前的本机完整Git备份仍按原记录保留在`.local/branch-cleanup/2026-10-16/helpr-before-branch-cleanup.bundle`，可用`git bundle verify`检查。2026-10-20的[分支清理记录](branch-cleanup-2026-10-20.json)保存删除前提交、对应归档标签与远端核对结果。
+
+2026-11-04的[分支清理记录](branch-cleanup-2026-11-04.json)保存渠道同步、已合并分支清理及07–09归档结果。三个原型另有已验证的完整本机备份`.local/branch-cleanup/2026-11-04/prototype-archive/prototypes-before-cleanup.bundle`。Git推送遇到服务端错误后，改用GitHub API保存37个文件对象、6个原始提交及3个附注标签，逐项校验文件、目录、提交和标签哈希，保持原始对象不变；只有远端归档标签解引用核对成功后才删除本地分支。网络失败和有限续传记录保存在本机归档目录，没有启动产品或网页验证。
 
 ## 06副本清理与旧附件记录
 
@@ -46,36 +51,38 @@ git worktree add --detach ../helpr-lifecycle-archive archive/2026-10-20/lifecycl
 
 ## 07 当前备份恢复原型
 
-2026-10-23按用户请求新增`backup-v1`，来源分支`codex/backup-prototype`，固定源码`9bca8026274eb0358a84a88397a3068cb053c82e`。用户已明确确认，产品实现独立编写并已进入验收；原型仍独立保留，尚未归档，不合入产品。
+2026-10-23按用户请求新增`backup-v1`，原来源分支`codex/backup-prototype`，固定源码`9bca8026274eb0358a84a88397a3068cb053c82e`。用户已明确确认，产品实现独立编写；2026-11-04原型独立归档，未合入产品。
 
-- 工作副本：`/Users/yuexiaoliang/.codex/worktrees/backup-prototype/helpr`。
-- [单文件入口](/Users/yuexiaoliang/.codex/worktrees/backup-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/backup/backup-prototype.html)，可直接双击；[范围与走查说明](/Users/yuexiaoliang/.codex/worktrees/backup-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/backup/README.md)。
+- 当前来源：`archive/2026-11-04/backup-prototype`；原工作副本已不存在，旧分支名已清理。
+- [原型HTML源码](https://github.com/yuexiaoliang/helpr/blob/archive/2026-11-04/backup-prototype/.scratch/helpr-first-release-implementation/prototypes/backup/backup-prototype.html)与[范围及走查说明](https://github.com/yuexiaoliang/helpr/blob/archive/2026-11-04/backup-prototype/.scratch/helpr-first-release-implementation/prototypes/backup/README.md)由归档标签保留；按上文恢复副本后可双击HTML。
 - 原临时内置浏览器预览已结束，原型单文件保留。
-- [07事项](../../.scratch/helpr-first-release-implementation/issues/07-local-backup-and-restore.md#原型确认)记录已确认范围与实现／验收状态。若以后移除副本，可从上述固定提交以Git恢复`.scratch/helpr-first-release-implementation/prototypes/backup/`，不依赖临时服务。
+- [07事项](../../.scratch/helpr-first-release-implementation/issues/07-local-backup-and-restore.md#原型确认)记录已确认范围与实现／验收状态。原体验路径仅作历史记录，可从归档标签恢复`.scratch/helpr-first-release-implementation/prototypes/backup/`，不依赖临时服务。
 
 本次主工作区只登记来源和范围，不合入原型HTML或其模拟逻辑。历史归档标签及05／06验收结论保持。
 
 ## 08 当前新版检查原型
 
-2026-10-23按用户“那就做吧”制作`version-check-v1`，来源分支`codex/version-check-prototype`，固定源码`23d3ecdbc345f31e44decdc3516260213b9c57c2`。用户随后明确确认并要求实现，正式代码独立编写；当前实包验收6/7，见[08报告](../testing/evidence/version-08/REPORT.md)，原型副本继续独立保留。
+2026-10-23按用户“那就做吧”制作`version-check-v1`，原来源分支`codex/version-check-prototype`，固定源码`23d3ecdbc345f31e44decdc3516260213b9c57c2`。用户随后明确确认并要求实现，正式代码独立编写；产品验收见[08报告](../testing/evidence/version-08/REPORT.md)，2026-11-04原型独立归档。
 
-- 工作副本：`/Users/yuexiaoliang/.codex/worktrees/version-check-prototype/helpr`，本聊天附属的受管工作区。
-- [单文件入口](/Users/yuexiaoliang/.codex/worktrees/version-check-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/version-check/version-check-prototype.html)，可直接双击；[范围与走查说明](/Users/yuexiaoliang/.codex/worktrees/version-check-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/version-check/README.md)。
+- 当前来源：`archive/2026-11-04/version-check-prototype`；原工作副本已不存在，旧分支名已清理。
+- [原型HTML源码](https://github.com/yuexiaoliang/helpr/blob/archive/2026-11-04/version-check-prototype/.scratch/helpr-first-release-implementation/prototypes/version-check/version-check-prototype.html)与[范围及走查说明](https://github.com/yuexiaoliang/helpr/blob/archive/2026-11-04/version-check-prototype/.scratch/helpr-first-release-implementation/prototypes/version-check/README.md)由归档标签保留；按上文恢复副本后可双击HTML。
 - 内置浏览器临时预览使用`http://127.0.0.1:4320/version-check-prototype.html`，本机服务在2026-10-23约17:14（Asia/Shanghai）独立到期；到期不影响HTML。
-- [08事项](../../.scratch/helpr-first-release-implementation/issues/08-version-check-and-download-notice.md#原型确认)记录已确认范围，包括检查频率、当前会话稍后处理和各种异常；12场景／69分步及修正证据只保存在原型分支。
-- 原型所有网络、下载和任务均为模拟；正式来源与下载策略现见[版本渠道](version-channel.md)。没有把原型合入主工作区产品代码，也没有推送该原型分支或新标签；独立元数据渠道的推送另有记录。以后移除副本时，可从固定提交恢复`.scratch/helpr-first-release-implementation/prototypes/version-check/`。
+- [08事项](../../.scratch/helpr-first-release-implementation/issues/08-version-check-and-download-notice.md#原型确认)记录已确认范围，包括检查频率、当前会话稍后处理和各种异常；12场景／69分步及修正证据保存在原型归档。
+- 原型所有网络、下载和任务均为模拟；正式来源与下载策略现见[版本渠道](version-channel.md)。原型没有合入主工作区产品代码；本次仅发布归档标签，独立元数据渠道另行维护。可从归档标签恢复`.scratch/helpr-first-release-implementation/prototypes/version-check/`。
 
 ## 09 当前手动升级原型
 
-2026-10-27按用户「那就开始做吧」制作 `manual-upgrade-v1` 初稿（`2747a993dbf64f7284834dfe0d7a185b8a3af163`）；用户随后明确选择「先继续完善和检查原型」，更新为 v2（`d7f8057deb1cda198f6947daac29d3494a79d961`）。2026-11-04 继续核对并修正为 `manual-upgrade-v3`。当前来源分支 `codex/manual-upgrade-prototype`，固定提交 `38124d1c543a508614f7e9692a89dbcd1e610efe`。用户随后明确同意按v3及09所列范围正式实现，确认记录见事项；历史版本和原型检查边界保留。
+2026-10-27按用户「那就开始做吧」制作 `manual-upgrade-v1` 初稿（`2747a993dbf64f7284834dfe0d7a185b8a3af163`）；用户随后明确选择「先继续完善和检查原型」，更新为 v2（`d7f8057deb1cda198f6947daac29d3494a79d961`）。2026-11-04 继续核对并修正为 `manual-upgrade-v3`。原来源分支 `codex/manual-upgrade-prototype`，固定提交 `38124d1c543a508614f7e9692a89dbcd1e610efe`。用户随后明确同意按v3及09所列范围正式实现，确认记录见事项；历史版本和原型检查边界保留。
 
-- 工作副本：`/Users/yuexiaoliang/.codex/worktrees/manual-upgrade-prototype/helpr`，本聊天附属受管工作区。
-- [单文件入口](/Users/yuexiaoliang/.codex/worktrees/manual-upgrade-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/manual-upgrade/manual-upgrade-prototype.html)，可直接双击；[体验、范围和阻碍](/Users/yuexiaoliang/.codex/worktrees/manual-upgrade-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/manual-upgrade/README.md)独立保留。没有运行临时网页服务。
-- [09事项](../../.scratch/helpr-first-release-implementation/issues/09-manual-upgrade-and-credential-continuity.md#原型确认)记录待确认范围；v3的22个引导场景和自由操作全为内存模拟。22场景／327离线纯状态动作及3组v2／v3反例轨迹由 `STATE-REHEARSAL.json` 保留，v2原始记录另存 `STATE-REHEARSAL-v2.json`、`CHECKS-v2.json`。v3修正外部换版在途操作、未保存文字及旧版检查被沿用的恢复问题；原文字可恢复且已保存只演练模拟成功分支。两段脚本语法和静态资源核对通过。原始 `file:` 拒绝仍保留在 `CHECKS-v1.json`；本轮只读当前浏览器清单与官方说明，未获得原拒绝已解除的依据，未再次导航。纯状态演练没有执行DOM，不替代浏览器或产品证据；交互、输入、键盘和布局均未走查，没有截图。
+- 当前来源：`archive/2026-11-04/manual-upgrade-prototype`；原工作副本`/Users/yuexiaoliang/.codex/worktrees/manual-upgrade-prototype/helpr`经核对无未提交、未跟踪或忽略文件后正常移除，旧分支名已清理。
+- [原型HTML源码](https://github.com/yuexiaoliang/helpr/blob/archive/2026-11-04/manual-upgrade-prototype/.scratch/helpr-first-release-implementation/prototypes/manual-upgrade/manual-upgrade-prototype.html)与[体验、范围和阻碍](https://github.com/yuexiaoliang/helpr/blob/archive/2026-11-04/manual-upgrade-prototype/.scratch/helpr-first-release-implementation/prototypes/manual-upgrade/README.md)由归档标签保留；按上文恢复副本后可双击HTML。没有运行临时网页服务。
+- [09事项](../../.scratch/helpr-first-release-implementation/issues/09-manual-upgrade-and-credential-continuity.md#原型确认)记录已确认范围及历史确认过程；v3的22个引导场景和自由操作全为内存模拟。22场景／327离线纯状态动作及3组v2／v3反例轨迹由 `STATE-REHEARSAL.json` 保留，v2原始记录另存 `STATE-REHEARSAL-v2.json`、`CHECKS-v2.json`。v3修正外部换版在途操作、未保存文字及旧版检查被沿用的恢复问题；原文字可恢复且已保存只演练模拟成功分支。两段脚本语法和静态资源核对通过。原始 `file:` 拒绝仍保留在 `CHECKS-v1.json`；本轮只读当前浏览器清单与官方说明，未获得原拒绝已解除的依据，未再次导航。纯状态演练没有执行DOM，不替代浏览器或产品证据；交互、输入、键盘和布局均未走查，没有截图。
 - 已关闭失败创建的自有空白标签，最终本聊天内置浏览器标签为空。没有启动正式应用、下载或安装包、访问凭据、执行迁移或写入网页，不勾选09验收，不提前解除23依赖。
-- 原型未合入产品、未推送。将来移除副本后，可从上述固定提交恢复 `.scratch/helpr-first-release-implementation/prototypes/manual-upgrade/`；无需恢复真实产品资料。
+- 原型未合入产品，本次已发布固定归档标签。可从标签恢复 `.scratch/helpr-first-release-implementation/prototypes/manual-upgrade/`；无需恢复真实产品资料。
 
 ## 09 当前正式实现
+
+2026-11-04清理已完整合入`main`的`codex/manual-upgrade`分支。原工作副本`/Users/yuexiaoliang/.codex/worktrees/manual-upgrade/helpr`固定在`5c280bc`并切为detached HEAD，忽略的验证资料完整保留。下文为当时的整合及验证记录，当前最终验收另见[09最终验收](../testing/evidence/upgrade-09/FINAL-ACCEPTANCE.md)。
 
 2026-10-27，正式实现单独保存在 `codex/manual-upgrade`，受管工作副本为 `/Users/yuexiaoliang/.codex/worktrees/manual-upgrade/helpr`。基点 `246eabe`，产品实现及修正为 `04472bf`、`7ece508`、`852e7c3`。2026-11-04 在用户批准v3后核对出这份尚未合入的历史实现，按固定提交 `5c280bc` 整合到主工作区 `main`，同时保留v3确认及历史失败。原型HTML和模拟代码未合入产品，未推送或发布。
 

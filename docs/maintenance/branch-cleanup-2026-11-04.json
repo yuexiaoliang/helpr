@@ -1,0 +1,109 @@
+{
+  "checkedAt": "2026-11-04T18:07:20.473275+08:00",
+  "userRequests": [
+    "同步本地 codex/updates-stable，再清理已经合并和重复的分支",
+    "那把三个原型分支也归档后清理掉吧。"
+  ],
+  "channelSync": {
+    "branch": "codex/updates-stable",
+    "before": "3d3b97a4508f206f6fd99eca32945069ec27afc1",
+    "after": "0d03f1b3b4d712259f5cc43881ea739ee2f7cba9",
+    "upstream": "origin/codex/updates-stable"
+  },
+  "removedMergedOrDuplicateLocalBranches": [
+    {
+      "branch": "codex/manual-upgrade",
+      "commit": "5c280bcd10a0a920f71787f042180512eb836f46"
+    },
+    {
+      "branch": "codex/updates-0.2.2",
+      "commit": "0d03f1b3b4d712259f5cc43881ea739ee2f7cba9"
+    }
+  ],
+  "removedRemoteBranches": [
+    {
+      "branch": "codex/preview-0.2.2",
+      "commit": "3c8d98612b09046c5cb7918e9b42e3eef29db897",
+      "preservedTag": "v0.2.2"
+    }
+  ],
+  "archivedLocalBranches": [
+    {
+      "branch": "codex/backup-prototype",
+      "commit": "9bca8026274eb0358a84a88397a3068cb053c82e",
+      "archiveTag": "archive/2026-11-04/backup-prototype",
+      "tagObject": "5a7aff955af231eeaa448b8fa188010fe5f41cd2",
+      "remotePeeledCommitVerified": true
+    },
+    {
+      "branch": "codex/version-check-prototype",
+      "commit": "23d3ecdbc345f31e44decdc3516260213b9c57c2",
+      "archiveTag": "archive/2026-11-04/version-check-prototype",
+      "tagObject": "a3b395a72fa7c1a5b8dfc816055656182cc2a2b9",
+      "remotePeeledCommitVerified": true
+    },
+    {
+      "branch": "codex/manual-upgrade-prototype",
+      "commit": "38124d1c543a508614f7e9692a89dbcd1e610efe",
+      "archiveTag": "archive/2026-11-04/manual-upgrade-prototype",
+      "tagObject": "f3859dd9fd12f5ef92dd7f564b9a507b46f6f474",
+      "remotePeeledCommitVerified": true
+    }
+  ],
+  "remainingLocalBranches": [
+    "main",
+    "codex/updates-stable"
+  ],
+  "remoteBranchesObserved": [
+    {
+      "commit": "0d03f1b3b4d712259f5cc43881ea739ee2f7cba9",
+      "name": "codex/updates-stable"
+    },
+    {
+      "commit": "2d94af7f1ab4fa83b8cf675d323c6534d1794049",
+      "name": "main"
+    }
+  ],
+  "mainPushPerformed": false,
+  "newArchiveTagsPublished": [
+    "archive/2026-11-04/backup-prototype",
+    "archive/2026-11-04/version-check-prototype",
+    "archive/2026-11-04/manual-upgrade-prototype"
+  ],
+  "allArchiveObjectHashesUnchanged": true,
+  "archivePublishingMethod": "GitHub API：保留37个文件对象、6个原始提交及3个附注标签的全部原始哈希",
+  "localDeletionMethod": "Compare-and-delete exact branch refs in one Git ref transaction after remote tag verification",
+  "localBundle": ".local/branch-cleanup/2026-11-04/prototype-archive/prototypes-before-cleanup.bundle",
+  "bundleContainsCompleteHistory": true,
+  "restorationVerification": [
+    {
+      "tag": "archive/2026-11-04/backup-prototype",
+      "filesRestored": 9,
+      "allBlobHashesMatched": true
+    },
+    {
+      "tag": "archive/2026-11-04/version-check-prototype",
+      "filesRestored": 14,
+      "allBlobHashesMatched": true
+    },
+    {
+      "tag": "archive/2026-11-04/manual-upgrade-prototype",
+      "filesRestored": 7,
+      "allBlobHashesMatched": true
+    }
+  ],
+  "removedWorktrees": [
+    "/Users/yuexiaoliang/.codex/worktrees/manual-upgrade-prototype/helpr"
+  ],
+  "removedWorktreeHadUncommittedUntrackedOrIgnoredFiles": false,
+  "preservedImplementationWorktree": {
+    "path": "/Users/yuexiaoliang/.codex/worktrees/manual-upgrade/helpr",
+    "commit": "5c280bcd10a0a920f71787f042180512eb836f46",
+    "headMode": "detached",
+    "ignoredValidationFilesPreserved": true
+  },
+  "detailedLocalLogs": [
+    ".local/branch-cleanup/2026-11-04/f7b6cc7d/cleanup.json",
+    ".local/branch-cleanup/2026-11-04/prototype-archive/archive.json"
+  ]
+}

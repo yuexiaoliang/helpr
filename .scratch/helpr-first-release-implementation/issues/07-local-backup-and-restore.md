@@ -20,6 +20,7 @@ User stories: 2、52、56–57
 ## 原型确认
 
 - 状态：已确认。
+- 归档与恢复：2026-11-04已发布`archive/2026-11-04/backup-prototype`并核对远端原始提交，旧分支及副本已清理。下列体验路径保留为历史记录，当前恢复入口见[分支索引](../../../docs/maintenance/branch-archive.md#07-当前备份恢复原型)；归档不改变确认范围或验收结论。
 - 原型：`backup-v1`，2026-10-23；来源分支 `codex/backup-prototype`，固定源码提交 `9bca8026274eb0358a84a88397a3068cb053c82e`。原内置浏览器临时预览已结束；[可直接双击的单文件原型](/Users/yuexiaoliang/.codex/worktrees/backup-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/backup/backup-prototype.html)、[范围与体验说明](/Users/yuexiaoliang/.codex/worktrees/backup-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/backup/README.md)。恢复来源与当前工作副本见[分支索引](../../../docs/maintenance/branch-archive.md#07-当前备份恢复原型)。
 - 覆盖范围：当前已有任务、意图、动作及必要证据的本机备份入口；位置、内容清单与凭据／登录排除说明；检查后保留当前资料、切换、逐任务核对与选择继续；较新停止、目标修改和已有网站结果不被旧资料无声覆盖；无较新本机记录、缺模型设置或登录、结果不明、损坏／不兼容／缺文件、空间不足、当前资料保留失败、慢备份时停止、保存后回执丢失和记录／恢复中断等交互。共 12 个引导场景，并提供自由操作和完整状态。
 - 模拟边界：全部文件、版本、清单、完整性、记录进程、登录、模型设置和网站结果均为内存模拟，没有读取真实资料、产生业务备份或调用模型／网站。恢复中断演练限定为切换未完成、当前资料副本已保留的路径。流程、真实素材版本与定时计划随后续事项扩充；真实数据库、迁移／中断、凭据排除、结果核对和完整恢复验收仍按原验收条件取证。浏览器走查不作为正式产品通过，未开始 07 实现。

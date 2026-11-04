@@ -20,6 +20,7 @@ User stories: 2–3、58、63–64
 ## 原型确认
 
 - 状态：已确认。
+- 归档与恢复：2026-11-04已发布`archive/2026-11-04/manual-upgrade-prototype`并核对远端原始提交，旧分支及副本已清理。下列体验路径保留为历史记录，当前恢复入口见[分支索引](../../../docs/maintenance/branch-archive.md#09-当前手动升级原型)；v1/v2历史及v3原型确认、检查边界均保留。
 - 原型：`manual-upgrade-v3`，2026-11-04；独立分支 `codex/manual-upgrade-prototype`，固定提交 `38124d1c543a508614f7e9692a89dbcd1e610efe`。v2（`d7f8057`）、v1（`2747a99`）及原检查记录保留。[可直接双击的单文件原型](/Users/yuexiaoliang/.codex/worktrees/manual-upgrade-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/manual-upgrade/manual-upgrade-prototype.html)、[范围与体验说明](/Users/yuexiaoliang/.codex/worktrees/manual-upgrade-prototype/helpr/.scratch/helpr-first-release-implementation/prototypes/manual-upgrade/README.md)。来源及恢复方法见[分支索引](../../../docs/maintenance/branch-archive.md#09-当前手动升级原型)。内置浏览器走查仍受阻，没有临时网页预览服务。
 - 覆盖范围：升级准备与新派发协调、处理在途动作及未保存网页文字、保存任务与草稿、业务资料备份、主动退出、用户手动换版、新版资料／状态格式与迁移／原密钥／原有效登录／原生输入和控制检查、逐任务实际结果核对与原意图恢复；演练保存／备份失败、准备中较新停止或草稿变化、取消准备或安装、系统授权取消、凭据与有效登录缺失、登录真实到期、迁移失败／中断、错误来源／架构／安装包、资料不兼容、未知结果及外部强行换版。共22个引导场景及自由操作，全部为内存模拟；v2增加双任务网页文字分别处理及较新停止使旧核对失效；v3增加外部换版后原操作仍在途、原网页文字待处理、新包不能沿用旧版成功检查的演练。原文字确实可恢复并保存是模拟的成功分支，不承诺外部强行终止后能找回未保存网页文字。
 - 确认记录：2026-11-04 用户明确确认：「同意按 v3 及 09 所列范围正式实现，开始吧。」本次确认适用于 `38124d1` 的 v3 及上述09覆盖范围，据此开始正式实现。此前制作、检查及继续的指令保留原意；原型离线演练和本次批准不替代真实两版换装、原凭据／有效登录延续或其它产品验收。
