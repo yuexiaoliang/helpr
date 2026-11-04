@@ -9,23 +9,27 @@ import { validationRoot } from './workspace-budget.mjs';
 
 // 只用旧实包留下的数据库副本及现有签名包；不启动、安装或重签应用。
 const mode = process.argv[2];
-assert(['--check', '--run', '--static', '--worker'].includes(mode) && process.argv.length === 3, 'EXPLICIT_MODE_REQUIRED');
+assert(['--check', '--run', '--run-current', '--static', '--worker'].includes(mode) && process.argv.length === 3, 'EXPLICIT_MODE_REQUIRED');
 if (mode === '--worker') assert(process.send && process.env.HELPR_OFFLINE_ROOT, 'OWNED_WORKER_REQUIRED');
 assert(process.platform === 'darwin' && process.arch === 'arm64', 'TARGET_MAC_REQUIRED');
 const budgetFile = path.join(validationRoot, 'budget.json');
 const initialBudget = fs.readFileSync(budgetFile);
 const budget = JSON.parse(initialBudget);
-const profile = budget.upgrade09.run.profile;
+const refreshed = mode === '--run-current' || process.env.HELPR_OFFLINE_SOURCE === 'refreshed36';
+const refreshedReport = refreshed ? JSON.parse(fs.readFileSync(path.join(validationRoot,'upgrade09-legacy-refresh/result.json'))) : null;
+if(refreshed) assert(refreshedReport.passed && refreshedReport.sourceBuild===36 && refreshedReport.exit.code===0 && refreshedReport.remaining.length===0,'REAL_REFRESHED_LEGACY_REQUIRED');
+const profile = refreshed ? refreshedReport.profile : budget.upgrade09.run.profile;
 const profileRoot = `/private/tmp/helpr-workspace-validation-${process.getuid()}`;
 assert.equal(fs.realpathSync(profileRoot), profileRoot, 'REAL_VALIDATION_ROOT_REQUIRED');
 assert(profile.startsWith(profileRoot + '/upgrade09-') && fs.realpathSync(profile) === profile, 'REAL_OLD_PROFILE_REQUIRED');
-const baselineFile = path.join(budget.upgrade09.run.root, 'old-baseline.json');
-const sources = fs.readdirSync(profile).filter(file => /^workspace-before-upgrade-09-.*\.sqlite$/.test(file));
+const baselineFile = path.join(refreshed ? refreshedReport.root : budget.upgrade09.run.root, 'old-baseline.json');
+const sources = refreshed ? ['workspace.sqlite'] : fs.readdirSync(profile).filter(file => /^workspace-before-upgrade-09-.*\.sqlite$/.test(file));
 assert.equal(sources.length, 1, 'ONE_REAL_OLD_DATABASE_REQUIRED');
-const original = path.join(profile, sources[0]);
+const original = refreshed ? path.join(refreshedReport.root,'source-format6/workspace.sqlite') : path.join(profile, sources[0]);
 assert(fs.lstatSync(original).isFile() && fs.realpathSync(original) === original, 'REAL_OLD_DATABASE_REQUIRED');
-const candidate = JSON.parse(fs.readFileSync(path.join(validationRoot, 'build-37.json')));
-assert(candidate.prepared && candidate.build === 37, 'FIXED_CANDIDATE_REQUIRED');
+const candidateNumber=refreshed ? 41 : 37;
+const candidate = JSON.parse(fs.readFileSync(path.join(validationRoot, `build-${candidateNumber}.json`)));
+assert(candidate.prepared && candidate.build === candidateNumber, 'FIXED_CANDIDATE_REQUIRED');
 const digest = file => createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 const originalHash = digest(original);
 const packageResource = path.join(candidate.app, 'Contents/Resources/app.asar');
@@ -35,7 +39,7 @@ if (mode === '--check') {
   process.exit(0);
 }
 // 独立父进程不导入SQLite，监督可能同步阻塞的worker及其同组子进程。
-if (mode === '--run' || mode === '--static') {
+if (mode === '--run' || mode === '--run-current' || mode === '--static') {
   const root = fs.mkdtempSync(profileRoot + '/upgrade09-offline-');
   assert.equal(fs.realpathSync(root), root);
   const codeParent = path.resolve('.local/upgrade09-offline-code');
@@ -47,7 +51,7 @@ if (mode === '--run' || mode === '--static') {
   const log = fs.openSync(path.join(root, 'worker.log'), 'wx', 0o600);
   const worker = fork(path.resolve('scripts/verify-upgrade-offline.mjs'), ['--worker'], {
     detached: true, stdio: ['ignore', log, log, 'ipc'],
-    env: { ...process.env, HELPR_OFFLINE_ROOT: root, HELPR_OFFLINE_CODE: codeRoot, HELPR_OFFLINE_DEADLINE: String(deadline), HELPR_OFFLINE_SCOPE: mode === '--static' ? 'static' : 'all' },
+    env: { ...process.env, HELPR_OFFLINE_ROOT: root, HELPR_OFFLINE_CODE: codeRoot, HELPR_OFFLINE_DEADLINE: String(deadline), HELPR_OFFLINE_SCOPE: mode === '--static' ? 'static' : 'all', HELPR_OFFLINE_SOURCE: refreshed ? 'refreshed36' : 'original' },
   });
   fs.closeSync(log);
   const supervisor = { started, deadline, worker: worker.pid, passed: false, signals: [] };
@@ -114,7 +118,7 @@ assert(codeRoot.startsWith(path.resolve('.local/upgrade09-offline-code') + '/') 
 const report = {
   scope: process.env.HELPR_OFFLINE_SCOPE === 'static' ? 'static codesign only; no application launch or migration' : 'Node source entry + real format-6 database copy + static codesign; no Electron or system authorization',
   started: Date.now(), deadline: Number(process.env.HELPR_OFFLINE_DEADLINE), sourceDatabaseSha256: originalHash,
-  candidate: 37, appStarts: 0, installs: 0, applicationBuilds: 0, signing: 0,
+  candidate: candidateNumber, source:refreshed ? 'actual candidate36 start116 refreshed format6' : 'original format6 backup', appStarts: 0, installs: 0, applicationBuilds: 0, signing: 0,
   realModels: 0, remoteWrites: 0, sourceRecordProcessInterruptions: 0, cases: [], passed: false,
 };
 let child, childExit, reader;
@@ -157,6 +161,8 @@ try {
   const { WorkspaceRecords, verifyPackageIdentity } = createRequire(import.meta.url)(entry);
   const Database = createRequire(import.meta.url)('better-sqlite3');
   const migrations = path.resolve('app/records/migrations');
+  const lockProbe=path.join(codeRoot,'sqlite-lock-probe');
+  if(process.env.HELPR_OFFLINE_SCOPE!=='static')execFileSync('/usr/bin/clang',['-Wall','-Werror','-O2',path.resolve('scripts/upgrade-sqlite-lock.c'),'-o',lockProbe],{stdio:'pipe',timeout:30000});
   const expected = JSON.parse(fs.readFileSync(baselineFile)).tasks;
   function facts(snapshot) {
     return snapshot.tasks.map(t => [t.id, t.goal, t.draft, t.messages.map(m => ({ role: m.role, text: m.text })), t.execution?.intent ?? null, t.execution?.phase ?? null]);
@@ -217,7 +223,11 @@ try {
     reader.exec('BEGIN; SELECT * FROM workspace;');
     const stderr = fs.openSync(path.join(folder, 'stderr.log'), 'wx', 0o600);
     try {
-      child = fork(path.join(codeRoot, 'records.cjs'), [folder, migrations, '--workspace-validation'], { stdio: ['ignore', 'ignore', stderr, 'ipc'] });
+      child = fork(path.join(codeRoot, 'records.cjs'), [folder, migrations, '--workspace-validation'], {
+        stdio: ['ignore', 'ignore', stderr, 'ipc'],
+        execArgv: ['--require', path.resolve('scripts/upgrade-migration-observer.cjs')],
+        env: { ...process.env, HELPR_MIGRATION_OBSERVER: folder },
+      });
     } finally { fs.closeSync(stderr); }
     childExit = new Promise(resolve => { child.once('exit', (code, signal) => resolve({ code, signal })); child.once('error', error => resolve({ error: error.message })); });
     const identities = ps().split('\n').filter(line => +line.trim().split(/\s+/)[0] === child.pid);
@@ -227,15 +237,18 @@ try {
     child.on('message', input => { if (input.ready) ready = true; });
     const journal = path.join(folder, 'workspace.sqlite-journal');
     const limit = Date.now() + 2500;
-    let pendingCommit = false;
+    let pendingCommit = false, pendingLock;
     while (Date.now() < limit && child.exitCode === null && child.signalCode === null) {
-      if (fs.existsSync(journal) && fs.statSync(journal).size > 512) {
-        try { read(folder, 'SELECT schema_version FROM workspace'); }
-        catch (error) { if (error.code === 'SQLITE_BUSY') { pendingCommit = true; break; } else throw error; }
+      if (fs.existsSync(path.join(folder, 'migration-commit.json')) && fs.existsSync(journal) && fs.statSync(journal).size > 512) {
+        pendingLock=JSON.parse(execFileSync(lockProbe,[path.join(folder,'workspace.sqlite')],{encoding:'utf8',timeout:1000}));
+        if(pendingLock.writer && pendingLock.pid===child.pid && pendingLock.start===0x40000000){pendingCommit=true;break;}
       }
       await delay(10);
     }
     assert(pendingCommit && !ready, 'MIGRATION_PENDING_COMMIT_NOT_PROVEN');
+    const commitReceipt = JSON.parse(fs.readFileSync(path.join(folder, 'migration-commit.json')));
+    assert.equal(commitReceipt.pid, child.pid);
+    assert.equal(commitReceipt.stage, 'migration-commit-entered');
     const journalBytes = fs.statSync(journal).size;
     report.sourceRecordProcessInterruptions++;
     child.kill('SIGKILL');
@@ -243,10 +256,10 @@ try {
     assert.equal(exit.signal, 'SIGKILL');
     reader.exec('ROLLBACK'); reader.close(); reader = null;
     migrate(folder);
-    return { pendingCommitProvenByIndependentBusyRead: true, journalBytes, readyBeforeInterruption: ready, exit, recoveredWithFrozenMigration: true };
+    return { commitReceipt, pendingLock, pendingCommitProvenByIndependentOSLock: true, journalBytes, readyBeforeInterruption: ready, exit, recoveredWithFrozenMigration: true };
   });
   }
-  await check('现有37签名有效，系统TextEdit被公开包身份入口拒绝', async () => {
+  await check(`现有${candidateNumber}签名有效，系统TextEdit被公开包身份入口拒绝`, async () => {
     const identity = await verifyPackageIdentity(candidate.app);
     await assert.rejects(verifyPackageIdentity('/System/Applications/TextEdit.app'), { message: 'UPGRADE_PACKAGE_UNVERIFIED' });
     return { identity, wrongIdentifierRejected: true };

@@ -1,0 +1,134 @@
+{
+  "scope": "actual old36 format6; final signed41 actual migration; Node exact commit interruption and immutable migration failure copies",
+  "legacy": {
+    "build": 36,
+    "start": 116,
+    "hash": "c75cf7c671e4c95da0fb7cd519c8b8716ac7428aad91d684955f729ecf4dff7f",
+    "exit": {
+      "code": 0,
+      "signal": null
+    },
+    "remaining": [],
+    "tasks": 2
+  },
+  "finalPackage": {
+    "build": 41,
+    "start": 117,
+    "originalTaskFactsMatched": true,
+    "nativeInputAvailable": true,
+    "switches": {
+      "port": false,
+      "pipe": true,
+      "inspect": false
+    },
+    "exit": {
+      "code": 0,
+      "signal": null
+    },
+    "remaining": []
+  },
+  "offline": {
+    "sourceDatabaseSha256": "c75cf7c671e4c95da0fb7cd519c8b8716ac7428aad91d684955f729ecf4dff7f",
+    "passed": true,
+    "cases": [
+      {
+        "name": "真实旧库按冻结迁移到7，原任务、对话、中文草稿与停止逐值相同",
+        "started": 1793777240115,
+        "passed": true,
+        "tasksCompared": 2,
+        "independentOldBackup": true,
+        "reopened": true,
+        "ended": 1793777240177
+      },
+      {
+        "name": "不兼容的format明确拒绝且不清空资料",
+        "started": 1793777240177,
+        "passed": true,
+        "code": "DATA_VERSION_UNSUPPORTED",
+        "rejectedCopyUnchanged": true,
+        "ended": 1793777240179
+      },
+      {
+        "name": "不兼容的state明确拒绝且不清空资料",
+        "started": 1793777240179,
+        "passed": true,
+        "code": "STATE_MODEL_UNSUPPORTED",
+        "rejectedCopyUnchanged": true,
+        "ended": 1793777240182
+      },
+      {
+        "name": "旧库遇到故意破坏的迁移SQL时回滚，保留旧副本并可用冻结迁移恢复",
+        "started": 1793777240182,
+        "passed": true,
+        "injectedFault": "invalid SQL only in disposable migration copy",
+        "rollback": true,
+        "recoveredWithFrozenMigration": true,
+        "ended": 1793777240240
+      },
+      {
+        "name": "真实冻结迁移提交受读锁阻挡时中断自有Node记录进程，再开保留原事实",
+        "started": 1793777240240,
+        "passed": true,
+        "commitReceipt": {
+          "stage": "migration-commit-entered",
+          "pid": 35755,
+          "at": 1793777240381
+        },
+        "pendingLock": {
+          "writer": true,
+          "pid": 35755,
+          "start": 1073741824,
+          "length": 2
+        },
+        "pendingCommitProvenByIndependentOSLock": true,
+        "journalBytes": 12824,
+        "readyBeforeInterruption": false,
+        "exit": {
+          "code": null,
+          "signal": "SIGKILL"
+        },
+        "recoveredWithFrozenMigration": true,
+        "ended": 1793777240919
+      },
+      {
+        "name": "现有41签名有效，系统TextEdit被公开包身份入口拒绝",
+        "started": 1793777240919,
+        "passed": true,
+        "identity": {
+          "platform": "darwin",
+          "arch": "arm64",
+          "identifier": "local.helpr.desktop",
+          "requirement": "bd4d1621955c08b7de8b2ebde339eded305e34cc1193b4dfb234254d2ca91ff5"
+        },
+        "wrongIdentifierRejected": true,
+        "ended": 1793777243025
+      },
+      {
+        "name": "破坏签名包的隔离克隆后拒绝，原包保持原哈希",
+        "started": 1793777243025,
+        "passed": true,
+        "damagedSealRejected": true,
+        "originalPackageUnchanged": true,
+        "cloneNotLaunched": true,
+        "ended": 1793777245515
+      }
+    ],
+    "sourceRecordProcessInterruptions": 1,
+    "remaining": []
+  },
+  "preservedFailure": {
+    "error": "MIGRATION_PENDING_COMMIT_NOT_PROVEN",
+    "cleanup": {
+      "pid": 35690,
+      "signal": "SIGKILL",
+      "sent": true,
+      "exit": {
+        "code": null,
+        "signal": "SIGKILL"
+      }
+    },
+    "remaining": [],
+    "reason": "Same-process independent SQLite connection did not prove pending commit; new trace plus separate F_GETLK process proves it."
+  },
+  "limits": "No referenced material in current issue09 dataset; future12–14 and23 matrix retained. SIGKILL is not power loss."
+}

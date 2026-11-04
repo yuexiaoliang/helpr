@@ -1,0 +1,258 @@
+{
+  "scope": "packaged local fixtures; no real credential/login, IME, sleep or power-loss acceptance",
+  "build": 41,
+  "archive": "34942bc963c341cc9a1a8a89bc12582e9eed79afdb2558c4f7d05c2848fe82cb",
+  "certificateSha256": "5bd4c2c1f28a99910837bb31ba404f3043378c54463bdc8a8bdf04ce75d2f119",
+  "starts": [
+    {
+      "start": 119,
+      "pid": 37937,
+      "duplicate": false,
+      "at": 1793777687070,
+      "nativeUI": {
+        "stage": "before-interrupt",
+        "start": 119,
+        "hostPid": 37942,
+        "hostApp": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/upgrade09-final-migration/helpr.app/Contents/Frameworks/helpr Workspace.app",
+        "source": "cua-native-window",
+        "title": "helpr",
+        "observedAt": 1793777715081,
+        "evidence": "CUA actual A website one write while still executing, B stopped with zero writes; native paste into B actual website textarea succeeded without resuming stopped task.",
+        "confirmedAt": 1793777722590
+      },
+      "exit": {
+        "code": null,
+        "signal": "SIGKILL"
+      },
+      "pids": [
+        37937,
+        37938,
+        37939,
+        37940,
+        37941,
+        37942,
+        37947,
+        37948,
+        37949,
+        37950,
+        37951,
+        37954,
+        37955,
+        37956,
+        37957
+      ],
+      "groups": [
+        37937,
+        37940,
+        37942
+      ],
+      "remaining": []
+    },
+    {
+      "start": 120,
+      "pid": 38019,
+      "duplicate": false,
+      "at": 1793777722814,
+      "nativeUI": {
+        "stage": "recovered",
+        "start": 120,
+        "hostPid": 38025,
+        "hostApp": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/upgrade09-final-migration/helpr.app/Contents/Frameworks/helpr Workspace.app",
+        "source": "cua-native-window",
+        "title": "helpr",
+        "observedAt": 1793777740294,
+        "evidence": "CUA actual cold reopened final41: task A complete, actual website one write; task B stopped; interrupted model response visibly retained as unknown consumption, not resent.",
+        "confirmedAt": 1793777746569
+      },
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "pids": [
+        38019,
+        38021,
+        38022,
+        38023,
+        38024,
+        38025,
+        38030,
+        38031,
+        38032,
+        38033,
+        38034,
+        38035,
+        38036,
+        38037,
+        38038,
+        38105,
+        38106,
+        38107
+      ],
+      "groups": [
+        38019,
+        38023,
+        38025
+      ],
+      "remaining": []
+    },
+    {
+      "start": 121,
+      "pid": 38086,
+      "duplicate": true,
+      "at": 1793777746572,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "pids": [
+        38086,
+        38096,
+        38097
+      ],
+      "groups": [],
+      "remaining": []
+    },
+    {
+      "start": 122,
+      "pid": 38115,
+      "duplicate": false,
+      "at": 1793777748143,
+      "nativeUI": {
+        "stage": "final",
+        "start": 122,
+        "hostPid": 38121,
+        "hostApp": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/upgrade09-final-migration/helpr.app/Contents/Frameworks/helpr Workspace.app",
+        "source": "cua-native-window",
+        "title": "helpr",
+        "observedAt": 1793777758455,
+        "evidence": "CUA final cold reopen: A complete, B stopped, C completed actual one write; interrupted response usage remains unknown, no resend of completed A.",
+        "confirmedAt": 1793777769820
+      },
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "pids": [
+        38115,
+        38117,
+        38118,
+        38119,
+        38120,
+        38121,
+        38126,
+        38127,
+        38128,
+        38129,
+        38130,
+        38131,
+        38132,
+        38133,
+        38134,
+        38135,
+        38136
+      ],
+      "groups": [
+        38115,
+        38119,
+        38121
+      ],
+      "remaining": []
+    }
+  ],
+  "faults": [
+    {
+      "pid": 37941,
+      "signal": "SIGSTOP",
+      "label": "records-unresponsive",
+      "at": 1793777722596
+    },
+    {
+      "pid": 37937,
+      "signal": "SIGKILL",
+      "label": "owner-exits-with-effect-unrecorded",
+      "at": 1793777722598
+    },
+    {
+      "pid": 38024,
+      "signal": "SIGKILL",
+      "label": "record-process-exits-during-quit-checkpoint",
+      "at": 1793777747441
+    }
+  ],
+  "effects": [
+    {
+      "name": "A",
+      "count": 1,
+      "at": 1793777689638
+    },
+    {
+      "name": "C",
+      "count": 1,
+      "at": 1793777749804
+    }
+  ],
+  "counts": {
+    "A": 1,
+    "B": 0,
+    "C": 1
+  },
+  "models": [
+    {
+      "at": 1793777689254,
+      "name": "A",
+      "count": 0
+    },
+    {
+      "at": 1793777689696,
+      "name": "A",
+      "count": 1
+    },
+    {
+      "at": 1793777724227,
+      "name": "A",
+      "count": 1
+    },
+    {
+      "at": 1793777747362,
+      "name": "C",
+      "count": 0
+    },
+    {
+      "at": 1793777749431,
+      "name": "C",
+      "count": 0
+    },
+    {
+      "at": 1793777749867,
+      "name": "C",
+      "count": 1
+    }
+  ],
+  "checks": [
+    "owned-tree-cleared-37937",
+    "one-effect-after-cold-recovery",
+    "original-stop-retained",
+    "owned-tree-cleared-38086",
+    "competing-start-exits-without-new-owner",
+    "exit-failure-retains-application",
+    "new-record-process",
+    "owned-tree-cleared-38019",
+    "only-remaining-work-written-once",
+    "owned-tree-cleared-38115"
+  ],
+  "passed": true,
+  "global": {
+    "builds": 41,
+    "installs": 18,
+    "starts": 122,
+    "faults": 45,
+    "cleanups": 18
+  },
+  "preservedFailure": {
+    "start": 118,
+    "reason": "validator rejected show command before any model/task/effect; normal exit0; corrected show allowlist",
+    "prelaunchFollowupError": "missing profile metadata; no new application start, empty folder archived"
+  },
+  "realModels": 0,
+  "remoteBusinessWrites": 0
+}

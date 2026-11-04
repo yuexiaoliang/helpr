@@ -1,0 +1,156 @@
+{
+  "scope": "current Mac, fixed self-signed candidate41 authorization regression; not all issue09",
+  "source": "3c8d986",
+  "build": 41,
+  "version": "0.2.2",
+  "asarSha256": "34942bc963c341cc9a1a8a89bc12582e9eed79afdb2558c4f7d05c2848fe82cb",
+  "cancellation": {
+    "at": 1793776058327,
+    "start": 112,
+    "build": 41,
+    "passed": true,
+    "cookieRows": 1,
+    "cookieDigestUnchanged": true,
+    "settingsUnchanged": true,
+    "noWebsiteRequests": true,
+    "userReported": "已拒绝／取消这次授权",
+    "protectionNoticeVisible": true
+  },
+  "authorization": {
+    "build": 41,
+    "priorResultPassed": false,
+    "priorResultSha256": "df8f8e04b0b6ee2f83cb6b1e1423b63a524fe6027d06a9e4cb96ba864a7bce14",
+    "started": 1793775967732,
+    "steps": [
+      {
+        "stage": "denied",
+        "start": 112,
+        "observedAt": 1793776058439,
+        "operatorObservation": "User cancelled system prompt; CUA protection unavailable notice; original Cookie row and encrypted digest unchanged; model configuration unchanged; zero website requests."
+      },
+      {
+        "stage": "persistent",
+        "start": 113,
+        "observedAt": 1793776245979,
+        "operatorObservation": "User selected always allow; CUA original website login and original-key connection succeeded. Metadata lists main hash, not host hash; that diagnostic expectation was not met, so no claim both partitions persisted. Actual cold reopen still required. Initial model UI call timed out awaiting user authorization; one explicit retry after user completion succeeded."
+      },
+      {
+        "stage": "cold",
+        "start": 115,
+        "observedAt": 1793776928269,
+        "operatorObservation": "Same installed build41 cold start115 after both main and workspace persistent approvals: user explicitly reports no prompt again. CUA responsive real window, original-key model connection succeeded with no key entry; both original website sessions authenticated, original drafts and stopped states preserved. No approval handoff or login on this start."
+      }
+    ],
+    "correction": {
+      "start": 114,
+      "reason": "first persistent approval saved only main identity; user then persisted remaining workspace identity",
+      "receiptSha256": "1de59c74d10e8bec3a0382af097ee94c1933f7fdaf117ccffb91b85fc20160fb",
+      "priorResultSha256": "65bf0ddcdcbd790e82307d5cd5f42b60b3cc08440d4cfbc075cc9bf3f5d2b67d"
+    }
+  },
+  "cold": {
+    "start": 115,
+    "exit": {
+      "code": 0,
+      "signal": null
+    },
+    "remaining": [],
+    "models": [
+      {
+        "at": 1793776817478,
+        "start": 115,
+        "method": "GET",
+        "path": "/v1/models",
+        "originalKeyMatched": true
+      }
+    ],
+    "pages": [
+      {
+        "at": 1793776574167,
+        "name": "A",
+        "start": 115,
+        "authenticated": true,
+        "expires": 1793779107
+      },
+      {
+        "at": 1793776574234,
+        "name": "B",
+        "start": 115,
+        "authenticated": true,
+        "expires": 1793779107
+      }
+    ],
+    "logins": 1
+  },
+  "preservedFailures": [
+    {
+      "start": 111,
+      "code": "COOKIE_DELETED_AFTER_AUTHORIZATION_CANCEL",
+      "restorationNotAcceptance": true
+    },
+    {
+      "start": 114,
+      "code": "SAME_PACKAGE_AUTHORIZATION_PROMPT_REPEATED",
+      "correctedBy": "User persisted remaining workspace identity; both partitions listed before115"
+    }
+  ],
+  "starts": [
+    {
+      "start": 111,
+      "build": 40,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "remaining": [],
+      "normalCleanup": true
+    },
+    {
+      "start": 112,
+      "build": 41,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "remaining": [],
+      "normalCleanup": true
+    },
+    {
+      "start": 113,
+      "build": 41,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "remaining": [],
+      "normalCleanup": true
+    },
+    {
+      "start": 114,
+      "build": 41,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "remaining": [],
+      "normalCleanup": true
+    },
+    {
+      "start": 115,
+      "build": 41,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "remaining": [],
+      "normalCleanup": true
+    }
+  ],
+  "counts": {
+    "A": 2,
+    "B": 1
+  },
+  "realModels": 0,
+  "remoteBusinessWrites": 0,
+  "passed": true
+}

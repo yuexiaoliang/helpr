@@ -13,9 +13,10 @@ import { openUpgradeFixture, confirmUpgradeUI, requireUpgradeNativePreflight, re
 
 // 同一受管入口持有全部应用、服务与四次启动；产品交互交由CUA。
 const mode = process.argv.slice(2).join(' ');
-assert(['--check', '--preflight', '--run', '--after-97', '--check-after-97', '--v3-check', '--v3-preflight', '--v3-run', '--v3-check-after101', '--v3-after101', '--repair-check', '--repair-preflight', '--repair-run', '--repair-resume', '--repair-replace40', '--repair-resume40', '--repair-auth40', '--repair-auth41'].includes(mode), 'EXPLICIT_MODE_REQUIRED');
+assert(['--check', '--preflight', '--run', '--after-97', '--check-after-97', '--v3-check', '--v3-preflight', '--v3-run', '--v3-check-after101', '--v3-after101', '--repair-check', '--repair-preflight', '--repair-run', '--repair-resume', '--repair-replace40', '--repair-resume40', '--repair-auth40', '--repair-auth41', '--repair-auth41-resume'].includes(mode), 'EXPLICIT_MODE_REQUIRED');
 const repair = mode.startsWith('--repair-');
-const auth41 = mode === '--repair-auth41';
+const auth41Resume = mode === '--repair-auth41-resume';
+const auth41 = mode === '--repair-auth41' || auth41Resume;
 const auth40 = mode === '--repair-auth40' || auth41;
 const repairReplace40 = mode === '--repair-replace40';
 const repair40 = repairReplace40 || mode === '--repair-resume40' || auth40;
@@ -65,9 +66,10 @@ if (!repairResume) assert(budget.used.starts === (repair ? 103 : next ? after101
 assert(continuation ? fs.existsSync(batchFile) && fs.existsSync(root) : !fs.existsSync(batchFile) && !fs.existsSync(root), 'BATCH_IDENTITY_REQUIRED');
 const previous = continuation ? JSON.parse(fs.readFileSync(path.join(root, 'result.json'))) : null;
 if (repairResume) {
-  assert((auth41 ? previous.passed === false && previous.starts.at(-1).start === 111 && previous.error === 'CUA_ROUND_ABORTED' : auth40 ? previous.passed === true && previous.repairStages.coldStart === 110 : previous.passed === false && previous.error) && previous.installs.length === (repair40 && !repairReplace40 ? 3 : 2) && previous.tasks.length === 2 && previous.logins.length === 1 && previous.oldBackup && previous.checks.includes('old-upgrade-ui-exit-confirmed') && !previous.emergencyCleanupAttempted, 'REPAIR_CHECKPOINT_REQUIRED');
+  assert((auth41Resume ? previous.passed === false && previous.starts.at(-1).start === 114 && previous.error === 'CUA_ROUND_ABORTED' && previous.authorization.steps.length===2 : auth41 ? previous.passed === false && previous.starts.at(-1).start === 111 && previous.error === 'CUA_ROUND_ABORTED' : auth40 ? previous.passed === true && previous.repairStages.coldStart === 110 : previous.passed === false && previous.error) && previous.installs.length === (auth41Resume ? 4 : repair40 && !repairReplace40 ? 3 : 2) && previous.tasks.length === 2 && previous.logins.length === 1 && previous.oldBackup && previous.checks.includes('old-upgrade-ui-exit-confirmed') && !previous.emergencyCleanupAttempted, 'REPAIR_CHECKPOINT_REQUIRED');
   const last = previous.starts.at(-1);
-  assert(last.build === (auth41 ? 40 : repairReplace40 ? 39 : newBuild) && last.exit?.code === 0 && last.remaining?.length === 0 && budget.used.starts === last.start && budget.used.installs === previous.installs.at(-1).number, 'REPAIR_PREVIOUS_START_NOT_CLEARED');
+  assert(last.build === (auth41 && !auth41Resume ? 40 : repairReplace40 ? 39 : newBuild) && last.exit?.code === 0 && last.remaining?.length === 0 && budget.used.starts === last.start && budget.used.installs === previous.installs.at(-1).number, 'REPAIR_PREVIOUS_START_NOT_CLEARED');
+  if(auth41Resume) assert(JSON.parse(fs.readFileSync(path.join(validationRoot,'auth09/persistent-114.json'))).allListed===true,'BOTH_PERSISTENT_IDENTITIES_REQUIRED');
   assert(!ps().some(row => (last.identities[row.pid]?.birth === row.birth && last.identities[row.pid]?.command === row.command) || last.groups.includes(row.group)), 'REPAIR_OWNED_PROCESS_REMAINS');
   assert(!fs.existsSync(path.join(root, 'resume-after-' + last.start + '-once')), 'CONTINUATION_ALREADY_USED');
   assert(fs.existsSync(path.join(root, 'private-fixture.json')), 'ORIGINAL_PRIVATE_FIXTURE_REQUIRED');
@@ -145,7 +147,8 @@ if (previous && !repairResume) Object.assign(report, { installs: previous.instal
 if (repairResume) {
   Object.assign(report, previous);
   report.builds = [...new Set([...previous.builds,newBuild])];
-  if (auth40) report.authorization = {build:newBuild,priorResultPassed:previous.passed,priorResultSha256:hash(fs.readFileSync(path.join(root,'result-through-' + previous.starts.at(-1).start + '.json'))),started:Date.now(),steps:[]};
+  if (auth41Resume) { report.authorization = previous.authorization; report.authorization.correction={start:114,reason:'first persistent approval saved only main identity; user then persisted remaining workspace identity',receiptSha256:hash(fs.readFileSync(path.join(validationRoot,'auth09/persistent-114.json'))),priorResultSha256:hash(fs.readFileSync(path.join(root,'result-through-114.json')))}; }
+  else if (auth40) report.authorization = {build:newBuild,priorResultPassed:previous.passed,priorResultSha256:hash(fs.readFileSync(path.join(root,'result-through-' + previous.starts.at(-1).start + '.json'))),started:Date.now(),steps:[]};
   else report.priorFailures = [...(previous.priorFailures ?? []),{start:previous.starts.at(-1).start,error:previous.error,sha256:hash(fs.readFileSync(path.join(root,'result-through-' + previous.starts.at(-1).start + '.json')))}];
   delete report.error; delete report.ended; report.passed = false;
 }
@@ -342,9 +345,9 @@ try {
   save();
   if (!continuation) install(old);
   else {
-    const installed = auth41 ? JSON.parse(fs.readFileSync(path.join(validationRoot,'build-40.json'))) : repairReplace40 ? JSON.parse(fs.readFileSync(path.join(validationRoot,'build-39.json'))) : repairResume ? fresh : old;
+    const installed = auth41 && !auth41Resume ? JSON.parse(fs.readFileSync(path.join(validationRoot,'build-40.json'))) : repairReplace40 ? JSON.parse(fs.readFileSync(path.join(validationRoot,'build-39.json'))) : repairResume ? fresh : old;
     for (const [file, expected] of Object.entries(installed.hashes)) assert.equal(hash(fs.readFileSync(path.join(installation, file))), expected, 'ORIGINAL_INSTALLED_PACKAGE_REQUIRED');
-    if (repairReplace40 || auth41) {
+    if (repairReplace40 || auth41 && !auth41Resume) {
       assert.equal(verify(installed).certificateSha256,verify(fresh).certificateSha256,'PUBLISHER_CHANGED');
       const preserved = path.join(root,'installation/helpr-build' + installed.build + '-preserved.app');
       assert(!fs.existsSync(preserved),'OLD_REPAIR_PACKAGE_ALREADY_PRESERVED');

@@ -15,10 +15,10 @@ test('明确取消总次数限制只适用于获批且仍在进行的09验证，
   debitValidationBudget(budget, 'starts', 'upgrade09Repair');
   assert.equal(budget.used.starts, 104);
   assert.equal(budget.limits.starts, 103);
-  assert.throws(
-    () => debitValidationBudget(budget, 'faults', 'upgrade09Repair'),
-    /VALIDATION_BUDGET_EXHAUSTED/,
-  );
+  assert.throws(() => debitValidationBudget(budget, 'faults'), /VALIDATION_BUDGET_EXHAUSTED/);
+  debitValidationBudget(budget, 'faults', 'upgrade09Repair');
+  assert.equal(budget.used.faults, 44);
+  assert.equal(budget.limits.faults, 43);
   budget.upgrade09Repair.active = false;
   assert.throws(
     () => debitValidationBudget(budget, 'builds', 'upgrade09Repair'),

@@ -17,7 +17,7 @@ export function debitValidationBudget(budget, kind, scope) {
     budget.upgrade09Repair?.approved === true &&
     budget.upgrade09Repair?.unlimited === true &&
     budget.upgrade09Repair?.active === true &&
-    ['builds', 'installs', 'starts', 'cleanups'].includes(kind);
+    ['builds', 'installs', 'starts', 'faults', 'cleanups'].includes(kind);
   if (!uncapped && budget.used[kind] >= budget.limits[kind])
     throw Error('VALIDATION_BUDGET_EXHAUSTED');
   budget.used[kind]++;
