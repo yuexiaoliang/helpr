@@ -1,0 +1,133 @@
+{
+  "date": "2026-11-04",
+  "timezone": "Asia/Shanghai",
+  "sourceCommit": "6f501a91e6bbf25cc46592cae870bfe051b62b84",
+  "approval": {
+    "approvedAt": "2026-11-04T03:09:41.470Z",
+    "limits": {
+      "builds": 1,
+      "installs": 2,
+      "starts": 3,
+      "faults": 0,
+      "cleanups": 2,
+      "localModels": 8,
+      "localEffects": 4,
+      "versionRequests": 16,
+      "newTasks": 2,
+      "realModels": 0,
+      "remoteWrites": 0,
+      "minutes": 90
+    },
+    "started": 1793761781470,
+    "deadline": 1793767181470
+  },
+  "build": {
+    "number": 38,
+    "version": "0.2.1",
+    "prepared": true,
+    "signedImages": 54,
+    "certificateSha256": "5bd4c2c1f28a99910837bb31ba404f3043378c54463bdc8a8bdf04ce75d2f119",
+    "asarSha256": "fa1544d103ebecacbadef42848be5c6acd6bbac7f429d2893362a809439d21fc",
+    "manifestSha256": "6020b391c608f29f7a55c40c32da510d39ef2953533ff01dd94b68cd354fbdb9"
+  },
+  "runtime": {
+    "passed": false,
+    "runnerError": "CUA_ROUND_ABORTED",
+    "blocker": {
+      "at": "2026-11-04T03:14:38.125Z",
+      "kind": "native-computer-use-unavailable",
+      "firstCall": "getApp for running owned workspace app timed out at 30 seconds",
+      "independentProbe": "getApp for running Finder also timed out at 10 seconds",
+      "inventoryReadable": true,
+      "cleanupConfirmed": true,
+      "originalDeadline": 1793767181470,
+      "retryNotAttempted": true
+    },
+    "starts": [
+      {
+        "number": 101,
+        "build": 37,
+        "at": 1793761885426,
+        "pid": 68300,
+        "exit": {
+          "code": 0,
+          "signal": null
+        },
+        "pids": [
+          68300,
+          68307,
+          68308,
+          68309,
+          68310,
+          68311,
+          68317,
+          68318,
+          68319,
+          68320,
+          68321
+        ],
+        "groups": [
+          68300,
+          68309,
+          68311
+        ],
+        "remaining": [],
+        "ready": true
+      }
+    ],
+    "models": 0,
+    "tasks": 0,
+    "logins": 0,
+    "localEffects": 0,
+    "versionRequests": 1,
+    "remoteBusinessWrites": 0,
+    "captures": 0
+  },
+  "cleanup": {
+    "at": "2026-11-04T03:13:05.374Z",
+    "remaining": [],
+    "listeners": [
+      {
+        "port": 55540,
+        "output": ""
+      },
+      {
+        "port": 55541,
+        "output": ""
+      }
+    ],
+    "forcedCleanupUsed": false
+  },
+  "cumulative": {
+    "used": {
+      "builds": 38,
+      "installs": 11,
+      "starts": 101,
+      "faults": 42,
+      "cleanups": 17
+    },
+    "limits": {
+      "builds": 38,
+      "installs": 12,
+      "starts": 103,
+      "faults": 43,
+      "cleanups": 19
+    }
+  },
+  "remaining": {
+    "builds": 0,
+    "installs": 1,
+    "starts": 2
+  },
+  "evidenceHashes": {
+    "report": "3b56b5f8861f8f9aade706125a09787daade48e5defee0121120f6afba72424c",
+    "cleanup": "70316ba87fde178d08adfc6b34a0eece6197528bca13a15400f4cfcb0a900a75",
+    "cuaFailure": "9e87a0d3a32c66c4186d8d60b25515ee8b2fa8fb5ebf376dcb51e43cac01e38d"
+  },
+  "acceptance": {
+    "completed": 2,
+    "total": 10,
+    "newCriteriaCompleted": 0
+  },
+  "boundary": "No visible GUI was read or captured. Native connection timed out; ready signal does not establish UI acceptance. No model credential, task, login or business operation was created. Historical failures and fixed deadline retained."
+}
