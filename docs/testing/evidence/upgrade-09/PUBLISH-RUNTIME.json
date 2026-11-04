@@ -1,0 +1,100 @@
+{
+  "userApproval": "允许本次自用预览例外公开发布，继续下载验收",
+  "release": {
+    "id": 433669974,
+    "url": "https://github.com/yuexiaoliang/helpr/releases/tag/v0.2.2",
+    "tag": "v0.2.2",
+    "draft": false,
+    "prerelease": true,
+    "publishedAt": "2026-11-04T08:32:46Z",
+    "assets": [
+      {
+        "name": "helpr-0.2.2-macos-arm64-local-preview.zip",
+        "bytes": 311712836,
+        "sha256": "sha256:eab6218ba4e919ea3d969b29d9f74e7524a38d53d479879158e21d7df63f166d",
+        "url": "https://github.com/yuexiaoliang/helpr/releases/download/v0.2.2/helpr-0.2.2-macos-arm64-local-preview.zip"
+      },
+      {
+        "name": "SHA256SUMS",
+        "bytes": 108,
+        "sha256": "sha256:2c73353ced4a4e715a7d038ee6ce939153dba5964463b8565bf0f0d78528f6b3",
+        "url": "https://github.com/yuexiaoliang/helpr/releases/download/v0.2.2/SHA256SUMS"
+      }
+    ]
+  },
+  "sourceCommit": "3c8d98612b09046c5cb7918e9b42e3eef29db897",
+  "sourceBranch": "codex/preview-0.2.2",
+  "channel": {
+    "before": "3d3b97a4508f206f6fd99eca32945069ec27afc1",
+    "after": "0d03f1b3b4d712259f5cc43881ea739ee2f7cba9",
+    "blob": "caeac528447e0777d27b1906f4f99d32b3c46e9f",
+    "release": "https://github.com/yuexiaoliang/helpr/releases/tag/v0.2.2",
+    "manifest": {
+      "schema": 1,
+      "version": "0.2.2",
+      "platform": "darwin",
+      "arch": "arm64",
+      "minOS": "14.0.0",
+      "dataFormats": [
+        6,
+        7
+      ],
+      "stateModels": [
+        1
+      ],
+      "notes": [
+        "当前 Mac 自用预览：本机开发签名，未公证，不作为其它电脑的正式交付。",
+        "本次公开预览经用户明确允许；手动换版前先处理现场并保存备份。"
+      ],
+      "downloadURL": "https://github.com/yuexiaoliang/helpr/releases/tag/v0.2.2"
+    },
+    "userApprovedPublicSelfUseException": true
+  },
+  "publicChannelGET": {
+    "at": 1793781351685,
+    "status": 200,
+    "cacheControl": "max-age=300",
+    "manifest": {
+      "schema": 1,
+      "version": "0.2.2",
+      "platform": "darwin",
+      "arch": "arm64",
+      "minOS": "14.0.0",
+      "dataFormats": [
+        6,
+        7
+      ],
+      "stateModels": [
+        1
+      ],
+      "notes": [
+        "当前 Mac 自用预览：本机开发签名，未公证，不作为其它电脑的正式交付。",
+        "本次公开预览经用户明确允许；手动换版前先处理现场并保存备份。"
+      ],
+      "downloadURL": "https://github.com/yuexiaoliang/helpr/releases/tag/v0.2.2"
+    }
+  },
+  "downloadAcceptance": {
+    "status": "completed_current_mac_with_explicit_run_exception",
+    "passed": true,
+    "evidence": "DOWNLOAD-RUNTIME.json",
+    "oldStart": 128,
+    "newStart": 131,
+    "blockedStarts": [
+      129,
+      130
+    ],
+    "defaultGatekeeperFirstRunPassed": false,
+    "explicitUserRunException": true,
+    "attributesRestored": true
+  },
+  "browserTool": "iab connection timed out even after desktop unlock and user showing queued browser panel; native CUA available; browser download handed to operator",
+  "finalReleaseNotes": {
+    "at": 1793783911811,
+    "id": 433669974,
+    "url": "https://github.com/yuexiaoliang/helpr/releases/tag/v0.2.2",
+    "body": "# helpr 0.2.2 本机自用预览\n\n固定候选41，来源提交3c8d986。仅供当前Mac的自用交付验证；使用本机开发签名，没有Developer ID或公证，不作为面向其它电脑的正式发行。\n\n修正网页保护不可用时仍加载网站而丢失Cookie的问题；系统授权取消时保留资料并暂停依赖工作。普通退出不再被尚待升级核对误阻止。\n\n安装包：helpr-0.2.2-macos-arm64-local-preview.zip\n\nSHA-256：eab6218ba4e919ea3d969b29d9f74e7524a38d53d479879158e21d7df63f166d\n\n已实测旧格式6到7及中断恢复、原测试密钥和未到期登录跨版延续、取消授权、两份持久许可后的同包无提示冷开，以及停止、接管和待核对条件保持。原失败及具体边界见仓库09验收证据。\n\n经用户明确允许，已公开发布此自用预览并更新08渠道。实际浏览器下载与原包SHA-256、签名及fuses一致；在当前Mac的隔离资料中完成0.1.0→0.2.2换版、原任务／中文草稿／停止保持及正常退出。\n\n实际下载包的默认首次运行被macOS拦截。经用户单独批准，仅对已验证安装副本临时解除下载隔离后完成运行，测试后逐项恢复原属性；原zip保持隔离，系统Gatekeeper保持启用。此结果不表示默认Gatekeeper放行，也不替代Developer ID签名、公证或其它电脑的正式分发验收。\n",
+    "prerelease": true,
+    "assetsUnchanged": true
+  }
+}

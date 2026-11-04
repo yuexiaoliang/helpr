@@ -1,5 +1,7 @@
 # helpr 首版实现事项
 
+2026-11-04当前进度：09已完成当前资料范围10/10；固定41／0.2.2，公开自用预览和08渠道已获准发布。实际浏览器下载、原旧资料迁移、基础检查及正常退出完成；默认Gatekeeper拦截仍保留，运行依赖用户批准的单包临时例外，测试后恢复隔离属性。23取得09前置，其它前置、完整资料和最终候选复验保持。[09最终验收](../../docs/testing/evidence/upgrade-09/FINAL-ACCEPTANCE.md)。以下保留各轮历史进度与限制。
+
 2026-11-04最新排查：普通退出与升级派发屏障的误用已在源码修正，完整137正式／25旧回归及静态检查、验证器专项5/5通过。CUA清单可读，访达窗口绑定仍45秒超时，工具内部唯一根因未确认，实际验收仍2/10；未追加构建或启动，候选38保持原样。[诊断与下一轮条件](../../docs/testing/upgrade-09-diagnosis.md)。
 
 当前进度（2026-11-04）：09的 `manual-upgrade-v3` 及所列范围已获用户明确批准。已将原独立实现 `5c280bc` 整合到主工作区，并补齐v3换版现场检查与3项回归；源码0.2.1的完整133正式／25旧回归及静态检查通过。历史限定实包验收仍2/10；源码阶段无新增实包消耗；随后实际运行结果见下段。来源差异、原失败及下一批具体额度见[本轮记录](../../docs/testing/evidence/upgrade-09/V3-IMPLEMENTATION.md)。
@@ -30,7 +32,7 @@
 | [06 收起运行、锁屏与休眠恢复](issues/06-hide-lock-sleep-and-resume.md)（已验收） | [05](issues/05-quit-crash-and-cold-recovery.md) |
 | [07 本机备份与旧备份恢复](issues/07-local-backup-and-restore.md)（已验收） | [05](issues/05-quit-crash-and-cold-recovery.md) |
 | [08 自动检查新版与可信下载提醒](issues/08-version-check-and-download-notice.md)（已验收） | [02](issues/02-model-settings-and-page-understanding.md) |
-| [09 手动换版保留资料、原密钥和有效登录](issues/09-manual-upgrade-and-credential-continuity.md) | [06](issues/06-hide-lock-sleep-and-resume.md)、[07](issues/07-local-backup-and-restore.md)、[08](issues/08-version-check-and-download-notice.md) |
+| [09 手动换版保留资料、原密钥和有效登录](issues/09-manual-upgrade-and-credential-continuity.md)（当前资料范围已验收） | [06](issues/06-hide-lock-sleep-and-resume.md)、[07](issues/07-local-backup-and-restore.md)、[08](issues/08-version-check-and-download-notice.md) |
 | [10 参与请求、确认与全局可操作提醒](issues/10-participation-and-actionable-notifications.md) | [03](issues/03-parallel-execution-stop-and-continue.md) |
 | [11 任务组、收起、关闭与历史返回](issues/11-task-groups-history-and-close.md) | [04](issues/04-native-takeover-and-page-ownership.md)、[10](issues/10-participation-and-actionable-notifications.md) |
 | [12 固定素材版本并准备真实上传](issues/12-material-version-and-upload-preparation.md) | [06](issues/06-hide-lock-sleep-and-resume.md)、[10](issues/10-participation-and-actionable-notifications.md) |
