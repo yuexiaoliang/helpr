@@ -11,7 +11,19 @@ export const validationRoot = path.join(
   path.dirname(commonGitDirectory),
   '.local/workspace-validation',
 );
-export function spend(kind) {
+export function debitValidationBudget(budget, kind, scope) {
+  const uncapped =
+    scope === 'upgrade09Repair' &&
+    budget.upgrade09Repair?.approved === true &&
+    budget.upgrade09Repair?.unlimited === true &&
+    budget.upgrade09Repair?.active === true &&
+    ['builds', 'installs', 'starts', 'cleanups'].includes(kind);
+  if (!uncapped && budget.used[kind] >= budget.limits[kind])
+    throw Error('VALIDATION_BUDGET_EXHAUSTED');
+  budget.used[kind]++;
+  return budget;
+}
+export function spend(kind, scope) {
   fs.mkdirSync(validationRoot, { recursive: true, mode: 0o700 });
   const file = path.join(validationRoot, 'budget.json');
   const budget = fs.existsSync(file)
@@ -22,9 +34,7 @@ export function spend(kind) {
         modelCalls: 0,
         remoteWrites: 0,
       };
-  if (budget.used[kind] >= budget.limits[kind])
-    throw Error('VALIDATION_BUDGET_EXHAUSTED');
-  budget.used[kind]++;
+  debitValidationBudget(budget, kind, scope);
   fs.writeFileSync(file, JSON.stringify(budget, null, 2) + '\n', {
     mode: 0o600,
   });

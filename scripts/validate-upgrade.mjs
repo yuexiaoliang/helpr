@@ -7,7 +7,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
 import assert from 'node:assert/strict';
-import { spend, validationRoot } from './workspace-budget.mjs';
+import { spend as debit, validationRoot } from './workspace-budget.mjs';
 import { verifyDevelopmentSignature } from './development-signing.mjs';
 import { openUpgradeFixture, confirmUpgradeUI, requireUpgradeNativePreflight, recordUpgradeCleanup, writeUpgradeJSON } from './upgrade-validation-state.mjs';
 
@@ -18,6 +18,7 @@ const repair = mode.startsWith('--repair-');
 const next = repair || mode.startsWith('--v3-');
 const oldBuild = repair ? 38 : next ? 37 : 36, newBuild = oldBuild + 1, oldVersion = repair ? '0.2.1' : next ? '0.2.0' : '0.1.0', newVersion = repair ? '0.2.2' : next ? '0.2.1' : '0.2.0';
 const section = repair ? 'upgrade09Repair' : next ? 'upgrade09V3' : 'upgrade09';
+const spend = kind => debit(kind, repair ? section : undefined);
 const after97 = mode === '--after-97' || mode === '--check-after-97';
 const after101 = mode === '--v3-after101' || mode === '--v3-check-after101';
 const continuation = after97 || after101;
@@ -48,13 +49,13 @@ const ps = () => execFileSync('/bin/ps', ['-axo', 'pid=,ppid=,pgid=,lstart=,comm
 assert(!ps().some(row => row.pid !== process.pid && (/\/helpr\.app\/Contents\/MacOS\/helpr(?: |$)/.test(row.command) || /helpr Workspace Helper/.test(row.command) || /^(?:\S*\/)?node\s+(?:\S*\/)?validate-\S+\.mjs(?:\s|$)/.test(row.command))), 'OTHER_VALIDATION_RUNNING');
 execFileSync(process.execPath, ['scripts/validate-workspace.mjs', '--preflight'], { stdio: 'inherit', timeout: 65000 });
 const budget = JSON.parse(fs.readFileSync(budgetFile));
-assert(budget[section]?.approved && budget.limits.builds === newBuild && budget.limits.starts === (repair ? 106 : next ? 103 : 100), 'EXPLICIT_APPROVAL_REQUIRED');
-if (repair) assert(budget.limits.installs === 14 && (mode === '--repair-preflight' ? [38, 39].includes(budget.used.builds) : budget.used.builds === 39) && budget[section].baseUsed?.starts === 103 && budget[section].baseUsed?.installs === 12 && budget[section].baseUsed?.builds === 38 && budget[section].limits?.starts === 3 && budget[section].limits?.installs === 2 && budget[section].limits?.builds === 1 && budget[section].limits?.faults === 0, 'EXACT_REPAIR_APPROVAL_REQUIRED');
+assert(budget[section]?.approved && (repair ? budget[section].unlimited === true && budget[section].active === true : budget.limits.builds === newBuild && budget.limits.starts === (next ? 103 : 100)), 'EXPLICIT_APPROVAL_REQUIRED');
+if (repair) assert((mode === '--repair-preflight' ? [38, 39].includes(budget.used.builds) : budget.used.builds === 39) && budget[section].baseUsed?.starts === 103 && budget[section].baseUsed?.installs === 12 && budget[section].baseUsed?.builds === 38, 'EXACT_REPAIR_APPROVAL_REQUIRED');
 else if (next) assert(budget.limits.installs === 12 && (mode === '--v3-preflight' ? [37, 38].includes(budget.used.builds) : budget.used.builds === 38) && budget[section].baseUsed?.starts === 100 && budget[section].baseUsed?.installs === 10 && budget[section].limits?.starts === 3 && budget[section].limits?.installs === 2, 'EXACT_V3_APPROVAL_REQUIRED');
-const originalDeadline = budget[section].runtimeStartedAt + 90 * 60000;
+const originalDeadline = repair ? null : budget[section].runtimeStartedAt + 90 * 60000;
 const extraTime = next ? null : budget.upgrade09.after97Time;
 if (extraTime) assert(after97 && extraTime.approved === true && extraTime.originalDeadline === originalDeadline && Number.isSafeInteger(extraTime.approvedAt) && extraTime.deadline === extraTime.approvedAt + 60 * 60000, 'EXACT_TIME_EXTENSION_APPROVAL_REQUIRED');
-const batchDeadline = extraTime?.deadline ?? originalDeadline;
+const batchDeadline = extraTime?.deadline ?? originalDeadline ?? Number.MAX_SAFE_INTEGER;
 assert(budget.used.starts === (repair ? 103 : next ? after101 ? 101 : 100 : after97 ? 97 : 96) && budget.used.installs === (repair ? 12 : next ? after101 ? 11 : 10 : after97 ? 9 : 8) && budget.used.faults === 42 && budget.used.cleanups === (repair ? 18 : 17), 'ORIGINAL_BUDGET_REQUIRED');
 assert(continuation ? fs.existsSync(batchFile) && fs.existsSync(root) : !fs.existsSync(batchFile) && !fs.existsSync(root), 'BATCH_IDENTITY_REQUIRED');
 const previous = continuation ? JSON.parse(fs.readFileSync(path.join(root, 'result.json'))) : null;
@@ -122,7 +123,7 @@ const privateFixture = next ? openUpgradeFixture(root) : null;
 const apiKey = privateFixture?.state.apiKey ?? 'upgrade09-test-' + randomUUID();
 const sessionToken = privateFixture?.state.sessionToken ?? randomUUID();
 let expires = privateFixture?.state.expires ?? Math.floor(Date.now() / 1000) + 7200;
-const report = { scope: 'early real-package upgrade; real safeStorage and persistent browser; local fixtures only', started: budget[section].runtimeStartedAt, originalDeadline, approvedDeadline: batchDeadline, builds: [oldBuild, newBuild], limits: budget[section].limits, installs: [], starts: [], tasks: [], checks: [], models: [], logins: [], pages: [], effects: [], versionRequests: [], captures: [], realModels: 0, remoteBusinessWrites: 0, passed: false };
+const report = { scope: 'early real-package upgrade; real safeStorage and persistent browser; local fixtures only', started: budget[section].runtimeStartedAt, originalDeadline, approvedDeadline: repair ? null : batchDeadline, unlimited: repair, builds: [oldBuild, newBuild], limits: budget[section].limits, installs: [], starts: [], tasks: [], checks: [], models: [], logins: [], pages: [], effects: [], versionRequests: [], captures: [], realModels: 0, remoteBusinessWrites: 0, passed: false };
 if (previous) Object.assign(report, { installs: previous.installs, starts: previous.starts, checks: previous.checks, versionRequests: previous.versionRequests, priorFailure: { start: after101 ? 101 : 97, error: previous.error, sha256: hash(fs.readFileSync(path.join(root, after101 ? 'result-101.json' : 'result-97.json'))), originalStarted: previous.started }, continuation: after101 ? 'native connection recovered; only old-to-new stages within remaining two starts; cold reopen deferred' : 'one corrected readiness retry; no fault reserved' });
 if (after101) Object.assign(report, { scope: 'limited v3 old-to-new continuation only; original failed start retained; cold reopen not covered', coldReopenDeferred: true, originalThreeStagePlanPassed: false });
 const oldStart = repair ? 104 : next ? after101 ? 102 : 101 : after97 ? 98 : 97, newStart = oldStart + 1, coldStart = after101 ? null : oldStart + 2;
@@ -207,7 +208,7 @@ function install(manifest) {
 }
 async function launch(build) {
   limited(); assert(!current || current.cleared, 'PREVIOUS_NOT_CLEARED');
-  assert(report.starts.length < (next ? 3 : 4), 'START_LIMIT');
+  assert(repair || report.starts.length < (next ? 3 : 4), 'START_LIMIT');
   const spent = spend('starts');
   const row = { start: spent.used.starts, build, at: Date.now() };
   report.starts.push(row); save();
@@ -253,7 +254,7 @@ const website = http.createServer(async (req, res) => {
     limited(); const url = new URL(req.url, 'http://127.0.0.1');
     const authenticated = (req.headers.cookie ?? '').split(';').some(c => c.trim() === 'helpr_upgrade09=' + sessionToken) && Date.now() / 1000 < expires;
     if (url.pathname.startsWith('/v1/')) {
-      assert(report.models.length < 8, 'LOCAL_MODEL_LIMIT');
+      assert(repair || report.models.length < 8, 'LOCAL_MODEL_LIMIT');
       const match = req.headers.authorization === 'Bearer ' + apiKey;
       report.models.push({ at: Date.now(), start: current.row.start, method: req.method, path: url.pathname, originalKeyMatched: match }); save(); assert(match, 'ORIGINAL_KEY_REQUIRED');
       if (req.method === 'GET' && url.pathname === '/v1/models') { res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify({ data: [{ id: 'local-upgrade-09' }] })); return; }
@@ -279,7 +280,7 @@ const website = http.createServer(async (req, res) => {
     }
     const savePage = url.pathname.match(/^\/save\/([AB])$/);
     if (req.method === 'POST' && savePage) {
-      assert(authenticated && report.effects.length < 4, 'AUTHENTICATED_EFFECT_LIMIT');
+      assert(authenticated && (repair || report.effects.length < 4), 'AUTHENTICATED_EFFECT_LIMIT');
       let text = ''; for await (const chunk of req) { text += chunk; assert(Buffer.byteLength(text) <= 10000, 'LOCAL_TEXT_LIMIT'); }
       const name = savePage[1]; counts[name]++; privateFixture?.save(); report.effects.push({ at: Date.now(), start: current.row.start, name, textHash: hash(text), bytes: Buffer.byteLength(text), count: counts[name] }); save();
       res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify({ count: counts[name] })); return;
@@ -294,7 +295,7 @@ fs.chmodSync(keyFile, 0o600);
 let futureVersion = false;
 const versions = https.createServer({ key: fs.readFileSync(keyFile), cert: fs.readFileSync(certFile) }, (req, res) => {
   try {
-    limited(); assert(report.versionRequests.length < 16 && req.method === 'GET' && req.url === '/stable.json', 'VERSION_REQUEST_LIMIT');
+    limited(); assert((repair || report.versionRequests.length < 16) && req.method === 'GET' && req.url === '/stable.json', 'VERSION_REQUEST_LIMIT');
     report.versionRequests.push({ at: Date.now(), start: current?.row.start, futureVersion }); save();
     res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify({ schema: 1, version: futureVersion ? (next && current?.row.build === oldBuild ? newVersion : '0.3.0') : oldVersion, platform: 'darwin', arch: 'arm64', minOS: '14.0.0', dataFormats: [6, 7], stateModels: [1], notes: ['仅本机交互夹具，不代表真实Release或可下载安装包。'], downloadURL: futureVersion ? 'https://github.com/yuexiaoliang/helpr/releases/tag/v' + (next && current?.row.build === oldBuild ? newVersion : '0.3.0') : null }));
   } catch (error) { failure ??= error.message; safeSave(); res.writeHead(400); res.end(); }
