@@ -132,6 +132,10 @@ export class UpgradeService {
       !['idle', 'complete'].includes(this.ledger.phase)
     );
   }
+  canExit() {
+    // 尚待核对仍需阻止派发，但可保存退出；正在进行的准备或检查不可中途关闭。
+    return this.ledger !== null && this.pending === null;
+  }
   private async capture() {
     const proof = upgradeProofSchema.parse(await this.ports.capture());
     this.pages = proof.pages;

@@ -9,6 +9,7 @@ import { pathToFileURL } from 'node:url';
 import assert from 'node:assert/strict';
 import { spend, validationRoot } from './workspace-budget.mjs';
 import { verifyDevelopmentSignature } from './development-signing.mjs';
+import { openUpgradeFixture, confirmUpgradeUI, requireUpgradeNativePreflight, recordUpgradeCleanup, writeUpgradeJSON } from './upgrade-validation-state.mjs';
 
 // 同一受管入口持有全部应用、服务与四次启动；产品交互交由CUA。
 const mode = process.argv.slice(2).join(' ');
@@ -34,7 +35,7 @@ const configure = (origin, key) => uiCommandSchema.parse({ kind: 'model-save', r
 configure('http://127.0.0.1:50000', 'not-a-real-key');
 for (const command of [{ kind: 'upgrade-status' }, { kind: 'upgrade-check' }, { kind: 'upgrade-cancel' }, { kind: 'upgrade-exit', revision: 1 }]) uiCommandSchema.parse(command);
 if (mode === '--check' || mode === '--v3-check') {
-  console.log(JSON.stringify({ valid: true, appStarts: 0, protection: 'real safeStorage; workspace-fixture switch forbidden', reply: reply.decision, oldBuild, newBuild, oldVersion, newVersion, starts: next ? 3 : 4 }));
+  console.log(JSON.stringify({ valid: true, appStarts: 0, protection: 'real safeStorage; workspace-fixture switch forbidden', nativeUIConfirmationPerStart: next, privateFixtureIdentityPersisted: next, reply: reply.decision, oldBuild, newBuild, oldVersion, newVersion, starts: next ? 3 : 4 }));
   process.exit(0);
 }
 const ps = () => execFileSync('/bin/ps', ['-axo', 'pid=,ppid=,pgid=,lstart=,command='], { encoding: 'utf8', timeout: 5000 }).trim().split('\n').map(line => {
@@ -68,6 +69,7 @@ if (after101) {
   assert(budget[section].nativeConnectionRecovered === true, 'NATIVE_CONNECTION_RECOVERY_REQUIRED');
   assert(!fs.existsSync(path.join(root, 'after-101-once')), 'CONTINUATION_ALREADY_USED');
 }
+if (next) requireUpgradeNativePreflight(budget[section].nativePreflight);
 const old = JSON.parse(fs.readFileSync(path.join(validationRoot, 'build-' + oldBuild + '.json')));
 const expectedOld = next ? path.join(fs.realpathSync(path.join(process.cwd(), '../..')), '.codex/worktrees/manual-upgrade/helpr/dist/candidates/manual-upgrade-09/mac-arm64/helpr.app') : '/Users/yuexiaoliang/projects/helpr/dist/candidates/version-08/mac-arm64/helpr.app';
 assert(old.build === oldBuild && old.prepared && old.app === expectedOld, 'FIXED_OLD_CANDIDATE_REQUIRED');
@@ -113,20 +115,21 @@ assert(profile.startsWith(profileRoot + '/upgrade09-') && fs.realpathSync(profil
 const installation = path.join(root, 'installation/helpr.app');
 const backupDirectory = path.join(root, 'selected-backups');
 if (!continuation) fs.mkdirSync(backupDirectory, { mode: 0o700 });
-const apiKey = 'upgrade09-test-' + randomUUID();
-const sessionToken = randomUUID();
-let expires = next ? 0 : Math.floor(Date.now() / 1000) + 7200;
+const privateFixture = next ? openUpgradeFixture(root) : null;
+const apiKey = privateFixture?.state.apiKey ?? 'upgrade09-test-' + randomUUID();
+const sessionToken = privateFixture?.state.sessionToken ?? randomUUID();
+let expires = privateFixture?.state.expires ?? Math.floor(Date.now() / 1000) + 7200;
 const report = { scope: 'early real-package upgrade; real safeStorage and persistent browser; local fixtures only', started: budget[section].runtimeStartedAt, originalDeadline, approvedDeadline: batchDeadline, builds: [oldBuild, newBuild], limits: budget[section].limits, installs: [], starts: [], tasks: [], checks: [], models: [], logins: [], pages: [], effects: [], versionRequests: [], captures: [], realModels: 0, remoteBusinessWrites: 0, passed: false };
 if (previous) Object.assign(report, { installs: previous.installs, starts: previous.starts, checks: previous.checks, versionRequests: previous.versionRequests, priorFailure: { start: after101 ? 101 : 97, error: previous.error, sha256: hash(fs.readFileSync(path.join(root, after101 ? 'result-101.json' : 'result-97.json'))), originalStarted: previous.started }, continuation: after101 ? 'native connection recovered; only old-to-new stages within remaining two starts; cold reopen deferred' : 'one corrected readiness retry; no fault reserved' });
 if (after101) Object.assign(report, { scope: 'limited v3 old-to-new continuation only; original failed start retained; cold reopen not covered', coldReopenDeferred: true, originalThreeStagePlanPassed: false });
 const oldStart = next ? after101 ? 102 : 101 : after97 ? 98 : 97, newStart = oldStart + 1, coldStart = after101 ? null : oldStart + 2;
-const write = (name, value) => fs.writeFileSync(path.join(root, name), JSON.stringify(value, null, 2) + '\n', { mode: 0o600 });
+const write = (name, value) => writeUpgradeJSON(path.join(root, name), value);
 const save = () => {
   write('result.json', report);
   const b = JSON.parse(fs.readFileSync(budgetFile));
   b[section].used = { builds: b.used.builds - (next ? 37 : 36), starts: report.starts.length, installs: report.installs.length, faults: report.fault ? 1 : 0, cleanups: b.used.cleanups - 17, localModels: report.models.length, localEffects: report.effects.length, versionRequests: report.versionRequests.length, newTasks: report.tasks.length };
   b[section].run = { root, profile, passed: report.passed, error: report.error ?? null, started: report.started, ended: report.ended ?? null };
-  fs.writeFileSync(budgetFile, JSON.stringify(b, null, 2) + '\n', { mode: 0o600 });
+  writeUpgradeJSON(budgetFile, b);
 };
 const safeSave = () => { try { save(); } catch (error) { report.persistenceError ??= error.code ?? error.message; report.passed = false; failure ??= 'EVIDENCE_WRITE_FAILED'; } };
 let failure, current, finished = false, setupUsed = false, baseline, newInstalled = false;
@@ -176,7 +179,7 @@ async function gone(normal = true) {
   const app = current;
   await until(() => app.exit, 45000, true);
   await until(() => processes(app).length === 0, 10000, true);
-  app.row.remaining = processes(app); app.cleared = true;
+  recordUpgradeCleanup(app, processes(app), 'normal');
   check('owned-processes-cleared-' + app.row.start, app.row.remaining.length === 0);
   if (normal) assert.equal(app.exit.code, 0, 'NORMAL_EXIT_REQUIRED');
 }
@@ -231,7 +234,7 @@ async function launch(build) {
   await until(() => { processes(app); return app.ready || app.exit; }, Math.max(1, readyDeadline - Date.now()));
   assert(app.ready && !app.exit, 'APPLICATION_NOT_READY');
   assert(!row.ready.fixture, 'REAL_CREDENTIAL_PROTECTION_REQUIRED');
-  write('context.json', { root, profile, origin, installation, backupDirectory, hostApp: path.join(installation, 'Contents/Frameworks/helpr Workspace.app'), start: row.start });
+  write('context.json', { root, profile, origin, installation, backupDirectory, hostApp: path.join(installation, 'Contents/Frameworks/helpr Workspace.app'), hostPid: row.ready.hostPid, start: row.start });
   console.log('UPGRADE_READY ' + JSON.stringify({ start: row.start, build, root }));
 }
 function facts(state) { return { settings: state.modelSettings, tasks: state.tasks.map(t => [t.id, t.goal, t.draft, t.messages, t.execution?.intent ?? null, t.execution?.phase ?? null]) }; }
@@ -241,7 +244,7 @@ async function capture(label) {
   const image = await rpc({ kind: 'capture' });
   write('capture-' + label + '.json', image); report.captures.push(label); save();
 }
-const counts = { A: 0, B: 0 };
+const counts = privateFixture?.state.counts ?? { A: 0, B: 0 };
 const website = http.createServer(async (req, res) => {
   try {
     limited(); const url = new URL(req.url, 'http://127.0.0.1');
@@ -261,6 +264,7 @@ const website = http.createServer(async (req, res) => {
     if (url.pathname === '/login') {
       assert(current?.row.build === oldBuild && report.logins.length === 0, 'ORIGINAL_LOGIN_ONLY');
       if (next) expires = Math.floor(Date.now() / 1000) + 7201;
+      if (privateFixture) { privateFixture.state.expires = expires; privateFixture.save(); }
       report.logins.push({ at: Date.now(), expires, start: current.row.start }); save();
       res.writeHead(302, { 'Set-Cookie': `helpr_upgrade09=${sessionToken}; Path=/; HttpOnly; Max-Age=7200; SameSite=Lax`, Location: '/page/A' }); res.end(); return;
     }
@@ -274,7 +278,7 @@ const website = http.createServer(async (req, res) => {
     if (req.method === 'POST' && savePage) {
       assert(authenticated && report.effects.length < 4, 'AUTHENTICATED_EFFECT_LIMIT');
       let text = ''; for await (const chunk of req) { text += chunk; assert(Buffer.byteLength(text) <= 10000, 'LOCAL_TEXT_LIMIT'); }
-      const name = savePage[1]; counts[name]++; report.effects.push({ at: Date.now(), start: current.row.start, name, textHash: hash(text), bytes: Buffer.byteLength(text), count: counts[name] }); save();
+      const name = savePage[1]; counts[name]++; privateFixture?.save(); report.effects.push({ at: Date.now(), start: current.row.start, name, textHash: hash(text), bytes: Buffer.byteLength(text), count: counts[name] }); save();
       res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify({ count: counts[name] })); return;
     }
     if (url.pathname === '/favicon.ico') { res.writeHead(204); res.end(); return; }
@@ -282,7 +286,7 @@ const website = http.createServer(async (req, res) => {
   } catch (error) { failure ??= error.message; safeSave(); if (!res.headersSent) res.writeHead(400); res.end('FIXTURE_REJECTED'); }
 });
 const keyFile = path.join(root, 'tls-key.pem'), certFile = path.join(root, 'tls-cert.pem');
-execFileSync('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', keyFile, '-out', certFile, '-days', '1', '-subj', '/CN=127.0.0.1', '-addext', 'subjectAltName=IP:127.0.0.1'], { stdio: 'ignore', timeout: 10000 });
+if (!next || !fs.existsSync(keyFile) && !fs.existsSync(certFile)) execFileSync('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', keyFile, '-out', certFile, '-days', '1', '-subj', '/CN=127.0.0.1', '-addext', 'subjectAltName=IP:127.0.0.1'], { stdio: 'ignore', timeout: 10000 });
 fs.chmodSync(keyFile, 0o600);
 let futureVersion = false;
 const versions = https.createServer({ key: fs.readFileSync(keyFile), cert: fs.readFileSync(certFile) }, (req, res) => {
@@ -295,9 +299,10 @@ const versions = https.createServer({ key: fs.readFileSync(keyFile), cert: fs.re
 let origin;
 for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => { failure ??= 'VALIDATOR_' + signal; });
 try {
-  await new Promise((resolve, reject) => { website.once('error', reject); website.listen(0, '127.0.0.1', resolve); });
+  await new Promise((resolve, reject) => { website.once('error', reject); website.listen(privateFixture?.state.httpPort ?? 0, '127.0.0.1', resolve); });
   origin = 'http://127.0.0.1:' + website.address().port;
-  await new Promise((resolve, reject) => { versions.once('error', reject); versions.listen(0, '127.0.0.1', resolve); });
+  await new Promise((resolve, reject) => { versions.once('error', reject); versions.listen(privateFixture?.state.httpsPort ?? 0, '127.0.0.1', resolve); });
+  if (privateFixture) { privateFixture.state.httpPort = website.address().port; privateFixture.state.httpsPort = versions.address().port; privateFixture.save(); }
   fs.writeFileSync(path.join(profile, 'version-fixture.json'), JSON.stringify({ source: `https://127.0.0.1:${versions.address().port}/stable.json`, ca: fs.readFileSync(certFile, 'utf8') }), { mode: 0o600 });
   save();
   if (!continuation) install(old);
@@ -310,7 +315,14 @@ try {
       const c = JSON.parse(fs.readFileSync(file)); fs.unlinkSync(file);
       try {
         let value;
+        if (next && ['setup', 'future', 'baseline', 'finish'].includes(c.op)) assert(current.row.nativeUI, 'CUA_NATIVE_WINDOW_NOT_CONFIRMED');
         switch (c.op) {
+          case 'ui-ready': {
+            assert(next && !current.cleared && !current.exit, 'LIVE_V3_NATIVE_WINDOW_REQUIRED');
+            assert(processes(current).some(p => p.pid === c.observation?.hostPid), 'NATIVE_HOST_PROCESS_NOT_LIVE');
+            current.row.nativeUI = confirmUpgradeUI(current.row, c.observation);
+            save(); value = { nativeUIRegistered: true, start: current.row.start }; break;
+          }
           case 'setup': {
             assert(!setupUsed && current.row.build === oldBuild, 'SETUP_ONCE'); setupUsed = true;
             await rpc(configure(origin, apiKey), 600000);
@@ -327,7 +339,9 @@ try {
             const s = await snapshot();
             const u = (next || current.row.build === newBuild) ? await rpc({ kind: 'upgrade-status' }) : null;
             if (next && current.row.build === newBuild && u?.phase === 'blocked' && u.error === 'UPGRADE_PAGE_UNSAVED') report.v3PageGuard = {start:current.row.start,recordRevision:u.recordRevision,dirtyTasks:u.dirtyTasks};
-            write('inspection-' + current.row.start + '.json', { state: s, upgrade: u, models: report.models, pages: report.pages, effects: report.effects });
+            const inspection = { state: s, upgrade: u, models: report.models, pages: report.pages, effects: report.effects };
+            write('inspection-' + current.row.start + '-' + current.sequence + '.json', inspection);
+            write('inspection-' + current.row.start + '.json', inspection);
             value = { state: facts(s), upgrade: u, models: report.models.length, effects: report.effects.length, logins: report.logins.length }; break;
           }
           case 'capture': await capture(c.label); value = { captured: c.label }; break;
@@ -400,6 +414,7 @@ finally {
         signal('SIGTERM');
         try { await until(() => processes(current).length === 0, 5000, true); } catch { signal('SIGKILL'); await until(() => processes(current).length === 0, 5000, true); }
         report.cleanupRemaining = processes(current);
+        recordUpgradeCleanup(current, report.cleanupRemaining, 'signals');
       } catch (error) { report.cleanupInspectionError = error.message; report.passed = false; }
       if (report.cleanupRemaining?.length) report.passed = false;
     }

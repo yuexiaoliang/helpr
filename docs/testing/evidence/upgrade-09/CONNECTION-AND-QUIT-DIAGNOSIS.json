@@ -1,0 +1,154 @@
+{
+  "date": "2026-11-04",
+  "recordedAt": "2026-11-04T04:00:04.435683+00:00",
+  "baseCommit": "03dc929",
+  "scope": "连接与退出诊断、源码修正及离线验证；未新增实际应用轮次",
+  "productQuit": {
+    "cause": "controller普通quit把UpgradeService.held()的自动派发屏障直接当成退出禁止条件；重开checking及blocked在没有异步检查时也被拒绝",
+    "redCommand": "pnpm exec vitest run tests/workspace/upgrade.test.ts -t '升级后尚待检查时普通退出'",
+    "redError": "UPGRADE_PENDING",
+    "redDurationMs": 826,
+    "fix": "普通quit改查canExit；升级检查空闲时可可靠保存退出，原升级记录和屏障保持；正在检查或保存未完成仍拒绝",
+    "regressionTests": 4,
+    "testedWith": "真实UpgradeService、临时SQLite与controller实际quit协调函数；Electron接口被隔离，不启动应用",
+    "realSignedPackageVerified": false
+  },
+  "nativeConnection": {
+    "resolved": false,
+    "minimalRepro": "await cua.getApp(\"com.apple.finder\") with Finder already running",
+    "noHelprRequired": true,
+    "observations": [
+      {
+        "api": "cua.getState()",
+        "outerTimeoutMs": 10000,
+        "result": "js execution timed out; kernel reset"
+      },
+      {
+        "api": "cua.getState({emit:false}) unawaited diagnostic",
+        "result": "returned30apps2browsers; browser errors node_repl exec context not found",
+        "boundary": "跨调用异步实验丢失浏览器执行上下文，不能用作修复或稳定性证明"
+      },
+      {
+        "api": "await cua.listApps({emit:false})",
+        "elapsedMs": 28,
+        "apps": 30
+      },
+      {
+        "api": "await cua.getState({emit:false})",
+        "elapsedMs": 218,
+        "apps": 30,
+        "browsers": 2,
+        "errors": []
+      },
+      {
+        "api": "await cua.getApp(com.apple.finder)",
+        "outerTimeoutMs": 45000,
+        "result": "js execution timed out; kernel reset"
+      }
+    ],
+    "locatedBoundary": "原生窗口绑定链；包含应用访问策略核对和窗口／可访问性树读取。不能由外层超时确定具体内部步骤。",
+    "service": {
+      "pid": 75150,
+      "parentPid": 74711,
+      "version": "26.1027.1001730",
+      "sdk": "@oai/cua 0.2.6",
+      "plugin": "unified-computer-use 26.1029.61003"
+    },
+    "sampleFindings": [
+      "主线程采样主要处于正常run loop等待，不支持直接认定主线程死锁",
+      "观察到对旧宿主80328和访达87732的AXNotificationObserver线程；仅说明观察者存在，不能证明其是根因"
+    ],
+    "sdkFinding": "MacComputerUseClient默认请求截止120秒，旧10/30秒外层截止会先重置kernel而隐藏原始结果；45秒窗口读取仍失败，不是只把外层等待加长即可解决",
+    "preflight": "未发现锁屏或受保护输入",
+    "tccRead": "只读查询两处TCC库均authorization denied；这不证明Computer Use缺权限；未绕过访问限制",
+    "concurrencySnapshot": {
+      "otherLoadedThreadsActive": 0,
+      "onlyCurrentThreadActive": true,
+      "boundary": "仅当前时点摘要，不推定历史103时没有并发"
+    },
+    "sourceModification": "未修改共享工具的代码或权限，未重启共享宿主或服务",
+    "unknown": "原生服务内部请求停在哪个等待点，现有日志没有请求阶段或错误回执，尚不能确认唯一内部根因"
+  },
+  "validator": {
+    "currentNativeWindowRequiredPerStart": true,
+    "freshWindowAndScreenshotPreflightRequired": true,
+    "privateFixtureIdentityAndPortsPersisted": true,
+    "originalKeysOrCookiesRecreatedForOldRun": false,
+    "inspectionHistoryNoLongerOverwritten": true,
+    "normalAndForcedCleanupRecordedSeparately": true,
+    "offlineTests": 5,
+    "oldBatchStillOneShot": true,
+    "atomicReportReplacement": true
+  },
+  "checks": {
+    "compile": "passed",
+    "formalTests": 137,
+    "legacyTests": 25,
+    "syntaxFiles": 209,
+    "typesLintFormat": "passed",
+    "scriptTests": 5,
+    "firstFailures": [
+      "补充测试首次未排除checkpoint的workspaceRevision变化；门控第二次capture等待了新未解Promise，已按真实双采集顺序修正",
+      "首次完整检查发现3条测试lint问题，修正后完整检查通过"
+    ],
+    "sourceFixInCandidate38": false,
+    "candidate38AsarUnchanged": "fa1544d103ebecacbadef42848be5c6acd6bbac7f429d2893362a809439d21fc",
+    "consumedBatchGuard": "ORIGINAL_BUDGET_REQUIRED; 0 application starts; counters unchanged"
+  },
+  "budget": {
+    "used": {
+      "builds": 38,
+      "installs": 12,
+      "starts": 103,
+      "faults": 42,
+      "cleanups": 18
+    },
+    "limits": {
+      "builds": 38,
+      "installs": 12,
+      "starts": 103,
+      "faults": 43,
+      "cleanups": 19
+    },
+    "applicationDelta": {
+      "builds": 0,
+      "installs": 0,
+      "starts": 0,
+      "faults": 0,
+      "cleanups": 0
+    },
+    "originalDeadline": 1793767181470,
+    "increased": false
+  },
+  "evidenceHashes": {
+    "quit-red.log": "5e3cdd73843e63afb5f1a849699da879c1b3b09ca1e6be96d69e8462370303fa",
+    "quit-green.log": "bcad93cff77a8e43754fbc6853cdec057e5ffb66756c08802dd6e7638077bbb9",
+    "quit-green-corrected.log": "34c5ec7ef09b28a86ab51b924c908bacab9e312964b50e7394bfb53b661dc264",
+    "compile.log": "cb774f77cddc31315a597b8aceccc2e9e592023226b0b71eb854024f803fb644",
+    "full-check.log": "a57e97a4bc80e7d4dd3d5f205bed0e808e16b6ce5c74c440c132a30d6d7a0ca5",
+    "full-check-corrected.log": "f31e93293264c7d6e64efa6c3e92fe34dbe75df2aa658a9e9c0e0d4b5facebb1",
+    "validator-tests-final.log": "dc502576cf841c111d7222de60d5ec3ad586dbd0965419d22ecbe57e59fc2955",
+    "native-service-sample.txt": "2cc6049e6d774f51105b657f2f7ff0390a3b68a80fcc796e8694d26fbc35163b",
+    "native-window-sample.txt": "0bd6c09a7f0d3817c13cd6c62cd00bf300ff34c8818172e71177569ba625146a",
+    "native-errors.log": "6a105b91d25933f6c54289af691d9c991a86c63c340ca13a472b5a44aa88c346",
+    "consumed-batch-guard.log": "bfa1fe26c8a7f0ce0a027c005d9d030eb2ebb9586845d68095e0b61d00705f90",
+    "diagnosis-cleanup.json": "ae1d5730c00d27499eb84903097c3ee0634930d2ea78367c41a5c5288b372c50"
+  },
+  "acceptance": {
+    "completed": 2,
+    "total": 10,
+    "newCriteriaCompleted": 0
+  },
+  "nextAcceptance": "须先恢复原生窗口绑定与截图，核对新的有界实包额度和包含修正的新候选，再验证；现有103批次不重开。",
+  "officialSources": [
+    "https://developers.openai.com/plugins/deploy/troubleshooting",
+    "https://developers.openai.com/training/walkthroughs/using-your-computer-and-browser"
+  ],
+  "localSDKHashes": {
+    "client.js": "71134f10354fe9f7be23a62df52789908a8592151685286a7965b297a81cef8f",
+    "native-pipe.js": "60b3653f7ee052007b02a79e11416a89d424d73dac450e429a93b214839c267f",
+    "get_app_state.js": "7b7fe2af461c7cd348c07535b1deae9ea14837dbdac9985ba479eb2e53e5248d",
+    "computer-use-policy.js": "b1591c30de7a51d0fb5a842a78096920427e1c96bda8199589b3c8de417cd897"
+  },
+  "finalCleanupConfirmed": true
+}

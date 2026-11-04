@@ -51,6 +51,17 @@ import {
   CURRENT_STATE_MODEL,
 } from '../shared/record-format';
 
+export async function requestApplicationQuit(ports: {
+  upgrades: Pick<UpgradeService, 'canExit'>;
+  canExit: () => boolean;
+  quit: () => Promise<void>;
+}): Promise<null> {
+  if (!ports.upgrades.canExit()) throw Error('UPGRADE_PENDING');
+  if (!ports.canExit()) throw Error('UNSAVED_CHANGES');
+  await ports.quit();
+  return null;
+}
+
 export async function startController(
   folder: string,
   validation: boolean,
@@ -684,16 +695,15 @@ export async function startController(
       return { state: await models.ask(command) };
     }
     if (command.kind === 'quit') {
-      if (upgrades.held()) throw Error('UPGRADE_PENDING');
-      if (
-        !recordsAvailable ||
-        !workspace.canExit() ||
-        !executions.canExit() ||
-        !backups.canExit()
-      )
-        throw new Error('UNSAVED_CHANGES');
-      await quit();
-      return null;
+      return requestApplicationQuit({
+        upgrades,
+        canExit: () =>
+          recordsAvailable &&
+          workspace.canExit() &&
+          executions.canExit() &&
+          backups.canExit(),
+        quit,
+      });
     }
     if (
       command.kind === 'panel' ||

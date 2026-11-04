@@ -14,6 +14,18 @@ import { WorkspaceRecords } from '../../app/records/workspace';
 import { UpgradeService } from '../../app/desktop/upgrade-service';
 import { randomUUID } from 'node:crypto';
 import type { UpgradeProof } from '../../app/shared/upgrade';
+import { requestApplicationQuit } from '../../app/desktop/controller';
+
+vi.mock('electron', () => ({
+  app: {},
+  utilityProcess: {},
+  Menu: {},
+  Tray: {},
+  nativeImage: {},
+  safeStorage: {},
+  powerMonitor: {},
+  shell: {},
+}));
 
 const folders: string[] = [];
 const closeOwners: (() => void)[] = [];
@@ -22,6 +34,98 @@ afterEach(() => {
   closeOwners.splice(0).forEach((close) => close());
   for (const folder of folders.splice(0))
     rmSync(folder, { recursive: true, force: true });
+});
+
+test('升级后尚待检查时普通退出可靠保存，重开仍须检查且不解除升级暂停', async () => {
+  const h = await preparedUpgrade();
+  const service = await h.reopen();
+  const quit = vi.fn(() => {
+    h.records.checkpoint();
+    return Promise.resolve();
+  });
+  expect(service.held()).toBe(true);
+  await expect(
+    requestApplicationQuit({ upgrades: service, canExit: () => true, quit }),
+  ).resolves.toBeNull();
+  expect(quit).toHaveBeenCalledOnce();
+  expect(service.held()).toBe(true);
+  const reopened = await h.reopen();
+  expect(reopened.held()).toBe(true);
+  expect(await reopened.handle({ kind: 'upgrade-status' })).toMatchObject({
+    phase: 'checking',
+    reopening: true,
+    continuity: 'unchecked',
+  });
+  expect(h.releases).toBe(1);
+});
+
+test('升级检查失败后可退出，原失败、备份与执行屏障保持', async () => {
+  const h = await preparedUpgrade();
+  const service = await h.reopen();
+  h.setFailure('MODEL_CREDENTIAL_UNAVAILABLE');
+  const blocked = await service.handle({ kind: 'upgrade-check' });
+  expect(blocked).toMatchObject({
+    phase: 'blocked',
+    error: 'MODEL_CREDENTIAL_UNAVAILABLE',
+  });
+  const ledger = h.records.upgrade({ kind: 'status' });
+  await requestApplicationQuit({
+    upgrades: service,
+    canExit: () => true,
+    quit: () => {
+      h.records.checkpoint();
+      return Promise.resolve();
+    },
+  });
+  const after = h.records.upgrade({ kind: 'status' });
+  expect(after.workspaceRevision).toBeGreaterThanOrEqual(
+    ledger.workspaceRevision,
+  );
+  expect({ ...after, workspaceRevision: ledger.workspaceRevision }).toEqual(
+    ledger,
+  );
+  expect(service.held()).toBe(true);
+  expect(h.releases).toBe(1);
+});
+
+test('升级核对进行中仍不能退出，核对结束后才允许，未可靠保存继续阻止退出', async () => {
+  const h = await preparedUpgrade();
+  const service = await h.reopen();
+  let completeCapture = () => {};
+  const gate = new Promise<void>((resolve) => (completeCapture = resolve));
+  h.setCaptureGate(() => gate);
+  const before = h.captures;
+  const checking = service.handle({ kind: 'upgrade-check' });
+  const quit = vi.fn(async () => {});
+  try {
+    await vi.waitFor(() => expect(h.captures).toBe(before + 1));
+    await expect(
+      requestApplicationQuit({ upgrades: service, canExit: () => true, quit }),
+    ).rejects.toThrow('UPGRADE_PENDING');
+    expect(quit).not.toHaveBeenCalled();
+  } finally {
+    completeCapture();
+    await checking;
+  }
+  await expect(
+    requestApplicationQuit({ upgrades: service, canExit: () => false, quit }),
+  ).rejects.toThrow('UNSAVED_CHANGES');
+  expect(quit).not.toHaveBeenCalled();
+});
+
+test('升级待核对时退出保存失败不清除升级记录或屏障', async () => {
+  const h = await preparedUpgrade();
+  const service = await h.reopen();
+  const ledger = h.records.upgrade({ kind: 'status' });
+  await expect(
+    requestApplicationQuit({
+      upgrades: service,
+      canExit: () => true,
+      quit: () => Promise.reject(Error('SQLITE_BUSY')),
+    }),
+  ).rejects.toThrow('SQLITE_BUSY');
+  expect(h.records.upgrade({ kind: 'status' })).toEqual(ledger);
+  expect(service.held()).toBe(true);
 });
 
 test.each([
@@ -119,6 +223,7 @@ async function preparedUpgrade() {
   let afterBackup = () => {};
   let captures = 0;
   let releases = 0;
+  let captureGate = () => Promise.resolve();
   const make = (version: string) =>
     new UpgradeService({
       version,
@@ -129,8 +234,9 @@ async function preparedUpgrade() {
         return Promise.resolve();
       },
       ready: () => true,
-      capture: () => {
+      capture: async () => {
         captures++;
+        await captureGate();
         return failure
           ? Promise.reject(Error(failure))
           : Promise.resolve(structuredClone(proof));
@@ -186,6 +292,9 @@ async function preparedUpgrade() {
     },
     get captures() {
       return captures;
+    },
+    setCaptureGate: (gate: () => Promise<void>) => {
+      captureGate = gate;
     },
     get releases() {
       return releases;
