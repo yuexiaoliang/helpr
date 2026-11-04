@@ -81,7 +81,43 @@
     "localEffects": 0,
     "versionRequests": 1,
     "remoteBusinessWrites": 0,
-    "captures": 0
+    "captures": 0,
+    "connectionRetries": [
+      {
+        "recordedAt": "2026-11-04T03:24:50.008Z",
+        "basis": "用户在上轮连接失败后明确回复“再试试”",
+        "api": "cua.getState()",
+        "timeoutMs": 10000,
+        "result": "js execution timed out; kernel reset, rerun your request",
+        "inventoryReadable": false,
+        "nativeAppsRead": 0,
+        "applicationStarts": 0,
+        "installations": 0,
+        "builds": 0,
+        "cumulativeUsed": {
+          "builds": 38,
+          "installs": 11,
+          "starts": 101,
+          "faults": 42,
+          "cleanups": 17
+        },
+        "originalDeadline": 1793767181470,
+        "independentCleanup": {
+          "remaining": [],
+          "listeners": [
+            {
+              "port": 55540,
+              "output": ""
+            },
+            {
+              "port": 55541,
+              "output": ""
+            }
+          ]
+        },
+        "boundary": "Only one native connection retry, no application or browser launched, no process terminated, no deadline or counter reset."
+      }
+    ]
   },
   "cleanup": {
     "at": "2026-11-04T03:13:05.374Z",
@@ -122,7 +158,8 @@
   "evidenceHashes": {
     "report": "3b56b5f8861f8f9aade706125a09787daade48e5defee0121120f6afba72424c",
     "cleanup": "70316ba87fde178d08adfc6b34a0eece6197528bca13a15400f4cfcb0a900a75",
-    "cuaFailure": "9e87a0d3a32c66c4186d8d60b25515ee8b2fa8fb5ebf376dcb51e43cac01e38d"
+    "cuaFailure": "9e87a0d3a32c66c4186d8d60b25515ee8b2fa8fb5ebf376dcb51e43cac01e38d",
+    "cuaConnectionRetry1": "c219a737b60424e913648053ac51e2749c2019aedd55d60bf91b29caae978f57"
   },
   "acceptance": {
     "completed": 2,
