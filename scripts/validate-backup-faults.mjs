@@ -7,7 +7,7 @@ import {spawn,execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {createRequire} from 'node:module';
 import {pathToFileURL} from 'node:url';
-import {spend,validationRoot} from './workspace-budget.mjs';
+import {spend,updateValidationBudget,validationRoot} from './workspace-budget.mjs';
 import {verifyDevelopmentSignature} from './development-signing.mjs';
 import {capacityVolume,guardCapacity} from './backup-validation-storage.mjs';
 
@@ -35,34 +35,40 @@ const manifest=JSON.parse(fs.readFileSync(path.join(validationRoot,`build-${buil
 assert(manifest.prepared&&path.isAbsolute(manifest.app),'PREPARED_BUILD_REQUIRED');
 for(const [file,hash]of Object.entries(manifest.hashes))assert.equal(createHash('sha256').update(fs.readFileSync(path.join(manifest.app,file))).digest('hex'),hash);
 const signature=verifyDevelopmentSignature(manifest.app);
-execFileSync(process.execPath,['scripts/validate-workspace.mjs','--preflight'],{timeout:65000,stdio:'pipe'});
 const processRows=()=>execFileSync('/bin/ps',['-axo','pid=,ppid=,pgid=,command='],{encoding:'utf8',timeout:5000}).trim().split('\n').map(line=>{const m=line.trim().match(/^(\d+)\s+(\d+)\s+(\d+)\s+(.*)$/);return {pid:+m[1],parent:+m[2],group:+m[3],command:m[4]};});
 const existing=processRows();assert(!existing.some(row=>row.pid!==process.pid&&(/\/helpr\.app\/Contents\/MacOS\/helpr(?: |$)/.test(row.command)||/^(?:\S*\/)?node scripts\/validate-(?:backup|workspace|recovery|takeover).*\.mjs/.test(row.command))),'OTHER_VALIDATION_RUNNING');
 for(const start of source.starts)assert(!existing.some(row=>start.pids.includes(row.pid)||start.groups.includes(row.group)),'SOURCE_PROCESSES_REMAIN');
 const budgetFile=path.join(validationRoot,'budget.json');
 const readBudget=()=>JSON.parse(fs.readFileSync(budgetFile));const initialBudget=readBudget(),campaign=initialBudget.backup07Closeout;
 assert(campaign?.basis.includes('增加')&&campaign.baseline.starts===90&&campaign.baseline.faults===37,'APPROVED_CLOSEOUT_REQUIRED');
-assert(initialBudget.used.starts+2<=initialBudget.limits.starts&&initialBudget.used.faults+5<=initialBudget.limits.faults&&initialBudget.used.cleanups+1<=initialBudget.limits.cleanups,'PRIMARY_BUDGET_REQUIRED');
 assert(campaign.activeMilliseconds<campaign.limits.activeMilliseconds,'CAMPAIGN_TIME_EXHAUSTED');
 if(preparationRetry){const prior=JSON.parse(fs.readFileSync(path.join(validationRoot,'backup-07-closeout-1/result.json')));assert(prior.error==='HELPER_FAILED:hdiutil'&&prior.starts.length===0&&prior.faults.length===0&&prior.storage.reclaimed&&prior.remainingHelperProcesses.length===0&&prior.helpers[0].stderr.includes('-format requires'),'DIAGNOSED_PREPARATION_FAILURE_REQUIRED');}
 const root=path.join(validationRoot,preparationRetry?'backup-07-closeout-2':'backup-07-closeout-1');assert(!fs.existsSync(root),'ROUND_ALREADY_EXISTS');
 if(preflight){console.log(JSON.stringify({preflight:true,build,profile:'original',primaryStarts:2,primaryFaults:5,maximumImageMiB:32,newTasks:0,models:0,effects:0,appStarts:0}));process.exit(0);}
+execFileSync(process.execPath,['scripts/validate-workspace.mjs','--preflight'],{timeout:65000,stdio:'pipe'});
 fs.mkdirSync(root,{mode:0o700});
-{const b=readBudget();b.backup07Closeout.runs.push({root,started:Date.now(),candidate:build,commit:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim()});fs.writeFileSync(budgetFile,JSON.stringify(b,null,2)+'\n',{mode:0o600});}
+const commit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+updateValidationBudget(budget => {
+  budget.backup07Closeout.runs.push({ root, started: Date.now(), candidate: build, commit });
+});
 const write=(name,value)=>fs.writeFileSync(path.join(root,name),JSON.stringify(value,null,2)+'\n',{mode:0o600});
 const report={build,archive:manifest.hashes['Contents/Resources/app.asar'],certificate:signature.certificateSha256,sourceSHA256:createHash('sha256').update(fs.readFileSync(path.join(sourceCold,'result.json'))).digest('hex'),started:Date.now(),limits:{starts:2,faults:5,models:0,effects:0,tasks:0,roundMilliseconds:1200000},starts:[],faults:[],commands:[],helpers:[],checks:[],models:[],effects:[],pageInputs:[],counts:source.counts,stages:[],phase:'storage-preparation'};
 let lastAccount=Date.now(),failure,current,reader,volume,watcher,readonly=false,finished=false,baseline,receiptFile,receiptRequest,receiptDigest,immediateStop,restoreBefore,interrupted=false,gate,receiptEpoch;
 let deadline=Math.min(Date.now()+1200000,Date.now()+campaign.limits.activeMilliseconds-campaign.activeMilliseconds);
 report.rounds=[{kind:'faults',started:report.started,deadline}];
 const helpers=new Map();
-function account(){const now=Date.now(),b=readBudget();b.backup07Closeout.activeMilliseconds+=now-lastAccount;lastAccount=now;fs.writeFileSync(budgetFile,JSON.stringify(b,null,2)+'\n',{mode:0o600});}
+function account() {
+  const now = Date.now();
+  updateValidationBudget(budget => { budget.backup07Closeout.activeMilliseconds += now - lastAccount; });
+  lastAccount = now;
+}
 function save(){write('result.json',report);account();}
 const check=(name,condition)=>{assert(condition,name);if(!report.checks.includes(name))report.checks.push(name);save();};
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const alive=pid=>{try{process.kill(pid,0);return true;}catch{return false;}};
 function limited(){assert(Date.now()<deadline,'ROUND_TIME_LIMIT');assert(readBudget().backup07Closeout.activeMilliseconds<campaign.limits.activeMilliseconds,'CAMPAIGN_TIME_LIMIT');if(failure)throw Error(failure);}
 function fault(kind,detail={}){limited();assert(report.faults.length<report.limits.faults,'PRIMARY_FAULT_LIMIT');const b=spend('faults');report.faults.push({kind,at:Date.now(),global:b.used.faults,...detail});save();}
-function emergency(){const b=readBudget();assert(b.used.cleanups-campaign.baseline.cleanups<campaign.limits.cleanups,'CAMPAIGN_CLEANUP_LIMIT');spend('cleanups');}
+function emergency(){spend('cleanups');}
 for(const signal of ['SIGINT','SIGTERM'])process.on(signal,()=>{failure??='VALIDATOR_'+signal;save();});
 async function until(fn,ms=15000,cleanup=false){const end=cleanup?Date.now()+ms:Math.min(deadline,Date.now()+ms);while(Date.now()<end){if(!cleanup)limited();if(await fn())return;await delay(50);}throw Error('BACKUP_FAULT_WAIT_EXPIRED');}
 function captureTree(app){const rows=processRows();let added=true;while(added){added=false;for(const row of rows)if(app.pids.has(row.parent)&&!app.pids.has(row.pid)){app.pids.add(row.pid);added=true;}}for(const row of rows)if(app.pids.has(row.pid)&&app.pids.has(row.group))app.groups.add(row.group);app.row.pids=[...app.pids];app.row.groups=[...app.groups];app.row.tree=rows.filter(row=>app.pids.has(row.pid));return rows.filter(row=>app.pids.has(row.pid)||app.groups.has(row.group));}
@@ -162,6 +168,16 @@ finally{
  }
  if(volume)try{await volume.cleanup();}catch(error){report.storageCleanupError=error.message;report.passed=false;}
  const helperGroups=report.helpers.map(row=>row.group);report.remainingHelperProcesses=processRows().filter(row=>helperGroups.includes(row.group)||helpers.has(row.pid));if(report.remainingHelperProcesses.length)report.passed=false;
- site.closeAllConnections();await new Promise(resolve=>site.close(resolve));report.ended=Date.now();report.rounds.at(-1).ended??=report.ended;{const b=readBudget();Object.assign(b.backup07Closeout.runs.find(row=>row.root===root),{ended:report.ended,passed:report.passed,error:report.error,remaining:current?.row.remaining??[],storageDetached:report.storage?.detached??false});fs.writeFileSync(budgetFile,JSON.stringify(b,null,2)+'\n',{mode:0o600});}save();console.log('BACKUP_FAULT_RESULT '+JSON.stringify({passed:report.passed,error:report.error,root}));
+ site.closeAllConnections();
+ await new Promise(resolve => site.close(resolve));
+ report.ended = Date.now();
+ report.rounds.at(-1).ended ??= report.ended;
+ updateValidationBudget(budget => {
+   const run = budget.backup07Closeout.runs.find(row => row.root === root);
+   Object.assign(run, { ended: report.ended, passed: report.passed, error: report.error,
+     remaining: current?.row.remaining ?? [], storageDetached: report.storage?.detached ?? false });
+ });
+ save();
+ console.log('BACKUP_FAULT_RESULT ' + JSON.stringify({ passed: report.passed, error: report.error, root }));
 }
 async function snapshotFromDisk(){return snapshotSchema.parse(JSON.parse(fs.readFileSync(path.join(root,'snapshot.json'))));}

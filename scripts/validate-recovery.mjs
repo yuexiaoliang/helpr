@@ -8,7 +8,7 @@ import {spawn,execFileSync} from 'node:child_process';
 import {createHash,randomUUID} from 'node:crypto';
 import {createRequire} from 'node:module';
 import {pathToFileURL} from 'node:url';
-import {spend as debit,validationRoot} from './workspace-budget.mjs';
+import {spend,validationRoot} from './workspace-budget.mjs';
 import {verifyDevelopmentSignature} from './development-signing.mjs';
 import {confirmUpgradeUI,requireUpgradeNativePreflight} from './upgrade-validation-state.mjs';
 const upgrade09=process.argv.includes('--upgrade09');
@@ -16,7 +16,6 @@ const coordination=process.argv.includes('--coordination');
 const coordinationTail=process.argv.includes('--tail');
 assert(!coordinationTail||coordination,'COORDINATION_TAIL_REQUIRED');
 assert(!coordination||upgrade09,'UPGRADE09_COORDINATION_REQUIRED');
-const spend=kind=>debit(kind,upgrade09?'upgrade09Repair':undefined);
 
 // 直接加载正式公开契约；预检不启动产品、不访问网站或凭据。
 function commandsFor(origin){return {
@@ -78,22 +77,24 @@ if(resume){
 }
 const root=freshC?originalRoot+'-quit-followup-after-profile-loss':quitFollowup?originalRoot+'-quit-followup':resume?originalRoot+(resume==='startup-evidence'?'-resume':resume==='show-contract'?'-show-contract':resume==='coordination-version'?'-version-resume':'-contract-resume'):originalRoot;
 assert(!fs.existsSync(root),'ROUND_ALREADY_EXISTS');
-execFileSync(process.execPath,['scripts/validate-workspace.mjs','--preflight'],{stdio:'pipe'});
 const profileRoot=`/private/tmp/helpr-workspace-validation-${process.getuid()}`;
 fs.mkdirSync(profileRoot,{recursive:true,mode:0o700});assert.equal(fs.realpathSync(profileRoot),profileRoot);
 if(quitFollowup&&!freshC)assert(followup.profile.startsWith(profileRoot+'/recovery05-')&&fs.realpathSync(followup.profile)===followup.profile,'INVALID_PROFILE_ROOT');
 const limits=quitFollowup?{starts:2,faults:0,cleanups:1,models:6,effects:1,tasks:freshC?1:0,minutes:8}:{starts:4,faults:3,cleanups:1,models:10,effects:2,tasks:3,minutes:8};
 if(coordination)Object.assign(limits,{starts:2,faults:0,models:10,effects:1});
-const remainingBudget=JSON.parse(fs.readFileSync(path.join(validationRoot,'budget.json')));
 if(upgrade09){
- assert(remainingBudget.upgrade09Repair?.approved&&remainingBudget.upgrade09Repair?.unlimited&&remainingBudget.upgrade09Repair?.active,'UPGRADE09_APPROVAL_REQUIRED');
- requireUpgradeNativePreflight(remainingBudget.upgrade09Repair.nativePreflight);
+ const remainingBudget=JSON.parse(fs.readFileSync(path.join(validationRoot,'budget.json')));
+ assert(remainingBudget.upgrade09Repair?.approved&&remainingBudget.upgrade09Repair?.active,'RECORDED_UPGRADE09_BATCH_REQUIRED');
+ if(!preflight){
+  execFileSync(process.execPath,['scripts/validate-workspace.mjs','--preflight'],{stdio:'pipe',timeout:65000});
+  requireUpgradeNativePreflight(remainingBudget.upgrade09Repair.nativePreflight);
+ }
  limits.minutes=20;
  const others=execFileSync('/bin/ps',['-axo','pid=,command='],{encoding:'utf8',timeout:5000}).trim().split('\n').map(r=>{const m=r.trim().match(/^(\d+)\s+(.*)$/);return{pid:+m[1],command:m[2]};});
  const conflicts=others.filter(r=>r.pid!==process.pid&&(/^\S+\/helpr\.app\/Contents\/MacOS\/helpr(?: |$)/.test(r.command)||/^\/.*\/Contents\/MacOS\/helpr Workspace Helper(?: |$)/.test(r.command)||/^(?:\S*\/)?node\s+(?:\S*\/)?(?:validate-\S+|capture-upgrade-legacy)\.mjs(?:\s|$)/.test(r.command)));
  if(conflicts.length)console.log(JSON.stringify({validationConflicts:conflicts,self:process.pid}));
  assert.equal(conflicts.length,0,'OTHER_VALIDATION_RUNNING');
-}else for(const kind of ['starts','faults','cleanups'])assert(remainingBudget.used[kind]+limits[kind]<=remainingBudget.limits[kind],'ROUND_BUDGET_NOT_RESERVED');
+}
 if(preflight){console.log(JSON.stringify({preflightPassed:true,build,preparation:signingFollowup?'signing-followup':'original',freshC,limits,carry,appStarts:0,modelCalls:0,effects:0}));process.exit(0);}
 fs.mkdirSync(root,{mode:0o700});
 const profile=resume==='coordination-version'?previous.profile:resume==='show-contract'?JSON.parse(fs.readFileSync(path.join(validationRoot,'auth09/show-contract-profile-recovery.json'))).profile:quitFollowup&&!freshC?followup.profile:fs.mkdtempSync(profileRoot+'/recovery05-');

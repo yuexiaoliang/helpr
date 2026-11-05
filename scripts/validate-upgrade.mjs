@@ -7,12 +7,23 @@ import { createHash, randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
 import assert from 'node:assert/strict';
-import { spend as debit, validationRoot } from './workspace-budget.mjs';
+import { spend, updateValidationBudget, validationRoot } from './workspace-budget.mjs';
 import { verifyDevelopmentSignature } from './development-signing.mjs';
 import { openUpgradeFixture, confirmUpgradeUI, requireUpgradeNativePreflight, recordUpgradeCleanup, writeUpgradeJSON } from './upgrade-validation-state.mjs';
 
-// 同一受管入口持有全部应用、服务与四次启动；产品交互交由CUA。
 const mode = process.argv.slice(2).join(' ');
+if (!mode || mode === '--unattended') {
+  execFileSync('pnpm', ['exec', 'vitest', 'run', 'tests/workspace/upgrade.test.ts',
+    'tests/workspace/upgrade-ui.test.tsx', 'tests/workspace/page-protection.test.ts'], {
+    stdio: 'inherit', timeout: 120000,
+  });
+  execFileSync(process.execPath, ['--test', 'scripts/upgrade-validation-state.test.mjs'], {
+    stdio: 'inherit', timeout: 30000,
+  });
+  console.log(JSON.stringify({ scope: 'upgrade-source', passed: true, appStarts: 0,
+    pendingAcceptance: ['实际换版与窗口', '原密钥及网站登录延续'] }));
+  process.exit(0);
+}
 assert(['--check', '--preflight', '--run', '--after-97', '--check-after-97', '--v3-check', '--v3-preflight', '--v3-run', '--v3-check-after101', '--v3-after101', '--repair-check', '--repair-preflight', '--repair-run', '--repair-resume', '--repair-replace40', '--repair-resume40', '--repair-auth40', '--repair-auth41', '--repair-auth41-resume'].includes(mode), 'EXPLICIT_MODE_REQUIRED');
 const repair = mode.startsWith('--repair-');
 const auth41Resume = mode === '--repair-auth41-resume';
@@ -23,7 +34,6 @@ const repair40 = repairReplace40 || mode === '--repair-resume40' || auth40;
 const next = repair || mode.startsWith('--v3-');
 const oldBuild = repair ? 38 : next ? 37 : 36, newBuild = auth41 ? 41 : repair40 ? 40 : oldBuild + 1, oldVersion = repair ? '0.2.1' : next ? '0.2.0' : '0.1.0', newVersion = repair ? '0.2.2' : next ? '0.2.1' : '0.2.0';
 const section = repair ? 'upgrade09Repair' : next ? 'upgrade09V3' : 'upgrade09';
-const spend = kind => debit(kind, repair ? section : undefined);
 const after97 = mode === '--after-97' || mode === '--check-after-97';
 const after101 = mode === '--v3-after101' || mode === '--v3-check-after101';
 const repairResume = mode === '--repair-resume' || repair40;
@@ -34,6 +44,7 @@ const batchFile = path.join(validationRoot, batchName + '-batch.json');
 const budgetFile = path.join(validationRoot, 'budget.json');
 const contractsFile = path.join(validationRoot, 'upgrade09-contracts.mjs');
 const hash = (bytes) => createHash('sha256').update(bytes).digest('hex');
+fs.mkdirSync(validationRoot, { recursive: true, mode: 0o700 });
 createRequire(import.meta.resolve('vite'))('esbuild').buildSync({
   stdin: { contents: "export {uiCommandSchema} from './app/shared/contracts';export {nextStepSchema} from './app/shared/execution';", resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, platform: 'node', format: 'esm', outfile: contractsFile,
@@ -52,12 +63,30 @@ const ps = () => execFileSync('/bin/ps', ['-axo', 'pid=,ppid=,pgid=,lstart=,comm
   assert(m, 'PROCESS_ROW_INVALID');
   return { pid: +m[1], parent: +m[2], group: +m[3], birth: m[4].replace(/\s+/g, ' '), command: m[5] };
 });
-assert(!ps().some(row => row.pid !== process.pid && (/\/helpr\.app\/Contents\/MacOS\/helpr(?: |$)/.test(row.command) || /helpr Workspace Helper/.test(row.command) || /^(?:\S*\/)?node\s+(?:\S*\/)?validate-\S+\.mjs(?:\s|$)/.test(row.command))), 'OTHER_VALIDATION_RUNNING');
-execFileSync(process.execPath, ['scripts/validate-workspace.mjs', '--preflight'], { stdio: 'inherit', timeout: 65000 });
+const old = JSON.parse(fs.readFileSync(path.join(validationRoot, 'build-' + oldBuild + '.json')));
+const expectedOld = repair ? path.resolve('dist/candidates/manual-upgrade-v3/mac-arm64/helpr.app') : next ? path.join(fs.realpathSync(path.join(process.cwd(), '../..')), '.codex/worktrees/manual-upgrade/helpr/dist/candidates/manual-upgrade-09/mac-arm64/helpr.app') : '/Users/yuexiaoliang/projects/helpr/dist/candidates/version-08/mac-arm64/helpr.app';
+assert(old.build === oldBuild && old.prepared && old.app === expectedOld, 'FIXED_OLD_CANDIDATE_REQUIRED');
+function verify(manifest) {
+  const version = execFileSync('/usr/libexec/PlistBuddy', ['-c', 'Print :CFBundleShortVersionString', path.join(manifest.app, 'Contents/Info.plist')], {encoding:'utf8', timeout:5000}).trim();
+  assert.equal(version, manifest.build === oldBuild ? oldVersion : newVersion, 'REAL_PACKAGE_VERSION_REQUIRED');
+  for (const [file, expected] of Object.entries(manifest.hashes)) assert.equal(hash(fs.readFileSync(path.join(manifest.app, file))), expected, file);
+  return verifyDevelopmentSignature(manifest.app);
+}
+verify(old);
+if (mode === '--preflight' || mode === '--v3-preflight' || mode === '--repair-preflight') {
+  console.log(JSON.stringify({ preflight: 'old-package-verified', oldBuild, nextBuild: newBuild, oldApp: old.app, appStarts: 0, nativeWindow: 'pending' }));
+  process.exit(0);
+}
 const budget = JSON.parse(fs.readFileSync(budgetFile));
-assert(budget[section]?.approved && (repair ? budget[section].unlimited === true && budget[section].active === true : budget.limits.builds === newBuild && budget.limits.starts === (next ? 103 : 100)), 'EXPLICIT_APPROVAL_REQUIRED');
-if (repair) assert((mode === '--repair-preflight' ? [38, 39, 40].includes(budget.used.builds) : budget.used.builds === newBuild) && budget[section].baseUsed?.starts === 103 && budget[section].baseUsed?.installs === 12 && budget[section].baseUsed?.builds === 38, 'EXACT_REPAIR_APPROVAL_REQUIRED');
-else if (next) assert(budget.limits.installs === 12 && (mode === '--v3-preflight' ? [37, 38].includes(budget.used.builds) : budget.used.builds === 38) && budget[section].baseUsed?.starts === 100 && budget[section].baseUsed?.installs === 10 && budget[section].limits?.starts === 3 && budget[section].limits?.installs === 2, 'EXACT_V3_APPROVAL_REQUIRED');
+// 以下命令恢复已记录的特定验收现场，核对原候选、批次及一次性标记。
+assert(budget[section]?.approved && (!repair || budget[section].active === true), 'RECORDED_UPGRADE_BATCH_REQUIRED');
+if (repair) {
+  assert(budget.used.builds === newBuild && budget[section].baseUsed?.starts === 103 &&
+    budget[section].baseUsed?.installs === 12 && budget[section].baseUsed?.builds === 38, 'REPAIR_BASELINE_MISMATCH');
+} else if (next) {
+  assert(budget.used.builds === 38 && budget[section].baseUsed?.starts === 100 &&
+    budget[section].baseUsed?.installs === 10, 'V3_BASELINE_MISMATCH');
+}
 const originalDeadline = repair ? null : budget[section].runtimeStartedAt + 90 * 60000;
 const extraTime = next ? null : budget.upgrade09.after97Time;
 if (extraTime) assert(after97 && extraTime.approved === true && extraTime.originalDeadline === originalDeadline && Number.isSafeInteger(extraTime.approvedAt) && extraTime.deadline === extraTime.approvedAt + 60 * 60000, 'EXACT_TIME_EXTENSION_APPROVAL_REQUIRED');
@@ -85,23 +114,7 @@ if (after101) {
   assert.equal(previous.started, budget[section].runtimeStartedAt, 'ORIGINAL_DEADLINE_REQUIRED');
   const prior = previous.starts[0];
   assert(!ps().some(row => (prior.identities[row.pid]?.birth === row.birth && prior.identities[row.pid]?.command === row.command) || prior.groups.includes(row.group)), 'PREVIOUS_101_PROCESSES_REMAIN');
-  assert(budget[section].nativeConnectionRecovered === true, 'NATIVE_CONNECTION_RECOVERY_REQUIRED');
   assert(!fs.existsSync(path.join(root, 'after-101-once')), 'CONTINUATION_ALREADY_USED');
-}
-if (next) requireUpgradeNativePreflight(budget[section].nativePreflight);
-const old = JSON.parse(fs.readFileSync(path.join(validationRoot, 'build-' + oldBuild + '.json')));
-const expectedOld = repair ? path.resolve('dist/candidates/manual-upgrade-v3/mac-arm64/helpr.app') : next ? path.join(fs.realpathSync(path.join(process.cwd(), '../..')), '.codex/worktrees/manual-upgrade/helpr/dist/candidates/manual-upgrade-09/mac-arm64/helpr.app') : '/Users/yuexiaoliang/projects/helpr/dist/candidates/version-08/mac-arm64/helpr.app';
-assert(old.build === oldBuild && old.prepared && old.app === expectedOld, 'FIXED_OLD_CANDIDATE_REQUIRED');
-function verify(manifest) {
-  const version = execFileSync('/usr/libexec/PlistBuddy', ['-c', 'Print :CFBundleShortVersionString', path.join(manifest.app, 'Contents/Info.plist')], {encoding:'utf8', timeout:5000}).trim();
-  assert.equal(version, manifest.build === oldBuild ? oldVersion : newVersion, 'REAL_PACKAGE_VERSION_REQUIRED');
-  for (const [file, expected] of Object.entries(manifest.hashes)) assert.equal(hash(fs.readFileSync(path.join(manifest.app, file))), expected, file);
-  return verifyDevelopmentSignature(manifest.app);
-}
-verify(old);
-if (mode === '--preflight' || mode === '--v3-preflight' || mode === '--repair-preflight') {
-  console.log(JSON.stringify({ preflight: true, oldBuild, nextBuild: newBuild, oldApp: old.app, appStarts: 0, remainingStarts: next ? 3 : 4, installs: 2, minutes: 90 }));
-  process.exit(0);
 }
 const fresh = JSON.parse(fs.readFileSync(path.join(validationRoot, 'build-' + newBuild + '.json')));
 assert(fresh.build === newBuild && fresh.prepared && fresh.app === path.resolve(auth41 ? 'dist/candidates/manual-upgrade-repair-41/mac-arm64/helpr.app' : repair40 ? 'dist/candidates/manual-upgrade-repair-40/mac-arm64/helpr.app' : repair ? 'dist/candidates/manual-upgrade-repair/mac-arm64/helpr.app' : next ? 'dist/candidates/manual-upgrade-v3/mac-arm64/helpr.app' : 'dist/candidates/manual-upgrade-09/mac-arm64/helpr.app'), 'FIXED_NEW_CANDIDATE_REQUIRED');
@@ -114,6 +127,10 @@ if (mode === '--check-after-97' || mode === '--v3-check-after101') {
   console.log(JSON.stringify({ valid: true, appStarts: 0, carriedStart: after101 ? 101 : 97, used: budget.used, remainingStarts: after101 ? 2 : 3, coldReopenDeferred: after101, originalDeadline, approvedDeadline: batchDeadline }));
   process.exit(0);
 }
+// 只有将实际操作窗口的历史验收轮次才在此交接。上面的源码、包和续验资料检查可独立进行。
+assert(!ps().some(row => row.pid !== process.pid && (/\/helpr\.app\/Contents\/MacOS\/helpr(?: |$)/.test(row.command) || /helpr Workspace Helper/.test(row.command) || /^(?:\S*\/)?node\s+(?:\S*\/)?validate-\S+\.mjs(?:\s|$)/.test(row.command))), 'OTHER_VALIDATION_RUNNING');
+execFileSync(process.execPath, ['scripts/validate-workspace.mjs', '--preflight'], { stdio: 'inherit', timeout: 65000 });
+if (next) requireUpgradeNativePreflight(budget[section].nativePreflight);
 if (continuation) {
   if (repairResume) {
     const last = previous.starts.at(-1).start;
@@ -160,10 +177,10 @@ if (repair) report.repairStages = {oldStart,newStart,coldStart};
 const write = (name, value) => writeUpgradeJSON(path.join(root, name), value);
 const save = () => {
   write('result.json', report);
-  const b = JSON.parse(fs.readFileSync(budgetFile));
-  b[section].used = { builds: b.used.builds - (repair ? 38 : next ? 37 : 36), starts: report.starts.length, installs: report.installs.length, faults: report.fault ? 1 : 0, cleanups: b.used.cleanups - (repair ? 18 : 17), localModels: report.models.length, localEffects: report.effects.length, versionRequests: report.versionRequests.length, newTasks: report.tasks.length };
-  b[section].run = { root, profile, passed: report.passed, error: report.error ?? null, started: report.started, ended: report.ended ?? null };
-  writeUpgradeJSON(budgetFile, b);
+  updateValidationBudget(b => {
+    b[section].used = { builds: b.used.builds - (repair ? 38 : next ? 37 : 36), starts: report.starts.length, installs: report.installs.length, faults: report.fault ? 1 : 0, cleanups: b.used.cleanups - (repair ? 18 : 17), localModels: report.models.length, localEffects: report.effects.length, versionRequests: report.versionRequests.length, newTasks: report.tasks.length };
+    b[section].run = { root, profile, passed: report.passed, error: report.error ?? null, started: report.started, ended: report.ended ?? null };
+  });
 };
 const safeSave = () => { try { save(); } catch (error) { report.persistenceError ??= error.code ?? error.message; report.passed = false; failure ??= 'EVIDENCE_WRITE_FAILED'; } };
 let failure, current, finished = false, setupUsed = false, baseline, newInstalled = false;

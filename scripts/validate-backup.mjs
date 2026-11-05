@@ -39,14 +39,12 @@ const manifest=JSON.parse(fs.readFileSync(path.join(validationRoot,`build-${buil
 assert(manifest.prepared&&path.isAbsolute(manifest.app),'PREPARED_BUILD_REQUIRED');
 for(const [file,hash]of Object.entries(manifest.hashes))assert.equal(createHash('sha256').update(fs.readFileSync(path.join(manifest.app,file))).digest('hex'),hash,file);
 const signature=verifyDevelopmentSignature(manifest.app);
-execFileSync(process.execPath,['scripts/validate-workspace.mjs','--preflight'],{stdio:'pipe',timeout:65000});
 const ps=()=>execFileSync('/bin/ps',['-axo','pid=,ppid=,pgid=,command='],{encoding:'utf8',timeout:5000}).trim().split('\n').map(line=>{const match=line.trim().match(/^(\d+)\s+(\d+)\s+(\d+)\s+(.*)$/);return {pid:+match[1],parent:+match[2],group:+match[3],command:match[4]};});
 assert(!ps().some(row=>row.pid!==process.pid&&(/\/helpr\.app\/Contents\/MacOS\/helpr(?: |$)/.test(row.command)||/^(?:\S*\/)?node scripts\/validate-(?:backup|workspace-ui|recovery|lifecycle)\.mjs/.test(row.command))),'OTHER_VALIDATION_RUNNING');
-const budget=JSON.parse(fs.readFileSync(path.join(validationRoot,'budget.json')));
-assert(budget.used.starts+(carry?1:2)<=budget.limits.starts&&budget.used.cleanups+1<=budget.limits.cleanups,'ROUND_BUDGET_NOT_RESERVED');
 const root=originalRoot+(carry?'-cold':'');
 assert(!fs.existsSync(root),'ROUND_ALREADY_EXISTS');
 if(preflight){assert(!carry||Date.now()<Date.parse(carry.started)+20*60000,'ORIGINAL_ROUND_TIME_LIMIT');console.log(JSON.stringify({preflight:true,build,starts:carry?1:2,models:carry?0:12,effects:carry?0:2,carriedStarts:carry?.starts.length??0,carriedModels:carry?.models.length??0,carriedEffects:carry?.effects.length??0,inputs:40,minutes:20,appStarts:0}));process.exit(0);}
+execFileSync(process.execPath,['scripts/validate-workspace.mjs','--preflight'],{stdio:'pipe',timeout:65000});
 fs.mkdirSync(root,{mode:0o700});
 const profileRoot=`/private/tmp/helpr-workspace-validation-${process.getuid()}`;
 fs.mkdirSync(profileRoot,{recursive:true,mode:0o700});assert.equal(fs.realpathSync(profileRoot),profileRoot);

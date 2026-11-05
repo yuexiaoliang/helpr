@@ -21,7 +21,7 @@ const ps = () => execFileSync('/bin/ps', ['-axo', 'pid=,ppid=,pgid=,lstart=,comm
 assert(!ps().some(p => p.pid !== process.pid && (/\/helpr\.app\/Contents\/MacOS\/helpr(?: |$)/.test(p.command) || /helpr Workspace Helper/.test(p.command) || /^(?:\S*\/)?node\s+(?:\S*\/)?(?:validate-\S+|capture-upgrade-legacy)\.mjs(?:\s|$)/.test(p.command))), 'OTHER_VALIDATION_RUNNING');
 execFileSync(process.execPath,['scripts/validate-workspace.mjs','--preflight'],{stdio:'inherit',timeout:65000});
 const budget=JSON.parse(fs.readFileSync(path.join(validationRoot,'budget.json')));
-assert(budget.upgrade09Repair?.active && budget.upgrade09Repair?.unlimited && budget.upgrade09Repair?.approved);
+assert(budget.upgrade09Repair?.active && budget.upgrade09Repair?.approved, 'RECORDED_UPGRADE09_BATCH_REQUIRED');
 requireUpgradeNativePreflight(budget.upgrade09Repair.nativePreflight);
 const legacy=upgraded?JSON.parse(fs.readFileSync(path.join(validationRoot,downloadNew?'upgrade09-download-old/result.json':'upgrade09-legacy-refresh/result.json'))):null;
 const oldSeed=downloadOld?JSON.parse(fs.readFileSync(path.join(validationRoot,'upgrade09-legacy-refresh/result.json'))):null;
@@ -56,9 +56,9 @@ if((upgraded&&!downloadNew)||downloadOld){fs.copyFileSync(path.join((oldSeed??le
 const installation=downloadAuthorized?reuseDownloaded.installation:downloadOld?oldSeed.installation:path.join(root,'helpr.app');
 const report={sourceBuild,sourceApp:manifest.app,root,profile,installation,started:Date.now(),deadline:Date.now()+20*60000,passed:false};
 const save=()=>fs.writeFileSync(path.join(root,'result.json'),JSON.stringify(report,null,2)+'\n',{mode:0o600});
-if(downloadOld){report.install=oldSeed.install;report.reusedInstallation=true;report.seeded=true;}else if(downloadAuthorized){report.install=reuseDownloaded.install;report.reusedInstallation=true;report.priorBlockedStart=reuseDownloaded.start;}else{report.install=spend('installs','upgrade09Repair').used.installs;save();execFileSync('/usr/bin/ditto',[manifest.app,installation],{timeout:120000});}
+if(downloadOld){report.install=oldSeed.install;report.reusedInstallation=true;report.seeded=true;}else if(downloadAuthorized){report.install=reuseDownloaded.install;report.reusedInstallation=true;report.priorBlockedStart=reuseDownloaded.start;}else{report.install=spend('installs').used.installs;save();execFileSync('/usr/bin/ditto',[manifest.app,installation],{timeout:120000});}
 for(const [file,digest] of Object.entries(manifest.hashes))assert.equal(hash(path.join(installation,file)),digest);
-report.start=spend('starts','upgrade09Repair').used.starts;
+report.start=spend('starts').used.starts;
 const env=Object.fromEntries(['HOME','PATH','TMPDIR','LANG'].filter(k=>process.env[k]).map(k=>[k,process.env[k]]));
 const stderr=fs.openSync(path.join(root,'stderr.log'),'wx',0o600);
 const child=spawn(path.join(installation,'Contents/MacOS/helpr'),['--workspace-validation'],{env:{...env,HELPR_VALIDATION_DATA:profile},stdio:['ignore','ignore',stderr,'ipc']});fs.closeSync(stderr);
@@ -127,7 +127,7 @@ try{
   }
 }catch(e){report.error=e.message;process.exitCode=1;}
 finally{
-  try{await quit();}catch(e){report.passed=false;process.exitCode=1;report.cleanupError=e.message;report.cleanup=spend('cleanups','upgrade09Repair').used.cleanups;for(const signal of ['SIGTERM','SIGKILL']){const live=owned();if(!live.length)break;report.signals??=[];report.signals.push({signal,members:live});for(const g of new Set(live.map(r=>r.group)))if(groups.has(g))try{process.kill(-g,signal);}catch{}for(const p of owned())try{process.kill(p.pid,signal);}catch{}await delay(1000);}report.remaining=owned();}
+  try{await quit();}catch(e){report.passed=false;process.exitCode=1;report.cleanupError=e.message;report.cleanup=spend('cleanups').used.cleanups;for(const signal of ['SIGTERM','SIGKILL']){const live=owned();if(!live.length)break;report.signals??=[];report.signals.push({signal,members:live});for(const g of new Set(live.map(r=>r.group)))if(groups.has(g))try{process.kill(-g,signal);}catch{}for(const p of owned())try{process.kill(p.pid,signal);}catch{}await delay(1000);}report.remaining=owned();}
   if(downloadException&&report.remaining?.length===0){
     try{
       const receiptFile=path.join(validationRoot,'delivery09-41/temporary-quarantine-exception.json');

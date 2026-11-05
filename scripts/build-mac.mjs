@@ -27,7 +27,7 @@ if (process.argv.length === 3 && process.argv[2] === '--check-signing') {
 }
 const candidate = process.argv[2]?.match(/^--candidate=([a-z0-9-]{1,40})$/)?.[1];
 if (process.argv.length > 3 || (process.argv[2] && !candidate)) throw Error('INVALID_BUILD_CANDIDATE');
-const budget = spend('builds', /^manual-upgrade-repair(?:-\d+)?$/.test(candidate ?? '') ? 'upgrade09Repair' : undefined);
+const budget = spend('builds');
 const output = path.resolve(candidate ? `dist/candidates/${candidate}` : 'dist/packages');
 const manifest = {
   build: budget.used.builds,

@@ -28,9 +28,10 @@
 pnpm install --frozen-lockfile
 node node_modules/electron/install.js
 pnpm compile
-pnpm check
-pnpm dev
+pnpm validate:workspace
 ```
+
+需要手动打开开发客户端时可单独运行 `pnpm dev`。日常无人值守调试使用下方的隔离验证入口。
 
 pnpm 原生构建许可保存在 `pnpm-workspace.yaml`。Electron 二进制单独准备；没有全局展开依赖。`compile` 先构建 macOS 只读进程映像检查器和原生退出监督，再编译控制、网页宿主、记录、观察／单步执行工作者、独立 CJS preload 与 React 静态界面。当前 Mac 需要已有的 Command Line Tools；用户打开打包应用无需这些开发工具。Linux CI 只编译和测试可运行的记录、契约及 UI，不抵算 macOS 原生和安装验收。
 
@@ -40,9 +41,9 @@ pnpm build:mac
 
 产物位于 `dist/packages/mac-arm64/helpr.app`，仅供当前 Apple Silicon Mac 自用，使用已固定的本机开发证书签名（见[开发签名约定](../docs/testing/development-signing.md)）；对外分发仍按已有规格准备 Developer ID 签名和公证。当前安装候选和验收状态见[核对报告](../docs/testing/evidence/workspace-01/REPORT.md)。应用图标仍为 Electron 默认图标，品牌图标等待对应设计确认。
 
-保留正在运行的候选时，可使用 `node scripts/build-mac.mjs --candidate=<名称>` 输出到独立的 `dist/candidates/<名称>`；同样计入构建额度和签名核对，不覆盖已有包。
+需要验证新的应用代码时，用 `pnpm build:mac --candidate=<新名称>` 生成独立签名包，构建编号写入共享账本。只改验证脚本时可复用适用的候选。
 
-定向核对原生输入准备可用 `node scripts/validate-workspace.mjs --candidate=<名称> --input-preparation`：在新验证资料中创建本机网页，通过公开开始和停止入口后正常退出，只消耗一次既定启动；没有模型配置，不发送模型请求。候选选择不能与安装选项混用。此模式不代替实际接管或真人验收，见 [04 输入准备修正](../docs/testing/evidence/takeover-04/INPUT-PREPARATION.md)。
+定向核对输入准备可用 `pnpm validate:workspace --candidate=<名称> --input-preparation`。它在临时网站会话中创建两个本机页面，通过公开开始和停止入口后退出；实际接管另按 [04 输入准备修正](../docs/testing/evidence/takeover-04/INPUT-PREPARATION.md)核对。
 
 ## 资料与运行职责
 
@@ -62,23 +63,19 @@ Pino／pino-roll 每个角色独占诊断文件，仅保存限定事件、错误
 
 ## 验证入口
 
-沿用[本轮验证方案](../docs/testing/workspace-01-plan.md)和累计额度。
+日常开发运行定向 Vitest 用例，或用 `pnpm validate:workspace` 运行整套源码检查。升级问题可用 `pnpm validate:upgrade` 单独核对升级逻辑、界面状态和凭据保护错误处理。这两个默认入口都能在没有桌面连接、签名包或系统授权的情况下运行。
 
-```sh
-node scripts/validate-startup.mjs
-pnpm validate:workspace --preflight
-pnpm validate:workspace --install --interactive --fault
-```
+需要核对实际 Electron 包时，选用含本次改动的固定候选，运行 `pnpm validate:workspace --fixture --candidate=<名称>`。加 `--preflight` 只核对该包，无需窗口截图。运行时通过受限通道核对两项任务、本机网页收件、正常退出和冷重开。每轮创建隔离资料，网页采用临时会话。结果中的 `storage` 和 `pendingAcceptance` 标明本轮能证明什么。现有 [无人值守测试模式](../docs/testing/unattended-fixtures.md) 说明本机网页、虚构凭据和正式资料的隔离边界。
 
-已在核对中安装过且身份一致时，使用 `--installed` 选择现有安装，不再次消耗安装或覆盖应用。
+只有核对真实系统凭据和持久登录时才显式选择 `--system-storage`。需要现场操作再加 `--interactive`。此时按事项固定包、准备测试账号及资料，集中处理系统授权与真人动作。`--fixture --install` 把测试副本放在隔离目录。`--installed` 显式选择用户已有的安装。只有相应安装已获授权时才使用 `--system-storage --install` 写入用户应用目录。历史 [01 验收方案](../docs/testing/workspace-01-plan.md)保留当轮的边界。
 
-`validate-owner-exit.mjs --early` 验证宿主执行 JavaScript 前的退出；`validate-workspace.mjs --fault --blocked-host` 验证宿主响应被暂停后的退出与记录重开。两者都在既定启动和故障额度内运行，独立核对实际进程；不能以退出消息代替清理证据。
+`validate-owner-exit.mjs --early` 验证宿主执行 JavaScript 前的退出。`validate-workspace.mjs --fault --blocked-host` 验证宿主响应被暂停后的退出与记录重开。每轮限制故障次数，独立核对实际进程。
 
 `validate-dock.mjs` 在空验证资料区启动实际安装包，以只读 `NSRunningApplication` 元数据核对已知同 UID、同安装路径的控制／宿主角色，再正常退出并检查进程。不读取其它窗口或发送输入，也不抵算 CUA／真人点击 Dock 与焦点验收。
 
-可见工作区验收在扣减额度前检查 Mac 锁屏及受保护输入；未就绪时保留现场并停止。`--preflight` 只读系统条件，不启动或安装应用。未发现锁屏不代表界面和中文输入已经验收通过。
+单独的 `pnpm validate:workspace --preflight` 供原生验收预检锁屏和受保护输入。Computer Use 无法读取窗口时，登记候选、失败现象和待核对的条目。交互轮已打开时，在入口打印的路径创建 `defer-ui`，脚本会继续核对网页、冷重开和进程清理。输出中的 `automatedPassed` 标记自动部分，退出码 2 表示现场交互仍待验。
 
-这不是可以无限重复的日常检查。脚本先记累计次数，再正常启动最终应用；验证资料必须在固定 OS 临时根 `helpr-workspace-validation-<uid>` 内，拒绝指向正式资料的符号链接。安装脚本拒绝覆盖已存在的应用；替换本轮自己的候选前须结束其自有进程并保留构建身份。网页夹具只在本机提供虚构会话；不使用模型或远程业务写入。最终浏览器和数据库资料、构建包及日志均忽略，只提交脱敏结论。
+脚本累计记录构建、安装、启动、故障和清理次数。隔离调试沿用[仓库验证规则](../AGENTS.md#测试与验证)直接进行，已结束的批次保留原账本与失败。验证资料放在固定 OS 临时根 `helpr-workspace-validation-<uid>` 下，拒绝指向正式资料的链接。每轮结束用 OS 核对自有进程和进程组。原始资料、包及日志限本机保存。
 
 源码测试与旧实验检查分别保留。真实 macOS 中文输入、网页手动登录、焦点和安装后视觉需要实际包证据，不能由 React 模拟输入或旧实验通过替代。具体依赖来自精确版本与锁文件，升级单独核对受影响能力。
 
@@ -124,7 +121,7 @@ Node-API 8 原生模块经 node-gyp `13.1.0` 构建，固定 arm64／macOS 14 �
 
 记录格式升为版本 5，旧格式升级前保存 `workspace-before-recovery-05-*.sqlite`。独立初始化标记防止已用资料区在数据库丢失或截空后被重建成空库；损坏、未知状态模型及不兼容资料保留并明确拒绝恢复。当前没有上传素材或真实发布流程，其版本核对仍由 12–14 扩展。
 
-源码专项为 `pnpm exec vitest run tests/workspace/recovery.test.ts tests/workspace/runtime-ownership.test.ts`；实际签名包限定验证为 `node scripts/validate-recovery.mjs --build=<固定编号>`，具体候选、累计预算与边界见 [05 核对方案](../docs/testing/recovery-05-plan.md)。本机受控模型不代表真实模型业务判断；强杀不代表物理断电验证，真实凭据与有效登录延续由 09 验收。
+源码专项为 `pnpm exec vitest run tests/workspace/recovery.test.ts tests/workspace/runtime-ownership.test.ts`。实际签名包限定验证为 `node scripts/validate-recovery.mjs --build=<固定编号>`。[05 核对方案](../docs/testing/recovery-05-plan.md)保存原候选、批次记录和适用边界。真实凭据与有效登录延续归 09 验收。
 
 ## 收起、锁屏与休眠恢复（06）
 

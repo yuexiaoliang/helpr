@@ -21,9 +21,11 @@
     "format:check": "prettier --check app tests/workspace *.ts *.json *.mjs pnpm-workspace.yaml",
     "test:workspace": "vitest run",
     "check:legacy": "node scripts/check.mjs",
-    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:workspace && pnpm check:legacy",
+    "test:validation": "node --test scripts/*.test.mjs",
+    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:workspace && pnpm test:validation && pnpm check:legacy",
     "build:mac": "node scripts/build-mac.mjs",
     "validate:workspace": "node scripts/validate-workspace.mjs",
+    "validate:upgrade": "node scripts/validate-upgrade.mjs",
     "test:browser": "npm --prefix .scratch/helpr-first-release/experiments/runtime-flow-replay test && node --test .scratch/helpr-first-release/experiments/result-recovery/proxy.test.mjs"
   },
   "dependencies": {
@@ -62,6 +64,7 @@
     "jsdom": "30.1.2",
     "node-gyp": "13.1.0",
     "prettier": "3.9.10",
+    "proper-lockfile": "4.1.2",
     "typescript": "6.0.3",
     "typescript-eslint": "8.71.2",
     "vite": "7.3.7",

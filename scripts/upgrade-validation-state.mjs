@@ -2,23 +2,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
+import { writeValidationJSON } from './validation-json.mjs';
 
-export function writeUpgradeJSON(file, value) {
-  const bytes = JSON.stringify(value, null, 2) + '\n';
-  const temporary = file + '.' + randomUUID() + '.tmp';
-  try {
-    const fd = fs.openSync(temporary, 'wx', 0o600);
-    try {
-      fs.writeFileSync(fd, bytes);
-      fs.fsyncSync(fd);
-    } finally {
-      fs.closeSync(fd);
-    }
-    fs.renameSync(temporary, file);
-  } finally {
-    if (fs.existsSync(temporary)) fs.unlinkSync(temporary);
-  }
-}
+export { writeValidationJSON as writeUpgradeJSON };
 
 // 仅本机虚构服务的身份；不读取产品密钥，不进入公开报告或业务备份。
 export function openUpgradeFixture(root) {
@@ -83,7 +69,7 @@ export function openUpgradeFixture(root) {
         state.sessionToken === identity.sessionToken,
       'FIXTURE_IDENTITY_CHANGED',
     );
-    writeUpgradeJSON(file, state);
+    writeValidationJSON(file, state);
   };
   if (!existed) save();
   return { state, save };
