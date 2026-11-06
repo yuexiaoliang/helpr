@@ -1,0 +1,215 @@
+{
+  "at": "2026-11-06T17:50:25.030316+00:00",
+  "database": "/private/tmp/helpr-workspace-validation-501/run-UJ4BQA/workspace.sqlite",
+  "dataVersion": 16,
+  "snapshotEqualsDatabase": true,
+  "cases": [
+    {
+      "item": "A",
+      "taskId": "1d70ba3f-e9fd-41e3-93a9-8e1d7c1a1eeb",
+      "phase": "complete",
+      "usedVersion": null,
+      "candidate": "ed893900-94b4-470f-9072-ca51028b8ecc",
+      "decision": {
+        "version": "ed893900-94b4-470f-9072-ca51028b8ecc",
+        "expectedParent": null,
+        "observedHeads": [],
+        "status": "adopted"
+      },
+      "repairs": [],
+      "writes": [
+        "upload",
+        "draft",
+        "published"
+      ],
+      "modelCalls": 8,
+      "usageKinds": [
+        "web-planning",
+        "web-planning",
+        "web-planning",
+        "web-planning",
+        "web-planning",
+        "web-planning",
+        "web-planning",
+        "web-planning"
+      ],
+      "sha256": "19efaf763da95b16c096e884eb9a1a40c811dd18163446e9069eda42f20fba5b"
+    },
+    {
+      "item": "B",
+      "taskId": "3f5d45d4-849a-4da3-b85c-f3e3895209ca",
+      "phase": "complete",
+      "usedVersion": "ed893900-94b4-470f-9072-ca51028b8ecc",
+      "candidate": "32ee992d-c0cf-485d-b86b-5ba9a3f7575e",
+      "decision": {
+        "version": "32ee992d-c0cf-485d-b86b-5ba9a3f7575e",
+        "expectedParent": "ed893900-94b4-470f-9072-ca51028b8ecc",
+        "observedHeads": [
+          "ed893900-94b4-470f-9072-ca51028b8ecc"
+        ],
+        "status": "adopted"
+      },
+      "repairs": [
+        {
+          "id": "7effd302-54ef-4534-82a5-db6a63550e9c",
+          "useId": "b4d99433-5018-43ba-a009-ed8b2ab3d481",
+          "goalVersion": 1,
+          "runId": "c3e36065-046f-4c7c-8651-d8d0267519c3",
+          "fromIndex": 1,
+          "source": {
+            "url": "http://127.0.0.1:50945/edit?item=B",
+            "title": "附件编辑",
+            "fingerprint": "5b7b4d5db55f6239ab272b008ab73a3868a07feedd2902a106bfcb9ad7fe0543",
+            "generation": 1,
+            "observedAt": 1793987379903,
+            "truncated": false
+          },
+          "reason": "WORKFLOW_CONTROL_CHANGED"
+        }
+      ],
+      "writes": [
+        "upload",
+        "draft",
+        "published"
+      ],
+      "modelCalls": 8,
+      "usageKinds": [
+        "intent-and-inputs",
+        "workflow-repair",
+        "workflow-repair",
+        "workflow-repair",
+        "workflow-repair",
+        "workflow-repair",
+        "workflow-repair",
+        "workflow-repair"
+      ],
+      "sha256": "d37c9c82e311a02974246724c66786a4abe2829c03ae383211fa164786217340"
+    },
+    {
+      "item": "C",
+      "taskId": "bbd8afa9-e2f2-4222-8544-d06ad81920cc",
+      "phase": "complete",
+      "usedVersion": "ed893900-94b4-470f-9072-ca51028b8ecc",
+      "candidate": "7fb80ce7-3ce8-447b-a833-dc23e448dc08",
+      "decision": {
+        "version": "7fb80ce7-3ce8-447b-a833-dc23e448dc08",
+        "expectedParent": "ed893900-94b4-470f-9072-ca51028b8ecc",
+        "observedHeads": [
+          "32ee992d-c0cf-485d-b86b-5ba9a3f7575e"
+        ],
+        "status": "conflict"
+      },
+      "repairs": [
+        {
+          "id": "73db07ac-476e-4a24-8609-97762758c956",
+          "useId": "72c7307b-bcf6-4f40-a98e-643cab87ec53",
+          "goalVersion": 1,
+          "runId": "b068bfca-913d-4312-90e1-c63d30bc7337",
+          "fromIndex": 1,
+          "source": {
+            "url": "http://127.0.0.1:50945/edit?item=C",
+            "title": "附件编辑",
+            "fingerprint": "4e0a47fcea13de9433f2140db17718e27a4bfc17d34f025f8498b64a2203ed24",
+            "generation": 1,
+            "observedAt": 1793987379923,
+            "truncated": false
+          },
+          "reason": "WORKFLOW_CONTROL_CHANGED"
+        }
+      ],
+      "writes": [
+        "upload",
+        "draft",
+        "published"
+      ],
+      "modelCalls": 7,
+      "usageKinds": [
+        "intent-and-inputs",
+        "workflow-repair",
+        "workflow-repair",
+        "workflow-repair",
+        "workflow-repair",
+        "workflow-repair",
+        "workflow-repair"
+      ],
+      "sha256": "96688ab4a16b644cb5f1b1f864c27410c7e264a1993432a6941e479d0fe90e8c"
+    },
+    {
+      "item": "D",
+      "taskId": "e84d6ac6-4a47-43ff-87d7-38a41830b0ca",
+      "phase": "complete",
+      "usedVersion": "32ee992d-c0cf-485d-b86b-5ba9a3f7575e",
+      "candidate": "437f05f2-89cf-4751-8c10-785f7ae84306",
+      "decision": {
+        "version": "437f05f2-89cf-4751-8c10-785f7ae84306",
+        "expectedParent": "32ee992d-c0cf-485d-b86b-5ba9a3f7575e",
+        "observedHeads": [
+          "32ee992d-c0cf-485d-b86b-5ba9a3f7575e"
+        ],
+        "status": "adopted"
+      },
+      "repairs": [],
+      "writes": [
+        "upload",
+        "draft",
+        "published"
+      ],
+      "modelCalls": 1,
+      "usageKinds": [
+        "intent-and-inputs"
+      ],
+      "sha256": "4b7a8374723b3d8b37bd8536366e5710e5c79d3978bf409c70b420c06943ab11"
+    }
+  ],
+  "processes": {
+    "pids": [
+      17345,
+      17357,
+      17358,
+      17359,
+      17360,
+      17361,
+      17366,
+      17367,
+      17368,
+      17369,
+      17370,
+      17372,
+      17373,
+      17405,
+      17406,
+      17431,
+      17432,
+      17451,
+      17452,
+      17453,
+      17454,
+      17455,
+      17456,
+      17461,
+      17462,
+      17463,
+      17464,
+      17465,
+      17467,
+      17468,
+      17469,
+      17470,
+      17471,
+      17472,
+      17473,
+      17474
+    ],
+    "groups": [
+      17345,
+      17359,
+      17361,
+      17451,
+      17454,
+      17456
+    ],
+    "remaining": []
+  },
+  "localModelCalls": 24,
+  "localWrites": 12
+}

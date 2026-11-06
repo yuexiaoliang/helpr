@@ -1,0 +1,626 @@
+[
+  {
+    "taskId": "bbea9bb2-f0d5-4218-bcca-f16dae4991ce",
+    "execution": {
+      "coordination": {
+        "session": {
+          "id": "helpr-fixture-web",
+          "epoch": "f0b08e5f-3e05-4c65-a5b6-d79547556eba:0",
+          "origin": "http://127.0.0.1:50161"
+        },
+        "status": "ready",
+        "account": {
+          "name": "账号 fixture",
+          "url": "http://127.0.0.1:50161/users/fixture"
+        },
+        "target": {
+          "name": "当前记录",
+          "url": "http://127.0.0.1:50161/edit?item=A"
+        },
+        "permissionEvidence": [
+          "可编辑此记录"
+        ],
+        "source": {
+          "url": "http://127.0.0.1:50161/edit?item=A",
+          "title": "附件编辑",
+          "fingerprint": "857ae7df41a14354abc1024f814041d0af27307956e6beec4a73c3a365cdb2c0",
+          "generation": 1,
+          "observedAt": 1793986890045,
+          "truncated": false
+        }
+      },
+      "resourceClaims": [
+        {
+          "status": "held",
+          "id": "e0c0ed0c-73d7-433d-9b7f-aae42e0cecdd",
+          "runId": "d6157021-56e1-4bb6-b448-1f4378c60de1",
+          "goalVersion": 1,
+          "origin": "http://127.0.0.1:50161",
+          "targetUrl": "http://127.0.0.1:50161/edit?item=A"
+        }
+      ],
+      "materialProcessing": [
+        {
+          "materialId": "a1b5dcab-e9ec-4b87-8684-81d89a2b6a1a",
+          "goalVersion": 1,
+          "targetUrl": "http://127.0.0.1:50161/edit?item=A",
+          "approvalId": "2432801f-be9a-4659-b39d-dbd1476d477c",
+          "actionId": "1b7a05bc-58ad-403a-8a4b-2f927a827dd7",
+          "status": "unknown",
+          "resultId": null
+        }
+      ],
+      "materials": [
+        {
+          "id": "a1b5dcab-e9ec-4b87-8684-81d89a2b6a1a",
+          "goalVersion": 1,
+          "sha256": "19efaf763da95b16c096e884eb9a1a40c811dd18163446e9069eda42f20fba5b",
+          "bytes": 5,
+          "name": "A-修复素材.bin",
+          "source": "/private/tmp/helpr-workspace-validation-501/run-pY8mmM/A-修复素材.bin",
+          "selectedAt": 1793986887851,
+          "selection": {
+            "scope": "/private/tmp/helpr-workspace-validation-501/run-pY8mmM/A-修复素材.bin",
+            "rule": "exact",
+            "name": null,
+            "extension": null,
+            "basis": "使用“/private/tmp/helpr-workspace-validation-501/run-pY8mmM/A-修复素材.bin”"
+          }
+        }
+      ],
+      "preparation": [
+        {
+          "kind": "target",
+          "url": "http://127.0.0.1:50161/edit?item=A",
+          "materialId": null,
+          "evidence": [
+            "附件编辑"
+          ],
+          "id": "14a2bf25-3362-4fd4-a7b7-1f109960d49c",
+          "goalVersion": 1,
+          "actionId": "5580f716-3d6f-4ab9-adea-bae0039c4b88",
+          "source": {
+            "url": "http://127.0.0.1:50161/edit?item=A",
+            "title": "附件编辑",
+            "fingerprint": "4a3f2ec61ca1318084cc97e7d849ee17c6700d84f6d6d26335397b321178ae3d",
+            "generation": 1,
+            "observedAt": 1793986888328,
+            "truncated": false
+          },
+          "verification": "page-observed"
+        },
+        {
+          "kind": "upload",
+          "url": "http://127.0.0.1:50161/file?item=A",
+          "materialId": "a1b5dcab-e9ec-4b87-8684-81d89a2b6a1a",
+          "evidence": [
+            "附件已上传"
+          ],
+          "id": "5ded649b-1f99-40dc-9b8d-5b6d2af23f5c",
+          "goalVersion": 1,
+          "actionId": "5580f716-3d6f-4ab9-adea-bae0039c4b88",
+          "source": {
+            "url": "http://127.0.0.1:50161/edit?item=A",
+            "title": "附件编辑",
+            "fingerprint": "4a3f2ec61ca1318084cc97e7d849ee17c6700d84f6d6d26335397b321178ae3d",
+            "generation": 1,
+            "observedAt": 1793986888328,
+            "truncated": false
+          },
+          "verification": "page-observed"
+        },
+        {
+          "kind": "draft",
+          "url": "http://127.0.0.1:50161/edit?item=A",
+          "materialId": null,
+          "evidence": [
+            "草稿已保存"
+          ],
+          "id": "9995a000-2a7c-4e75-ad1b-629213c9a625",
+          "goalVersion": 1,
+          "actionId": "ba8a6437-ae8b-478e-890d-c7d517169dfc",
+          "source": {
+            "url": "http://127.0.0.1:50161/edit?item=A",
+            "title": "附件编辑",
+            "fingerprint": "bbfc82ab3f6634a995cb843f0de5b6d41f7fa57d05416e6cef587a245984c1d7",
+            "generation": 1,
+            "observedAt": 1793986888803,
+            "truncated": false
+          },
+          "verification": "page-observed"
+        }
+      ],
+      "publication": {
+        "destination": "公告",
+        "content": "A本次独立全文",
+        "attachment": {
+          "materialId": "a1b5dcab-e9ec-4b87-8684-81d89a2b6a1a",
+          "targetUrl": "http://127.0.0.1:50161/edit?item=A",
+          "url": "http://127.0.0.1:50161/file?item=A"
+        },
+        "revision": 1,
+        "approvalId": "2432801f-be9a-4659-b39d-dbd1476d477c",
+        "origin": "http://127.0.0.1:50161"
+      },
+      "modelVersion": 1,
+      "intent": "automatic",
+      "phase": "paused",
+      "version": 4,
+      "intentId": "77ca5408-7ee6-4c53-aa04-e2dc8085fde6",
+      "goalVersion": 1,
+      "goal": "使用“/private/tmp/helpr-workspace-validation-501/run-pY8mmM/A-修复素材.bin”在 http://127.0.0.1:50161/edit?item=A 发布“A本次独立全文”到“公告”",
+      "runId": null,
+      "resource": null,
+      "summary": "执行暂时无法继续，已暂停后续操作。已有结果与记录保留。",
+      "actions": [
+        {
+          "coordination": {
+            "session": {
+              "id": "helpr-fixture-web",
+              "epoch": "f0b08e5f-3e05-4c65-a5b6-d79547556eba:0",
+              "origin": "http://127.0.0.1:50161"
+            },
+            "claimId": "e0c0ed0c-73d7-433d-9b7f-aae42e0cecdd"
+          },
+          "observedLinks": [
+            {
+              "name": "账号 fixture",
+              "url": "http://127.0.0.1:50161/users/fixture"
+            },
+            {
+              "name": "当前记录",
+              "url": "http://127.0.0.1:50161/edit?item=A"
+            },
+            {
+              "name": "永久链接",
+              "url": "http://127.0.0.1:50161/result?item=A"
+            }
+          ],
+          "resultLinks": [
+            {
+              "name": "账号 fixture",
+              "url": "http://127.0.0.1:50161/users/fixture"
+            },
+            {
+              "name": "当前记录",
+              "url": "http://127.0.0.1:50161/edit?item=A"
+            },
+            {
+              "name": "永久链接",
+              "url": "http://127.0.0.1:50161/result?item=A"
+            },
+            {
+              "name": "下载附件",
+              "url": "http://127.0.0.1:50161/file?item=A"
+            }
+          ],
+          "id": "5580f716-3d6f-4ab9-adea-bae0039c4b88",
+          "runId": "01415030-6566-4349-9497-04d68938632a",
+          "goalVersion": 1,
+          "status": "confirmed",
+          "summary": "核对本次附件",
+          "action": {
+            "kind": "upload",
+            "materialId": "a1b5dcab-e9ec-4b87-8684-81d89a2b6a1a",
+            "target": {
+              "fileIndex": 0
+            }
+          },
+          "effect": "upload",
+          "preconditions": [
+            "附件编辑"
+          ],
+          "source": {
+            "url": "http://127.0.0.1:50161/edit?item=A",
+            "title": "附件编辑",
+            "fingerprint": "74b155a150b3fcbe9153438fd7901dc9da06b3d98a5d297ebc397bbc336591bf",
+            "generation": 1,
+            "observedAt": 1793986887871,
+            "truncated": false
+          },
+          "observedUrls": [
+            "http://127.0.0.1:50161/edit?item=A",
+            "http://127.0.0.1:50161/users/fixture",
+            "http://127.0.0.1:50161/result?item=A"
+          ],
+          "resultSource": {
+            "url": "http://127.0.0.1:50161/edit?item=A",
+            "title": "附件编辑",
+            "fingerprint": "4a3f2ec61ca1318084cc97e7d849ee17c6700d84f6d6d26335397b321178ae3d",
+            "generation": 1,
+            "observedAt": 1793986888328,
+            "truncated": false
+          },
+          "binding": {
+            "targetId": "87A635A2A89E0E678F19902F5EE5E64C",
+            "generation": 1
+          },
+          "evidence": [
+            "附件已上传"
+          ],
+          "returned": true,
+          "dispatchState": "possible"
+        },
+        {
+          "coordination": {
+            "session": {
+              "id": "helpr-fixture-web",
+              "epoch": "f0b08e5f-3e05-4c65-a5b6-d79547556eba:0",
+              "origin": "http://127.0.0.1:50161"
+            },
+            "claimId": "e0c0ed0c-73d7-433d-9b7f-aae42e0cecdd"
+          },
+          "observedLinks": [
+            {
+              "name": "账号 fixture",
+              "url": "http://127.0.0.1:50161/users/fixture"
+            },
+            {
+              "name": "当前记录",
+              "url": "http://127.0.0.1:50161/edit?item=A"
+            },
+            {
+              "name": "永久链接",
+              "url": "http://127.0.0.1:50161/result?item=A"
+            },
+            {
+              "name": "下载附件",
+              "url": "http://127.0.0.1:50161/file?item=A"
+            }
+          ],
+          "resultLinks": [
+            {
+              "name": "账号 fixture",
+              "url": "http://127.0.0.1:50161/users/fixture"
+            },
+            {
+              "name": "当前记录",
+              "url": "http://127.0.0.1:50161/edit?item=A"
+            },
+            {
+              "name": "永久链接",
+              "url": "http://127.0.0.1:50161/result?item=A"
+            },
+            {
+              "name": "下载附件",
+              "url": "http://127.0.0.1:50161/file?item=A"
+            }
+          ],
+          "id": "ba8a6437-ae8b-478e-890d-c7d517169dfc",
+          "runId": "01415030-6566-4349-9497-04d68938632a",
+          "goalVersion": 1,
+          "status": "confirmed",
+          "summary": "核对本次附件",
+          "action": {
+            "kind": "click",
+            "target": {
+              "role": "button",
+              "name": "保存草稿",
+              "exact": true
+            }
+          },
+          "effect": "draft",
+          "preconditions": [
+            "附件编辑"
+          ],
+          "source": {
+            "url": "http://127.0.0.1:50161/edit?item=A",
+            "title": "附件编辑",
+            "fingerprint": "4a3f2ec61ca1318084cc97e7d849ee17c6700d84f6d6d26335397b321178ae3d",
+            "generation": 1,
+            "observedAt": 1793986888328,
+            "truncated": false
+          },
+          "observedUrls": [
+            "http://127.0.0.1:50161/edit?item=A",
+            "http://127.0.0.1:50161/users/fixture",
+            "http://127.0.0.1:50161/file?item=A",
+            "http://127.0.0.1:50161/result?item=A"
+          ],
+          "resultSource": {
+            "url": "http://127.0.0.1:50161/edit?item=A",
+            "title": "附件编辑",
+            "fingerprint": "bbfc82ab3f6634a995cb843f0de5b6d41f7fa57d05416e6cef587a245984c1d7",
+            "generation": 1,
+            "observedAt": 1793986888803,
+            "truncated": false
+          },
+          "binding": {
+            "targetId": "87A635A2A89E0E678F19902F5EE5E64C",
+            "generation": 1
+          },
+          "evidence": [
+            "草稿已保存"
+          ],
+          "returned": true,
+          "dispatchState": "possible"
+        },
+        {
+          "coordination": {
+            "session": {
+              "id": "helpr-fixture-web",
+              "epoch": "f0b08e5f-3e05-4c65-a5b6-d79547556eba:0",
+              "origin": "http://127.0.0.1:50161"
+            },
+            "claimId": "e0c0ed0c-73d7-433d-9b7f-aae42e0cecdd"
+          },
+          "observedLinks": [
+            {
+              "name": "账号 fixture",
+              "url": "http://127.0.0.1:50161/users/fixture"
+            },
+            {
+              "name": "当前记录",
+              "url": "http://127.0.0.1:50161/edit?item=A"
+            },
+            {
+              "name": "永久链接",
+              "url": "http://127.0.0.1:50161/result?item=A"
+            },
+            {
+              "name": "下载附件",
+              "url": "http://127.0.0.1:50161/file?item=A"
+            }
+          ],
+          "resultLinks": [
+            {
+              "name": "账号 fixture",
+              "url": "http://127.0.0.1:50161/users/fixture"
+            },
+            {
+              "name": "当前记录",
+              "url": "http://127.0.0.1:50161/edit?item=A"
+            },
+            {
+              "name": "永久链接",
+              "url": "http://127.0.0.1:50161/result?item=A"
+            },
+            {
+              "name": "下载附件",
+              "url": "http://127.0.0.1:50161/file?item=A"
+            }
+          ],
+          "id": "72234185-f3c9-423f-974f-1df52ccc00c3",
+          "runId": "d6157021-56e1-4bb6-b448-1f4378c60de1",
+          "goalVersion": 1,
+          "status": "confirmed",
+          "summary": "核对本次附件",
+          "action": {
+            "kind": "fill",
+            "target": {
+              "role": "textbox",
+              "name": "发布标题",
+              "exact": true
+            },
+            "value": "A本次独立全文"
+          },
+          "effect": "interaction",
+          "preconditions": [
+            "附件编辑"
+          ],
+          "source": {
+            "url": "http://127.0.0.1:50161/edit?item=A",
+            "title": "附件编辑",
+            "fingerprint": "bbfc82ab3f6634a995cb843f0de5b6d41f7fa57d05416e6cef587a245984c1d7",
+            "generation": 1,
+            "observedAt": 1793986889033,
+            "truncated": false
+          },
+          "observedUrls": [
+            "http://127.0.0.1:50161/edit?item=A",
+            "http://127.0.0.1:50161/users/fixture",
+            "http://127.0.0.1:50161/file?item=A",
+            "http://127.0.0.1:50161/result?item=A"
+          ],
+          "resultSource": {
+            "url": "http://127.0.0.1:50161/edit?item=A",
+            "title": "附件编辑",
+            "fingerprint": "2d1bf006af7e5b845919e61b778a3e19a434a5c97698c4ca7cd53f63993ff51f",
+            "generation": 1,
+            "observedAt": 1793986889477,
+            "truncated": false
+          },
+          "binding": {
+            "targetId": "87A635A2A89E0E678F19902F5EE5E64C",
+            "generation": 1
+          },
+          "evidence": [
+            "标题已填写"
+          ],
+          "returned": true,
+          "dispatchState": "possible"
+        },
+        {
+          "coordination": {
+            "session": {
+              "id": "helpr-fixture-web",
+              "epoch": "f0b08e5f-3e05-4c65-a5b6-d79547556eba:0",
+              "origin": "http://127.0.0.1:50161"
+            },
+            "claimId": "e0c0ed0c-73d7-433d-9b7f-aae42e0cecdd"
+          },
+          "observedLinks": [
+            {
+              "name": "账号 fixture",
+              "url": "http://127.0.0.1:50161/users/fixture"
+            },
+            {
+              "name": "当前记录",
+              "url": "http://127.0.0.1:50161/edit?item=A"
+            },
+            {
+              "name": "永久链接",
+              "url": "http://127.0.0.1:50161/result?item=A"
+            },
+            {
+              "name": "下载附件",
+              "url": "http://127.0.0.1:50161/file?item=A"
+            }
+          ],
+          "resultLinks": [
+            {
+              "name": "账号 fixture",
+              "url": "http://127.0.0.1:50161/users/fixture"
+            },
+            {
+              "name": "当前记录",
+              "url": "http://127.0.0.1:50161/edit?item=A"
+            },
+            {
+              "name": "永久链接",
+              "url": "http://127.0.0.1:50161/result?item=A"
+            },
+            {
+              "name": "下载附件",
+              "url": "http://127.0.0.1:50161/file?item=A"
+            }
+          ],
+          "id": "ef5f4ac9-f0f3-4af8-aa8f-c03c85925fef",
+          "runId": "d6157021-56e1-4bb6-b448-1f4378c60de1",
+          "goalVersion": 1,
+          "status": "confirmed",
+          "summary": "核对本次附件",
+          "action": {
+            "kind": "select",
+            "target": {
+              "role": "combobox",
+              "name": "栏目",
+              "exact": true
+            },
+            "value": "公告"
+          },
+          "effect": "interaction",
+          "preconditions": [
+            "附件编辑"
+          ],
+          "source": {
+            "url": "http://127.0.0.1:50161/edit?item=A",
+            "title": "附件编辑",
+            "fingerprint": "2d1bf006af7e5b845919e61b778a3e19a434a5c97698c4ca7cd53f63993ff51f",
+            "generation": 1,
+            "observedAt": 1793986889477,
+            "truncated": false
+          },
+          "observedUrls": [
+            "http://127.0.0.1:50161/edit?item=A",
+            "http://127.0.0.1:50161/users/fixture",
+            "http://127.0.0.1:50161/file?item=A",
+            "http://127.0.0.1:50161/result?item=A"
+          ],
+          "resultSource": {
+            "url": "http://127.0.0.1:50161/edit?item=A",
+            "title": "附件编辑",
+            "fingerprint": "857ae7df41a14354abc1024f814041d0af27307956e6beec4a73c3a365cdb2c0",
+            "generation": 1,
+            "observedAt": 1793986889929,
+            "truncated": false
+          },
+          "binding": {
+            "targetId": "87A635A2A89E0E678F19902F5EE5E64C",
+            "generation": 1
+          },
+          "evidence": [
+            "栏目已填写"
+          ],
+          "returned": true,
+          "dispatchState": "possible"
+        },
+        {
+          "coordination": {
+            "session": {
+              "id": "helpr-fixture-web",
+              "epoch": "f0b08e5f-3e05-4c65-a5b6-d79547556eba:0",
+              "origin": "http://127.0.0.1:50161"
+            },
+            "claimId": "e0c0ed0c-73d7-433d-9b7f-aae42e0cecdd"
+          },
+          "observedLinks": [
+            {
+              "name": "账号 fixture",
+              "url": "http://127.0.0.1:50161/users/fixture"
+            },
+            {
+              "name": "当前记录",
+              "url": "http://127.0.0.1:50161/edit?item=A"
+            },
+            {
+              "name": "永久链接",
+              "url": "http://127.0.0.1:50161/result?item=A"
+            },
+            {
+              "name": "下载附件",
+              "url": "http://127.0.0.1:50161/file?item=A"
+            }
+          ],
+          "id": "1b7a05bc-58ad-403a-8a4b-2f927a827dd7",
+          "runId": "d6157021-56e1-4bb6-b448-1f4378c60de1",
+          "goalVersion": 1,
+          "status": "unknown",
+          "summary": "核对本次附件",
+          "action": {
+            "kind": "click",
+            "target": {
+              "role": "button",
+              "name": "附件：A-修复素材.bin",
+              "exact": true
+            }
+          },
+          "effect": "publication",
+          "preconditions": [
+            "附件编辑"
+          ],
+          "submission": {
+            "publication": {
+              "destination": "公告",
+              "content": "A本次独立全文",
+              "attachment": {
+                "materialId": "a1b5dcab-e9ec-4b87-8684-81d89a2b6a1a",
+                "targetUrl": "http://127.0.0.1:50161/edit?item=A",
+                "url": "http://127.0.0.1:50161/file?item=A"
+              }
+            },
+            "download": {
+              "url": "http://127.0.0.1:50161/file?item=A",
+              "sha256": "19efaf763da95b16c096e884eb9a1a40c811dd18163446e9069eda42f20fba5b",
+              "bytes": 5,
+              "checkedAt": 1793986890041
+            },
+            "recovery": {
+              "rule": "public-attachment-v1",
+              "url": "http://127.0.0.1:50161/result?item=A",
+              "targetUrl": "http://127.0.0.1:50161/edit?item=A",
+              "attachmentUrl": "http://127.0.0.1:50161/file?item=A",
+              "evidence": [
+                "永久链接"
+              ],
+              "targetFactId": "14a2bf25-3362-4fd4-a7b7-1f109960d49c",
+              "uploadFactId": "5ded649b-1f99-40dc-9b8d-5b6d2af23f5c"
+            }
+          },
+          "publicationApprovalId": "2432801f-be9a-4659-b39d-dbd1476d477c",
+          "source": {
+            "url": "http://127.0.0.1:50161/edit?item=A",
+            "title": "附件编辑",
+            "fingerprint": "857ae7df41a14354abc1024f814041d0af27307956e6beec4a73c3a365cdb2c0",
+            "generation": 1,
+            "observedAt": 1793986890045,
+            "truncated": false
+          },
+          "observedUrls": [
+            "http://127.0.0.1:50161/edit?item=A",
+            "http://127.0.0.1:50161/users/fixture",
+            "http://127.0.0.1:50161/file?item=A",
+            "http://127.0.0.1:50161/result?item=A"
+          ],
+          "binding": {
+            "targetId": "87A635A2A89E0E678F19902F5EE5E64C",
+            "generation": 1
+          },
+          "evidence": [],
+          "returned": false,
+          "dispatchState": "possible"
+        }
+      ]
+    }
+  }
+]

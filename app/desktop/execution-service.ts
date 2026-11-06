@@ -24,7 +24,13 @@ import {
 } from '../shared/execution';
 import type { PageObservation } from '../shared/model';
 import { materialFailureMessage } from '../shared/material';
-import { currentWorkflow, replayStep } from '../shared/workflow-replay';
+import {
+  currentWorkflow,
+  replayStep,
+  reboundAction,
+} from '../shared/workflow-replay';
+import { currentRepair, withinWorkflowScope } from '../shared/workflow-repair';
+import { availableWorkflows } from '../shared/workflow-catalog';
 import type { LearnedWorkflow } from '../shared/workflow';
 import {
   sameSession,
@@ -38,6 +44,17 @@ export type BoundObservation = {
   binding: { targetId: string; generation: number };
 };
 export type ProposalInput = {
+  repair?: {
+    parentVersion: string;
+    fromIndex: number;
+    index: number;
+    targetUrl: string;
+    materialId: string;
+    content: string;
+    destination: string;
+    operation: { action: WebAction; effect: NextStep['effect'] } | null;
+    resultRule: LearnedWorkflow['resultRule'];
+  };
   coordination?: TaskExecution['coordination'];
   workflows?: Pick<
     LearnedWorkflow,
@@ -1129,9 +1146,7 @@ export class ExecutionService {
             ['reserved', 'dispatched', 'unknown'].includes(a.status),
           ) ?? null;
         const use = currentWorkflow(current);
-        const workflows = this.ports
-          .current()
-          .tasks.flatMap((t) => t.execution?.learnedWorkflows ?? [])
+        const workflows = availableWorkflows(this.ports.current().tasks)
           .filter(
             (w) =>
               w.replay &&
@@ -1147,7 +1162,8 @@ export class ExecutionService {
             applicability,
           }));
         let replay: NextStep | undefined;
-        const replaying = use && !current.loginOrigin;
+        const repair = currentRepair(current);
+        const replaying = use && !current.loginOrigin && !repair;
         if (replaying) {
           const deadline = Date.now() + 8000;
           for (let attempt = 0; ; attempt++) {
@@ -1155,6 +1171,27 @@ export class ExecutionService {
               replay = replayStep(current, observed.observation);
               break;
             } catch (error) {
+              if (
+                error instanceof Error &&
+                [
+                  'WORKFLOW_CONDITION_CHANGED',
+                  'WORKFLOW_CONTROL_CHANGED',
+                ].includes(error.message) &&
+                (error.message === 'WORKFLOW_CONTROL_CHANGED' ||
+                  attempt >= 7 ||
+                  Date.now() >= deadline)
+              ) {
+                await this.record({
+                  kind: 'workflow-repair',
+                  taskId: job.taskId,
+                  runId: job.runId,
+                  id: randomUUID(),
+                  useId: use.id,
+                  source: observed.observation,
+                  reason: error.message,
+                });
+                break;
+              }
               if (
                 !(error instanceof Error) ||
                 error.message !== 'WORKFLOW_CONDITION_CHANGED' ||
@@ -1174,6 +1211,7 @@ export class ExecutionService {
               if (!this.live(job)) return;
             }
           }
+          if (!replay) continue;
         }
         let step: NextStep;
         try {
@@ -1196,13 +1234,46 @@ export class ExecutionService {
                       preparation: current.preparation?.filter(
                         (f) => f.goalVersion === current.goalVersion,
                       ),
-                      workflows: current.actions.some(
-                        (a) => a.goalVersion === current.goalVersion,
-                      )
-                        ? []
-                        : workflows,
+                      workflows:
+                        use ||
+                        current.actions.some(
+                          (a) => a.goalVersion === current.goalVersion,
+                        )
+                          ? []
+                          : workflows,
                       loginOrigin: current.loginOrigin,
                       coordination: current.coordination,
+                      ...(repair && use
+                        ? {
+                            repair: {
+                              parentVersion: use.workflow.version,
+                              fromIndex: repair.fromIndex,
+                              index: current.actions.filter(
+                                (a) =>
+                                  a.goalVersion === current.goalVersion &&
+                                  a.status !== 'cancelled',
+                              ).length,
+                              targetUrl: use.targetUrl,
+                              materialId: use.materialId,
+                              content: use.approved?.content ?? use.content,
+                              destination: use.destination,
+                              operation: (() => {
+                                const index = current.actions.filter(
+                                  (a) =>
+                                    a.goalVersion === current.goalVersion &&
+                                    a.status !== 'cancelled',
+                                ).length;
+                                return index < use.workflow.steps.length
+                                  ? {
+                                      action: reboundAction(use, index),
+                                      effect: use.workflow.steps[index]!.effect,
+                                    }
+                                  : null;
+                              })(),
+                              resultRule: use.workflow.resultRule,
+                            },
+                          }
+                        : {}),
                       clarifications: current.answers
                         ?.filter((a) => a.goalVersion === current.goalVersion)
                         .map((a) => ({ question: a.text, answer: a.answer })),
@@ -1233,6 +1304,18 @@ export class ExecutionService {
           throw error;
         }
         if (!this.live(job)) return;
+        if (repair && !withinWorkflowScope(current, step)) {
+          await this.record({
+            kind: 'ask',
+            workflowScopeChange: true,
+            taskId: job.taskId,
+            runId: job.runId,
+            questionId: randomUUID(),
+            url: observed.observation.url,
+            text: '网页变化后的做法涉及原目标、内容或操作范围之外的改变，已保留原确认并暂停。请说明是否需要修改本次委托。',
+          });
+          return;
+        }
         if (!step.evidence.every((v) => observed.observation.text.includes(v)))
           throw Error('EXECUTION_EVIDENCE_MISSING');
         if (
@@ -1644,6 +1727,7 @@ export class ExecutionService {
             ? {
                 workflowStep: {
                   useId: use.id,
+                  ...(repair ? { repairId: repair.id } : {}),
                   index: current.actions.filter(
                     (a) =>
                       a.goalVersion === current.goalVersion &&

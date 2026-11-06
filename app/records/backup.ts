@@ -1,4 +1,4 @@
-import { validPublicationReferences } from './workflow';
+import { validPublicationReferences, validWorkflowCatalog } from './workflow';
 import { z } from 'zod';
 import { createHash, randomUUID } from 'node:crypto';
 import { constants } from 'node:fs';
@@ -70,6 +70,7 @@ const envelope = z.strictObject({
     z.literal(12),
     z.literal(13),
     z.literal(14),
+    z.literal(15),
     z.literal(CURRENT_DATA_FORMAT),
   ]),
   stateModel: z.literal(CURRENT_STATE_MODEL),
@@ -479,6 +480,7 @@ export async function readBackup(
   if (
     materials.size !== (value.payload.materials?.length ?? 0) ||
     [...materials].some(([sha, data]) => materialDigest(data) !== sha) ||
+    !validWorkflowCatalog(value.payload.tasks) ||
     value.payload.tasks.some((t) => {
       const versions = t.execution?.materials ?? [];
       return (

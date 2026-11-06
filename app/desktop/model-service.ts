@@ -254,9 +254,11 @@ export class ModelService {
         expectedVersion: job.expectedVersion,
         ...(planning ? { purpose: 'execution' } : {}),
         usageKind: planning
-          ? planning.workflows?.length
-            ? 'intent-and-inputs'
-            : 'web-planning'
+          ? planning.repair
+            ? 'workflow-repair'
+            : planning.workflows?.length
+              ? 'intent-and-inputs'
+              : 'web-planning'
           : 'page-question',
       });
       const result = receiptSchema.passthrough().parse(await job.ready);
@@ -371,6 +373,9 @@ export class ModelService {
             coordinationInstruction:
               '账号和目标关联只能由当前网页证据提出。页面同时具有唯一的当前账号链接、标识当前记录的稳定编辑链接（URL 必须等于当前页面的完整 URL）和明确可编辑的权限文字时，提供 coordination={account:{name,url},target:{name,url},permissionEvidence:[原文]}，链接必须来自结构化 links。不能把菜单、登录入口、同名文件或标签页作为账号或稳定目标。缺少证据省略 coordination，系统保守协调同站工作。登录核对 authenticated 必须同时提供上述当前账号及目标权限证据；不能把“已登录”当作可以更换账号。原账号不符时等待用户切回或修改委托，不自行更换目标、清除旧确认或补发积压。',
             workflows: job.planning.workflows ?? [],
+            repair: job.planning.repair ?? null,
+            repairInstruction:
+              'repair 非空表示旧网页条件或控件已经失效。重新观察当前网页，只修复这次固定流程剩余步骤的定位与观察依据。动作顺序、kind、effect、固定素材、目标、栏目、已确认全文和最终结果规则保持；不可增加或跳过步骤。只提议当前一个动作，不返回脚本或候选流程。已有派发先核对，不重送。需要改变操作效果、目标或处理规则时用 ask；不能降低成功条件。只有实际走通并独立核对后系统才形成候选，冲突版本不自动拼接。',
             workflowInstruction:
               'workflows 是已有成功证据的候选，不是本次授权。首次理解新委托时优先判断候选适用性：同站、当前 URL 与入口路径一致且用户明确给出本次目标、完整文字和栏目，才用 decision=reuse、workflow={taskId,version,sha256,content,destination}，准确引用候选标识；content 与 destination 必须逐字来自本次目标或 clarifications。尚无素材时同次提供 material，沿用取材规则。只负责理解和绑定本次输入，不生成网页动作；后续由统一入口逐步核对及重放。参数不明用 ask；候选不适用时继续正常观察，不能借用原单次确认、文件、附件或结果地址。',
             materialInstruction:

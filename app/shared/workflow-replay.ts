@@ -40,6 +40,23 @@ export function reboundAction(use: WorkflowUse, index: number): WebAction {
   return action;
 }
 
+export function observedControl(action: WebAction, source: PageObservation) {
+  if (action.kind === 'upload')
+    return source.text.includes(
+      `[file ${action.target.fileIndex}] ${action.target.frameUrl ?? source.url}`,
+    );
+  if (!source.controls) return false;
+  const target = action.target;
+  const matches = source.controls.filter(
+    (c) =>
+      c.role === target.role &&
+      c.name === target.name &&
+      c.frameUrl === (target.frameUrl ?? source.url),
+  );
+  // 层级关系尚未进入观察协议，同名控件不能凭模型声明 within 消歧。
+  return target.exact && matches.length === 1 && !matches[0]!.disabled;
+}
+
 function requireEvidence(values: string[], observation: PageObservation) {
   if (
     !values.length ||
@@ -164,6 +181,8 @@ export function replayStep(
   const step = use.workflow.steps[index]!;
   const evidence = requireEvidence(step.before.evidence, observation);
   const action = reboundAction(use, index);
+  if (observation.controls && !observedControl(action, observation))
+    throw Error('WORKFLOW_CONTROL_CHANGED');
   const needsPublication =
     step.effect === 'publication' ||
     step.bindings.some((b) => ['content', 'destination'].includes(b.parameter));

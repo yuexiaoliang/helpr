@@ -119,3 +119,19 @@ export const workflowUseSchema = z.strictObject({
   source: pageSourceSchema,
 });
 export type WorkflowUse = z.infer<typeof workflowUseSchema>;
+
+export const workflowRepairSchema = z.strictObject({
+  id: z.string().uuid(),
+  useId: z.string().uuid(),
+  goalVersion: z.number().int().positive(),
+  runId: z.string(),
+  fromIndex: z.number().int().nonnegative().max(60),
+  source: pageSourceSchema,
+  reason: z.enum(['WORKFLOW_CONDITION_CHANGED', 'WORKFLOW_CONTROL_CHANGED']),
+});
+export const workflowDecisionSchema = z.strictObject({
+  version: z.string().uuid(),
+  expectedParent: z.string().uuid().nullable(),
+  observedHeads: z.array(z.string().uuid()).max(60),
+  status: z.enum(['adopted', 'conflict', 'unusable']),
+});

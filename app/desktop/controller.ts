@@ -362,6 +362,7 @@ export async function startController(
       const tree = await read('Accessibility.getFullAXTree');
       const document = await read('DOMSnapshot.captureSnapshot');
       const supplements = [materialObservation(document)];
+      const childObservations: ReturnType<typeof pageObservation>[] = [];
       const childFrames: { id: string; url: string }[] = [];
       const collectFrames = (value: unknown, root = false) => {
         const item = z
@@ -378,10 +379,13 @@ export async function startController(
         // 无法读取的跨进程 frame 明示缺口；不以维护者脚本补写内容。
         try {
           const ax = await read('Accessibility.getFullAXTree', child.id);
-          supplements.push(
-            `[frame] ${child.url}\n` +
-              pageObservation(frame, ax, qualification.generation).text,
+          const observation = pageObservation(
+            { frameTree: { frame: child } },
+            ax,
+            qualification.generation,
           );
+          childObservations.push(observation);
+          supplements.push(`[frame] ${child.url}\n` + observation.text);
         } catch {
           supplements.push(`[frame-unavailable] ${child.url}`);
         }
@@ -392,14 +396,28 @@ export async function startController(
       );
       if (JSON.stringify(sessionBefore) !== JSON.stringify(sessionAfter))
         throw Error('COORDINATION_STALE');
+      const observation = pageObservation(
+        frame,
+        tree,
+        qualification.generation,
+        supplements.join('\n'),
+      );
+      const controls = [observation, ...childObservations].flatMap(
+        (o) => o.controls ?? [],
+      );
+      const links = [observation, ...childObservations].flatMap(
+        (o) => o.links ?? [],
+      );
+      observation.controls = controls.slice(0, 500);
+      observation.links = links.slice(0, 300);
+      observation.truncated ||=
+        controls.length > 500 ||
+        links.length > 300 ||
+        childFrames.length > 8 ||
+        childObservations.some((o) => o.truncated);
       return {
         session: sessionAfter,
-        observation: pageObservation(
-          frame,
-          tree,
-          qualification.generation,
-          supplements.join('\n'),
-        ),
+        observation,
         binding: {
           targetId: qualification.targetId,
           generation: qualification.generation,

@@ -222,6 +222,11 @@ export function recordPublicationResult(
   };
   // 老执行若缺少步骤前条件，只记录已经成立的业务结果，不伪造学习证据。
   if (
+    !e.learnedWorkflows?.some((w) =>
+      e.publicationChecks?.some(
+        (c) => c.id === w.evidence.resultId && c.actionId === action.id,
+      ),
+    ) &&
     e.actions
       .filter(
         (a) => a.goalVersion === e.goalVersion && a.status !== 'cancelled',
@@ -233,10 +238,5 @@ export function recordPublicationResult(
   ) {
     const workflow = learnWorkflow(taskId, e, check);
     (e.learnedWorkflows ??= []).push(workflow);
-    e.workflowAdoption = {
-      version: workflow.version,
-      sha256: workflow.sha256,
-      expectedParent: workflow.parentVersion,
-    };
   }
 }

@@ -8,12 +8,111 @@ import {
 } from '../shared/workflow';
 import { samePublication } from '../shared/publication';
 import { reboundAction } from '../shared/workflow-replay';
+import { sameWorkflowOperation } from '../shared/workflow-repair';
+import { workflowCatalog } from '../shared/workflow-catalog';
 import { validCoordinationReferences } from './coordination';
 
 export const workflowHash = (body: unknown) =>
   createHash('sha256')
     .update(JSON.stringify(workflowBodySchema.strip().parse(body)))
     .digest('hex');
+
+/** 与结果及候选同事务执行。冲突只保留候选，不覆盖头部或修改执行中的固定版本。 */
+export function adoptWorkflow(
+  e: TaskExecution,
+  others: { execution: TaskExecution }[],
+) {
+  const w = e.learnedWorkflows?.at(-1);
+  if (!w || e.workflowDecisions?.some((d) => d.version === w.version)) return;
+  const catalog = workflowCatalog([...others, { execution: e }]);
+  const heads = w.parentVersion
+    ? catalog.heads
+        .filter((h) => catalog.root(h) === catalog.root(w))
+        .map((h) => h.version)
+    : [];
+  const status = !w.replay
+    ? 'unusable'
+    : !w.parentVersion || (heads.length === 1 && heads[0] === w.parentVersion)
+      ? 'adopted'
+      : 'conflict';
+  // 保留旧格式的历史采用引用，避免同任务修正目标后丢掉旧采用事实。
+  const prior = e.workflowAdoption;
+  if (prior && !e.workflowDecisions?.some((d) => d.version === prior.version))
+    (e.workflowDecisions ??= []).push({
+      version: prior.version,
+      expectedParent: prior.expectedParent,
+      observedHeads: prior.expectedParent ? [prior.expectedParent] : [],
+      status: 'adopted',
+    });
+  (e.workflowDecisions ??= []).push({
+    version: w.version,
+    expectedParent: w.parentVersion,
+    observedHeads: heads,
+    status,
+  });
+  if (status === 'adopted')
+    e.workflowAdoption = {
+      version: w.version,
+      sha256: w.sha256,
+      expectedParent: w.parentVersion,
+    };
+}
+
+/** 冷开和备份同时核对跨任务来源；不能只核对每份 JSON 自身的摘要。 */
+export function validWorkflowCatalog(
+  entries: { execution?: TaskExecution | null }[],
+) {
+  try {
+    const catalog = workflowCatalog(entries);
+    const versions = new Map(catalog.candidates.map((w) => [w.version, w]));
+    if (versions.size !== catalog.candidates.length) return false;
+    const adoptedParents = new Set<string>();
+    for (const { execution: e } of entries) {
+      if (!e) continue;
+      for (const use of e.workflowUses ?? []) {
+        const source = versions.get(use.workflow.version);
+        if (!source || JSON.stringify(source) !== JSON.stringify(use.workflow))
+          return false;
+      }
+      for (const w of e.learnedWorkflows ?? []) {
+        if (
+          w.parentVersion !==
+          (e.workflowUses?.find((u) => u.goalVersion === w.goalVersion)
+            ?.workflow.version ?? null)
+        )
+          return false;
+        catalog.root(w);
+      }
+      for (const d of e.workflowDecisions ?? []) {
+        const w = versions.get(d.version);
+        if (
+          !w ||
+          d.observedHeads.some(
+            (v) =>
+              !versions.has(v) ||
+              catalog.root(versions.get(v)!) !== catalog.root(w),
+          )
+        )
+          return false;
+        if (d.status === 'adopted' && d.expectedParent) {
+          if (adoptedParents.has(d.expectedParent)) return false;
+          adoptedParents.add(d.expectedParent);
+        }
+      }
+      if (
+        e.workflowAdoption &&
+        e.workflowDecisions?.some(
+          (d) =>
+            d.version === e.workflowAdoption!.version && d.status !== 'adopted',
+        )
+      )
+        return false;
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 function replayRules(
   e: TaskExecution,
@@ -197,6 +296,37 @@ export function validPublicationReferences(
     history = e.publicationHistory?.map((h) => h.check) ?? [],
     workflows = e.learnedWorkflows ?? [];
   if (
+    new Set(e.workflowRepairs?.map((r) => r.id)).size !==
+      (e.workflowRepairs?.length ?? 0) ||
+    new Set(e.workflowRepairs?.map((r) => r.useId)).size !==
+      (e.workflowRepairs?.length ?? 0) ||
+    e.workflowRepairs?.some(
+      (r) =>
+        !e.workflowUses?.some(
+          (u) =>
+            u.id === r.useId &&
+            u.goalVersion === r.goalVersion &&
+            u.targetUrl === r.source.url &&
+            r.fromIndex <= u.workflow.steps.length,
+        ),
+    ) ||
+    new Set(e.workflowDecisions?.map((d) => d.version)).size !==
+      (e.workflowDecisions?.length ?? 0) ||
+    e.workflowDecisions?.some(
+      (d) =>
+        !workflows.some(
+          (w) =>
+            w.version === d.version &&
+            w.parentVersion === d.expectedParent &&
+            (d.status !== 'adopted' ||
+              !w.parentVersion ||
+              (d.observedHeads.length === 1 &&
+                d.observedHeads[0] === w.parentVersion)),
+        ),
+    )
+  )
+    return false;
+  if (
     new Set(e.workflowUses?.map((u) => u.id)).size !==
       (e.workflowUses?.length ?? 0) ||
     new Set(e.workflowUses?.map((u) => u.goalVersion)).size !==
@@ -219,6 +349,21 @@ export function validPublicationReferences(
       );
       if (!use) return true;
       try {
+        if (a.workflowStep.repairId)
+          return (
+            !e.workflowRepairs?.some(
+              (r) =>
+                r.id === a.workflowStep!.repairId &&
+                r.useId === use.id &&
+                a.workflowStep!.index >= r.fromIndex,
+            ) ||
+            !sameWorkflowOperation(
+              use,
+              a.workflowStep.index,
+              a.action,
+              a.effect,
+            )
+          );
         return (
           JSON.stringify(a.action) !==
           JSON.stringify(reboundAction(use, a.workflowStep.index))

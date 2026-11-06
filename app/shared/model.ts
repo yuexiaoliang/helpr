@@ -58,15 +58,23 @@ export const observedLinkSchema = z.strictObject({
   name: z.string().min(1).max(1000),
   url: z.url().max(4096),
 });
+export const observedControlSchema = z.strictObject({
+  role: z.string().max(100),
+  name: z.string().max(1000),
+  frameUrl: z.url(),
+  disabled: z.boolean(),
+});
 export type PageObservation = PageSource & {
   text: string;
   links?: z.infer<typeof observedLinkSchema>[];
+  controls?: z.infer<typeof observedControlSchema>[];
 };
 export const modelUsageKindSchema = z.enum([
   'legacy-unspecified',
   'page-question',
   'intent-and-inputs',
   'web-planning',
+  'workflow-repair',
   'material-content',
 ]);
 export const modelCallSchema = z.strictObject({

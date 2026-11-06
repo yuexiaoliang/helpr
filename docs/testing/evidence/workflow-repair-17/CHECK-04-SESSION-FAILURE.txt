@@ -1,0 +1,59 @@
+$ pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:workspace && pnpm test:validation && pnpm check:legacy
+$ tsc --noEmit
+$ eslint app tests/workspace electron.vite.config.ts drizzle.config.ts vitest.config.ts
+$ prettier --check app tests/workspace *.ts *.json *.mjs pnpm-workspace.yaml
+Checking formatting...
+All matched files use Prettier code style!
+$ vitest run
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/workflow-repair.test.ts (17 tests | 1 failed) 18769ms
+   × 共享会话变化撤销待保存的修复资格，保留原未知上传 969ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/workflow-repair.test.ts > 共享会话变化撤销待保存的修复资格，保留原未知上传
+AssertionError: expected [ { …(7) } ] to be undefined
+
+- Expected:
+undefined
+
++ Received:
+[
+  {
+    "fromIndex": 1,
+    "goalVersion": 2,
+    "id": "32568578-c160-4bc0-9a75-28b963b50944",
+    "reason": "WORKFLOW_CONTROL_CHANGED",
+    "runId": "c2073c6d-0a7a-48c0-897e-7dbe00c5cd00",
+    "source": {
+      "fingerprint": "1",
+      "generation": 1,
+      "observedAt": 1793987148441,
+      "title": "编辑附件",
+      "truncated": false,
+      "url": "http://127.0.0.1:50527/edit?task=4d9cae11-7026-49b9-8b06-dca2efbbea60",
+    },
+    "useId": "cf31e1b8-ad7c-4620-8275-c6a854da9b89",
+  },
+]
+
+ ❯ tests/workspace/workflow-repair.test.ts:26:34
+     24|   const b = await f.add('会话变化', '公告', changed);
+     25|   expect(f.page(b).writes).toEqual(['upload']);
+     26|   expect(f.e(b).workflowRepairs).toBeUndefined();
+       |                                  ^
+     27|   expect(f.e(b).actions[0]!.status).toBe('unknown');
+     28|   expect(f.e(b).learnedWorkflows).toBeUndefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 23 passed (24)
+      Tests  1 failed | 242 passed (243)
+   Start at  01:45:29
+   Duration  93.66s (tests 90%, import 7%, environment 2%)
+
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.

@@ -55,11 +55,35 @@ export function pageObservation(
   const title = typeof rootName === 'string' ? rootName.slice(0, 1000) : '';
   const lines: string[] = [];
   const links: NonNullable<PageObservation['links']> = [];
+  const controls: NonNullable<PageObservation['controls']> = [];
   for (const node of nodes) {
     if (node.ignored || excluded.has(node.nodeId)) continue;
     const name = typeof node.name?.value === 'string' ? node.name.value : '';
     const value = typeof node.value?.value === 'string' ? node.value.value : '';
     const role = typeof node.role?.value === 'string' ? node.role.value : '';
+    if (
+      [
+        'button',
+        'link',
+        'checkbox',
+        'textbox',
+        'combobox',
+        'radio',
+        'option',
+        'menuitem',
+        'row',
+        'tab',
+        'switch',
+      ].includes(role)
+    )
+      controls.push({
+        role,
+        name: name.slice(0, 1000),
+        frameUrl: url,
+        disabled: !!node.properties?.some(
+          (p) => p.name === 'disabled' && p.value.value === true,
+        ),
+      });
     const flags = (node.properties ?? [])
       .filter((p) =>
         ['checked', 'selected', 'expanded', 'disabled'].includes(p.name),
@@ -91,9 +115,13 @@ export function pageObservation(
     title,
     text,
     links: links.slice(0, 300),
+    controls: controls.slice(0, 500),
     generation,
     observedAt: Date.now(),
-    truncated: full.length !== text.length || links.length > 300,
+    truncated:
+      full.length !== text.length ||
+      links.length > 300 ||
+      controls.length > 500,
     fingerprint: createHash('sha256')
       .update(url + '\n' + full)
       .digest('hex'),

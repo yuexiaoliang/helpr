@@ -1,4 +1,4 @@
-import { validPublicationReferences } from './workflow';
+import { validPublicationReferences, validWorkflowCatalog } from './workflow';
 import { endedExecution, splitDelegation } from '../shared/task-groups';
 import { hideTaskTab } from './task-tab';
 import Database from 'better-sqlite3';
@@ -125,6 +125,7 @@ export class WorkspaceRecords {
           12,
           13,
           14,
+          15,
           CURRENT_DATA_FORMAT,
         ].includes(priorVersion)
       )
@@ -132,25 +133,27 @@ export class WorkspaceRecords {
       if (legacy && priorVersion !== CURRENT_DATA_FORMAT) {
         const backup = path.join(
           folder,
-          (priorVersion === 14
-            ? 'workspace-before-coordination-16-'
-            : priorVersion === 13
-              ? 'workspace-before-workflow-reuse-15-'
-              : priorVersion === 12
-                ? 'workspace-before-publication-recovery-14-'
-                : priorVersion === 11
-                  ? 'workspace-before-publication-13-'
-                  : priorVersion === 10
-                    ? 'workspace-before-material-12-'
-                    : priorVersion === 9
-                      ? 'workspace-before-task-groups-11-'
-                      : priorVersion >= 7
-                        ? 'workspace-before-participation-10-'
-                        : priorVersion === 6
-                          ? 'workspace-before-upgrade-09-'
-                          : priorVersion === 5
-                            ? 'workspace-before-backup-07-'
-                            : 'workspace-before-recovery-05-') +
+          (priorVersion === 15
+            ? 'workspace-before-workflow-repair-17-'
+            : priorVersion === 14
+              ? 'workspace-before-coordination-16-'
+              : priorVersion === 13
+                ? 'workspace-before-workflow-reuse-15-'
+                : priorVersion === 12
+                  ? 'workspace-before-publication-recovery-14-'
+                  : priorVersion === 11
+                    ? 'workspace-before-publication-13-'
+                    : priorVersion === 10
+                      ? 'workspace-before-material-12-'
+                      : priorVersion === 9
+                        ? 'workspace-before-task-groups-11-'
+                        : priorVersion >= 7
+                          ? 'workspace-before-participation-10-'
+                          : priorVersion === 6
+                            ? 'workspace-before-upgrade-09-'
+                            : priorVersion === 5
+                              ? 'workspace-before-backup-07-'
+                              : 'workspace-before-recovery-05-') +
             randomUUID() +
             '.sqlite',
         );
@@ -173,6 +176,16 @@ export class WorkspaceRecords {
         )
           throw Error('DATA_CORRUPT');
       }
+      if (
+        !validWorkflowCatalog(
+          this.db
+            .select()
+            .from(schema.executions)
+            .all()
+            .map((row) => ({ execution: executionSchema.parse(row.body) })),
+        )
+      )
+        throw Error('DATA_CORRUPT');
       this.db
         .insert(schema.workspace)
         .values({
@@ -202,6 +215,7 @@ export class WorkspaceRecords {
         version !== 12 &&
         version !== 13 &&
         version !== 14 &&
+        version !== 15 &&
         version !== CURRENT_DATA_FORMAT
       )
         throw new Error('DATA_VERSION_UNSUPPORTED');

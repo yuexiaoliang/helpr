@@ -32,14 +32,29 @@ import {
   type TaskExecution,
 } from '../shared/execution';
 import * as schema from './schema';
-import { pageSourceSchema, observedLinkSchema } from '../shared/model';
+import {
+  pageSourceSchema,
+  observedLinkSchema,
+  observedControlSchema,
+} from '../shared/model';
 import {
   materialVersionSchema,
   preparationProposalSchema,
 } from '../shared/material';
 import { workflowChoiceSchema, workflowUseSchema } from '../shared/workflow';
-import { workflowHash } from './workflow';
-import { currentWorkflow, reboundAction } from '../shared/workflow-replay';
+import { workflowHash, adoptWorkflow } from './workflow';
+import {
+  currentWorkflow,
+  reboundAction,
+  observedControl,
+  replayStep,
+} from '../shared/workflow-replay';
+import {
+  currentRepair,
+  sameWorkflowOperation,
+  withinWorkflowScope,
+} from '../shared/workflow-repair';
+import { availableWorkflows } from '../shared/workflow-catalog';
 import {
   sessionContextSchema,
   coordinationProposalSchema,
@@ -120,6 +135,7 @@ function move(e: TaskExecution, event: PhaseEvent) {
 const observation = pageSourceSchema.extend({
   text: z.string().max(30000),
   links: z.array(observedLinkSchema).max(300).optional(),
+  controls: z.array(observedControlSchema).max(500).optional(),
 });
 const work = { taskId: z.string(), runId: z.string() };
 const intentSchema = executionIntentSchema.extend({
@@ -129,6 +145,14 @@ const intentSchema = executionIntentSchema.extend({
   controlSequence: z.number().int().positive().optional(),
 });
 const commandSchema = z.discriminatedUnion('kind', [
+  z.strictObject({
+    kind: z.literal('workflow-repair'),
+    ...work,
+    id: z.string().uuid(),
+    useId: z.string().uuid(),
+    reason: z.enum(['WORKFLOW_CONDITION_CHANGED', 'WORKFLOW_CONTROL_CHANGED']),
+    source: observation,
+  }),
   z.strictObject({
     kind: z.literal('session-invalidated'),
     taskId: z.string(),
@@ -200,6 +224,7 @@ const commandSchema = z.discriminatedUnion('kind', [
   }),
   z.strictObject({
     kind: z.literal('ask'),
+    workflowScopeChange: z.boolean().optional(),
     coordinationDecision: z.boolean().optional(),
     type: z.enum(['review', 'login']).optional(),
     publication: publicationSchema.optional(),
@@ -986,6 +1011,8 @@ export class ExecutionRecords {
           }
           if (recovery) {
             recordPublicationResult(task.id, e, c.check, action);
+            if (c.check.status === 'verified')
+              adoptWorkflow(e, this.others(task.id));
             move(e, c.check.status === 'verified' ? 'REVIEW_COMPLETE' : 'WAIT');
             delete e.recoveryPending;
             delete e.recoverySource;
@@ -1022,6 +1049,67 @@ export class ExecutionRecords {
           return c.kind === 'dispatch'
             ? { permitted: false }
             : { created: false };
+        if (c.kind === 'workflow-repair') {
+          if (
+            e.coordination &&
+            (e.coordination.status !== 'ready' ||
+              e.coordination.refreshRequired)
+          )
+            throw Error('COORDINATION_STALE');
+          const use = currentWorkflow(e);
+          const prior = currentRepair(e);
+          if (prior) {
+            if (prior.useId !== c.useId)
+              throw Error('REQUEST_CONTENT_CONFLICT');
+            if (
+              prior.id === c.id &&
+              (prior.runId !== c.runId ||
+                prior.reason !== c.reason ||
+                JSON.stringify(prior.source) !==
+                  JSON.stringify(pageSourceSchema.strip().parse(c.source)))
+            )
+              throw Error('REQUEST_CONTENT_CONFLICT');
+            return { created: false };
+          }
+          if (
+            !use ||
+            use.id !== c.useId ||
+            c.source.truncated ||
+            c.source.url !== use.targetUrl ||
+            c.source.url !== task.url ||
+            e.loginOrigin ||
+            e.observedAnomalies?.some((a) => a.goalVersion === e.goalVersion) ||
+            e.actions.some(
+              (a) =>
+                ['reserved', 'dispatched', 'unknown'].includes(a.status) &&
+                !a.returned,
+            )
+          )
+            throw Error('WORKFLOW_NOT_APPLICABLE');
+          let reason: string | undefined;
+          try {
+            replayStep(e, c.source);
+          } catch (error) {
+            reason = error instanceof Error ? error.message : '';
+          }
+          if (reason !== c.reason) throw Error('WORKFLOW_REPAIR_NOT_NEEDED');
+          (e.workflowRepairs ??= []).push({
+            id: c.id,
+            useId: use.id,
+            goalVersion: e.goalVersion,
+            runId: c.runId,
+            fromIndex: e.actions.filter(
+              (a) =>
+                a.goalVersion === e.goalVersion && a.status !== 'cancelled',
+            ).length,
+            source: pageSourceSchema.strip().parse(c.source),
+            reason: c.reason,
+          });
+          e.summary =
+            '网页做法已变化，正在按本次目标和确认重新观察；核对成功后才记住新做法。';
+          this.save(task.id, e);
+          return { created: true };
+        }
         if (c.kind === 'workflow-bind') {
           if (
             e.observedAnomalies?.some((a) => a.goalVersion === e.goalVersion) ||
@@ -1056,6 +1144,13 @@ export class ExecutionRecords {
           ].join('\n');
           if (
             !workflow?.replay ||
+            !availableWorkflows([
+              ...this.others(task.id),
+              { execution: e },
+            ]).some(
+              (w) =>
+                w.version === c.choice.version && w.sha256 === c.choice.sha256,
+            ) ||
             workflow.sha256 !== workflowHash(workflow) ||
             !source?.publicationChecks?.some(
               (r) =>
@@ -1113,13 +1208,19 @@ export class ExecutionRecords {
           if (!action || c.check.source.url !== task.url)
             throw Error('PUBLICATION_BINDING_MISMATCH');
           recordPublicationResult(task.id, e, c.check, action);
+          if (c.check.status === 'verified')
+            adoptWorkflow(e, this.others(task.id));
           move(e, c.check.status === 'verified' ? 'FINISH' : 'WAIT');
           e.summary =
             c.check.status === 'verified'
               ? '已核对发布结果和附件内容。' +
-                (e.workflowAdoption
-                  ? '已保存本次学到的做法；新输入仍需验证。'
-                  : '步骤证据不足，尚未保存可复用流程。')
+                (e.workflowDecisions?.at(-1)?.status === 'conflict'
+                  ? '本次做法已保存；已有另一份更新，兼容性需在后续任务重新验证。'
+                  : e.workflowDecisions?.at(-1)?.status === 'adopted'
+                    ? currentRepair(e)
+                      ? '已适应网页变化并记住验证过的新做法。'
+                      : '已保存本次学到的做法；新输入仍需验证。'
+                    : '步骤证据不足，尚未保存可复用流程。')
               : '发布结果尚未核实，已保留目标和核对记录，不重复提交。';
           e.runId = null;
           if (c.check.status === 'verified') e.resource = null;
@@ -1154,6 +1255,16 @@ export class ExecutionRecords {
         }
         if (c.kind === 'preparation-observed') {
           if (c.source.url !== task.url) throw Error('EXECUTION_PAGE_CHANGED');
+          const use = currentWorkflow(e);
+          if (
+            use &&
+            c.facts.some((f) =>
+              f.kind === 'upload'
+                ? f.materialId !== use.materialId
+                : f.url !== use.targetUrl,
+            )
+          )
+            throw Error('WORKFLOW_SCOPE_CHANGE');
           const facts = (e.preparation ??= []);
           const actions = e.actions.filter(
             (a) =>
@@ -1206,6 +1317,14 @@ export class ExecutionRecords {
               if (
                 !material ||
                 !action ||
+                (use &&
+                  (c.source.links?.filter((l) => l.url === fact.url).length !==
+                    1 ||
+                    c.source.links?.filter(
+                      (l) =>
+                        l.name ===
+                        c.source.links?.find((l) => l.url === fact.url)?.name,
+                    ).length !== 1)) ||
                 action.observedUrls?.includes(fact.url) ||
                 new URL(action.source.url).origin !== new URL(fact.url).origin
               )
@@ -1353,7 +1472,26 @@ export class ExecutionRecords {
         if (c.kind === 'ask') {
           if (task.url !== c.url) throw Error('EXECUTION_PAGE_CHANGED');
           if (
+            c.workflowScopeChange &&
+            (!currentRepair(e) || c.type || c.publication)
+          )
+            throw Error('WORKFLOW_NOT_APPLICABLE');
+          if (
+            currentWorkflow(e) &&
+            c.publication &&
+            !withinWorkflowScope(e, {
+              decision: 'review',
+              summary: c.text,
+              action: null,
+              evidence: [],
+              previous: null,
+              publication: c.publication,
+            })
+          )
+            throw Error('WORKFLOW_SCOPE_CHANGE');
+          if (
             c.type !== 'login' &&
+            !c.workflowScopeChange &&
             e.actions.some((a) =>
               ['reserved', 'dispatched', 'unknown'].includes(a.status),
             )
@@ -1503,6 +1641,7 @@ export class ExecutionRecords {
                 a.goalVersion === e.goalVersion && a.status !== 'cancelled',
             ).length;
             const step = use?.workflow.steps[index];
+            const repair = currentRepair(e);
             if (
               !use ||
               !step ||
@@ -1511,9 +1650,18 @@ export class ExecutionRecords {
               c.source.url !== use.targetUrl ||
               c.source.truncated ||
               c.effect !== step.effect ||
-              !step.before.evidence.every((s) => c.source.text.includes(s)) ||
-              JSON.stringify(c.action) !==
-                JSON.stringify(reboundAction(use, index))
+              (repair
+                ? c.workflowStep.repairId !== repair.id ||
+                  !sameWorkflowOperation(use, index, c.action, c.effect) ||
+                  !observedControl(c.action, c.source) ||
+                  !c.evidence?.length
+                : c.workflowStep.repairId ||
+                  !step.before.evidence.every((s) =>
+                    c.source.text.includes(s),
+                  ) ||
+                  JSON.stringify(c.action) !==
+                    JSON.stringify(reboundAction(use, index)) ||
+                  (c.source.controls && !observedControl(c.action, c.source)))
             )
               throw Error('WORKFLOW_NOT_APPLICABLE');
           }

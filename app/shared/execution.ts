@@ -18,6 +18,8 @@ import {
   learnedWorkflowSchema,
   workflowChoiceSchema,
   workflowUseSchema,
+  workflowRepairSchema,
+  workflowDecisionSchema,
 } from './workflow';
 import {
   materialSelectionSchema,
@@ -82,6 +84,7 @@ export const actionFactSchema = z.strictObject({
     .strictObject({
       useId: z.string().uuid(),
       index: z.number().int().nonnegative().max(59),
+      repairId: z.string().uuid().optional(),
     })
     .optional(),
   observedLinks: z.array(observedLinkSchema).max(300).optional(),
@@ -199,6 +202,8 @@ export const executionSchema = z.strictObject({
   coordination: coordinationSchema.optional(),
   resourceClaims: z.array(resourceClaimSchema).max(60).optional(),
   workflowUses: z.array(workflowUseSchema).max(60).optional(),
+  workflowRepairs: z.array(workflowRepairSchema).max(60).optional(),
+  workflowDecisions: z.array(workflowDecisionSchema).max(60).optional(),
   observedAnomalies: z
     .array(
       z.strictObject({

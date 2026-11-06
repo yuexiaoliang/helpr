@@ -85,6 +85,7 @@ export async function verifyWorkflow({ client, website, data, evidence, command,
         assert(calls.every(c => c.usageKind === 'web-planning'));
       }
     });
+    learned = done.learnedWorkflows[0];
     evidence.workflow.cases.push({ item: sample.item, taskId, sha256, review, done, calls, writes, readiness });
   }
   await active.quit();

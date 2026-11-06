@@ -1,5 +1,7 @@
 # helpr 首版实现事项
 
+2026-11-07 最新交接：[17 网页变化修复与并发流程采用](issues/17-page-change-and-concurrent-workflow-repair.md#开发结果)完成独立实现与自动核对，243 应用／9 验证器／25 旧回归通过。最终候选 67、启动 185／186 通过页面控件变化、双页修复重叠、同父候选竞争及冷复用；36 PID／6 组清空。[报告](../../docs/testing/evidence/workflow-repair-17/REPORT.md)保留替代模型误选控件、共享会话入口反例与 CUA 超时。17 当前 7/9，真实模型／WordPress 和原生组合待验，14／15／16 前置保持；下一会话推进 [18](issues/18-excel-article-preview-and-publish.md) 独立的 Excel 内容处理。普通提交不推送或发布。
+
 2026-11-07 最新交接：[16 共享登录与同一目标的执行协调](issues/16-shared-login-and-target-coordination.md#开发结果)完成独立实现与自动检查，226 应用／8 验证器／25 旧回归通过。候选 65、启动 180／181 通过不同目标重叠、同目标取舍、共享登录换账号及冷开；独立记录和 48 PID／6 组清空通过。[报告](../../docs/testing/evidence/coordination-16/REPORT.md)保留两次实际失败、修正及 CUA 超时。16 当前 7/8，真实模型／WordPress、多站点和中断组合待验，13 前置保持；下一会话推进 [17](issues/17-page-change-and-concurrent-workflow-repair.md) 的独立网页变化修复与并发流程采用。普通提交不推送或发布。
 
 2026-11-06 接续至 11-07 最新交接：[15 换输入与冷启动流程复用](issues/15-parameterized-and-cold-workflow-reuse.md#开发结果)完成独立实现和自动检查，207 应用／8 验证器／25 旧回归通过。候选 61、启动 176／177 通过首次形成候选、换素材／标题／栏目及冷开新输入；复用各 1 次委托绑定模型，网页步骤无模型，独立字节／记录／32 PID 和 6 组清空通过。[报告](../../docs/testing/evidence/workflow-15/REPORT.md)保留迁移装置、初稿失败和 CUA 超时。15 当前 6/8，真实模型／WordPress 和双活动网页组合待验，13 前置保持；下一会话推进 [16](issues/16-shared-login-and-target-coordination.md) 独立共享登录与目标协调。普通提交不推送或发布。

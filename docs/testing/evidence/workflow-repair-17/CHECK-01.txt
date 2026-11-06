@@ -1,0 +1,48 @@
+$ pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:workspace && pnpm test:validation && pnpm check:legacy
+$ tsc --noEmit
+$ eslint app tests/workspace electron.vite.config.ts drizzle.config.ts vitest.config.ts
+$ prettier --check app tests/workspace *.ts *.json *.mjs pnpm-workspace.yaml
+Checking formatting...
+All matched files use Prettier code style!
+$ vitest run
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/backup.test.ts (10 tests | 1 failed) 1390ms
+   × 记录拥有者创建一致业务备份，排除模型凭据与网站会话，重送返回原备份 155ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/backup.test.ts > 记录拥有者创建一致业务备份，排除模型凭据与网站会话，重送返回原备份
+AssertionError: expected { format: 'helpr-backup', …(7) } to match object { format: 'helpr-backup', …(3) }
+(10 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "dataVersion": 15,
++   "dataVersion": 16,
+    "format": "helpr-backup",
+    "stateModel": 1,
+    "version": 1,
+  }
+
+ ❯ tests/workspace/backup.test.ts:57:29
+     55|   expect(bytes).not.toContain('PRIVATE-CREDENTIAL');
+     56|   expect(bytes).not.toContain('ciphertext');
+     57|   expect(JSON.parse(bytes)).toMatchObject({
+       |                             ^
+     58|     format: 'helpr-backup',
+     59|     version: 1,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 23 passed (24)
+      Tests  1 failed | 238 passed (239)
+   Start at  01:33:53
+   Duration  90.43s (tests 90%, import 8%, environment 2%)
+
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.
