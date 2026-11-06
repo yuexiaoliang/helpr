@@ -12,6 +12,7 @@ import { spend, validationRoot } from './workspace-budget.mjs';
 import { fixture } from './workspace-fixture.mjs';
 import { verifyWorkflowRepair } from './workflow-repair-validation.mjs';
 import { verifyWorkflow } from './workflow-validation.mjs';
+import { verifyArticle } from './article-validation.mjs';
 import { verifyCoordination } from './coordination-validation.mjs';
 
 const args = process.argv.slice(2);
@@ -30,6 +31,7 @@ const { values: options } = parseArgs({
     publication: flag,
     'workflow-reuse': flag,
     'workflow-repair': flag,
+    article: flag,
     coordination: flag,
     'publication-recovery': { type: 'string' },
     interactive: flag,
@@ -79,10 +81,10 @@ assert(
   !options['input-preparation'] || (!options.interactive && !options.fault),
   'INPUT_PREPARATION_IS_A_SINGLE_CHECK',
 );
-if (options.participation || options['participation-review'] || options['task-groups'] || options.material || options.publication || options['workflow-reuse'] || options['workflow-repair'] || options.coordination) {
+if (options.participation || options['participation-review'] || options['task-groups'] || options.material || options.publication || options['workflow-reuse'] || options['workflow-repair'] || options.article || options.coordination) {
   assert(
     options.fixture && !systemStorage && !options.interactive && !options.fault &&
-      !options['input-preparation'] && [options.participation, options['participation-review'], options['task-groups'], options.material, options.publication, options['workflow-reuse'], options['workflow-repair'], options.coordination].filter(Boolean).length === 1,
+      !options['input-preparation'] && [options.participation, options['participation-review'], options['task-groups'], options.material, options.publication, options['workflow-reuse'], options['workflow-repair'], options.article, options.coordination].filter(Boolean).length === 1,
     'PARTICIPATION_FIXTURE_REQUIRED',
   );
 }
@@ -231,7 +233,8 @@ const materialBytes = Buffer.from([0, 1, 99, 128, 255, 2, 3, 4]);
 if (options.material || options.publication) fs.writeFileSync(materialSource, materialBytes);
 const website = await fixture({
   coordination: options.coordination,
-  workflow: options['workflow-reuse'] || options['workflow-repair'],
+  workflow: options['workflow-reuse'] || options['workflow-repair'] || options.article,
+  article: options.article,
   repair: options['workflow-repair'],
   participation: options.participation || options['task-groups'],
   review: options['participation-review'],
@@ -866,6 +869,7 @@ async function verifyMaterial(client) {
 async function validate() {
   let client = await launch();
   if (options.coordination) return verifyCoordination({client, website, evidence, command, waitFor, check, launch, remainingOwned});
+  if (options.article) return verifyArticle({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
   if (options['workflow-repair']) return verifyWorkflowRepair({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
   if (options['workflow-reuse']) return verifyWorkflow({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
   if (options.publication) return verifyPublication(client);

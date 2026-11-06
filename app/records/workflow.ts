@@ -1,3 +1,4 @@
+import { validArticleReferences } from './article';
 import { createHash, randomUUID } from 'node:crypto';
 import type { TaskExecution } from '../shared/execution';
 import type { PublicationCheck } from '../shared/publication';
@@ -291,7 +292,8 @@ export function validPublicationReferences(
   taskId: string,
   e: TaskExecution,
 ): boolean {
-  if (!validCoordinationReferences(e)) return false;
+  if (!validCoordinationReferences(e) || !validArticleReferences(e))
+    return false;
   const checks = e.publicationChecks ?? [],
     history = e.publicationHistory?.map((h) => h.check) ?? [],
     workflows = e.learnedWorkflows ?? [];

@@ -2,6 +2,7 @@ import { useRef, useState, useSyncExternalStore } from 'react';
 import type { Task, UICommand } from '../shared/contracts';
 import type { WorkspaceStore } from './store';
 import styles from './Workspace.module.css';
+import { ArticleSources } from './ArticleSources';
 
 type Props = {
   task: Task;
@@ -27,6 +28,8 @@ export function ParticipationForm({
   };
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
+  const [changingGoal, setChangingGoal] = useState(false);
+  const [goal, setGoal] = useState(task.execution?.goal ?? task.goal);
   const composing = useRef(false);
   if (!question) return null;
   const control = task.executionControl;
@@ -71,6 +74,17 @@ export function ParticipationForm({
           return;
         }
         if (review) {
+          if (changingGoal) {
+            if (goal.trim())
+              void submit({
+                kind: 'execution-intent',
+                taskId: task.id,
+                requestId: crypto.randomUUID(),
+                intent: 'revise',
+                text: goal,
+              });
+            return;
+          }
           if (editing && !answer.trim()) return;
           void submit(
             editing
@@ -98,6 +112,7 @@ export function ParticipationForm({
             {preview.origin} · {preview.destination} · 第 {preview.revision} 版
           </strong>
           <p className={styles.previewContent}>{preview.content}</p>
+          {task.execution && <ArticleSources execution={task.execution} />}
           {preview.attachment && (
             <p>
               本次附件：
@@ -143,6 +158,23 @@ export function ParticipationForm({
           />
         </label>
       )}
+      {review && changingGoal && (
+        <label>
+          修改本次目标与处理要求
+          <textarea
+            value={goal}
+            maxLength={20000}
+            rows={4}
+            onChange={(event) => setGoal(event.target.value)}
+            onCompositionStart={() => {
+              composing.current = true;
+            }}
+            onCompositionEnd={() => {
+              composing.current = false;
+            }}
+          />
+        </label>
+      )}
       {error && <p role="alert">{error}</p>}
       {(!login || inTask) && (
         <button
@@ -151,7 +183,8 @@ export function ParticipationForm({
           disabled={
             sending ||
             blocked ||
-            ((!question.type || editing) && !answer.trim())
+            ((!question.type || editing) && !answer.trim()) ||
+            (changingGoal && !goal.trim())
           }
         >
           {sending
@@ -159,13 +192,15 @@ export function ParticipationForm({
             : login
               ? '已登录，核对后继续'
               : review
-                ? editing
-                  ? '查看修改后的预览'
-                  : '确认发布这一版'
+                ? changingGoal
+                  ? '按新要求重新准备'
+                  : editing
+                    ? '查看修改后的预览'
+                    : '确认发布这一版'
                 : '提交回复'}
         </button>
       )}
-      {review && !editing && (
+      {review && !editing && !changingGoal && (
         <button
           type="button"
           disabled={sending || blocked}
@@ -174,6 +209,15 @@ export function ParticipationForm({
           }}
         >
           修改这段文字
+        </button>
+      )}
+      {review && !editing && (
+        <button
+          type="button"
+          disabled={sending || blocked}
+          onClick={() => setChangingGoal(!changingGoal)}
+        >
+          {changingGoal ? '取消修改要求' : '修改目标或处理要求'}
         </button>
       )}
       {!inTask && (

@@ -31,6 +31,12 @@ import {
 } from '../shared/workflow-replay';
 import { currentRepair, withinWorkflowScope } from '../shared/workflow-repair';
 import { availableWorkflows } from '../shared/workflow-catalog';
+import {
+  contentSourceSchema,
+  excelFailureMessage,
+  type ContentSource,
+  type ArticleVersion,
+} from '../shared/article';
 import type { LearnedWorkflow } from '../shared/workflow';
 import {
   sameSession,
@@ -44,6 +50,8 @@ export type BoundObservation = {
   binding: { targetId: string; generation: number };
 };
 export type ProposalInput = {
+  contentSource?: ContentSource;
+  article?: ArticleVersion;
   repair?: {
     parentVersion: string;
     fromIndex: number;
@@ -311,6 +319,8 @@ export class ExecutionService {
           'PREPARATION_INCOMPLETE',
           'PUBLICATION_RESULT_REQUIRED',
           'PUBLICATION_BINDING_MISMATCH',
+          'ARTICLE_BINDING_MISMATCH',
+          'ARTICLE_FACT_INVALID',
           'PUBLICATION_BYTES_UNVERIFIED',
           'PUBLICATION_ALREADY_DISPATCHED',
         ].includes(code)
@@ -1228,6 +1238,9 @@ export class ExecutionService {
                       pending,
                       history: current.actions,
                       publication: current.publication,
+                      article: current.articles?.findLast(
+                        (a) => a.goalVersion === current.goalVersion,
+                      ),
                       materials: current.materials?.filter(
                         (m) => m.goalVersion === current.goalVersion,
                       ),
@@ -1596,6 +1609,84 @@ export class ExecutionService {
           }
           continue;
         }
+        if (step.decision === 'compose') {
+          if (!step.compose || !this.ports.material || current.publication)
+            throw Error('MODEL_FORMAT');
+          try {
+            const parsed = z
+              .object({ source: contentSourceSchema, state: snapshotSchema })
+              .parse(
+                await this.ports.material({
+                  kind: 'parse',
+                  taskId: job.taskId,
+                  runId: job.runId,
+                  materialId: step.compose.materialId,
+                }),
+              );
+            if (parsed.state.revision >= this.ports.current().revision)
+              this.publish(parsed.state);
+            if (!this.live(job)) return;
+            const proposal = await this.abortable(
+              () =>
+                this.ports.propose({
+                  taskId: job.taskId,
+                  runId: job.runId,
+                  goal: current.goal,
+                  observation: observed.observation,
+                  pending: null,
+                  history: [],
+                  contentSource: parsed.source,
+                  signal: job.abort.signal,
+                  permit: (send) =>
+                    this.ports.input
+                      ? this.ports.input.permit(
+                          job.taskId,
+                          job.inputEpoch,
+                          send,
+                        )
+                      : send(),
+                }),
+              job.abort.signal,
+            );
+            if (!this.live(job)) return;
+            if (proposal.decision === 'ask') {
+              await this.record({
+                kind: 'ask',
+                taskId: job.taskId,
+                runId: job.runId,
+                questionId: randomUUID(),
+                text: proposal.summary,
+                url: observed.observation.url,
+              });
+              return;
+            }
+            if (!proposal.article || !proposal.modelCallId)
+              throw Error('MODEL_FORMAT');
+            await this.record({
+              kind: 'article-generated',
+              taskId: job.taskId,
+              runId: job.runId,
+              sourceId: parsed.source.id,
+              draft: proposal.article,
+              modelCallId: proposal.modelCallId,
+            });
+          } catch (error) {
+            if (!this.live(job)) return;
+            const message =
+              excelFailureMessage[error instanceof Error ? error.message : ''];
+            if (!message) throw error;
+            await this.record({
+              kind: 'ask',
+              taskId: job.taskId,
+              runId: job.runId,
+              questionId: randomUUID(),
+              text: message,
+              url: observed.observation.url,
+            });
+            return;
+          }
+          continue;
+        }
         if (step.decision === 'prepared') {
           await this.record({
             kind: 'finish',
@@ -1640,6 +1731,9 @@ export class ExecutionService {
                 ? {
                     type: 'review',
                     publication: {
+                      ...(preview.articleId
+                        ? { articleId: preview.articleId }
+                        : {}),
                       content: preview.content,
                       destination: preview.destination,
                       ...(preview.attachment

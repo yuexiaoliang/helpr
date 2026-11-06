@@ -20,6 +20,7 @@ export const attachmentBindingSchema = z.strictObject({
   url,
 });
 export const publicationSchema = z.strictObject({
+  articleId: z.string().uuid().optional(),
   destination: z.string().trim().min(1).max(600),
   content: z
     .string()
@@ -95,6 +96,7 @@ export type PublicationCheck = z.infer<typeof publicationCheckSchema>;
 
 export function samePublication(a: Publication, b: Publication) {
   return (
+    a.articleId === b.articleId &&
     a.content === b.content &&
     a.destination === b.destination &&
     JSON.stringify(a.attachment) === JSON.stringify(b.attachment)

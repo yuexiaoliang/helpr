@@ -1,3 +1,12 @@
+import { contentSourceSchema, articleDraftSchema } from '../shared/article';
+import {
+  contentRequirements,
+  contentSourceHash,
+  generatedArticle,
+  editArticle,
+  publicationArticle,
+  contentCallHash,
+} from './article';
 import {
   attachmentBinding,
   submissionReady,
@@ -189,6 +198,18 @@ const commandSchema = z.discriminatedUnion('kind', [
     kind: z.literal('publication-result'),
     ...work,
     check: publicationCheckSchema,
+  }),
+  z.strictObject({
+    kind: z.literal('content-source'),
+    ...work,
+    source: contentSourceSchema,
+  }),
+  z.strictObject({
+    kind: z.literal('article-generated'),
+    ...work,
+    sourceId: z.string().uuid(),
+    draft: articleDraftSchema,
+    modelCallId: z.string(),
   }),
   z.strictObject({
     kind: z.literal('material-selected'),
@@ -533,12 +554,14 @@ export class ExecutionRecords {
         )
           throw Error('PARTICIPATION_EXPIRED');
         if (c.operation === 'edit') {
+          editArticle(e, c.content);
           p.content = c.content;
           e.version++;
           p.revision++;
           p.approvalId = null;
           q.id = randomUUID();
         } else {
+          publicationArticle(e, p);
           p.approvalId = q.id;
           const use = currentWorkflow(e);
           if (use) use.approved = { id: q.id, content: p.content };
@@ -1224,6 +1247,68 @@ export class ExecutionRecords {
               : '发布结果尚未核实，已保留目标和核对记录，不重复提交。';
           e.runId = null;
           if (c.check.status === 'verified') e.resource = null;
+          this.save(task.id, e);
+          return { created: true };
+        }
+        if (c.kind === 'content-source') {
+          if (
+            e.actions.some((a) =>
+              ['reserved', 'dispatched', 'unknown'].includes(a.status),
+            )
+          )
+            throw Error('EXECUTION_RESULT_UNKNOWN');
+          if (
+            e.publication?.approvalId ||
+            c.source.goalVersion !== e.goalVersion ||
+            !e.materials?.some(
+              (m) =>
+                m.id === c.source.materialId &&
+                m.sha256 === c.source.materialSha256 &&
+                m.goalVersion === e.goalVersion,
+            ) ||
+            contentSourceHash(c.source) !== c.source.sha256 ||
+            JSON.stringify({
+              goal: c.source.requirements.goal,
+              answers: c.source.requirements.answers,
+            }) !== JSON.stringify(contentRequirements(e))
+          )
+            throw Error('ARTICLE_BINDING_MISMATCH');
+          if ((e.contentSources?.length ?? 0) >= 60)
+            throw Error('EXECUTION_LIMIT');
+          (e.contentSources ??= []).push(c.source);
+          this.save(task.id, e);
+          return { created: true };
+        }
+        if (c.kind === 'article-generated') {
+          const source = e.contentSources?.find(
+            (s) => s.id === c.sourceId && s.goalVersion === e.goalVersion,
+          );
+          const call = this.db
+            .select()
+            .from(schema.modelCalls)
+            .where(eq(schema.modelCalls.id, c.modelCallId))
+            .get();
+          if (
+            !source ||
+            e.publication ||
+            e.actions.some((a) =>
+              ['reserved', 'dispatched', 'unknown'].includes(a.status),
+            ) ||
+            !call ||
+            call.taskId !== task.id ||
+            call.phase !== 'complete' ||
+            call.usageKind !== 'material-content' ||
+            call.hash !== contentCallHash(task.id, source) ||
+            JSON.stringify(
+              z
+                .object({ article: articleDraftSchema })
+                .parse(JSON.parse(call.output)).article,
+            ) !== JSON.stringify(c.draft)
+          )
+            throw Error('ARTICLE_BINDING_MISMATCH');
+          if ((e.articles?.length ?? 0) >= 60) throw Error('EXECUTION_LIMIT');
+          const article = generatedArticle(e, source, c.draft, c.modelCallId);
+          (e.articles ??= []).push(article);
           this.save(task.id, e);
           return { created: true };
         }

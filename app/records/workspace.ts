@@ -34,6 +34,14 @@ import { UpgradeRecords } from './upgrade';
 import { z } from 'zod';
 import { MaterialFiles } from './material';
 import { materialSelectionSchema } from '../shared/material';
+import { parseExcel } from './excel';
+import {
+  contentRequirements,
+  contentSourceHash,
+  validArticleModelCalls,
+} from './article';
+import { archivedModelCallSchema } from '../shared/model';
+import { contentSourceSchema } from '../shared/article';
 import {
   CURRENT_DATA_FORMAT,
   CURRENT_STATE_MODEL,
@@ -126,6 +134,7 @@ export class WorkspaceRecords {
           13,
           14,
           15,
+          16,
           CURRENT_DATA_FORMAT,
         ].includes(priorVersion)
       )
@@ -133,27 +142,29 @@ export class WorkspaceRecords {
       if (legacy && priorVersion !== CURRENT_DATA_FORMAT) {
         const backup = path.join(
           folder,
-          (priorVersion === 15
-            ? 'workspace-before-workflow-repair-17-'
-            : priorVersion === 14
-              ? 'workspace-before-coordination-16-'
-              : priorVersion === 13
-                ? 'workspace-before-workflow-reuse-15-'
-                : priorVersion === 12
-                  ? 'workspace-before-publication-recovery-14-'
-                  : priorVersion === 11
-                    ? 'workspace-before-publication-13-'
-                    : priorVersion === 10
-                      ? 'workspace-before-material-12-'
-                      : priorVersion === 9
-                        ? 'workspace-before-task-groups-11-'
-                        : priorVersion >= 7
-                          ? 'workspace-before-participation-10-'
-                          : priorVersion === 6
-                            ? 'workspace-before-upgrade-09-'
-                            : priorVersion === 5
-                              ? 'workspace-before-backup-07-'
-                              : 'workspace-before-recovery-05-') +
+          (priorVersion === 16
+            ? 'workspace-before-excel-article-18-'
+            : priorVersion === 15
+              ? 'workspace-before-workflow-repair-17-'
+              : priorVersion === 14
+                ? 'workspace-before-coordination-16-'
+                : priorVersion === 13
+                  ? 'workspace-before-workflow-reuse-15-'
+                  : priorVersion === 12
+                    ? 'workspace-before-publication-recovery-14-'
+                    : priorVersion === 11
+                      ? 'workspace-before-publication-13-'
+                      : priorVersion === 10
+                        ? 'workspace-before-material-12-'
+                        : priorVersion === 9
+                          ? 'workspace-before-task-groups-11-'
+                          : priorVersion >= 7
+                            ? 'workspace-before-participation-10-'
+                            : priorVersion === 6
+                              ? 'workspace-before-upgrade-09-'
+                              : priorVersion === 5
+                                ? 'workspace-before-backup-07-'
+                                : 'workspace-before-recovery-05-') +
             randomUUID() +
             '.sqlite',
         );
@@ -161,6 +172,18 @@ export class WorkspaceRecords {
         chmodSync(backup, 0o600);
       }
       migrate(this.db, { migrationsFolder: migrations });
+      const contentCalls = [
+        ...this.db
+          .select()
+          .from(schema.modelCalls)
+          .all()
+          .map((call) => ({ call, hash: call.hash, output: call.output })),
+        ...this.db
+          .select()
+          .from(schema.archivedModelCalls)
+          .all()
+          .map((row) => archivedModelCallSchema.parse(row.body)),
+      ];
       for (const row of this.db.select().from(schema.executions).all()) {
         const body = row.body;
         if (
@@ -172,7 +195,15 @@ export class WorkspaceRecords {
           throw Error('STATE_MODEL_UNSUPPORTED');
         if (
           !executionSchema.safeParse(body).success ||
-          !validPublicationReferences(row.taskId, executionSchema.parse(body))
+          !validPublicationReferences(
+            row.taskId,
+            executionSchema.parse(body),
+          ) ||
+          !validArticleModelCalls(
+            row.taskId,
+            executionSchema.parse(body),
+            contentCalls,
+          )
         )
           throw Error('DATA_CORRUPT');
       }
@@ -216,6 +247,7 @@ export class WorkspaceRecords {
         version !== 13 &&
         version !== 14 &&
         version !== 15 &&
+        version !== 16 &&
         version !== CURRENT_DATA_FORMAT
       )
         throw new Error('DATA_VERSION_UNSUPPORTED');
@@ -300,6 +332,11 @@ export class WorkspaceRecords {
     const c = z
       .discriminatedUnion('kind', [
         z.strictObject({
+          kind: z.literal('parse'),
+          ...base,
+          materialId: z.string().uuid(),
+        }),
+        z.strictObject({
           kind: z.literal('verify'),
           taskId: z.string(),
           materialId: z.string().uuid(),
@@ -344,6 +381,50 @@ export class WorkspaceRecords {
       return e;
     };
     const e = active();
+    if (c.kind === 'parse') {
+      const material = e.materials?.find(
+        (m) => m.id === c.materialId && m.goalVersion === e.goalVersion,
+      );
+      if (!material) throw Error('MATERIAL_NOT_AUTHORIZED');
+      const requirements = contentRequirements(e);
+      const prior = e.contentSources?.find(
+        (s) =>
+          s.materialId === material.id &&
+          s.requirements.goal === requirements.goal &&
+          JSON.stringify(s.requirements.answers) ===
+            JSON.stringify(requirements.answers),
+      );
+      if (prior) return { source: prior, state: this.snapshot() };
+      const bytes = await this.materials.read(material);
+      const parsed = await parseExcel(bytes, material.name);
+      const latest = active();
+      if (
+        latest.version !== e.version ||
+        JSON.stringify(contentRequirements(latest)) !==
+          JSON.stringify(requirements)
+      )
+        throw Error('EXECUTION_STOPPED');
+      const body = {
+        ...parsed,
+        id: randomUUID(),
+        materialId: material.id,
+        materialSha256: material.sha256,
+        goalVersion: e.goalVersion,
+        createdAt: Date.now(),
+        requirements: { id: randomUUID(), ...requirements },
+      };
+      const source = contentSourceSchema.parse({
+        ...body,
+        sha256: contentSourceHash(body),
+      });
+      this.executions.execute({
+        kind: 'content-source',
+        taskId: c.taskId,
+        runId: c.runId,
+        source,
+      });
+      return { source, state: this.snapshot() };
+    }
     if (c.kind === 'select') {
       if (e.materials?.some((m) => m.goalVersion === e.goalVersion))
         throw Error('MATERIAL_ALREADY_FIXED');

@@ -8,6 +8,7 @@ import type {
 } from '../shared/publication';
 import { samePublication } from '../shared/publication';
 import { learnWorkflow } from './workflow';
+import { publicationArticle } from './article';
 
 export function freezeRecovery(
   e: TaskExecution,
@@ -92,6 +93,7 @@ export function validateHistoricalCheck(
 }
 
 export function attachmentBinding(e: TaskExecution, p: Publication) {
+  publicationArticle(e, p);
   const a = p.attachment;
   const materials =
     e.materials?.filter((m) => m.goalVersion === e.goalVersion) ?? [];

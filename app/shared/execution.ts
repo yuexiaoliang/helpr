@@ -1,4 +1,9 @@
 import { z } from 'zod';
+import {
+  contentSourceSchema,
+  articleVersionSchema,
+  articleDraftSchema,
+} from './article';
 import { pageSourceSchema, observedLinkSchema } from './model';
 import { webActionSchema } from './web-action';
 import {
@@ -199,6 +204,8 @@ export const participationDecisionSchema = z.discriminatedUnion('operation', [
 ]);
 export type ParticipationDecision = z.infer<typeof participationDecisionSchema>;
 export const executionSchema = z.strictObject({
+  contentSources: z.array(contentSourceSchema).max(60).optional(),
+  articles: z.array(articleVersionSchema).max(60).optional(),
   coordination: coordinationSchema.optional(),
   resourceClaims: z.array(resourceClaimSchema).max(60).optional(),
   workflowUses: z.array(workflowUseSchema).max(60).optional(),
@@ -323,6 +330,9 @@ export const executionControlSchema = z.strictObject({
   system: z.boolean().optional(),
 });
 export const nextStepSchema = z.strictObject({
+  compose: z.strictObject({ materialId: z.string().uuid() }).optional(),
+  article: articleDraftSchema.optional(),
+  modelCallId: z.string().optional(),
   coordination: coordinationProposalSchema.optional(),
   workflow: workflowChoiceSchema.optional(),
   recovery: publicationRecoverySchema.optional(),
@@ -332,6 +342,7 @@ export const nextStepSchema = z.strictObject({
   extraResults: z.array(z.url()).max(50).optional(),
   decision: z.enum([
     'reuse',
+    'compose',
     'observe',
     'material',
     'prepared',

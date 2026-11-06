@@ -204,3 +204,15 @@ Node-API 8 原生模块经 node-gyp `13.1.0` 构建，固定 arm64／macOS 14 �
 记录格式 **16** 接续 15，迁移先保留原库。修复起点、动作引用、候选、采用决定及跨任务来源纳入冷开和备份完整性检查；任务归档仍保留引用。模型用途新增 `workflow-repair`，与委托绑定、网页首次规划分别计数。当前范围是已学得线性路径的定位与观察条件修复；新增／删去步骤、复杂结构重排仍需要扩展和验证。
 
 定向入口：`pnpm exec vitest run tests/workspace/workflow-repair.test.ts`。固定包入口：`pnpm validate:workspace --fixture --candidate=workflow-repair-17-session --workflow-repair`。本机页面变化、双任务候选竞争和冷开复用有独立证据；真实模型／WordPress 和原生窗口仍待验。见[17 检查报告](../docs/testing/evidence/workflow-repair-17/REPORT.md)与[检查安排](../docs/testing/workflow-repair-17-plan.md)。
+
+## 读取 Excel、预览与确认文章（18）
+
+用户委托读取表格成文时，先固定素材字节，再读取工作簿并按本次目标和已收到的回答生成建议。每段记录单元格引用，来源、处理要求及模型输入摘要／输出与文章版本关联。内容模型记为 `material-content`，与网页规划和委托绑定分别计数；网页中的内容及表格单元格不能授予本机读取或发布权限。
+
+默认在所属任务预览完整文字、固定附件及实际目标。展开“查看表格来源与不确定项”可看引用、原值、公式和空值。修改文字形成新版本，仍完整匹配的段落保留引用；新增／重写内容明确标为用户编辑，未自动取得源表依据。“修改目标或处理要求”撤销旧任务资格并重新准备。单次确认绑定本任务、本版文字、素材和目标，原路径改变、另一任务确认、旧回复或“继续”不能批准新内容。
+
+锁定 SheetJS CE 0.20.3（官方 tarball）、yauzl 3.4.0 与 saxes 6.0.0。当前只读未加密 `.xlsx`；公式不重算，缓存不作确定事实，隐藏内容、错误、无效日期和合并从属格不作引用。保留 1900／1904 日期系统、原数值与显示格式；空白不等于零。文件、解压、工作表与单元格数量有明确限制，超限整份反馈。完整范围见[18 检查安排](../docs/testing/article-18-plan.md)与[解析选型](../docs/research/excel-content-parsing.md)。
+
+记录格式 **17** 接续 16，迁移前保留原库。解析、要求、生成与用户版本、模型来源、预览确认及派发关联进入冷开和备份校验。最终发布仍走已有资格、当前网页全文／目标、附件字节及公开结果检查，失败不把素材标为完成。引用及数值核对不等于通用语义证明；真实模型和远程后台继续待验。
+
+定向入口：`pnpm exec vitest run tests/workspace/article.test.ts tests/workspace/article-ui.test.tsx`。实包入口：`pnpm validate:workspace --fixture --candidate=excel-article-18 --article`。证据及剩余范围见 [18 检查报告](../docs/testing/evidence/article-18/REPORT.md)。

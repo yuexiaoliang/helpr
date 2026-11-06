@@ -1,5 +1,5 @@
 // 本机替代模型从委托提取参数并提议首次动作；复用阶段只回答绑定，不提供网页步骤。
-export function workflowFixture(receipts, { repair = false } = {}) {
+export function workflowFixture(receipts, { repair = false, article = false } = {}) {
   let calls = 0, writes = 0;
   const waitingDrafts = new Map();
   const labels = id => !repair || id === 'A' ? {draft: '保存草稿', title: '发布标题', publish: '发布附件'} : id === 'C' ? {draft: '暂存附件', title: '正文内容', publish: '确认送出'} : {draft: '暂存附件', title: '公告全文', publish: '发布附件'};
@@ -17,6 +17,21 @@ export function workflowFixture(receipts, { repair = false } = {}) {
         try {
           if (++calls > 80) throw Error('FIXTURE_MODEL_LIMIT');
           const input = JSON.parse(body), plan = JSON.parse(input.messages.at(-1).content);
+          if (article && plan.source) {
+            const source = plan.source;
+            const blocks = [];
+            for (const sheet of source.sheets) {
+              for (const cell of sheet.cells.filter(c => c.status === 'value' && c.address.startsWith('A'))) {
+                const value = sheet.cells.find(c => c.address === 'B' + cell.address.slice(1) && c.status === 'value');
+                if (value) blocks.push({ kind: 'fact', text: cell.display + '：' + value.display + '。', citations: [cell,value].map(c => ({sheet:sheet.name,address:c.address,quote:c.display})) });
+              }
+            }
+            const answer = {decision:'review', summary:'已按固定表格生成文章建议', evidence:['基于固定素材提出建议'], previous:null, action:null, article:{destination:'公告',blocks}};
+            receipts.push({kind:'content-model', sourceId:source.id, at:Date.now()});
+            res.writeHead(200, {'Content-Type':'text/event-stream'});
+            res.end('data: ' + JSON.stringify({choices:[{index:0,delta:{content:JSON.stringify(answer)},finish_reason:null}]}) + '\n\ndata: ' + JSON.stringify({choices:[{index:0,delta:{},finish_reason:'stop'}],usage:{prompt_tokens:100,completion_tokens:100,total_tokens:200}}) + '\n\ndata: [DONE]\n\n');
+            return;
+          }
           const observed = input.messages.at(-2).content;
           const [, source, target, content, destination] = plan.goal.match(/使用“(.+?)”在 (http\S+) 发布“(.+?)”到“(.+?)”/);
           const targetURL = new URL(target), id = targetURL.searchParams.get('item');
@@ -26,18 +41,19 @@ export function workflowFixture(receipts, { repair = false } = {}) {
           const titleControl = /\[textbox\] ([^\n：]+)/.exec(observed)?.[1];
           const previous = plan.previous ? { id: plan.previous.id, status: 'confirmed', evidence: [observed.includes('已正式发布') ? '已正式发布' : observed.includes('栏目已填写') ? '栏目已填写' : observed.includes('标题已填写') ? '标题已填写' : observed.includes('草稿已保存') ? '草稿已保存' : '附件已上传'] } : null;
           let step = { decision: 'act', summary: '核对本次附件', evidence: ['附件编辑'], previous, action: null };
-          if (plan.workflows?.length) {
+          if (!article && plan.workflows?.length) {
             const w = plan.workflows[0];
             step = { ...step, decision: 'reuse', material, workflow: { taskId: w.taskId, version: w.version, sha256: w.sha256, content, destination } };
           } else if (/正在(上传|保存|发布)附件/.test(observed)) step = { ...step, decision: 'observe', previous: null };
           else if (!m) step = { ...step, decision: 'material', material };
+          else if (article && !plan.article) step = { ...step, decision: 'compose', compose: {materialId:m.id} };
           else if (!observed.includes('附件已上传')) step = { ...step, effect: 'upload', action: { kind: 'upload', materialId: m.id, target: { fileIndex: 0 } } };
           else {
             step.preparation = [{ kind: 'target', url: target, materialId: null, evidence: ['附件编辑'] }, { kind: 'upload', url: base + '/file?item=' + id, materialId: m.id, evidence: ['附件已上传'] }];
             if (!observed.includes('草稿已保存')) step = { ...step, effect: 'draft', action: { kind: 'click', target: { role: 'button', name: buttons.find(name => /保存草稿|暂存附件/.test(name)) } } };
             else {
               step.preparation.push({ kind: 'draft', url: target, materialId: null, evidence: ['草稿已保存'] });
-              const publication = { content: p?.content ?? content, destination, attachment: { materialId: m.id, targetUrl: target, url: base + '/file?item=' + id } };
+              const publication = { ...(article ? {articleId: p?.articleId ?? plan.article.id} : {}), content: p?.content ?? plan.article?.content ?? content, destination, attachment: { materialId: m.id, targetUrl: target, url: base + '/file?item=' + id } };
               if (!p?.approvalId) step = { ...step, decision: 'review', publication };
               else if (observed.includes('已正式发布')) step = { ...step, decision: 'complete', result: { url: base + '/result?item=' + id, targetUrl: target, attachmentUrl: publication.attachment.url, publishedEvidence: ['已正式发布'] } };
               else {
@@ -88,7 +104,7 @@ export function workflowFixture(receipts, { repair = false } = {}) {
     if (url.pathname === '/edit') {
       const names = labels(id);
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.end(`<!doctype html><meta charset="utf-8"><title>附件编辑</title><h1>附件编辑</h1>${repair ? `<a href="/users/fixture">账号 fixture</a><a href="/edit${query}">当前记录</a><p>可编辑此记录</p>` : ''}<p>固定标签：公告</p><label>附件<input type="file"></label><p id="upload">${p.bytes ? `附件已上传 <a href="/file${query}">下载附件</a>` : '等待素材'}</p><button id="draft">${names.draft}</button><p id="drafted">${p.draft ? '草稿已保存' : '尚未保存'}</p><label>${names.title}<input id="title"></label><output id="preview"></output><label>栏目<select id="destination"><option>公告</option><option>通知</option></select></label><output id="selected"></output><a href="/result${query}">永久链接</a><button id="publish">${names.publish}</button><p id="result">${p.published ? '已正式发布' : '尚未发布'}</p><script>
+      res.end(`<!doctype html><meta charset="utf-8"><title>附件编辑</title><h1>附件编辑</h1>${repair ? `<a href="/users/fixture">账号 fixture</a><a href="/edit${query}">当前记录</a><p>可编辑此记录</p>` : ''}<p>固定标签：公告</p><label>附件<input type="file"></label><p id="upload">${p.bytes ? `附件已上传 <a href="/file${query}">下载附件</a>` : '等待素材'}</p><button id="draft">${names.draft}</button><p id="drafted">${p.draft ? '草稿已保存' : '尚未保存'}</p><label>${names.title}${article ? '<textarea id="title"></textarea>' : '<input id="title">'}</label><output id="preview"></output><label>栏目<select id="destination"><option>公告</option><option>通知</option></select></label><output id="selected"></output><a href="/result${query}">永久链接</a><button id="publish">${names.publish}</button><p id="result">${p.published ? '已正式发布' : '尚未发布'}</p><script>
 const q=${JSON.stringify(query)};
 document.querySelector('[type=file]').onchange=async e=>{document.querySelector('#upload').textContent='正在上传附件';await fetch('/upload'+q,{method:'POST',body:await e.target.files[0].arrayBuffer()});document.querySelector('#upload').innerHTML='附件已上传 <a href="/file'+q+'">下载附件</a>'};
 document.querySelector('#draft').onclick=async()=>{document.querySelector('#drafted').textContent='正在保存附件';await fetch('/draft'+q,{method:'POST'});document.querySelector('#drafted').textContent='草稿已保存'};

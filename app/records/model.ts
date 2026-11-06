@@ -158,9 +158,19 @@ export class ModelRecords {
       .all()
       .map((message) => {
         const call = message.callId ? calls.get(message.callId) : undefined;
+        let visibleOutput = call?.output;
+        if (call?.usageKind === 'material-content' && call.output) {
+          try {
+            visibleOutput = z
+              .object({ summary: z.string() })
+              .parse(JSON.parse(call.output)).summary;
+          } catch {
+            visibleOutput = '表格内容处理记录已保存。';
+          }
+        }
         return {
           role: message.role,
-          text: call ? call.output : message.text,
+          text: call ? visibleOutput! : message.text,
           ...(call ? { call: modelCallSchema.strip().parse(call) } : {}),
         };
       });

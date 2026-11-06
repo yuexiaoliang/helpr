@@ -1,4 +1,5 @@
 import { validPublicationReferences, validWorkflowCatalog } from './workflow';
+import { validArticleModelCalls } from './article';
 import { z } from 'zod';
 import { createHash, randomUUID } from 'node:crypto';
 import { constants } from 'node:fs';
@@ -71,6 +72,7 @@ const envelope = z.strictObject({
     z.literal(13),
     z.literal(14),
     z.literal(15),
+    z.literal(16),
     z.literal(CURRENT_DATA_FORMAT),
   ]),
   stateModel: z.literal(CURRENT_STATE_MODEL),
@@ -485,7 +487,9 @@ export async function readBackup(
       const versions = t.execution?.materials ?? [];
       return (
         new Set(versions.map((m) => m.id)).size !== versions.length ||
-        (t.execution && !validPublicationReferences(t.id, t.execution)) ||
+        (t.execution &&
+          (!validPublicationReferences(t.id, t.execution) ||
+            !validArticleModelCalls(t.id, t.execution, value.payload.calls))) ||
         versions.some((m) => materials.get(m.sha256)?.length !== m.bytes) ||
         t.execution?.actions.some(
           (a) =>
