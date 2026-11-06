@@ -5,6 +5,9 @@ import {
   executionIntentSchema,
   nextStepSchema,
   type ExecutionIntent,
+  type ParticipationReply,
+  type ParticipationDecision,
+  type TaskExecution,
   type NextStep,
   type ActionFact,
   type WebAction,
@@ -25,6 +28,9 @@ export type ProposalInput = {
   goal: string;
   observation: PageObservation;
   pending: ActionFact | null;
+  publication?: TaskExecution['publication'];
+  loginOrigin?: string;
+  clarifications?: { question: string; answer: string }[];
   history: ActionFact[];
   signal: AbortSignal;
   permit?: <T>(send: () => T) => T;
@@ -85,6 +91,7 @@ export class ExecutionService {
   private systemGeneration = 0;
   private restoring = false;
   private upgradeHeld = false;
+  private readonly pendingReplies = new Set<Promise<unknown>>();
   private readonly reviews = new Map<
     string,
     { abort: AbortController; work: Promise<void>; epoch?: number }
@@ -119,6 +126,7 @@ export class ExecutionService {
   }
   canExit() {
     return (
+      this.pendingReplies.size === 0 &&
       this.pendingIntents.size === 0 &&
       this.reviews.size === 0 &&
       this.interruptions.size === 0 &&
@@ -241,6 +249,8 @@ export class ExecutionService {
           'INVALID_REQUEST',
           'EXECUTION_STOPPED',
           'EXECUTION_CONTINUE_REQUIRED',
+          'PARTICIPATION_EXPIRED',
+          'PARTICIPATION_REQUIRED',
           'EXECUTION_RESULT_UNKNOWN',
           'EXECUTION_PAGE_CHANGED',
           'EXECUTION_LIMIT',
@@ -319,14 +329,99 @@ export class ExecutionService {
       this.pump();
     }
   }
-  async intent(input: ExecutionIntent): Promise<WorkspaceSnapshot> {
+  async reply(
+    command: ParticipationReply | ParticipationDecision,
+  ): Promise<WorkspaceSnapshot> {
+    if (this.closing) throw Error('APPLICATION_EXITING');
+    if (!this.systemReady()) throw Error('SYSTEM_SUSPENDED');
+    if (!this.available) throw Error('RECORDS_UNAVAILABLE');
+    if (
+      command.kind === 'participation-decision' &&
+      command.operation === 'login-check'
+    ) {
+      const task = this.ports
+        .current()
+        .tasks.find((t) => t.id === command.taskId);
+      const q = task?.execution?.question;
+      const block = this.blocked.get(command.taskId);
+      if (
+        !task?.execution ||
+        !q ||
+        q.id !== command.questionId ||
+        q.type !== 'login' ||
+        this.pendingIntents.has(task.id) ||
+        (block &&
+          (!block.saved ||
+            !['page-change', 'takeover'].includes(block.reason ?? '')))
+      )
+        throw Error('PARTICIPATION_EXPIRED');
+      return this.intent(
+        {
+          kind: 'execution-intent',
+          intent: 'continue',
+          taskId: task.id,
+          requestId: 'login:' + q.id,
+          expectedVersion: task.execution.version,
+          text: '已登录，核对后继续',
+        },
+        q.id,
+      );
+    }
+    if (
+      this.blocked.has(command.taskId) ||
+      this.pendingIntents.has(command.taskId)
+    )
+      throw Error('PARTICIPATION_EXPIRED');
+    const work = this.record(command);
+    this.pendingReplies.add(work);
+    try {
+      await work;
+      return this.decorate(this.ports.current());
+    } finally {
+      this.pendingReplies.delete(work);
+      this.pump();
+    }
+  }
+  async intent(
+    input: ExecutionIntent,
+    loginQuestionId?: string,
+    closeAtVersion?: number,
+  ): Promise<WorkspaceSnapshot> {
     const command = executionIntentSchema.parse(input);
+    const currentTask = this.ports
+      .current()
+      .tasks.find((t) => t.id === command.taskId);
+    if (
+      closeAtVersion !== undefined &&
+      (!currentTask ||
+        currentTask.hidden ||
+        (currentTask.execution?.version ?? 0) !== closeAtVersion ||
+        this.pendingIntents.has(command.taskId))
+    )
+      throw Error('RECORD_VERSION_CONFLICT');
+    if (
+      currentTask?.archived &&
+      currentTask.execution?.result &&
+      currentTask.execution.result.goalVersion ===
+        currentTask.execution.goalVersion &&
+      ['continue', 'start'].includes(command.intent)
+    )
+      return this.decorate(this.ports.current());
     if (
       ['start', 'continue'].includes(command.intent) &&
       this.ports.current().tasks.find((t) => t.id === command.taskId)?.execution
         ?.restoreReview === 'complete'
     )
       return this.decorate(this.ports.current());
+    const pendingQuestion = this.ports
+      .current()
+      .tasks.find((task) => task.id === command.taskId)?.execution?.question;
+    if (
+      pendingQuestion &&
+      pendingQuestion.id !== loginQuestionId &&
+      ['start', 'continue'].includes(command.intent)
+    )
+      throw Error('PARTICIPATION_REQUIRED');
     const priorBlock = this.blocked.get(command.taskId);
     let recordStarted = false;
     if (this.closing) throw Error('APPLICATION_EXITING');
@@ -358,6 +453,8 @@ export class ExecutionService {
       recordStarted = true;
       const result = await this.record({
         ...command,
+        ...(loginQuestionId ? { loginQuestionId } : {}),
+        ...(closeAtVersion !== undefined ? { closeAtVersion } : {}),
         kind: 'intent',
         controlSequence: sequence,
       });
@@ -397,6 +494,15 @@ export class ExecutionService {
         )
           await this.suspend(command.taskId, 'ownership-unknown', randomUUID());
         return this.decorate(this.ports.current());
+      }
+      if (
+        closeAtVersion !== undefined &&
+        task?.archived &&
+        task.execution?.intent !== 'stopped'
+      ) {
+        this.blocked.delete(task.id);
+        this.publish();
+        return this.decorate(result.state);
       }
       if (task?.execution?.intent === 'stopped')
         this.blocked.set(task.id, {
@@ -802,6 +908,11 @@ export class ExecutionService {
                 observation: observed.observation,
                 pending,
                 history: current.actions,
+                publication: current.publication,
+                loginOrigin: current.loginOrigin,
+                clarifications: current.answers
+                  ?.filter((a) => a.goalVersion === current.goalVersion)
+                  .map((a) => ({ question: a.text, answer: a.answer })),
                 signal: job.abort.signal,
                 permit: (send) =>
                   this.ports.input
@@ -842,6 +953,66 @@ export class ExecutionService {
           });
         }
         if (!this.live(job)) return;
+        if (step.decision === 'authenticated' && !current.loginOrigin)
+          throw Error('MODEL_FORMAT');
+        const p = current.publication;
+        if (
+          current.loginOrigin &&
+          step.decision === 'authenticated' &&
+          new URL(observed.observation.url).origin === current.loginOrigin
+        ) {
+          await this.record({
+            kind: 'verified-login',
+            taskId: job.taskId,
+            runId: job.runId,
+            source: observed.observation,
+            evidence: step.evidence,
+          });
+          continue;
+        }
+        const requiresLogin =
+          !!current.loginOrigin || step.decision === 'login';
+        const candidate = step.publication;
+        const needsReview =
+          step.decision === 'review' ||
+          (step.decision === 'act' &&
+            (candidate || p) &&
+            (!p?.approvalId ||
+              !candidate ||
+              p.approvalId !== step.approvalId ||
+              p.content !== candidate.content ||
+              p.destination !== candidate.destination ||
+              p.origin !== new URL(observed.observation.url).origin)) ||
+          (p && !p.approvalId);
+        if (requiresLogin || needsReview || step.decision === 'ask') {
+          const preview = candidate ?? p;
+          if (!requiresLogin && needsReview && !preview)
+            throw Error('MODEL_FORMAT');
+          await this.record({
+            kind: 'ask',
+            taskId: job.taskId,
+            runId: job.runId,
+            questionId: randomUUID(),
+            ...(requiresLogin
+              ? { type: 'login' }
+              : needsReview && preview
+                ? {
+                    type: 'review',
+                    publication: {
+                      content: preview.content,
+                      destination: preview.destination,
+                    },
+                  }
+                : {}),
+            text: requiresLogin
+              ? '请到这项任务的网页登录，完成后核对。'
+              : needsReview
+                ? '请确认本次发布的目标和内容。'
+                : step.summary,
+            url: observed.observation.url,
+          });
+          return;
+        }
         if (step.decision === 'complete') {
           await this.record({
             kind: 'finish',
@@ -861,6 +1032,12 @@ export class ExecutionService {
         const actionId = randomUUID();
         const reserved = await this.record({
           kind: 'reserve',
+          ...(step.publication
+            ? {
+                publication: step.publication,
+                approvalId: step.approvalId ?? undefined,
+              }
+            : {}),
           taskId: job.taskId,
           runId: job.runId,
           id: actionId,
@@ -931,7 +1108,7 @@ export class ExecutionService {
     await Promise.allSettled([...this.reviews.values()].map((r) => r.work));
     for (;;) {
       const pump = this.pumping;
-      await Promise.allSettled([...this.interruptions]);
+      await Promise.allSettled([...this.interruptions, ...this.pendingReplies]);
       if (pump) await pump;
       const jobs = [...this.jobs.values()];
       if (!jobs.length && !this.pumping) return;

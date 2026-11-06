@@ -106,3 +106,91 @@ test('两项任务重开后保留原身份和各自对话', () => {
   ]);
   records.close();
 });
+
+test('分组创建与停止关闭可重送，历史回看和旧关闭提示不改变新执行', () => {
+  const folder = mkdtempSync(path.join(tmpdir(), 'helpr-groups-'));
+  folders.push(folder);
+  let r = new WorkspaceRecords(folder, 'app/records/migrations');
+  try {
+    const create = {
+      kind: 'create',
+      requestId: 'groups',
+      goal: '把 https://source.test 的周报分别发到 https://a.test 和 https://b.test',
+    };
+    const { taskId: a, state } = r.execute(create);
+    const b = state.tasks[1]!;
+    expect(state.tasks.map((t) => t.url)).toEqual([
+      'https://a.test/',
+      'https://b.test/',
+    ]);
+    expect(b.groupId).toBeTruthy();
+    expect(b.groupId).toBe(state.tasks[0]?.groupId);
+    expect(r.execute(create).state.tasks).toHaveLength(2);
+    const stop = {
+      kind: 'intent',
+      intent: 'stop',
+      requestId: 'stop-close',
+      closeAtVersion: 0,
+      taskId: a,
+    };
+    r.execution(stop);
+    r.execution(stop);
+    expect(r.snapshot().active).toBe(b.id);
+    r.close();
+    r = new WorkspaceRecords(folder, 'app/records/migrations');
+    r.execute({ kind: 'select', taskId: a, requestId: 'reopen' });
+    expect(r.snapshot().tasks[0]).toMatchObject({
+      archived: true,
+      hidden: false,
+      execution: { intent: 'stopped' },
+    });
+    r.execution({
+      kind: 'intent',
+      intent: 'continue',
+      requestId: 'continue',
+      taskId: a,
+    });
+    expect(() => r.execution({ ...stop, requestId: 'late' })).toThrow(
+      'RECORD_VERSION_CONFLICT',
+    );
+    expect(() =>
+      r.execute({ kind: 'archive-task', taskId: a, requestId: 'late-archive' }),
+    ).toThrow('RECORD_VERSION_CONFLICT');
+    expect(r.snapshot().tasks[1]?.execution).toBeNull();
+    r.execute({
+      kind: 'page',
+      phase: 'manual',
+      url: 'https://a.test/',
+      taskId: a,
+      requestId: 'page',
+    });
+    r.execution({ kind: 'claim', taskId: a, runId: 'check' });
+    r.execution({
+      kind: 'ask',
+      taskId: a,
+      runId: 'check',
+      url: 'https://a.test/',
+      questionId: crypto.randomUUID(),
+      text: '目标栏目是哪个？',
+    });
+    expect(r.snapshot().tasks[0]).toMatchObject({
+      archived: false,
+      hidden: false,
+      execution: { phase: 'paused' },
+    });
+    expect(
+      r
+        .execute({ ...create, requestId: 'one', keepTogether: true })
+        .state.tasks.at(-1)?.goal,
+    ).toBe(create.goal);
+    expect(
+      r.execute({
+        ...create,
+        requestId: 'sequence',
+        goal: '从 A 读取后，然后发布到 B 和 C',
+      }).state.tasks,
+    ).toHaveLength(4);
+  } finally {
+    r.close();
+  }
+});

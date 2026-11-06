@@ -111,6 +111,9 @@ let win: BrowserWindow;
 let overlay: WebContentsView;
 let toast: WebContentsView;
 let noticeTimer: ReturnType<typeof setTimeout>;
+const replyDrafts: Record<string, string> = {};
+let inboxWindow: BrowserWindow | undefined;
+let inboxReady: Promise<void> | undefined;
 let panelTimer: ReturnType<typeof setTimeout>;
 let recovered = false;
 let closing = false;
@@ -121,7 +124,7 @@ const trusted = new Map<
   number,
   {
     contents: WebContents;
-    role: 'chrome' | 'chat' | 'panel' | 'toast';
+    role: 'chrome' | 'chat' | 'panel' | 'toast' | 'inbox';
     taskId?: string;
   }
 >();
@@ -162,6 +165,10 @@ function suspend(taskId: string | null, reason: ExecutionPauseReason) {
 }
 function editFocused(command: 'undo' | 'redo' | 'cut' | 'paste' | 'selectAll') {
   const target = webContents.getFocusedWebContents();
+  if (target && target === inboxWindow?.webContents) {
+    target[command]();
+    return;
+  }
   const owner = inputGate.focused();
   const task = [...pages].find(([, page]) => page.view.webContents === target);
   if (task && owner === 'web:' + task[0]) suspend(task[0], 'takeover');
@@ -177,7 +184,9 @@ function nativeBindings() {
   let step = 'CHROME';
   let restoring = false;
   try {
-    const fullPanel = panel.panel !== 'none' && panel.panel !== 'preview';
+    const fullPanel = !['none', 'preview', 'participation'].includes(
+      panel.panel,
+    );
     if (!fullPanel)
       inputGate.bind(
         'ui:chrome',
@@ -273,7 +282,7 @@ function emit(event: WorkspaceEvent): void {
 }
 function loadUI(
   contents: WebContents,
-  role: 'chrome' | 'chat' | 'panel' | 'toast',
+  role: 'chrome' | 'chat' | 'panel' | 'toast' | 'inbox',
   taskId?: string,
 ): Promise<void> {
   trusted.set(contents.id, { contents, role, taskId });
@@ -283,6 +292,7 @@ function loadUI(
   contents.on('did-finish-load', () =>
     contents.send('workspace-event', {
       state,
+      replyDrafts,
       panel,
       ...(version ? { version } : {}),
       ...(upgrade ? { upgrade } : {}),
@@ -323,6 +333,8 @@ function layout(): void {
       width: 336,
       height: 260,
     });
+  else if (panel.panel === 'participation')
+    overlay.setBounds({ x: 16, y: height - 298, width: 350, height: 280 });
   else overlay.setBounds({ x: 0, y: 0, width, height });
   nativeBindings();
 }
@@ -583,7 +595,7 @@ function bindPage(task: Task): void {
 function reconcile(): void {
   let added = false;
   for (const task of state.tasks)
-    if (!pages.has(task.id)) {
+    if (!pages.has(task.id) && !(task.archived && task.hidden)) {
       bindPage(task);
       added = true;
     }
@@ -772,6 +784,52 @@ async function perform(input: unknown): Promise<unknown> {
     }
     return null;
   }
+  if (command.kind === 'show-inbox') {
+    if (win.isVisible())
+      return perform({ kind: 'panel', panel: 'participation', focus: true });
+    if (!inboxWindow || inboxWindow.isDestroyed()) {
+      const area = screen.getDisplayNearestPoint(
+        screen.getCursorScreenPoint(),
+      ).workArea;
+      const box = new BrowserWindow({
+        title: 'helpr · 待办',
+        width: 380,
+        height: 380,
+        x: area.x + area.width - 392,
+        y: area.y + 8,
+        show: false,
+        minimizable: false,
+        fullscreenable: false,
+        webPreferences: {
+          ...prefs,
+          session: session.fromPartition('helpr-ui'),
+          preload,
+        },
+      });
+      inboxWindow = box;
+      box.on('closed', () => {
+        if (inboxWindow === box) {
+          inboxWindow = undefined;
+          inboxReady = undefined;
+        }
+      });
+      inboxReady = loadUI(box.webContents, 'inbox').catch((error: unknown) => {
+        if (!box.isDestroyed()) box.destroy();
+        throw error;
+      });
+    }
+    await inboxReady;
+    inboxWindow?.show();
+    inboxWindow?.focus();
+    return null;
+  }
+  if (command.kind === 'show-task') {
+    inboxWindow?.hide();
+    await perform({ kind: 'panel', panel: 'none' });
+    win.show();
+    win.focus();
+    return null;
+  }
   if (command.kind === 'show') {
     win.show();
     win.focus();
@@ -823,6 +881,11 @@ async function perform(input: unknown): Promise<unknown> {
   }
   if (command.kind === 'panel') {
     const next = panelSchema.parse(input);
+    if (
+      ['participation', 'close-task'].includes(panel.panel) &&
+      (next.panel === 'preview' || next.delayed)
+    )
+      return null;
     clearTimeout(panelTimer);
     const apply = () => {
       const overlayHadFocus =
@@ -900,6 +963,7 @@ async function perform(input: unknown): Promise<unknown> {
         : await verifyPageProtection(safeStorage),
       window: {
         visible: win.isVisible(),
+        inboxVisible: inboxWindow?.isVisible() ?? false,
         bounds: win.getBounds(),
         contentBounds: win.getContentBounds(),
         workArea: screen.getDisplayMatching(win.getBounds()).workArea,
@@ -924,6 +988,42 @@ ipcMain.handle('workspace-request', (event, input: unknown) => {
   )
     throw new Error('HOST_REQUEST_DENIED');
   const command = uiCommandSchema.parse(input);
+  if (
+    [
+      'participation-draft',
+      'participation-open',
+      'participation-reply',
+      'participation-decision',
+    ].includes(command.kind) &&
+    binding.role !== 'chat' &&
+    binding.role !== 'inbox' &&
+    !(binding.role === 'panel' && panel.panel === 'participation')
+  )
+    throw Error('HOST_REQUEST_DENIED');
+  if (binding.role === 'inbox') {
+    if (command.kind === 'dismiss-notice') {
+      inboxWindow?.hide();
+      return null;
+    }
+    if (
+      ![
+        'snapshot',
+        'participation-draft',
+        'participation-open',
+        'participation-decision',
+        'participation-reply',
+      ].includes(command.kind)
+    )
+      throw Error('HOST_REQUEST_DENIED');
+  }
+  if (
+    command.kind === 'participation-decision' &&
+    command.operation === 'login-check' &&
+    (binding.role !== 'chat' ||
+      !win.isVisible() ||
+      state.active !== command.taskId)
+  )
+    throw Error('HOST_REQUEST_DENIED');
   if (command.kind.startsWith('upgrade-') && binding.role !== 'panel')
     throw Error('HOST_REQUEST_DENIED');
   if (
@@ -952,6 +1052,10 @@ ipcMain.handle('workspace-request', (event, input: unknown) => {
         'minimize',
         'model-cancel',
         'execution-intent',
+        'participation-reply',
+        'participation-decision',
+        'participation-draft',
+        'participation-open',
       ].includes(command.kind) ||
       !('taskId' in command) ||
       command.taskId !== binding.taskId
@@ -979,6 +1083,21 @@ ipcMain.handle('workspace-request', (event, input: unknown) => {
     toast.setVisible(false);
     versionNotice = false;
     broadcast({ versionNotice });
+  }
+  if (command.kind === 'participation-draft') {
+    if (
+      !state.tasks.some(
+        (t) =>
+          t.id === command.taskId &&
+          t.execution?.question?.id === command.questionId,
+      )
+    )
+      throw Error('PARTICIPATION_EXPIRED');
+    replyDrafts[command.questionId] = command.text;
+    for (const { contents } of trusted.values())
+      if (contents !== event.sender && !contents.isDestroyed())
+        contents.send('workspace-event', { replyDrafts });
+    return null;
   }
   if (command.kind === 'snapshot') return state;
   return controller.request(
@@ -1035,7 +1154,25 @@ process.on('message', (input: unknown) => {
   }
   const update = z.object({ state: snapshotSchema }).safeParse(input);
   if (update.success && update.data.state.revision >= state.revision) {
+    const previousQuestions = new Set(
+      state.tasks.map((task) => task.execution?.question?.id),
+    );
     state = update.data.state;
+    for (const id of Object.keys(replyDrafts))
+      if (!state.tasks.some((t) => t.execution?.question?.id === id)) {
+        delete replyDrafts[id];
+        broadcast({ replyDrafts });
+      }
+    const incoming = state.tasks.some(
+      (task) =>
+        task.execution?.question &&
+        !previousQuestions.has(task.execution.question.id),
+    );
+    if (win && incoming && panel.panel === 'none') {
+      clearTimeout(panelTimer);
+      panel = { kind: 'panel', panel: 'participation' };
+      broadcast({ panel });
+    }
     if (win) {
       reconcile();
       if (!recovered) {
@@ -1148,6 +1285,7 @@ void app
       webPreferences: { ...prefs, session: local, preload },
     });
     win.contentView.addChildView(overlay);
+    overlay.setBackgroundColor('#00000000');
     const panelLoaded = loadUI(overlay.webContents, 'panel');
     overlay.setVisible(false);
     toast = new WebContentsView({
@@ -1260,6 +1398,7 @@ void app
       });
     }
     app.on('activate', () => {
+      if (inboxWindow?.isVisible()) return;
       win.show();
       win.focus();
     });

@@ -1,10 +1,15 @@
 import { z } from 'zod';
+import { hideTaskTab } from './task-tab';
+import { endedExecution } from '../shared/task-groups';
 import { eq, sql } from 'drizzle-orm';
 import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { createMachine, transition } from 'xstate';
 import {
   executionSchema,
+  participationReplySchema,
+  participationDecisionSchema,
+  publicationSchema,
   executionIntentSchema,
   executionPhaseSchema,
   webActionSchema,
@@ -83,6 +88,8 @@ const observation = pageSourceSchema.extend({ text: z.string().max(30000) });
 const work = { taskId: z.string(), runId: z.string() };
 const intentSchema = executionIntentSchema.extend({
   kind: z.literal('intent'),
+  closeAtVersion: z.number().int().nonnegative().optional(),
+  loginQuestionId: z.string().uuid().optional(),
   controlSequence: z.number().int().positive().optional(),
 });
 const commandSchema = z.discriminatedUnion('kind', [
@@ -99,6 +106,23 @@ const commandSchema = z.discriminatedUnion('kind', [
     step: nextStepSchema,
   }),
   intentSchema,
+  participationReplySchema,
+  participationDecisionSchema,
+  z.strictObject({
+    kind: z.literal('verified-login'),
+    ...work,
+    source: observation,
+    evidence: nextStepSchema.shape.evidence,
+  }),
+  z.strictObject({
+    kind: z.literal('ask'),
+    type: z.enum(['review', 'login']).optional(),
+    publication: publicationSchema.optional(),
+    ...work,
+    questionId: z.string().uuid(),
+    text: z.string().trim().min(1).max(1500),
+    url: z.string(),
+  }),
   z.strictObject({
     kind: z.literal('recover'),
     taskId: z.string(),
@@ -123,6 +147,8 @@ const commandSchema = z.discriminatedUnion('kind', [
   }),
   z.strictObject({
     kind: z.literal('reserve'),
+    publication: publicationSchema.optional(),
+    approvalId: z.string().uuid().optional(),
     ...work,
     id: z.string(),
     summary: z.string().min(1).max(1500),
@@ -174,6 +200,7 @@ export function pauseForBackup(e: TaskExecution): TaskExecution {
   const next = executionSchema.parse(structuredClone(e));
   next.version++;
   next.runId = null;
+  delete next.question;
   next.restoreReview = 'required';
   delete next.recoveryPending;
   delete next.recoverySource;
@@ -248,6 +275,104 @@ export class ExecutionRecords {
         .get();
       if (!task) throw new Error('TASK_NOT_FOUND');
       let e = this.get(c.taskId);
+      if (c.kind === 'participation-decision') {
+        const receiptId = 'review:' + c.questionId;
+        const hash = createHash('sha256')
+          .update(JSON.stringify(c))
+          .digest('hex');
+        const prior = this.db
+          .select()
+          .from(schema.executionRequests)
+          .where(eq(schema.executionRequests.id, receiptId))
+          .get();
+        if (prior) {
+          if (prior.taskId !== task.id || prior.hash !== hash)
+            throw Error('REQUEST_CONTENT_CONFLICT');
+          return { created: false };
+        }
+        const q = e?.question,
+          p = e?.publication;
+        if (
+          !e ||
+          !p ||
+          !q ||
+          c.operation === 'login-check' ||
+          q.type !== 'review' ||
+          q.id !== c.questionId ||
+          q.goalVersion !== e.goalVersion ||
+          q.url !== task.url ||
+          e.intent !== 'automatic' ||
+          e.phase !== 'paused' ||
+          e.pauseReason ||
+          e.restoreReview
+        )
+          throw Error('PARTICIPATION_EXPIRED');
+        if (c.operation === 'edit') {
+          p.content = c.content;
+          e.version++;
+          p.revision++;
+          p.approvalId = null;
+          q.id = randomUUID();
+        } else {
+          p.approvalId = q.id;
+          delete e.question;
+          queueRecovery(e, task.url, '已确认这版内容，先核对网页再继续。');
+        }
+        this.db
+          .insert(schema.executionRequests)
+          .values({ id: receiptId, taskId: task.id, hash })
+          .run();
+        this.db
+          .insert(schema.messages)
+          .values({
+            taskId: task.id,
+            role: 'user',
+            text:
+              (c.operation === 'edit' ? '修改为' : '确认发布') +
+              '第 ' +
+              p.revision +
+              ' 版 · ' +
+              p.destination +
+              '\n' +
+              p.content,
+          })
+          .run();
+        this.save(task.id, e);
+        return { created: true };
+      }
+      if (c.kind === 'participation-reply') {
+        const previous = e?.answers?.find(
+          (answer) => answer.id === c.questionId,
+        );
+        if (previous) {
+          if (previous.answer !== c.text)
+            throw Error('REQUEST_CONTENT_CONFLICT');
+          return { created: false };
+        }
+        const question = e?.question;
+        if (
+          !e ||
+          !question ||
+          question.type ||
+          question.id !== c.questionId ||
+          question.goalVersion !== e.goalVersion ||
+          question.url !== task.url ||
+          e.intent !== 'automatic' ||
+          e.phase !== 'paused' ||
+          e.pauseReason ||
+          e.restoreReview
+        )
+          throw Error('PARTICIPATION_EXPIRED');
+        (e.answers ??= []).push({ ...question, answer: c.text });
+        delete e.question;
+        this.db
+          .insert(schema.messages)
+          .values({ taskId: task.id, role: 'user', text: c.text })
+          .run();
+        queueRecovery(e, task.url, '已收到回复，先核对当前网页再继续。');
+        this.save(task.id, e);
+        return { created: true };
+      }
       if (c.kind === 'backup-pause') {
         if (!e) return { recorded: false };
         if (c.expectedVersion !== undefined && c.expectedVersion !== e.version)
@@ -280,7 +405,10 @@ export class ExecutionRecords {
           ['reserved', 'dispatched', 'unknown'].includes(a.status),
         );
         e.restoreReview =
-          unknown || c.step.decision === 'wait'
+          unknown ||
+          e.loginOrigin ||
+          (e.publication && !e.publication.approvalId) ||
+          !['complete', 'act'].includes(c.step.decision)
             ? 'unknown'
             : c.step.decision === 'complete'
               ? 'complete'
@@ -391,6 +519,11 @@ export class ExecutionRecords {
         delete e.recoveryPending;
         delete e.recoverySource;
         e.runId = null;
+        if (
+          e.question?.type !== 'login' ||
+          !['takeover', 'page-change'].includes(c.reason)
+        )
+          delete e.question;
         e.pauseReason = c.reason;
         for (const action of e.actions) {
           if (action.status === 'reserved') action.status = 'cancelled';
@@ -423,6 +556,35 @@ export class ExecutionRecords {
             current: e?.intentId === c.requestId && !e.pauseReason,
           };
         }
+        if (c.closeAtVersion !== undefined) {
+          if (
+            c.intent !== 'stop' ||
+            task.hidden ||
+            (e?.version ?? 0) !== c.closeAtVersion
+          )
+            throw Error('RECORD_VERSION_CONFLICT');
+          hideTaskTab(this.db, task.id);
+          this.db
+            .update(schema.tasks)
+            .set({ archived: true, version: task.version + 1 })
+            .where(eq(schema.tasks.id, task.id))
+            .run();
+          if (endedExecution(e)) {
+            this.db
+              .insert(schema.executionRequests)
+              .values({ id: c.requestId, hash, taskId: task.id })
+              .run();
+            this.save(task.id, e!);
+            return { created: true };
+          }
+        }
+        if (
+          task.archived &&
+          e?.result &&
+          e.result.goalVersion === e.goalVersion &&
+          ['start', 'continue'].includes(c.intent)
+        )
+          return { created: false, current: true };
         if (e?.restoreReview && ['start', 'continue'].includes(c.intent)) {
           if (e.restoreReview === 'complete')
             return { created: false, current: false };
@@ -453,12 +615,32 @@ export class ExecutionRecords {
           summary: '',
           actions: [],
         };
+        if (
+          c.loginQuestionId &&
+          (c.intent !== 'continue' ||
+            e.question?.type !== 'login' ||
+            e.question.id !== c.loginQuestionId ||
+            e.intent !== 'automatic' ||
+            (e.pauseReason &&
+              !['takeover', 'page-change'].includes(e.pauseReason)) ||
+            e.restoreReview)
+        )
+          throw Error('PARTICIPATION_EXPIRED');
+        if (
+          !c.loginQuestionId &&
+          e.question &&
+          ['start', 'continue'].includes(c.intent)
+        )
+          throw Error('PARTICIPATION_REQUIRED');
+        delete e.question;
         if (c.intent === 'start' && e.intent === 'stopped')
           throw new Error('EXECUTION_STOPPED');
         if (c.intent === 'start' && e.pauseReason)
           throw Error('EXECUTION_CONTINUE_REQUIRED');
         if (c.intent === 'revise') {
           if (!c.text?.trim()) throw new Error('INVALID_REQUEST');
+          delete e.publication;
+          delete e.loginOrigin;
           e.goal = c.text.trim();
           e.goalVersion++;
           this.db
@@ -550,6 +732,70 @@ export class ExecutionRecords {
           return c.kind === 'dispatch'
             ? { permitted: false }
             : { created: false };
+        if (c.kind === 'verified-login') {
+          if (
+            !e.loginOrigin ||
+            c.source.url !== task.url ||
+            new URL(task.url).origin !== e.loginOrigin ||
+            !c.evidence.every((v) => c.source.text.includes(v))
+          )
+            throw Error('EXECUTION_EVIDENCE_MISSING');
+          this.db
+            .insert(schema.messages)
+            .values({
+              taskId: task.id,
+              role: 'system',
+              text: '已核对网站登录：' + c.evidence.join('；'),
+            })
+            .run();
+          delete e.loginOrigin;
+          e.summary = '已在所属网站核对登录，继续核对原任务。';
+          this.save(task.id, e);
+          return { created: true };
+        }
+        if (c.kind === 'ask') {
+          if (task.url !== c.url) throw Error('EXECUTION_PAGE_CHANGED');
+          if (
+            e.actions.some((a) =>
+              ['reserved', 'dispatched', 'unknown'].includes(a.status),
+            )
+          )
+            throw Error('EXECUTION_RESULT_UNKNOWN');
+          if (c.type === 'login')
+            e.loginOrigin ??= e.publication?.origin ?? new URL(c.url).origin;
+          if (c.type === 'review') {
+            if (!c.publication) throw Error('INVALID_REQUEST');
+            const old = e.publication;
+            e.publication = {
+              ...c.publication,
+              origin: new URL(c.url).origin,
+              approvalId: null,
+              revision: (old?.revision ?? 0) + 1,
+            };
+          }
+          if (task.archived)
+            this.db
+              .update(schema.tasks)
+              .set({ archived: false })
+              .where(eq(schema.tasks.id, task.id))
+              .run();
+          e.question = {
+            type: c.type,
+            runId: c.runId,
+            id: c.questionId,
+            goalVersion: e.goalVersion,
+            text: c.text,
+            url: c.url,
+          };
+          e.version++;
+          e.runId = null;
+          e.resource = null;
+          move(e, 'BLOCK');
+          e.summary = c.text;
+          // 提问原文已随本轮模型回复进入所属会话。这里只保存待答事实。
+          this.save(task.id, e);
+          return { created: true };
+        }
         if (c.kind === 'dispatch') {
           const a = e.actions.find((a) => a.id === c.id);
           if (!a || a.runId !== c.runId || a.status !== 'reserved')
@@ -562,6 +808,44 @@ export class ExecutionRecords {
           return { permitted: true };
         }
         if (c.kind === 'reserve') {
+          if (e.loginOrigin) throw Error('PARTICIPATION_REQUIRED');
+          const p = e.publication;
+          if (p || c.publication || c.approvalId) {
+            if (
+              !p?.approvalId ||
+              !c.publication ||
+              p.approvalId !== c.approvalId ||
+              p.origin !== new URL(c.source.url).origin ||
+              p.content !== c.publication.content ||
+              p.destination !== c.publication.destination
+            )
+              throw Error('PARTICIPATION_REQUIRED');
+            if (
+              (c.action.kind === 'fill' &&
+                ![p.content, p.destination].includes(c.action.value)) ||
+              (c.action.kind === 'select' &&
+                c.action.value !== p.destination) ||
+              c.action.kind === 'check'
+            )
+              throw Error('PARTICIPATION_REQUIRED');
+          }
+          // 首版窄发布只允许一次提交点击，且派发前必须能在所属网页核对去向和全文。
+          if (p && c.action.kind === 'click') {
+            if (
+              !c.source.text.includes(p.content) ||
+              !c.source.text.includes(p.destination)
+            )
+              throw Error('EXECUTION_EVIDENCE_MISSING');
+            if (
+              e.actions.some(
+                (a) =>
+                  a.id !== c.id &&
+                  a.publicationApprovalId === p.approvalId &&
+                  a.status !== 'cancelled',
+              )
+            )
+              throw Error('PARTICIPATION_REQUIRED');
+          }
           const prior = e.actions.find((a) => a.id === c.id);
           if (prior) {
             if (JSON.stringify(prior.action) !== JSON.stringify(c.action))
@@ -580,6 +864,12 @@ export class ExecutionRecords {
             c.binding.generation !== c.source.generation
           )
             throw new Error('EXECUTION_PAGE_CHANGED');
+          if (task.archived)
+            this.db
+              .update(schema.tasks)
+              .set({ archived: false })
+              .where(eq(schema.tasks.id, task.id))
+              .run();
           e.actions.push({
             id: c.id,
             runId: c.runId,
@@ -587,6 +877,9 @@ export class ExecutionRecords {
             status: 'reserved',
             summary: c.summary,
             action: c.action,
+            ...(p?.approvalId && c.action.kind === 'click'
+              ? { publicationApprovalId: p.approvalId }
+              : {}),
             source: pageSourceSchema.strip().parse(c.source),
             binding: c.binding,
             evidence: [],
@@ -611,6 +904,8 @@ export class ExecutionRecords {
           return { resolved: true };
         }
         if (c.phase === 'complete') {
+          if (e.loginOrigin || (e.publication && !e.publication.approvalId))
+            throw Error('PARTICIPATION_REQUIRED');
           if (
             !c.source ||
             !c.evidence?.length ||

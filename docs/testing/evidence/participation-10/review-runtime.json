@@ -1,0 +1,145 @@
+{
+  "scenario": "participation-v2",
+  "method": "通过公开业务命令打开隔离签名包的待办，核对窗口可见性，使用两个本机网页和虚构模型；发布结果来自网站回执。",
+  "pending": "原生菜单实际点击、中文输入法及焦点；Computer Use 读取窗口清单超时。",
+  "runs": [
+    {
+      "run": "run-1793871595669",
+      "build": 44,
+      "candidate": "participation-review",
+      "appAsarSha256": "9458fe7e893483a3efc560efd0bf914f82412c40c11893c88b0a1ae7434ffcad",
+      "verifiedSignedImages": 54,
+      "start": 140,
+      "storage": "fixture",
+      "passed": true,
+      "checks": [
+        {
+          "name": "两个真实页面都到达独立网站，网页没有 Node 或宿主对话桥",
+          "passed": true
+        },
+        {
+          "name": "菜单栏待办窗口已打开，原窗口仍收起，B 仍选中",
+          "passed": true
+        },
+        {
+          "name": "登录页核对失败时继续等待，网站还没有发布",
+          "passed": true
+        },
+        {
+          "name": "网站只收到 A 已确认的改稿一次",
+          "passed": true
+        }
+      ],
+      "modelSteps": [
+        "review",
+        "login",
+        "login",
+        "authenticated",
+        "act",
+        "act",
+        "complete"
+      ],
+      "websiteReceipts": [
+        {
+          "kind": "published",
+          "task": "A",
+          "text": "三份资料已核对，请见附件。",
+          "destination": "内部公告"
+        }
+      ],
+      "remainingProcesses": []
+    },
+    {
+      "run": "run-1793871981561",
+      "build": 45,
+      "candidate": "participation-reviewed",
+      "appAsarSha256": "0f41bb76df1d477d9f05b0ab8ead6875d92b368d7b17139f477002713cadcf45",
+      "verifiedSignedImages": 54,
+      "start": 141,
+      "storage": "fixture",
+      "passed": true,
+      "checks": [
+        {
+          "name": "两个真实页面都到达独立网站，网页没有 Node 或宿主对话桥",
+          "passed": true
+        },
+        {
+          "name": "菜单栏待办窗口已打开，原窗口仍收起，B 仍选中",
+          "passed": true
+        },
+        {
+          "name": "登录页核对失败时继续等待，网站还没有发布",
+          "passed": true
+        },
+        {
+          "name": "网站只收到 A 已确认的改稿一次",
+          "passed": true
+        }
+      ],
+      "modelSteps": [
+        "review",
+        "login",
+        "login",
+        "authenticated",
+        "act",
+        "act",
+        "complete"
+      ],
+      "websiteReceipts": [
+        {
+          "kind": "published",
+          "task": "A",
+          "text": "三份资料已核对，请见附件。",
+          "destination": "内部公告"
+        }
+      ],
+      "remainingProcesses": []
+    },
+    {
+      "run": "run-1793872172874",
+      "build": 46,
+      "candidate": "participation-10-reviewed",
+      "appAsarSha256": "bfd399c1331efdcf0dc941384b4fa6ed4bddc35877d3f810e84be80e51379d7a",
+      "verifiedSignedImages": 54,
+      "start": 142,
+      "storage": "fixture",
+      "passed": true,
+      "checks": [
+        {
+          "name": "两个真实页面都到达独立网站，网页没有 Node 或宿主对话桥",
+          "passed": true
+        },
+        {
+          "name": "菜单栏待办窗口已打开，原窗口仍收起，B 仍选中",
+          "passed": true
+        },
+        {
+          "name": "登录页核对失败时继续等待，网站还没有发布",
+          "passed": true
+        },
+        {
+          "name": "网站只收到 A 已确认的改稿一次",
+          "passed": true
+        }
+      ],
+      "modelSteps": [
+        "review",
+        "login",
+        "login",
+        "authenticated",
+        "act",
+        "act",
+        "complete"
+      ],
+      "websiteReceipts": [
+        {
+          "kind": "published",
+          "task": "A",
+          "text": "三份资料已核对，请见附件。",
+          "destination": "内部公告"
+        }
+      ],
+      "remainingProcesses": []
+    }
+  ]
+}

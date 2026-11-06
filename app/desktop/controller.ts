@@ -3,6 +3,7 @@ import {
   utilityProcess,
   Menu,
   Tray,
+  dialog,
   nativeImage,
   safeStorage,
   powerMonitor,
@@ -284,7 +285,9 @@ export async function startController(
     onExit: (listener) => host.once('exit', listener),
   });
   const workers = new Set<ReturnType<typeof utilityProcess.fork>>();
+  const trayUpdates: { refresh?: () => void } = {};
   const publish = () => {
+    trayUpdates.refresh?.();
     if (host.connected) host.send({ state: executions.decorate(state) });
   };
   let recordsAvailable = true;
@@ -648,6 +651,52 @@ export async function startController(
     if (command.kind === 'backup-review')
       return { state: await executions.reviewRestored(command.taskId) };
     if (command.kind.startsWith('backup-')) return backups.handle(command);
+    if (command.kind === 'participation-open') {
+      const task = state.tasks.find((t) => t.id === command.taskId);
+      if (task?.execution?.question?.id !== command.questionId)
+        throw Error('PARTICIPATION_EXPIRED');
+      await saveWorkspace({
+        kind: 'select',
+        taskId: task.id,
+        requestId: randomUUID(),
+      });
+      if (task.minimized)
+        await saveWorkspace({
+          kind: 'minimize',
+          taskId: task.id,
+          requestId: randomUUID(),
+        });
+      await hostClient.request({ kind: 'show-task' });
+      return { state: executions.decorate(state) };
+    }
+    if (
+      command.kind === 'participation-reply' ||
+      command.kind === 'participation-decision'
+    ) {
+      if (
+        command.kind === 'participation-decision' &&
+        command.operation === 'login-check' &&
+        state.active !== command.taskId
+      )
+        throw Error('TASK_NOT_OWNED');
+      if (workspace.unresolvedTasks().includes(command.taskId))
+        throw Error('UNSAVED_CHANGES');
+      return { state: await executions.reply(command) };
+    }
+    if (command.kind === 'stop-and-close') {
+      return {
+        state: await executions.intent(
+          {
+            kind: 'execution-intent',
+            intent: 'stop',
+            requestId: command.requestId,
+            taskId: command.taskId,
+          },
+          undefined,
+          command.executionVersion,
+        ),
+      };
+    }
     if (command.kind === 'execution-intent') {
       if (
         command.intent !== 'stop' &&
@@ -994,29 +1043,47 @@ export async function startController(
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLbtAAAAABJRU5ErkJggg==',
   );
   const tray = new Tray(icon);
-  tray.setTitle('helpr');
-  tray.setToolTip('打开 helpr');
-  tray.setContextMenu(
-    Menu.buildFromTemplate([
-      {
-        label: '打开 helpr',
-        click: () => {
-          void hostClient.request({ kind: 'show' }).catch(() => {});
+  let lastCount = -1;
+  const openInbox = () => {
+    void hostClient.request({ kind: 'show-inbox' }).catch(() => {
+      log.event('failure', { code: 'INBOX_UNAVAILABLE' });
+      void dialog
+        .showMessageBox({
+          type: 'warning',
+          message: '待办窗口暂时打不开',
+          detail: '待办仍然保留。可以重试，或从主窗口的“待回复”处理。',
+          buttons: ['知道了'],
+        })
+        .catch(() => {});
+    });
+  };
+  trayUpdates.refresh = () => {
+    const count = state.tasks.filter((t) => t.execution?.question).length;
+    if (count === lastCount) return;
+    lastCount = count;
+    tray.setTitle(count ? 'helpr · 待办 ' + count : 'helpr');
+    tray.setToolTip('打开 helpr');
+    tray.setContextMenu(
+      Menu.buildFromTemplate([
+        ...(count ? [{ label: '待办 ' + count, click: openInbox }] : []),
+        {
+          label: '打开 helpr',
+          click: () => {
+            void hostClient.request({ kind: 'show' }).catch(() => {});
+          },
         },
-      },
-      {
-        label: '退出 helpr',
-        click: () => {
-          void hostClient
-            .request({ kind: 'panel', panel: 'quit' })
-            .catch(() => {});
+        {
+          label: '退出 helpr',
+          click: () => {
+            void hostClient
+              .request({ kind: 'panel', panel: 'quit' })
+              .catch(() => {});
+          },
         },
-      },
-    ]),
-  );
-  tray.on('click', () => {
-    void hostClient.request({ kind: 'show' }).catch(() => {});
-  });
+      ]),
+    );
+  };
+  trayUpdates.refresh();
   host.on('message', (input: unknown) => {
     const ready = z
       .object({
@@ -1090,9 +1157,14 @@ export async function startController(
         }
         if (
           command.success &&
-          ['capture', 'inspect', 'show', 'resize', 'validation-move'].includes(
-            command.data.kind,
-          )
+          [
+            'capture',
+            'inspect',
+            'show-inbox',
+            'show',
+            'resize',
+            'validation-move',
+          ].includes(command.data.kind)
         )
           return hostClient.request(req.data.command);
         return execute(req.data.command);

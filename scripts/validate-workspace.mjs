@@ -20,6 +20,9 @@ const { values: options } = parseArgs({
     'system-storage': flag,
     preflight: flag,
     'input-preparation': flag,
+    participation: flag,
+    'participation-review': flag,
+    'task-groups': flag,
     interactive: flag,
     fault: flag,
     'blocked-host': flag,
@@ -62,6 +65,13 @@ assert(
   !options['input-preparation'] || (!options.interactive && !options.fault),
   'INPUT_PREPARATION_IS_A_SINGLE_CHECK',
 );
+if (options.participation || options['participation-review'] || options['task-groups']) {
+  assert(
+    options.fixture && !systemStorage && !options.interactive && !options.fault &&
+      !options['input-preparation'] && [options.participation, options['participation-review'], options['task-groups']].filter(Boolean).length === 1,
+    'PARTICIPATION_FIXTURE_REQUIRED',
+  );
+}
 const candidate = options.candidate;
 if (candidate !== undefined && !/^[a-z0-9-]{1,40}$/.test(candidate))
   throw Error('INVALID_BUILD_CANDIDATE');
@@ -202,7 +212,10 @@ fs.mkdirSync(profileRoot, { recursive: true, mode: 0o700 });
 if (fs.realpathSync(profileRoot) !== profileRoot)
   throw Error('VALIDATION_PROFILE_REQUIRED');
 const data = fs.mkdtempSync(path.join(profileRoot, 'run-'));
-const website = await fixture();
+const website = await fixture({
+  participation: options.participation || options['task-groups'],
+  review: options['participation-review'],
+});
 if (!systemStorage) {
   // 版本检查也留在回环地址。此 HTTP 夹具对 HTTPS 版本查询呈现离线状态。
   fs.writeFileSync(
@@ -434,12 +447,217 @@ const command = (kind, fields = {}) => ({
   requestId: randomUUID(),
   ...fields,
 });
+async function verifyParticipationReview(client, a, b) {
+  const request = (cmd) => client.request(cmd);
+  const snapshot = () => request({ kind: 'snapshot' });
+  const owner = (state) => state.tasks.find((t) => t.id === a);
+  const waitQuestion = (type, prior) =>
+    waitFor(async () => {
+      const task = owner(await snapshot());
+      if (['failed', 'unknown'].includes(task.execution?.phase))
+        throw Error(task.execution.summary);
+      const q = task.execution?.question;
+      return q?.type === type && q.id !== prior && q;
+    }, 20000);
+  const decide = (q, operation, more = {}) =>
+    request({
+      kind: 'participation-decision',
+      taskId: a,
+      questionId: q.id,
+      operation,
+      ...more,
+    });
+  await request(
+    command('model-save', {
+      protocol: 'chat-completions',
+      expectedVersion: 0,
+      endpoint: website.base + '/v1',
+      model: 'fixture',
+      apiKey: 'local-fixture-not-a-secret',
+    }),
+  );
+  await request(command('execution-intent', { taskId: a, intent: 'start' }));
+  const first = await waitQuestion('review');
+  await request({ kind: 'hide' });
+  await request({ kind: 'show-inbox' });
+  const hidden = await request({ kind: 'inspect' });
+  check('菜单栏待办窗口已打开，原窗口仍收起，B 仍选中', () => {
+    assert.equal(hidden.window.visible, false);
+    assert.equal(hidden.window.inboxVisible, true);
+  });
+  assert.equal((await snapshot()).active, b);
+  const content = '三份资料已核对，请见附件。';
+  await decide(first, 'edit', { content });
+  const edited = await waitQuestion('review', first.id);
+  await assert.rejects(
+    decide(first, 'approve'),
+    /REQUEST_CONTENT_CONFLICT|PARTICIPATION_EXPIRED/,
+  );
+  await decide(edited, 'approve');
+  await decide(edited, 'approve');
+  const login = await waitQuestion('login');
+  assert.equal((await snapshot()).active, b);
+  await request({
+    kind: 'participation-open',
+    taskId: a,
+    questionId: login.id,
+  });
+  assert.equal((await snapshot()).active, a);
+  assert.equal((await request({ kind: 'inspect' })).window.visible, true);
+  await decide(login, 'login-check');
+  const again = await waitQuestion('login', login.id);
+  check('登录页核对失败时继续等待，网站还没有发布', () =>
+    assert(!website.receipts.some((r) => r.kind === 'published')),
+  );
+  await request(
+    command('navigate', { taskId: a, url: website.base + '/login?task=A' }),
+  );
+  await waitFor(async () => {
+    const task = owner(await snapshot());
+    return (
+      task.phase === 'manual' &&
+      task.url.endsWith('/page?task=A') &&
+      website.receipts.some(
+        (r) => r.kind === 'page' && r.task === 'A' && r.authenticated,
+      )
+    );
+  });
+  await decide(again, 'login-check');
+  await waitFor(async () => {
+    const e = owner(await snapshot()).execution;
+    if (['failed', 'paused', 'unknown'].includes(e.phase))
+      throw Error(e.summary);
+    return e.phase === 'complete';
+  }, 30000);
+  check('网站只收到 A 已确认的改稿一次', () =>
+    assert.deepEqual(
+      website.receipts.filter((r) => r.kind === 'published'),
+      [
+        {
+          kind: 'published',
+          task: 'A',
+          text: content,
+          destination: '内部公告',
+        },
+      ],
+    ),
+  );
+}
+async function verifyTaskGroups(client) {
+  const goal =
+    '把 https://source.example.test 的周报分别发到 ' +
+    website.base +
+    '/page?task=A 和 ' +
+    website.base +
+    '/page?task=B';
+  const created = await client.request(command('create', { goal }));
+  const [a, b] = created.state.tasks;
+  check('同一句委托产生两个独立任务', () => {
+    assert.equal(created.state.tasks.length, 2);
+    assert(a.groupId && a.groupId === b.groupId && a.id !== b.id);
+  });
+  await waitFor(() =>
+    ['A', 'B'].every((task) =>
+      website.receipts.some((r) => r.kind === 'probe' && r.task === task),
+    ),
+  );
+  await client.request(command('draft', { taskId: b.id, text: '公告草稿' }));
+  await client.request(
+    command('model-save', {
+      protocol: 'chat-completions',
+      expectedVersion: 0,
+      endpoint: website.base + '/v1',
+      model: 'fixture',
+      apiKey: 'local-fixture-not-a-secret',
+    }),
+  );
+  await client.request(
+    command('execution-intent', { taskId: a.id, intent: 'start' }),
+  );
+  const waiting = await waitFor(async () => {
+    const state = await client.request({ kind: 'snapshot' });
+    return state.tasks.find((t) => t.id === a.id)?.execution?.question;
+  });
+  const observe = () =>
+    client.request({
+      kind: 'observe',
+      taskId: a.id,
+      method: 'Page.getFrameTree',
+    });
+  const frame = JSON.stringify(await observe());
+  await client.request(command('hide-task', { taskId: a.id }));
+  const hidden = await client.request({ kind: 'snapshot' });
+  check('收起后 B 仍可编辑，A 的页面和待办保留', () => {
+    assert.equal(hidden.active, b.id);
+    assert.equal(
+      hidden.tasks.find((t) => t.id === a.id).execution.question.id,
+      waiting.id,
+    );
+    assert.equal(hidden.tasks.find((t) => t.id === b.id).draft, '公告草稿');
+  });
+  const afterFold = await observe();
+  check('收起前后仍是同一个网页文档', () =>
+    assert.equal(JSON.stringify(afterFold), frame),
+  );
+  await client.request({
+    kind: 'participation-reply',
+    taskId: a.id,
+    questionId: waiting.id,
+    text: '尚未登录虚构账号',
+  });
+  await waitFor(
+    async () =>
+      (await client.request({ kind: 'snapshot' })).tasks.find(
+        (t) => t.id === a.id,
+      ).execution.phase === 'complete',
+  );
+  await client.request(command('select', { taskId: a.id }));
+  await client.request(command('archive-task', { taskId: a.id }));
+  await client.request(
+    command('stop-and-close', { taskId: b.id, executionVersion: 0 }),
+  );
+  await client.quit();
+  const reopened = await launch();
+  await reopened.request(command('select', { taskId: b.id }));
+  const state = await reopened.request({ kind: 'snapshot' });
+  check('冷重开仍可回看同组的两份历史，草稿、停止和已核对结果保留', () => {
+    assert.equal(state.active, b.id);
+    assert(state.tasks.every((t) => t.archived && t.groupId === a.groupId));
+    assert.equal(state.tasks.find((t) => t.id === b.id).draft, '公告草稿');
+    assert.equal(
+      state.tasks.find((t) => t.id === b.id).execution.phase,
+      'stopped',
+    );
+    assert.deepEqual(
+      state.tasks.find((t) => t.id === a.id).execution.result.evidence,
+      ['尚未登录虚构账号'],
+    );
+  });
+  const calls = website.receipts.filter((r) => r.kind === 'planning').length;
+  await reopened.request(command('select', { taskId: a.id }));
+  await reopened.request(
+    command('execution-intent', { taskId: a.id, intent: 'continue' }),
+  );
+  check('查看并继续已完成任务仍沿用同一结果', () =>
+    assert.equal(
+      website.receipts.filter((r) => r.kind === 'planning').length,
+      calls,
+    ),
+  );
+  await reopened.quit();
+}
 async function validate() {
   let client = await launch();
+  if (options['task-groups']) return verifyTaskGroups(client);
+  const goal = options['participation-review']
+    ? '发布团队简报到内部公告，先让我核对文字。'
+    : options.participation
+      ? '先问我要核对哪条提示，再核对它是否出现在网页。'
+      : '核对任务 A ';
   const a = (
     await client.request(
       command('create', {
-        goal: '核对任务 A ' + website.base + '/page?task=A',
+        goal: goal + website.base + '/page?task=A',
       }),
     )
   ).taskId;
@@ -467,6 +685,81 @@ async function validate() {
       ),
     );
   });
+  if (options['participation-review']) {
+    await verifyParticipationReview(client, a, b);
+    await client.quit();
+    return;
+  }
+  if (options.participation) {
+    await client.request(
+      command('model-save', {
+        protocol: 'chat-completions',
+        expectedVersion: 0,
+        endpoint: website.base + '/v1',
+        model: 'fixture',
+        apiKey: 'local-fixture-not-a-secret',
+      }),
+    );
+    await client.request(
+      command('execution-intent', { taskId: a, intent: 'start' }),
+    );
+    const question = await waitFor(async () => {
+      const state = await client.request({ kind: 'snapshot' });
+      assert.equal(state.active, b);
+      const task = state.tasks.find((t) => t.id === a);
+      if (['failed', 'unknown'].includes(task.execution?.phase))
+        throw Error(task.execution.summary);
+      return task.execution?.question;
+    }, 20000);
+    const reply = {
+      kind: 'participation-reply',
+      taskId: a,
+      questionId: question.id,
+      text: '尚未登录虚构账号',
+    };
+    await client.request(reply);
+    await client.request(reply);
+    const state = await waitFor(async () => {
+      const current = await client.request({ kind: 'snapshot' });
+      const phase = current.tasks.find((t) => t.id === a).execution.phase;
+      if (['failed', 'unknown'].includes(phase))
+        throw Error(current.tasks.find((t) => t.id === a).execution.summary);
+      return phase === 'complete' && current;
+    }, 20000);
+    check('B 保持选中，A 仅收一份回复并依据网页证据完成', () => {
+      assert.equal(state.active, b);
+      assert.equal(
+        state.tasks
+          .find((t) => t.id === a)
+          .messages.filter((m) => m.role === 'user' && m.text === reply.text)
+          .length,
+        1,
+      );
+      assert(
+        !state.tasks
+          .find((t) => t.id === b)
+          .messages.some((m) => m.text === reply.text),
+      );
+      assert.equal(
+        state.tasks
+          .find((t) => t.id === a)
+          .messages.filter((m) => m.text === question.text).length,
+        1,
+      );
+      assert.deepEqual(
+        state.tasks.find((t) => t.id === a).execution.result.evidence,
+        [reply.text],
+      );
+      assert.deepEqual(
+        website.receipts
+          .filter((r) => r.kind === 'planning')
+          .map((r) => r.decision),
+        ['ask', 'complete'],
+      );
+    });
+    await client.quit();
+    return;
+  }
   // 公开开始入口必须经过真实宿主原生准备。新资料没有模型配置，不发送模型网络请求。
   const begun = await client.request(
     command('execution-intent', { taskId: a, intent: 'start' }),

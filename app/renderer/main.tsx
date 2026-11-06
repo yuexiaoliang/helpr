@@ -11,7 +11,7 @@ declare global {
 }
 const query = new URLSearchParams(location.search);
 const surface = query.get('surface');
-if (surface === 'chat' || surface === 'toast')
+if (surface === 'chat' || surface === 'toast' || surface === 'panel')
   document.body.style.background = 'transparent';
 const store = new WorkspaceStore(window.workspace);
 window.addEventListener('beforeunload', () => store.dispose());
@@ -21,7 +21,10 @@ if (root)
     <App
       store={store}
       surface={
-        surface === 'chat' || surface === 'panel' || surface === 'toast'
+        surface === 'chat' ||
+        surface === 'panel' ||
+        surface === 'inbox' ||
+        surface === 'toast'
           ? surface
           : 'chrome'
       }

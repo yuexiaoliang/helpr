@@ -1,0 +1,76 @@
+{
+  "method": "使用签名包的公开业务入口和独立本机网页，比较收起前后的网页 frame，并在冷重开后检查历史记录。",
+  "runs": [
+    {
+      "run": "run-1793873408973",
+      "build": 47,
+      "applicationArchive": "3e4666b59d3c51137700179622620a245f5071a1735a709364b1853def238901",
+      "signedImages": 54,
+      "starts": [
+        143,
+        144
+      ],
+      "checks": [
+        {
+          "name": "同一句委托产生两个独立任务",
+          "passed": true
+        },
+        {
+          "name": "收起后 B 仍可编辑，A 的页面和待办保留",
+          "passed": true
+        },
+        {
+          "name": "冷重开仍可回看同组的两份历史，草稿、停止和已核对结果保留",
+          "passed": true
+        },
+        {
+          "name": "查看并继续已完成任务仍沿用同一结果",
+          "passed": true
+        }
+      ],
+      "modelSteps": [
+        "ask",
+        "complete"
+      ],
+      "remaining": []
+    },
+    {
+      "run": "run-1793873646428",
+      "build": 48,
+      "applicationArchive": "f2951cd0f4b3e8b2d5c37ddb077c30b6eed6ecc6cbe9549aa9dfcc5e598398b9",
+      "signedImages": 54,
+      "starts": [
+        145,
+        146
+      ],
+      "checks": [
+        {
+          "name": "同一句委托产生两个独立任务",
+          "passed": true
+        },
+        {
+          "name": "收起后 B 仍可编辑，A 的页面和待办保留",
+          "passed": true
+        },
+        {
+          "name": "收起前后仍是同一个网页文档",
+          "passed": true
+        },
+        {
+          "name": "冷重开仍可回看同组的两份历史，草稿、停止和已核对结果保留",
+          "passed": true
+        },
+        {
+          "name": "查看并继续已完成任务仍沿用同一结果",
+          "passed": true
+        }
+      ],
+      "modelSteps": [
+        "ask",
+        "complete"
+      ],
+      "remaining": []
+    }
+  ],
+  "pending": "实际菜单、中文输入法与焦点归集中实机验收。"
+}

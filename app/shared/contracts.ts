@@ -5,6 +5,8 @@ import { upgradeUICommandSchema, type UpgradeStatus } from './upgrade';
 import { websiteURL } from './url-policy';
 import {
   executionSchema,
+  participationReplySchema,
+  participationDecisionSchema,
   executionIntentSchema,
   executionControlSchema,
   systemConditionSchema,
@@ -77,6 +79,7 @@ export const recordCommandSchema = z.discriminatedUnion('kind', [
     kind: z.literal('create'),
     requestId: id,
     goal: z.string().trim().min(1).max(600),
+    keepTogether: z.literal(true).optional(),
   }),
   z.strictObject({
     ...taskFields,
@@ -100,6 +103,7 @@ export const recordCommandSchema = z.discriminatedUnion('kind', [
   }),
   taskCommand('select'),
   taskCommand('hide-task'),
+  taskCommand('archive-task'),
   taskCommand('minimize'),
 ]);
 export type RecordCommand = z.infer<typeof recordCommandSchema>;
@@ -109,6 +113,9 @@ export const taskSchema = z.strictObject({
   created: z.number(),
   url: z.string(),
   draft: z.string(),
+  archived: z.boolean().optional(),
+  groupId: id.nullable().optional(),
+  groupGoal: z.string().max(600).nullable().optional(),
   hidden: z.boolean(),
   minimized: z.boolean(),
   phase: z.enum(['no-page', 'loading', 'manual', 'error']),
@@ -143,12 +150,14 @@ export const panelSchema = z.strictObject({
     'tasks',
     'quit',
     'preview',
+    'participation',
     'close-task',
     'settings',
     'backup',
     'version',
   ]),
   taskId: id.optional(),
+  executionVersion: z.number().int().nonnegative().optional(),
   x: z.number().min(0).max(10000).optional(),
   focus: z.boolean().optional(),
   delayed: z.boolean().optional(),
@@ -158,6 +167,25 @@ export const uiCommandSchema = z.union([
   versionUICommandSchema,
   upgradeUICommandSchema,
   modelUICommandSchema,
+  z.strictObject({
+    kind: z.literal('participation-draft'),
+    taskId: id,
+    questionId: z.string().uuid(),
+    text: z.string().max(4000),
+  }),
+  z.strictObject({
+    kind: z.literal('participation-open'),
+    taskId: id,
+    questionId: z.string().uuid(),
+  }),
+  participationDecisionSchema,
+  participationReplySchema,
+  z.strictObject({
+    kind: z.literal('stop-and-close'),
+    taskId: id,
+    requestId: id,
+    executionVersion: z.number().int().nonnegative(),
+  }),
   executionIntentSchema,
   recordCommandSchema.refine((command) => command.kind !== 'page'),
   z.strictObject({ kind: z.literal('snapshot') }),
@@ -170,6 +198,7 @@ export const uiCommandSchema = z.union([
 ]);
 export type UICommand = z.infer<typeof uiCommandSchema>;
 export type WorkspaceEvent = {
+  replyDrafts?: Record<string, string>;
   upgrade?: UpgradeStatus;
   version?: VersionStatus;
   versionNotice?: boolean;

@@ -587,3 +587,85 @@ test('真实提交等待期间 draft 不提前回执，释放只读夹具后可�
     await records.close();
   }
 });
+
+test('A 的回复已保存但回执丢失，派发前中断后在 B 重开并重送仍只收一次', async () => {
+  const dir = folder();
+  let dropReply = false;
+  let dropped = 0;
+  let records = await open(dir, () => {
+    if (!dropReply) return false;
+    dropReply = false;
+    dropped++;
+    return true;
+  });
+  const url = 'https://example.test/brief';
+  const a = (await records.client.request({
+    kind: 'create',
+    requestId: 'a',
+    goal: '简报 ' + url,
+  })) as { taskId: string };
+  await records.client.request({
+    kind: 'page',
+    requestId: 'ready',
+    taskId: a.taskId,
+    url,
+    phase: 'manual',
+  });
+  const b = (await records.client.request({
+    kind: 'create',
+    requestId: 'b',
+    goal: '资料核对',
+  })) as { taskId: string };
+  const execute = (command: object) =>
+    records.client.request({
+      kind: 'execution',
+      command: { taskId: a.taskId, ...command },
+    });
+  await execute({ kind: 'intent', intent: 'start', requestId: 'start' });
+  await execute({ kind: 'claim', runId: 'run-a' });
+  const questionId = '42a40e91-621a-4b35-827a-4adcc65f02b1';
+  await execute({
+    kind: 'ask',
+    runId: 'run-a',
+    questionId,
+    text: '要发到哪个栏目？',
+    url,
+  });
+  const reply = {
+    kind: 'execution',
+    command: {
+      kind: 'participation-reply',
+      taskId: a.taskId,
+      questionId,
+      text: '公告',
+    },
+  };
+  dropReply = true;
+  await expect(records.client.request(reply, 1000)).rejects.toThrow(
+    'REQUEST_TIMEOUT',
+  );
+  expect(dropped).toBe(1);
+  await records.crash();
+  records = await open(dir);
+  const read = async () =>
+    snapshotSchema.parse(await records.client.request({ kind: 'snapshot' }));
+  const before = await read();
+  expect(before.active).toBe(b.taskId);
+  const owner = before.tasks.find((t) => t.id === a.taskId);
+  expect(owner?.execution).toMatchObject({
+    phase: 'queued',
+    recoveryPending: true,
+    actions: [],
+    answers: [{ id: questionId, answer: '公告' }],
+  });
+  expect(owner?.execution?.question).toBeUndefined();
+  expect(owner?.messages.filter((m) => m.text === '公告')).toHaveLength(1);
+  expect(
+    before.tasks
+      .find((t) => t.id === b.taskId)
+      ?.messages.some((m) => m.text === '公告'),
+  ).toBe(false);
+  expect(await records.client.request(reply)).toMatchObject({ created: false });
+  expect(await read()).toEqual(before);
+  await records.close();
+});

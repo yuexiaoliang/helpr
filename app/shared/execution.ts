@@ -93,6 +93,7 @@ export const actionFactSchema = z.strictObject({
   ]),
   summary: z.string().max(1500),
   action: webActionSchema,
+  publicationApprovalId: z.string().uuid().optional(),
   source: pageSourceSchema,
   resultSource: pageSourceSchema.optional(),
   binding: pageBindingSchema,
@@ -142,7 +143,60 @@ export const pauseDescription = {
       '任务变化在记录连接中断时未能保存，已暂停自动操作。保存恢复后请核对任务，再明确继续。',
   },
 } satisfies Record<ExecutionPauseReason, { label: string; message: string }>;
+export const publicationSchema = z.strictObject({
+  destination: z.string().trim().min(1).max(600),
+  content: z
+    .string()
+    .min(1)
+    .max(4000)
+    .refine((s) => !!s.trim()),
+});
+export type Publication = z.infer<typeof publicationSchema>;
+const questionSchema = z.strictObject({
+  type: z.enum(['review', 'login']).optional(),
+  runId: z.string().optional(),
+  id: z.string().uuid(),
+  goalVersion: z.number().int().positive(),
+  text: z.string().trim().min(1).max(1500),
+  url: z.string(),
+});
+export const participationReplySchema = z.strictObject({
+  kind: z.literal('participation-reply'),
+  taskId: z.string().min(1),
+  questionId: questionSchema.shape.id,
+  text: z.string().trim().min(1).max(4000),
+});
+export type ParticipationReply = z.infer<typeof participationReplySchema>;
+const decisionFields = {
+  kind: z.literal('participation-decision'),
+  taskId: z.string().min(1),
+  questionId: questionSchema.shape.id,
+};
+export const participationDecisionSchema = z.discriminatedUnion('operation', [
+  z.strictObject({
+    ...decisionFields,
+    operation: z.literal('edit'),
+    content: publicationSchema.shape.content,
+  }),
+  z.strictObject({ ...decisionFields, operation: z.literal('approve') }),
+  z.strictObject({ ...decisionFields, operation: z.literal('login-check') }),
+]);
+export type ParticipationDecision = z.infer<typeof participationDecisionSchema>;
 export const executionSchema = z.strictObject({
+  publication: publicationSchema
+    .extend({
+      revision: z.number().int().positive(),
+      approvalId: z.string().uuid().nullable(),
+      origin: z.string(),
+    })
+    .optional(),
+  loginOrigin: z.string().optional(),
+  question: questionSchema.optional(),
+  answers: z
+    .array(
+      questionSchema.extend({ answer: participationReplySchema.shape.text }),
+    )
+    .optional(),
   restoreReview: z
     .enum(['required', 'ready', 'unknown', 'complete'])
     .optional(),
@@ -188,7 +242,17 @@ export const executionControlSchema = z.strictObject({
   system: z.boolean().optional(),
 });
 export const nextStepSchema = z.strictObject({
-  decision: z.enum(['act', 'complete', 'wait']),
+  decision: z.enum([
+    'act',
+    'complete',
+    'wait',
+    'ask',
+    'review',
+    'login',
+    'authenticated',
+  ]),
+  publication: publicationSchema.nullable().optional(),
+  approvalId: z.string().uuid().nullable().optional(),
   summary: z.string().min(1).max(1500),
   evidence: z.array(z.string().min(1).max(2000)).min(1).max(10),
   previous: z

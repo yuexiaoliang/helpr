@@ -14,9 +14,11 @@ import {
 } from 'react-aria-components';
 import type { Task, UICommand, WorkspaceSnapshot } from '../shared/contracts';
 import { WorkspaceStore, modelErrorLabel } from './store';
+import { ParticipationForm, ParticipationInbox } from './Participation';
 import { ModelSettings } from './ModelSettings';
 import { BackupSettings } from './BackupSettings';
 import { VersionSettings } from './VersionSettings';
+import { endedExecution, splitDelegation } from '../shared/task-groups';
 import { activeModelCall } from '../shared/model';
 import type { ExecutionIntent } from '../shared/execution';
 import { pauseDescription, systemConditionLabel } from '../shared/execution';
@@ -34,6 +36,7 @@ const phaseLabel = (task: Task) => {
     return pauseDescription[reason].label;
   if (task.executionControl?.blocked)
     return task.executionControl.stopSaved ? '已停止' : '执行已暂停 · 需查看';
+  if (task.execution?.question) return '等你回复';
   if (task.execution) {
     if (task.execution.phase === 'queued' && task.phase === 'loading')
       return '正在打开网页';
@@ -72,7 +75,7 @@ export function App({
   taskId,
 }: {
   store: WorkspaceStore;
-  surface: 'chrome' | 'chat' | 'panel' | 'toast';
+  surface: 'chrome' | 'chat' | 'panel' | 'toast' | 'inbox';
   taskId?: string;
 }) {
   const view = useSyncExternalStore(store.subscribe, store.get);
@@ -82,6 +85,14 @@ export function App({
   const task = view.state.tasks.find(
     (t) => t.id === (taskId ?? view.state.active),
   );
+  if (surface === 'inbox')
+    return (
+      <ParticipationInbox
+        tasks={view.state.tasks}
+        store={store}
+        close={() => send({ kind: 'dismiss-notice' })}
+      />
+    );
   if (surface === 'chat')
     return task ? <Chat key={task.id} store={store} task={task} /> : null;
   if (surface === 'panel') return <Panel store={store} />;
@@ -144,6 +155,17 @@ export function App({
           <Icon src={plus} />
         </button>
         <div className={styles.tools}>
+          <FoldFeedback store={store} />
+          {view.state.tasks.some((t) => t.execution?.question) && (
+            <button
+              onClick={() =>
+                send({ kind: 'panel', panel: 'participation', focus: true })
+              }
+            >
+              待回复 ·{' '}
+              {view.state.tasks.filter((t) => t.execution?.question).length}
+            </button>
+          )}
           <button
             onClick={() => send({ kind: 'panel', panel: 'version' })}
             aria-label="关于与新版"
@@ -171,7 +193,9 @@ export function App({
             aria-label="查看全部任务"
           >
             <Icon src={tasksIcon} />
-            <span>任务 {view.state.tasks.length}</span>
+            <span>
+              活动任务 {view.state.tasks.filter((t) => !t.archived).length}
+            </span>
           </button>
           <button
             className={styles.iconButton}
@@ -296,6 +320,21 @@ function TaskTab({
           if (event.key === 'Escape') send({ kind: 'panel', panel: 'none' });
         }}
       >
+        {task.groupGoal && (
+          <span
+            className={styles.groupMark}
+            title={task.groupGoal}
+            aria-label={'任务组：' + task.groupGoal}
+          >
+            同组{' '}
+            {
+              store
+                .get()
+                .state.tasks.filter((member) => member.groupId === task.groupId)
+                .length
+            }
+          </span>
+        )}
         <span className={styles.taskName} title={task.goal}>
           {task.goal}
         </span>
@@ -306,10 +345,29 @@ function TaskTab({
       </button>
       <button
         className={styles.closeTab}
-        aria-label={`收起任务 ${task.goal}`}
-        onClick={() =>
-          send({ kind: 'panel', panel: 'close-task', taskId: task.id })
-        }
+        aria-label={`关闭任务 ${task.goal}`}
+        onClick={() => {
+          if (timer.current) clearTimeout(timer.current);
+          if (endedExecution(task.execution)) {
+            void store
+              .perform({
+                kind: 'archive-task',
+                taskId: task.id,
+                requestId: requestId(),
+              })
+              .then(() => store.perform({ kind: 'panel', panel: 'none' }))
+              .catch(() => {});
+            return;
+          }
+          keyboardPreview.current = true;
+          send({
+            kind: 'panel',
+            panel: 'close-task',
+            taskId: task.id,
+            executionVersion: task.execution?.version ?? 0,
+            x: tab.current?.getBoundingClientRect().left,
+          });
+        }}
       >
         <Icon src={close} />
       </button>
@@ -387,6 +445,15 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
   const [showResults, setShowResults] = useState(false);
   const controlPending = useRef<ExecutionIntent | null>(null);
   async function control(intent: ExecutionIntent['intent']) {
+    if (
+      intent === 'continue' &&
+      task.archived &&
+      task.execution?.result?.goalVersion === task.execution?.goalVersion &&
+      task.execution?.result
+    ) {
+      setShowResults(true);
+      return;
+    }
     const command =
       controlPending.current?.intent === intent
         ? controlPending.current
@@ -449,7 +516,13 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
         requestId: id,
         text: value,
       });
-      if (/^查看结果[。！!]?$/u.test(value.trim())) setShowResults(true);
+      if (
+        /^查看结果[。！!]?$/u.test(value.trim()) ||
+        (task.archived &&
+          task.execution?.result &&
+          /^继续[。！!]?$/u.test(value.trim()))
+      )
+        setShowResults(true);
       setText((current) => (current === value ? '' : current));
       pending.current = null;
       setFailed(false);
@@ -606,11 +679,20 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
               )}
             </section>
           )}
+          {task.execution?.question && (
+            <ParticipationForm
+              inTask
+              key={task.execution.question.id}
+              task={task}
+              store={store}
+            />
+          )}
           <div className={styles.executionActions}>
             <button
               type="button"
               disabled={
                 !configured ||
+                !!task.execution?.question ||
                 (!task.executionControl?.blocked &&
                   ['queued', 'checking', 'running'].includes(
                     task.execution?.phase ?? '',
@@ -733,6 +815,117 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
     </section>
   );
 }
+function FoldFeedback({ store }: { store: WorkspaceStore }) {
+  const [folded, setFolded] = useState<Task | null>(null);
+  useEffect(() => {
+    let previous = store.get().state;
+    let shown = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const unsubscribe = store.subscribe(() => {
+      const next = store.get().state;
+      if (next === previous) return;
+      const changed = next.tasks.find(
+        (t) =>
+          t.hidden &&
+          !t.archived &&
+          previous.tasks.some((p) => p.id === t.id && !p.hidden),
+      );
+      previous = next;
+      if (changed && !shown) {
+        shown = true;
+        setFolded(changed);
+        timer = setTimeout(() => setFolded(null), 8000);
+      }
+    });
+    return () => {
+      unsubscribe();
+      clearTimeout(timer);
+    };
+  }, [store]);
+  if (
+    !folded ||
+    !store
+      .get()
+      .state.tasks.some((t) => t.id === folded.id && t.hidden && !t.archived)
+  )
+    return null;
+  return (
+    <button
+      aria-label={'已收起' + folded.goal + '，重新打开'}
+      onClick={() => {
+        void store
+          .perform({
+            kind: 'select',
+            requestId: requestId(),
+            taskId: folded.id,
+          })
+          .then(() => setFolded(null))
+          .catch(() => {});
+      }}
+    >
+      已收起 · 重新打开
+    </button>
+  );
+}
+function TaskDirectory({
+  tasks,
+  store,
+  close,
+}: {
+  tasks: Task[];
+  store: WorkspaceStore;
+  close: () => void;
+}) {
+  const [history, setHistory] = useState(false);
+  const groups = new Map<string, Task[]>();
+  for (const task of tasks.filter((t) => !!t.archived === history)) {
+    const id = task.groupId ?? task.id;
+    groups.set(id, [...(groups.get(id) ?? []), task]);
+  }
+  return (
+    <>
+      <Heading slot="title">{history ? '历史记录' : '活动任务'}</Heading>
+      <div className={styles.actions}>
+        <Button aria-pressed={!history} onPress={() => setHistory(false)}>
+          活动任务
+        </Button>
+        <Button aria-pressed={history} onPress={() => setHistory(true)}>
+          历史记录
+        </Button>
+      </div>
+      {!groups.size && (
+        <p>{history ? '还没有已关闭的任务。' : '当前没有活动任务。'}</p>
+      )}
+      {Array.from(groups, ([id, members]) => (
+        <section key={id}>
+          {members[0]?.groupGoal && <h3>{members[0].groupGoal}</h3>}
+          {members.map((task) => (
+            <button
+              key={task.id}
+              className={styles.taskRow}
+              onClick={() =>
+                void store
+                  .perform({
+                    kind: 'select',
+                    requestId: requestId(),
+                    taskId: task.id,
+                  })
+                  .then(close)
+                  .catch(() => {})
+              }
+            >
+              <span>{task.goal}</span>
+              <small>
+                {!history && task.hidden ? '已收起 · ' : ''}
+                {phaseLabel(task)}
+              </small>
+            </button>
+          ))}
+        </section>
+      ))}
+    </>
+  );
+}
 function Panel({ store }: { store: WorkspaceStore }) {
   const view = useSyncExternalStore(store.subscribe, store.get);
   const previewRoot = useRef<HTMLDivElement>(null);
@@ -757,6 +950,94 @@ function Panel({ store }: { store: WorkspaceStore }) {
       .catch(() => {});
   };
   if (view.panel.panel === 'none') return null;
+  if (view.panel.panel === 'participation')
+    return (
+      <ParticipationInbox
+        tasks={view.state.tasks}
+        store={store}
+        close={closePanel}
+      />
+    );
+  if (view.panel.panel === 'close-task') {
+    const task = view.state.tasks.find((t) => t.id === view.panel.taskId);
+    if (!task) return null;
+    const ended = endedExecution(task.execution);
+    const stale =
+      view.panel.executionVersion !== undefined &&
+      view.panel.executionVersion !== (task.execution?.version ?? 0);
+    const fold = () =>
+      void store
+        .perform({
+          kind: ended ? 'archive-task' : 'hide-task',
+          taskId: task.id,
+          requestId: requestId(),
+        })
+        .then(closePanel)
+        .catch(() => {});
+    const stop = () =>
+      void store
+        .perform({
+          kind: 'stop-and-close',
+          requestId: requestId(),
+          taskId: task.id,
+          executionVersion: task.execution?.version ?? 0,
+        })
+        .then(closePanel)
+        .catch(() => {});
+    const explanation = ended
+      ? '会话与结果可在历史中查看。'
+      : task.execution?.question
+        ? '收起后仍可从待办回复。'
+        : task.execution?.pauseReason
+          ? '收起后保留现场，等待你明确继续。'
+          : task.execution?.phase === 'queued'
+            ? '收起后仍按顺序排队。'
+            : task.execution &&
+                ['running', 'checking'].includes(task.execution.phase)
+              ? '收起后继续执行，可从活动任务返回。'
+              : '收起后保留当前网页与会话。';
+    return (
+      <ModalOverlay
+        isOpen
+        isDismissable={!view.saving}
+        onOpenChange={(open) => {
+          if (!open) closePanel();
+        }}
+        className={styles.closeBackdrop}
+      >
+        <Modal
+          className={styles.closeCard}
+          style={{
+            left: Math.min(
+              view.panel.x ?? 8,
+              Math.max(8, window.innerWidth - 338),
+            ),
+          }}
+        >
+          <Dialog aria-label="关闭任务">
+            <Heading slot="title">{task.goal}</Heading>
+            <p>
+              {phaseLabel(task)} · {explanation}
+            </p>
+            <div className={styles.actions}>
+              <Button autoFocus isDisabled={!!view.saving} onPress={fold}>
+                {ended ? '收入历史' : '收起任务'}
+              </Button>
+              {!ended && stale && (
+                <Button onPress={closePanel}>状态已更新，返回任务</Button>
+              )}
+              {!ended && !stale && (
+                <Button isDisabled={!!view.saving} onPress={stop}>
+                  停止任务
+                </Button>
+              )}
+            </div>
+            {view.notice && <p role="status">{view.notice}</p>}
+          </Dialog>
+        </Modal>
+      </ModalOverlay>
+    );
+  }
   if (view.panel.panel === 'preview') {
     const task = view.state.tasks.find((t) => t.id === view.panel.taskId);
     return task ? (
@@ -835,55 +1116,11 @@ function Panel({ store }: { store: WorkspaceStore }) {
           ) : view.panel.panel === 'new' ? (
             <NewTask store={store} close={closePanel} />
           ) : view.panel.panel === 'tasks' ? (
-            <>
-              <Heading slot="title">全部任务</Heading>
-              <p>
-                收起标签后，任务和对话仍保留。同一网站的登录会话在任务间共用。
-              </p>
-              {view.state.tasks.map((task) => (
-                <button
-                  key={task.id}
-                  className={styles.taskRow}
-                  onClick={() => {
-                    void store
-                      .perform({
-                        kind: 'select',
-                        requestId: requestId(),
-                        taskId: task.id,
-                      })
-                      .then(closePanel)
-                      .catch(() => {});
-                  }}
-                >
-                  <span>{task.goal}</span>
-                  <small>{phaseLabel(task)}</small>
-                </button>
-              ))}
-            </>
-          ) : view.panel.panel === 'close-task' ? (
-            <>
-              <Heading slot="title">收起这项任务？</Heading>
-              <p>网页现场、对话与记录仍保留。需要时从顶部的全部任务中找回。</p>
-              <div className={styles.actions}>
-                <Button onPress={closePanel}>返回</Button>
-                <Button
-                  className={styles.primary}
-                  onPress={() => {
-                    if (view.panel.taskId)
-                      void store
-                        .perform({
-                          kind: 'hide-task',
-                          taskId: view.panel.taskId,
-                          requestId: requestId(),
-                        })
-                        .then(closePanel)
-                        .catch(() => {});
-                  }}
-                >
-                  收起任务
-                </Button>
-              </div>
-            </>
+            <TaskDirectory
+              tasks={view.state.tasks}
+              store={store}
+              close={closePanel}
+            />
           ) : (
             <>
               <Heading slot="title">退出 helpr？</Heading>
@@ -924,7 +1161,9 @@ function NewTask({
   store: WorkspaceStore;
   close: () => void;
 }) {
+  const [keepTogether, setKeepTogether] = useState(false);
   const [goal, setGoal] = useState(store.getNewGoal());
+  const members = splitDelegation(goal);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const id = useRef(store.getCreationId());
@@ -934,7 +1173,12 @@ function NewTask({
     setBusy(true);
     setError('');
     try {
-      await store.perform({ kind: 'create', requestId: id.current, goal });
+      await store.perform({
+        kind: 'create',
+        requestId: id.current,
+        goal,
+        ...(keepTogether ? { keepTogether: true as const } : {}),
+      });
       store.cacheNewGoal('');
       onClose();
     } catch {
@@ -968,6 +1212,22 @@ function NewTask({
           placeholder="例如：把本周经营周报发布到公司网站"
         />
       </label>
+      {members.length > 1 && (
+        <div>
+          <p>
+            这份委托可按目标分为 {members.length} 项：
+            {members.map((m) => m.destination).join('、')}。
+          </p>
+          <label>
+            <input
+              type="checkbox"
+              checked={keepTogether}
+              onChange={(event) => setKeepTogether(event.target.checked)}
+            />
+            保留为一项任务
+          </label>
+        </div>
+      )}
       {error && (
         <p role="alert" className={styles.notice}>
           {error}

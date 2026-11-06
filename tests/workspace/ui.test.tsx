@@ -86,3 +86,97 @@ test('任务 A 的中文对话草稿不会进入 B，输入法确认键不会提
     '手动接管测试',
   );
 });
+
+test('在标签旁停止只关闭所属任务，历史列表可以回看原任务', async () => {
+  const folder = mkdtempSync(path.join(tmpdir(), 'helpr-close-ui-'));
+  const records = new WorkspaceRecords(folder, 'app/records/migrations');
+  const { taskId: a, state } = records.execute({
+    kind: 'create',
+    goal: '把周报分别发到校刊和公告栏',
+    requestId: 'ab',
+  });
+  const listeners = new Set<(e: WorkspaceEvent) => void>();
+  const emit = (e: WorkspaceEvent) => listeners.forEach((l) => l(e));
+  const store = new WorkspaceStore(
+    {
+      request(c) {
+        if (c.kind === 'snapshot') return Promise.resolve(records.snapshot());
+        if (c.kind === 'panel') {
+          emit({ panel: c });
+          return Promise.resolve();
+        }
+        const result =
+          c.kind === 'stop-and-close'
+            ? records.execution({
+                kind: 'intent',
+                intent: 'stop',
+                taskId: c.taskId,
+                requestId: c.requestId,
+                closeAtVersion: c.executionVersion,
+              })
+            : records.execute(c);
+        emit({ state: result.state });
+        return Promise.resolve(result);
+      },
+      subscribe(l) {
+        listeners.add(l);
+        return () => {
+          listeners.delete(l);
+        };
+      },
+    },
+    state,
+  );
+  dispose = () => {
+    store.dispose();
+    records.close();
+    rmSync(folder, { recursive: true, force: true });
+  };
+  render(
+    <>
+      <App surface="chrome" store={store} />
+      <App surface="panel" store={store} />
+    </>,
+  );
+  fireEvent.click(
+    screen.getByRole('button', { name: '关闭任务 把周报发到校刊' }),
+  );
+  const fold = await screen.findByRole('button', { name: '收起任务' });
+  await waitFor(() => expect(document.activeElement).toBe(fold));
+  fireEvent.keyDown(fold, { key: 'Escape', code: 'Escape' });
+  await waitFor(() =>
+    expect(screen.queryByRole('dialog', { name: '关闭任务' })).toBeNull(),
+  );
+  expect(records.snapshot().tasks[0]).toMatchObject({
+    id: a,
+    archived: false,
+    hidden: false,
+    execution: null,
+  });
+  fireEvent.click(
+    screen.getByRole('button', { name: '关闭任务 把周报发到校刊' }),
+  );
+  fireEvent.click(await screen.findByRole('button', { name: '停止任务' }));
+  await waitFor(() =>
+    expect(records.snapshot().tasks[0]).toMatchObject({
+      id: a,
+      archived: true,
+      hidden: true,
+      execution: { intent: 'stopped' },
+    }),
+  );
+  await waitFor(() =>
+    expect(screen.queryByRole('dialog', { name: '关闭任务' })).toBeNull(),
+  );
+  fireEvent.click(screen.getByRole('button', { name: '查看全部任务' }));
+  fireEvent.click(await screen.findByRole('button', { name: '历史记录' }));
+  fireEvent.click(
+    screen.getByRole('button', { name: /把周报发到校刊.*已停止/ }),
+  );
+  await waitFor(() => expect(records.snapshot().active).toBe(a));
+  expect(records.snapshot().tasks[0]).toMatchObject({
+    archived: true,
+    hidden: false,
+    execution: { intent: 'stopped' },
+  });
+});

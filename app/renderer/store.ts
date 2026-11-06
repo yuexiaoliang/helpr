@@ -61,6 +61,8 @@ const labels: Record<string, string> = {
     '本次回复已停止，已生成内容保留。已发出的请求实际消耗可能未知。',
   MODEL_INTERRUPTED:
     '上次请求因程序中断而结束，已有内容保留；不会自动重新发送。',
+  PARTICIPATION_EXPIRED: '这条问题已失效，请查看当前待办。',
+  PARTICIPATION_REQUIRED: '请先回答任务的问题。',
   MODEL_PAGE_UNAVAILABLE: '暂时无法观察这项任务的网页，请先打开网页再询问。',
   MODEL_RECORDS_UNAVAILABLE:
     '请求记录暂时不可用，已阻断新的模型发送。请保留窗口并重新打开 helpr 后核对。',
@@ -80,6 +82,7 @@ const labels: Record<string, string> = {
 export const modelErrorLabel = (code: string): string =>
   labels[code] ?? '模型请求未完成，请核对后重新发送。';
 export type WorkspaceView = {
+  replyDrafts: Record<string, string>;
   upgrade: UpgradeStatus | null;
   version: VersionStatus | null;
   versionNotice: boolean;
@@ -110,6 +113,7 @@ export class WorkspaceStore {
       upgrade: null,
       version: null,
       versionNotice: false,
+      replyDrafts: {},
       state: initial,
       notice: '',
       panel: { kind: 'panel', panel: 'none' },
@@ -131,6 +135,7 @@ export class WorkspaceStore {
           event.version.revision >= (this.view.version?.revision ?? -1)
             ? versionStatusSchema.parse(event.version)
             : this.view.version,
+        replyDrafts: event.replyDrafts ?? this.view.replyDrafts,
         versionNotice: event.versionNotice ?? this.view.versionNotice,
         state,
         notice: event.notice ?? this.view.notice,
@@ -138,6 +143,25 @@ export class WorkspaceStore {
       });
     });
     void this.perform({ kind: 'snapshot' });
+  }
+  saveReplyDraft(taskId: string, questionId: string, text: string) {
+    this.update({
+      ...this.view,
+      replyDrafts: { ...this.view.replyDrafts, [questionId]: text },
+    });
+    void this.bridge
+      .request({ kind: 'participation-draft', taskId, questionId, text })
+      .catch(() => {
+        if (
+          this.view.state.tasks.some(
+            (t) => t.execution?.question?.id === questionId,
+          )
+        )
+          this.update({
+            ...this.view,
+            notice: '草稿暂未同步到其他入口，当前输入已保留。',
+          });
+      });
   }
   private update(view: WorkspaceView): void {
     this.view = view;

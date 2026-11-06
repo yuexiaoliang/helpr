@@ -56,7 +56,13 @@ export type BackupPayload = z.infer<typeof backupPayloadSchema>;
 const envelope = z.strictObject({
   format: z.literal('helpr-backup'),
   version: z.literal(1),
-  dataVersion: z.union([z.literal(6), z.literal(CURRENT_DATA_FORMAT)]),
+  dataVersion: z.union([
+    z.literal(6),
+    z.literal(7),
+    z.literal(8),
+    z.literal(9),
+    z.literal(CURRENT_DATA_FORMAT),
+  ]),
   stateModel: z.literal(CURRENT_STATE_MODEL),
   id: z.string().min(1).max(100),
   created: z.number().int().nonnegative(),

@@ -580,3 +580,72 @@
   padding: 14px;
   margin: 12px 0;
 }
+
+.replyInbox {
+  height: 100vh;
+  overflow: auto;
+  border: 1px solid #b8cec2;
+  border-radius: 12px;
+  background: white;
+  padding: 14px;
+  overflow-wrap: anywhere;
+}
+.replyInbox header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.replyForm {
+  padding: 6px 8px;
+  overflow: auto;
+}
+.replyForm label,
+.replyForm textarea {
+  display: block;
+  width: 100%;
+}
+.replyForm textarea {
+  margin: 6px 0;
+  font: inherit;
+  resize: vertical;
+}
+
+.previewContent {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  padding: 8px 10px;
+  background: #eff5f1;
+  border-left: 3px solid #63987c;
+}
+
+.groupMark {
+  font-size: 10px;
+  border-radius: 3px;
+  background: #d4e4d8;
+  color: #325242;
+  padding: 1px 3px;
+}
+.closeBackdrop {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+}
+.closeCard {
+  position: absolute;
+  top: 50px;
+  width: min(320px, calc(100% - 16px));
+  padding: 16px;
+  background: white;
+  border: 1px solid #dbe3db;
+  border-radius: 12px;
+  box-shadow: 0 8px 22px #26382d22;
+}
+.closeCard h2 {
+  font-size: 16px;
+  overflow-wrap: anywhere;
+}
+.closeCard p {
+  font-size: 14px;
+  margin: 8px 0 14px;
+}

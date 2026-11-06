@@ -1,3 +1,5 @@
+import { endedExecution, splitDelegation } from '../shared/task-groups';
+import { hideTaskTab } from './task-tab';
 import Database from 'better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
@@ -21,7 +23,7 @@ import {
   type Task,
   type WorkspaceSnapshot,
 } from '../shared/contracts';
-import { explicitWebsite, websiteURL } from '../shared/url-policy';
+import { websiteURL } from '../shared/url-policy';
 import * as schema from './schema';
 import { ModelRecords } from './model';
 import { ExecutionRecords } from './execution';
@@ -100,16 +102,23 @@ export class WorkspaceRecords {
             )
             .get()?.schema_version
         : CURRENT_DATA_FORMAT;
-      if (!priorVersion || ![1, 2, 3, 4, 5, 6, 7].includes(priorVersion))
+      if (
+        !priorVersion ||
+        ![1, 2, 3, 4, 5, 6, 7, 8, 9, CURRENT_DATA_FORMAT].includes(priorVersion)
+      )
         throw Error('DATA_VERSION_UNSUPPORTED');
       if (legacy && priorVersion !== CURRENT_DATA_FORMAT) {
         const backup = path.join(
           folder,
-          (priorVersion === 6
-            ? 'workspace-before-upgrade-09-'
-            : priorVersion === 5
-              ? 'workspace-before-backup-07-'
-              : 'workspace-before-recovery-05-') +
+          (priorVersion === 9
+            ? 'workspace-before-task-groups-11-'
+            : priorVersion >= 7
+              ? 'workspace-before-participation-10-'
+              : priorVersion === 6
+                ? 'workspace-before-upgrade-09-'
+                : priorVersion === 5
+                  ? 'workspace-before-backup-07-'
+                  : 'workspace-before-recovery-05-') +
             randomUUID() +
             '.sqlite',
         );
@@ -150,6 +159,9 @@ export class WorkspaceRecords {
         version !== 4 &&
         version !== 5 &&
         version !== 6 &&
+        version !== 7 &&
+        version !== 8 &&
+        version !== 9 &&
         version !== CURRENT_DATA_FORMAT
       )
         throw new Error('DATA_VERSION_UNSUPPORTED');
@@ -265,32 +277,38 @@ export class WorkspaceRecords {
         }
         let taskId: string;
         if (command.kind === 'create') {
+          const members = splitDelegation(command.goal, command.keepTogether);
+          const groupId = members.length > 1 ? randomUUID() : null;
           taskId = randomUUID();
-          const url = explicitWebsite(command.goal);
-          tx.insert(schema.tasks)
-            .values({
-              id: taskId,
-              goal: command.goal,
-              created: Date.now(),
-              url,
-              draft: '',
-              hidden: false,
-              minimized: false,
-              phase: url ? pagePhase('no-page', 'LOAD') : 'no-page',
-              error: '',
-              version: 1,
-            })
-            .run();
-          tx.insert(schema.messages)
-            .values([
-              { taskId, role: 'user', text: command.goal },
-              {
-                taskId,
-                role: 'system',
-                text: '目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。',
-              },
-            ])
-            .run();
+          for (const [i, { goal, url }] of members.entries()) {
+            const memberId = i === 0 ? taskId : randomUUID();
+            tx.insert(schema.tasks)
+              .values({
+                id: memberId,
+                groupId,
+                groupGoal: groupId ? command.goal : null,
+                goal,
+                created: Date.now(),
+                url,
+                draft: '',
+                hidden: false,
+                minimized: false,
+                phase: url ? pagePhase('no-page', 'LOAD') : 'no-page',
+                error: '',
+                version: 1,
+              })
+              .run();
+            tx.insert(schema.messages)
+              .values([
+                { taskId: memberId, role: 'user', text: goal },
+                {
+                  taskId: memberId,
+                  role: 'system',
+                  text: '目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。',
+                },
+              ])
+              .run();
+          }
           tx.update(schema.workspace)
             .set({ active: taskId })
             .where(eq(schema.workspace.id, 1))
@@ -345,24 +363,15 @@ export class WorkspaceRecords {
                 .where(eq(schema.workspace.id, 1))
                 .run();
               break;
-            case 'hide-task': {
-              update.hidden = true;
-              const meta = tx.select().from(schema.workspace).get();
-              if (meta?.active === taskId)
-                tx.update(schema.workspace)
-                  .set({
-                    active:
-                      tx
-                        .select()
-                        .from(schema.tasks)
-                        .where(eq(schema.tasks.hidden, false))
-                        .all()
-                        .find((t) => t.id !== taskId)?.id ?? null,
-                  })
-                  .where(eq(schema.workspace.id, 1))
-                  .run();
+            case 'archive-task':
+              if (!endedExecution(this.executions.get(taskId)))
+                throw Error('RECORD_VERSION_CONFLICT');
+              update.archived = true;
+              hideTaskTab(tx, taskId);
               break;
-            }
+            case 'hide-task':
+              hideTaskTab(tx, taskId);
+              break;
             case 'minimize':
               update.minimized = !task.minimized;
               break;

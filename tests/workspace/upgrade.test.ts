@@ -685,12 +685,13 @@ test('构造的格式6库迁移失败保留原副本，修复后原任务草稿�
   });
   r.close();
   const old = new Database(path.join(folder, 'workspace.sqlite'));
-  old.exec('DROP TABLE installation');
-  old
-    .prepare(
-      'DELETE FROM __drizzle_migrations WHERE created_at=(SELECT MAX(created_at) FROM __drizzle_migrations)',
-    )
-    .run();
+  old.exec(
+    'DROP TABLE installation; ALTER TABLE tasks DROP COLUMN group_id; ALTER TABLE tasks DROP COLUMN group_goal; ALTER TABLE tasks DROP COLUMN archived;',
+  );
+  // 格式 6 仅包含 0000–0003，还原迁移游标后分别演练失败和成功。
+  old.exec(
+    'DELETE FROM __drizzle_migrations WHERE rowid NOT IN (SELECT rowid FROM __drizzle_migrations ORDER BY created_at LIMIT 4)',
+  );
   old.exec('UPDATE workspace SET schema_version=6');
   old.close();
   const broken = path.join(folder, 'broken-migrations');
@@ -724,5 +725,40 @@ test('构造的格式6库迁移失败保留原副本，修复后原任务草稿�
     ).toBe(1);
   } finally {
     r.close();
+  }
+});
+
+test('格式 7 的任务升至格式 9 前留下可读原库，原会话仍可查看', () => {
+  const folder = mkdtempSync(
+    path.join(tmpdir(), 'helpr-participation-migration-'),
+  );
+  folders.push(folder);
+  const original = new WorkspaceRecords(folder, 'app/records/migrations');
+  const before = original.execute({
+    kind: 'create',
+    requestId: 'prior',
+    goal: '整理旧资料',
+  }).state;
+  original.close();
+  const legacy = new Database(path.join(folder, 'workspace.sqlite'));
+  legacy.exec('UPDATE workspace SET schema_version=7');
+  legacy.close();
+  const current = new WorkspaceRecords(folder, 'app/records/migrations');
+  try {
+    expect(current.snapshot().tasks).toEqual(before.tasks);
+    const copy = readdirSync(folder).find((name) =>
+      name.startsWith('workspace-before-participation-10-'),
+    );
+    expect(copy).toBeTruthy();
+    const backup = new Database(path.join(folder, copy!), { readonly: true });
+    try {
+      expect(
+        backup.prepare('SELECT schema_version FROM workspace').pluck().get(),
+      ).toBe(7);
+    } finally {
+      backup.close();
+    }
+  } finally {
+    current.close();
   }
 });
