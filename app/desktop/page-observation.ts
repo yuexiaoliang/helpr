@@ -54,6 +54,7 @@ export function pageObservation(
     ?.name?.value;
   const title = typeof rootName === 'string' ? rootName.slice(0, 1000) : '';
   const lines: string[] = [];
+  const links: NonNullable<PageObservation['links']> = [];
   for (const node of nodes) {
     if (node.ignored || excluded.has(node.nodeId)) continue;
     const name = typeof node.name?.value === 'string' ? node.name.value : '';
@@ -69,6 +70,19 @@ export function pageObservation(
       ? `[${role}] ${content}${flags.length ? ' (' + flags.join(', ') + ')' : ''}`
       : '';
     if (line && line !== lines.at(-1)) lines.push(line);
+    const link = node.properties?.find((p) => p.name === 'url')?.value.value;
+    if (role === 'link' && name && typeof link === 'string') {
+      try {
+        const href = websiteURL(link);
+        links.push({ name: name.slice(0, 1000), url: href });
+        lines.push(
+          '[observed-link] ' +
+            JSON.stringify({ name: name.slice(0, 1000), url: href }),
+        );
+      } catch {
+        /* 无效链接不能成为复用依据。 */
+      }
+    }
   }
   const full = lines.join('\n') + (supplements ? '\n' + supplements : ''),
     text = full.slice(0, 30000);
@@ -76,9 +90,10 @@ export function pageObservation(
     url,
     title,
     text,
+    links: links.slice(0, 300),
     generation,
     observedAt: Date.now(),
-    truncated: full.length !== text.length,
+    truncated: full.length !== text.length || links.length > 300,
     fingerprint: createHash('sha256')
       .update(url + '\n' + full)
       .digest('hex'),

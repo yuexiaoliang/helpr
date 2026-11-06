@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { pageSourceSchema } from './model';
+import { pageSourceSchema, observedLinkSchema } from './model';
 import { webActionSchema } from './web-action';
 import {
   publicationSchema,
@@ -8,7 +8,11 @@ import {
   publicationCheckSchema,
   publicationRecoverySchema,
 } from './publication';
-import { learnedWorkflowSchema } from './workflow';
+import {
+  learnedWorkflowSchema,
+  workflowChoiceSchema,
+  workflowUseSchema,
+} from './workflow';
 import {
   materialSelectionSchema,
   materialVersionSchema,
@@ -65,6 +69,14 @@ export const pageBindingSchema = z.strictObject({
   generation: z.number().int().nonnegative(),
 });
 export const actionFactSchema = z.strictObject({
+  workflowStep: z
+    .strictObject({
+      useId: z.string().uuid(),
+      index: z.number().int().nonnegative().max(59),
+    })
+    .optional(),
+  observedLinks: z.array(observedLinkSchema).max(300).optional(),
+  resultLinks: z.array(observedLinkSchema).max(300).optional(),
   id: z.string().min(1),
   runId: z.string(),
   goalVersion: z.number().int(),
@@ -175,6 +187,7 @@ export const participationDecisionSchema = z.discriminatedUnion('operation', [
 ]);
 export type ParticipationDecision = z.infer<typeof participationDecisionSchema>;
 export const executionSchema = z.strictObject({
+  workflowUses: z.array(workflowUseSchema).max(60).optional(),
   observedAnomalies: z
     .array(
       z.strictObject({
@@ -294,12 +307,14 @@ export const executionControlSchema = z.strictObject({
   system: z.boolean().optional(),
 });
 export const nextStepSchema = z.strictObject({
+  workflow: workflowChoiceSchema.optional(),
   recovery: publicationRecoverySchema.optional(),
   effect: actionFactSchema.shape.effect,
   result: publicationResultProposalSchema.optional(),
   anomalies: z.array(z.string().min(1).max(2000)).max(20).optional(),
   extraResults: z.array(z.url()).max(50).optional(),
   decision: z.enum([
+    'reuse',
     'observe',
     'material',
     'prepared',

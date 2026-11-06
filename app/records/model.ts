@@ -11,6 +11,7 @@ import {
   pageSourceSchema,
   MODEL_LIMITS,
   archivedModelCallSchema,
+  modelUsageKindSchema,
 } from '../shared/model';
 import * as schema from './schema';
 
@@ -28,6 +29,7 @@ const commandSchema = z.discriminatedUnion('kind', [
   z.strictObject({
     kind: z.literal('begin'),
     purpose: z.literal('execution').optional(),
+    usageKind: modelUsageKindSchema.optional(),
     id: key,
     taskId: key,
     text: z.string().trim().min(1).max(20000),
@@ -226,6 +228,7 @@ export class ModelRecords {
                 command.text,
                 command.expectedVersion ?? null,
                 ...(command.purpose ? [command.purpose] : []),
+                ...(command.usageKind ? [command.usageKind] : []),
               ]),
             )
             .digest('hex');
@@ -281,6 +284,7 @@ export class ModelRecords {
               configurationVersion: settings.version,
               model: settings.model,
               phase: 'preparing',
+              usageKind: command.usageKind ?? 'legacy-unspecified',
             })
             .run();
           this.db

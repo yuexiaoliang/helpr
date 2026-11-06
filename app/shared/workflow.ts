@@ -9,6 +9,13 @@ const parameter = z.enum([
   'targetUrl',
   'attachmentUrl',
 ]);
+export const workflowChoiceSchema = z.strictObject({
+  taskId: z.string(),
+  version: z.string().uuid(),
+  sha256: z.string().regex(/^[a-f0-9]{64}$/),
+  content: z.string().min(1).max(20000),
+  destination: z.string().min(1).max(500),
+});
 export const workflowBodySchema = z.strictObject({
   format: z.literal(1),
   version: z.string().uuid(),
@@ -81,8 +88,34 @@ export const workflowBodySchema = z.strictObject({
     approvalId: z.string().uuid(),
   }),
   authority: z.literal('none'),
+  replay: z
+    .strictObject({
+      format: z.literal(1),
+      target: z.literal('explicit-current-url'),
+      attachmentLink: z.string().min(1).max(1000),
+      resultLink: z.string().min(1).max(1000),
+      publishedEvidence: z.array(z.string()).min(1).max(10),
+    })
+    .optional(),
 });
 export const learnedWorkflowSchema = workflowBodySchema.extend({
   sha256: z.string().regex(/^[a-f0-9]{64}$/),
 });
 export type LearnedWorkflow = z.infer<typeof learnedWorkflowSchema>;
+export const workflowUseSchema = z.strictObject({
+  approved: z
+    .strictObject({
+      id: z.string().uuid(),
+      content: workflowChoiceSchema.shape.content,
+    })
+    .optional(),
+  id: z.string().uuid(),
+  goalVersion: z.number().int().positive(),
+  workflow: learnedWorkflowSchema,
+  materialId: z.string().uuid(),
+  targetUrl: z.url(),
+  content: workflowChoiceSchema.shape.content,
+  destination: workflowChoiceSchema.shape.destination,
+  source: pageSourceSchema,
+});
+export type WorkflowUse = z.infer<typeof workflowUseSchema>;

@@ -1,0 +1,1 @@
+ALTER TABLE `model_calls` ADD `usage_kind` text DEFAULT 'legacy-unspecified' NOT NULL;

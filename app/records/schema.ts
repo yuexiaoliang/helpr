@@ -52,6 +52,7 @@ export const modelSettings = sqliteTable('model_settings', {
   ciphertext: text('ciphertext').notNull(),
 });
 export const modelCalls = sqliteTable('model_calls', {
+  usageKind: text('usage_kind').notNull().default('legacy-unspecified'),
   id: text('id').primaryKey(),
   taskId: text('task_id')
     .notNull()

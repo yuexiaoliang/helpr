@@ -1,5 +1,7 @@
 # helpr 首版实现事项
 
+2026-11-06 接续至 11-07 最新交接：[15 换输入与冷启动流程复用](issues/15-parameterized-and-cold-workflow-reuse.md#开发结果)完成独立实现和自动检查，207 应用／8 验证器／25 旧回归通过。候选 61、启动 176／177 通过首次形成候选、换素材／标题／栏目及冷开新输入；复用各 1 次委托绑定模型，网页步骤无模型，独立字节／记录／32 PID 和 6 组清空通过。[报告](../../docs/testing/evidence/workflow-15/REPORT.md)保留迁移装置、初稿失败和 CUA 超时。15 当前 6/8，真实模型／WordPress 和双活动网页组合待验，13 前置保持；下一会话推进 [16](issues/16-shared-login-and-target-coordination.md) 独立共享登录与目标协调。普通提交不推送或发布。
+
 2026-11-06 最新交接：[14 提交中断后的真实网站结果核对](issues/14-recover-real-publication-outcomes.md#开发结果)已交付独立实现和当前自动检查，195 应用／8 验证器／25 旧回归通过。最终候选 60 在 166／167、172／173、174／175 通过三个中断位置，保持停止且不重复提交；[报告](../../docs/testing/evidence/publication-14/REPORT.md)保留两次冷开观察失败、清理错误和源码反例。14 当前 6/10 条关闭，真实模型／WordPress 和双活动网页原生组合待验，13 前置保持。下一会话推进 [15](issues/15-parameterized-and-cold-workflow-reuse.md) 独立参数化与冷启动流程复用；普通提交不推送或发布。
 
 2026-11-06 最新交接：[13 首次附件发布并保存学到的流程](issues/13-first-publication-and-learned-workflow.md#开发结果)已交付独立代码与当前自动检查，175 应用／8 验证器／25 旧回归通过。最终候选 57、启动 160／161 完成一次本机上传、草稿、确认发布及冷开，独立字节和进程清理通过；[报告](../../docs/testing/evidence/publication-13/REPORT.md)保留启动 157 的旧观察拒绝、异常优先级修正和所有限制。13 当前 5/9 条关闭，真实模型／WordPress 学习发布及固定版本重放仍待验，12 前置不整体解除。下一会话推进 [14](issues/14-recover-real-publication-outcomes.md) 独立恢复代码和本机检查，真实费用与远程写入另按授权。

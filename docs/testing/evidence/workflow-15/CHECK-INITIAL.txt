@@ -1,0 +1,12 @@
+$ pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:workspace && pnpm test:validation && pnpm check:legacy
+$ tsc --noEmit
+$ eslint app tests/workspace electron.vite.config.ts drizzle.config.ts vitest.config.ts
+
+/Users/yuexiaoliang/projects/helpr/tests/workspace/workflow-reuse.test.ts
+   77:23  error  '_' is defined but never used                               @typescript-eslint/no-unused-vars
+  379:7   error  Unexpected `await` of a non-Promise (non-"Thenable") value  @typescript-eslint/await-thenable
+
+✖ 2 problems (2 errors, 0 warnings)
+
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.

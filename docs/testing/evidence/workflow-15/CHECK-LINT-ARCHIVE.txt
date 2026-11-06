@@ -1,0 +1,13 @@
+$ pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:workspace && pnpm test:validation && pnpm check:legacy
+$ tsc --noEmit
+$ eslint app tests/workspace electron.vite.config.ts drizzle.config.ts vitest.config.ts
+
+/Users/yuexiaoliang/projects/helpr/tests/workspace/workflow-reuse.test.ts
+  455:11  error  This assertion is unnecessary since it does not change the type of the expression  @typescript-eslint/no-unnecessary-type-assertion
+  456:15  error  This assertion is unnecessary since it does not change the type of the expression  @typescript-eslint/no-unnecessary-type-assertion
+
+✖ 2 problems (2 errors, 0 warnings)
+  2 errors and 0 warnings potentially fixable with the `--fix` option.
+
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.

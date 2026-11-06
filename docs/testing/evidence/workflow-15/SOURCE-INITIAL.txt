@@ -1,0 +1,26 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/workflow-reuse.test.ts (7 tests | 1 failed) 4832ms
+   × 绑定版本损坏冷开拒绝；格式13迁移先保留原库 697ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/workflow-reuse.test.ts > 绑定版本损坏冷开拒绝；格式13迁移先保留原库
+Error: DATA_VERSION_UNSUPPORTED
+ ❯ new WorkspaceRecords app/records/workspace.ts:202:15
+    200|         version !== CURRENT_DATA_FORMAT
+    201|       )
+    202|         throw new Error('DATA_VERSION_UNSUPPORTED');
+       |               ^
+    203|       if (version !== CURRENT_DATA_FORMAT)
+    204|         this.db
+ ❯ tests/workspace/workflow-reuse.test.ts:526:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 passed (7)
+   Start at  23:43:50
+   Duration  5.41s (tests 91%, import 7%, transform 3%)

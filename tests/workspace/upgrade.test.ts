@@ -686,7 +686,7 @@ test('构造的格式6库迁移失败保留原副本，修复后原任务草稿�
   r.close();
   const old = new Database(path.join(folder, 'workspace.sqlite'));
   old.exec(
-    'DROP TABLE installation; ALTER TABLE tasks DROP COLUMN group_id; ALTER TABLE tasks DROP COLUMN group_goal; ALTER TABLE tasks DROP COLUMN archived;',
+    'DROP TABLE installation; ALTER TABLE tasks DROP COLUMN group_id; ALTER TABLE tasks DROP COLUMN group_goal; ALTER TABLE tasks DROP COLUMN archived; ALTER TABLE model_calls DROP COLUMN usage_kind;',
   );
   // 格式 6 仅包含 0000–0003，还原迁移游标后分别演练失败和成功。
   old.exec(

@@ -32,11 +32,14 @@ import {
   type TaskExecution,
 } from '../shared/execution';
 import * as schema from './schema';
-import { pageSourceSchema } from '../shared/model';
+import { pageSourceSchema, observedLinkSchema } from '../shared/model';
 import {
   materialVersionSchema,
   preparationProposalSchema,
 } from '../shared/material';
+import { workflowChoiceSchema, workflowUseSchema } from '../shared/workflow';
+import { workflowHash } from './workflow';
+import { currentWorkflow, reboundAction } from '../shared/workflow-replay';
 
 const activeTransitions = {
   DISPATCH: { target: 'running', guard: 'automatic' },
@@ -101,7 +104,10 @@ function move(e: TaskExecution, event: PhaseEvent) {
   const [next] = transition(lifecycle, state, { type: event });
   e.phase = executionPhaseSchema.parse(next.value);
 }
-const observation = pageSourceSchema.extend({ text: z.string().max(30000) });
+const observation = pageSourceSchema.extend({
+  text: z.string().max(30000),
+  links: z.array(observedLinkSchema).max(300).optional(),
+});
 const work = { taskId: z.string(), runId: z.string() };
 const intentSchema = executionIntentSchema.extend({
   kind: z.literal('intent'),
@@ -110,6 +116,12 @@ const intentSchema = executionIntentSchema.extend({
   controlSequence: z.number().int().positive().optional(),
 });
 const commandSchema = z.discriminatedUnion('kind', [
+  z.strictObject({
+    kind: z.literal('workflow-bind'),
+    ...work,
+    choice: workflowChoiceSchema,
+    source: observation,
+  }),
   z.strictObject({
     kind: z.literal('anomaly'),
     ...work,
@@ -193,6 +205,7 @@ const commandSchema = z.discriminatedUnion('kind', [
   }),
   z.strictObject({
     kind: z.literal('reserve'),
+    workflowStep: executionSchema.shape.actions.element.shape.workflowStep,
     effect: nextStepSchema.shape.effect,
     evidence: nextStepSchema.shape.evidence.optional(),
     download: downloadCheckSchema.optional(),
@@ -367,6 +380,8 @@ export class ExecutionRecords {
           q.id = randomUUID();
         } else {
           p.approvalId = q.id;
+          const use = currentWorkflow(e);
+          if (use) use.approved = { id: q.id, content: p.content };
           delete e.question;
           queueRecovery(e, task.url, '已确认这版内容，先核对网页再继续。');
         }
@@ -861,6 +876,76 @@ export class ExecutionRecords {
           return c.kind === 'dispatch'
             ? { permitted: false }
             : { created: false };
+        if (c.kind === 'workflow-bind') {
+          if (
+            e.observedAnomalies?.some((a) => a.goalVersion === e.goalVersion) ||
+            currentWorkflow(e) ||
+            e.actions.some(
+              (a) =>
+                a.goalVersion === e.goalVersion && a.status !== 'cancelled',
+            ) ||
+            e.actions.some((a) =>
+              ['reserved', 'dispatched', 'unknown'].includes(a.status),
+            )
+          )
+            throw Error('WORKFLOW_NOT_APPLICABLE');
+          const row = this.db
+            .select()
+            .from(schema.executions)
+            .where(eq(schema.executions.taskId, c.choice.taskId))
+            .get();
+          const source = row ? executionSchema.parse(row.body) : undefined;
+          const workflow = source?.learnedWorkflows?.find(
+            (w) =>
+              w.version === c.choice.version && w.sha256 === c.choice.sha256,
+          );
+          const material = e.materials?.filter(
+            (m) => m.goalVersion === e.goalVersion,
+          );
+          const intent = [
+            e.goal,
+            ...(e.answers ?? [])
+              .filter((a) => a.goalVersion === e.goalVersion)
+              .map((a) => a.answer),
+          ].join('\n');
+          if (
+            !workflow?.replay ||
+            workflow.sha256 !== workflowHash(workflow) ||
+            !source?.publicationChecks?.some(
+              (r) =>
+                r.id === workflow.evidence.resultId && r.status === 'verified',
+            ) ||
+            material?.length !== 1 ||
+            c.source.truncated ||
+            c.source.url !== task.url ||
+            new URL(c.source.url).origin !== workflow.applicability.origin ||
+            new URL(c.source.url).pathname !==
+              new URL(workflow.applicability.entryUrl).pathname ||
+            !(intent.match(/https?:\/\/[^\s<>"'，。；）)]+/gu) ?? []).some(
+              (url) => url === c.source.url,
+            ) ||
+            !intent.includes(c.choice.content) ||
+            !intent.includes(c.choice.destination)
+          )
+            throw Error('WORKFLOW_NOT_APPLICABLE');
+          const use = workflowUseSchema.parse({
+            id: randomUUID(),
+            goalVersion: e.goalVersion,
+            workflow,
+            materialId: material[0]!.id,
+            targetUrl: c.source.url,
+            content: c.choice.content,
+            destination: c.choice.destination,
+            source: pageSourceSchema.strip().parse(c.source),
+          });
+          // 固定完整版本，后续采用变化不影响本次执行，也不带入原任务的确认。
+          (e.workflowUses ??= []).push(use);
+          delete e.publication;
+          e.summary =
+            '已绑定本次素材和目标，按保存的做法执行；发布前仍需本次确认。';
+          this.save(task.id, e);
+          return { created: true };
+        }
         if (c.kind === 'anomaly') {
           if (c.source.url !== task.url) throw Error('EXECUTION_PAGE_CHANGED');
           (e.observedAnomalies ??= []).push({
@@ -1099,6 +1184,37 @@ export class ExecutionRecords {
           return { permitted: true };
         }
         if (c.kind === 'reserve') {
+          const recorded = e.actions.find((a) => a.id === c.id);
+          if (recorded) {
+            if (
+              JSON.stringify(recorded.action) !== JSON.stringify(c.action) ||
+              JSON.stringify(recorded.workflowStep) !==
+                JSON.stringify(c.workflowStep)
+            )
+              throw Error('REQUEST_CONTENT_CONFLICT');
+            return { created: false };
+          }
+          const use = currentWorkflow(e);
+          if (use || c.workflowStep) {
+            const index = e.actions.filter(
+              (a) =>
+                a.goalVersion === e.goalVersion && a.status !== 'cancelled',
+            ).length;
+            const step = use?.workflow.steps[index];
+            if (
+              !use ||
+              !step ||
+              c.workflowStep?.useId !== use.id ||
+              c.workflowStep.index !== index ||
+              c.source.url !== use.targetUrl ||
+              c.source.truncated ||
+              c.effect !== step.effect ||
+              !step.before.evidence.every((s) => c.source.text.includes(s)) ||
+              JSON.stringify(c.action) !==
+                JSON.stringify(reboundAction(use, index))
+            )
+              throw Error('WORKFLOW_NOT_APPLICABLE');
+          }
           if (e.loginOrigin) throw Error('PARTICIPATION_REQUIRED');
           if (e.observedAnomalies?.some((o) => o.goalVersion === e.goalVersion))
             throw Error('EXECUTION_RESULT_UNKNOWN');
@@ -1222,6 +1338,8 @@ export class ExecutionRecords {
           if (c.evidence && !c.evidence.every((v) => c.source.text.includes(v)))
             throw Error('EXECUTION_EVIDENCE_MISSING');
           e.actions.push({
+            ...(c.workflowStep ? { workflowStep: c.workflowStep } : {}),
+            observedLinks: c.source.links ?? [],
             effect,
             preconditions: c.evidence,
             ...(hasMaterial && effect === 'publication' && p && c.download
@@ -1346,6 +1464,7 @@ export class ExecutionRecords {
           a.status = 'confirmed';
           a.evidence = c.evidence;
           a.resultSource = pageSourceSchema.strip().parse(c.source);
+          a.resultLinks = c.source.links ?? [];
           this.save(task.id, e);
           return { resolved: true };
         }

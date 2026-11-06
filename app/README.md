@@ -176,3 +176,11 @@ Node-API 8 原生模块经 node-gyp `13.1.0` 构建，固定 arm64／macOS 14 �
 可靠未派发的旧预留取消，新执行先核对本机固定素材，再按当前网页和原有效确认经统一入口续做。已经可能派发、缺少稳定关联、超时、404、内容或素材不符均不批准重送。中断的上传需要保存的目标／上传关联和下载字节，旧草稿需要对应动作的准备事实；不把草稿当成发布完成。
 
 记录格式 13 接续 12，升级前保留原库，冻结规则和历史核对进入备份及引用检查。当前规则只支持同站匿名公开 HTML／附件和精确永久链接；私有、动态或不兼容结果保持未知。定向检查见 `tests/workspace/publication.test.ts`、`material.test.ts`、`recovery.test.ts`；实际候选用 `pnpm validate:workspace --fixture --candidate=publication-recovery-14-checked --publication-recovery=result`，另有 `reserved` 和 `committed` 两个中断位置。范围、失败与真实待验见[14 检查报告](../docs/testing/evidence/publication-14/REPORT.md)和[验证安排](../docs/testing/publication-14-plan.md)。
+
+## 换输入与冷启动流程复用（15）
+
+正常委托可采用已有流程，先核对本次明确网站、目标、正文／标题、栏目和固定素材，再保存所用完整版本。流程只提供做法，不带来源任务的单次确认；本次仍预览和确认，改稿后采用确认的全文。网页步骤按字段引用重放，使用当前实际链接和步骤条件，继续经过原预留、派发、停止和素材／结果检查。缺条件或链接歧义则暂停，不借用旧值或重发。
+
+当前支持从已核对动作形成的同站、同入口路径、明确编辑目标的线性附件流程。缺少链接元数据的旧候选不补造重放依据；复杂动态导航和网页变化留待重新观察与后续修复。模型用途与网页重放步骤分别保存，冷开从记录读取固定版本。记录格式 14 接续 13，迁移前保留原库，新增采用和模型用途进入备份及引用检查，恢复仍先暂停。
+
+源码入口：`pnpm exec vitest run tests/workspace/workflow-reuse.test.ts`。固定包检查：`pnpm validate:workspace --fixture --candidate=workflow-reuse-15 --workflow-reuse`。候选 61 已通过首次形成候选、换输入和冷开新输入；真实模型、WordPress／Excel 和双活动网页组合待验。证据、原失败与边界见[15 检查报告](../docs/testing/evidence/workflow-15/REPORT.md)。

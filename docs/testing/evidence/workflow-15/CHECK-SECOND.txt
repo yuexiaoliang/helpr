@@ -1,0 +1,51 @@
+$ pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:workspace && pnpm test:validation && pnpm check:legacy
+$ tsc --noEmit
+$ eslint app tests/workspace electron.vite.config.ts drizzle.config.ts vitest.config.ts
+$ prettier --check app tests/workspace *.ts *.json *.mjs pnpm-workspace.yaml
+Checking formatting...
+All matched files use Prettier code style!
+$ vitest run
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/upgrade.test.ts (23 tests | 1 failed) 3182ms
+   × 构造的格式6库迁移失败保留原副本，修复后原任务草稿可读，格式6业务备份仍可检查 89ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/upgrade.test.ts > 构造的格式6库迁移失败保留原副本，修复后原任务草稿可读，格式6业务备份仍可检查
+DrizzleError: Failed to run the query 'ALTER TABLE `model_calls` ADD `usage_kind` text DEFAULT 'legacy-unspecified' NOT NULL;'
+ ❯ BetterSQLiteSession.run node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/session.ts:271:10
+ ❯ SQLiteSyncDialect.migrate node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/dialect.ts:978:15
+ ❯ migrate node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/migrator.ts:10:13
+ ❯ new WorkspaceRecords app/records/workspace.ts:157:7
+    155|         chmodSync(backup, 0o600);
+    156|       }
+    157|       migrate(this.db, { migrationsFolder: migrations });
+       |       ^
+    158|       for (const row of this.db.select().from(schema.executions).all()…
+    159|         const body = row.body;
+ ❯ tests/workspace/upgrade.test.ts:709:7
+
+Caused by: SqliteError: duplicate column name: usage_kind
+ ❯ Database.prepare node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/wrappers.js:5:21
+ ❯ BetterSQLiteSession.prepareQuery node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/drizzle-orm/better-sqlite3/session.js:23:30
+ ❯ BetterSQLiteSession.prepareOneTimeQuery node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/drizzle-orm/sqlite-core/session.js:141:17
+ ❯ BetterSQLiteSession.run node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/drizzle-orm/sqlite-core/session.js:154:19
+ ❯ SQLiteSyncDialect.migrate node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/drizzle-orm/sqlite-core/dialect.js:662:21
+ ❯ migrate node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/drizzle-orm/better-sqlite3/migrator.js:4:14
+ ❯ new WorkspaceRecords app/records/workspace.ts:157:7
+ ❯ tests/workspace/upgrade.test.ts:709:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'SQLITE_ERROR' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 21 passed (22)
+      Tests  1 failed | 201 passed (202)
+   Start at  23:52:51
+   Duration  64.86s (tests 87%, import 10%, environment 3%, transform 1%)
+
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.

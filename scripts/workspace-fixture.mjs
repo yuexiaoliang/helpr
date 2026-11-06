@@ -1,13 +1,16 @@
 import http from 'node:http';
 import { randomUUID } from 'node:crypto';
 import { materialFixture } from './material-fixture.mjs';
+import { workflowFixture } from './workflow-fixture.mjs';
 
-export async function fixture({ participation = false, review = false, material } = {}) {
+export async function fixture({ participation = false, review = false, material, workflow = false } = {}) {
   const receipts = [];
   const handleMaterial = material ? materialFixture(material, receipts) : null;
+  const handleWorkflow = workflow ? workflowFixture(receipts) : null;
   const login = 'fixture-' + randomUUID();
   const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://127.0.0.1');
+    if (handleWorkflow?.(req, res, url)) return;
     if (handleMaterial?.(req, res, url)) return;
     const task = url.searchParams.get('task') || 'A';
     if (

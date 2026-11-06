@@ -24,12 +24,18 @@ import {
 } from '../shared/execution';
 import type { PageObservation } from '../shared/model';
 import { materialFailureMessage } from '../shared/material';
+import { currentWorkflow, replayStep } from '../shared/workflow-replay';
+import type { LearnedWorkflow } from '../shared/workflow';
 
 export type BoundObservation = {
   observation: PageObservation;
   binding: { targetId: string; generation: number };
 };
 export type ProposalInput = {
+  workflows?: Pick<
+    LearnedWorkflow,
+    'taskId' | 'version' | 'sha256' | 'goal' | 'applicability'
+  >[];
   taskId: string;
   runId: string;
   goal: string;
@@ -264,6 +270,7 @@ export class ExecutionService {
           'EXECUTION_RESULT_UNKNOWN',
           'EXECUTION_PAGE_CHANGED',
           'EXECUTION_LIMIT',
+          'WORKFLOW_NOT_APPLICABLE',
           'EXECUTION_EVIDENCE_MISSING',
           'BACKUP_REVIEW_REQUIRED',
           'MATERIAL_NOT_AUTHORIZED',
@@ -1008,7 +1015,7 @@ export class ExecutionService {
       }
       for (let index = 0; index < 20; index++) {
         if (!this.live(job)) return;
-        const observed = await this.abortable(
+        let observed = await this.abortable(
           () => this.ports.observe(job.taskId, job.abort.signal),
           job.abort.signal,
         );
@@ -1021,39 +1028,132 @@ export class ExecutionService {
           current.actions.find((a) =>
             ['reserved', 'dispatched', 'unknown'].includes(a.status),
           ) ?? null;
+        const use = currentWorkflow(current);
+        const workflows = this.ports
+          .current()
+          .tasks.flatMap((t) => t.execution?.learnedWorkflows ?? [])
+          .filter(
+            (w) =>
+              w.replay &&
+              w.applicability.origin ===
+                new URL(observed.observation.url).origin,
+          )
+          .slice(-10)
+          .map(({ taskId, version, sha256, goal, applicability }) => ({
+            taskId,
+            version,
+            sha256,
+            goal,
+            applicability,
+          }));
+        let replay: NextStep | undefined;
+        if (use) {
+          const deadline = Date.now() + 8000;
+          for (let attempt = 0; ; attempt++) {
+            try {
+              replay = replayStep(current, observed.observation);
+              break;
+            } catch (error) {
+              if (
+                !(error instanceof Error) ||
+                error.message !== 'WORKFLOW_CONDITION_CHANGED' ||
+                attempt >= 7 ||
+                Date.now() >= deadline
+              )
+                throw error;
+              await this.abortable(
+                () => new Promise<void>((resolve) => setTimeout(resolve, 250)),
+                job.abort.signal,
+              );
+              if (!this.live(job)) return;
+              observed = await this.abortable(
+                () => this.ports.observe(job.taskId, job.abort.signal),
+                job.abort.signal,
+              );
+              if (!this.live(job)) return;
+            }
+          }
+        }
         const step = nextStepSchema.parse(
-          await this.abortable(
-            () =>
-              this.ports.propose({
-                taskId: job.taskId,
-                runId: job.runId,
-                goal: current.goal,
-                observation: observed.observation,
-                pending,
-                history: current.actions,
-                publication: current.publication,
-                materials: current.materials?.filter(
-                  (m) => m.goalVersion === current.goalVersion,
-                ),
-                preparation: current.preparation?.filter(
-                  (f) => f.goalVersion === current.goalVersion,
-                ),
-                loginOrigin: current.loginOrigin,
-                clarifications: current.answers
-                  ?.filter((a) => a.goalVersion === current.goalVersion)
-                  .map((a) => ({ question: a.text, answer: a.answer })),
-                signal: job.abort.signal,
-                permit: (send) =>
-                  this.ports.input
-                    ? this.ports.input.permit(job.taskId, job.inputEpoch, send)
-                    : send(),
-              }),
-            job.abort.signal,
-          ),
+          use
+            ? replay
+            : await this.abortable(
+                () =>
+                  this.ports.propose({
+                    taskId: job.taskId,
+                    runId: job.runId,
+                    goal: current.goal,
+                    observation: observed.observation,
+                    pending,
+                    history: current.actions,
+                    publication: current.publication,
+                    materials: current.materials?.filter(
+                      (m) => m.goalVersion === current.goalVersion,
+                    ),
+                    preparation: current.preparation?.filter(
+                      (f) => f.goalVersion === current.goalVersion,
+                    ),
+                    workflows: current.actions.some(
+                      (a) => a.goalVersion === current.goalVersion,
+                    )
+                      ? []
+                      : workflows,
+                    loginOrigin: current.loginOrigin,
+                    clarifications: current.answers
+                      ?.filter((a) => a.goalVersion === current.goalVersion)
+                      .map((a) => ({ question: a.text, answer: a.answer })),
+                    signal: job.abort.signal,
+                    permit: (send) =>
+                      this.ports.input
+                        ? this.ports.input.permit(
+                            job.taskId,
+                            job.inputEpoch,
+                            send,
+                          )
+                        : send(),
+                  }),
+                job.abort.signal,
+              ),
         );
         if (!this.live(job)) return;
         if (!step.evidence.every((v) => observed.observation.text.includes(v)))
           throw Error('EXECUTION_EVIDENCE_MISSING');
+        if (
+          step.decision === 'reuse' &&
+          !step.anomalies?.length &&
+          !step.extraResults?.length
+        ) {
+          if (!step.workflow || pending || use)
+            throw Error('WORKFLOW_NOT_APPLICABLE');
+          if (
+            !current.materials?.some(
+              (m) => m.goalVersion === current.goalVersion,
+            )
+          ) {
+            if (!step.material || !this.ports.material)
+              throw Error('WORKFLOW_NOT_APPLICABLE');
+            const selected = receipt.parse(
+              await this.ports.material({
+                kind: 'select',
+                taskId: job.taskId,
+                runId: job.runId,
+                selection: step.material,
+              }),
+            );
+            if (selected.state.revision >= this.ports.current().revision)
+              this.publish(selected.state);
+            if (!this.live(job) || !selected.created) return;
+          }
+          await this.record({
+            kind: 'workflow-bind',
+            taskId: job.taskId,
+            runId: job.runId,
+            choice: step.workflow,
+            source: observed.observation,
+          });
+          if (!this.live(job)) return;
+          continue;
+        }
         // 取得稳定目标或已上传依据即保存；后面的失败不能抹掉已有事实。
         if (step.preparation?.length) {
           await this.record({
@@ -1352,6 +1452,18 @@ export class ExecutionService {
         const actionId = randomUUID();
         const reserved = await this.record({
           kind: 'reserve',
+          ...(use
+            ? {
+                workflowStep: {
+                  useId: use.id,
+                  index: current.actions.filter(
+                    (a) =>
+                      a.goalVersion === current.goalVersion &&
+                      a.status !== 'cancelled',
+                  ).length,
+                },
+              }
+            : {}),
           effect: step.effect,
           recovery: step.recovery,
           evidence: step.evidence,
@@ -1416,7 +1528,9 @@ export class ExecutionService {
             ? '网页已变化，先核对现有结果。'
             : code === 'MATERIAL_CORRUPT'
               ? '本机固定素材缺失或损坏，已保留原记录并暂停；不会重读来源替换或继续提交。'
-              : '执行暂时无法继续，已暂停后续操作。已有结果与记录保留。',
+              : code.startsWith('WORKFLOW_')
+                ? '已保存的做法与本次参数或网页条件不匹配，已暂停并保留记录，需要重新核对；不会套用旧值或重发。'
+                : '执行暂时无法继续，已暂停后续操作。已有结果与记录保留。',
         ).catch(() => {});
       }
     }

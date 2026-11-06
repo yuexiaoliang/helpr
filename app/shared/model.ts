@@ -54,8 +54,23 @@ export const pageSourceSchema = z.strictObject({
   truncated: z.boolean(),
 });
 export type PageSource = z.infer<typeof pageSourceSchema>;
-export type PageObservation = PageSource & { text: string };
+export const observedLinkSchema = z.strictObject({
+  name: z.string().min(1).max(1000),
+  url: z.url().max(4096),
+});
+export type PageObservation = PageSource & {
+  text: string;
+  links?: z.infer<typeof observedLinkSchema>[];
+};
+export const modelUsageKindSchema = z.enum([
+  'legacy-unspecified',
+  'page-question',
+  'intent-and-inputs',
+  'web-planning',
+  'material-content',
+]);
 export const modelCallSchema = z.strictObject({
+  usageKind: modelUsageKindSchema.optional(),
   id: z.string(),
   taskId: z.string(),
   model: z.string(),
