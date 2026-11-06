@@ -15,7 +15,7 @@ const eventSchema = z.object({
   params: z.record(z.string(), z.unknown()).optional(),
 });
 const pageMethods = new Set(
-  'Page.enable Page.getFrameTree Page.setLifecycleEventsEnabled Page.addScriptToEvaluateOnNewDocument Page.removeScriptToEvaluateOnNewDocument Page.createIsolatedWorld Page.getLayoutMetrics Page.handleJavaScriptDialog Page.setInterceptFileChooserDialog Page.bringToFront Runtime.enable Runtime.disable Runtime.evaluate Runtime.callFunctionOn Runtime.getProperties Runtime.releaseObject Runtime.releaseObjectGroup Runtime.runIfWaitingForDebugger Runtime.addBinding Runtime.removeBinding DOM.getDocument DOM.describeNode DOM.resolveNode DOM.getContentQuads DOM.getBoxModel DOM.scrollIntoViewIfNeeded DOM.querySelector DOM.querySelectorAll Network.enable Log.enable Inspector.enable Input.dispatchMouseEvent Input.dispatchKeyEvent Input.insertText'.split(
+  'Page.enable Page.getFrameTree Page.setLifecycleEventsEnabled Page.addScriptToEvaluateOnNewDocument Page.removeScriptToEvaluateOnNewDocument Page.createIsolatedWorld Page.getLayoutMetrics Page.handleJavaScriptDialog Page.setInterceptFileChooserDialog Page.bringToFront Runtime.enable Runtime.disable Runtime.evaluate Runtime.callFunctionOn Runtime.getProperties Runtime.releaseObject Runtime.releaseObjectGroup Runtime.runIfWaitingForDebugger Runtime.addBinding Runtime.removeBinding DOM.getDocument DOM.describeNode DOM.resolveNode DOM.getContentQuads DOM.getBoxModel DOM.scrollIntoViewIfNeeded DOM.querySelector DOM.querySelectorAll DOM.getFrameOwner Network.enable Log.enable Inspector.enable Input.dispatchMouseEvent Input.dispatchKeyEvent Input.insertText'.split(
     ' ',
   ),
 );
@@ -253,7 +253,7 @@ export class ExecutionProtocol {
       if (c.ids.has(id) || c.ids.size >= 4000)
         throw Error('PROTOCOL_REQUEST_REPEATED');
       c.ids.add(id);
-      if (JSON.stringify(input).length > 4 * 1024 * 1024)
+      if (JSON.stringify(input).length > 16 * 1024 * 1024)
         throw Error('PROTOCOL_PACKET_LIMIT');
       const root = !sessionId || c.virtual.has(sessionId),
         s = sessionId ? this.sessions.get(sessionId) : undefined;
@@ -351,6 +351,11 @@ export class ExecutionProtocol {
         if (!this.live(c)) throw Error('EXECUTION_STOPPED');
         result = await this.send(c, method, p, sessionId);
         this.learn(s, result);
+        if (
+          method === 'DOM.getFrameOwner' &&
+          typeof result.backendNodeId === 'number'
+        )
+          s.nodes.add(result.backendNodeId);
       }
       if (!this.live(c)) throw Error('EXECUTION_STOPPED');
       deliver({ result });

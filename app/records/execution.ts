@@ -21,6 +21,10 @@ import {
 } from '../shared/execution';
 import * as schema from './schema';
 import { pageSourceSchema } from '../shared/model';
+import {
+  materialVersionSchema,
+  preparationProposalSchema,
+} from '../shared/material';
 
 const activeTransitions = {
   DISPATCH: { target: 'running', guard: 'automatic' },
@@ -93,6 +97,17 @@ const intentSchema = executionIntentSchema.extend({
   controlSequence: z.number().int().positive().optional(),
 });
 const commandSchema = z.discriminatedUnion('kind', [
+  z.strictObject({
+    kind: z.literal('material-selected'),
+    ...work,
+    material: materialVersionSchema,
+  }),
+  z.strictObject({
+    kind: z.literal('preparation-observed'),
+    ...work,
+    source: observation,
+    facts: z.array(preparationProposalSchema).min(1).max(5),
+  }),
   z.strictObject({
     kind: z.literal('backup-pause'),
     taskId: z.string(),
@@ -174,6 +189,7 @@ const commandSchema = z.discriminatedUnion('kind', [
     kind: z.literal('finish'),
     ...work,
     phase: z.enum(['complete', 'unknown', 'paused', 'failed']),
+    prepared: z.boolean().optional(),
     summary: z.string().max(1500),
     source: observation.optional(),
     evidence: z.array(z.string()).max(10).optional(),
@@ -404,11 +420,25 @@ export class ExecutionRecords {
         const unknown = e.actions.some((a) =>
           ['reserved', 'dispatched', 'unknown'].includes(a.status),
         );
+        const goalVersion = e.goalVersion;
+        const materials =
+          e.materials?.filter((m) => m.goalVersion === goalVersion) ?? [];
+        const facts =
+          e.preparation?.filter((f) => f.goalVersion === goalVersion) ?? [];
+        const prepared =
+          c.step.decision === 'prepared' &&
+          materials.length > 0 &&
+          facts.some((f) => f.kind === 'target') &&
+          facts.some((f) => f.kind === 'draft') &&
+          materials.every((m) =>
+            facts.some((f) => f.kind === 'upload' && f.materialId === m.id),
+          );
         e.restoreReview =
           unknown ||
           e.loginOrigin ||
           (e.publication && !e.publication.approvalId) ||
-          !['complete', 'act'].includes(c.step.decision)
+          (materials.length > 0 && c.step.decision === 'complete') ||
+          (!prepared && !['complete', 'act'].includes(c.step.decision))
             ? 'unknown'
             : c.step.decision === 'complete'
               ? 'complete'
@@ -732,6 +762,118 @@ export class ExecutionRecords {
           return c.kind === 'dispatch'
             ? { permitted: false }
             : { created: false };
+        if (c.kind === 'material-selected') {
+          if (
+            c.material.goalVersion !== e.goalVersion ||
+            e.materials?.some((m) => m.goalVersion === e.goalVersion)
+          )
+            throw Error('MATERIAL_ALREADY_FIXED');
+          if (
+            e.actions.some((a) =>
+              ['reserved', 'dispatched', 'unknown'].includes(a.status),
+            )
+          )
+            throw Error('EXECUTION_RESULT_UNKNOWN');
+          (e.materials ??= []).push(c.material);
+          // 改变素材后不能继承旧的内容确认。
+          delete e.publication;
+          this.db
+            .insert(schema.messages)
+            .values({
+              taskId: task.id,
+              role: 'system',
+              text: `已固定素材：${c.material.name}（${c.material.bytes} 字节）。来源：${c.material.source}。取材依据：${c.material.selection.basis}。后续上传使用这一版本。`,
+            })
+            .run();
+          this.save(task.id, e);
+          return { created: true };
+        }
+        if (c.kind === 'preparation-observed') {
+          if (c.source.url !== task.url) throw Error('EXECUTION_PAGE_CHANGED');
+          const facts = (e.preparation ??= []);
+          const actions = e.actions.filter(
+            (a) =>
+              a.goalVersion === e.goalVersion &&
+              ['dispatched', 'unknown', 'confirmed'].includes(a.status),
+          );
+          for (const fact of c.facts) {
+            if (
+              !fact.evidence.every((v) => c.source.text.includes(v)) ||
+              (fact.url !== c.source.url && !c.source.text.includes(fact.url))
+            )
+              throw Error('EXECUTION_EVIDENCE_MISSING');
+            const target = facts.find(
+              (f) => f.goalVersion === e.goalVersion && f.kind === 'target',
+            );
+            if (new URL(fact.url).origin !== new URL(c.source.url).origin)
+              throw Error('PREPARATION_TARGET_CHANGED');
+            let action = actions.at(-1);
+            if (fact.kind === 'target') {
+              const explicit = [
+                e.goal,
+                ...(e.answers ?? [])
+                  .filter((a) => a.goalVersion === e.goalVersion)
+                  .map((a) => a.answer),
+              ].some((text) =>
+                (text.match(/https?:\/\/[^\s<>"'，。；）)]+/gu) ?? []).some(
+                  (url) => url === fact.url,
+                ),
+              );
+              if (
+                fact.materialId ||
+                (target && target.url !== fact.url) ||
+                (!target &&
+                  !explicit &&
+                  (!action ||
+                    action.source.url === fact.url ||
+                    action.observedUrls?.includes(fact.url)))
+              )
+                throw Error('PREPARATION_TARGET_CHANGED');
+            } else if (fact.kind === 'upload') {
+              const material = e.materials?.find(
+                (m) =>
+                  m.id === fact.materialId && m.goalVersion === e.goalVersion,
+              );
+              action = actions.find(
+                (a) =>
+                  a.action.kind === 'upload' &&
+                  a.action.materialId === material?.id,
+              );
+              if (
+                !material ||
+                !action ||
+                action.observedUrls?.includes(fact.url) ||
+                new URL(action.source.url).origin !== new URL(fact.url).origin
+              )
+                throw Error('MATERIAL_NOT_AUTHORIZED');
+            } else if (
+              !target ||
+              fact.url !== target.url ||
+              fact.materialId ||
+              !action
+            )
+              throw Error('PREPARATION_TARGET_CHANGED');
+            if (
+              !facts.some(
+                (f) =>
+                  f.goalVersion === e.goalVersion &&
+                  f.kind === fact.kind &&
+                  f.url === fact.url &&
+                  f.materialId === fact.materialId,
+              )
+            )
+              facts.push({
+                ...fact,
+                id: randomUUID(),
+                goalVersion: e.goalVersion,
+                actionId: action?.id ?? null,
+                source: pageSourceSchema.strip().parse(c.source),
+                verification: 'page-observed',
+              });
+          }
+          this.save(task.id, e);
+          return { created: true };
+        }
         if (c.kind === 'verified-login') {
           if (
             !e.loginOrigin ||
@@ -809,6 +951,40 @@ export class ExecutionRecords {
         }
         if (c.kind === 'reserve') {
           if (e.loginOrigin) throw Error('PARTICIPATION_REQUIRED');
+          if (c.action.kind === 'upload') {
+            const id = c.action.materialId;
+            if (
+              !e.materials?.some(
+                (m) => m.id === id && m.goalVersion === e.goalVersion,
+              )
+            )
+              throw Error('MATERIAL_NOT_AUTHORIZED');
+            if (
+              e.actions.some(
+                (a) =>
+                  a.action.kind === 'upload' &&
+                  a.action.materialId === id &&
+                  a.status !== 'cancelled',
+              )
+            )
+              throw Error('MATERIAL_ALREADY_UPLOADED');
+            const frame = c.action.target.frameUrl ?? c.source.url;
+            if (
+              !c.source.text.includes(
+                `[file ${c.action.target.fileIndex}] ${frame}`,
+              )
+            )
+              throw Error('EXECUTION_EVIDENCE_MISSING');
+          }
+          const preparationTarget = e.preparation?.find(
+            (f) => f.kind === 'target' && f.goalVersion === e.goalVersion,
+          );
+          if (
+            preparationTarget &&
+            new URL(c.source.url).origin !==
+              new URL(preparationTarget.url).origin
+          )
+            throw Error('PREPARATION_TARGET_CHANGED');
           const p = e.publication;
           if (p || c.publication || c.approvalId) {
             if (
@@ -881,6 +1057,16 @@ export class ExecutionRecords {
               ? { publicationApprovalId: p.approvalId }
               : {}),
             source: pageSourceSchema.strip().parse(c.source),
+            observedUrls: [
+              ...new Set([
+                c.source.url,
+                ...[
+                  ...c.source.text.matchAll(
+                    /^\[link-url\] (https?:\/\/\S+)$/gm,
+                  ),
+                ].map((m) => m[1]!),
+              ]),
+            ].slice(0, 300),
             binding: c.binding,
             evidence: [],
             returned: false,
@@ -903,7 +1089,40 @@ export class ExecutionRecords {
           this.save(task.id, e);
           return { resolved: true };
         }
+        if (c.prepared) {
+          const materials =
+            e.materials?.filter((m) => m.goalVersion === e.goalVersion) ?? [];
+          const facts =
+            e.preparation?.filter((f) => f.goalVersion === e.goalVersion) ?? [];
+          if (
+            c.phase !== 'paused' ||
+            !materials.length ||
+            !facts.some((f) => f.kind === 'target') ||
+            !facts.some((f) => f.kind === 'draft') ||
+            !materials.every((m) =>
+              facts.some((f) => f.kind === 'upload' && f.materialId === m.id),
+            ) ||
+            e.actions.some((a) =>
+              ['reserved', 'dispatched', 'unknown'].includes(a.status),
+            )
+          )
+            throw Error('PREPARATION_INCOMPLETE');
+          if (
+            !c.source ||
+            c.source.url !== task.url ||
+            !c.evidence?.length ||
+            !c.evidence.every((v) => c.source!.text.includes(v))
+          )
+            throw Error('EXECUTION_EVIDENCE_MISSING');
+          e.prepared = {
+            goalVersion: e.goalVersion,
+            source: pageSourceSchema.strip().parse(c.source),
+            evidence: c.evidence,
+          };
+        }
         if (c.phase === 'complete') {
+          if (e.materials?.some((m) => m.goalVersion === e.goalVersion))
+            throw Error('PREPARATION_ONLY');
           if (e.loginOrigin || (e.publication && !e.publication.approvalId))
             throw Error('PARTICIPATION_REQUIRED');
           if (

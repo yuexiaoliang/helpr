@@ -1,0 +1,137 @@
+{
+  "sourceProfile": "/private/tmp/helpr-workspace-validation-501/run-cANOaT",
+  "phase": "paused",
+  "actions": [
+    {
+      "id": "8d768d41-c4d1-49d9-9bf5-cb76479cdf1d",
+      "runId": "006baf5d-b9fd-4f47-8b6b-41cda9efb50b",
+      "goalVersion": 1,
+      "status": "confirmed",
+      "summary": "准备测试草稿",
+      "action": {
+        "kind": "upload",
+        "materialId": "e86853dc-cde3-4b27-ab97-36bb32e45f02",
+        "target": {
+          "fileIndex": 0,
+          "frameUrl": "http://127.0.0.1:49819/form"
+        }
+      },
+      "source": {
+        "url": "http://127.0.0.1:49819/page?task=A",
+        "title": "素材准备",
+        "fingerprint": "f7673b5b156f5c2a39ce7d0f594c3f6aa9d07713bf90afeae53cc9a22196f77a",
+        "generation": 2,
+        "observedAt": 1793972950537,
+        "truncated": false
+      },
+      "observedUrls": [
+        "http://127.0.0.1:49819/page?task=A"
+      ],
+      "resultSource": {
+        "url": "http://127.0.0.1:49819/page?task=A",
+        "title": "素材准备",
+        "fingerprint": "c847f4d5968a38447dd3cee22836efb320a23d975e34668b17e4101925dbc33b",
+        "generation": 2,
+        "observedAt": 1793972950957,
+        "truncated": false
+      },
+      "binding": {
+        "targetId": "631AB0F40DEABD11C157315168534E84",
+        "generation": 2
+      },
+      "evidence": [
+        "附件已上传"
+      ],
+      "returned": true,
+      "dispatchState": "possible"
+    },
+    {
+      "id": "7ae4511b-4362-435f-83f7-fbd75f52ef81",
+      "runId": "006baf5d-b9fd-4f47-8b6b-41cda9efb50b",
+      "goalVersion": 1,
+      "status": "unknown",
+      "summary": "准备测试草稿",
+      "action": {
+        "kind": "click",
+        "target": {
+          "role": "button",
+          "name": "保存草稿",
+          "exact": true,
+          "frameUrl": "http://127.0.0.1:49819/form"
+        }
+      },
+      "source": {
+        "url": "http://127.0.0.1:49819/page?task=A",
+        "title": "素材准备",
+        "fingerprint": "c847f4d5968a38447dd3cee22836efb320a23d975e34668b17e4101925dbc33b",
+        "generation": 2,
+        "observedAt": 1793972950957,
+        "truncated": false
+      },
+      "observedUrls": [
+        "http://127.0.0.1:49819/page?task=A",
+        "http://127.0.0.1:49819/files/7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334"
+      ],
+      "binding": {
+        "targetId": "631AB0F40DEABD11C157315168534E84",
+        "generation": 2
+      },
+      "evidence": [],
+      "returned": false,
+      "dispatchState": "possible"
+    }
+  ],
+  "preparation": [
+    {
+      "kind": "target",
+      "url": "http://127.0.0.1:49819/page?task=A",
+      "materialId": null,
+      "evidence": [
+        "素材准备"
+      ],
+      "id": "cb8b89b4-b6a9-4a9e-805f-088bd9b50522",
+      "goalVersion": 1,
+      "actionId": "8d768d41-c4d1-49d9-9bf5-cb76479cdf1d",
+      "source": {
+        "url": "http://127.0.0.1:49819/page?task=A",
+        "title": "素材准备",
+        "fingerprint": "c847f4d5968a38447dd3cee22836efb320a23d975e34668b17e4101925dbc33b",
+        "generation": 2,
+        "observedAt": 1793972950957,
+        "truncated": false
+      },
+      "verification": "page-observed"
+    },
+    {
+      "kind": "upload",
+      "url": "http://127.0.0.1:49819/files/7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334",
+      "materialId": "e86853dc-cde3-4b27-ab97-36bb32e45f02",
+      "evidence": [
+        "附件已上传"
+      ],
+      "id": "1fdf1495-6275-4f62-ae9f-b5050a551be8",
+      "goalVersion": 1,
+      "actionId": "8d768d41-c4d1-49d9-9bf5-cb76479cdf1d",
+      "source": {
+        "url": "http://127.0.0.1:49819/page?task=A",
+        "title": "素材准备",
+        "fingerprint": "c847f4d5968a38447dd3cee22836efb320a23d975e34668b17e4101925dbc33b",
+        "generation": 2,
+        "observedAt": 1793972950957,
+        "truncated": false
+      },
+      "verification": "page-observed"
+    }
+  ],
+  "failures": [
+    {
+      "level": 30,
+      "time": "2026-11-06T13:49:18.341Z",
+      "role": "controller",
+      "pid": 55183,
+      "event": "failure",
+      "taskId": "8f251c9a-ec59-4511-8685-94472de450ff",
+      "code": "EXECUTION_ACT_TIMEOUT"
+    }
+  ]
+}

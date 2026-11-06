@@ -24,6 +24,7 @@ export function pageObservation(
   frame: unknown,
   accessibility: unknown,
   generation: number,
+  supplements = '',
 ): PageObservation {
   const url = websiteURL(
     z
@@ -69,8 +70,8 @@ export function pageObservation(
       : '';
     if (line && line !== lines.at(-1)) lines.push(line);
   }
-  const full = lines.join('\n'),
-    text = full.slice(0, 16000);
+  const full = lines.join('\n') + (supplements ? '\n' + supplements : ''),
+    text = full.slice(0, 30000);
   return {
     url,
     title,

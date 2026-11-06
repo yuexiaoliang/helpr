@@ -673,6 +673,33 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
                 ))}
               </ol>
               {!task.execution.actions.length && <p>尚未发送网页操作。</p>}
+              {task.execution.materials
+                ?.filter((m) => m.goalVersion === task.execution?.goalVersion)
+                .map((m) => (
+                  <p key={m.id}>
+                    已固定素材：{m.name}（{m.bytes} 字节）
+                    <small>来源：{m.source}</small>
+                    <small>取材依据：{m.selection.basis}</small>
+                  </p>
+                ))}
+              {task.execution.preparation
+                ?.filter((f) => f.goalVersion === task.execution?.goalVersion)
+                .map((f) => (
+                  <p key={f.id}>
+                    {
+                      {
+                        target: '编辑目标',
+                        upload: '附件位置',
+                        draft: '已观察的草稿',
+                      }[f.kind]
+                    }
+                    ：{f.url}
+                    <small>{f.evidence.join('；')}</small>
+                    {f.kind === 'upload' && (
+                      <small>页面已显示附件；下载内容尚未核对。</small>
+                    )}
+                  </p>
+                ))}
               {task.execution.result?.goalVersion ===
                 task.execution.goalVersion && (
                 <p>{task.execution.result.evidence.join('；')}</p>

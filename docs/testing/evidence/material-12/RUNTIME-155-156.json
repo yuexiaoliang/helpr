@@ -1,0 +1,309 @@
+{
+  "app": "/Users/yuexiaoliang/projects/helpr/dist/candidates/material-12-diagnostic/mac-arm64/helpr.app",
+  "storage": "fixture",
+  "pendingAcceptance": [
+    "系统钥匙串与跨重启登录",
+    "原生窗口与真人输入"
+  ],
+  "started": "2026-11-06T13:53:41.471Z",
+  "checks": [
+    {
+      "name": "iframe 实际上传使用固定字节，源文件后续替换未改变输入",
+      "passed": true
+    },
+    {
+      "name": "独立下载与原选素材逐字节相同，草稿只保存一次",
+      "passed": true
+    },
+    {
+      "name": "冷重开保留固定素材、草稿和待继续状态",
+      "passed": true
+    },
+    {
+      "name": "明确继续核对原草稿，未再次上传或新建",
+      "passed": true
+    }
+  ],
+  "samples": [
+    {
+      "kind": "startup",
+      "number": 155,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:50042",
+        "persistent": false
+      },
+      "ms": 4598,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    },
+    {
+      "kind": "startup",
+      "number": 156,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:50042",
+        "persistent": false
+      },
+      "ms": 872,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    }
+  ],
+  "processes": [
+    {
+      "number": 155,
+      "controller": 57118,
+      "seen": {
+        "57118": {
+          "parent": 57103,
+          "group": 57118
+        },
+        "57131": {
+          "parent": 57118,
+          "group": 57090
+        },
+        "57132": {
+          "parent": 57118,
+          "group": 57090
+        },
+        "57134": {
+          "parent": 1,
+          "group": 57134
+        },
+        "57135": {
+          "parent": 57118,
+          "group": 57118
+        },
+        "57136": {
+          "parent": 57134,
+          "group": 57136
+        },
+        "57142": {
+          "parent": 57136,
+          "group": 57136
+        },
+        "57143": {
+          "parent": 57136,
+          "group": 57136
+        },
+        "57144": {
+          "parent": 57136,
+          "group": 57136
+        },
+        "57145": {
+          "parent": 57136,
+          "group": 57136
+        },
+        "57146": {
+          "parent": 57136,
+          "group": 57136
+        },
+        "57148": {
+          "parent": 57136,
+          "group": 57136
+        },
+        "57149": {
+          "parent": 57136,
+          "group": 57136
+        }
+      },
+      "groups": [
+        57118,
+        57134,
+        57136
+      ],
+      "remaining": [],
+      "exit": {
+        "code": 0,
+        "signal": null
+      }
+    },
+    {
+      "number": 156,
+      "controller": 57159,
+      "seen": {
+        "57159": {
+          "parent": 57103,
+          "group": 57159
+        },
+        "57160": {
+          "parent": 57159,
+          "group": 57090
+        },
+        "57161": {
+          "parent": 57159,
+          "group": 57090
+        },
+        "57162": {
+          "parent": 1,
+          "group": 57162
+        },
+        "57163": {
+          "parent": 57159,
+          "group": 57159
+        },
+        "57164": {
+          "parent": 57162,
+          "group": 57164
+        },
+        "57169": {
+          "parent": 57164,
+          "group": 57164
+        },
+        "57170": {
+          "parent": 57164,
+          "group": 57164
+        },
+        "57171": {
+          "parent": 57164,
+          "group": 57164
+        },
+        "57172": {
+          "parent": 57164,
+          "group": 57164
+        },
+        "57173": {
+          "parent": 57164,
+          "group": 57164
+        },
+        "57175": {
+          "parent": 57164,
+          "group": 57164
+        },
+        "57176": {
+          "parent": 57164,
+          "group": 57164
+        }
+      },
+      "groups": [
+        57159,
+        57162,
+        57164
+      ],
+      "remaining": [],
+      "exit": {
+        "code": 0,
+        "signal": null
+      }
+    }
+  ],
+  "fixture": [
+    {
+      "kind": "page"
+    },
+    {
+      "kind": "planning",
+      "decision": "material"
+    },
+    {
+      "kind": "planning",
+      "decision": "act"
+    },
+    {
+      "kind": "upload",
+      "sha256": "7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334",
+      "bytes": 8
+    },
+    {
+      "kind": "planning",
+      "decision": "act"
+    },
+    {
+      "kind": "draft",
+      "sha256": "7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334"
+    },
+    {
+      "kind": "planning",
+      "decision": "prepared"
+    },
+    {
+      "kind": "download",
+      "sha256": "7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334"
+    },
+    {
+      "kind": "page"
+    },
+    {
+      "kind": "planning",
+      "decision": "prepared"
+    }
+  ],
+  "material": {
+    "sha256": "7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334",
+    "bytes": 8,
+    "preparation": [
+      {
+        "kind": "target",
+        "url": "http://127.0.0.1:50042/page?task=A",
+        "materialId": null,
+        "evidence": [
+          "素材准备"
+        ],
+        "id": "4f290d2a-009d-488d-b6d1-88b205e34529",
+        "goalVersion": 1,
+        "actionId": "acb69310-1385-4176-bbee-bcc39c2debc8",
+        "source": {
+          "url": "http://127.0.0.1:50042/page?task=A",
+          "title": "素材准备",
+          "fingerprint": "284f7ea8322006df7194d7be19120e9a63ae27d4696029f73e4dc888d64e4e23",
+          "generation": 2,
+          "observedAt": 1793973226966,
+          "truncated": false
+        },
+        "verification": "page-observed"
+      },
+      {
+        "kind": "upload",
+        "url": "http://127.0.0.1:50042/files/7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334",
+        "materialId": "68b38d03-5308-447f-9da7-4c9c74d8dda0",
+        "evidence": [
+          "附件已上传"
+        ],
+        "id": "8d584d27-ff6f-43a1-8748-b5eb87239420",
+        "goalVersion": 1,
+        "actionId": "acb69310-1385-4176-bbee-bcc39c2debc8",
+        "source": {
+          "url": "http://127.0.0.1:50042/page?task=A",
+          "title": "素材准备",
+          "fingerprint": "284f7ea8322006df7194d7be19120e9a63ae27d4696029f73e4dc888d64e4e23",
+          "generation": 2,
+          "observedAt": 1793973226966,
+          "truncated": false
+        },
+        "verification": "page-observed"
+      },
+      {
+        "kind": "draft",
+        "url": "http://127.0.0.1:50042/page?task=A",
+        "materialId": null,
+        "evidence": [
+          "草稿已保存"
+        ],
+        "id": "21594663-b7c3-4d53-929c-62bec5c61c70",
+        "goalVersion": 1,
+        "actionId": "99c9fbe2-676d-4949-bf5c-4536b94c3c18",
+        "source": {
+          "url": "http://127.0.0.1:50042/page?task=A",
+          "title": "素材准备",
+          "fingerprint": "22ad5efa23aef2603cd032a7f819f1488b0dc1ae2f36a488d54902011d2b8265",
+          "generation": 2,
+          "observedAt": 1793973227409,
+          "truncated": false
+        },
+        "verification": "page-observed"
+      }
+    ],
+    "modelCalls": 5,
+    "realModelCalls": 0,
+    "remoteWrites": 0
+  },
+  "automatedPassed": true,
+  "passed": true,
+  "remaining": [],
+  "ms": 8665
+}

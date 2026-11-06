@@ -23,6 +23,7 @@ const { values: options } = parseArgs({
     participation: flag,
     'participation-review': flag,
     'task-groups': flag,
+    material: flag,
     interactive: flag,
     fault: flag,
     'blocked-host': flag,
@@ -65,10 +66,10 @@ assert(
   !options['input-preparation'] || (!options.interactive && !options.fault),
   'INPUT_PREPARATION_IS_A_SINGLE_CHECK',
 );
-if (options.participation || options['participation-review'] || options['task-groups']) {
+if (options.participation || options['participation-review'] || options['task-groups'] || options.material) {
   assert(
     options.fixture && !systemStorage && !options.interactive && !options.fault &&
-      !options['input-preparation'] && [options.participation, options['participation-review'], options['task-groups']].filter(Boolean).length === 1,
+      !options['input-preparation'] && [options.participation, options['participation-review'], options['task-groups'], options.material].filter(Boolean).length === 1,
     'PARTICIPATION_FIXTURE_REQUIRED',
   );
 }
@@ -212,9 +213,13 @@ fs.mkdirSync(profileRoot, { recursive: true, mode: 0o700 });
 if (fs.realpathSync(profileRoot) !== profileRoot)
   throw Error('VALIDATION_PROFILE_REQUIRED');
 const data = fs.mkdtempSync(path.join(profileRoot, 'run-'));
+const materialSource = path.join(data, '原始素材.bin');
+const materialBytes = Buffer.from([0, 1, 99, 128, 255, 2, 3, 4]);
+if (options.material) fs.writeFileSync(materialSource, materialBytes);
 const website = await fixture({
   participation: options.participation || options['task-groups'],
   review: options['participation-review'],
+  material: options.material ? { source: materialSource } : undefined,
 });
 if (!systemStorage) {
   // 版本检查也留在回环地址。此 HTTP 夹具对 HTTPS 版本查询呈现离线状态。
@@ -646,8 +651,61 @@ async function verifyTaskGroups(client) {
   );
   await reopened.quit();
 }
+async function verifyMaterial(client) {
+  const taskId = (await client.request(command('create', { goal: `使用“${materialSource}”在 ${website.base}/page?task=A 上传并保存草稿，不发布。` }))).taskId;
+  await waitFor(async () => (await client.request({ kind: 'snapshot' })).tasks[0]?.phase === 'manual');
+  await client.request(command('model-save', { protocol: 'chat-completions', expectedVersion: 0, endpoint: website.base + '/v1', model: 'fixture', apiKey: 'local-fixture-not-a-secret' }));
+  await client.request(command('execution-intent', { taskId, intent: 'start' }));
+  const ready = async (current, afterObservation = 0) => waitFor(async () => {
+    const e = (await current.request({ kind: 'snapshot' })).tasks.find(t => t.id === taskId).execution;
+    if (e?.phase === 'paused' && e.prepared?.source.observedAt > afterObservation && e.preparation?.some(f => f.kind === 'draft')) return e;
+    if (e && ['unknown', 'failed', 'paused'].includes(e.phase)) throw Error(e.summary);
+    return false;
+  }, 40000);
+  const prepared = await ready(client);
+  const sha256 = createHash('sha256').update(materialBytes).digest('hex');
+  check('iframe 实际上传使用固定字节，源文件后续替换未改变输入', () => {
+    assert.deepEqual(website.receipts.filter(r => r.kind === 'upload'), [{ kind: 'upload', sha256, bytes: materialBytes.length }]);
+    assert.notDeepEqual(fs.readFileSync(materialSource), materialBytes);
+  });
+  const attachment = prepared.preparation.find(f => f.kind === 'upload');
+  const downloaded = Buffer.from(await (await fetch(attachment.url, { signal: AbortSignal.timeout(5000) })).arrayBuffer());
+  check('独立下载与原选素材逐字节相同，草稿只保存一次', () => {
+    assert.deepEqual(downloaded, materialBytes);
+    assert.deepEqual(website.receipts.filter(r => r.kind === 'draft'), [{ kind: 'draft', sha256 }]);
+    assert.deepEqual(prepared.preparation.map(f => f.kind), ['target', 'upload', 'draft']);
+  });
+  evidence.material = { sha256, bytes: downloaded.length, preparation: prepared.preparation, modelCalls: website.receipts.filter(r => r.kind === 'planning').length, realModelCalls: 0, remoteWrites: 0 };
+  await client.quit();
+  const reopened = await launch();
+  await waitFor(async () => (await reopened.request({ kind: 'snapshot' })).tasks.find(t => t.id === taskId).phase === 'manual');
+  // 冷重开投影中可能仍是旧的 manual；必须取得本次私有页面连接的实际观察。
+  await waitFor(async () => {
+    try { return !!(await reopened.request({ kind: 'observe', taskId, method: 'Page.getFrameTree' })).frameTree; }
+    catch (error) { if (/PAGE_NOT_AVAILABLE|CONTROL_DISCONNECTED|STALE_OBSERVATION|OBSERVATION_NOT_AUTHORIZED/.test(error.message)) return false; throw error; }
+  });
+  const restored = (await reopened.request({ kind: 'snapshot' })).tasks.find(t => t.id === taskId).execution;
+  check('冷重开保留固定素材、草稿和待继续状态', () => {
+    assert.deepEqual(restored.materials, prepared.materials);
+    assert.deepEqual(restored.preparation, prepared.preparation);
+    assert.equal(restored.phase, 'paused');
+  });
+  // LocalFixture 的 token 刻意只在一个进程内有效；本项不验收真实凭据延续。
+  await reopened.request(command('model-save', { protocol: 'chat-completions', expectedVersion: 1, endpoint: website.base + '/v1', model: 'fixture', apiKey: 'local-fixture-not-a-secret' }));
+  await reopened.request(command('execution-intent', { taskId, intent: 'continue' }));
+  const reviewed = await ready(reopened, prepared.prepared.source.observedAt);
+  assert(reviewed.prepared.source.observedAt > prepared.prepared.source.observedAt);
+  evidence.material.observations = { preparedAt: prepared.prepared.source.observedAt, continuedAt: reviewed.prepared.source.observedAt };
+  check('明确继续核对原草稿，未再次上传或新建', () => {
+    assert.equal(website.receipts.filter(r => r.kind === 'upload').length, 1);
+    assert.equal(website.receipts.filter(r => r.kind === 'draft').length, 1);
+  });
+  evidence.material.modelCalls = website.receipts.filter(r => r.kind === 'planning').length;
+  await reopened.quit();
+}
 async function validate() {
   let client = await launch();
+  if (options.material) return verifyMaterial(client);
   if (options['task-groups']) return verifyTaskGroups(client);
   const goal = options['participation-review']
     ? '发布团队简报到内部公告，先让我核对文字。'

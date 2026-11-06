@@ -4,6 +4,7 @@ import { z } from 'zod';
 import type { WebActionJob, BoundObservation } from './execution-service';
 import { ExecutionProtocol, type ProtocolClient } from './execution-protocol';
 import { actionFailureCodeSchema } from '../shared/execution';
+import { materialPayloadSchema } from '../shared/material';
 
 /** 每次启动的工作者只持有一个动作；取消撤销通道并结束工作者，不关闭用户网页。 */
 export class WebExecutor {
@@ -20,8 +21,22 @@ export class WebExecutor {
     private readonly env: NodeJS.ProcessEnv,
     private readonly failure: (taskId: string, code: string) => void,
     private readonly ownsProcess?: (pid: number | undefined) => boolean,
+    private readonly material?: (command: unknown) => Promise<unknown>,
   ) {}
   async perform(job: WebActionJob): Promise<void> {
+    if (!job.qualified() || job.signal.aborted)
+      throw Error('EXECUTION_STOPPED');
+    const payload =
+      job.action.kind === 'upload'
+        ? materialPayloadSchema.parse(
+            await this.material?.({
+              kind: 'payload',
+              taskId: job.taskId,
+              runId: job.runId,
+              actionId: job.actionId,
+            }),
+          )
+        : undefined;
     if (!job.qualified() || job.signal.aborted)
       throw Error('EXECUTION_STOPPED');
     const current = await this.observe(job.taskId, job.signal);
@@ -113,7 +128,7 @@ export class WebExecutor {
           finish(Error('RUNTIME_GROUP_UNAVAILABLE'));
           return;
         }
-        worker.postMessage({ job: job.action });
+        worker.postMessage({ job: job.action, payload });
       });
     });
   }

@@ -15,6 +15,8 @@ import { backupArchiveSchema, type BackupArchive } from '../shared/backup';
 import * as schema from './schema';
 import { pauseForBackup } from './execution';
 import { websiteURL } from '../shared/url-policy';
+import { MaterialFiles, materialDigest } from './material';
+import { materialPayloadSchema } from '../shared/material';
 import {
   CURRENT_DATA_FORMAT,
   CURRENT_STATE_MODEL,
@@ -45,6 +47,7 @@ const requestFact = z.strictObject({
   hash: z.string(),
 });
 export const backupPayloadSchema = z.strictObject({
+  materials: z.array(materialPayloadSchema.omit({ name: true })).optional(),
   revision: snapshotSchema.shape.revision,
   active: snapshotSchema.shape.active,
   tasks: z.array(taskSchema.omit({ executionControl: true })),
@@ -61,6 +64,7 @@ const envelope = z.strictObject({
     z.literal(7),
     z.literal(8),
     z.literal(9),
+    z.literal(10),
     z.literal(CURRENT_DATA_FORMAT),
   ]),
   stateModel: z.literal(CURRENT_STATE_MODEL),
@@ -176,6 +180,9 @@ export class BackupRecords {
         ),
       })
     ).archive;
+    const materials = new MaterialFiles(this.folder);
+    for (const file of incoming.payload.materials ?? [])
+      await materials.put(Buffer.from(file.base64, 'base64'), file.sha256);
     // 短事务中按当前事实合并。文件写入等待期间的新停止／目标变化仍以本机当前记录为准。
     this.db.transaction(
       () => {
@@ -358,8 +365,27 @@ export class BackupRecords {
         error.code === 'ENOENT'
       ))
         throw error;
-      const payload = this.payload(),
-        data = bytes(payload),
+      const payload = this.payload();
+      const references = payload.tasks.flatMap(
+        (t) => t.execution?.materials ?? [],
+      );
+      if (references.length) {
+        const files = new MaterialFiles(this.folder);
+        payload.materials = [];
+        let estimatedSize = Buffer.byteLength(JSON.stringify(payload));
+        for (const version of references) {
+          if (payload.materials.some((m) => m.sha256 === version.sha256))
+            continue;
+          estimatedSize += Math.ceil(version.bytes / 3) * 4 + 128;
+          if (estimatedSize > 64 * 1024 * 1024) throw Error('BACKUP_TOO_LARGE');
+          const content = await files.read(version);
+          payload.materials.push({
+            sha256: version.sha256,
+            base64: content.toString('base64'),
+          });
+        }
+      }
+      const data = bytes(backupPayloadSchema.parse(payload)),
         created = Date.now();
       const contents = JSON.stringify(
         envelope.parse({
@@ -439,6 +465,34 @@ export async function readBackup(
   )
     throw Error('BACKUP_INVALID');
   const ids = new Set(value.payload.tasks.map((t) => t.id));
+  const materials = new Map(
+    (value.payload.materials ?? []).map((m) => [
+      m.sha256,
+      Buffer.from(m.base64, 'base64'),
+    ]),
+  );
+  if (
+    materials.size !== (value.payload.materials?.length ?? 0) ||
+    [...materials].some(([sha, data]) => materialDigest(data) !== sha) ||
+    value.payload.tasks.some((t) => {
+      const versions = t.execution?.materials ?? [];
+      return (
+        new Set(versions.map((m) => m.id)).size !== versions.length ||
+        versions.some((m) => materials.get(m.sha256)?.length !== m.bytes) ||
+        t.execution?.actions.some(
+          (a) =>
+            a.action.kind === 'upload' &&
+            !versions.some(
+              (m) =>
+                a.action.kind === 'upload' &&
+                m.id === a.action.materialId &&
+                m.goalVersion === a.goalVersion,
+            ),
+        )
+      );
+    })
+  )
+    throw Error('BACKUP_INVALID');
   const calls = new Map(value.payload.calls.map((c) => [c.call.id, c.call]));
   if (
     ids.size !== value.payload.tasks.length ||

@@ -26,7 +26,12 @@ export const modelConfigurationSchema = z.strictObject({
     .refine((value) => {
       try {
         const url = new URL(websiteURL(value));
-        return !url.search && !url.hash;
+        return (
+          !url.search &&
+          !url.hash &&
+          (url.protocol === 'https:' ||
+            ['127.0.0.1', 'localhost', '[::1]'].includes(url.hostname))
+        );
       } catch {
         return false;
       }

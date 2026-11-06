@@ -1,11 +1,14 @@
 import http from 'node:http';
 import { randomUUID } from 'node:crypto';
+import { materialFixture } from './material-fixture.mjs';
 
-export async function fixture({ participation = false, review = false } = {}) {
+export async function fixture({ participation = false, review = false, material } = {}) {
   const receipts = [];
+  const handleMaterial = material ? materialFixture(material, receipts) : null;
   const login = 'fixture-' + randomUUID();
   const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://127.0.0.1');
+    if (handleMaterial?.(req, res, url)) return;
     const task = url.searchParams.get('task') || 'A';
     if (
       (participation || review) &&

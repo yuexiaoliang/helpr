@@ -441,7 +441,8 @@ function bindPage(task: Task): void {
       } catch {
         event.preventDefault();
         emit({
-          notice: '这个地址无法在网页工作区打开。请使用网站的 HTTPS 地址。',
+          notice:
+            '这个地址无法在网页工作区打开。请使用 HTTP 或 HTTPS 网站地址。',
         });
       }
     };

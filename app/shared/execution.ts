@@ -1,5 +1,10 @@
 import { z } from 'zod';
 import { pageSourceSchema } from './model';
+import {
+  materialSelectionSchema,
+  materialVersionSchema,
+  preparationProposalSchema,
+} from './material';
 
 export const systemConditionSchema = z.enum([
   'screen-locked',
@@ -42,8 +47,17 @@ export const roleLocatorSchema = z.strictObject({
 });
 export const elementLocatorSchema = roleLocatorSchema.extend({
   within: roleLocatorSchema.optional(),
+  frameUrl: z.url().optional(),
 });
 export const webActionSchema = z.discriminatedUnion('kind', [
+  z.strictObject({
+    kind: z.literal('upload'),
+    materialId: z.string().uuid(),
+    target: z.strictObject({
+      fileIndex: z.number().int().nonnegative().max(100),
+      frameUrl: z.url().optional(),
+    }),
+  }),
   z.strictObject({ kind: z.literal('click'), target: elementLocatorSchema }),
   z.strictObject({
     kind: z.literal('fill'),
@@ -75,6 +89,13 @@ export const actionFailureCodeSchema = z.enum([
   'EXECUTION_ACT_CAPABILITY',
   'EXECUTION_ACT_TIMEOUT',
   'EXECUTION_ACT_UNAVAILABLE',
+  'EXECUTION_ACT_OBSCURED',
+  'EXECUTION_ACT_LOCATOR_MISSING',
+  'EXECUTION_ACT_NAVIGATION',
+  'EXECUTION_ACT_STABILITY_WAIT',
+  'EXECUTION_ACT_SCROLL_WAIT',
+  'EXECUTION_ACT_INPUT_WAIT',
+  'EXECUTION_ACT_HIT_TARGET_WAIT',
 ]);
 export const pageBindingSchema = z.strictObject({
   targetId: z.string().min(1),
@@ -95,6 +116,7 @@ export const actionFactSchema = z.strictObject({
   action: webActionSchema,
   publicationApprovalId: z.string().uuid().optional(),
   source: pageSourceSchema,
+  observedUrls: z.array(z.url().max(4096)).max(300).optional(),
   resultSource: pageSourceSchema.optional(),
   binding: pageBindingSchema,
   evidence: z.array(z.string().max(2000)).max(10),
@@ -183,6 +205,25 @@ export const participationDecisionSchema = z.discriminatedUnion('operation', [
 ]);
 export type ParticipationDecision = z.infer<typeof participationDecisionSchema>;
 export const executionSchema = z.strictObject({
+  prepared: z
+    .strictObject({
+      goalVersion: z.number().int().positive(),
+      source: pageSourceSchema,
+      evidence: z.array(z.string()).min(1).max(10),
+    })
+    .optional(),
+  materials: z.array(materialVersionSchema).optional(),
+  preparation: z
+    .array(
+      preparationProposalSchema.extend({
+        id: z.string().uuid(),
+        goalVersion: z.number().int().positive(),
+        actionId: z.string().nullable(),
+        source: pageSourceSchema,
+        verification: z.literal('page-observed'),
+      }),
+    )
+    .optional(),
   publication: publicationSchema
     .extend({
       revision: z.number().int().positive(),
@@ -243,6 +284,9 @@ export const executionControlSchema = z.strictObject({
 });
 export const nextStepSchema = z.strictObject({
   decision: z.enum([
+    'observe',
+    'material',
+    'prepared',
     'act',
     'complete',
     'wait',
@@ -251,6 +295,8 @@ export const nextStepSchema = z.strictObject({
     'login',
     'authenticated',
   ]),
+  material: materialSelectionSchema.nullable().optional(),
+  preparation: z.array(preparationProposalSchema).max(5).optional(),
   publication: publicationSchema.nullable().optional(),
   approvalId: z.string().uuid().nullable().optional(),
   summary: z.string().min(1).max(1500),

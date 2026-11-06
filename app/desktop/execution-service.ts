@@ -17,6 +17,7 @@ import {
   systemConditionLabel,
 } from '../shared/execution';
 import type { PageObservation } from '../shared/model';
+import { materialFailureMessage } from '../shared/material';
 
 export type BoundObservation = {
   observation: PageObservation;
@@ -32,6 +33,8 @@ export type ProposalInput = {
   loginOrigin?: string;
   clarifications?: { question: string; answer: string }[];
   history: ActionFact[];
+  materials?: TaskExecution['materials'];
+  preparation?: TaskExecution['preparation'];
   signal: AbortSignal;
   permit?: <T>(send: () => T) => T;
 };
@@ -108,6 +111,7 @@ export class ExecutionService {
       ) => Promise<BoundObservation>;
       propose: (input: ProposalInput) => Promise<NextStep>;
       perform: (job: WebActionJob) => Promise<void>;
+      material?: (command: unknown) => Promise<unknown>;
       revoke: (taskId: string) => void;
       stopModels: (taskId: string) => void;
       beforeRecovery?: () => Promise<void>;
@@ -256,6 +260,12 @@ export class ExecutionService {
           'EXECUTION_LIMIT',
           'EXECUTION_EVIDENCE_MISSING',
           'BACKUP_REVIEW_REQUIRED',
+          'MATERIAL_NOT_AUTHORIZED',
+          'MATERIAL_ALREADY_UPLOADED',
+          'MATERIAL_ALREADY_FIXED',
+          'PREPARATION_TARGET_CHANGED',
+          'PREPARATION_INCOMPLETE',
+          'PREPARATION_ONLY',
         ].includes(code)
       ) {
         this.latestRecordFailure = Math.max(this.latestRecordFailure, sequence);
@@ -530,12 +540,23 @@ export class ExecutionService {
       return this.decorate(result.state);
     } catch (error) {
       // 准备能力失败时尚未请求新保存，保留先前已可靠保存的暂停／停止。
-      if (
-        !recordStarted &&
-        priorBlock?.saved &&
-        this.intents.get(command.taskId) === sequence
-      )
-        this.blocked.set(command.taskId, priorBlock);
+      if (!recordStarted && this.intents.get(command.taskId) === sequence) {
+        if (priorBlock) this.blocked.set(command.taskId, priorBlock);
+        else {
+          const previous = this.ports
+            .current()
+            .tasks.find((t) => t.id === command.taskId)?.execution;
+          if (!previous) this.blocked.delete(command.taskId);
+          else if (['queued', 'checking', 'running'].includes(previous.phase))
+            await this.suspend(command.taskId, 'page-change', randomUUID());
+          else
+            this.blocked.set(command.taskId, {
+              saved: true,
+              message:
+                '网页连接尚未就绪，原任务记录保留。连接恢复后可重试继续。',
+            });
+        }
+      }
       if (
         command.intent === 'stop' &&
         this.intents.get(command.taskId) === sequence
@@ -695,6 +716,17 @@ export class ExecutionService {
                 ['reserved', 'dispatched', 'unknown'].includes(a.status),
               ) ?? null,
             history: e.actions,
+            materials: e.materials?.filter(
+              (m) => m.goalVersion === e.goalVersion,
+            ),
+            preparation: e.preparation?.filter(
+              (f) => f.goalVersion === e.goalVersion,
+            ),
+            publication: e.publication,
+            loginOrigin: e.loginOrigin,
+            clarifications: e.answers
+              ?.filter((a) => a.goalVersion === e.goalVersion)
+              .map((a) => ({ question: a.text, answer: a.answer })),
             signal: job.abort.signal,
             permit: (send) => {
               if (!current()) throw Error('EXECUTION_STOPPED');
@@ -909,6 +941,12 @@ export class ExecutionService {
                 pending,
                 history: current.actions,
                 publication: current.publication,
+                materials: current.materials?.filter(
+                  (m) => m.goalVersion === current.goalVersion,
+                ),
+                preparation: current.preparation?.filter(
+                  (f) => f.goalVersion === current.goalVersion,
+                ),
                 loginOrigin: current.loginOrigin,
                 clarifications: current.answers
                   ?.filter((a) => a.goalVersion === current.goalVersion)
@@ -925,6 +963,25 @@ export class ExecutionService {
         if (!this.live(job)) return;
         if (!step.evidence.every((v) => observed.observation.text.includes(v)))
           throw Error('EXECUTION_EVIDENCE_MISSING');
+        // 取得稳定目标或已上传依据即保存；后面的失败不能抹掉已有事实。
+        if (step.preparation?.length) {
+          await this.record({
+            kind: 'preparation-observed',
+            taskId: job.taskId,
+            runId: job.runId,
+            source: observed.observation,
+            facts: step.preparation,
+          });
+          if (!this.live(job)) return;
+        }
+        if (step.decision === 'observe') {
+          // 仅再取一次受控观察；保留未知派发，不给任何重送资格。
+          await this.abortable(
+            () => new Promise<void>((resolve) => setTimeout(resolve, 250)),
+            job.abort.signal,
+          );
+          continue;
+        }
         if (pending) {
           if (
             step.previous?.id !== pending.id ||
@@ -953,6 +1010,73 @@ export class ExecutionService {
           });
         }
         if (!this.live(job)) return;
+        if (step.decision === 'material') {
+          if (!step.material || !this.ports.material)
+            throw Error('MODEL_FORMAT');
+          try {
+            const result = receipt.parse(
+              await this.ports.material({
+                kind: 'select',
+                taskId: job.taskId,
+                runId: job.runId,
+                selection: step.material,
+              }),
+            );
+            if (result.state.revision >= this.ports.current().revision)
+              this.publish(result.state);
+            if (!this.live(job) || !result.created) return;
+          } catch (error) {
+            if (!this.live(job)) return;
+            const message =
+              materialFailureMessage[
+                error instanceof Error ? error.message : ''
+              ];
+            if (!message) {
+              if (
+                error instanceof Error &&
+                [
+                  'MATERIAL_ALREADY_FIXED',
+                  'EXECUTION_RESULT_UNKNOWN',
+                  'EXECUTION_STOPPED',
+                ].includes(error.message)
+              )
+                throw error;
+              this.disable();
+              throw error;
+            }
+            await this.record({
+              kind: 'ask',
+              taskId: job.taskId,
+              runId: job.runId,
+              questionId: randomUUID(),
+              text: message,
+              url: observed.observation.url,
+            });
+            return;
+          }
+          continue;
+        }
+        if (step.decision === 'prepared') {
+          await this.record({
+            kind: 'finish',
+            taskId: job.taskId,
+            runId: job.runId,
+            phase: 'paused',
+            prepared: true,
+            source: observed.observation,
+            evidence: step.evidence,
+            summary:
+              '素材已上传并保存草稿，准备依据已记录。最终发布尚未执行；下载字节仍须独立核对。',
+          });
+          return;
+        }
+        if (
+          current.materials?.some(
+            (m) => m.goalVersion === current.goalVersion,
+          ) &&
+          (step.decision === 'complete' || step.publication)
+        )
+          throw Error('PREPARATION_ONLY');
         if (step.decision === 'authenticated' && !current.loginOrigin)
           throw Error('MODEL_FORMAT');
         const p = current.publication;

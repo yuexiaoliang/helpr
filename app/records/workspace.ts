@@ -31,6 +31,8 @@ import { executionSchema } from '../shared/execution';
 import { BackupRecords } from './backup';
 import { UpgradeRecords } from './upgrade';
 import { z } from 'zod';
+import { MaterialFiles } from './material';
+import { materialSelectionSchema } from '../shared/material';
 import {
   CURRENT_DATA_FORMAT,
   CURRENT_STATE_MODEL,
@@ -63,8 +65,11 @@ export class WorkspaceRecords {
   private readonly db: ReturnType<typeof drizzle<typeof schema>>;
   private readonly backups: BackupRecords;
   private readonly upgrades: UpgradeRecords;
+  private readonly materials: MaterialFiles;
+  private readonly materialWork = new Set<Promise<unknown>>();
   constructor(folder: string, migrations: string, validation = false) {
     mkdirSync(folder, { recursive: true, mode: 0o700 });
+    this.materials = new MaterialFiles(folder);
     const marker = path.join(folder, '.workspace-records');
     if (
       existsSync(marker) &&
@@ -104,21 +109,25 @@ export class WorkspaceRecords {
         : CURRENT_DATA_FORMAT;
       if (
         !priorVersion ||
-        ![1, 2, 3, 4, 5, 6, 7, 8, 9, CURRENT_DATA_FORMAT].includes(priorVersion)
+        ![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, CURRENT_DATA_FORMAT].includes(
+          priorVersion,
+        )
       )
         throw Error('DATA_VERSION_UNSUPPORTED');
       if (legacy && priorVersion !== CURRENT_DATA_FORMAT) {
         const backup = path.join(
           folder,
-          (priorVersion === 9
-            ? 'workspace-before-task-groups-11-'
-            : priorVersion >= 7
-              ? 'workspace-before-participation-10-'
-              : priorVersion === 6
-                ? 'workspace-before-upgrade-09-'
-                : priorVersion === 5
-                  ? 'workspace-before-backup-07-'
-                  : 'workspace-before-recovery-05-') +
+          (priorVersion === 10
+            ? 'workspace-before-material-12-'
+            : priorVersion === 9
+              ? 'workspace-before-task-groups-11-'
+              : priorVersion >= 7
+                ? 'workspace-before-participation-10-'
+                : priorVersion === 6
+                  ? 'workspace-before-upgrade-09-'
+                  : priorVersion === 5
+                    ? 'workspace-before-backup-07-'
+                    : 'workspace-before-recovery-05-') +
             randomUUID() +
             '.sqlite',
         );
@@ -162,6 +171,7 @@ export class WorkspaceRecords {
         version !== 7 &&
         version !== 8 &&
         version !== 9 &&
+        version !== 10 &&
         version !== CURRENT_DATA_FORMAT
       )
         throw new Error('DATA_VERSION_UNSUPPORTED');
@@ -234,6 +244,95 @@ export class WorkspaceRecords {
     )
       throw Error('UPGRADE_PENDING');
     return { ...this.executions.execute(input), state: this.snapshot() };
+  }
+  material(input: unknown) {
+    const work = this.materialCommand(input);
+    this.materialWork.add(work);
+    void work.finally(() => this.materialWork.delete(work)).catch(() => {});
+    return work;
+  }
+  private async materialCommand(input: unknown) {
+    const base = { taskId: z.string(), runId: z.string() };
+    const c = z
+      .discriminatedUnion('kind', [
+        z.strictObject({
+          kind: z.literal('select'),
+          ...base,
+          selection: materialSelectionSchema,
+        }),
+        z.strictObject({
+          kind: z.literal('payload'),
+          ...base,
+          actionId: z.string(),
+        }),
+      ])
+      .parse(input);
+    const active = () => {
+      const e = this.executions.get(c.taskId);
+      if (
+        this.upgrades.held() ||
+        !e ||
+        e.intent !== 'automatic' ||
+        e.runId !== c.runId ||
+        !['checking', 'running'].includes(e.phase)
+      )
+        throw Error('EXECUTION_STOPPED');
+      return e;
+    };
+    const e = active();
+    if (c.kind === 'select') {
+      if (e.materials?.some((m) => m.goalVersion === e.goalVersion))
+        throw Error('MATERIAL_ALREADY_FIXED');
+      if (
+        e.actions.some((a) =>
+          ['reserved', 'dispatched', 'unknown'].includes(a.status),
+        )
+      )
+        throw Error('EXECUTION_RESULT_UNKNOWN');
+      const material = await this.materials.select(
+        c.selection,
+        [
+          e.goal,
+          ...(e.answers ?? [])
+            .filter((a) => a.goalVersion === e.goalVersion)
+            .map((a) => a.answer),
+        ],
+        e.goalVersion,
+      );
+      active();
+      const result = this.executions.execute({
+        kind: 'material-selected',
+        taskId: c.taskId,
+        runId: c.runId,
+        material,
+      });
+      return { ...result, state: this.snapshot() };
+    }
+    const action = e.actions.find(
+      (a) =>
+        a.id === c.actionId &&
+        a.runId === c.runId &&
+        a.goalVersion === e.goalVersion &&
+        a.status === 'dispatched',
+    );
+    const id =
+      action?.action.kind === 'upload' ? action.action.materialId : null;
+    const version = e.materials?.find(
+      (m) => m.id === id && m.goalVersion === e.goalVersion,
+    );
+    if (!version) throw Error('MATERIAL_NOT_AUTHORIZED');
+    const bytes = await this.materials.read(version);
+    const latest = active();
+    if (
+      latest.version !== e.version ||
+      latest.actions.find((a) => a.id === c.actionId)?.status !== 'dispatched'
+    )
+      throw Error('EXECUTION_STOPPED');
+    return {
+      name: version.name,
+      sha256: version.sha256,
+      base64: bytes.toString('base64'),
+    };
   }
   lookupRequest(input: unknown): {
     applied: boolean;
@@ -412,6 +511,7 @@ export class WorkspaceRecords {
   }
   async settleBackups() {
     await this.backups.settled();
+    await Promise.allSettled([...this.materialWork]);
   }
   checkpoint(): WorkspaceSnapshot {
     this.db.transaction(() => {

@@ -214,6 +214,7 @@ export const observationSchema = z.strictObject({
   taskId: id,
   token: z.string(),
   method: z.string().max(100),
+  frameId: z.string().optional(),
 });
 export const rpcRequestSchema = z.strictObject({
   id: z.number().int().positive(),

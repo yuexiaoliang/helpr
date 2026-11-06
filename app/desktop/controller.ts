@@ -29,6 +29,7 @@ import { ObservationBroker } from './observation-broker';
 import { runtimeImages } from './startup';
 import { ModelService } from './model-service';
 import { pageObservation } from './page-observation';
+import { materialObservation } from './material-observation';
 import { ExecutionService, type BoundObservation } from './execution-service';
 import { ExecutionProtocol } from './execution-protocol';
 import { WebExecutor } from './web-executor';
@@ -343,18 +344,50 @@ export async function startController(
     if (signal.aborted) throw new Error('MODEL_CANCELLED');
     const qualification = broker.client(taskId);
     try {
-      const read = (method: string) =>
+      const read = (method: string, frameId?: string) =>
         broker.observe(qualification, {
           taskId,
           token: qualification.token,
           method,
+          ...(frameId ? { frameId } : {}),
         });
       // 首次观察会建立这份资格独占的会话，先完成连接再读取第二项。
       const frame = await read('Page.getFrameTree');
       const tree = await read('Accessibility.getFullAXTree');
+      const document = await read('DOMSnapshot.captureSnapshot');
+      const supplements = [materialObservation(document)];
+      const childFrames: { id: string; url: string }[] = [];
+      const collectFrames = (value: unknown, root = false) => {
+        const item = z
+          .object({
+            frame: z.object({ id: z.string(), url: z.string() }),
+            childFrames: z.array(z.unknown()).optional(),
+          })
+          .parse(value);
+        if (!root) childFrames.push(item.frame);
+        item.childFrames?.forEach((child) => collectFrames(child));
+      };
+      collectFrames(frame.frameTree, true);
+      for (const child of childFrames.slice(0, 8)) {
+        // 无法读取的跨进程 frame 明示缺口；不以维护者脚本补写内容。
+        try {
+          const ax = await read('Accessibility.getFullAXTree', child.id);
+          supplements.push(
+            `[frame] ${child.url}\n` +
+              pageObservation(frame, ax, qualification.generation).text,
+          );
+        } catch {
+          supplements.push(`[frame-unavailable] ${child.url}`);
+        }
+      }
       if (signal.aborted) throw new Error('MODEL_CANCELLED');
       return {
-        observation: pageObservation(frame, tree, qualification.generation),
+        observation: pageObservation(
+          frame,
+          tree,
+          qualification.generation,
+          supplements.join('\n'),
+        ),
         binding: {
           targetId: qualification.targetId,
           generation: qualification.generation,
@@ -372,6 +405,7 @@ export async function startController(
     env,
     (taskId, code) => log.event('failure', { taskId, code }),
     (pid) => ownership.owns(pid),
+    (command) => recordClient.request({ kind: 'material', command }),
   );
   const saveExecution = (command: unknown) =>
     recordClient.request({ kind: 'execution', command });
@@ -404,6 +438,7 @@ export async function startController(
     observe: observePage,
     propose: (input) => models.propose(input),
     perform: (job) => webExecutor.perform(job),
+    material: (command) => recordClient.request({ kind: 'material', command }),
     revoke: (taskId) => webExecutor.revoke(taskId),
     stopModels: (taskId) => models.cancelTask(taskId),
     beforeRecovery: barriers ? () => barriers.pass('recovery', '*') : undefined,

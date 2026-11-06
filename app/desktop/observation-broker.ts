@@ -24,6 +24,7 @@ export type Qualification = {
   revoked: boolean;
   inputEpoch: number;
   sessionId?: string;
+  frames?: Set<string>;
 };
 export class ObservationBroker {
   private sequence = 0;
@@ -199,6 +200,12 @@ export class ObservationBroker {
     if (request.taskId !== client.taskId) throw new Error('TASK_NOT_OWNED');
     if (!methods.has(request.method))
       throw new Error('OBSERVATION_CAPABILITY_DENIED');
+    if (
+      request.frameId &&
+      (request.method !== 'Accessibility.getFullAXTree' ||
+        !client.frames?.has(request.frameId))
+    )
+      throw Error('FRAME_NOT_OWNED');
     if (!client.sessionId)
       client.sessionId = z.string().parse(
         (
@@ -215,8 +222,24 @@ export class ObservationBroker {
         ? { format: 'png', captureBeyondViewport: false }
         : request.method === 'DOMSnapshot.captureSnapshot'
           ? { computedStyles: [] }
-          : {};
+          : request.frameId
+            ? { frameId: request.frameId }
+            : {};
     const result = await this.send(request.method, params, client.sessionId);
+    if (request.method === 'Page.getFrameTree') {
+      client.frames = new Set();
+      const learn = (input: unknown) => {
+        const node = z
+          .object({
+            frame: z.object({ id: z.string() }),
+            childFrames: z.array(z.unknown()).optional(),
+          })
+          .parse(input);
+        client.frames!.add(node.frame.id);
+        node.childFrames?.forEach(learn);
+      };
+      learn(result.frameTree);
+    }
     if (!this.valid(client, request.token))
       throw new Error('STALE_OBSERVATION');
     return result;

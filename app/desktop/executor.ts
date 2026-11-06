@@ -3,8 +3,11 @@ import {
   type ConnectOverCDPTransport,
   type Locator,
   type Page,
+  type Frame,
 } from 'playwright-core';
 import { z } from 'zod';
+import { createHash } from 'node:crypto';
+import { materialPayloadSchema } from '../shared/material';
 import {
   webActionSchema,
   elementLocatorSchema,
@@ -26,16 +29,23 @@ function locate(
   page: Page,
   target: z.infer<typeof elementLocatorSchema>,
 ): Locator {
+  const frame = selectFrame(page, target.frameUrl);
   const root = target.within
-    ? page.getByRole(target.within.role, {
+    ? frame.getByRole(target.within.role, {
         name: target.within.name,
         exact: target.within.exact,
       })
-    : page;
+    : frame;
   return root.getByRole(target.role, {
     name: target.name,
     exact: target.exact,
   });
+}
+function selectFrame(page: Page, url?: string): Frame {
+  if (!url) return page.mainFrame();
+  const matches = page.frames().filter((f) => f.url() === url);
+  if (matches.length !== 1) throw Error('FRAME_NOT_UNIQUE');
+  return matches[0]!;
 }
 port.on('message', ({ data }: { data: unknown }) => {
   const incoming = z
@@ -45,7 +55,9 @@ port.on('message', ({ data }: { data: unknown }) => {
     transport.onmessage?.(incoming.data.protocol);
     return;
   }
-  const job = z.object({ job: webActionSchema }).safeParse(data);
+  const job = z
+    .object({ job: webActionSchema, payload: materialPayloadSchema.optional() })
+    .safeParse(data);
   if (!job.success || started) return;
   started = true;
   void (async () => {
@@ -59,9 +71,28 @@ port.on('message', ({ data }: { data: unknown }) => {
       if (pages.length !== 1) throw Error('SINGLE_OWNED_PAGE_REQUIRED');
       const page = pages[0]!;
       page.setDefaultTimeout(7000);
-      const action = job.data.job,
-        target = locate(page, action.target);
+      const action = job.data.job;
       phase = 'act';
+      if (action.kind === 'upload') {
+        const payload = materialPayloadSchema.parse(job.data.payload);
+        const buffer = Buffer.from(payload.base64, 'base64');
+        if (
+          createHash('sha256').update(buffer).digest('hex') !== payload.sha256
+        )
+          throw Error('MATERIAL_CORRUPT');
+        const target = selectFrame(page, action.target.frameUrl)
+          .locator('input[type="file"]')
+          .nth(action.target.fileIndex);
+        await target.setInputFiles(
+          { name: payload.name, mimeType: 'application/octet-stream', buffer },
+          { timeout: 7000 },
+        );
+        port.postMessage({ done: true });
+        return;
+      }
+      const target = locate(page, action.target);
+      if ((await target.count()) !== 1)
+        throw Error('EXECUTION_LOCATOR_MISSING');
       if (action.kind === 'click') await target.click({ timeout: 7000 });
       else if (action.kind === 'fill')
         await target.fill(action.value, { timeout: 7000 });
@@ -73,17 +104,34 @@ port.on('message', ({ data }: { data: unknown }) => {
     } catch (error) {
       // 只返回固定分类，禁止把含网页内容、定位文字的原始异常发到日志。
       const message = error instanceof Error ? error.message : '';
-      const reason = message.includes('element is not stable')
-        ? 'UNSTABLE'
-        : message.includes('element is not visible')
-          ? 'INVISIBLE'
-          : message.includes('outside of the viewport')
-            ? 'VIEWPORT'
-            : message.includes('EXECUTION_CAPABILITY_REVOKED_OR_DENIED')
-              ? 'CAPABILITY'
-              : error instanceof Error && error.name === 'TimeoutError'
-                ? 'TIMEOUT'
-                : 'UNAVAILABLE';
+      const reason = message.includes('EXECUTION_LOCATOR_MISSING')
+        ? 'LOCATOR_MISSING'
+        : message.includes('intercepts pointer events')
+          ? 'OBSCURED'
+          : message.includes('waiting for scheduled navigations to finish')
+            ? 'NAVIGATION'
+            : message.includes('element is not stable')
+              ? 'UNSTABLE'
+              : message.includes('element is not visible')
+                ? 'INVISIBLE'
+                : message.includes('outside of the viewport')
+                  ? 'VIEWPORT'
+                  : message.includes('EXECUTION_CAPABILITY_REVOKED_OR_DENIED')
+                    ? 'CAPABILITY'
+                    : error instanceof Error && error.name === 'TimeoutError'
+                      ? message.includes('performing click action')
+                        ? 'INPUT_WAIT'
+                        : message.includes('done scrolling')
+                          ? 'HIT_TARGET_WAIT'
+                          : message.includes('scrolling into view if needed') ||
+                              (message.includes('attempting click action') &&
+                                !message.includes('waiting for element to be'))
+                            ? 'SCROLL_WAIT'
+                            : message.includes('waiting for element to be') &&
+                                !message.includes('element is visible')
+                              ? 'STABILITY_WAIT'
+                              : 'TIMEOUT'
+                      : 'UNAVAILABLE';
       port.postMessage({
         failed: true,
         code: actionFailureCodeSchema.parse(
