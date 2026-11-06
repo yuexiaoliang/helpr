@@ -37,6 +37,8 @@ const phaseLabel = (task: Task) => {
   if (task.executionControl?.blocked)
     return task.executionControl.stopSaved ? '已停止' : '执行已暂停 · 需查看';
   if (task.execution?.question) return '等你回复';
+  if (task.execution?.coordination?.status === 'login') return '等待共享登录';
+  if (task.execution?.coordination?.waitFor) return '等待目标可用';
   if (task.execution) {
     if (task.execution.phase === 'queued' && task.phase === 'loading')
       return '正在打开网页';
@@ -587,6 +589,29 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
               <span>
                 {task.executionControl?.message ?? task.execution.summary}
               </span>
+              {task.execution.coordination?.loginOwner &&
+                task.execution.coordination.loginOwner !== task.id &&
+                (() => {
+                  const owner = view.state.tasks.find(
+                    (t) => t.id === task.execution?.coordination?.loginOwner,
+                  );
+                  return owner?.execution?.question?.type === 'login' ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        void store
+                          .perform({
+                            kind: 'participation-open',
+                            taskId: owner.id,
+                            questionId: owner.execution!.question!.id,
+                          })
+                          .catch(() => {});
+                      }}
+                    >
+                      处理共享登录
+                    </button>
+                  ) : null;
+                })()}
             </div>
           )}
           <div className={styles.feed} aria-label="对话记录">

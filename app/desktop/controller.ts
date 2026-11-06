@@ -34,6 +34,8 @@ import { ExecutionService, type BoundObservation } from './execution-service';
 import { ExecutionProtocol } from './execution-protocol';
 import { WebExecutor } from './web-executor';
 import { InputGate } from './input-gate';
+import { sessionContextSchema } from '../shared/coordination';
+import { StorageMonitor } from './storage-monitor';
 import {
   executionPauseReasonSchema,
   type SystemCondition,
@@ -342,6 +344,10 @@ export async function startController(
     signal: AbortSignal,
   ): Promise<BoundObservation> {
     if (signal.aborted) throw new Error('MODEL_CANCELLED');
+    const sessionBefore = sessionContextSchema.parse(
+      await hostClient.request({ kind: 'session-context', taskId }),
+    );
+    await storageMonitor.ensure(taskId, sessionBefore.origin);
     const qualification = broker.client(taskId);
     try {
       const read = (method: string, frameId?: string) =>
@@ -381,7 +387,13 @@ export async function startController(
         }
       }
       if (signal.aborted) throw new Error('MODEL_CANCELLED');
+      const sessionAfter = sessionContextSchema.parse(
+        await hostClient.request({ kind: 'session-context', taskId }),
+      );
+      if (JSON.stringify(sessionBefore) !== JSON.stringify(sessionAfter))
+        throw Error('COORDINATION_STALE');
       return {
+        session: sessionAfter,
         observation: pageObservation(
           frame,
           tree,
@@ -455,6 +467,13 @@ export async function startController(
       }
     },
     observe: observePage,
+    session: async (taskId) =>
+      sessionContextSchema.parse(
+        await hostClient.request({ kind: 'session-context', taskId }),
+      ),
+    refreshPage: async (taskId) => {
+      await hostClient.request({ kind: 'coordination-refresh', taskId });
+    },
     propose: (input) => models.propose(input),
     perform: (job) => webExecutor.perform(job),
     material: (command) => recordClient.request({ kind: 'material', command }),
@@ -475,6 +494,21 @@ export async function startController(
       valid: (taskId, epoch) => inputGate.valid(taskId, epoch),
       permit: (taskId, epoch, send) => inputGate.permit(taskId, epoch, send),
     },
+  });
+  const storageMonitor = new StorageMonitor(broker, (origin) => {
+    for (const task of state.tasks) {
+      if (
+        task.execution?.coordination?.session.origin !== origin &&
+        (!task.url || new URL(task.url).origin !== origin)
+      )
+        continue;
+      inputGate.block(task.id);
+      webExecutor.revoke(task.id);
+      models.cancelTask(task.id);
+    }
+    void hostClient
+      .request({ kind: 'storage-session-change', origin })
+      .catch(() => executions.disable());
   });
   const backups = new BackupService({
     choose: async (kind) => {
@@ -843,6 +877,26 @@ export async function startController(
   });
   const lastSuspensionSerial = new Map<string, number>();
   host.on('message', (input: unknown) => {
+    const sessionChange = z
+      .object({
+        websiteSessionChanged: z.object({
+          session: sessionContextSchema,
+          taskIds: z.array(z.string()),
+        }),
+      })
+      .safeParse(input);
+    if (sessionChange.success) {
+      const { session, taskIds } = sessionChange.data.websiteSessionChanged;
+      void executions
+        .sessionChanged(
+          session,
+          taskIds.filter((id) => state.tasks.some((t) => t.id === id)),
+        )
+        .catch(() =>
+          log.event('failure', { code: 'SESSION_CHANGE_NOT_SAVED' }),
+        );
+      return;
+    }
     const suspension = z
       .object({
         suspension: z.strictObject({

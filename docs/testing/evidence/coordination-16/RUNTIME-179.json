@@ -1,0 +1,3015 @@
+{
+  "app": "/Users/yuexiaoliang/projects/helpr/dist/candidates/coordination-16-final/mac-arm64/helpr.app",
+  "storage": "fixture",
+  "pendingAcceptance": [
+    "系统钥匙串与跨重启登录",
+    "原生窗口与真人输入"
+  ],
+  "started": "2026-11-06T17:05:39.532Z",
+  "checks": [
+    {
+      "name": "两个不同稳定目标实际重叠写入，各自记录同一账号和独立目标",
+      "passed": true
+    },
+    {
+      "name": "同一目标不重叠，等待者重新读取后询问取舍，未覆盖前项结果",
+      "passed": true
+    }
+  ],
+  "samples": [
+    {
+      "kind": "startup",
+      "number": 179,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:63226",
+        "persistent": false
+      },
+      "ms": 3246,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    }
+  ],
+  "processes": [
+    {
+      "number": 179,
+      "controller": 4306,
+      "seen": {
+        "4306": {
+          "parent": 4290,
+          "group": 4306
+        },
+        "4352": {
+          "parent": 4306,
+          "group": 4271
+        },
+        "4353": {
+          "parent": 4306,
+          "group": 4271
+        },
+        "4354": {
+          "parent": 4306,
+          "group": 4354
+        },
+        "4355": {
+          "parent": 4306,
+          "group": 4306
+        },
+        "4356": {
+          "parent": 4354,
+          "group": 4356
+        },
+        "4363": {
+          "parent": 4356,
+          "group": 4356
+        },
+        "4364": {
+          "parent": 4356,
+          "group": 4356
+        },
+        "4365": {
+          "parent": 4356,
+          "group": 4356
+        },
+        "4366": {
+          "parent": 4356,
+          "group": 4356
+        },
+        "4367": {
+          "parent": 4356,
+          "group": 4356
+        },
+        "4369": {
+          "parent": 4356,
+          "group": 4356
+        },
+        "4370": {
+          "parent": 4356,
+          "group": 4356
+        },
+        "4373": {
+          "parent": 4356,
+          "group": 4356
+        },
+        "4374": {
+          "parent": 4356,
+          "group": 4356
+        },
+        "4383": {
+          "parent": 4356,
+          "group": 4356
+        },
+        "4384": {
+          "parent": 4356,
+          "group": 4356
+        },
+        "4387": {
+          "parent": 4356,
+          "group": 4356
+        },
+        "4388": {
+          "parent": 4356,
+          "group": 4356
+        },
+        "4397": {
+          "parent": 4356,
+          "group": 4356
+        },
+        "4398": {
+          "parent": 4356,
+          "group": 4356
+        },
+        "4402": {
+          "parent": 4356,
+          "group": 4356
+        },
+        "4404": {
+          "parent": 4356,
+          "group": 4356
+        }
+      },
+      "groups": [
+        4306,
+        4354,
+        4356
+      ],
+      "remaining": [
+        4306,
+        4352,
+        4353,
+        4354,
+        4355,
+        4356,
+        4363,
+        4364,
+        4365,
+        4366,
+        4367,
+        4369,
+        4370,
+        4373,
+        4374,
+        4383,
+        4384,
+        4387,
+        4388,
+        4397,
+        4398,
+        4402,
+        4404
+      ]
+    }
+  ],
+  "fixture": [
+    {
+      "kind": "page",
+      "item": "A",
+      "account": "alice",
+      "revision": 0,
+      "at": 1793984742872
+    },
+    {
+      "kind": "page",
+      "item": "B",
+      "account": "alice",
+      "revision": 0,
+      "at": 1793984743372
+    },
+    {
+      "kind": "environment",
+      "holdWrites": true,
+      "at": 1793984743808
+    },
+    {
+      "kind": "planning",
+      "item": "A",
+      "decision": "act",
+      "account": "alice",
+      "at": 1793984743949
+    },
+    {
+      "kind": "planning",
+      "item": "B",
+      "decision": "act",
+      "account": "alice",
+      "at": 1793984743950
+    },
+    {
+      "kind": "planning",
+      "item": "A",
+      "decision": "act",
+      "account": "alice",
+      "at": 1793984744496
+    },
+    {
+      "kind": "planning",
+      "item": "B",
+      "decision": "act",
+      "account": "alice",
+      "at": 1793984744540
+    },
+    {
+      "kind": "write-start",
+      "item": "B",
+      "value": "第二项内容",
+      "account": "alice",
+      "at": 1793984745007
+    },
+    {
+      "kind": "planning",
+      "item": "B",
+      "decision": "observe",
+      "account": "alice",
+      "at": 1793984745064
+    },
+    {
+      "kind": "planning",
+      "item": "B",
+      "decision": "observe",
+      "account": "alice",
+      "at": 1793984745402
+    },
+    {
+      "kind": "planning",
+      "item": "B",
+      "decision": "observe",
+      "account": "alice",
+      "at": 1793984745738
+    },
+    {
+      "kind": "write-start",
+      "item": "A",
+      "value": "第一项内容",
+      "account": "alice",
+      "at": 1793984745990
+    },
+    {
+      "kind": "write-end",
+      "item": "B",
+      "value": "第二项内容",
+      "account": "alice",
+      "revision": 1,
+      "at": 1793984746002
+    },
+    {
+      "kind": "write-end",
+      "item": "A",
+      "value": "第一项内容",
+      "account": "alice",
+      "revision": 1,
+      "at": 1793984746002
+    },
+    {
+      "kind": "environment",
+      "holdWrites": false,
+      "at": 1793984746002
+    },
+    {
+      "kind": "planning",
+      "item": "A",
+      "decision": "observe",
+      "account": "alice",
+      "at": 1793984746046
+    },
+    {
+      "kind": "planning",
+      "item": "B",
+      "decision": "complete",
+      "account": "alice",
+      "at": 1793984746090
+    },
+    {
+      "kind": "planning",
+      "item": "A",
+      "decision": "complete",
+      "account": "alice",
+      "at": 1793984746160
+    },
+    {
+      "kind": "page",
+      "item": "C",
+      "account": "alice",
+      "revision": 0,
+      "at": 1793984746353
+    },
+    {
+      "kind": "page",
+      "item": "C",
+      "account": "alice",
+      "revision": 0,
+      "at": 1793984746815
+    },
+    {
+      "kind": "environment",
+      "holdWrites": true,
+      "at": 1793984747262
+    },
+    {
+      "kind": "planning",
+      "item": "C",
+      "decision": "act",
+      "account": "alice",
+      "at": 1793984747339
+    },
+    {
+      "kind": "planning",
+      "item": "C",
+      "decision": "act",
+      "account": "alice",
+      "at": 1793984747776
+    },
+    {
+      "kind": "write-start",
+      "item": "C",
+      "value": "保留前项内容",
+      "account": "alice",
+      "at": 1793984748173
+    },
+    {
+      "kind": "planning",
+      "item": "C",
+      "decision": "observe",
+      "account": "alice",
+      "at": 1793984748262
+    },
+    {
+      "kind": "planning",
+      "item": "C",
+      "decision": "act",
+      "account": "alice",
+      "at": 1793984748307
+    },
+    {
+      "kind": "write-end",
+      "item": "C",
+      "value": "保留前项内容",
+      "account": "alice",
+      "revision": 1,
+      "at": 1793984748424
+    },
+    {
+      "kind": "environment",
+      "holdWrites": false,
+      "at": 1793984748424
+    },
+    {
+      "kind": "planning",
+      "item": "C",
+      "decision": "complete",
+      "account": "alice",
+      "at": 1793984748646
+    },
+    {
+      "kind": "page",
+      "item": "C",
+      "account": "alice",
+      "revision": 1,
+      "at": 1793984748757
+    },
+    {
+      "kind": "planning",
+      "item": "C",
+      "decision": "act",
+      "account": "alice",
+      "at": 1793984748822
+    },
+    {
+      "kind": "planning",
+      "item": "C",
+      "decision": "act",
+      "account": "alice",
+      "at": 1793984749040
+    },
+    {
+      "kind": "planning",
+      "item": "C",
+      "decision": "act",
+      "account": "alice",
+      "at": 1793984749485
+    },
+    {
+      "kind": "write-start",
+      "item": "C",
+      "value": "后项内容",
+      "account": "alice",
+      "at": 1793984749890
+    },
+    {
+      "kind": "planning",
+      "item": "C",
+      "decision": "observe",
+      "account": "alice",
+      "at": 1793984749953
+    },
+    {
+      "kind": "write-end",
+      "item": "C",
+      "value": "后项内容",
+      "account": "alice",
+      "revision": 2,
+      "at": 1793984750041
+    },
+    {
+      "kind": "planning",
+      "item": "C",
+      "decision": "complete",
+      "account": "alice",
+      "at": 1793984750298
+    },
+    {
+      "kind": "environment",
+      "planningWait": true,
+      "at": 1793984750400
+    },
+    {
+      "kind": "page",
+      "item": "D",
+      "account": "alice",
+      "revision": 0,
+      "at": 1793984750430
+    },
+    {
+      "kind": "page",
+      "item": "E",
+      "account": "alice",
+      "revision": 0,
+      "at": 1793984750993
+    },
+    {
+      "kind": "planning",
+      "item": "D",
+      "decision": "observe",
+      "account": "alice",
+      "at": 1793984751548
+    },
+    {
+      "kind": "planning",
+      "item": "E",
+      "decision": "observe",
+      "account": "alice",
+      "at": 1793984751597
+    },
+    {
+      "kind": "environment",
+      "account": null,
+      "at": 1793984751702
+    },
+    {
+      "kind": "page",
+      "item": "D",
+      "account": null,
+      "revision": 0,
+      "at": 1793984751957
+    },
+    {
+      "kind": "planning",
+      "item": "D",
+      "decision": "login",
+      "account": null,
+      "at": 1793984752051
+    },
+    {
+      "kind": "page",
+      "item": "E",
+      "account": null,
+      "revision": 0,
+      "at": 1793984752073
+    },
+    {
+      "kind": "environment",
+      "account": "bob",
+      "planningWait": false,
+      "at": 1793984752258
+    }
+  ],
+  "coordination": {
+    "cases": [
+      {
+        "name": "independent-targets",
+        "taskIds": [
+          "e9525f49-818c-47b7-9581-0524332d5c6a",
+          "e5f50bf8-05a8-4476-af9a-f725a54172c9"
+        ],
+        "overlapping": {
+          "revision": 61,
+          "active": "e5f50bf8-05a8-4476-af9a-f725a54172c9",
+          "tasks": [
+            {
+              "id": "e9525f49-818c-47b7-9581-0524332d5c6a",
+              "goal": "更新 http://127.0.0.1:63226/edit?item=A 为“第一项内容”",
+              "created": 1793984742839,
+              "url": "http://127.0.0.1:63226/edit?item=A",
+              "draft": "",
+              "archived": false,
+              "groupId": null,
+              "groupGoal": null,
+              "hidden": false,
+              "minimized": false,
+              "phase": "manual",
+              "execution": {
+                "coordination": {
+                  "session": {
+                    "id": "helpr-fixture-web",
+                    "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+                    "origin": "http://127.0.0.1:63226"
+                  },
+                  "status": "ready",
+                  "account": {
+                    "name": "账号 alice",
+                    "url": "http://127.0.0.1:63226/users/alice"
+                  },
+                  "target": {
+                    "name": "当前记录",
+                    "url": "http://127.0.0.1:63226/edit?item=A"
+                  },
+                  "permissionEvidence": [
+                    "可编辑此记录"
+                  ],
+                  "source": {
+                    "url": "http://127.0.0.1:63226/edit?item=A",
+                    "title": "记录编辑",
+                    "fingerprint": "e0e9dedfcca7be00816afc91a0a044d69f9779b91cd4bd0eb9f588ca3c7e9c9d",
+                    "generation": 1,
+                    "observedAt": 1793984744450,
+                    "truncated": false
+                  }
+                },
+                "resourceClaims": [
+                  {
+                    "status": "held",
+                    "id": "ff7b62fc-529a-4d85-8bc0-b2203f7e9521",
+                    "runId": "a22e378d-73ec-4e17-9323-b00426ee5eb5",
+                    "goalVersion": 1,
+                    "origin": "http://127.0.0.1:63226",
+                    "targetUrl": "http://127.0.0.1:63226/edit?item=A"
+                  }
+                ],
+                "modelVersion": 1,
+                "intent": "automatic",
+                "phase": "running",
+                "version": 2,
+                "intentId": "5ad22a45-5b97-4df4-9ce6-14d428e96a09",
+                "goalVersion": 1,
+                "goal": "更新 http://127.0.0.1:63226/edit?item=A 为“第一项内容”",
+                "runId": "a22e378d-73ec-4e17-9323-b00426ee5eb5",
+                "resource": null,
+                "summary": "更新当前记录",
+                "actions": [
+                  {
+                    "coordination": {
+                      "session": {
+                        "id": "helpr-fixture-web",
+                        "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+                        "origin": "http://127.0.0.1:63226"
+                      },
+                      "claimId": "ff7b62fc-529a-4d85-8bc0-b2203f7e9521"
+                    },
+                    "observedLinks": [
+                      {
+                        "name": "当前记录",
+                        "url": "http://127.0.0.1:63226/edit?item=A"
+                      },
+                      {
+                        "name": "账号 alice",
+                        "url": "http://127.0.0.1:63226/users/alice"
+                      }
+                    ],
+                    "resultLinks": [
+                      {
+                        "name": "当前记录",
+                        "url": "http://127.0.0.1:63226/edit?item=A"
+                      },
+                      {
+                        "name": "账号 alice",
+                        "url": "http://127.0.0.1:63226/users/alice"
+                      }
+                    ],
+                    "id": "af40f0a2-11dc-43d4-a42f-1888f74a801d",
+                    "runId": "a22e378d-73ec-4e17-9323-b00426ee5eb5",
+                    "goalVersion": 1,
+                    "status": "confirmed",
+                    "summary": "更新当前记录",
+                    "action": {
+                      "kind": "fill",
+                      "target": {
+                        "role": "textbox",
+                        "name": "记录内容",
+                        "exact": true
+                      },
+                      "value": "第一项内容"
+                    },
+                    "effect": "interaction",
+                    "preconditions": [
+                      "记录编辑"
+                    ],
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=A",
+                      "title": "记录编辑",
+                      "fingerprint": "80b594eeeb18bd138e4ab87c8e8b72da5bf7aa0b7b508e3d62fa68b0b4024c6c",
+                      "generation": 1,
+                      "observedAt": 1793984743863,
+                      "truncated": false
+                    },
+                    "observedUrls": [
+                      "http://127.0.0.1:63226/edit?item=A",
+                      "http://127.0.0.1:63226/users/alice"
+                    ],
+                    "resultSource": {
+                      "url": "http://127.0.0.1:63226/edit?item=A",
+                      "title": "记录编辑",
+                      "fingerprint": "e0e9dedfcca7be00816afc91a0a044d69f9779b91cd4bd0eb9f588ca3c7e9c9d",
+                      "generation": 1,
+                      "observedAt": 1793984744450,
+                      "truncated": false
+                    },
+                    "binding": {
+                      "targetId": "BA9CCEB4123259287536266DB3696315",
+                      "generation": 1
+                    },
+                    "evidence": [
+                      "输入内容 第一项内容"
+                    ],
+                    "returned": true,
+                    "dispatchState": "possible"
+                  },
+                  {
+                    "coordination": {
+                      "session": {
+                        "id": "helpr-fixture-web",
+                        "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+                        "origin": "http://127.0.0.1:63226"
+                      },
+                      "claimId": "ff7b62fc-529a-4d85-8bc0-b2203f7e9521"
+                    },
+                    "observedLinks": [
+                      {
+                        "name": "当前记录",
+                        "url": "http://127.0.0.1:63226/edit?item=A"
+                      },
+                      {
+                        "name": "账号 alice",
+                        "url": "http://127.0.0.1:63226/users/alice"
+                      }
+                    ],
+                    "id": "e8e4cd84-1fde-43b9-ae86-556c142715bb",
+                    "runId": "a22e378d-73ec-4e17-9323-b00426ee5eb5",
+                    "goalVersion": 1,
+                    "status": "dispatched",
+                    "summary": "更新当前记录",
+                    "action": {
+                      "kind": "click",
+                      "target": {
+                        "role": "button",
+                        "name": "保存记录",
+                        "exact": true
+                      }
+                    },
+                    "effect": "interaction",
+                    "preconditions": [
+                      "记录编辑"
+                    ],
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=A",
+                      "title": "记录编辑",
+                      "fingerprint": "e0e9dedfcca7be00816afc91a0a044d69f9779b91cd4bd0eb9f588ca3c7e9c9d",
+                      "generation": 1,
+                      "observedAt": 1793984744450,
+                      "truncated": false
+                    },
+                    "observedUrls": [
+                      "http://127.0.0.1:63226/edit?item=A",
+                      "http://127.0.0.1:63226/users/alice"
+                    ],
+                    "binding": {
+                      "targetId": "BA9CCEB4123259287536266DB3696315",
+                      "generation": 1
+                    },
+                    "evidence": [],
+                    "returned": false,
+                    "dispatchState": "possible"
+                  }
+                ]
+              },
+              "error": "",
+              "version": 4,
+              "messages": [
+                {
+                  "role": "user",
+                  "text": "更新 http://127.0.0.1:63226/edit?item=A 为“第一项内容”"
+                },
+                {
+                  "role": "system",
+                  "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+                },
+                {
+                  "role": "user",
+                  "text": "开始执行"
+                },
+                {
+                  "role": "assistant",
+                  "text": "更新当前记录",
+                  "call": {
+                    "usageKind": "web-planning",
+                    "id": "549555da-3019-44b1-bc57-8b53c18f6abf",
+                    "taskId": "e9525f49-818c-47b7-9581-0524332d5c6a",
+                    "model": "fixture",
+                    "configurationVersion": 1,
+                    "phase": "complete",
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=A",
+                      "title": "记录编辑",
+                      "fingerprint": "80b594eeeb18bd138e4ab87c8e8b72da5bf7aa0b7b508e3d62fa68b0b4024c6c",
+                      "generation": 1,
+                      "observedAt": 1793984743863,
+                      "truncated": false
+                    },
+                    "pageChanged": false,
+                    "dispatched": true,
+                    "reservedTokens": 22356,
+                    "inputTokens": 100,
+                    "outputTokens": 100,
+                    "totalTokens": 200,
+                    "error": null
+                  }
+                },
+                {
+                  "role": "assistant",
+                  "text": "更新当前记录",
+                  "call": {
+                    "usageKind": "web-planning",
+                    "id": "f13aee97-562c-4321-8822-7b17929ca4fd",
+                    "taskId": "e9525f49-818c-47b7-9581-0524332d5c6a",
+                    "model": "fixture",
+                    "configurationVersion": 1,
+                    "phase": "complete",
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=A",
+                      "title": "记录编辑",
+                      "fingerprint": "e0e9dedfcca7be00816afc91a0a044d69f9779b91cd4bd0eb9f588ca3c7e9c9d",
+                      "generation": 1,
+                      "observedAt": 1793984744450,
+                      "truncated": false
+                    },
+                    "pageChanged": false,
+                    "dispatched": true,
+                    "reservedTokens": 24001,
+                    "inputTokens": 100,
+                    "outputTokens": 100,
+                    "totalTokens": 200,
+                    "error": null
+                  }
+                }
+              ]
+            },
+            {
+              "id": "e5f50bf8-05a8-4476-af9a-f725a54172c9",
+              "goal": "更新 http://127.0.0.1:63226/edit?item=B 为“第二项内容”",
+              "created": 1793984743347,
+              "url": "http://127.0.0.1:63226/edit?item=B",
+              "draft": "",
+              "archived": false,
+              "groupId": null,
+              "groupGoal": null,
+              "hidden": false,
+              "minimized": false,
+              "phase": "manual",
+              "execution": {
+                "coordination": {
+                  "session": {
+                    "id": "helpr-fixture-web",
+                    "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+                    "origin": "http://127.0.0.1:63226"
+                  },
+                  "status": "ready",
+                  "account": {
+                    "name": "账号 alice",
+                    "url": "http://127.0.0.1:63226/users/alice"
+                  },
+                  "target": {
+                    "name": "当前记录",
+                    "url": "http://127.0.0.1:63226/edit?item=B"
+                  },
+                  "permissionEvidence": [
+                    "可编辑此记录"
+                  ],
+                  "source": {
+                    "url": "http://127.0.0.1:63226/edit?item=B",
+                    "title": "记录编辑",
+                    "fingerprint": "c8beb241426d0b8e0606cc9a5191d1907e8035a144b462854b41c40b7eed2844",
+                    "generation": 1,
+                    "observedAt": 1793984745704,
+                    "truncated": false
+                  }
+                },
+                "resourceClaims": [
+                  {
+                    "status": "held",
+                    "id": "c8302e15-eddd-4a2e-ac3b-ee5a7c109965",
+                    "runId": "05b20919-3612-49b6-bdc0-337a634fda02",
+                    "goalVersion": 1,
+                    "origin": "http://127.0.0.1:63226",
+                    "targetUrl": "http://127.0.0.1:63226/edit?item=B"
+                  }
+                ],
+                "modelVersion": 1,
+                "intent": "automatic",
+                "phase": "running",
+                "version": 2,
+                "intentId": "769ca4d5-92c6-41aa-b982-ae9c85e1da65",
+                "goalVersion": 1,
+                "goal": "更新 http://127.0.0.1:63226/edit?item=B 为“第二项内容”",
+                "runId": "05b20919-3612-49b6-bdc0-337a634fda02",
+                "resource": null,
+                "summary": "更新当前记录",
+                "actions": [
+                  {
+                    "coordination": {
+                      "session": {
+                        "id": "helpr-fixture-web",
+                        "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+                        "origin": "http://127.0.0.1:63226"
+                      },
+                      "claimId": "c8302e15-eddd-4a2e-ac3b-ee5a7c109965"
+                    },
+                    "observedLinks": [
+                      {
+                        "name": "当前记录",
+                        "url": "http://127.0.0.1:63226/edit?item=B"
+                      },
+                      {
+                        "name": "账号 alice",
+                        "url": "http://127.0.0.1:63226/users/alice"
+                      }
+                    ],
+                    "resultLinks": [
+                      {
+                        "name": "当前记录",
+                        "url": "http://127.0.0.1:63226/edit?item=B"
+                      },
+                      {
+                        "name": "账号 alice",
+                        "url": "http://127.0.0.1:63226/users/alice"
+                      }
+                    ],
+                    "id": "3efb38fc-a1c1-48b3-a2c0-df456b58a4bc",
+                    "runId": "05b20919-3612-49b6-bdc0-337a634fda02",
+                    "goalVersion": 1,
+                    "status": "confirmed",
+                    "summary": "更新当前记录",
+                    "action": {
+                      "kind": "fill",
+                      "target": {
+                        "role": "textbox",
+                        "name": "记录内容",
+                        "exact": true
+                      },
+                      "value": "第二项内容"
+                    },
+                    "effect": "interaction",
+                    "preconditions": [
+                      "记录编辑"
+                    ],
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=B",
+                      "title": "记录编辑",
+                      "fingerprint": "1b18637469a449313aa8261a7ff37588dbd97249d0159e87134940eee7877577",
+                      "generation": 1,
+                      "observedAt": 1793984743888,
+                      "truncated": false
+                    },
+                    "observedUrls": [
+                      "http://127.0.0.1:63226/edit?item=B",
+                      "http://127.0.0.1:63226/users/alice"
+                    ],
+                    "resultSource": {
+                      "url": "http://127.0.0.1:63226/edit?item=B",
+                      "title": "记录编辑",
+                      "fingerprint": "63809609a05093a65700df82d3b76b53d82acb7dcec0bdfcb44113a8f59039c9",
+                      "generation": 1,
+                      "observedAt": 1793984744484,
+                      "truncated": false
+                    },
+                    "binding": {
+                      "targetId": "34217A72A8E83FBD7328714D4708FD76",
+                      "generation": 1
+                    },
+                    "evidence": [
+                      "输入内容 第二项内容"
+                    ],
+                    "returned": true,
+                    "dispatchState": "possible"
+                  },
+                  {
+                    "coordination": {
+                      "session": {
+                        "id": "helpr-fixture-web",
+                        "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+                        "origin": "http://127.0.0.1:63226"
+                      },
+                      "claimId": "c8302e15-eddd-4a2e-ac3b-ee5a7c109965"
+                    },
+                    "observedLinks": [
+                      {
+                        "name": "当前记录",
+                        "url": "http://127.0.0.1:63226/edit?item=B"
+                      },
+                      {
+                        "name": "账号 alice",
+                        "url": "http://127.0.0.1:63226/users/alice"
+                      }
+                    ],
+                    "id": "8a2823cf-5611-4c4c-9aac-9c0fffb8fcda",
+                    "runId": "05b20919-3612-49b6-bdc0-337a634fda02",
+                    "goalVersion": 1,
+                    "status": "unknown",
+                    "summary": "更新当前记录",
+                    "action": {
+                      "kind": "click",
+                      "target": {
+                        "role": "button",
+                        "name": "保存记录",
+                        "exact": true
+                      }
+                    },
+                    "effect": "interaction",
+                    "preconditions": [
+                      "记录编辑"
+                    ],
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=B",
+                      "title": "记录编辑",
+                      "fingerprint": "63809609a05093a65700df82d3b76b53d82acb7dcec0bdfcb44113a8f59039c9",
+                      "generation": 1,
+                      "observedAt": 1793984744484,
+                      "truncated": false
+                    },
+                    "observedUrls": [
+                      "http://127.0.0.1:63226/edit?item=B",
+                      "http://127.0.0.1:63226/users/alice"
+                    ],
+                    "binding": {
+                      "targetId": "34217A72A8E83FBD7328714D4708FD76",
+                      "generation": 1
+                    },
+                    "evidence": [],
+                    "returned": true,
+                    "dispatchState": "possible"
+                  }
+                ]
+              },
+              "error": "",
+              "version": 7,
+              "messages": [
+                {
+                  "role": "user",
+                  "text": "更新 http://127.0.0.1:63226/edit?item=B 为“第二项内容”"
+                },
+                {
+                  "role": "system",
+                  "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+                },
+                {
+                  "role": "user",
+                  "text": "开始执行"
+                },
+                {
+                  "role": "assistant",
+                  "text": "更新当前记录",
+                  "call": {
+                    "usageKind": "web-planning",
+                    "id": "2e11cac9-f2f5-4345-8fb9-5b11cd6c56d5",
+                    "taskId": "e5f50bf8-05a8-4476-af9a-f725a54172c9",
+                    "model": "fixture",
+                    "configurationVersion": 1,
+                    "phase": "complete",
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=B",
+                      "title": "记录编辑",
+                      "fingerprint": "1b18637469a449313aa8261a7ff37588dbd97249d0159e87134940eee7877577",
+                      "generation": 1,
+                      "observedAt": 1793984743888,
+                      "truncated": false
+                    },
+                    "pageChanged": false,
+                    "dispatched": true,
+                    "reservedTokens": 22356,
+                    "inputTokens": 100,
+                    "outputTokens": 100,
+                    "totalTokens": 200,
+                    "error": null
+                  }
+                },
+                {
+                  "role": "assistant",
+                  "text": "更新当前记录",
+                  "call": {
+                    "usageKind": "web-planning",
+                    "id": "842c1ea0-6fd3-4117-a10e-c2764915cd93",
+                    "taskId": "e5f50bf8-05a8-4476-af9a-f725a54172c9",
+                    "model": "fixture",
+                    "configurationVersion": 1,
+                    "phase": "complete",
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=B",
+                      "title": "记录编辑",
+                      "fingerprint": "63809609a05093a65700df82d3b76b53d82acb7dcec0bdfcb44113a8f59039c9",
+                      "generation": 1,
+                      "observedAt": 1793984744484,
+                      "truncated": false
+                    },
+                    "pageChanged": false,
+                    "dispatched": true,
+                    "reservedTokens": 24001,
+                    "inputTokens": 100,
+                    "outputTokens": 100,
+                    "totalTokens": 200,
+                    "error": null
+                  }
+                },
+                {
+                  "role": "assistant",
+                  "text": "更新当前记录",
+                  "call": {
+                    "usageKind": "web-planning",
+                    "id": "6a6fa491-1b20-4bce-a7bb-e84e5d4d2876",
+                    "taskId": "e5f50bf8-05a8-4476-af9a-f725a54172c9",
+                    "model": "fixture",
+                    "configurationVersion": 1,
+                    "phase": "complete",
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=B",
+                      "title": "记录编辑",
+                      "fingerprint": "c8beb241426d0b8e0606cc9a5191d1907e8035a144b462854b41c40b7eed2844",
+                      "generation": 1,
+                      "observedAt": 1793984745032,
+                      "truncated": false
+                    },
+                    "pageChanged": false,
+                    "dispatched": true,
+                    "reservedTokens": 24787,
+                    "inputTokens": 100,
+                    "outputTokens": 100,
+                    "totalTokens": 200,
+                    "error": null
+                  }
+                },
+                {
+                  "role": "assistant",
+                  "text": "更新当前记录",
+                  "call": {
+                    "usageKind": "web-planning",
+                    "id": "482a2628-57cb-40d7-8297-cdd2066cb4fe",
+                    "taskId": "e5f50bf8-05a8-4476-af9a-f725a54172c9",
+                    "model": "fixture",
+                    "configurationVersion": 1,
+                    "phase": "complete",
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=B",
+                      "title": "记录编辑",
+                      "fingerprint": "c8beb241426d0b8e0606cc9a5191d1907e8035a144b462854b41c40b7eed2844",
+                      "generation": 1,
+                      "observedAt": 1793984745369,
+                      "truncated": false
+                    },
+                    "pageChanged": false,
+                    "dispatched": true,
+                    "reservedTokens": 24839,
+                    "inputTokens": 100,
+                    "outputTokens": 100,
+                    "totalTokens": 200,
+                    "error": null
+                  }
+                },
+                {
+                  "role": "assistant",
+                  "text": "更新当前记录",
+                  "call": {
+                    "usageKind": "web-planning",
+                    "id": "33628bcf-b09e-4df1-b52e-1f4556bb8f18",
+                    "taskId": "e5f50bf8-05a8-4476-af9a-f725a54172c9",
+                    "model": "fixture",
+                    "configurationVersion": 1,
+                    "phase": "complete",
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=B",
+                      "title": "记录编辑",
+                      "fingerprint": "c8beb241426d0b8e0606cc9a5191d1907e8035a144b462854b41c40b7eed2844",
+                      "generation": 1,
+                      "observedAt": 1793984745704,
+                      "truncated": false
+                    },
+                    "pageChanged": false,
+                    "dispatched": true,
+                    "reservedTokens": 24891,
+                    "inputTokens": 100,
+                    "outputTokens": 100,
+                    "totalTokens": 200,
+                    "error": null
+                  }
+                }
+              ]
+            }
+          ],
+          "modelSettings": {
+            "protocol": "chat-completions",
+            "endpoint": "http://127.0.0.1:63226/v1",
+            "model": "fixture",
+            "version": 1,
+            "hasCredential": true
+          },
+          "runtime": {
+            "conditions": []
+          }
+        },
+        "first": {
+          "coordination": {
+            "session": {
+              "id": "helpr-fixture-web",
+              "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+              "origin": "http://127.0.0.1:63226"
+            },
+            "status": "ready",
+            "account": {
+              "name": "账号 alice",
+              "url": "http://127.0.0.1:63226/users/alice"
+            },
+            "target": {
+              "name": "当前记录",
+              "url": "http://127.0.0.1:63226/edit?item=A"
+            },
+            "permissionEvidence": [
+              "可编辑此记录"
+            ],
+            "source": {
+              "url": "http://127.0.0.1:63226/edit?item=A",
+              "title": "记录编辑",
+              "fingerprint": "28d96f32ffacc996b82343bf8ee14da42e8c152e4a32cb465773e97ab1a6b420",
+              "generation": 1,
+              "observedAt": 1793984746106,
+              "truncated": false
+            }
+          },
+          "resourceClaims": [
+            {
+              "status": "released",
+              "id": "ff7b62fc-529a-4d85-8bc0-b2203f7e9521",
+              "runId": "a22e378d-73ec-4e17-9323-b00426ee5eb5",
+              "goalVersion": 1,
+              "origin": "http://127.0.0.1:63226",
+              "targetUrl": "http://127.0.0.1:63226/edit?item=A"
+            }
+          ],
+          "modelVersion": 1,
+          "intent": "automatic",
+          "phase": "complete",
+          "version": 2,
+          "intentId": "5ad22a45-5b97-4df4-9ce6-14d428e96a09",
+          "goalVersion": 1,
+          "goal": "更新 http://127.0.0.1:63226/edit?item=A 为“第一项内容”",
+          "runId": null,
+          "resource": null,
+          "summary": "更新当前记录",
+          "actions": [
+            {
+              "coordination": {
+                "session": {
+                  "id": "helpr-fixture-web",
+                  "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+                  "origin": "http://127.0.0.1:63226"
+                },
+                "claimId": "ff7b62fc-529a-4d85-8bc0-b2203f7e9521"
+              },
+              "observedLinks": [
+                {
+                  "name": "当前记录",
+                  "url": "http://127.0.0.1:63226/edit?item=A"
+                },
+                {
+                  "name": "账号 alice",
+                  "url": "http://127.0.0.1:63226/users/alice"
+                }
+              ],
+              "resultLinks": [
+                {
+                  "name": "当前记录",
+                  "url": "http://127.0.0.1:63226/edit?item=A"
+                },
+                {
+                  "name": "账号 alice",
+                  "url": "http://127.0.0.1:63226/users/alice"
+                }
+              ],
+              "id": "af40f0a2-11dc-43d4-a42f-1888f74a801d",
+              "runId": "a22e378d-73ec-4e17-9323-b00426ee5eb5",
+              "goalVersion": 1,
+              "status": "confirmed",
+              "summary": "更新当前记录",
+              "action": {
+                "kind": "fill",
+                "target": {
+                  "role": "textbox",
+                  "name": "记录内容",
+                  "exact": true
+                },
+                "value": "第一项内容"
+              },
+              "effect": "interaction",
+              "preconditions": [
+                "记录编辑"
+              ],
+              "source": {
+                "url": "http://127.0.0.1:63226/edit?item=A",
+                "title": "记录编辑",
+                "fingerprint": "80b594eeeb18bd138e4ab87c8e8b72da5bf7aa0b7b508e3d62fa68b0b4024c6c",
+                "generation": 1,
+                "observedAt": 1793984743863,
+                "truncated": false
+              },
+              "observedUrls": [
+                "http://127.0.0.1:63226/edit?item=A",
+                "http://127.0.0.1:63226/users/alice"
+              ],
+              "resultSource": {
+                "url": "http://127.0.0.1:63226/edit?item=A",
+                "title": "记录编辑",
+                "fingerprint": "e0e9dedfcca7be00816afc91a0a044d69f9779b91cd4bd0eb9f588ca3c7e9c9d",
+                "generation": 1,
+                "observedAt": 1793984744450,
+                "truncated": false
+              },
+              "binding": {
+                "targetId": "BA9CCEB4123259287536266DB3696315",
+                "generation": 1
+              },
+              "evidence": [
+                "输入内容 第一项内容"
+              ],
+              "returned": true,
+              "dispatchState": "possible"
+            },
+            {
+              "coordination": {
+                "session": {
+                  "id": "helpr-fixture-web",
+                  "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+                  "origin": "http://127.0.0.1:63226"
+                },
+                "claimId": "ff7b62fc-529a-4d85-8bc0-b2203f7e9521"
+              },
+              "observedLinks": [
+                {
+                  "name": "当前记录",
+                  "url": "http://127.0.0.1:63226/edit?item=A"
+                },
+                {
+                  "name": "账号 alice",
+                  "url": "http://127.0.0.1:63226/users/alice"
+                }
+              ],
+              "resultLinks": [
+                {
+                  "name": "当前记录",
+                  "url": "http://127.0.0.1:63226/edit?item=A"
+                },
+                {
+                  "name": "账号 alice",
+                  "url": "http://127.0.0.1:63226/users/alice"
+                }
+              ],
+              "id": "e8e4cd84-1fde-43b9-ae86-556c142715bb",
+              "runId": "a22e378d-73ec-4e17-9323-b00426ee5eb5",
+              "goalVersion": 1,
+              "status": "confirmed",
+              "summary": "更新当前记录",
+              "action": {
+                "kind": "click",
+                "target": {
+                  "role": "button",
+                  "name": "保存记录",
+                  "exact": true
+                }
+              },
+              "effect": "interaction",
+              "preconditions": [
+                "记录编辑"
+              ],
+              "source": {
+                "url": "http://127.0.0.1:63226/edit?item=A",
+                "title": "记录编辑",
+                "fingerprint": "e0e9dedfcca7be00816afc91a0a044d69f9779b91cd4bd0eb9f588ca3c7e9c9d",
+                "generation": 1,
+                "observedAt": 1793984744450,
+                "truncated": false
+              },
+              "observedUrls": [
+                "http://127.0.0.1:63226/edit?item=A",
+                "http://127.0.0.1:63226/users/alice"
+              ],
+              "resultSource": {
+                "url": "http://127.0.0.1:63226/edit?item=A",
+                "title": "记录编辑",
+                "fingerprint": "28d96f32ffacc996b82343bf8ee14da42e8c152e4a32cb465773e97ab1a6b420",
+                "generation": 1,
+                "observedAt": 1793984746106,
+                "truncated": false
+              },
+              "binding": {
+                "targetId": "BA9CCEB4123259287536266DB3696315",
+                "generation": 1
+              },
+              "evidence": [
+                "已保存 第一项内容"
+              ],
+              "returned": true,
+              "dispatchState": "possible"
+            }
+          ],
+          "result": {
+            "goalVersion": 1,
+            "source": {
+              "url": "http://127.0.0.1:63226/edit?item=A",
+              "title": "记录编辑",
+              "fingerprint": "28d96f32ffacc996b82343bf8ee14da42e8c152e4a32cb465773e97ab1a6b420",
+              "generation": 1,
+              "observedAt": 1793984746106,
+              "truncated": false
+            },
+            "evidence": [
+              "记录编辑"
+            ]
+          }
+        },
+        "second": {
+          "coordination": {
+            "session": {
+              "id": "helpr-fixture-web",
+              "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+              "origin": "http://127.0.0.1:63226"
+            },
+            "status": "ready",
+            "account": {
+              "name": "账号 alice",
+              "url": "http://127.0.0.1:63226/users/alice"
+            },
+            "target": {
+              "name": "当前记录",
+              "url": "http://127.0.0.1:63226/edit?item=B"
+            },
+            "permissionEvidence": [
+              "可编辑此记录"
+            ],
+            "source": {
+              "url": "http://127.0.0.1:63226/edit?item=B",
+              "title": "记录编辑",
+              "fingerprint": "6f8b50a90055f2d0200aa43d123c8430ee1aec1420047de2ec018c72be16e85e",
+              "generation": 1,
+              "observedAt": 1793984746037,
+              "truncated": false
+            }
+          },
+          "resourceClaims": [
+            {
+              "status": "released",
+              "id": "c8302e15-eddd-4a2e-ac3b-ee5a7c109965",
+              "runId": "05b20919-3612-49b6-bdc0-337a634fda02",
+              "goalVersion": 1,
+              "origin": "http://127.0.0.1:63226",
+              "targetUrl": "http://127.0.0.1:63226/edit?item=B"
+            }
+          ],
+          "modelVersion": 1,
+          "intent": "automatic",
+          "phase": "complete",
+          "version": 2,
+          "intentId": "769ca4d5-92c6-41aa-b982-ae9c85e1da65",
+          "goalVersion": 1,
+          "goal": "更新 http://127.0.0.1:63226/edit?item=B 为“第二项内容”",
+          "runId": null,
+          "resource": null,
+          "summary": "更新当前记录",
+          "actions": [
+            {
+              "coordination": {
+                "session": {
+                  "id": "helpr-fixture-web",
+                  "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+                  "origin": "http://127.0.0.1:63226"
+                },
+                "claimId": "c8302e15-eddd-4a2e-ac3b-ee5a7c109965"
+              },
+              "observedLinks": [
+                {
+                  "name": "当前记录",
+                  "url": "http://127.0.0.1:63226/edit?item=B"
+                },
+                {
+                  "name": "账号 alice",
+                  "url": "http://127.0.0.1:63226/users/alice"
+                }
+              ],
+              "resultLinks": [
+                {
+                  "name": "当前记录",
+                  "url": "http://127.0.0.1:63226/edit?item=B"
+                },
+                {
+                  "name": "账号 alice",
+                  "url": "http://127.0.0.1:63226/users/alice"
+                }
+              ],
+              "id": "3efb38fc-a1c1-48b3-a2c0-df456b58a4bc",
+              "runId": "05b20919-3612-49b6-bdc0-337a634fda02",
+              "goalVersion": 1,
+              "status": "confirmed",
+              "summary": "更新当前记录",
+              "action": {
+                "kind": "fill",
+                "target": {
+                  "role": "textbox",
+                  "name": "记录内容",
+                  "exact": true
+                },
+                "value": "第二项内容"
+              },
+              "effect": "interaction",
+              "preconditions": [
+                "记录编辑"
+              ],
+              "source": {
+                "url": "http://127.0.0.1:63226/edit?item=B",
+                "title": "记录编辑",
+                "fingerprint": "1b18637469a449313aa8261a7ff37588dbd97249d0159e87134940eee7877577",
+                "generation": 1,
+                "observedAt": 1793984743888,
+                "truncated": false
+              },
+              "observedUrls": [
+                "http://127.0.0.1:63226/edit?item=B",
+                "http://127.0.0.1:63226/users/alice"
+              ],
+              "resultSource": {
+                "url": "http://127.0.0.1:63226/edit?item=B",
+                "title": "记录编辑",
+                "fingerprint": "63809609a05093a65700df82d3b76b53d82acb7dcec0bdfcb44113a8f59039c9",
+                "generation": 1,
+                "observedAt": 1793984744484,
+                "truncated": false
+              },
+              "binding": {
+                "targetId": "34217A72A8E83FBD7328714D4708FD76",
+                "generation": 1
+              },
+              "evidence": [
+                "输入内容 第二项内容"
+              ],
+              "returned": true,
+              "dispatchState": "possible"
+            },
+            {
+              "coordination": {
+                "session": {
+                  "id": "helpr-fixture-web",
+                  "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+                  "origin": "http://127.0.0.1:63226"
+                },
+                "claimId": "c8302e15-eddd-4a2e-ac3b-ee5a7c109965"
+              },
+              "observedLinks": [
+                {
+                  "name": "当前记录",
+                  "url": "http://127.0.0.1:63226/edit?item=B"
+                },
+                {
+                  "name": "账号 alice",
+                  "url": "http://127.0.0.1:63226/users/alice"
+                }
+              ],
+              "resultLinks": [
+                {
+                  "name": "当前记录",
+                  "url": "http://127.0.0.1:63226/edit?item=B"
+                },
+                {
+                  "name": "账号 alice",
+                  "url": "http://127.0.0.1:63226/users/alice"
+                }
+              ],
+              "id": "8a2823cf-5611-4c4c-9aac-9c0fffb8fcda",
+              "runId": "05b20919-3612-49b6-bdc0-337a634fda02",
+              "goalVersion": 1,
+              "status": "confirmed",
+              "summary": "更新当前记录",
+              "action": {
+                "kind": "click",
+                "target": {
+                  "role": "button",
+                  "name": "保存记录",
+                  "exact": true
+                }
+              },
+              "effect": "interaction",
+              "preconditions": [
+                "记录编辑"
+              ],
+              "source": {
+                "url": "http://127.0.0.1:63226/edit?item=B",
+                "title": "记录编辑",
+                "fingerprint": "63809609a05093a65700df82d3b76b53d82acb7dcec0bdfcb44113a8f59039c9",
+                "generation": 1,
+                "observedAt": 1793984744484,
+                "truncated": false
+              },
+              "observedUrls": [
+                "http://127.0.0.1:63226/edit?item=B",
+                "http://127.0.0.1:63226/users/alice"
+              ],
+              "resultSource": {
+                "url": "http://127.0.0.1:63226/edit?item=B",
+                "title": "记录编辑",
+                "fingerprint": "6f8b50a90055f2d0200aa43d123c8430ee1aec1420047de2ec018c72be16e85e",
+                "generation": 1,
+                "observedAt": 1793984746037,
+                "truncated": false
+              },
+              "binding": {
+                "targetId": "34217A72A8E83FBD7328714D4708FD76",
+                "generation": 1
+              },
+              "evidence": [
+                "已保存 第二项内容"
+              ],
+              "returned": true,
+              "dispatchState": "possible"
+            }
+          ],
+          "result": {
+            "goalVersion": 1,
+            "source": {
+              "url": "http://127.0.0.1:63226/edit?item=B",
+              "title": "记录编辑",
+              "fingerprint": "6f8b50a90055f2d0200aa43d123c8430ee1aec1420047de2ec018c72be16e85e",
+              "generation": 1,
+              "observedAt": 1793984746037,
+              "truncated": false
+            },
+            "evidence": [
+              "记录编辑"
+            ]
+          }
+        }
+      },
+      {
+        "name": "same-target",
+        "taskIds": [
+          "49c24ea8-0672-4244-bc9c-445f88caed76",
+          "151b0b00-9592-4379-ac12-04c93806b31b"
+        ],
+        "waiting": {
+          "revision": 119,
+          "active": "151b0b00-9592-4379-ac12-04c93806b31b",
+          "tasks": [
+            {
+              "id": "e9525f49-818c-47b7-9581-0524332d5c6a",
+              "goal": "更新 http://127.0.0.1:63226/edit?item=A 为“第一项内容”",
+              "created": 1793984742839,
+              "url": "http://127.0.0.1:63226/edit?item=A",
+              "draft": "",
+              "archived": false,
+              "groupId": null,
+              "groupGoal": null,
+              "hidden": false,
+              "minimized": false,
+              "phase": "manual",
+              "execution": {
+                "coordination": {
+                  "session": {
+                    "id": "helpr-fixture-web",
+                    "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+                    "origin": "http://127.0.0.1:63226"
+                  },
+                  "status": "ready",
+                  "account": {
+                    "name": "账号 alice",
+                    "url": "http://127.0.0.1:63226/users/alice"
+                  },
+                  "target": {
+                    "name": "当前记录",
+                    "url": "http://127.0.0.1:63226/edit?item=A"
+                  },
+                  "permissionEvidence": [
+                    "可编辑此记录"
+                  ],
+                  "source": {
+                    "url": "http://127.0.0.1:63226/edit?item=A",
+                    "title": "记录编辑",
+                    "fingerprint": "28d96f32ffacc996b82343bf8ee14da42e8c152e4a32cb465773e97ab1a6b420",
+                    "generation": 1,
+                    "observedAt": 1793984746106,
+                    "truncated": false
+                  }
+                },
+                "resourceClaims": [
+                  {
+                    "status": "released",
+                    "id": "ff7b62fc-529a-4d85-8bc0-b2203f7e9521",
+                    "runId": "a22e378d-73ec-4e17-9323-b00426ee5eb5",
+                    "goalVersion": 1,
+                    "origin": "http://127.0.0.1:63226",
+                    "targetUrl": "http://127.0.0.1:63226/edit?item=A"
+                  }
+                ],
+                "modelVersion": 1,
+                "intent": "automatic",
+                "phase": "complete",
+                "version": 2,
+                "intentId": "5ad22a45-5b97-4df4-9ce6-14d428e96a09",
+                "goalVersion": 1,
+                "goal": "更新 http://127.0.0.1:63226/edit?item=A 为“第一项内容”",
+                "runId": null,
+                "resource": null,
+                "summary": "更新当前记录",
+                "actions": [
+                  {
+                    "coordination": {
+                      "session": {
+                        "id": "helpr-fixture-web",
+                        "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+                        "origin": "http://127.0.0.1:63226"
+                      },
+                      "claimId": "ff7b62fc-529a-4d85-8bc0-b2203f7e9521"
+                    },
+                    "observedLinks": [
+                      {
+                        "name": "当前记录",
+                        "url": "http://127.0.0.1:63226/edit?item=A"
+                      },
+                      {
+                        "name": "账号 alice",
+                        "url": "http://127.0.0.1:63226/users/alice"
+                      }
+                    ],
+                    "resultLinks": [
+                      {
+                        "name": "当前记录",
+                        "url": "http://127.0.0.1:63226/edit?item=A"
+                      },
+                      {
+                        "name": "账号 alice",
+                        "url": "http://127.0.0.1:63226/users/alice"
+                      }
+                    ],
+                    "id": "af40f0a2-11dc-43d4-a42f-1888f74a801d",
+                    "runId": "a22e378d-73ec-4e17-9323-b00426ee5eb5",
+                    "goalVersion": 1,
+                    "status": "confirmed",
+                    "summary": "更新当前记录",
+                    "action": {
+                      "kind": "fill",
+                      "target": {
+                        "role": "textbox",
+                        "name": "记录内容",
+                        "exact": true
+                      },
+                      "value": "第一项内容"
+                    },
+                    "effect": "interaction",
+                    "preconditions": [
+                      "记录编辑"
+                    ],
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=A",
+                      "title": "记录编辑",
+                      "fingerprint": "80b594eeeb18bd138e4ab87c8e8b72da5bf7aa0b7b508e3d62fa68b0b4024c6c",
+                      "generation": 1,
+                      "observedAt": 1793984743863,
+                      "truncated": false
+                    },
+                    "observedUrls": [
+                      "http://127.0.0.1:63226/edit?item=A",
+                      "http://127.0.0.1:63226/users/alice"
+                    ],
+                    "resultSource": {
+                      "url": "http://127.0.0.1:63226/edit?item=A",
+                      "title": "记录编辑",
+                      "fingerprint": "e0e9dedfcca7be00816afc91a0a044d69f9779b91cd4bd0eb9f588ca3c7e9c9d",
+                      "generation": 1,
+                      "observedAt": 1793984744450,
+                      "truncated": false
+                    },
+                    "binding": {
+                      "targetId": "BA9CCEB4123259287536266DB3696315",
+                      "generation": 1
+                    },
+                    "evidence": [
+                      "输入内容 第一项内容"
+                    ],
+                    "returned": true,
+                    "dispatchState": "possible"
+                  },
+                  {
+                    "coordination": {
+                      "session": {
+                        "id": "helpr-fixture-web",
+                        "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+                        "origin": "http://127.0.0.1:63226"
+                      },
+                      "claimId": "ff7b62fc-529a-4d85-8bc0-b2203f7e9521"
+                    },
+                    "observedLinks": [
+                      {
+                        "name": "当前记录",
+                        "url": "http://127.0.0.1:63226/edit?item=A"
+                      },
+                      {
+                        "name": "账号 alice",
+                        "url": "http://127.0.0.1:63226/users/alice"
+                      }
+                    ],
+                    "resultLinks": [
+                      {
+                        "name": "当前记录",
+                        "url": "http://127.0.0.1:63226/edit?item=A"
+                      },
+                      {
+                        "name": "账号 alice",
+                        "url": "http://127.0.0.1:63226/users/alice"
+                      }
+                    ],
+                    "id": "e8e4cd84-1fde-43b9-ae86-556c142715bb",
+                    "runId": "a22e378d-73ec-4e17-9323-b00426ee5eb5",
+                    "goalVersion": 1,
+                    "status": "confirmed",
+                    "summary": "更新当前记录",
+                    "action": {
+                      "kind": "click",
+                      "target": {
+                        "role": "button",
+                        "name": "保存记录",
+                        "exact": true
+                      }
+                    },
+                    "effect": "interaction",
+                    "preconditions": [
+                      "记录编辑"
+                    ],
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=A",
+                      "title": "记录编辑",
+                      "fingerprint": "e0e9dedfcca7be00816afc91a0a044d69f9779b91cd4bd0eb9f588ca3c7e9c9d",
+                      "generation": 1,
+                      "observedAt": 1793984744450,
+                      "truncated": false
+                    },
+                    "observedUrls": [
+                      "http://127.0.0.1:63226/edit?item=A",
+                      "http://127.0.0.1:63226/users/alice"
+                    ],
+                    "resultSource": {
+                      "url": "http://127.0.0.1:63226/edit?item=A",
+                      "title": "记录编辑",
+                      "fingerprint": "28d96f32ffacc996b82343bf8ee14da42e8c152e4a32cb465773e97ab1a6b420",
+                      "generation": 1,
+                      "observedAt": 1793984746106,
+                      "truncated": false
+                    },
+                    "binding": {
+                      "targetId": "BA9CCEB4123259287536266DB3696315",
+                      "generation": 1
+                    },
+                    "evidence": [
+                      "已保存 第一项内容"
+                    ],
+                    "returned": true,
+                    "dispatchState": "possible"
+                  }
+                ],
+                "result": {
+                  "goalVersion": 1,
+                  "source": {
+                    "url": "http://127.0.0.1:63226/edit?item=A",
+                    "title": "记录编辑",
+                    "fingerprint": "28d96f32ffacc996b82343bf8ee14da42e8c152e4a32cb465773e97ab1a6b420",
+                    "generation": 1,
+                    "observedAt": 1793984746106,
+                    "truncated": false
+                  },
+                  "evidence": [
+                    "记录编辑"
+                  ]
+                }
+              },
+              "error": "",
+              "version": 6,
+              "messages": [
+                {
+                  "role": "user",
+                  "text": "更新 http://127.0.0.1:63226/edit?item=A 为“第一项内容”"
+                },
+                {
+                  "role": "system",
+                  "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+                },
+                {
+                  "role": "user",
+                  "text": "开始执行"
+                },
+                {
+                  "role": "assistant",
+                  "text": "更新当前记录",
+                  "call": {
+                    "usageKind": "web-planning",
+                    "id": "549555da-3019-44b1-bc57-8b53c18f6abf",
+                    "taskId": "e9525f49-818c-47b7-9581-0524332d5c6a",
+                    "model": "fixture",
+                    "configurationVersion": 1,
+                    "phase": "complete",
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=A",
+                      "title": "记录编辑",
+                      "fingerprint": "80b594eeeb18bd138e4ab87c8e8b72da5bf7aa0b7b508e3d62fa68b0b4024c6c",
+                      "generation": 1,
+                      "observedAt": 1793984743863,
+                      "truncated": false
+                    },
+                    "pageChanged": false,
+                    "dispatched": true,
+                    "reservedTokens": 22356,
+                    "inputTokens": 100,
+                    "outputTokens": 100,
+                    "totalTokens": 200,
+                    "error": null
+                  }
+                },
+                {
+                  "role": "assistant",
+                  "text": "更新当前记录",
+                  "call": {
+                    "usageKind": "web-planning",
+                    "id": "f13aee97-562c-4321-8822-7b17929ca4fd",
+                    "taskId": "e9525f49-818c-47b7-9581-0524332d5c6a",
+                    "model": "fixture",
+                    "configurationVersion": 1,
+                    "phase": "complete",
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=A",
+                      "title": "记录编辑",
+                      "fingerprint": "e0e9dedfcca7be00816afc91a0a044d69f9779b91cd4bd0eb9f588ca3c7e9c9d",
+                      "generation": 1,
+                      "observedAt": 1793984744450,
+                      "truncated": false
+                    },
+                    "pageChanged": false,
+                    "dispatched": true,
+                    "reservedTokens": 24001,
+                    "inputTokens": 100,
+                    "outputTokens": 100,
+                    "totalTokens": 200,
+                    "error": null
+                  }
+                },
+                {
+                  "role": "assistant",
+                  "text": "更新当前记录",
+                  "call": {
+                    "usageKind": "web-planning",
+                    "id": "6617c9b1-b885-4d43-af56-17353dc322de",
+                    "taskId": "e9525f49-818c-47b7-9581-0524332d5c6a",
+                    "model": "fixture",
+                    "configurationVersion": 1,
+                    "phase": "complete",
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=A",
+                      "title": "记录编辑",
+                      "fingerprint": "00f843377ddd2f05c073bfd1f54a94572bda5b34040a6c2426824f985b3d75a8",
+                      "generation": 1,
+                      "observedAt": 1793984746014,
+                      "truncated": false
+                    },
+                    "pageChanged": true,
+                    "dispatched": true,
+                    "reservedTokens": 24787,
+                    "inputTokens": 100,
+                    "outputTokens": 100,
+                    "totalTokens": 200,
+                    "error": null
+                  }
+                },
+                {
+                  "role": "assistant",
+                  "text": "更新当前记录",
+                  "call": {
+                    "usageKind": "web-planning",
+                    "id": "08822148-b927-42b8-a543-f2688642961e",
+                    "taskId": "e9525f49-818c-47b7-9581-0524332d5c6a",
+                    "model": "fixture",
+                    "configurationVersion": 1,
+                    "phase": "complete",
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=A",
+                      "title": "记录编辑",
+                      "fingerprint": "28d96f32ffacc996b82343bf8ee14da42e8c152e4a32cb465773e97ab1a6b420",
+                      "generation": 1,
+                      "observedAt": 1793984746106,
+                      "truncated": false
+                    },
+                    "pageChanged": false,
+                    "dispatched": true,
+                    "reservedTokens": 24865,
+                    "inputTokens": 100,
+                    "outputTokens": 100,
+                    "totalTokens": 200,
+                    "error": null
+                  }
+                }
+              ]
+            },
+            {
+              "id": "e5f50bf8-05a8-4476-af9a-f725a54172c9",
+              "goal": "更新 http://127.0.0.1:63226/edit?item=B 为“第二项内容”",
+              "created": 1793984743347,
+              "url": "http://127.0.0.1:63226/edit?item=B",
+              "draft": "",
+              "archived": false,
+              "groupId": null,
+              "groupGoal": null,
+              "hidden": false,
+              "minimized": false,
+              "phase": "manual",
+              "execution": {
+                "coordination": {
+                  "session": {
+                    "id": "helpr-fixture-web",
+                    "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+                    "origin": "http://127.0.0.1:63226"
+                  },
+                  "status": "ready",
+                  "account": {
+                    "name": "账号 alice",
+                    "url": "http://127.0.0.1:63226/users/alice"
+                  },
+                  "target": {
+                    "name": "当前记录",
+                    "url": "http://127.0.0.1:63226/edit?item=B"
+                  },
+                  "permissionEvidence": [
+                    "可编辑此记录"
+                  ],
+                  "source": {
+                    "url": "http://127.0.0.1:63226/edit?item=B",
+                    "title": "记录编辑",
+                    "fingerprint": "6f8b50a90055f2d0200aa43d123c8430ee1aec1420047de2ec018c72be16e85e",
+                    "generation": 1,
+                    "observedAt": 1793984746037,
+                    "truncated": false
+                  }
+                },
+                "resourceClaims": [
+                  {
+                    "status": "released",
+                    "id": "c8302e15-eddd-4a2e-ac3b-ee5a7c109965",
+                    "runId": "05b20919-3612-49b6-bdc0-337a634fda02",
+                    "goalVersion": 1,
+                    "origin": "http://127.0.0.1:63226",
+                    "targetUrl": "http://127.0.0.1:63226/edit?item=B"
+                  }
+                ],
+                "modelVersion": 1,
+                "intent": "automatic",
+                "phase": "complete",
+                "version": 2,
+                "intentId": "769ca4d5-92c6-41aa-b982-ae9c85e1da65",
+                "goalVersion": 1,
+                "goal": "更新 http://127.0.0.1:63226/edit?item=B 为“第二项内容”",
+                "runId": null,
+                "resource": null,
+                "summary": "更新当前记录",
+                "actions": [
+                  {
+                    "coordination": {
+                      "session": {
+                        "id": "helpr-fixture-web",
+                        "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+                        "origin": "http://127.0.0.1:63226"
+                      },
+                      "claimId": "c8302e15-eddd-4a2e-ac3b-ee5a7c109965"
+                    },
+                    "observedLinks": [
+                      {
+                        "name": "当前记录",
+                        "url": "http://127.0.0.1:63226/edit?item=B"
+                      },
+                      {
+                        "name": "账号 alice",
+                        "url": "http://127.0.0.1:63226/users/alice"
+                      }
+                    ],
+                    "resultLinks": [
+                      {
+                        "name": "当前记录",
+                        "url": "http://127.0.0.1:63226/edit?item=B"
+                      },
+                      {
+                        "name": "账号 alice",
+                        "url": "http://127.0.0.1:63226/users/alice"
+                      }
+                    ],
+                    "id": "3efb38fc-a1c1-48b3-a2c0-df456b58a4bc",
+                    "runId": "05b20919-3612-49b6-bdc0-337a634fda02",
+                    "goalVersion": 1,
+                    "status": "confirmed",
+                    "summary": "更新当前记录",
+                    "action": {
+                      "kind": "fill",
+                      "target": {
+                        "role": "textbox",
+                        "name": "记录内容",
+                        "exact": true
+                      },
+                      "value": "第二项内容"
+                    },
+                    "effect": "interaction",
+                    "preconditions": [
+                      "记录编辑"
+                    ],
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=B",
+                      "title": "记录编辑",
+                      "fingerprint": "1b18637469a449313aa8261a7ff37588dbd97249d0159e87134940eee7877577",
+                      "generation": 1,
+                      "observedAt": 1793984743888,
+                      "truncated": false
+                    },
+                    "observedUrls": [
+                      "http://127.0.0.1:63226/edit?item=B",
+                      "http://127.0.0.1:63226/users/alice"
+                    ],
+                    "resultSource": {
+                      "url": "http://127.0.0.1:63226/edit?item=B",
+                      "title": "记录编辑",
+                      "fingerprint": "63809609a05093a65700df82d3b76b53d82acb7dcec0bdfcb44113a8f59039c9",
+                      "generation": 1,
+                      "observedAt": 1793984744484,
+                      "truncated": false
+                    },
+                    "binding": {
+                      "targetId": "34217A72A8E83FBD7328714D4708FD76",
+                      "generation": 1
+                    },
+                    "evidence": [
+                      "输入内容 第二项内容"
+                    ],
+                    "returned": true,
+                    "dispatchState": "possible"
+                  },
+                  {
+                    "coordination": {
+                      "session": {
+                        "id": "helpr-fixture-web",
+                        "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+                        "origin": "http://127.0.0.1:63226"
+                      },
+                      "claimId": "c8302e15-eddd-4a2e-ac3b-ee5a7c109965"
+                    },
+                    "observedLinks": [
+                      {
+                        "name": "当前记录",
+                        "url": "http://127.0.0.1:63226/edit?item=B"
+                      },
+                      {
+                        "name": "账号 alice",
+                        "url": "http://127.0.0.1:63226/users/alice"
+                      }
+                    ],
+                    "resultLinks": [
+                      {
+                        "name": "当前记录",
+                        "url": "http://127.0.0.1:63226/edit?item=B"
+                      },
+                      {
+                        "name": "账号 alice",
+                        "url": "http://127.0.0.1:63226/users/alice"
+                      }
+                    ],
+                    "id": "8a2823cf-5611-4c4c-9aac-9c0fffb8fcda",
+                    "runId": "05b20919-3612-49b6-bdc0-337a634fda02",
+                    "goalVersion": 1,
+                    "status": "confirmed",
+                    "summary": "更新当前记录",
+                    "action": {
+                      "kind": "click",
+                      "target": {
+                        "role": "button",
+                        "name": "保存记录",
+                        "exact": true
+                      }
+                    },
+                    "effect": "interaction",
+                    "preconditions": [
+                      "记录编辑"
+                    ],
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=B",
+                      "title": "记录编辑",
+                      "fingerprint": "63809609a05093a65700df82d3b76b53d82acb7dcec0bdfcb44113a8f59039c9",
+                      "generation": 1,
+                      "observedAt": 1793984744484,
+                      "truncated": false
+                    },
+                    "observedUrls": [
+                      "http://127.0.0.1:63226/edit?item=B",
+                      "http://127.0.0.1:63226/users/alice"
+                    ],
+                    "resultSource": {
+                      "url": "http://127.0.0.1:63226/edit?item=B",
+                      "title": "记录编辑",
+                      "fingerprint": "6f8b50a90055f2d0200aa43d123c8430ee1aec1420047de2ec018c72be16e85e",
+                      "generation": 1,
+                      "observedAt": 1793984746037,
+                      "truncated": false
+                    },
+                    "binding": {
+                      "targetId": "34217A72A8E83FBD7328714D4708FD76",
+                      "generation": 1
+                    },
+                    "evidence": [
+                      "已保存 第二项内容"
+                    ],
+                    "returned": true,
+                    "dispatchState": "possible"
+                  }
+                ],
+                "result": {
+                  "goalVersion": 1,
+                  "source": {
+                    "url": "http://127.0.0.1:63226/edit?item=B",
+                    "title": "记录编辑",
+                    "fingerprint": "6f8b50a90055f2d0200aa43d123c8430ee1aec1420047de2ec018c72be16e85e",
+                    "generation": 1,
+                    "observedAt": 1793984746037,
+                    "truncated": false
+                  },
+                  "evidence": [
+                    "记录编辑"
+                  ]
+                }
+              },
+              "error": "",
+              "version": 8,
+              "messages": [
+                {
+                  "role": "user",
+                  "text": "更新 http://127.0.0.1:63226/edit?item=B 为“第二项内容”"
+                },
+                {
+                  "role": "system",
+                  "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+                },
+                {
+                  "role": "user",
+                  "text": "开始执行"
+                },
+                {
+                  "role": "assistant",
+                  "text": "更新当前记录",
+                  "call": {
+                    "usageKind": "web-planning",
+                    "id": "2e11cac9-f2f5-4345-8fb9-5b11cd6c56d5",
+                    "taskId": "e5f50bf8-05a8-4476-af9a-f725a54172c9",
+                    "model": "fixture",
+                    "configurationVersion": 1,
+                    "phase": "complete",
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=B",
+                      "title": "记录编辑",
+                      "fingerprint": "1b18637469a449313aa8261a7ff37588dbd97249d0159e87134940eee7877577",
+                      "generation": 1,
+                      "observedAt": 1793984743888,
+                      "truncated": false
+                    },
+                    "pageChanged": false,
+                    "dispatched": true,
+                    "reservedTokens": 22356,
+                    "inputTokens": 100,
+                    "outputTokens": 100,
+                    "totalTokens": 200,
+                    "error": null
+                  }
+                },
+                {
+                  "role": "assistant",
+                  "text": "更新当前记录",
+                  "call": {
+                    "usageKind": "web-planning",
+                    "id": "842c1ea0-6fd3-4117-a10e-c2764915cd93",
+                    "taskId": "e5f50bf8-05a8-4476-af9a-f725a54172c9",
+                    "model": "fixture",
+                    "configurationVersion": 1,
+                    "phase": "complete",
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=B",
+                      "title": "记录编辑",
+                      "fingerprint": "63809609a05093a65700df82d3b76b53d82acb7dcec0bdfcb44113a8f59039c9",
+                      "generation": 1,
+                      "observedAt": 1793984744484,
+                      "truncated": false
+                    },
+                    "pageChanged": false,
+                    "dispatched": true,
+                    "reservedTokens": 24001,
+                    "inputTokens": 100,
+                    "outputTokens": 100,
+                    "totalTokens": 200,
+                    "error": null
+                  }
+                },
+                {
+                  "role": "assistant",
+                  "text": "更新当前记录",
+                  "call": {
+                    "usageKind": "web-planning",
+                    "id": "6a6fa491-1b20-4bce-a7bb-e84e5d4d2876",
+                    "taskId": "e5f50bf8-05a8-4476-af9a-f725a54172c9",
+                    "model": "fixture",
+                    "configurationVersion": 1,
+                    "phase": "complete",
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=B",
+                      "title": "记录编辑",
+                      "fingerprint": "c8beb241426d0b8e0606cc9a5191d1907e8035a144b462854b41c40b7eed2844",
+                      "generation": 1,
+                      "observedAt": 1793984745032,
+                      "truncated": false
+                    },
+                    "pageChanged": false,
+                    "dispatched": true,
+                    "reservedTokens": 24787,
+                    "inputTokens": 100,
+                    "outputTokens": 100,
+                    "totalTokens": 200,
+                    "error": null
+                  }
+                },
+                {
+                  "role": "assistant",
+                  "text": "更新当前记录",
+                  "call": {
+                    "usageKind": "web-planning",
+                    "id": "482a2628-57cb-40d7-8297-cdd2066cb4fe",
+                    "taskId": "e5f50bf8-05a8-4476-af9a-f725a54172c9",
+                    "model": "fixture",
+                    "configurationVersion": 1,
+                    "phase": "complete",
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=B",
+                      "title": "记录编辑",
+                      "fingerprint": "c8beb241426d0b8e0606cc9a5191d1907e8035a144b462854b41c40b7eed2844",
+                      "generation": 1,
+                      "observedAt": 1793984745369,
+                      "truncated": false
+                    },
+                    "pageChanged": false,
+                    "dispatched": true,
+                    "reservedTokens": 24839,
+                    "inputTokens": 100,
+                    "outputTokens": 100,
+                    "totalTokens": 200,
+                    "error": null
+                  }
+                },
+                {
+                  "role": "assistant",
+                  "text": "更新当前记录",
+                  "call": {
+                    "usageKind": "web-planning",
+                    "id": "33628bcf-b09e-4df1-b52e-1f4556bb8f18",
+                    "taskId": "e5f50bf8-05a8-4476-af9a-f725a54172c9",
+                    "model": "fixture",
+                    "configurationVersion": 1,
+                    "phase": "complete",
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=B",
+                      "title": "记录编辑",
+                      "fingerprint": "c8beb241426d0b8e0606cc9a5191d1907e8035a144b462854b41c40b7eed2844",
+                      "generation": 1,
+                      "observedAt": 1793984745704,
+                      "truncated": false
+                    },
+                    "pageChanged": false,
+                    "dispatched": true,
+                    "reservedTokens": 24891,
+                    "inputTokens": 100,
+                    "outputTokens": 100,
+                    "totalTokens": 200,
+                    "error": null
+                  }
+                },
+                {
+                  "role": "assistant",
+                  "text": "更新当前记录",
+                  "call": {
+                    "usageKind": "web-planning",
+                    "id": "48ab63a2-076b-47e9-8a91-63663730c4f1",
+                    "taskId": "e5f50bf8-05a8-4476-af9a-f725a54172c9",
+                    "model": "fixture",
+                    "configurationVersion": 1,
+                    "phase": "complete",
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=B",
+                      "title": "记录编辑",
+                      "fingerprint": "6f8b50a90055f2d0200aa43d123c8430ee1aec1420047de2ec018c72be16e85e",
+                      "generation": 1,
+                      "observedAt": 1793984746037,
+                      "truncated": false
+                    },
+                    "pageChanged": false,
+                    "dispatched": true,
+                    "reservedTokens": 24969,
+                    "inputTokens": 100,
+                    "outputTokens": 100,
+                    "totalTokens": 200,
+                    "error": null
+                  }
+                }
+              ]
+            },
+            {
+              "id": "49c24ea8-0672-4244-bc9c-445f88caed76",
+              "goal": "更新 http://127.0.0.1:63226/edit?item=C 为“保留前项内容”",
+              "created": 1793984746324,
+              "url": "http://127.0.0.1:63226/edit?item=C",
+              "draft": "",
+              "archived": false,
+              "groupId": null,
+              "groupGoal": null,
+              "hidden": false,
+              "minimized": false,
+              "phase": "manual",
+              "execution": {
+                "coordination": {
+                  "session": {
+                    "id": "helpr-fixture-web",
+                    "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+                    "origin": "http://127.0.0.1:63226"
+                  },
+                  "status": "ready",
+                  "account": {
+                    "name": "账号 alice",
+                    "url": "http://127.0.0.1:63226/users/alice"
+                  },
+                  "target": {
+                    "name": "当前记录",
+                    "url": "http://127.0.0.1:63226/edit?item=C"
+                  },
+                  "permissionEvidence": [
+                    "可编辑此记录"
+                  ],
+                  "source": {
+                    "url": "http://127.0.0.1:63226/edit?item=C",
+                    "title": "记录编辑",
+                    "fingerprint": "264cb0a4ff8a47d61310ca9288e39573d020e820307993d02fbea6c715ee0812",
+                    "generation": 1,
+                    "observedAt": 1793984748202,
+                    "truncated": false
+                  }
+                },
+                "resourceClaims": [
+                  {
+                    "status": "held",
+                    "id": "134362d6-c86c-4361-930a-6591e6590b6d",
+                    "runId": "6ae85675-f679-480c-8475-ecbd74b17990",
+                    "goalVersion": 1,
+                    "origin": "http://127.0.0.1:63226",
+                    "targetUrl": "http://127.0.0.1:63226/edit?item=C"
+                  }
+                ],
+                "modelVersion": 1,
+                "intent": "automatic",
+                "phase": "running",
+                "version": 2,
+                "intentId": "b3bcc002-d416-4474-b98c-f04c1bc02c69",
+                "goalVersion": 1,
+                "goal": "更新 http://127.0.0.1:63226/edit?item=C 为“保留前项内容”",
+                "runId": "6ae85675-f679-480c-8475-ecbd74b17990",
+                "resource": null,
+                "summary": "更新当前记录",
+                "actions": [
+                  {
+                    "coordination": {
+                      "session": {
+                        "id": "helpr-fixture-web",
+                        "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+                        "origin": "http://127.0.0.1:63226"
+                      },
+                      "claimId": "134362d6-c86c-4361-930a-6591e6590b6d"
+                    },
+                    "observedLinks": [
+                      {
+                        "name": "当前记录",
+                        "url": "http://127.0.0.1:63226/edit?item=C"
+                      },
+                      {
+                        "name": "账号 alice",
+                        "url": "http://127.0.0.1:63226/users/alice"
+                      }
+                    ],
+                    "resultLinks": [
+                      {
+                        "name": "当前记录",
+                        "url": "http://127.0.0.1:63226/edit?item=C"
+                      },
+                      {
+                        "name": "账号 alice",
+                        "url": "http://127.0.0.1:63226/users/alice"
+                      }
+                    ],
+                    "id": "54a58aba-3304-4736-bc5a-07a53cd0896c",
+                    "runId": "6ae85675-f679-480c-8475-ecbd74b17990",
+                    "goalVersion": 1,
+                    "status": "confirmed",
+                    "summary": "更新当前记录",
+                    "action": {
+                      "kind": "fill",
+                      "target": {
+                        "role": "textbox",
+                        "name": "记录内容",
+                        "exact": true
+                      },
+                      "value": "保留前项内容"
+                    },
+                    "effect": "interaction",
+                    "preconditions": [
+                      "记录编辑"
+                    ],
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=C",
+                      "title": "记录编辑",
+                      "fingerprint": "44827fea09e7adba9819611d8c286fcb0a4253df8c2e7e867b0284b9b49e3d92",
+                      "generation": 1,
+                      "observedAt": 1793984747307,
+                      "truncated": false
+                    },
+                    "observedUrls": [
+                      "http://127.0.0.1:63226/edit?item=C",
+                      "http://127.0.0.1:63226/users/alice"
+                    ],
+                    "resultSource": {
+                      "url": "http://127.0.0.1:63226/edit?item=C",
+                      "title": "记录编辑",
+                      "fingerprint": "77b2f3d6607952b38374c1cd16bb304130c21db73b4961bf89d10c6ceefbe762",
+                      "generation": 1,
+                      "observedAt": 1793984747741,
+                      "truncated": false
+                    },
+                    "binding": {
+                      "targetId": "A393326086F8D5D8D7ECC6D7DEF8F02F",
+                      "generation": 1
+                    },
+                    "evidence": [
+                      "输入内容 保留前项内容"
+                    ],
+                    "returned": true,
+                    "dispatchState": "possible"
+                  },
+                  {
+                    "coordination": {
+                      "session": {
+                        "id": "helpr-fixture-web",
+                        "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+                        "origin": "http://127.0.0.1:63226"
+                      },
+                      "claimId": "134362d6-c86c-4361-930a-6591e6590b6d"
+                    },
+                    "observedLinks": [
+                      {
+                        "name": "当前记录",
+                        "url": "http://127.0.0.1:63226/edit?item=C"
+                      },
+                      {
+                        "name": "账号 alice",
+                        "url": "http://127.0.0.1:63226/users/alice"
+                      }
+                    ],
+                    "id": "8bfdde30-c252-48f8-9d37-3f14272389c2",
+                    "runId": "6ae85675-f679-480c-8475-ecbd74b17990",
+                    "goalVersion": 1,
+                    "status": "unknown",
+                    "summary": "更新当前记录",
+                    "action": {
+                      "kind": "click",
+                      "target": {
+                        "role": "button",
+                        "name": "保存记录",
+                        "exact": true
+                      }
+                    },
+                    "effect": "interaction",
+                    "preconditions": [
+                      "记录编辑"
+                    ],
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=C",
+                      "title": "记录编辑",
+                      "fingerprint": "77b2f3d6607952b38374c1cd16bb304130c21db73b4961bf89d10c6ceefbe762",
+                      "generation": 1,
+                      "observedAt": 1793984747741,
+                      "truncated": false
+                    },
+                    "observedUrls": [
+                      "http://127.0.0.1:63226/edit?item=C",
+                      "http://127.0.0.1:63226/users/alice"
+                    ],
+                    "binding": {
+                      "targetId": "A393326086F8D5D8D7ECC6D7DEF8F02F",
+                      "generation": 1
+                    },
+                    "evidence": [],
+                    "returned": true,
+                    "dispatchState": "possible"
+                  }
+                ]
+              },
+              "error": "",
+              "version": 5,
+              "messages": [
+                {
+                  "role": "user",
+                  "text": "更新 http://127.0.0.1:63226/edit?item=C 为“保留前项内容”"
+                },
+                {
+                  "role": "system",
+                  "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+                },
+                {
+                  "role": "user",
+                  "text": "开始执行"
+                },
+                {
+                  "role": "assistant",
+                  "text": "更新当前记录",
+                  "call": {
+                    "usageKind": "web-planning",
+                    "id": "89e856a7-afc6-4bcb-8d7e-c1abd437f630",
+                    "taskId": "49c24ea8-0672-4244-bc9c-445f88caed76",
+                    "model": "fixture",
+                    "configurationVersion": 1,
+                    "phase": "complete",
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=C",
+                      "title": "记录编辑",
+                      "fingerprint": "44827fea09e7adba9819611d8c286fcb0a4253df8c2e7e867b0284b9b49e3d92",
+                      "generation": 1,
+                      "observedAt": 1793984747307,
+                      "truncated": false
+                    },
+                    "pageChanged": false,
+                    "dispatched": true,
+                    "reservedTokens": 22365,
+                    "inputTokens": 100,
+                    "outputTokens": 100,
+                    "totalTokens": 200,
+                    "error": null
+                  }
+                },
+                {
+                  "role": "assistant",
+                  "text": "更新当前记录",
+                  "call": {
+                    "usageKind": "web-planning",
+                    "id": "180ffe42-5b1e-46c1-a694-0ac19cbbdcb6",
+                    "taskId": "49c24ea8-0672-4244-bc9c-445f88caed76",
+                    "model": "fixture",
+                    "configurationVersion": 1,
+                    "phase": "complete",
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=C",
+                      "title": "记录编辑",
+                      "fingerprint": "77b2f3d6607952b38374c1cd16bb304130c21db73b4961bf89d10c6ceefbe762",
+                      "generation": 1,
+                      "observedAt": 1793984747741,
+                      "truncated": false
+                    },
+                    "pageChanged": false,
+                    "dispatched": true,
+                    "reservedTokens": 24031,
+                    "inputTokens": 100,
+                    "outputTokens": 100,
+                    "totalTokens": 200,
+                    "error": null
+                  }
+                },
+                {
+                  "role": "assistant",
+                  "text": "更新当前记录",
+                  "call": {
+                    "usageKind": "web-planning",
+                    "id": "1928945c-1083-4b15-9fec-e656f96190e9",
+                    "taskId": "49c24ea8-0672-4244-bc9c-445f88caed76",
+                    "model": "fixture",
+                    "configurationVersion": 1,
+                    "phase": "complete",
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=C",
+                      "title": "记录编辑",
+                      "fingerprint": "264cb0a4ff8a47d61310ca9288e39573d020e820307993d02fbea6c715ee0812",
+                      "generation": 1,
+                      "observedAt": 1793984748202,
+                      "truncated": false
+                    },
+                    "pageChanged": false,
+                    "dispatched": true,
+                    "reservedTokens": 24817,
+                    "inputTokens": 100,
+                    "outputTokens": 100,
+                    "totalTokens": 200,
+                    "error": null
+                  }
+                }
+              ]
+            },
+            {
+              "id": "151b0b00-9592-4379-ac12-04c93806b31b",
+              "goal": "更新 http://127.0.0.1:63226/edit?item=C 为“后项内容”",
+              "created": 1793984746788,
+              "url": "http://127.0.0.1:63226/edit?item=C",
+              "draft": "",
+              "archived": false,
+              "groupId": null,
+              "groupGoal": null,
+              "hidden": false,
+              "minimized": false,
+              "phase": "manual",
+              "execution": {
+                "coordination": {
+                  "session": {
+                    "id": "helpr-fixture-web",
+                    "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+                    "origin": "http://127.0.0.1:63226"
+                  },
+                  "status": "ready",
+                  "account": {
+                    "name": "账号 alice",
+                    "url": "http://127.0.0.1:63226/users/alice"
+                  },
+                  "target": {
+                    "name": "当前记录",
+                    "url": "http://127.0.0.1:63226/edit?item=C"
+                  },
+                  "permissionEvidence": [
+                    "可编辑此记录"
+                  ],
+                  "source": {
+                    "url": "http://127.0.0.1:63226/edit?item=C",
+                    "title": "记录编辑",
+                    "fingerprint": "44827fea09e7adba9819611d8c286fcb0a4253df8c2e7e867b0284b9b49e3d92",
+                    "generation": 1,
+                    "observedAt": 1793984748252,
+                    "truncated": false
+                  },
+                  "waitFor": "49c24ea8-0672-4244-bc9c-445f88caed76",
+                  "refreshRequired": true
+                },
+                "modelVersion": 1,
+                "intent": "automatic",
+                "phase": "queued",
+                "version": 3,
+                "intentId": "f3300b75-7dbb-44a7-b857-08ebb83034a7",
+                "goalVersion": 1,
+                "goal": "更新 http://127.0.0.1:63226/edit?item=C 为“后项内容”",
+                "runId": null,
+                "resource": null,
+                "summary": "另一项任务正在使用同一目标，或尚不能确认目标独立。等待后会重新核对，不覆盖已有内容。",
+                "actions": []
+              },
+              "error": "",
+              "version": 3,
+              "messages": [
+                {
+                  "role": "user",
+                  "text": "更新 http://127.0.0.1:63226/edit?item=C 为“后项内容”"
+                },
+                {
+                  "role": "system",
+                  "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+                },
+                {
+                  "role": "user",
+                  "text": "开始执行"
+                },
+                {
+                  "role": "assistant",
+                  "text": "更新当前记录",
+                  "call": {
+                    "usageKind": "web-planning",
+                    "id": "9742135e-9c5f-4c25-82cb-a46105741caf",
+                    "taskId": "151b0b00-9592-4379-ac12-04c93806b31b",
+                    "model": "fixture",
+                    "configurationVersion": 1,
+                    "phase": "complete",
+                    "source": {
+                      "url": "http://127.0.0.1:63226/edit?item=C",
+                      "title": "记录编辑",
+                      "fingerprint": "44827fea09e7adba9819611d8c286fcb0a4253df8c2e7e867b0284b9b49e3d92",
+                      "generation": 1,
+                      "observedAt": 1793984748252,
+                      "truncated": false
+                    },
+                    "pageChanged": false,
+                    "dispatched": true,
+                    "reservedTokens": 22347,
+                    "inputTokens": 100,
+                    "outputTokens": 100,
+                    "totalTokens": 200,
+                    "error": null
+                  }
+                }
+              ]
+            }
+          ],
+          "modelSettings": {
+            "protocol": "chat-completions",
+            "endpoint": "http://127.0.0.1:63226/v1",
+            "model": "fixture",
+            "version": 1,
+            "hasCredential": true
+          },
+          "runtime": {
+            "conditions": []
+          }
+        },
+        "question": {
+          "runId": "f60ffd54-c745-44b8-83ab-ada38e44da96",
+          "id": "d98b07ce-ea56-400f-9925-ee199cb9bffb",
+          "goalVersion": 1,
+          "text": "另一项任务已修改这个目标，当前结果已重新读取。本项还需要改写：请说明要保留现有结果、在其基础上继续，还是明确替换。",
+          "url": "http://127.0.0.1:63226/edit?item=C"
+        },
+        "beforeChoice": {
+          "value": "保留前项内容",
+          "revision": 1
+        },
+        "final": {
+          "coordination": {
+            "session": {
+              "id": "helpr-fixture-web",
+              "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+              "origin": "http://127.0.0.1:63226"
+            },
+            "status": "ready",
+            "account": {
+              "name": "账号 alice",
+              "url": "http://127.0.0.1:63226/users/alice"
+            },
+            "target": {
+              "name": "当前记录",
+              "url": "http://127.0.0.1:63226/edit?item=C"
+            },
+            "permissionEvidence": [
+              "可编辑此记录"
+            ],
+            "source": {
+              "url": "http://127.0.0.1:63226/edit?item=C",
+              "title": "记录编辑",
+              "fingerprint": "5520be791719f4edae10bc1eedd3a71dbfa993bb119a4d5cf7d0b104c2e8bf84",
+              "generation": 2,
+              "observedAt": 1793984750264,
+              "truncated": false
+            }
+          },
+          "resourceClaims": [
+            {
+              "status": "released",
+              "id": "6edf7d0d-e56c-4339-b2b2-0ddd30b6f510",
+              "runId": "0eabaabf-598e-41e0-8626-a977f8fba62d",
+              "goalVersion": 1,
+              "origin": "http://127.0.0.1:63226",
+              "targetUrl": "http://127.0.0.1:63226/edit?item=C"
+            }
+          ],
+          "answers": [
+            {
+              "runId": "f60ffd54-c745-44b8-83ab-ada38e44da96",
+              "id": "d98b07ce-ea56-400f-9925-ee199cb9bffb",
+              "goalVersion": 1,
+              "text": "另一项任务已修改这个目标，当前结果已重新读取。本项还需要改写：请说明要保留现有结果、在其基础上继续，还是明确替换。",
+              "url": "http://127.0.0.1:63226/edit?item=C",
+              "answer": "明确替换为本项委托的后项内容。"
+            }
+          ],
+          "modelVersion": 1,
+          "intent": "automatic",
+          "phase": "complete",
+          "version": 5,
+          "intentId": "f3300b75-7dbb-44a7-b857-08ebb83034a7",
+          "goalVersion": 1,
+          "goal": "更新 http://127.0.0.1:63226/edit?item=C 为“后项内容”",
+          "runId": null,
+          "resource": null,
+          "summary": "更新当前记录",
+          "actions": [
+            {
+              "coordination": {
+                "session": {
+                  "id": "helpr-fixture-web",
+                  "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+                  "origin": "http://127.0.0.1:63226"
+                },
+                "claimId": "6edf7d0d-e56c-4339-b2b2-0ddd30b6f510"
+              },
+              "observedLinks": [
+                {
+                  "name": "当前记录",
+                  "url": "http://127.0.0.1:63226/edit?item=C"
+                },
+                {
+                  "name": "账号 alice",
+                  "url": "http://127.0.0.1:63226/users/alice"
+                }
+              ],
+              "resultLinks": [
+                {
+                  "name": "当前记录",
+                  "url": "http://127.0.0.1:63226/edit?item=C"
+                },
+                {
+                  "name": "账号 alice",
+                  "url": "http://127.0.0.1:63226/users/alice"
+                }
+              ],
+              "id": "ee1ca330-ad72-48bf-a636-b67bbcc9dad1",
+              "runId": "0eabaabf-598e-41e0-8626-a977f8fba62d",
+              "goalVersion": 1,
+              "status": "confirmed",
+              "summary": "更新当前记录",
+              "action": {
+                "kind": "fill",
+                "target": {
+                  "role": "textbox",
+                  "name": "记录内容",
+                  "exact": true
+                },
+                "value": "后项内容"
+              },
+              "effect": "interaction",
+              "preconditions": [
+                "记录编辑"
+              ],
+              "source": {
+                "url": "http://127.0.0.1:63226/edit?item=C",
+                "title": "记录编辑",
+                "fingerprint": "425a1bc5a8ea0bc9e7ee12cf58edd9f228d0c1456659de54851fadd2b68c2a36",
+                "generation": 2,
+                "observedAt": 1793984749006,
+                "truncated": false
+              },
+              "observedUrls": [
+                "http://127.0.0.1:63226/edit?item=C",
+                "http://127.0.0.1:63226/users/alice"
+              ],
+              "resultSource": {
+                "url": "http://127.0.0.1:63226/edit?item=C",
+                "title": "记录编辑",
+                "fingerprint": "b4d3bbd29d7eefeee28dedaebc640d415d165a72efba441916020b95831c96e0",
+                "generation": 2,
+                "observedAt": 1793984749451,
+                "truncated": false
+              },
+              "binding": {
+                "targetId": "5EE4D292739289FB3EE17191057C704B",
+                "generation": 2
+              },
+              "evidence": [
+                "输入内容 后项内容"
+              ],
+              "returned": true,
+              "dispatchState": "possible"
+            },
+            {
+              "coordination": {
+                "session": {
+                  "id": "helpr-fixture-web",
+                  "epoch": "09da546d-925a-4d5b-9172-10e827526839:0",
+                  "origin": "http://127.0.0.1:63226"
+                },
+                "claimId": "6edf7d0d-e56c-4339-b2b2-0ddd30b6f510"
+              },
+              "observedLinks": [
+                {
+                  "name": "当前记录",
+                  "url": "http://127.0.0.1:63226/edit?item=C"
+                },
+                {
+                  "name": "账号 alice",
+                  "url": "http://127.0.0.1:63226/users/alice"
+                }
+              ],
+              "resultLinks": [
+                {
+                  "name": "当前记录",
+                  "url": "http://127.0.0.1:63226/edit?item=C"
+                },
+                {
+                  "name": "账号 alice",
+                  "url": "http://127.0.0.1:63226/users/alice"
+                }
+              ],
+              "id": "fc949f9a-4bdf-495d-ae67-195dccecfbc2",
+              "runId": "0eabaabf-598e-41e0-8626-a977f8fba62d",
+              "goalVersion": 1,
+              "status": "confirmed",
+              "summary": "更新当前记录",
+              "action": {
+                "kind": "click",
+                "target": {
+                  "role": "button",
+                  "name": "保存记录",
+                  "exact": true
+                }
+              },
+              "effect": "interaction",
+              "preconditions": [
+                "记录编辑"
+              ],
+              "source": {
+                "url": "http://127.0.0.1:63226/edit?item=C",
+                "title": "记录编辑",
+                "fingerprint": "b4d3bbd29d7eefeee28dedaebc640d415d165a72efba441916020b95831c96e0",
+                "generation": 2,
+                "observedAt": 1793984749451,
+                "truncated": false
+              },
+              "observedUrls": [
+                "http://127.0.0.1:63226/edit?item=C",
+                "http://127.0.0.1:63226/users/alice"
+              ],
+              "resultSource": {
+                "url": "http://127.0.0.1:63226/edit?item=C",
+                "title": "记录编辑",
+                "fingerprint": "5520be791719f4edae10bc1eedd3a71dbfa993bb119a4d5cf7d0b104c2e8bf84",
+                "generation": 2,
+                "observedAt": 1793984750264,
+                "truncated": false
+              },
+              "binding": {
+                "targetId": "5EE4D292739289FB3EE17191057C704B",
+                "generation": 2
+              },
+              "evidence": [
+                "已保存 后项内容"
+              ],
+              "returned": true,
+              "dispatchState": "possible"
+            }
+          ],
+          "result": {
+            "goalVersion": 1,
+            "source": {
+              "url": "http://127.0.0.1:63226/edit?item=C",
+              "title": "记录编辑",
+              "fingerprint": "5520be791719f4edae10bc1eedd3a71dbfa993bb119a4d5cf7d0b104c2e8bf84",
+              "generation": 2,
+              "observedAt": 1793984750264,
+              "truncated": false
+            },
+            "evidence": [
+              "记录编辑"
+            ]
+          }
+        }
+      }
+    ],
+    "realModelCalls": 0,
+    "remoteWrites": 0
+  },
+  "passed": false,
+  "error": "RECORD_VERSION_CONFLICT",
+  "quitError": "VALIDATION_TIMEOUT",
+  "cleanupError": "Command failed: /Users/yuexiaoliang/projects/helpr/dist/candidates/coordination-16-final/mac-arm64/helpr.app/Contents/Resources/process-path 4352",
+  "remaining": [
+    4306,
+    4352,
+    4353,
+    4354,
+    4355,
+    4356,
+    4363,
+    4364,
+    4365,
+    4366,
+    4367,
+    4369,
+    4370,
+    4373,
+    4374,
+    4383,
+    4384,
+    4387,
+    4388,
+    4397,
+    4398,
+    4402,
+    4404
+  ],
+  "ms": 23107
+}

@@ -1,0 +1,909 @@
+{
+  "limits": {
+    "builds": 38,
+    "installs": 12,
+    "starts": 103,
+    "faults": 43,
+    "cleanups": 19
+  },
+  "used": {
+    "builds": 65,
+    "installs": 19,
+    "starts": 181,
+    "faults": 52,
+    "cleanups": 25
+  },
+  "modelCalls": 0,
+  "remoteWrites": 0,
+  "changes": [
+    {
+      "builds": "+1",
+      "reason": "审查修正后将最终已检查源码重新打入同一包；安装/启动/故障额度不变"
+    },
+    {
+      "builds": "+1",
+      "installs": "+1",
+      "starts": "+3",
+      "cleanups": "+1",
+      "reason": "收尾入口审查：父映像来源与验证资料守卫；旧失败不抵算"
+    },
+    {
+      "starts": "+1",
+      "cleanups": "+1",
+      "reason": "已解锁且现场预检通过，按已准备方案完成build5原定三次正向启动；旧失败继续累计"
+    },
+    {
+      "reason": "授权迟到后发现宿主残留；空工作区反例及独立退出监督修正，按具体方案保留原计数"
+    },
+    {
+      "reason": "审查要求覆盖宿主JS开始前的退出窗口，追加1启动和1故障；不追加构建或业务调用"
+    },
+    {
+      "starts": "+1",
+      "cleanups": "+1",
+      "reason": "用户确认已授权现有build6；保留超时11，以同一安装完成原定首次、冷重开和故障恢复，不重复替换；再次授权阻塞则停止"
+    },
+    {
+      "starts": "+1",
+      "cleanups": "+1",
+      "reason": "用户要求CUA自测；原人工等待超时保留，当前同包三次自动核对内短暂尝试CUA，不再跨回合等待；不构建安装"
+    },
+    {
+      "builds": "+1",
+      "installs": "+1",
+      "starts": "+3",
+      "reason": "用户报告双Dock图标；空工作区只读OS角色反例、修后与冷重开，不登录网页或调用模型"
+    },
+    {
+      "starts": "+2",
+      "reason": "CUA恢复后用户要求回到工作；同一build7真实UI走查及同资料冷重开，无构建安装模型或远程写入"
+    },
+    {
+      "reason": "CUA 空工作区复现绑定后台控制者；独立内部宿主身份修正，1构建1安装3启动1故障2必要清理；保留启动19及全部原失败，不改信任、不开放端口"
+    },
+    {
+      "reason": "build8启动21失败；22最小原生入口明确EX_USAGE64，官方同版本源码证实helper stub拒绝browser；改用完整入口并核对固定RPATH，追加1构建1安装2启动，再失败回退build7，不增加故障/清理或真实业务"
+    },
+    {
+      "reason": "按预定失败停止条件恢复原build7，仅记录回退安装1次；不追加构建/启动/修正尝试"
+    },
+    {
+      "reason": "启动23失败后已恢复build7（安装7）。仅追加独立目录诊断构建1次，用剩余启动24读取有界固定错误码；不安装、不新增启动额度、无网页或模型，单次后停止"
+    },
+    {
+      "reason": "诊断24及独立崩溃报告/本机二进制静态检查确认helper路径失败；标准完整宿主布局，先离线检查再候选空工作区/CUA，通过才安装+冷重开。最多1构建3启动1安装及必要回退；保留全部原计数，模型/远程写入0，再失败停止"
+    },
+    {
+      "starts": "+2",
+      "reason": "用户在1224261后要求继续；同一build11两次真实CUA首次/正常冷重开核对，保留夹具预期会话；不构建/安装/故障，原计数不清零，至多30分钟，系统授权/产品/工具阻碍则保存停止"
+    },
+    {
+      "builds": "+1",
+      "installs": "+1 new and +1 rollback reserve",
+      "starts": "+4",
+      "reason": "28/29已结束；同一授权事项卡片快速选择后焦点原生红例、单变量修正、候选绿例后才安装及登录冷重开；原用量/失败保留，模型及远程写入0，修后失败/授权/工具传输阻碍则停止"
+    },
+    {
+      "starts": "+1 to allow candidate plus installed first/cold reopen",
+      "cleanups": "+1 bounded reserve",
+      "reason": "用户确认所见项目为helpr/helpr safe storage，现场预检恢复；复用build12至多启动32/33/34，候选通过才安装，允许就绪现场单次人工授权等待10分钟，整批30分钟，授权后仍受阻或焦点失败则保存停止；不构建、不调用模型或远程业务"
+    },
+    {
+      "starts": "+1; preserve starts33/34 for candidate and installed first, reserve35 for normal cold reopen",
+      "cleanups": "+1 bounded reserve",
+      "reason": "用户重启Computer Use后，Finder实际窗口/快捷键/关闭已响应；同一build12候选33门控焦点复验，通过才安装9并启动34/35；不构建，保留原失败与计数，30分钟，系统授权最多等待10分钟；任一修后焦点/工具/退出失败即停止，不改系统权限或信任。"
+    },
+    {
+      "builds": "+1",
+      "starts": "+1",
+      "reason": "候选12/33在实际门控仍失败且已正常退出，原批结束；新核对同版官方ReadyToCommitNavigation明确focusOnNavigation默认true并SetInitialFocus，单独关闭真实网页此设置，build13及34候选绿例后才35/36安装复验；不再重做候选12，不额外清理、故障、模型或业务写入。"
+    },
+    {
+      "builds": "+1",
+      "reason": "用户继续事项01；保留35焦点通过与按钮不可见红例。同版官方原生setter可重绘并显示容器，单变量在非全屏show恢复按钮可见，构建14，后台先准备，最多原有启动36一轮3分钟，等待明确让出桌面才运行；不安装，不追加其它额度。"
+    },
+    {
+      "starts": "+1",
+      "cleanups": "+1 necessary reserve",
+      "reason": "用户继续，复用同一候选14；36按钮可见但3分钟中止使人工Dock未完成。新安排仅37一次、整轮8分钟，在窗口就绪且有完整3分钟反馈余量时立即交付连贯人工两步，等明确前台可用才运行；不构建安装、无模型/业务写入，失败或超时保存停止。"
+    },
+    {
+      "starts": "+3",
+      "reason": "用户明确按已提交安装核对方案推进并让出电脑；38候选焦点通过才安装9，39/40同安装首次和冷重开，整体20分钟；其余上限不变，模型及远程业务0。"
+    },
+    {
+      "reason": "用户要求亲自手动测试；新人工诊断轮复用候选14，仅使用现有启动39一次及必要清理13，阶段1检查键盘卡片静态保持，正常才阶段2检查受控页面完成；12分钟兜底，不安装构建，无模型/远程写入，旧批停止与失败保留。原上限不变。"
+    },
+    {
+      "reason": "用户第二步回报窗口已被关闭；纠正人工安排，仅使用剩余启动40复用候选14补第二步，不设自动关闭窗口或超时强杀，等待用户明确结束；不增加计数上限、不构建安装、无模型/远程写入，异常只保存观察并保留用户窗口。"
+    },
+    {
+      "reason": "用户明确要求开始02实际试用，按docs/testing/model-02-trial.md新增1构建2启动1必要清理；保留旧安装和旧候选，不重置01用量；02最多4文本请求、1连接检查，远程业务写入0"
+    },
+    {
+      "at": "2026-10-16T05:58:17.300Z",
+      "reason": "用户开始03最小实际包试用；按docs/testing/execution-03-trial.md新批最多2构建2启动1必要清理，原15/41及旧失败保留，真实模型总计12由独立代理闸门计数，0安装/故障/远程业务写入"
+    },
+    {
+      "at": "2026-10-16T06:20:14.231Z",
+      "reason": "03两轮准备均失败且显示改动已撤回；同一试用必要的本机诊断与修正最多2构建2启动，0新增真实模型额度，0安装/故障/远程写入，保留8次真实请求与2次修改；见execution-03-trial.md"
+    },
+    {
+      "reason": "用户明确要求修复04实际输入准备缺陷：新有界修复轮保留旧20构建46启动；最多2次无可见窗口的原生诊断、1次修后候选构建、1次实际启动，0安装/故障/真实模型/远程写入；后台诊断各20秒，实际轮先协调桌面且最多10分钟，失败保存停止。"
+    },
+    {
+      "reason": "同一修复轮：两次原生布局最小诊断均通过，需在真实受管入口区分失败层；有界调整为1次诊断候选和1次修后候选（总构建至22），已有两次后台诊断累计至48，再至多两次实际启动（总至50），无安装/故障/真实模型/远程写入；只记录固定错误码，修后一次失败即停止，不增加循环。"
+    },
+    {
+      "reason": "诊断候选21已在公开开始入口复现固定 CHROME_NATIVE_BINDING_POINT，进一步收窄为拖动区域；同一修复轮增加一次隐藏最小CSS对照（1秒查询截止、进程20秒截止），构建不增，保留最终修后实际启动51；原计数和失败均保留。"
+    },
+    {
+      "at": "2026-10-16T13:13:40.360Z",
+      "reason": "用户明确 implement 继续04实际包接管验证；复用候选22，新增仅1启动至52，20分钟，本机受控模型至64/网页推进至24/输入探针至160；0构建安装故障真实模型远程业务，不重复已通过人工步骤。见takeover-04-plan.md。"
+    },
+    {
+      "at": "2026-10-16T13:15:40.534Z",
+      "reason": "同一04用户授权；启动52仅新夹具15秒凭据保存超时，0模型网页效果，独立检查已退出。恢复旧夹具180秒保存等待并延长正常收尾；只追加1同候选启动53，原失败/其它上限保留，准备仍失败保存停止。"
+    },
+    {
+      "at": "2026-10-16T14:16:40.636Z",
+      "reason": "用户回复已完成系统授权，恢复原04验证；复用候选22，新增仅1启动至54和1次必要清理预留至15；其它上限/失败/用量保持，见takeover-04-plan.md。"
+    },
+    {
+      "at": "2026-10-16T14:21:40.761Z",
+      "reason": "同一用户已完成授权的恢复轮：54线程样本定位系统钥匙串读取等待，180秒夹具过早关闭；修正等待10分钟且全轮20分钟不重置，仅追加同候选1启动55，0构建安装真实模型远程写入，原失败/其它上限保留。"
+    },
+    {
+      "at": "2026-10-16T14:53:11.084Z",
+      "reason": "用户再次确认当前授权；55此前十分钟截止已结束且旧PID不存在。修正验证夹具为系统授权交接不自动关窗，凭据成功后才计20分钟自动核对；同候选仅新增启动56，原用量失败及其它上限保持。"
+    },
+    {
+      "at": "2026-10-16T15:00:39.186Z",
+      "reason": "56三组实际接管通过后，刷新临时客户端多传requestId被公开契约拒绝，正常退出无残留。修正调用仅追加同候选1启动57，carry带入23模型/12推进/58收件/8任务，原总上限不重置，只补页面变化，不重做通过案例；0构建安装真实模型远程写入。"
+    },
+    {
+      "at": "2026-10-16T15:07:48.445Z",
+      "reason": "补04已确认实际记录竞争：仅一次2.5秒SQLite写锁后回滚，不读取修改业务行或终止进程；通过公开继续和原生键盘核对即时阻断。其它启动/网页/模型/任务上限不增。"
+    },
+    {
+      "date": "2026-10-17",
+      "builds": "+2",
+      "starts": "+2",
+      "faults": "+12",
+      "cleanups": "+1",
+      "reason": "用户确定允许保留候选22并生成派生取证包；只补04未通过范围，按方案固定批次，旧用量全部保留，不安装，不重复人工步骤"
+    },
+    {
+      "at": "2026-10-17T02:19:34.912Z",
+      "builds": "+1",
+      "starts": "+1",
+      "reason": "用户要求消除离机时反复钥匙串授权；按无人值守fixture方案仅一构建一启动补准备、视图重建与断管；原失败、26模型/12推进/26收件/10任务和剩余故障2/清理1保留，不安装，不重复已通过案例，意外准备阻塞保存停止。"
+    },
+    {
+      "at": "2026-10-17T02:49:03.921Z",
+      "builds": "+2",
+      "reason": "用户明确采用免费固定本机开发证书；仅签名候选26/27离线对照不同归档与逐组件相同身份规则，0安装/启动/产品故障/模型/业务写入；保留旧04用量与全部准备失败，签名包失败停止不追加。见development-signing.md"
+    },
+    {
+      "at": "2026-10-17T02:54:28.241Z",
+      "reason": "固定开发签名26在资源/别名逐项签名超过两分钟而失败，保留prepared:false及手动工具收尾；只用原剩余构建27定向修正实际代码过滤和父超时恢复，不增加总额度，不宣称两份完整包对照，0应用启动/安装/真实凭据。"
+    },
+    {
+      "at": "2026-10-17T03:42:36.029Z",
+      "starts": "+1",
+      "faults": "+1 (plus existing 1 reserve)",
+      "tasks": "+2 cumulative 12 to 14",
+      "reason": "用户明确继续04固定签名现有候选27，仅补重建后明确继续和双活跃控制断管；0构建安装人工步骤，带入旧30模型14推进29收件12任务，保留64/24/160总上限，失败保存收束。见takeover-04-plan.md末节。"
+    },
+    {
+      "at": "2026-10-17T03:51:01.132Z",
+      "starts": "+1",
+      "faults": "+1",
+      "tasks": "+2 cumulative 14 to 16",
+      "reason": "同一用户授权的04补验：启动61重建后继续已通过，断管真实能力暂停原因变化使客户端过窄断言失败。按已审阅方案只补断管后续，复用固定签名候选27，0构建重签安装人工步骤；带入35模型16推进32收件14任务，不重做重建，失败保存收束。见takeover-04-plan.md末节。"
+    },
+    {
+      "at": "2026-10-17T07:37:02.352Z",
+      "builds": "+1",
+      "starts": "+2",
+      "faults": "+2",
+      "tasks": "+2 cumulative 16 to 18",
+      "reason": "用户明确修复04 PANEL_NATIVE_BINDING_POINT并补能力恢复；旧包最小面板诊断和同固定签名修正包各一次，0安装/真实模型/远程写入，带入39/18/34/16全部用量，不重复接管重建断管，失败保存收束。见takeover-04-plan.md末节。"
+    },
+    {
+      "at": "2026-10-17T07:50:02.786Z",
+      "starts": "+1",
+      "faults": "+2",
+      "tasks": "+2 cumulative 18 to 20",
+      "reason": "同一04能力恢复授权：64已通过行为组合，但BrowserWindow捕获仅主webContents未覆盖独立toast。复用同签名28只补原生UI提示可见证据，0构建重签安装模型推进，带入全部用量，完成即正常退出。见takeover-04-plan.md末节。"
+    },
+    {
+      "at": "2026-10-17T09:04:01.475037+00:00",
+      "builds": "+1",
+      "starts": "+1",
+      "faults": "+4",
+      "tasks": "+2 cumulative 20 to 22",
+      "reason": "用户只补04鼠标移动及IPC延迟/真实提交等待输入次序；沿用固定签名和已有确认，旧用量/失败保留，0安装/真实模型/远程写入。单对任务/单次新观察候选，失败保存停止。见takeover-04-plan.md最后一节。"
+    },
+    {
+      "at": "2026-10-17T09:07:55.953066+00:00",
+      "starts": "+1",
+      "faults": "+3",
+      "tasks": "+2 cumulative 22 to 24",
+      "reason": "启动66移动通过，桌面核对导致排队动作超时、时序未启动，失败保留且正常收束；同29包仅补时序，自动衔接，0构建安装真实模型远程写入。见takeover-04-plan.md。"
+    },
+    {
+      "at": "2026-10-17T09:10:05.104388+00:00",
+      "starts": "+1",
+      "faults": "+4",
+      "tasks": "+2 cumulative 24 to 26",
+      "reason": "67辅助读锁兼容性失败且未送键；先在records公开入口回归红绿修正，只保留SHARED及外部只读探针。同包29仅补时序，旧失败/计数保留，0构建重签安装真实模型远程写入。见takeover-04-plan.md。"
+    },
+    {
+      "at": "2026-10-17T09:14:27.512289+00:00",
+      "starts": "+1 conservative accounting correction only",
+      "reason": "66桌面工具首次getApp误选外层无窗口控制入口后超时；可能的额外open尝试保守计一次启动。未再次运行，原66/67/68编号与所有结果保留，当前OS无候选残留。"
+    },
+    {
+      "date": "2026-10-17",
+      "reason": "用户确认recovery-v1并调用implement推进05；按docs/testing/recovery-05-plan.md固定新批1构建5启动3故障及既有1必要清理预留，3虚构任务/10受控模型/2本机效果/8分钟，0安装/真实模型/远程业务，旧用量及04失败全部保留，失败停止不自动追加。"
+    },
+    {
+      "date": "2026-10-17",
+      "builds": "+1 offline only",
+      "reason": "同一05 implement授权内的审阅修正：候选30离线prepared保留且未启动，新增保存重试退出及跨重开持久暂停回归后只构建固定recovery-05-final候选31；原5启动3故障/3任务10本机模型2本机效果8分钟保持，0安装真实模型远程业务，旧失败及全局用量保留。见recovery-05-plan.md。"
+    },
+    {
+      "date": "2026-10-17",
+      "cleanups": "+1 necessary reserve",
+      "reason": "用户明确回复“确认，按该方案补验”；复用31候选，原失败70和累计消耗保留，仅用剩余71–74四启动及三故障，最多三虚构任务/十本机受控模型/两本机效果/8分钟，0构建重签安装真实模型远程业务，失败保存并收束。见recovery-05-plan.md。"
+    },
+    {
+      "date": "2026-10-17",
+      "starts": "+1",
+      "reason": "用户明确确认追加1次启动补验05；同一31候选，72-75四启动、原三故障和已批清理17预留，0构建重签安装真实模型远程业务；三任务十本机模型两效果8分钟，原70/71失败链和累计用量保留。"
+    },
+    {
+      "date": "2026-10-17",
+      "builds": "+1",
+      "starts": "+2",
+      "reason": "用户明确确认“只补 C”：候选32固定签名，76/77仅补C正常退出与冷恢复；带入全部70-75失败/通过及4模型1效果3任务3故障，沿用模型余6/效果余1/清理17预留，0新任务故障安装真实模型远程业务，8分钟，失败停止。"
+    },
+    {
+      "date": "2026-10-19",
+      "tasks": "+1 cumulative fixture total 3 to 4",
+      "reason": "用户明确确认只追加1个虚构C任务补验；复用build32已完成签名副本，原76/77两启动、6本机模型/1本机效果/8分钟及清理17预留保持，0新构建重签安装故障，原失败和已通过案例保留。"
+    },
+    {
+      "date": "2026-10-19",
+      "starts": "+1",
+      "reason": "用户回复同意最小续验方案；复用候选34，任务总8/本机模型总32/收件总224，效果仍8，20分钟，其他上限不变，原累计6/22/4/150继续计入"
+    },
+    {
+      "date": "2026-10-19",
+      "starts": "+1",
+      "reason": "用户明确同意只追加1次启动，复用现有两任务和剩余额度；先确认窗口可见再开始，其他上限不变"
+    },
+    {
+      "date": "2026-10-20",
+      "starts": "+1",
+      "reason": "User explicitly approves only start 83; reuse original tasks and remaining allowances; fully check validator before launch and confirm visible window before human input. All prior counts retained."
+    },
+    {
+      "date": "2026-10-20",
+      "starts": "+1",
+      "reason": "User explicitly approved only one additional start (84) after complete resume plan and checks. Reuse original candidate and tasks, retain remaining 6 local models / 2 effects / 42 receipts; all other limits unchanged; no restart on failure."
+    },
+    {
+      "at": "2026-10-20T03:37:45.405Z",
+      "starts": "+6",
+      "builds": "+2 reserve only",
+      "localModels": "32→80",
+      "inputReceipts": "224→1024",
+      "reason": "用户：我希望可以追加足够的额度测试到 06 完成，并指出上次粘贴后程序退出令人困惑。按此明确继续和足额授权设置有限收尾批次，不再逐次询问启动增量。"
+    },
+    {
+      "at": "2026-10-27T03:58:27.632Z",
+      "builds": "+1",
+      "starts": "+4",
+      "reason": "用户批准09限定实包增量；安装／故障／清理上限不增加，旧用量与失败保留，见upgrade-09-plan.md"
+    },
+    {
+      "approvedAt": "2026-11-04T03:09:41.470Z",
+      "builds": "+1 to 38",
+      "installs": "+2 to 12",
+      "starts": "+3 to 103",
+      "reason": "Explicit user approval of the v3 90-minute isolated batch; previous failures and all used counters retained; fault and cleanup limits unchanged."
+    },
+    {
+      "at": "2026-11-04T05:53:12.642Z",
+      "scope": "upgrade09Repair",
+      "unlimited": true,
+      "basis": "2026-11-04用户已批准并明确覆盖原总限制：“批准，但是不做限制，直到测试完成为准。”本事项验证不再设构建、安装、启动或总时限上限；原计数、失败和截止保留为历史，不清零、不替换。明确授权仅登记在 `upgrade09Repair` 活跃范围，未改变其它事项的上限。各步骤和单次应用阶段仍有超时，超时先保留与清理，下一次尝试必须有诊断依据；没有无限盲重试。以下原待批准数字是历史提案，已由本条用户指令覆盖。当前先完成所列三阶段，必要修正／续验沿用本次批准，不逐次再索取次数。",
+      "previousLimits": {
+        "builds": 38,
+        "installs": 12,
+        "starts": 103,
+        "faults": 43,
+        "cleanups": 19
+      },
+      "previousUsed": {
+        "builds": 38,
+        "installs": 12,
+        "starts": 103,
+        "faults": 42,
+        "cleanups": 18
+      },
+      "originalDeadlineRetained": 1793767181470
+    }
+  ],
+  "approvals": [
+    {
+      "date": "2026-10-19",
+      "scope": "06 initial implementation batch",
+      "basis": "用户 /implement 确认 lifecycle-v1 及所列范围并要求实现；按 lifecycle-06-plan.md 首批必要验证",
+      "builds": "+1 (33)",
+      "starts": "+2 (78-79)",
+      "cleanups": "+1 reserve (global 18; old 05 reserve retained)",
+      "limits": "4 fictional tasks / 24 local controlled models / 8 local effects / 16 page input receipts; 0 installation, fault injection, real model or remote business writes; each active round <=20 minutes; stop on failure; no automatic new round"
+    },
+    {
+      "date": "2026-10-19",
+      "scope": "06 input receipts extension only",
+      "basis": "用户明确回复：同意，仅增加输入收件上限",
+      "inputs": "+144; cumulative 16 to 160; prior 10 retained",
+      "unchanged": "build33/start79, 4 tasks/24 local models/8 local effects/20 minutes; no new build, signing, install, start, task, model, effect, fault or cleanup allowance"
+    },
+    {
+      "date": "2026-10-19",
+      "scope": "06 hidden-window repair verification",
+      "basis": "用户在具体1构建1启动2虚构任务确认问题后回复“统一”，按本次上下文理解为同意并已说明",
+      "builds": "+1 (34)",
+      "starts": "+1 (80)",
+      "tasks": "+2, cumulative 4 to 6",
+      "unchanged": "24 local controlled models/8 local effects/160 page receipts; no installation, fault, real model, remote write or extra cleanup; 20 minutes active round; previous failures and usage retained"
+    },
+    {
+      "at": "2026-10-20T03:37:45.405Z",
+      "scope": "06 completion campaign only",
+      "basis": "用户：我希望可以追加足够的额度测试到 06 完成，并指出上次粘贴后程序退出令人困惑。按此明确继续和足额授权设置有限收尾批次，不再逐次询问启动增量。",
+      "limits": {
+        "starts": 90,
+        "builds": 36,
+        "localModels": 80,
+        "inputReceipts": 1024,
+        "tasks": 8,
+        "effects": 8
+      },
+      "maximumNewStarts": 6,
+      "maximumNewBuilds": 2,
+      "roundMinutes": 20,
+      "maximumActiveMinutes": 120,
+      "remainingScope": [
+        "independent IME takeover",
+        "independent paste",
+        "explicit continue and retained text",
+        "steady state and native switching measurements"
+      ],
+      "unchanged": "installation/fault/cleanup limits unchanged; original tasks/candidate/proofs retained; no real model calls or remote business writes",
+      "retryPolicy": "No blind automatic retries; each failed round retained, diagnose and correct before any bounded rerun; original counters remain cumulative",
+      "humanFailure": "Retain window and red status until agent explains and explicitly finishes; current 20-minute deadline remains independent fallback"
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "07 confirmed backup-v1 implementation validation",
+      "basis": "用户明确要求“可以，开始实现吧”；本轮必要验证按 docs/testing/backup-07-plan.md 固定，沿用全局上限不增加",
+      "build": 35,
+      "maximumStarts": 2,
+      "localModels": 12,
+      "effects": 2,
+      "pageInputs": 40,
+      "roundMinutes": 20,
+      "realModels": 0,
+      "remoteWrites": 0,
+      "installations": 0,
+      "faults": 0,
+      "retryPolicy": "失败保留并停止，不重置计数；冷重开前独立核对本轮进程及进程组清空"
+    },
+    {
+      "approvedAt": "2026-10-23T05:41:16.255366+00:00",
+      "basis": "用户在最多4次启动、6次故障验证及1次额外清理预留的明确方案后回复“增加”",
+      "source": "docs/testing/backup-07-plan.md",
+      "baseline": {
+        "builds": 35,
+        "installs": 8,
+        "starts": 90,
+        "faults": 37,
+        "cleanups": 17
+      },
+      "limits": {
+        "starts": 4,
+        "faults": 6,
+        "builds": 1,
+        "cleanups": 2,
+        "models": 0,
+        "effects": 0,
+        "tasks": 0,
+        "activeMilliseconds": 3600000
+      },
+      "activeMilliseconds": 0,
+      "runs": []
+    },
+    {
+      "approved": true,
+      "approvedAt": "2026-10-23T08:29:09.710563+00:00",
+      "basis": "用户在仅追加1次启动至95、复用候选36补08第7条的具体方案后回复“同意”",
+      "source": "docs/testing/evidence/version-08/REPORT.md#待确认的最小补验增量",
+      "candidate": 36,
+      "originalStart": 94,
+      "limits": {
+        "starts": 1,
+        "localModels": 4,
+        "versionRequests": 8,
+        "minutes": 12,
+        "newTasks": 0,
+        "applicationBuilds": 0,
+        "installs": 0,
+        "faults": 0,
+        "realModels": 0,
+        "webWrites": 0,
+        "externalOpens": 0,
+        "packageDownloads": 0,
+        "retries": 0
+      },
+      "used": {
+        "starts": 0,
+        "localModels": 0,
+        "versionRequests": 0
+      },
+      "cleanup": "使用原有额度，不增加上限"
+    },
+    {
+      "approved": true,
+      "approvedAt": "2026-10-23T08:51:15.429894+00:00",
+      "basis": "用户在只追加启动96的具体方案与95失败原因说明后回复“那就继续吧”",
+      "source": "docs/testing/evidence/version-08/REPORT.md#仅待确认的96续验",
+      "candidate": 36,
+      "originalStart": 94,
+      "failedStart": 95,
+      "limits": {
+        "starts": 1,
+        "localModels": 4,
+        "versionRequests": 8,
+        "minutes": 12,
+        "newTasks": 0,
+        "applicationBuilds": 0,
+        "installs": 0,
+        "faults": 0,
+        "realModels": 0,
+        "webWrites": 0,
+        "externalOpens": 0,
+        "packageDownloads": 0,
+        "retries": 0
+      },
+      "used": {
+        "starts": 0,
+        "localModels": 0,
+        "versionRequests": 0
+      },
+      "cleanup": "仅使用已有清理上限"
+    }
+  ],
+  "lifecycle06Completion": {
+    "at": "2026-10-20T03:37:45.405Z",
+    "scope": "06 completion campaign only",
+    "basis": "用户：我希望可以追加足够的额度测试到 06 完成，并指出上次粘贴后程序退出令人困惑。按此明确继续和足额授权设置有限收尾批次，不再逐次询问启动增量。",
+    "limits": {
+      "starts": 90,
+      "builds": 36,
+      "localModels": 80,
+      "inputReceipts": 1024,
+      "tasks": 8,
+      "effects": 8
+    },
+    "maximumNewStarts": 6,
+    "maximumNewBuilds": 2,
+    "roundMinutes": 20,
+    "maximumActiveMinutes": 120,
+    "remainingScope": [
+      "independent IME takeover",
+      "independent paste",
+      "explicit continue and retained text",
+      "steady state and native switching measurements"
+    ],
+    "unchanged": "installation/fault/cleanup limits unchanged; original tasks/candidate/proofs retained; no real model calls or remote business writes",
+    "retryPolicy": "No blind automatic retries; each failed round retained, diagnose and correct before any bounded rerun; original counters remain cumulative",
+    "humanFailure": "Retain window and red status until agent explains and explicitly finishes; current 20-minute deadline remains independent fallback"
+  },
+  "backup07Closeout": {
+    "approvedAt": "2026-10-23T05:41:16.255366+00:00",
+    "basis": "用户在最多4次启动、6次故障验证及1次额外清理预留的明确方案后回复“增加”",
+    "source": "docs/testing/backup-07-plan.md",
+    "baseline": {
+      "builds": 35,
+      "installs": 8,
+      "starts": 90,
+      "faults": 37,
+      "cleanups": 17
+    },
+    "limits": {
+      "starts": 4,
+      "faults": 6,
+      "builds": 1,
+      "cleanups": 2,
+      "models": 0,
+      "effects": 0,
+      "tasks": 0,
+      "activeMilliseconds": 3600000
+    },
+    "activeMilliseconds": 460994,
+    "runs": [
+      {
+        "root": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/backup-07-closeout-1",
+        "started": 1792735489277,
+        "candidate": 35,
+        "commit": "09a1dba355341912cb27596a5ddc6c2a3bd17699",
+        "ended": 1792735489963,
+        "passed": false,
+        "error": "HELPER_FAILED:hdiutil",
+        "remaining": [],
+        "storageDetached": true
+      },
+      {
+        "root": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/backup-07-closeout-2",
+        "started": 1792735536185,
+        "candidate": 35,
+        "commit": "a293947bf3e001f6ad45436e345c007241d114a5",
+        "ended": 1792735996533,
+        "passed": true,
+        "remaining": [],
+        "storageDetached": true
+      }
+    ]
+  },
+  "version08Execution": {
+    "approved": true,
+    "approvedAt": "2026-10-23T08:29:09.710563+00:00",
+    "basis": "用户在仅追加1次启动至95、复用候选36补08第7条的具体方案后回复“同意”",
+    "source": "docs/testing/evidence/version-08/REPORT.md#待确认的最小补验增量",
+    "candidate": 36,
+    "originalStart": 94,
+    "limits": {
+      "starts": 1,
+      "localModels": 4,
+      "versionRequests": 8,
+      "minutes": 12,
+      "newTasks": 0,
+      "applicationBuilds": 0,
+      "installs": 0,
+      "faults": 0,
+      "realModels": 0,
+      "webWrites": 0,
+      "externalOpens": 0,
+      "packageDownloads": 0,
+      "retries": 0
+    },
+    "used": {
+      "starts": 1,
+      "localModels": 0,
+      "versionRequests": 0
+    },
+    "cleanup": "使用原有额度，不增加上限",
+    "run": {
+      "root": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/version-08-1792741954239/execution-95",
+      "started": 1792744471430,
+      "ended": 1792744474050,
+      "passed": false,
+      "error": "RECORDS_UNAVAILABLE"
+    }
+  },
+  "version08ExecutionRetry": {
+    "approved": true,
+    "approvedAt": "2026-10-23T08:51:15.429894+00:00",
+    "basis": "用户在只追加启动96的具体方案与95失败原因说明后回复“那就继续吧”",
+    "source": "docs/testing/evidence/version-08/REPORT.md#仅待确认的96续验",
+    "candidate": 36,
+    "originalStart": 94,
+    "failedStart": 95,
+    "limits": {
+      "starts": 1,
+      "localModels": 4,
+      "versionRequests": 8,
+      "minutes": 12,
+      "newTasks": 0,
+      "applicationBuilds": 0,
+      "installs": 0,
+      "faults": 0,
+      "realModels": 0,
+      "webWrites": 0,
+      "externalOpens": 0,
+      "packageDownloads": 0,
+      "retries": 0
+    },
+    "used": {
+      "starts": 1,
+      "localModels": 2,
+      "versionRequests": 4
+    },
+    "cleanup": "仅使用已有清理上限",
+    "run": {
+      "root": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/version-08-1792741954239/execution-96",
+      "started": 1792745880509,
+      "ended": 1792746018502,
+      "passed": true,
+      "error": null
+    }
+  },
+  "upgrade09": {
+    "approved": true,
+    "approvedAt": "2026-10-27T03:58:27.627Z",
+    "basis": "用户在a50b4c7交付的1构建／最多4启动具体方案后回复“批准”",
+    "source": "docs/testing/upgrade-09-plan.md",
+    "baseUsed": {
+      "builds": 36,
+      "installs": 8,
+      "starts": 96,
+      "faults": 42,
+      "cleanups": 17
+    },
+    "limits": {
+      "builds": 1,
+      "starts": 4,
+      "installs": 2,
+      "faults": 1,
+      "cleanups": 2,
+      "localModels": 8,
+      "localEffects": 4,
+      "versionRequests": 16,
+      "newTasks": 2,
+      "realModels": 0,
+      "remoteWrites": 0,
+      "minutes": 90
+    },
+    "used": {
+      "builds": 1,
+      "starts": 4,
+      "installs": 2,
+      "faults": 0,
+      "cleanups": 0,
+      "localModels": 3,
+      "localEffects": 2,
+      "versionRequests": 4,
+      "newTasks": 2
+    },
+    "runtimeStartedAt": 1793074165262,
+    "runtimeDeadline": 1793079565262,
+    "run": {
+      "root": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/manual-upgrade-09",
+      "profile": "/private/tmp/helpr-workspace-validation-501/upgrade09-2Kv3Vo",
+      "passed": true,
+      "error": null,
+      "started": 1793074165262,
+      "ended": 1793081115775
+    },
+    "after97Time": {
+      "approved": true,
+      "approvedAt": 1793079950541,
+      "originalDeadline": 1793079565262,
+      "deadline": 1793083550541,
+      "basis": "用户对明确的一次60分钟续验时限回复“批准延长 60 分钟”；其它额度和原用量不变"
+    }
+  },
+  "upgrade09V3": {
+    "approved": true,
+    "approvedAt": "2026-11-04T03:09:41.470Z",
+    "basis": "User explicitly approved 1 signed build, 2 isolated installations and at most 3 application starts within a fixed 90 minute batch.",
+    "source": "docs/testing/upgrade-09-v3-plan.md",
+    "sourceCommit": "6f501a91e6bbf25cc46592cae870bfe051b62b84",
+    "baseUsed": {
+      "builds": 37,
+      "installs": 10,
+      "starts": 100,
+      "faults": 42,
+      "cleanups": 17
+    },
+    "limits": {
+      "builds": 1,
+      "installs": 2,
+      "starts": 3,
+      "faults": 0,
+      "cleanups": 2,
+      "localModels": 8,
+      "localEffects": 4,
+      "versionRequests": 16,
+      "newTasks": 2,
+      "realModels": 0,
+      "remoteWrites": 0,
+      "minutes": 90
+    },
+    "used": {
+      "builds": 1,
+      "starts": 3,
+      "installs": 2,
+      "faults": 0,
+      "cleanups": 1,
+      "localModels": 1,
+      "localEffects": 2,
+      "versionRequests": 4,
+      "newTasks": 2
+    },
+    "runtimeStartedAt": 1793761781470,
+    "runtimeDeadline": 1793767181470,
+    "run": {
+      "root": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/manual-upgrade-v3",
+      "profile": "/private/tmp/helpr-workspace-validation-501/upgrade09-7bX1bw",
+      "passed": false,
+      "error": "CUA_ROUND_ABORTED",
+      "started": 1793761781470,
+      "ended": 1793763255891
+    },
+    "blocker": {
+      "at": "2026-11-04T03:14:38.125Z",
+      "kind": "native-computer-use-unavailable",
+      "firstCall": "getApp for running owned workspace app timed out at 30 seconds",
+      "independentProbe": "getApp for running Finder also timed out at 10 seconds",
+      "inventoryReadable": true,
+      "cleanupConfirmed": true,
+      "originalDeadline": 1793767181470,
+      "retryNotAttempted": true
+    },
+    "connectionRetries": [
+      {
+        "recordedAt": "2026-11-04T03:24:50.008Z",
+        "basis": "用户在上轮连接失败后明确回复“再试试”",
+        "api": "cua.getState()",
+        "timeoutMs": 10000,
+        "result": "js execution timed out; kernel reset, rerun your request",
+        "inventoryReadable": false,
+        "nativeAppsRead": 0,
+        "applicationStarts": 0,
+        "installations": 0,
+        "builds": 0,
+        "cumulativeUsed": {
+          "builds": 38,
+          "installs": 11,
+          "starts": 101,
+          "faults": 42,
+          "cleanups": 17
+        },
+        "originalDeadline": 1793767181470,
+        "independentCleanup": {
+          "remaining": [],
+          "listeners": [
+            {
+              "port": 55540,
+              "output": ""
+            },
+            {
+              "port": 55541,
+              "output": ""
+            }
+          ]
+        },
+        "boundary": "Only one native connection retry, no application or browser launched, no process terminated, no deadline or counter reset."
+      },
+      {
+        "recordedAt": "2026-11-04T03:27:41.086Z",
+        "basis": "用户再次回复“再试试”",
+        "api": "cua.getState(); cua.getApp(com.apple.finder)",
+        "inventoryReadable": true,
+        "nativeWindowReadable": true,
+        "applicationStarts": 0,
+        "installations": 0,
+        "builds": 0,
+        "originalDeadline": 1793767181470
+      }
+    ],
+    "nativeConnectionRecovered": true,
+    "continuationPlan": {
+      "basis": "原授权范围内用剩余两次启动继续，未增加额度",
+      "starts": [
+        102,
+        103
+      ],
+      "builds": [
+        37,
+        38
+      ],
+      "reuseOriginalProfile": true,
+      "reuseInstallation11": true,
+      "remainingInstallation": 12,
+      "coldReopenDeferred": true,
+      "deadline": 1793767181470
+    },
+    "continuationResult": {
+      "passed": false,
+      "error": "CUA_ROUND_ABORTED",
+      "nativeError": {
+        "start": 103,
+        "build": 38,
+        "api": "cua.getApp for owned running workspace app",
+        "timeoutMs": 10000,
+        "result": "js execution timed out; kernel reset, rerun your request",
+        "visibleNewPackageUIRead": false
+      },
+      "normalCleanupError": "UPGRADE_PENDING",
+      "emergencyCleanupUsed": true,
+      "cleanupConfirmed": true,
+      "coldReopenDeferred": true,
+      "originalDeadline": 1793767181470
+    }
+  },
+  "upgrade09Repair": {
+    "approved": true,
+    "active": false,
+    "unlimited": true,
+    "approvedAt": "2026-11-04T05:53:12.642Z",
+    "basis": "2026-11-04用户已批准并明确覆盖原总限制：“批准，但是不做限制，直到测试完成为准。”本事项验证不再设构建、安装、启动或总时限上限；原计数、失败和截止保留为历史，不清零、不替换。明确授权仅登记在 `upgrade09Repair` 活跃范围，未改变其它事项的上限。各步骤和单次应用阶段仍有超时，超时先保留与清理，下一次尝试必须有诊断依据；没有无限盲重试。以下原待批准数字是历史提案，已由本条用户指令覆盖。当前先完成所列三阶段，必要修正／续验沿用本次批准，不逐次再索取次数。",
+    "source": "docs/testing/upgrade-09-repair-plan.md",
+    "sourceCommit": "f063a8672bd1a40957a2403b15ed711c2bcb0615",
+    "baseUsed": {
+      "builds": 38,
+      "installs": 12,
+      "starts": 103,
+      "faults": 42,
+      "cleanups": 18
+    },
+    "limits": {
+      "builds": null,
+      "installs": null,
+      "starts": null,
+      "cleanups": null,
+      "localModels": null,
+      "localEffects": null,
+      "versionRequests": null,
+      "minutes": null,
+      "faults": 0,
+      "realModels": 0,
+      "remoteWrites": 0
+    },
+    "used": {
+      "builds": 3,
+      "starts": 12,
+      "installs": 4,
+      "faults": 0,
+      "cleanups": 0,
+      "localModels": 5,
+      "localEffects": 3,
+      "versionRequests": 13,
+      "newTasks": 2
+    },
+    "runtimeStartedAt": 1793771592642,
+    "runtimeDeadline": null,
+    "nativePreflight": {
+      "source": "cua-native-window",
+      "observedAt": 1793783675726,
+      "elapsedMs": 1353,
+      "windowRead": true,
+      "screenshotRead": true,
+      "evidence": "CUA native Finder before temporary authorized single package exception run"
+    },
+    "run": {
+      "root": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/manual-upgrade-repair",
+      "profile": "/private/tmp/helpr-workspace-validation-501/upgrade09-WEaBor",
+      "passed": true,
+      "error": null,
+      "started": 1793771592642,
+      "ended": 1793776929525
+    },
+    "repairedSourceCommit": "983f899",
+    "completedAt": 1793784206225,
+    "result": "repair path passed; full issue09 acceptance remains 2/10",
+    "continuationRequestedAt": 1793775192916,
+    "continuationScope": "Diagnose persistent authorization first; finish remaining issue09 acceptance; user 2026-11-04",
+    "authorizationFixSource": "3c8d986",
+    "faultScopeBasis": "User approved no limits until issue09 testing complete; remaining matrix uses finite named faults, preserving all global counters and limits.",
+    "completion": {
+      "scope": "09 current data with explicit self-use publication and single package run exception",
+      "acceptance": "10/10",
+      "evidence": "docs/testing/evidence/upgrade-09/FINAL-ACCEPTANCE.md",
+      "used": {
+        "builds": 41,
+        "installs": 19,
+        "starts": 131,
+        "faults": 45,
+        "cleanups": 21
+      }
+    }
+  }
+}

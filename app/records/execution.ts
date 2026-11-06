@@ -40,6 +40,19 @@ import {
 import { workflowChoiceSchema, workflowUseSchema } from '../shared/workflow';
 import { workflowHash } from './workflow';
 import { currentWorkflow, reboundAction } from '../shared/workflow-replay';
+import {
+  sessionContextSchema,
+  coordinationProposalSchema,
+  sameSession,
+  sameAccount,
+} from '../shared/coordination';
+import {
+  acquireResource,
+  invalidateRun,
+  observeRelation,
+  releaseUnusedClaims,
+  resourceConflict,
+} from './coordination';
 
 const activeTransitions = {
   DISPATCH: { target: 'running', guard: 'automatic' },
@@ -117,6 +130,19 @@ const intentSchema = executionIntentSchema.extend({
 });
 const commandSchema = z.discriminatedUnion('kind', [
   z.strictObject({
+    kind: z.literal('session-invalidated'),
+    taskId: z.string(),
+    session: sessionContextSchema,
+  }),
+  z.strictObject({
+    kind: z.literal('coordination-observed'),
+    ...work,
+    session: sessionContextSchema,
+    source: observation,
+    proposal: coordinationProposalSchema.optional(),
+    authenticated: z.boolean().optional(),
+  }),
+  z.strictObject({
     kind: z.literal('workflow-bind'),
     ...work,
     choice: workflowChoiceSchema,
@@ -174,6 +200,7 @@ const commandSchema = z.discriminatedUnion('kind', [
   }),
   z.strictObject({
     kind: z.literal('ask'),
+    coordinationDecision: z.boolean().optional(),
     type: z.enum(['review', 'login']).optional(),
     publication: publicationSchema.optional(),
     ...work,
@@ -200,6 +227,7 @@ const commandSchema = z.discriminatedUnion('kind', [
   }),
   z.strictObject({
     kind: z.literal('claim'),
+    session: sessionContextSchema.optional(),
     taskId: z.string(),
     runId: z.string().min(1),
   }),
@@ -265,6 +293,12 @@ export function pauseForBackup(e: TaskExecution): TaskExecution {
   const next = executionSchema.parse(structuredClone(e));
   next.version++;
   next.runId = null;
+  if (next.coordination) {
+    next.coordination.status = 'unverified';
+    delete next.coordination.loginId;
+    delete next.coordination.loginOwner;
+    delete next.coordination.checkingLogin;
+  }
   delete next.question;
   next.restoreReview = 'required';
   delete next.recoveryPending;
@@ -316,6 +350,7 @@ export class ExecutionRecords {
     return row ? executionSchema.parse(row.body) : null;
   }
   private save(taskId: string, e: TaskExecution) {
+    releaseUnusedClaims(e);
     this.db
       .insert(schema.executions)
       .values({ taskId, body: e })
@@ -329,10 +364,84 @@ export class ExecutionRecords {
       .set({ revision: sql`${schema.workspace.revision}+1` })
       .run();
   }
+  private others(taskId: string) {
+    return this.db
+      .select()
+      .from(schema.executions)
+      .all()
+      .filter((r) => r.taskId !== taskId)
+      .map((r) => ({
+        taskId: r.taskId,
+        execution: executionSchema.parse(r.body),
+      }));
+  }
+  /** 一个登录障碍只保留一个可操作入口；停止拥有者后转给仍自动等待的任务。 */
+  private reconcileLogins() {
+    const rows = this.db
+      .select()
+      .from(schema.executions)
+      .all()
+      .map((r) => ({
+        taskId: r.taskId,
+        execution: executionSchema.parse(r.body),
+      }));
+    const ids = new Set(
+      rows.map((r) => r.execution.coordination?.loginId).filter(Boolean),
+    );
+    for (const id of ids) {
+      const group = rows.filter(
+        (r) => r.execution.coordination?.loginId === id,
+      );
+      const owner =
+        group.find(
+          (r) =>
+            r.execution.coordination?.checkingLogin &&
+            r.execution.intent === 'automatic',
+        ) ??
+        group.find(
+          (r) =>
+            r.execution.question?.type === 'login' &&
+            r.execution.intent === 'automatic',
+        ) ??
+        group.find(
+          (r) =>
+            r.execution.intent === 'automatic' &&
+            !r.execution.pauseReason &&
+            !r.execution.question &&
+            !r.execution.coordination?.checkingLogin &&
+            !['complete', 'failed'].includes(r.execution.phase),
+        );
+      for (const row of group) {
+        const e = row.execution,
+          c = e.coordination!;
+        const before = JSON.stringify(e);
+        c.loginOwner = owner?.taskId;
+        if (row !== owner && e.question?.type === 'login') delete e.question;
+        if (row === owner && !e.question && !c.checkingLogin) {
+          const url = this.db
+            .select()
+            .from(schema.tasks)
+            .where(eq(schema.tasks.id, row.taskId))
+            .get()!.url;
+          e.question = {
+            type: 'login',
+            id: randomUUID(),
+            goalVersion: e.goalVersion,
+            text: '这些任务共用网站登录。请在此网页登录，完成后核对。',
+            url,
+          };
+          e.loginOrigin = c.session.origin;
+          invalidateRun(e);
+          move(e, 'SUSPEND');
+        }
+        if (JSON.stringify(e) !== before) this.save(row.taskId, e);
+      }
+    }
+  }
   execute(input: unknown): Record<string, unknown> {
     const c = commandSchema.parse(input);
     let acceptedControl = false;
-    const result = this.db.transaction(() => {
+    const apply = (): Record<string, unknown> => {
       const task = this.db
         .select()
         .from(schema.tasks)
@@ -340,6 +449,32 @@ export class ExecutionRecords {
         .get();
       if (!task) throw new Error('TASK_NOT_FOUND');
       let e = this.get(c.taskId);
+      if (c.kind === 'session-invalidated') {
+        if (!e?.coordination || !sameSession(e.coordination.session, c.session))
+          return { invalidated: false };
+        const [oldBoot, oldEpoch] = e.coordination.session.epoch.split(':');
+        const [newBoot, newEpoch] = c.session.epoch.split(':');
+        if (oldBoot === newBoot && Number(newEpoch) <= Number(oldEpoch))
+          return { invalidated: false };
+        e.coordination.session = c.session;
+        if (e.coordination.status !== 'login')
+          e.coordination.status = 'unverified';
+        e.coordination.refreshRequired = true;
+        if (
+          e.intent === 'automatic' &&
+          ['queued', 'checking', 'running'].includes(e.phase) &&
+          !e.pauseReason &&
+          !e.question
+        )
+          queueRecovery(
+            e,
+            task.url,
+            '网站会话发生变化，先重新核对账号、目标权限和已有结果。',
+          );
+        else invalidateRun(e);
+        this.save(task.id, e);
+        return { invalidated: true };
+      }
       if (c.kind === 'participation-decision') {
         const receiptId = 'review:' + c.questionId;
         const hash = createHash('sha256')
@@ -431,6 +566,10 @@ export class ExecutionRecords {
         )
           throw Error('PARTICIPATION_EXPIRED');
         (e.answers ??= []).push({ ...question, answer: c.text });
+        if (e.coordination?.decisionQuestionId === question.id) {
+          delete e.coordination.changedBy;
+          delete e.coordination.decisionQuestionId;
+        }
         delete e.question;
         this.db
           .insert(schema.messages)
@@ -722,6 +861,12 @@ export class ExecutionRecords {
           if (!c.text?.trim()) throw new Error('INVALID_REQUEST');
           delete e.publication;
           delete e.loginOrigin;
+          if (e.coordination) {
+            e.coordination = {
+              session: e.coordination.session,
+              status: 'unverified',
+            };
+          }
           e.goal = c.text.trim();
           e.goalVersion++;
           this.db
@@ -737,6 +882,7 @@ export class ExecutionRecords {
         delete e.recoveryPending;
         delete e.recoverySource;
         e.intentId = c.requestId;
+        if (e.coordination) e.coordination.checkingLogin = !!c.loginQuestionId;
         e.runId = null;
         for (const a of e.actions)
           if (a.status === 'reserved') a.status = 'cancelled';
@@ -1092,6 +1238,62 @@ export class ExecutionRecords {
           this.save(task.id, e);
           return { created: true };
         }
+        if (c.kind === 'coordination-observed') {
+          if (c.source.url !== task.url) throw Error('EXECUTION_PAGE_CHANGED');
+          if (
+            e.coordination?.refreshRequired &&
+            e.coordination.source?.generation === c.source.generation
+          )
+            throw Error('COORDINATION_STALE');
+          const accepted = observeRelation(
+            e,
+            c.session,
+            c.source,
+            c.proposal,
+            c.authenticated,
+          );
+          if (c.proposal)
+            for (const row of this.others(task.id)) {
+              const other = row.execution,
+                relation = other.coordination;
+              if (
+                !relation?.account ||
+                !sameSession(relation.session, c.session) ||
+                sameAccount(relation.account, c.proposal.account) ||
+                ['complete', 'failed'].includes(other.phase)
+              )
+                continue;
+              relation.status = 'unverified';
+              relation.refreshRequired = true;
+              if (
+                other.intent === 'automatic' &&
+                !other.pauseReason &&
+                !other.question &&
+                ['queued', 'checking', 'running'].includes(other.phase)
+              )
+                queueRecovery(
+                  other,
+                  this.db
+                    .select()
+                    .from(schema.tasks)
+                    .where(eq(schema.tasks.id, row.taskId))
+                    .get()!.url,
+                  '共享网站的账号依据已改变，先重新核对原账号和目标。',
+                );
+              else invalidateRun(other);
+              this.save(row.taskId, other);
+            }
+          if (!accepted) {
+            if (e.coordination) e.coordination.checkingLogin = false;
+            invalidateRun(e);
+            move(e, 'BLOCK');
+            e.summary =
+              '当前账号或目标权限与原依据不一致，已暂停。请切回原账号并明确继续，或修改委托明确新的账号与目标。';
+          }
+          if (e.coordination) delete e.coordination.refreshRequired;
+          this.save(task.id, e);
+          return { observed: true };
+        }
         if (c.kind === 'verified-login') {
           if (
             !e.loginOrigin ||
@@ -1100,6 +1302,41 @@ export class ExecutionRecords {
             !c.evidence.every((v) => c.source.text.includes(v))
           )
             throw Error('EXECUTION_EVIDENCE_MISSING');
+          if (e.coordination) {
+            if (e.coordination.status !== 'ready' || !e.coordination.account)
+              throw Error('COORDINATION_EVIDENCE_MISSING');
+            const loginId = e.coordination.loginId;
+            for (const row of this.others(task.id)) {
+              const other = row.execution;
+              if (!loginId || other.coordination?.loginId !== loginId) continue;
+              delete other.coordination.loginId;
+              delete other.coordination.loginOwner;
+              delete other.coordination.checkingLogin;
+              other.coordination.status = 'unverified';
+              delete other.coordination.source;
+              delete other.loginOrigin;
+              if (other.question?.type === 'login') delete other.question;
+              if (
+                other.intent === 'automatic' &&
+                !other.pauseReason &&
+                !other.question &&
+                !['complete', 'failed'].includes(other.phase)
+              )
+                queueRecovery(
+                  other,
+                  this.db
+                    .select()
+                    .from(schema.tasks)
+                    .where(eq(schema.tasks.id, row.taskId))
+                    .get()!.url,
+                  '共享登录已恢复；分别核对原任务和已有结果后再安排，原确认仍须有效。',
+                );
+              this.save(row.taskId, other);
+            }
+            delete e.coordination.loginId;
+            delete e.coordination.loginOwner;
+            delete e.coordination.checkingLogin;
+          }
           this.db
             .insert(schema.messages)
             .values({
@@ -1116,6 +1353,7 @@ export class ExecutionRecords {
         if (c.kind === 'ask') {
           if (task.url !== c.url) throw Error('EXECUTION_PAGE_CHANGED');
           if (
+            c.type !== 'login' &&
             e.actions.some((a) =>
               ['reserved', 'dispatched', 'unknown'].includes(a.status),
             )
@@ -1123,6 +1361,48 @@ export class ExecutionRecords {
             throw Error('EXECUTION_RESULT_UNKNOWN');
           if (c.type === 'login')
             e.loginOrigin ??= e.publication?.origin ?? new URL(c.url).origin;
+          if (c.type === 'login' && e.coordination) {
+            const related = this.others(task.id).filter(
+              (r) =>
+                r.execution.coordination &&
+                sameSession(
+                  r.execution.coordination.session,
+                  e.coordination!.session,
+                ),
+            );
+            const id =
+              related.find((r) => r.execution.coordination?.loginId)?.execution
+                .coordination?.loginId ?? c.questionId;
+            e.coordination.status = 'login';
+            e.coordination.loginId = id;
+            e.coordination.checkingLogin = false;
+            for (const row of related) {
+              const other = row.execution;
+              if (['complete', 'failed'].includes(other.phase)) continue;
+              other.coordination!.status = 'login';
+              other.coordination!.loginId = id;
+              other.loginOrigin = e.loginOrigin;
+              invalidateRun(other);
+              if (
+                other.intent === 'automatic' &&
+                !other.pauseReason &&
+                !other.question
+              ) {
+                move(other, 'QUEUE');
+                other.recoveryPending = true;
+                other.recoverySource = {
+                  url: this.db
+                    .select()
+                    .from(schema.tasks)
+                    .where(eq(schema.tasks.id, row.taskId))
+                    .get()!.url,
+                  goalVersion: other.goalVersion,
+                };
+                other.summary = '等待共享网站登录；可在同一个登录提示中处理。';
+              }
+              this.save(row.taskId, other);
+            }
+          }
           if (c.type === 'review') {
             if (!c.publication) throw Error('INVALID_REQUEST');
             if (e.materials?.some((m) => m.goalVersion === e.goalVersion))
@@ -1149,9 +1429,16 @@ export class ExecutionRecords {
             text: c.text,
             url: c.url,
           };
+          if (c.coordinationDecision && e.coordination?.changedBy && !c.type)
+            e.coordination.decisionQuestionId = e.question.id;
           e.version++;
           e.runId = null;
-          e.resource = null;
+          if (
+            !e.actions.some((a) =>
+              ['reserved', 'dispatched', 'unknown'].includes(a.status),
+            )
+          )
+            e.resource = null;
           move(e, 'BLOCK');
           e.summary = c.text;
           // 提问原文已随本轮模型回复进入所属会话。这里只保存待答事实。
@@ -1161,6 +1448,21 @@ export class ExecutionRecords {
         if (c.kind === 'dispatch') {
           const a = e.actions.find((a) => a.id === c.id);
           if (!a || a.runId !== c.runId || a.status !== 'reserved')
+            return { permitted: false };
+          if (
+            e.coordination &&
+            (!a.coordination ||
+              e.coordination.status !== 'ready' ||
+              e.coordination.session.epoch !== a.coordination.session.epoch ||
+              !sameSession(e.coordination.session, a.coordination.session) ||
+              !e.resourceClaims?.some(
+                (r) =>
+                  r.status === 'held' &&
+                  r.id === a.coordination!.claimId &&
+                  r.runId === c.runId,
+              ) ||
+              resourceConflict(e, this.others(task.id)))
+          )
             return { permitted: false };
           if (
             a.effect === 'publication' &&
@@ -1216,6 +1518,27 @@ export class ExecutionRecords {
               throw Error('WORKFLOW_NOT_APPLICABLE');
           }
           if (e.loginOrigin) throw Error('PARTICIPATION_REQUIRED');
+          if (e.coordination?.changedBy) throw Error('PARTICIPATION_REQUIRED');
+          if (e.coordination) {
+            if (
+              e.coordination.status !== 'ready' ||
+              e.coordination.source?.fingerprint !== c.source.fingerprint ||
+              e.coordination.source.url !== c.source.url ||
+              e.coordination.source.generation !== c.source.generation
+            )
+              throw Error('COORDINATION_STALE');
+            const conflict = resourceConflict(e, this.others(task.id));
+            if (conflict) {
+              e.coordination.waitFor = conflict;
+              e.coordination.refreshRequired = true;
+              invalidateRun(e);
+              move(e, 'QUEUE');
+              e.summary =
+                '另一项任务正在使用同一目标，或尚不能确认目标独立。等待后会重新核对，不覆盖已有内容。';
+              this.save(task.id, e);
+              return { created: false };
+            }
+          }
           if (e.observedAnomalies?.some((o) => o.goalVersion === e.goalVersion))
             throw Error('EXECUTION_RESULT_UNKNOWN');
           if (c.action.kind === 'upload') {
@@ -1338,6 +1661,7 @@ export class ExecutionRecords {
           if (c.evidence && !c.evidence.every((v) => c.source.text.includes(v)))
             throw Error('EXECUTION_EVIDENCE_MISSING');
           e.actions.push({
+            ...(e.coordination ? { coordination: acquireResource(e) } : {}),
             ...(c.workflowStep ? { workflowStep: c.workflowStep } : {}),
             observedLinks: c.source.links ?? [],
             effect,
@@ -1554,6 +1878,60 @@ export class ExecutionRecords {
         return { claimed: false };
       if (!task.url || task.phase === 'loading' || task.phase === 'error')
         return { claimed: false };
+      if (c.session) {
+        if (c.session.origin !== new URL(task.url).origin)
+          throw Error('COORDINATION_STALE');
+        const old = e.coordination;
+        if (!old || !sameSession(old.session, c.session))
+          e.coordination = { session: c.session, status: 'unverified' };
+        else if (old.session.epoch !== c.session.epoch) {
+          old.session = c.session;
+          if (old.status !== 'login') old.status = 'unverified';
+          delete old.source;
+        }
+        const login = this.others(task.id).find(
+          (r) =>
+            r.execution.coordination?.loginId &&
+            sameSession(r.execution.coordination.session, c.session!),
+        );
+        if (login && !e.coordination!.checkingLogin) {
+          e.coordination!.status = 'login';
+          e.coordination!.loginId = login.execution.coordination!.loginId;
+          e.loginOrigin = c.session.origin;
+          e.summary = '等待共享网站登录；可在同一个登录提示中处理。';
+          this.save(task.id, e);
+          return { claimed: false };
+        }
+        if (
+          e.coordination!.status === 'login' &&
+          !e.coordination!.checkingLogin
+        )
+          return { claimed: false };
+        if (
+          e.coordination!.waitFor &&
+          resourceConflict(e, this.others(task.id))
+        )
+          return { claimed: false };
+        const previousOwner = this.others(task.id).find(
+          (r) => r.taskId === e.coordination!.waitFor,
+        )?.execution;
+        if (
+          previousOwner?.actions.some(
+            (a) =>
+              a.status !== 'cancelled' &&
+              previousOwner.resourceClaims?.some(
+                (r) =>
+                  r.id === a.coordination?.claimId &&
+                  r.origin === c.session!.origin &&
+                  (!r.targetUrl ||
+                    !e.coordination!.target ||
+                    r.targetUrl === e.coordination!.target.url),
+              ),
+          )
+        )
+          e.coordination!.changedBy = e.coordination!.waitFor;
+        delete e.coordination!.waitFor;
+      }
       const u = new URL(task.url),
         resource = u.origin + u.pathname;
       const others = this.db
@@ -1570,6 +1948,7 @@ export class ExecutionRecords {
       if (
         others.some(
           (x) =>
+            !c.session &&
             x.resource === resource &&
             (['checking', 'running'].includes(x.phase) ||
               x.actions.some((a) =>
@@ -1579,11 +1958,16 @@ export class ExecutionRecords {
       )
         return { claimed: false };
       e.runId = c.runId;
-      e.resource = resource;
+      e.resource = c.session ? null : resource;
       move(e, 'CLAIM');
       e.summary = '正在核对当前页面与已有结果。';
       this.save(task.id, e);
       return { claimed: true, execution: e };
+    };
+    const result = this.db.transaction(() => {
+      const result = apply();
+      this.reconcileLogins();
+      return result;
     });
     if (
       acceptedControl &&

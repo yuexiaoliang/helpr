@@ -26,12 +26,19 @@ import type { PageObservation } from '../shared/model';
 import { materialFailureMessage } from '../shared/material';
 import { currentWorkflow, replayStep } from '../shared/workflow-replay';
 import type { LearnedWorkflow } from '../shared/workflow';
+import {
+  sameSession,
+  sameAccount,
+  type SessionContext,
+} from '../shared/coordination';
 
 export type BoundObservation = {
+  session?: SessionContext;
   observation: PageObservation;
   binding: { targetId: string; generation: number };
 };
 export type ProposalInput = {
+  coordination?: TaskExecution['coordination'];
   workflows?: Pick<
     LearnedWorkflow,
     'taskId' | 'version' | 'sha256' | 'goal' | 'applicability'
@@ -112,6 +119,7 @@ export class ExecutionService {
     { abort: AbortController; work: Promise<void>; epoch?: number }
   >();
   private readonly interruptions = new Set<Promise<unknown>>();
+  private readonly sessionUpdates = new Map<string, Promise<unknown>>();
   constructor(
     private readonly ports: {
       records: (command: unknown) => Promise<unknown>;
@@ -127,6 +135,8 @@ export class ExecutionService {
       revoke: (taskId: string) => void;
       stopModels: (taskId: string) => void;
       beforeRecovery?: () => Promise<void>;
+      session?: (taskId: string) => Promise<SessionContext>;
+      refreshPage?: (taskId: string) => Promise<void>;
       initialUpgradeHold?: boolean;
       input?: {
         prepare: (taskId: string) => Promise<number>;
@@ -146,6 +156,7 @@ export class ExecutionService {
       this.pendingIntents.size === 0 &&
       this.reviews.size === 0 &&
       this.interruptions.size === 0 &&
+      this.sessionUpdates.size === 0 &&
       this.workspaceUnsettled.size === 0 &&
       ![...this.blocked.values()].some((b) => !b.saved)
     );
@@ -271,6 +282,9 @@ export class ExecutionService {
           'EXECUTION_PAGE_CHANGED',
           'EXECUTION_LIMIT',
           'WORKFLOW_NOT_APPLICABLE',
+          'COORDINATION_STALE',
+          'COORDINATION_EVIDENCE_MISSING',
+          'COORDINATION_TARGET_CHANGED',
           'EXECUTION_EVIDENCE_MISSING',
           'BACKUP_REVIEW_REQUIRED',
           'MATERIAL_NOT_AUTHORIZED',
@@ -555,6 +569,33 @@ export class ExecutionService {
       this.publish();
       return this.decorate(result.state);
     } catch (error) {
+      // 明确的旧版本拒绝没有接受新意图。撤销本次临时阻断，按最新可靠记录
+      // 保留停止／接管或问题入口；保存结果不明时仍必须保留未保存阻断。
+      if (
+        recordStarted &&
+        error instanceof Error &&
+        error.message === 'RECORD_VERSION_CONFLICT' &&
+        command.intent !== 'stop' &&
+        this.intents.get(command.taskId) === sequence
+      ) {
+        const latest = this.ports
+          .current()
+          .tasks.find((t) => t.id === command.taskId)?.execution;
+        if (priorBlock && !priorBlock.saved)
+          this.blocked.set(command.taskId, priorBlock);
+        else if (latest?.intent === 'stopped' || latest?.pauseReason)
+          this.blocked.set(command.taskId, {
+            saved: true,
+            message: latest.summary,
+            ...(latest.pauseReason ? { reason: latest.pauseReason } : {}),
+          });
+        else if (
+          latest &&
+          ['queued', 'checking', 'running'].includes(latest.phase)
+        )
+          await this.suspend(command.taskId, 'page-change', randomUUID());
+        else this.blocked.delete(command.taskId);
+      }
       // 准备能力失败时尚未请求新保存，保留先前已可靠保存的暂停／停止。
       if (!recordStarted && this.intents.get(command.taskId) === sequence) {
         if (priorBlock) this.blocked.set(command.taskId, priorBlock);
@@ -601,6 +642,7 @@ export class ExecutionService {
       !this.closing &&
       !job.abort.signal.aborted &&
       !this.blocked.has(job.taskId) &&
+      !this.sessionUpdates.has(job.taskId) &&
       (!this.ports.input ||
         this.ports.input.valid(job.taskId, job.inputEpoch)) &&
       this.jobs.get(job.taskId) === job &&
@@ -628,6 +670,44 @@ export class ExecutionService {
   }
   refresh() {
     this.pump();
+  }
+  /** 宿主已经同步撤销原生门；这里只保存事实，不解除用户停止或接管。 */
+  async sessionChanged(session: SessionContext, taskIds: string[]) {
+    for (const id of taskIds) {
+      this.ports.input?.block(id);
+      this.jobs.get(id)?.abort.abort(Error('COORDINATION_STALE'));
+      this.reviews.get(id)?.abort.abort(Error('COORDINATION_STALE'));
+      this.ports.revoke(id);
+      this.ports.stopModels(id);
+      const work = this.record({
+        kind: 'session-invalidated',
+        taskId: id,
+        session,
+      });
+      this.sessionUpdates.set(id, work);
+      void work
+        .finally(() => {
+          if (this.sessionUpdates.get(id) === work)
+            this.sessionUpdates.delete(id);
+          this.pump();
+        })
+        .catch(() => {});
+    }
+    await Promise.all([...this.sessionUpdates.values()]);
+  }
+  private blockSessionPeers(job: Job, session: SessionContext) {
+    for (const task of this.ports.current().tasks) {
+      if (
+        task.id === job.taskId ||
+        !task.execution?.coordination ||
+        !sameSession(task.execution.coordination.session, session)
+      )
+        continue;
+      this.ports.input?.block(task.id);
+      this.jobs.get(task.id)?.abort.abort(Error('COORDINATION_STALE'));
+      this.ports.revoke(task.id);
+      this.ports.stopModels(task.id);
+    }
   }
   async beginRestore() {
     if (this.upgradeHeld) throw Error('UPGRADE_PENDING');
@@ -835,7 +915,8 @@ export class ExecutionService {
         this.reviews.has(task.id) ||
         this.reviews.size + this.jobs.size >= 2 ||
         this.blocked.has(task.id) ||
-        this.pendingIntents.has(task.id)
+        this.pendingIntents.has(task.id) ||
+        this.sessionUpdates.has(task.id)
       )
         continue;
       const submitted = task.execution.actions.find(
@@ -900,10 +981,12 @@ export class ExecutionService {
         }
       }
       const runId = randomUUID();
+      const session = await this.ports.session?.(task.id);
       const claim = await this.record({
         kind: 'claim',
         taskId: task.id,
         runId,
+        ...(session ? { session } : {}),
       });
       if (!this.systemReady() || systemGeneration !== this.systemGeneration) {
         const execution = this.ports
@@ -919,6 +1002,13 @@ export class ExecutionService {
         return;
       }
       if (!claim.claimed) continue;
+      if (session && this.ports.session) {
+        const latest = await this.ports.session(task.id);
+        if (!sameSession(session, latest) || session.epoch !== latest.epoch) {
+          await this.sessionChanged(latest, [task.id]);
+          continue;
+        }
+      }
       const current = claim.state.tasks.find(
         (t) => t.id === task.id,
       )?.execution;
@@ -996,6 +1086,15 @@ export class ExecutionService {
       const initial = this.ports
         .current()
         .tasks.find((t) => t.id === job.taskId)?.execution;
+      if (initial?.coordination?.refreshRequired) {
+        // 本任务尚未写入且没有人工接管时才可丢弃旧只读页面。已有现场留待本人核对。
+        if (!initial.actions.some((a) => a.status !== 'cancelled')) {
+          if (!this.ports.refreshPage)
+            throw Error('COORDINATION_TARGET_CHANGED');
+          await this.ports.refreshPage(job.taskId);
+        }
+        if (!this.live(job)) return;
+      }
       for (const material of initial?.materials?.filter(
         (m) => m.goalVersion === initial.goalVersion,
       ) ?? []) {
@@ -1013,6 +1112,7 @@ export class ExecutionService {
         )
           throw Error('MATERIAL_CORRUPT');
       }
+      let stalePlans = 0;
       for (let index = 0; index < 20; index++) {
         if (!this.live(job)) return;
         let observed = await this.abortable(
@@ -1047,7 +1147,8 @@ export class ExecutionService {
             applicability,
           }));
         let replay: NextStep | undefined;
-        if (use) {
+        const replaying = use && !current.loginOrigin;
+        if (replaying) {
           const deadline = Date.now() + 8000;
           for (let attempt = 0; ; attempt++) {
             try {
@@ -1074,50 +1175,101 @@ export class ExecutionService {
             }
           }
         }
-        const step = nextStepSchema.parse(
-          use
-            ? replay
-            : await this.abortable(
-                () =>
-                  this.ports.propose({
-                    taskId: job.taskId,
-                    runId: job.runId,
-                    goal: current.goal,
-                    observation: observed.observation,
-                    pending,
-                    history: current.actions,
-                    publication: current.publication,
-                    materials: current.materials?.filter(
-                      (m) => m.goalVersion === current.goalVersion,
-                    ),
-                    preparation: current.preparation?.filter(
-                      (f) => f.goalVersion === current.goalVersion,
-                    ),
-                    workflows: current.actions.some(
-                      (a) => a.goalVersion === current.goalVersion,
-                    )
-                      ? []
-                      : workflows,
-                    loginOrigin: current.loginOrigin,
-                    clarifications: current.answers
-                      ?.filter((a) => a.goalVersion === current.goalVersion)
-                      .map((a) => ({ question: a.text, answer: a.answer })),
-                    signal: job.abort.signal,
-                    permit: (send) =>
-                      this.ports.input
-                        ? this.ports.input.permit(
-                            job.taskId,
-                            job.inputEpoch,
-                            send,
-                          )
-                        : send(),
-                  }),
-                job.abort.signal,
-              ),
-        );
+        let step: NextStep;
+        try {
+          step = nextStepSchema.parse(
+            replaying
+              ? replay
+              : await this.abortable(
+                  () =>
+                    this.ports.propose({
+                      taskId: job.taskId,
+                      runId: job.runId,
+                      goal: current.goal,
+                      observation: observed.observation,
+                      pending,
+                      history: current.actions,
+                      publication: current.publication,
+                      materials: current.materials?.filter(
+                        (m) => m.goalVersion === current.goalVersion,
+                      ),
+                      preparation: current.preparation?.filter(
+                        (f) => f.goalVersion === current.goalVersion,
+                      ),
+                      workflows: current.actions.some(
+                        (a) => a.goalVersion === current.goalVersion,
+                      )
+                        ? []
+                        : workflows,
+                      loginOrigin: current.loginOrigin,
+                      coordination: current.coordination,
+                      clarifications: current.answers
+                        ?.filter((a) => a.goalVersion === current.goalVersion)
+                        .map((a) => ({ question: a.text, answer: a.answer })),
+                      signal: job.abort.signal,
+                      permit: (send) =>
+                        this.ports.input
+                          ? this.ports.input.permit(
+                              job.taskId,
+                              job.inputEpoch,
+                              send,
+                            )
+                          : send(),
+                    }),
+                  job.abort.signal,
+                ),
+          );
+        } catch (error) {
+          // 只重做已拒绝的只读规划；旧提议不进入预留，已有派发仍先核对结果。
+          if (
+            error instanceof Error &&
+            error.message === 'EXECUTION_PAGE_CHANGED' &&
+            stalePlans < 2 &&
+            this.live(job)
+          ) {
+            stalePlans++;
+            continue;
+          }
+          throw error;
+        }
         if (!this.live(job)) return;
         if (!step.evidence.every((v) => observed.observation.text.includes(v)))
           throw Error('EXECUTION_EVIDENCE_MISSING');
+        if (
+          observed.session &&
+          (step.coordination ||
+            ['act', 'authenticated'].includes(step.decision))
+        ) {
+          if (
+            step.coordination &&
+            this.ports
+              .current()
+              .tasks.some(
+                (t) =>
+                  t.id !== job.taskId &&
+                  t.execution?.coordination?.account &&
+                  sameSession(
+                    t.execution.coordination.session,
+                    observed.session!,
+                  ) &&
+                  !sameAccount(
+                    t.execution.coordination.account,
+                    step.coordination!.account,
+                  ),
+              )
+          )
+            this.blockSessionPeers(job, observed.session);
+          await this.record({
+            kind: 'coordination-observed',
+            taskId: job.taskId,
+            runId: job.runId,
+            session: observed.session,
+            source: observed.observation,
+            proposal: step.coordination,
+            authenticated: step.decision === 'authenticated',
+          });
+          if (!this.live(job)) return;
+        }
         if (
           step.decision === 'reuse' &&
           !step.anomalies?.length &&
@@ -1175,6 +1327,34 @@ export class ExecutionService {
             extraResults: step.extraResults ?? [],
           });
           return;
+        }
+        // 登录障碍和未知结果分别保存。处理登录只授予观察，不把已送出的动作重发。
+        if (step.decision === 'login') {
+          if (observed.session) this.blockSessionPeers(job, observed.session);
+          await this.record({
+            kind: 'ask',
+            type: 'login',
+            taskId: job.taskId,
+            runId: job.runId,
+            questionId: randomUUID(),
+            text: '请到这项任务的网页登录，完成后先核对已有结果。',
+            url: observed.observation.url,
+          });
+          return;
+        }
+        if (
+          step.decision === 'authenticated' &&
+          current.loginOrigin &&
+          new URL(observed.observation.url).origin === current.loginOrigin
+        ) {
+          await this.record({
+            kind: 'verified-login',
+            taskId: job.taskId,
+            runId: job.runId,
+            source: observed.observation,
+            evidence: step.evidence,
+          });
+          continue;
         }
         if (step.decision === 'observe') {
           // 仅再取一次受控观察；保留未知派发，不给任何重送资格。
@@ -1347,25 +1527,8 @@ export class ExecutionService {
           });
           return;
         }
-        if (step.decision === 'authenticated' && !current.loginOrigin)
-          throw Error('MODEL_FORMAT');
         const p = current.publication;
-        if (
-          current.loginOrigin &&
-          step.decision === 'authenticated' &&
-          new URL(observed.observation.url).origin === current.loginOrigin
-        ) {
-          await this.record({
-            kind: 'verified-login',
-            taskId: job.taskId,
-            runId: job.runId,
-            source: observed.observation,
-            evidence: step.evidence,
-          });
-          continue;
-        }
-        const requiresLogin =
-          !!current.loginOrigin || step.decision === 'login';
+        const requiresLogin = !!current.loginOrigin;
         const candidate = step.publication;
         const needsReview =
           step.decision === 'review' ||
@@ -1381,6 +1544,8 @@ export class ExecutionService {
           const preview = candidate ?? p;
           if (!requiresLogin && needsReview && !preview)
             throw Error('MODEL_FORMAT');
+          if (requiresLogin && observed.session)
+            this.blockSessionPeers(job, observed.session);
           await this.record({
             kind: 'ask',
             taskId: job.taskId,
@@ -1425,6 +1590,18 @@ export class ExecutionService {
           await this.finish(job, 'unknown', step.summary);
           return;
         }
+        if (current.coordination?.changedBy) {
+          await this.record({
+            kind: 'ask',
+            taskId: job.taskId,
+            runId: job.runId,
+            questionId: randomUUID(),
+            coordinationDecision: true,
+            url: observed.observation.url,
+            text: '另一项任务已修改这个目标，当前结果已重新读取。本项还需要改写：请说明要保留现有结果、在其基础上继续，还是明确替换。',
+          });
+          return;
+        }
         let dispatchObservation = observed;
         let download: DownloadCheck | undefined;
         const finalAttachment =
@@ -1447,6 +1624,17 @@ export class ExecutionService {
             () => this.ports.observe(job.taskId, job.abort.signal),
             job.abort.signal,
           );
+          if (!this.live(job)) return;
+        }
+        if (dispatchObservation.session) {
+          await this.record({
+            kind: 'coordination-observed',
+            taskId: job.taskId,
+            runId: job.runId,
+            session: dispatchObservation.session,
+            source: dispatchObservation.observation,
+            proposal: step.coordination,
+          });
           if (!this.live(job)) return;
         }
         const actionId = randomUUID();
@@ -1483,6 +1671,16 @@ export class ExecutionService {
           binding: dispatchObservation.binding,
         });
         if (!this.live(job) || reserved.created !== true) return;
+        if (dispatchObservation.session && this.ports.session) {
+          const latest = await this.ports.session(job.taskId);
+          if (
+            !sameSession(latest, dispatchObservation.session) ||
+            latest.epoch !== dispatchObservation.session.epoch
+          ) {
+            await this.sessionChanged(latest, [job.taskId]);
+            return;
+          }
+        }
         const dispatched = await this.record({
           kind: 'dispatch',
           taskId: job.taskId,
@@ -1528,9 +1726,11 @@ export class ExecutionService {
             ? '网页已变化，先核对现有结果。'
             : code === 'MATERIAL_CORRUPT'
               ? '本机固定素材缺失或损坏，已保留原记录并暂停；不会重读来源替换或继续提交。'
-              : code.startsWith('WORKFLOW_')
-                ? '已保存的做法与本次参数或网页条件不匹配，已暂停并保留记录，需要重新核对；不会套用旧值或重发。'
-                : '执行暂时无法继续，已暂停后续操作。已有结果与记录保留。',
+              : code.startsWith('COORDINATION_')
+                ? '网站账号、目标或权限依据已变化，已暂停并保留原现场。请先保存需要保留的网页文字，刷新并核对原账号与目标后明确继续。'
+                : code.startsWith('WORKFLOW_')
+                  ? '已保存的做法与本次参数或网页条件不匹配，已暂停并保留记录，需要重新核对；不会套用旧值或重发。'
+                  : '执行暂时无法继续，已暂停后续操作。已有结果与记录保留。',
         ).catch(() => {});
       }
     }
@@ -1549,6 +1749,7 @@ export class ExecutionService {
     for (;;) {
       const pump = this.pumping;
       await Promise.allSettled([...this.interruptions, ...this.pendingReplies]);
+      await Promise.allSettled([...this.sessionUpdates.values()]);
       if (pump) await pump;
       const jobs = [...this.jobs.values()];
       if (this.reviews.size) {

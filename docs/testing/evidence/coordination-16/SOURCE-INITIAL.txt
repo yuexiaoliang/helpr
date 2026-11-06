@@ -1,0 +1,70 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/coordination.test.ts (10 tests | 3 failed) 2250ms
+   × 同一目标竞争等待；停止未派发拥有者释放，旧拥有者回调失效，等待者必须新观察 206ms
+   × 会话新代次取消未派发预留，重复或迟到通知不退回代次；账号改变不获得旧确认 116ms
+   × 已派发未知效果保留目标占用；同站未知身份保守等待，伪造和重名链接不能证明独立 260ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/coordination.test.ts > 同一目标竞争等待；停止未派发拥有者释放，旧拥有者回调失效，等待者必须新观察
+AssertionError: expected [Function] to throw an error
+
+- Expected:
+null
+
++ Received:
+undefined
+
+ ❯ tests/workspace/coordination.test.ts:88:43
+     86|   f.intent(a, 'stop');
+     87|   expect(f.get(a).resourceClaims![0]!.status).toBe('released');
+     88|   expect(() => f.dispatch(a, aa, oldRun)).toThrow('EXECUTION_STOPPED');
+       |                                           ^
+     89|   expect(f.claim(b).claimed).toBe(true);
+     90|   expect(() => f.observe(b)).toThrow('COORDINATION_STALE');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/workspace/coordination.test.ts > 会话新代次取消未派发预留，重复或迟到通知不退回代次；账号改变不获得旧确认
+AssertionError: expected [Function] to throw an error
+
+- Expected:
+null
+
++ Received:
+undefined
+
+ ❯ tests/workspace/coordination.test.ts:160:47
+    158|   expect(f.get(a).version).toBe(version);
+    159|   expect(f.get(a).actions[0]?.status).toBe('cancelled');
+    160|   expect(() => f.dispatch(a, action, oldRun)).toThrow('EXECUTION_STOPP…
+       |                                               ^
+    161|   f.recover(a);
+    162|   expect(() => f.observe(a)).toThrow('COORDINATION_STALE');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/workspace/coordination.test.ts > 已派发未知效果保留目标占用；同站未知身份保守等待，伪造和重名链接不能证明独立
+AssertionError: expected 'dispatched' to be 'unknown' // Object.is equality
+
+Expected: "unknown"
+Received: "dispatched"
+
+ ❯ tests/workspace/coordination.test.ts:180:39
+    178|   f.command({ kind: 'coordination-observed', taskId: c, runId: f.get(c…
+    179|   expect(f.reserve(c).result.created).toBe(false);
+    180|   expect(f.get(a).actions[0]?.status).toBe('unknown');
+       |                                       ^
+    181| });
+    182|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 7 passed (10)
+   Start at  00:38:00
+   Duration  2.85s (tests 81%, import 13%, transform 6%)
+

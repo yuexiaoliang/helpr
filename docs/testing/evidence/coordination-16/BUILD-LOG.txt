@@ -1,0 +1,95 @@
+$ node scripts/build-mac.mjs --candidate=coordination-16
+gyp info it worked if it ends with ok
+gyp info using node-gyp@13.1.0
+gyp info using node@24.18.0 | darwin | arm64
+gyp info chdir app/native
+gyp info find Python using Python version 3.9.6 found at "/Library/Developer/CommandLineTools/usr/bin/python3"
+
+gyp info spawn /Library/Developer/CommandLineTools/usr/bin/python3
+gyp info spawn args [
+gyp info spawn args '/Users/yuexiaoliang/projects/helpr/node_modules/.pnpm/node-gyp@13.1.0/node_modules/node-gyp/gyp/gyp_main.py',
+gyp info spawn args 'binding.gyp',
+gyp info spawn args '-f',
+gyp info spawn args 'make',
+gyp info spawn args '-I',
+gyp info spawn args '/Users/yuexiaoliang/projects/helpr/app/native/build/config.gypi',
+gyp info spawn args '-I',
+gyp info spawn args '/Users/yuexiaoliang/projects/helpr/node_modules/.pnpm/node-gyp@13.1.0/node_modules/node-gyp/addon.gypi',
+gyp info spawn args '-I',
+gyp info spawn args '/Users/yuexiaoliang/Library/Caches/node-gyp/24.18.0/include/node/common.gypi',
+gyp info spawn args '-Dlibrary=shared_library',
+gyp info spawn args '-Dvisibility=default',
+gyp info spawn args '-Dnode_root_dir=/Users/yuexiaoliang/Library/Caches/node-gyp/24.18.0',
+gyp info spawn args '-Dnode_gyp_dir=/Users/yuexiaoliang/projects/helpr/node_modules/.pnpm/node-gyp@13.1.0/node_modules/node-gyp',
+gyp info spawn args '-Dnode_lib_file=/Users/yuexiaoliang/Library/Caches/node-gyp/24.18.0/<(target_arch)/node.lib',
+gyp info spawn args '-Dmodule_root_dir=/Users/yuexiaoliang/projects/helpr/app/native',
+gyp info spawn args '-Dnode_engine=v8',
+gyp info spawn args '--depth=.',
+gyp info spawn args '--no-parallel',
+gyp info spawn args '--generator-output',
+gyp info spawn args 'build',
+gyp info spawn args '-Goutput_dir=.'
+gyp info spawn args ]
+gyp info spawn make
+gyp info spawn args [ 'BUILDTYPE=Release', '-C', 'build' ]
+  CXX(target) Release/obj.target/input_bridge/input-bridge.o
+  SOLINK_MODULE(target) Release/input_bridge.node
+gyp info ok 
+vite v7.3.7 building ssr environment for production...
+transforming...
+✓ 57 modules transformed.
+rendering chunks...
+dist/main/observer.cjs         0.86 kB
+dist/main/diagnostics.cjs      1.14 kB
+dist/main/rpc.cjs              1.47 kB
+dist/main/executor.cjs         4.39 kB
+dist/main/record-format.cjs    6.20 kB
+dist/main/local-fixture.cjs    8.62 kB
+dist/main/contracts.cjs       12.93 kB
+dist/main/execution.cjs       27.08 kB
+dist/main/host.cjs            46.43 kB
+dist/main/records.cjs        145.97 kB
+dist/main/main.cjs           187.70 kB
+✓ built in 403ms
+vite v7.3.7 building ssr environment for production...
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+dist/preload/preload.cjs  0.46 kB
+✓ built in 7ms
+vite v7.3.7 building client environment for production...
+transforming...
+node_modules/.pnpm/zod@4.6.7/node_modules/zod/v4/core/regexes.js (74:0): A comment
+
+"/** Anchors a pattern source. The interpolation lives here rather than at the call site because
+ * esbuild will not drop a `@__PURE__` call whose own argument interpolates a variable, but it
+ * will drop `anchor(dateSource)`. Keeping it inline pinned `date` into every bundle. */"
+
+in "node_modules/.pnpm/zod@4.6.7/node_modules/zod/v4/core/regexes.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+node_modules/.pnpm/zod@4.6.7/node_modules/zod/v4/core/util.js (400:0): A comment
+
+"// Wrapped in a `@__PURE__` IIFE: esbuild never tree-shakes a top-level initializer that contains a member access on `Number`, so the bare object literal survived into every bundle."
+
+in "node_modules/.pnpm/zod@4.6.7/node_modules/zod/v4/core/util.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+✓ 1468 modules transformed.
+rendering chunks...
+../../dist/renderer/index.html                     0.67 kB
+../../dist/renderer/assets/index-BSpZ6EHu.css     12.70 kB
+../../dist/renderer/assets/index-za8XfrcO.js   1,154.20 kB
+✓ built in 1.40s
+  • electron-builder  version=26.15.3 os=23.6.0
+  • detected workspace root for project using packageManager field  pm=pnpm config=pnpm@11.7.0 resolved=/Users/yuexiaoliang/projects/helpr projectDir=/Users/yuexiaoliang/projects/helpr
+  • executing @electron/rebuild  electronVersion=44.7.2 arch=arm64 buildFromSource=false workspaceRoot=/Users/yuexiaoliang/projects/helpr projectDir=./ appDir=./
+  • installing native dependencies  arch=arm64
+  • preparing       moduleName=better-sqlite3 arch=arm64
+  • finished        moduleName=better-sqlite3 arch=arm64
+  • completed installing native dependencies
+  • packaging       platform=darwin arch=arm64 electron=44.7.2 appOutDir=dist/candidates/coordination-16/mac-arm64
+  • using custom unpacked Electron distribution  electronDist=node_modules/electron/dist
+  • copying unpacked Electron  source=/Users/yuexiaoliang/projects/helpr/node_modules/electron/dist/Electron.app destination=/Users/yuexiaoliang/projects/helpr/dist/candidates/coordination-16/mac-arm64/Electron.app
+  • searching for node modules  pm=pnpm searchDir=/Users/yuexiaoliang/projects/helpr
+  • duplicate dependency references  dependencies=["react-dom@19.3.0","sonic-boom@4.2.1","@swc/helpers@0.5.23","react-stately@3.51.0","use-sync-external-store@1.7.0","@internationalized/number@3.6.9"]
+  • default Electron icon is used  reason=application icon is not set
+  • skipped macOS code signing  reason=identity explicitly is set to null
+{"hostLayout":"standard complete main bundle","helpers":4,"independentIdentity":true,"sameApplicationArchive":true,"sameFuses":true,"deepStrictSignatureVerified":true,"certificateSha256":"5bd4c2c1f28a99910837bb31ba404f3043378c54463bdc8a8bdf04ce75d2f119","signedImages":54}
+{"build":62,"prepared":true,"app":"/Users/yuexiaoliang/projects/helpr/dist/candidates/coordination-16/mac-arm64/helpr.app"}

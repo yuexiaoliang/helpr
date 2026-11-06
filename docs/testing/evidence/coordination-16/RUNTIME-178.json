@@ -1,0 +1,239 @@
+{
+  "app": "/Users/yuexiaoliang/projects/helpr/dist/candidates/coordination-16/mac-arm64/helpr.app",
+  "storage": "fixture",
+  "pendingAcceptance": [
+    "系统钥匙串与跨重启登录",
+    "原生窗口与真人输入"
+  ],
+  "started": "2026-11-06T16:55:46.149Z",
+  "checks": [],
+  "samples": [
+    {
+      "kind": "startup",
+      "number": 178,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:62470",
+        "persistent": false
+      },
+      "ms": 3220,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    }
+  ],
+  "processes": [
+    {
+      "number": 178,
+      "controller": 99142,
+      "seen": {
+        "99142": {
+          "parent": 99127,
+          "group": 99142
+        },
+        "99166": {
+          "parent": 99142,
+          "group": 99113
+        },
+        "99167": {
+          "parent": 99142,
+          "group": 99113
+        },
+        "99169": {
+          "parent": 1,
+          "group": 99169
+        },
+        "99170": {
+          "parent": 99142,
+          "group": 99142
+        },
+        "99171": {
+          "parent": 99169,
+          "group": 99171
+        },
+        "99176": {
+          "parent": 99171,
+          "group": 99171
+        },
+        "99177": {
+          "parent": 99171,
+          "group": 99171
+        },
+        "99178": {
+          "parent": 99171,
+          "group": 99171
+        },
+        "99179": {
+          "parent": 99171,
+          "group": 99171
+        },
+        "99180": {
+          "parent": 99171,
+          "group": 99171
+        },
+        "99184": {
+          "parent": 99171,
+          "group": 99171
+        },
+        "99185": {
+          "parent": 99171,
+          "group": 99171
+        },
+        "99190": {
+          "parent": 99171,
+          "group": 99171
+        },
+        "99191": {
+          "parent": 99171,
+          "group": 99171
+        }
+      },
+      "groups": [
+        99142,
+        99169,
+        99171
+      ],
+      "remaining": [],
+      "exit": {
+        "code": 0,
+        "signal": null
+      }
+    }
+  ],
+  "fixture": [
+    {
+      "kind": "page",
+      "item": "A",
+      "account": "alice",
+      "revision": 0,
+      "at": 1793984149486
+    },
+    {
+      "kind": "page",
+      "item": "B",
+      "account": "alice",
+      "revision": 0,
+      "at": 1793984150138
+    },
+    {
+      "kind": "environment",
+      "holdWrites": true,
+      "at": 1793984150675
+    },
+    {
+      "kind": "planning",
+      "item": "A",
+      "decision": "act",
+      "account": "alice",
+      "at": 1793984150823
+    },
+    {
+      "kind": "planning",
+      "item": "B",
+      "decision": "act",
+      "account": "alice",
+      "at": 1793984150825
+    },
+    {
+      "kind": "planning",
+      "item": "A",
+      "decision": "act",
+      "account": "alice",
+      "at": 1793984151392
+    },
+    {
+      "kind": "planning",
+      "item": "B",
+      "decision": "act",
+      "account": "alice",
+      "at": 1793984151404
+    },
+    {
+      "kind": "write-start",
+      "item": "B",
+      "value": "第二项内容",
+      "account": "alice",
+      "at": 1793984151909
+    },
+    {
+      "kind": "planning",
+      "item": "B",
+      "decision": "observe",
+      "account": "alice",
+      "at": 1793984151966
+    },
+    {
+      "kind": "planning",
+      "item": "B",
+      "decision": "observe",
+      "account": "alice",
+      "at": 1793984152306
+    },
+    {
+      "kind": "planning",
+      "item": "B",
+      "decision": "observe",
+      "account": "alice",
+      "at": 1793984152646
+    },
+    {
+      "kind": "write-start",
+      "item": "A",
+      "value": "第一项内容",
+      "account": "alice",
+      "at": 1793984152872
+    },
+    {
+      "kind": "planning",
+      "item": "A",
+      "decision": "observe",
+      "account": "alice",
+      "at": 1793984152932
+    },
+    {
+      "kind": "write-end",
+      "item": "B",
+      "value": "第二项内容",
+      "account": "alice",
+      "revision": 1,
+      "at": 1793984152967
+    },
+    {
+      "kind": "write-end",
+      "item": "A",
+      "value": "第一项内容",
+      "account": "alice",
+      "revision": 1,
+      "at": 1793984152967
+    },
+    {
+      "kind": "environment",
+      "holdWrites": false,
+      "at": 1793984152967
+    },
+    {
+      "kind": "planning",
+      "item": "B",
+      "decision": "observe",
+      "account": "alice",
+      "at": 1793984152999
+    },
+    {
+      "kind": "planning",
+      "item": "A",
+      "decision": "complete",
+      "account": "alice",
+      "at": 1793984153300
+    }
+  ],
+  "coordination": {
+    "cases": [],
+    "realModelCalls": 0,
+    "remoteWrites": 0
+  },
+  "passed": false,
+  "error": "网页已变化，先核对现有结果。",
+  "remaining": [],
+  "ms": 7768
+}

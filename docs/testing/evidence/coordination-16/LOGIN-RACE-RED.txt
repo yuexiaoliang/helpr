@@ -1,0 +1,33 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/coordination.test.ts (19 tests | 1 failed | 18 skipped) 170ms
+   × 登录核对准备期间新会话已保存：旧版本拒绝后保留可重试入口和退出资格 169ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/coordination.test.ts > 登录核对准备期间新会话已保存：旧版本拒绝后保留可重试入口和退出资格
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/workspace/coordination.test.ts:861:29
+    859|     }),
+    860|   ).rejects.toThrow('RECORD_VERSION_CONFLICT');
+    861|   expect(service.canExit()).toBe(true);
+       |                             ^
+    862|   expect(
+    863|     service.decorate(state).tasks.find((t) => t.id === a)?.executionCo…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 18 skipped (19)
+   Start at  01:07:53
+   Duration  652ms (import 58%, tests 30%, transform 12%)
+

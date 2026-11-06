@@ -1,0 +1,6 @@
+初稿静态检查：
+1. app/records/execution.ts TS2345：闭包中的 c.session 可选值；补齐已检查前提。
+2. app/desktop/host.ts TS2345：Cookie domain 可选；缺失时不扩大影响范围。
+3. app/records/execution.ts lint no-unnecessary-type-assertion：删除多余 e!。
+这些失败在定向修正后重新执行静态检查。
+4. 观察竞争回归装置缺少类型所需 exact 字段，Vitest 运行时默认值通过但 tsc 拒绝；补齐 exact:true 后重查。构建 63 的应用源码不受装置字段影响。

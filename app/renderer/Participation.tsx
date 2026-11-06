@@ -117,6 +117,13 @@ export function ParticipationForm({
       {login && (
         <p>
           {question.text} {task.execution?.loginOrigin}
+          {task.execution?.coordination?.account && (
+            <>
+              {' '}
+              原账号：{task.execution.coordination.account.name}
+              。恢复后会分别核对相关任务；已停止或已接管的任务仍需明确继续。
+            </>
+          )}
         </p>
       )}
       {(!question.type || editing) && (

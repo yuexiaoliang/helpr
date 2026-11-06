@@ -1,0 +1,36 @@
+$ pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:workspace && pnpm test:validation && pnpm check:legacy
+$ tsc --noEmit
+$ eslint app tests/workspace electron.vite.config.ts drizzle.config.ts vitest.config.ts
+$ prettier --check app tests/workspace *.ts *.json *.mjs pnpm-workspace.yaml
+Checking formatting...
+All matched files use Prettier code style!
+$ vitest run
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/coordination.test.ts (12 tests | 1 failed) 2754ms
+   × 共享登录保存失败整批回滚；未可靠保存的解除不会授予任何任务新资格 146ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/coordination.test.ts > 共享登录保存失败整批回滚；未可靠保存的解除不会授予任何任务新资格
+SqliteError: no such trigger: reject_coordination
+ ❯ Database.exec node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/wrappers.js:9:14
+ ❯ tests/workspace/coordination.test.ts:513:8
+    511|     expect(f.records().snapshot()).toEqual(before);
+    512|   } finally {
+    513|     db.exec('DROP TRIGGER reject_coordination');
+       |        ^
+    514|     db.close();
+    515|   }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 22 passed (23)
+      Tests  1 failed | 218 passed (219)
+   Start at  00:48:43
+   Duration  71.91s (tests 88%, import 9%, environment 2%, transform 1%)
+
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.

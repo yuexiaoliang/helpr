@@ -1,0 +1,6 @@
+$ node scripts/validate-workspace.mjs --fixture --candidate=coordination-16-login --coordination
+通过：两个不同稳定目标实际重叠写入，各自记录同一账号和独立目标
+通过：同一目标不重叠，等待者重新读取后询问取舍，未覆盖前项结果
+通过：同一登录障碍只有一个入口；切换账号不会执行原任务，已停止任务保持停止
+通过：正常退出并清空旧进程后，冷开重新取得当前会话和目标，原停止保持
+证据：/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/run-1793985370895

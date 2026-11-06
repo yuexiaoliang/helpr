@@ -1,0 +1,166 @@
+$ pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:workspace && pnpm test:validation && pnpm check:legacy
+$ tsc --noEmit
+$ eslint app tests/workspace electron.vite.config.ts drizzle.config.ts vitest.config.ts
+$ prettier --check app tests/workspace *.ts *.json *.mjs pnpm-workspace.yaml
+Checking formatting...
+All matched files use Prettier code style!
+$ vitest run
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+
+ Test Files  23 passed (23)
+      Tests  220 passed (220)
+   Start at  00:52:23
+   Duration  70.71s (tests 88%, import 9%, environment 2%)
+
+$ node --test scripts/*.test.mjs
+✔ 服务中断后仍保留同一虚构密钥、会话、到期、原端口与效果累计，损坏时拒绝重新生成身份 (10.42725ms)
+✔ 旧版或访达的界面确认不能放行新版，过期观察不能算窗口已响应 (0.376083ms)
+✔ 强制清理的实际退出码与OS剩余同时保留，未清空不允许下一次启动 (0.121ms)
+✔ 启动前仅清单恢复或一次陈旧成功都不够；窗口和图像须在本次预检响应 (0.852083ms)
+✔ 报告写入失败仍保留上一个完整检查点，不留下半份JSON (3.228166ms)
+✔ 旧总额用尽后仍可隔离调试，原用量、限额及已结束批次逐值保留 (23.062917ms)
+✔ 新工作副本首次记账无需配置额度；损坏的旧计数不会被重置或覆盖 (3.649167ms)
+✔ 并发构建与验证共享账本，产生的编号唯一且批次更新不会丢失 (95.351583ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 195.856583
+$ node scripts/check.mjs
+语法检查通过：222 个源码文件（排除历史快照）。
+{
+  "scope": "source replay; not packaged or real OS revalidation",
+  "source": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/macos-packaged-lifecycle/src/controller.mjs",
+  "sha256": "f99dfb172d48f408ba190a18d80f809df6e0573d5f9125afaf41844900b59c38",
+  "powerModuleSha256": "902605acf8835e15b43b3967bf738efee8a1f7474b626f4772eba9208f820ed2",
+  "checks": [
+    {
+      "name": "actual sleep → lock → resume remains blocked until unlock",
+      "pass": true
+    },
+    {
+      "name": "unlock before resume also remains blocked until both clear",
+      "pass": true
+    },
+    {
+      "name": "new lock during asynchronous reconciliation invalidates its completion",
+      "pass": true
+    },
+    {
+      "name": "rapid re-lock and unlock waits for a fresh reconciliation",
+      "pass": true
+    },
+    {
+      "name": "failed wake reconciliation remains blocked until a later successful check",
+      "pass": true
+    },
+    {
+      "name": "duplicate wake notifications do not start concurrent checks",
+      "pass": true
+    }
+  ]
+}
+{
+  "scope": "whole host source with native quit/parent order replayed; Electron effects replaced; real packaged verification still required",
+  "source": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/macos-packaged-lifecycle/src/host.cjs",
+  "sha256": "5c9a45c8d2776063441517553bfa03b26882cb06cc8a7134d18b0767dc673c94",
+  "checks": [
+    {
+      "name": "native quit after owner death must not wait for IPC disconnect",
+      "pass": true
+    },
+    {
+      "name": "closed control channel with unchanged parent also permits native quit",
+      "pass": true
+    },
+    {
+      "name": "missing native and IPC notifications still closes on changed parent",
+      "pass": true
+    },
+    {
+      "name": "live owner gets save request and views remain until acknowledgement",
+      "pass": true
+    },
+    {
+      "name": "live owner polling does not interpret idle or waiting as failure",
+      "pass": true
+    },
+    {
+      "name": "already orphaned at initialization creates no window",
+      "pass": true
+    },
+    {
+      "name": "owner death during page load cannot create a late view or ready",
+      "pass": true
+    },
+    {
+      "name": "IPC close followed by late close message cleans resources only once",
+      "pass": true
+    },
+    {
+      "name": "destroyed native views may lose webContents before will-quit; diagnostic must not throw",
+      "pass": true
+    }
+  ]
+}
+✔ 第 97 次模型请求在换输出目录并重启后仍被拒绝 (1839.5565ms)
+✔ 同一账本拒绝第二个活跃写入者 (41.683625ms)
+✔ 请求在途时进程被终止，重启保持调用和未知 token 预留 (112.218208ms)
+✔ 程序修订超限在新运行开始时被拒绝，相同版本可继续 (95.05575ms)
+✔ 截图等待期间功能结果已保存；截图失败和重启不会重复调用模型 (148.865625ms)
+✔ 取消且无 usage 的请求保留 token 预留，状态明确显示未知用量 (81.902625ms)
+✔ 只读计划随功能依赖失效，截图实现变化仍复用已通过结果 (128.68825ms)
+✔ 真实 CLI 在全新输出目录也显示历史 113 次调用和已耗尽的原预算 (51.7775ms)
+✔ 地址尾随斜杠不改变计划指纹或实际模型请求路径 (81.739417ms)
+✔ 账本损坏或已登记账本丢失时拒绝续跑并保持原文件 (82.748625ms)
+✔ 补截图复用留存采集入口；清理失败保留功能结果，重启后不伪造原页面 (165.979417ms)
+✔ 请求准备期间跨过截止时间，网络请求仍被拦截 (55.720958ms)
+✔ 采集截图时进程被终止，重启跳过功能执行并标明原页面丢失 (151.115167ms)
+✔ 并发请求争用最后一次额度时只发送一次 (55.751083ms)
+✔ CLI 在预算耗尽时退出，损坏的选择计划报错，均不创建输出目录 (94.524042ms)
+✔ 配置校验拒绝 URL 内凭据和覆盖控制字段；缺 key 不创建请求 (1.309583ms)
+✔ 自定义路径和模型到达请求；secret 只在认证头，记录不包含 secret (22.53625ms)
+✔ SSE 支持 keep-alive、CRLF 跨块和 UTF-8 跨块 (17.709541ms)
+✔ 取消 A 后不消费同一缓冲中的后续 delta；B 请求继续 (6.335667ms)
+✔ HTTP 错误正文即使回显 secret，也不进入错误和记录 (2.488417ms)
+✔ 不跟随重定向到其他认证目标 (2.225292ms)
+✔ 新进程读取四种持久化意图，不改变执行身份或重建记录 (212.137ms)
+✔ 记录缺失、截断或内容损坏时拒绝读取，保留原始文件 (34.088ms)
+✔ 有效封装中的执行身份、任务内容或素材字节不一致也必须拒绝 (71.926625ms)
+✔ 不兼容的流程和条件版本不能沿用旧进度 (44.984375ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3251.994333
+{
+  "uniqueCases": 18,
+  "passed": 18,
+  "primitiveCount": 258,
+  "observations": 166,
+  "modelInputs": 113,
+  "screenshotCount": 56,
+  "totalCalls": 113,
+  "knownTokens": 103489,
+  "missingUsageCalls": 3,
+  "peakRssMiB": 1508.46875,
+  "checks": {
+    "pageOwnership": true,
+    "stoppedGenerationFenced": true,
+    "modelPageIsolation": true,
+    "realModelOverlapBothHosts": true,
+    "realServerOverlapBothHosts": true,
+    "independentBResults": true,
+    "sameExecutionProtocolAcrossStudies": true,
+    "resumePlanReadOnly": true,
+    "historicalResultsNotReusedByCurrentDriver": true
+  }
+}

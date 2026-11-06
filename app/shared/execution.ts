@@ -2,6 +2,12 @@ import { z } from 'zod';
 import { pageSourceSchema, observedLinkSchema } from './model';
 import { webActionSchema } from './web-action';
 import {
+  coordinationSchema,
+  coordinationProposalSchema,
+  resourceClaimSchema,
+  sessionContextSchema,
+} from './coordination';
+import {
   publicationSchema,
   downloadCheckSchema,
   publicationResultProposalSchema,
@@ -69,6 +75,9 @@ export const pageBindingSchema = z.strictObject({
   generation: z.number().int().nonnegative(),
 });
 export const actionFactSchema = z.strictObject({
+  coordination: z
+    .strictObject({ session: sessionContextSchema, claimId: z.string().uuid() })
+    .optional(),
   workflowStep: z
     .strictObject({
       useId: z.string().uuid(),
@@ -187,6 +196,8 @@ export const participationDecisionSchema = z.discriminatedUnion('operation', [
 ]);
 export type ParticipationDecision = z.infer<typeof participationDecisionSchema>;
 export const executionSchema = z.strictObject({
+  coordination: coordinationSchema.optional(),
+  resourceClaims: z.array(resourceClaimSchema).max(60).optional(),
   workflowUses: z.array(workflowUseSchema).max(60).optional(),
   observedAnomalies: z
     .array(
@@ -307,6 +318,7 @@ export const executionControlSchema = z.strictObject({
   system: z.boolean().optional(),
 });
 export const nextStepSchema = z.strictObject({
+  coordination: coordinationProposalSchema.optional(),
   workflow: workflowChoiceSchema.optional(),
   recovery: publicationRecoverySchema.optional(),
   effect: actionFactSchema.shape.effect,

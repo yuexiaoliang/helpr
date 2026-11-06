@@ -2,14 +2,17 @@ import http from 'node:http';
 import { randomUUID } from 'node:crypto';
 import { materialFixture } from './material-fixture.mjs';
 import { workflowFixture } from './workflow-fixture.mjs';
+import { coordinationFixture } from './coordination-fixture.mjs';
 
-export async function fixture({ participation = false, review = false, material, workflow = false } = {}) {
+export async function fixture({ participation = false, review = false, material, workflow = false, coordination = false } = {}) {
   const receipts = [];
   const handleMaterial = material ? materialFixture(material, receipts) : null;
   const handleWorkflow = workflow ? workflowFixture(receipts) : null;
+  const coordinated = coordination ? coordinationFixture(receipts) : null;
   const login = 'fixture-' + randomUUID();
   const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://127.0.0.1');
+    if (coordinated?.handle(req, res, url)) return;
     if (handleWorkflow?.(req, res, url)) return;
     if (handleMaterial?.(req, res, url)) return;
     const task = url.searchParams.get('task') || 'A';
@@ -184,6 +187,7 @@ export async function fixture({ participation = false, review = false, material,
   return {
     base: `http://127.0.0.1:${server.address().port}`,
     receipts,
+    control: coordinated?.control,
     login,
     close: () => new Promise((resolve) => server.close(resolve)),
   };

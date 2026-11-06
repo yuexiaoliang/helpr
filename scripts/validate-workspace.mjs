@@ -11,6 +11,7 @@ import lockfile from 'proper-lockfile';
 import { spend, validationRoot } from './workspace-budget.mjs';
 import { fixture } from './workspace-fixture.mjs';
 import { verifyWorkflow } from './workflow-validation.mjs';
+import { verifyCoordination } from './coordination-validation.mjs';
 
 const args = process.argv.slice(2);
 const flag = { type: 'boolean' };
@@ -27,6 +28,7 @@ const { values: options } = parseArgs({
     material: flag,
     publication: flag,
     'workflow-reuse': flag,
+    coordination: flag,
     'publication-recovery': { type: 'string' },
     interactive: flag,
     fault: flag,
@@ -75,10 +77,10 @@ assert(
   !options['input-preparation'] || (!options.interactive && !options.fault),
   'INPUT_PREPARATION_IS_A_SINGLE_CHECK',
 );
-if (options.participation || options['participation-review'] || options['task-groups'] || options.material || options.publication || options['workflow-reuse']) {
+if (options.participation || options['participation-review'] || options['task-groups'] || options.material || options.publication || options['workflow-reuse'] || options.coordination) {
   assert(
     options.fixture && !systemStorage && !options.interactive && !options.fault &&
-      !options['input-preparation'] && [options.participation, options['participation-review'], options['task-groups'], options.material, options.publication, options['workflow-reuse']].filter(Boolean).length === 1,
+      !options['input-preparation'] && [options.participation, options['participation-review'], options['task-groups'], options.material, options.publication, options['workflow-reuse'], options.coordination].filter(Boolean).length === 1,
     'PARTICIPATION_FIXTURE_REQUIRED',
   );
 }
@@ -226,6 +228,7 @@ const materialSource = path.join(data, '原始素材.bin');
 const materialBytes = Buffer.from([0, 1, 99, 128, 255, 2, 3, 4]);
 if (options.material || options.publication) fs.writeFileSync(materialSource, materialBytes);
 const website = await fixture({
+  coordination: options.coordination,
   workflow: options['workflow-reuse'],
   participation: options.participation || options['task-groups'],
   review: options['participation-review'],
@@ -275,7 +278,7 @@ const deadline = setTimeout(
     ? 60000
     : options.interactive || systemStorage
       ? 30 * 60 * 1000
-      : options['workflow-reuse'] ? 3 * 60000 : 2 * 60000,
+      : options.coordination ? 5 * 60000 : options['workflow-reuse'] ? 3 * 60000 : 2 * 60000,
 );
 function check(name, test) {
   test();
@@ -859,6 +862,7 @@ async function verifyMaterial(client) {
 }
 async function validate() {
   let client = await launch();
+  if (options.coordination) return verifyCoordination({client, website, evidence, command, waitFor, check, launch, remainingOwned});
   if (options['workflow-reuse']) return verifyWorkflow({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
   if (options.publication) return verifyPublication(client);
   if (options.material) return verifyMaterial(client);

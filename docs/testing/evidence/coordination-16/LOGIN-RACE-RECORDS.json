@@ -1,0 +1,99 @@
+{
+  "profile": "/private/tmp/helpr-workspace-validation-501/run-lLlDK1/workspace.sqlite",
+  "entries": [
+    {
+      "taskId": "3f016985-39e0-450b-a40b-00823ac5832d",
+      "goal": "更新 http://127.0.0.1:63226/edit?item=D 为“保持停止”",
+      "version": 8,
+      "intent": "stopped",
+      "phase": "stopped",
+      "runId": null,
+      "intentId": "11cb8f3a-5633-4563-88dc-5aabf81bfd7f",
+      "question": null,
+      "coordination": {
+        "session": {
+          "id": "helpr-fixture-web",
+          "epoch": "09da546d-925a-4d5b-9172-10e827526839:4",
+          "origin": "http://127.0.0.1:63226"
+        },
+        "status": "login",
+        "account": {
+          "name": "账号 alice",
+          "url": "http://127.0.0.1:63226/users/alice"
+        },
+        "target": {
+          "name": "当前记录",
+          "url": "http://127.0.0.1:63226/edit?item=D"
+        },
+        "permissionEvidence": [
+          "可编辑此记录"
+        ],
+        "source": {
+          "url": "http://127.0.0.1:63226/edit?item=D",
+          "title": "记录编辑",
+          "fingerprint": "41636edf4c54c8e1df1b8b67a21ee7a015728f81ee9eeb69ef3819fc1cae27fd",
+          "generation": 1,
+          "observedAt": 1793984751482,
+          "truncated": false
+        },
+        "loginId": "66d16f45-09c8-4a1d-b4be-add083b21a32",
+        "loginOwner": "e140ab55-0b06-4c9d-914b-a11f405d45b7",
+        "checkingLogin": false,
+        "refreshRequired": true
+      },
+      "pauseReason": null,
+      "actions": [],
+      "summary": "任务已停止，页面与已有结果保留。"
+    },
+    {
+      "taskId": "e140ab55-0b06-4c9d-914b-a11f405d45b7",
+      "goal": "更新 http://127.0.0.1:63226/edit?item=E 为“恢复后的内容”",
+      "version": 8,
+      "intent": "automatic",
+      "phase": "paused",
+      "runId": null,
+      "intentId": "0bc41d94-8a79-4be9-beec-06b8a14638e4",
+      "question": {
+        "type": "login",
+        "id": "df6f9ebc-84bc-4af8-a312-e69702830b9f",
+        "goalVersion": 1,
+        "text": "这些任务共用网站登录。请在此网页登录，完成后核对。",
+        "url": "http://127.0.0.1:63226/edit?item=E"
+      },
+      "coordination": {
+        "session": {
+          "id": "helpr-fixture-web",
+          "epoch": "09da546d-925a-4d5b-9172-10e827526839:4",
+          "origin": "http://127.0.0.1:63226"
+        },
+        "status": "login",
+        "account": {
+          "name": "账号 alice",
+          "url": "http://127.0.0.1:63226/users/alice"
+        },
+        "target": {
+          "name": "当前记录",
+          "url": "http://127.0.0.1:63226/edit?item=E"
+        },
+        "permissionEvidence": [
+          "可编辑此记录"
+        ],
+        "source": {
+          "url": "http://127.0.0.1:63226/edit?item=E",
+          "title": "记录编辑",
+          "fingerprint": "330647940d51ae0db5969fec14e060b2a82fcc3d5b58a4faf7f9d3eb00c38055",
+          "generation": 1,
+          "observedAt": 1793984751538,
+          "truncated": false
+        },
+        "loginId": "66d16f45-09c8-4a1d-b4be-add083b21a32",
+        "loginOwner": "e140ab55-0b06-4c9d-914b-a11f405d45b7",
+        "refreshRequired": true
+      },
+      "pauseReason": null,
+      "actions": [],
+      "summary": "等待共享网站登录；可在同一个登录提示中处理。"
+    }
+  ],
+  "loginRequests": []
+}

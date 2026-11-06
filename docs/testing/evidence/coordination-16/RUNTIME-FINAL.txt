@@ -1,0 +1,6 @@
+$ node scripts/validate-workspace.mjs --fixture --candidate=coordination-16-final --coordination
+通过：两个不同稳定目标实际重叠写入，各自记录同一账号和独立目标
+通过：同一目标不重叠，等待者重新读取后询问取舍，未覆盖前项结果
+验证停止：RECORD_VERSION_CONFLICT
+证据：/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/run-1793984739527
+[ELIFECYCLE] Command failed with exit code 1.

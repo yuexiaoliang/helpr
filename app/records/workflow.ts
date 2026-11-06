@@ -8,6 +8,7 @@ import {
 } from '../shared/workflow';
 import { samePublication } from '../shared/publication';
 import { reboundAction } from '../shared/workflow-replay';
+import { validCoordinationReferences } from './coordination';
 
 export const workflowHash = (body: unknown) =>
   createHash('sha256')
@@ -191,6 +192,7 @@ export function validPublicationReferences(
   taskId: string,
   e: TaskExecution,
 ): boolean {
+  if (!validCoordinationReferences(e)) return false;
   const checks = e.publicationChecks ?? [],
     history = e.publicationHistory?.map((h) => h.check) ?? [],
     workflows = e.learnedWorkflows ?? [];

@@ -1,0 +1,30 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/coordination.test.ts (16 tests | 1 failed | 15 skipped) 218ms
+   × 结果回显与只读规划交错时重新观察，完成既有动作且不重发 218ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/coordination.test.ts > 结果回显与只读规划交错时重新观察，完成既有动作且不重发
+AssertionError: expected 'unknown' to be 'complete' // Object.is equality
+
+Expected: "complete"
+Received: "unknown"
+
+ ❯ tests/workspace/coordination.test.ts:763:26
+    761|   service.refresh();
+    762|   await service.settled();
+    763|   expect(f.get(a).phase).toBe('complete');
+       |                          ^
+    764|   expect(writes).toBe(1);
+    765|   expect(proposals).toBe(3);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 15 skipped (16)
+   Start at  00:56:57
+   Duration  692ms (import 53%, tests 36%, transform 11%)
+

@@ -34,6 +34,7 @@ import { InputGate } from './input-gate';
 import { loadProtectedPage, verifyPageProtection } from './page-protection';
 import type { ExecutionPauseReason } from '../shared/execution';
 import { LocalFixture } from './local-fixture';
+import { WebsiteSessions } from './website-sessions';
 import { versionStatusSchema, type VersionStatus } from '../shared/version';
 import {
   upgradeProofSchema,
@@ -42,6 +43,7 @@ import {
 } from '../shared/upgrade';
 
 const images = runtimeImages(process.execPath, app.isPackaged);
+const coordinatedRefresh = new Map<string, { url: string; epoch: number }>();
 const startup = resolveStartup({
   argv: process.argv,
   runtimeSwitches: debuggingSwitches.filter((name) =>
@@ -61,6 +63,9 @@ if (startup.role !== 'host') throw new Error('HOST_OWNER_REQUIRED');
 const fixture = startup.fixtureOrigin
   ? new LocalFixture(startup.fixtureOrigin)
   : undefined;
+const websiteSessions = new WebsiteSessions(
+  fixture?.partition ?? 'persist:helpr-web',
+);
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -401,10 +406,16 @@ function bindPage(task: Task): void {
           generation: page.generation,
         },
       });
-    wc.on('did-start-navigation', (_event, _url, _inPlace, main) => {
+    wc.on('did-start-navigation', (_event, url, _inPlace, main) => {
       if (page.view === view) {
         // 首次重建页面仍在阻断门内；其加载不能覆盖从记录恢复的原暂停原因。
-        if (!initialLoad) suspend(task.id, 'page-change');
+        const refresh = coordinatedRefresh.get(task.id);
+        const expected =
+          main &&
+          refresh?.url === url &&
+          refresh.epoch === inputGate.state(task.id).epoch;
+        if (main) coordinatedRefresh.delete(task.id);
+        if (!initialLoad && !expected) suspend(task.id, 'page-change');
         page.generation++;
         register();
         if (main) pageState(task.id, 'loading');
@@ -610,6 +621,62 @@ function reconcile(): void {
 }
 async function perform(input: unknown): Promise<unknown> {
   const command = z.object({ kind: z.string() }).parse(input);
+  if (command.kind === 'storage-session-change') {
+    const { origin } = z.object({ origin: z.url() }).parse(input);
+    const session = websiteSessions.storageChanged(new URL(origin).origin);
+    const taskIds = state.tasks
+      .filter(
+        (t) =>
+          t.execution?.coordination?.session.origin === session.origin ||
+          (t.url && new URL(t.url).origin === session.origin),
+      )
+      .map((t) => t.id);
+    taskIds.forEach((id) => inputGate.block(id));
+    notify({ websiteSessionChanged: { session, taskIds } });
+    return null;
+  }
+  if (
+    command.kind === 'session-context' ||
+    command.kind === 'coordination-refresh'
+  ) {
+    const { taskId } = z.object({ taskId: z.string() }).parse(input);
+    const wc = pages.get(taskId)?.view.webContents;
+    if (!wc || wc.isDestroyed()) throw Error('PAGE_NOT_AVAILABLE');
+    const url = websiteURL(wc.getURL());
+    if (command.kind === 'session-context') return websiteSessions.context(url);
+    const e = state.tasks.find((t) => t.id === taskId)?.execution;
+    const ticket = inputGate.state(taskId);
+    if (
+      !e ||
+      e.intent !== 'automatic' ||
+      e.pauseReason ||
+      e.question ||
+      !['checking', 'running'].includes(e.phase) ||
+      !e.coordination?.refreshRequired ||
+      e.actions.some((a) => a.status !== 'cancelled') ||
+      upgradeDirty.has(taskId) ||
+      ticket.blocked
+    )
+      throw Error('COORDINATION_TARGET_CHANGED');
+    await new Promise<void>((resolve, reject) => {
+      const finish = (error?: Error) => {
+        clearTimeout(timer);
+        wc.removeListener('did-finish-load', loaded);
+        coordinatedRefresh.delete(taskId);
+        if (error) reject(error);
+        else resolve();
+      };
+      const loaded = () => finish();
+      const timer = setTimeout(
+        () => finish(Error('COORDINATION_REFRESH_TIMEOUT')),
+        8000,
+      );
+      wc.once('did-finish-load', loaded);
+      coordinatedRefresh.set(taskId, { url, epoch: ticket.epoch });
+      wc.reloadIgnoringCache();
+    });
+    return null;
+  }
   if (command.kind === 'upgrade-page-state')
     return [...pages.entries()]
       .filter(
@@ -1226,6 +1293,34 @@ void app
   .then(async () => {
     const local = session.fromPartition('helpr-ui'),
       remote = session.fromPartition(fixture?.partition ?? 'persist:helpr-web');
+    remote.cookies.on('changed', (_event, cookie) => {
+      for (const p of pages.values()) {
+        const wc = p.view.webContents;
+        if (!wc || wc.isDestroyed() || wc.session !== remote) continue;
+        try {
+          websiteSessions.context(websiteURL(wc.getURL()));
+        } catch {
+          /* 初始化空白页不关联网站。 */
+        }
+      }
+      for (const session of websiteSessions.changed(cookie.domain ?? '')) {
+        const taskIds = state.tasks
+          .filter((t) => {
+            try {
+              return (
+                new URL(t.url).origin === session.origin ||
+                t.execution?.coordination?.session.origin === session.origin
+              );
+            } catch {
+              return false;
+            }
+          })
+          .map((t) => t.id);
+        // 与原生输入共用同步门，先于 IPC 和数据库保存阻断旧派发。
+        taskIds.forEach((id) => inputGate.block(id));
+        notify({ websiteSessionChanged: { session, taskIds } });
+      }
+    });
     if (fixture)
       remote.webRequest.onBeforeRequest((details, callback) => {
         callback({ cancel: !fixture.allowsRequest(details.url) });
