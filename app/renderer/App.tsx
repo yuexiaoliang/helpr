@@ -695,14 +695,59 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
                     }
                     ：{f.url}
                     <small>{f.evidence.join('；')}</small>
-                    {f.kind === 'upload' && (
-                      <small>页面已显示附件；下载内容尚未核对。</small>
-                    )}
+                    {f.kind === 'upload' &&
+                      !task.execution?.publicationChecks?.some(
+                        (c) =>
+                          c.status === 'verified' &&
+                          c.materialId === f.materialId,
+                      ) && <small>页面已显示附件；下载内容尚未核对。</small>}
                   </p>
                 ))}
               {task.execution.result?.goalVersion ===
                 task.execution.goalVersion && (
                 <p>{task.execution.result.evidence.join('；')}</p>
+              )}
+              {task.execution.publicationChecks
+                ?.filter((c) => c.goalVersion === task.execution?.goalVersion)
+                .map((c) => (
+                  <p key={c.id}>
+                    {c.status === 'verified'
+                      ? '发布与附件已独立核对'
+                      : '发布结果待核对'}
+                    <small>{c.proposal.url}</small>
+                    {c.status === 'verified' && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          void store.perform({
+                            kind: 'navigate',
+                            taskId: task.id,
+                            requestId: crypto.randomUUID(),
+                            url: c.proposal.url,
+                          })
+                        }
+                      >
+                        查看实际结果
+                      </button>
+                    )}
+                    {c.download && (
+                      <small>
+                        附件：{c.download.bytes} 字节 · SHA-256：
+                        {c.download.sha256}
+                      </small>
+                    )}
+                    <small>
+                      已检查公开页面与附件；其它网站改动尚未全面核对。
+                    </small>
+                  </p>
+                ))}
+              {task.execution.observedAnomalies?.map((o, i) => (
+                <p key={i}>
+                  已观察异常：{[...o.anomalies, ...o.extraResults].join('；')}
+                </p>
+              ))}
+              {task.execution.workflowAdoption && (
+                <p>已保存本次学到的流程。仅验证过本次输入，新输入仍需核对。</p>
               )}
             </section>
           )}

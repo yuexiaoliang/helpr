@@ -1,0 +1,88 @@
+import { z } from 'zod';
+import { webActionSchema } from './web-action';
+import { pageSourceSchema } from './model';
+
+const parameter = z.enum([
+  'materialId',
+  'content',
+  'destination',
+  'targetUrl',
+  'attachmentUrl',
+]);
+export const workflowBodySchema = z.strictObject({
+  format: z.literal(1),
+  version: z.string().uuid(),
+  parentVersion: z.string().uuid().nullable(),
+  taskId: z.string(),
+  goalVersion: z.number().int().positive(),
+  goal: z.string(),
+  createdAt: z.number().int().nonnegative(),
+  applicability: z.strictObject({
+    origin: z.string(),
+    entryUrl: z.url(),
+    mode: z.literal('attachment-publication'),
+    validated: z.literal('same-inputs-only'),
+    newInputs: z.literal('requires-validation'),
+  }),
+  parameters: z
+    .array(
+      z.strictObject({
+        name: parameter,
+        value: z.string(),
+        source: z.enum([
+          'material-version',
+          'approved-publication',
+          'preparation',
+        ]),
+        sourceId: z.string(),
+      }),
+    )
+    .length(5),
+  steps: z
+    .array(
+      z.strictObject({
+        actionId: z.string(),
+        runId: z.string(),
+        action: webActionSchema,
+        effect: z.enum(['interaction', 'upload', 'draft', 'publication']),
+        bindings: z
+          .array(
+            z.strictObject({
+              field: z.enum(['materialId', 'value']),
+              parameter,
+            }),
+          )
+          .max(2),
+        before: z.strictObject({
+          source: pageSourceSchema,
+          evidence: z.array(z.string()).max(10),
+        }),
+        after: z.strictObject({
+          source: pageSourceSchema,
+          evidence: z.array(z.string()).min(1).max(10),
+        }),
+        returned: z.boolean(),
+      }),
+    )
+    .min(1)
+    .max(60),
+  resultRule: z.literal(
+    'unique-target-approved-content-destination-and-attachment-sha256',
+  ),
+  recovery: z.strictObject({
+    targetUrl: z.url(),
+    targetFactId: z.string().uuid(),
+    resultUrl: z.url(),
+    uncertainDispatch: z.literal('read-only-no-resend'),
+  }),
+  evidence: z.strictObject({
+    resultId: z.string().uuid(),
+    materialId: z.string().uuid(),
+    approvalId: z.string().uuid(),
+  }),
+  authority: z.literal('none'),
+});
+export const learnedWorkflowSchema = workflowBodySchema.extend({
+  sha256: z.string().regex(/^[a-f0-9]{64}$/),
+});
+export type LearnedWorkflow = z.infer<typeof learnedWorkflowSchema>;

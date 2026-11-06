@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-06",
+  "command": "pnpm check",
+  "exitCode": 0,
+  "workspaceFiles": 21,
+  "workspaceTests": 175,
+  "publicationTests": 10,
+  "validationTests": 8,
+  "legacyTests": 25,
+  "legacySyntaxFiles": 218,
+  "typecheck": "passed",
+  "lint": "passed",
+  "format": "passed",
+  "anomalyRegression": {
+    "command": "pnpm exec vitest run tests/workspace/publication.test.ts -t 观察到额外结果",
+    "before": "failed: observedAnomalies was undefined after observe + anomaly",
+    "after": "passed",
+    "cause": "observe returned to the next loop before anomaly persistence",
+    "fix": "persist anomalies before the observe branch; carry unresolved anomalies into later verification"
+  },
+  "scope": "source and deterministic fixtures; not real-model or remote-business acceptance"
+}

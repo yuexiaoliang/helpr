@@ -98,6 +98,20 @@ export function ParticipationForm({
             {preview.origin} · {preview.destination} · 第 {preview.revision} 版
           </strong>
           <p className={styles.previewContent}>{preview.content}</p>
+          {preview.attachment && (
+            <p>
+              本次附件：
+              {
+                task.execution?.materials?.find(
+                  (m) => m.id === preview.attachment!.materialId,
+                )?.name
+              }
+              <br />
+              编辑目标：{preview.attachment.targetUrl}
+              <br />
+              附件位置：{preview.attachment.url}
+            </p>
+          )}
         </>
       )}
       {login && (

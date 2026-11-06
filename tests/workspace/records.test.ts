@@ -12,7 +12,7 @@ afterEach(() =>
     .forEach((folder) => rmSync(folder, { recursive: true, force: true })),
 );
 
-test.each([3, 10])(
+test.each([3, 10, 11])(
   '格式 %i 旧资料升级前留下独立副本，任务与草稿保留，后续重开不重复备份',
   (version) => {
     const folder = mkdtempSync(path.join(tmpdir(), 'helpr-upgrade-04-'));
@@ -42,9 +42,11 @@ test.each([3, 10])(
     records.close();
     const backups = readdirSync(folder).filter((name) =>
       name.startsWith(
-        version === 10
-          ? 'workspace-before-material-12-'
-          : 'workspace-before-recovery-05-',
+        version === 11
+          ? 'workspace-before-publication-13-'
+          : version === 10
+            ? 'workspace-before-material-12-'
+            : 'workspace-before-recovery-05-',
       ),
     );
     expect(backups).toHaveLength(1);
@@ -53,9 +55,11 @@ test.each([3, 10])(
     expect(
       readdirSync(folder).filter((name) =>
         name.startsWith(
-          version === 10
-            ? 'workspace-before-material-12-'
-            : 'workspace-before-recovery-05-',
+          version === 11
+            ? 'workspace-before-publication-13-'
+            : version === 10
+              ? 'workspace-before-material-12-'
+              : 'workspace-before-recovery-05-',
         ),
       ),
     ).toHaveLength(1);

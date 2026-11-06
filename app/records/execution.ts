@@ -1,3 +1,13 @@
+import {
+  attachmentBinding,
+  submissionReady,
+  recordPublicationResult,
+} from './publication';
+import {
+  downloadCheckSchema,
+  publicationCheckSchema,
+  samePublication,
+} from '../shared/publication';
 import { z } from 'zod';
 import { hideTaskTab } from './task-tab';
 import { endedExecution } from '../shared/task-groups';
@@ -98,6 +108,18 @@ const intentSchema = executionIntentSchema.extend({
 });
 const commandSchema = z.discriminatedUnion('kind', [
   z.strictObject({
+    kind: z.literal('anomaly'),
+    ...work,
+    source: observation,
+    anomalies: z.array(z.string().min(1).max(2000)).max(20),
+    extraResults: z.array(z.url()).max(50),
+  }),
+  z.strictObject({
+    kind: z.literal('publication-result'),
+    ...work,
+    check: publicationCheckSchema,
+  }),
+  z.strictObject({
     kind: z.literal('material-selected'),
     ...work,
     material: materialVersionSchema,
@@ -162,6 +184,9 @@ const commandSchema = z.discriminatedUnion('kind', [
   }),
   z.strictObject({
     kind: z.literal('reserve'),
+    effect: nextStepSchema.shape.effect,
+    evidence: nextStepSchema.shape.evidence.optional(),
+    download: downloadCheckSchema.optional(),
     publication: publicationSchema.optional(),
     approvalId: z.string().uuid().optional(),
     ...work,
@@ -745,12 +770,24 @@ export class ExecutionRecords {
           e.intent === 'automatic' &&
           e.runId === c.runId &&
           ['checking', 'running'].includes(e.phase);
+        if (c.kind === 'publication-result') {
+          const prior = e.publicationChecks?.find((r) => r.id === c.check.id);
+          if (prior) {
+            if (JSON.stringify(prior) !== JSON.stringify(c.check))
+              throw Error('REQUEST_CONTENT_CONFLICT');
+            return { created: false };
+          }
+        }
         if (c.kind === 'reported') {
           const a = e.actions.find((a) => a.id === c.id);
           if (!a) throw new Error('ACTION_NOT_OWNED');
           if (a.status === 'confirmed' || a.status === 'cancelled')
             return { recorded: false };
           a.returned = a.returned || c.returned;
+          const processing = e.materialProcessing?.find(
+            (p) => p.actionId === a.id,
+          );
+          if (processing) processing.status = 'unknown';
           a.status = 'unknown';
           if (e.intent === 'stopped')
             e.summary =
@@ -762,6 +799,40 @@ export class ExecutionRecords {
           return c.kind === 'dispatch'
             ? { permitted: false }
             : { created: false };
+        if (c.kind === 'anomaly') {
+          if (c.source.url !== task.url) throw Error('EXECUTION_PAGE_CHANGED');
+          (e.observedAnomalies ??= []).push({
+            goalVersion: e.goalVersion,
+            source: pageSourceSchema.strip().parse(c.source),
+            anomalies: c.anomalies,
+            extraResults: c.extraResults,
+          });
+          move(e, 'WAIT');
+          e.summary = '观察到异常或多余结果，已停止后续自动动作并保留记录。';
+          e.runId = null;
+          this.save(task.id, e);
+          return { created: true };
+        }
+        if (c.kind === 'publication-result') {
+          if (e.publicationChecks?.some((r) => r.id === c.check.id))
+            return { created: false };
+          const action = e.actions.find((a) => a.id === c.check.actionId);
+          if (!action || c.check.source.url !== task.url)
+            throw Error('PUBLICATION_BINDING_MISMATCH');
+          recordPublicationResult(task.id, e, c.check, action);
+          move(e, c.check.status === 'verified' ? 'FINISH' : 'WAIT');
+          e.summary =
+            c.check.status === 'verified'
+              ? '已核对发布结果和附件内容。' +
+                (e.workflowAdoption
+                  ? '已保存本次学到的做法；新输入仍需验证。'
+                  : '步骤证据不足，尚未保存可复用流程。')
+              : '发布结果尚未核实，已保留目标和核对记录，不重复提交。';
+          e.runId = null;
+          if (c.check.status === 'verified') e.resource = null;
+          this.save(task.id, e);
+          return { created: true };
+        }
         if (c.kind === 'material-selected') {
           if (
             c.material.goalVersion !== e.goalVersion ||
@@ -907,6 +978,8 @@ export class ExecutionRecords {
             e.loginOrigin ??= e.publication?.origin ?? new URL(c.url).origin;
           if (c.type === 'review') {
             if (!c.publication) throw Error('INVALID_REQUEST');
+            if (e.materials?.some((m) => m.goalVersion === e.goalVersion))
+              attachmentBinding(e, c.publication);
             const old = e.publication;
             e.publication = {
               ...c.publication,
@@ -942,6 +1015,20 @@ export class ExecutionRecords {
           const a = e.actions.find((a) => a.id === c.id);
           if (!a || a.runId !== c.runId || a.status !== 'reserved')
             return { permitted: false };
+          if (
+            a.effect === 'publication' &&
+            e.materials?.some((m) => m.goalVersion === e.goalVersion)
+          ) {
+            if (
+              !a.submission ||
+              !e.publication?.approvalId ||
+              a.publicationApprovalId !== e.publication.approvalId ||
+              !samePublication(a.submission.publication, e.publication) ||
+              a.source.url !== task.url ||
+              Date.now() - a.submission.download.checkedAt > 30000
+            )
+              throw Error('PARTICIPATION_REQUIRED');
+          }
           a.status = 'dispatched';
           a.dispatchState = 'possible';
           move(e, 'DISPATCH');
@@ -951,6 +1038,8 @@ export class ExecutionRecords {
         }
         if (c.kind === 'reserve') {
           if (e.loginOrigin) throw Error('PARTICIPATION_REQUIRED');
+          if (e.observedAnomalies?.some((o) => o.goalVersion === e.goalVersion))
+            throw Error('EXECUTION_RESULT_UNKNOWN');
           if (c.action.kind === 'upload') {
             const id = c.action.materialId;
             if (
@@ -986,14 +1075,35 @@ export class ExecutionRecords {
           )
             throw Error('PREPARATION_TARGET_CHANGED');
           const p = e.publication;
+          const hasMaterial = e.materials?.some(
+            (m) => m.goalVersion === e.goalVersion,
+          );
+          const effect =
+            c.effect ??
+            (c.action.kind === 'upload'
+              ? 'upload'
+              : p && c.action.kind === 'click'
+                ? 'publication'
+                : 'interaction');
+          if (hasMaterial && effect === 'publication') {
+            if (!p || !c.publication || c.action.kind !== 'click')
+              throw Error('PARTICIPATION_REQUIRED');
+            submissionReady(e, c.publication, c.source, c.download);
+          }
+          if (
+            hasMaterial &&
+            p?.approvalId &&
+            c.action.kind === 'click' &&
+            effect !== 'publication'
+          )
+            throw Error('PARTICIPATION_REQUIRED');
           if (p || c.publication || c.approvalId) {
             if (
               !p?.approvalId ||
               !c.publication ||
               p.approvalId !== c.approvalId ||
               p.origin !== new URL(c.source.url).origin ||
-              p.content !== c.publication.content ||
-              p.destination !== c.publication.destination
+              !samePublication(p, c.publication)
             )
               throw Error('PARTICIPATION_REQUIRED');
             if (
@@ -1017,6 +1127,7 @@ export class ExecutionRecords {
                 (a) =>
                   a.id !== c.id &&
                   a.publicationApprovalId === p.approvalId &&
+                  a.action.kind === 'click' &&
                   a.status !== 'cancelled',
               )
             )
@@ -1046,7 +1157,19 @@ export class ExecutionRecords {
               .set({ archived: false })
               .where(eq(schema.tasks.id, task.id))
               .run();
+          if (c.evidence && !c.evidence.every((v) => c.source.text.includes(v)))
+            throw Error('EXECUTION_EVIDENCE_MISSING');
           e.actions.push({
+            effect,
+            preconditions: c.evidence,
+            ...(hasMaterial && effect === 'publication' && p && c.download
+              ? {
+                  submission: {
+                    publication: c.publication!,
+                    download: c.download,
+                  },
+                }
+              : {}),
             id: c.id,
             runId: c.runId,
             goalVersion: e.goalVersion,
@@ -1072,6 +1195,16 @@ export class ExecutionRecords {
             returned: false,
             dispatchState: 'not-dispatched',
           });
+          if (hasMaterial && effect === 'publication')
+            (e.materialProcessing ??= []).push({
+              materialId: p!.attachment!.materialId,
+              goalVersion: e.goalVersion,
+              targetUrl: p!.attachment!.targetUrl,
+              approvalId: p!.approvalId!,
+              actionId: c.id,
+              status: 'pending',
+              resultId: null,
+            });
           e.summary = c.summary;
           this.save(task.id, e);
           return { created: true };
@@ -1079,6 +1212,7 @@ export class ExecutionRecords {
         if (c.kind === 'resolve') {
           const a = e.actions.find((a) => a.id === c.id);
           if (!a) throw new Error('ACTION_NOT_OWNED');
+          if (a.submission) throw Error('PUBLICATION_RESULT_REQUIRED');
           if (!['dispatched', 'unknown'].includes(a.status))
             throw new Error('EXECUTION_RESULT_UNKNOWN');
           if (!c.evidence.every((v) => c.source.text.includes(v)))
@@ -1122,7 +1256,7 @@ export class ExecutionRecords {
         }
         if (c.phase === 'complete') {
           if (e.materials?.some((m) => m.goalVersion === e.goalVersion))
-            throw Error('PREPARATION_ONLY');
+            throw Error('PUBLICATION_RESULT_REQUIRED');
           if (e.loginOrigin || (e.publication && !e.publication.approvalId))
             throw Error('PARTICIPATION_REQUIRED');
           if (

@@ -1,5 +1,13 @@
 import { z } from 'zod';
 import { pageSourceSchema } from './model';
+import { webActionSchema } from './web-action';
+import {
+  publicationSchema,
+  downloadCheckSchema,
+  publicationResultProposalSchema,
+  publicationCheckSchema,
+} from './publication';
+import { learnedWorkflowSchema } from './workflow';
 import {
   materialSelectionSchema,
   materialVersionSchema,
@@ -28,54 +36,8 @@ export const executionPhaseSchema = z.enum([
   'complete',
   'failed',
 ]);
-export const roleLocatorSchema = z.strictObject({
-  role: z.enum([
-    'button',
-    'link',
-    'checkbox',
-    'textbox',
-    'combobox',
-    'radio',
-    'option',
-    'menuitem',
-    'row',
-    'tab',
-    'switch',
-  ]),
-  name: z.string().min(1).max(500),
-  exact: z.boolean().default(true),
-});
-export const elementLocatorSchema = roleLocatorSchema.extend({
-  within: roleLocatorSchema.optional(),
-  frameUrl: z.url().optional(),
-});
-export const webActionSchema = z.discriminatedUnion('kind', [
-  z.strictObject({
-    kind: z.literal('upload'),
-    materialId: z.string().uuid(),
-    target: z.strictObject({
-      fileIndex: z.number().int().nonnegative().max(100),
-      frameUrl: z.url().optional(),
-    }),
-  }),
-  z.strictObject({ kind: z.literal('click'), target: elementLocatorSchema }),
-  z.strictObject({
-    kind: z.literal('fill'),
-    target: elementLocatorSchema,
-    value: z.string().max(20000),
-  }),
-  z.strictObject({
-    kind: z.literal('check'),
-    target: elementLocatorSchema,
-    checked: z.boolean(),
-  }),
-  z.strictObject({
-    kind: z.literal('select'),
-    target: elementLocatorSchema,
-    value: z.string().max(500).describe('选项在页面中显示的完整标签'),
-  }),
-]);
-export type WebAction = z.infer<typeof webActionSchema>;
+export { webActionSchema, elementLocatorSchema } from './web-action';
+export type { WebAction } from './web-action';
 export const actionFailureCodeSchema = z.enum([
   'EXECUTION_CONNECT_UNSTABLE',
   'EXECUTION_CONNECT_INVISIBLE',
@@ -114,6 +76,14 @@ export const actionFactSchema = z.strictObject({
   ]),
   summary: z.string().max(1500),
   action: webActionSchema,
+  effect: z.enum(['interaction', 'upload', 'draft', 'publication']).optional(),
+  preconditions: z.array(z.string().min(1).max(2000)).max(10).optional(),
+  submission: z
+    .strictObject({
+      publication: publicationSchema,
+      download: downloadCheckSchema,
+    })
+    .optional(),
   publicationApprovalId: z.string().uuid().optional(),
   source: pageSourceSchema,
   observedUrls: z.array(z.url().max(4096)).max(300).optional(),
@@ -165,15 +135,8 @@ export const pauseDescription = {
       '任务变化在记录连接中断时未能保存，已暂停自动操作。保存恢复后请核对任务，再明确继续。',
   },
 } satisfies Record<ExecutionPauseReason, { label: string; message: string }>;
-export const publicationSchema = z.strictObject({
-  destination: z.string().trim().min(1).max(600),
-  content: z
-    .string()
-    .min(1)
-    .max(4000)
-    .refine((s) => !!s.trim()),
-});
-export type Publication = z.infer<typeof publicationSchema>;
+export { publicationSchema } from './publication';
+export type { Publication } from './publication';
 const questionSchema = z.strictObject({
   type: z.enum(['review', 'login']).optional(),
   runId: z.string().optional(),
@@ -205,6 +168,38 @@ export const participationDecisionSchema = z.discriminatedUnion('operation', [
 ]);
 export type ParticipationDecision = z.infer<typeof participationDecisionSchema>;
 export const executionSchema = z.strictObject({
+  observedAnomalies: z
+    .array(
+      z.strictObject({
+        goalVersion: z.number().int().positive(),
+        source: pageSourceSchema,
+        anomalies: z.array(z.string()).max(20),
+        extraResults: z.array(z.url()).max(50),
+      }),
+    )
+    .optional(),
+  publicationChecks: z.array(publicationCheckSchema).max(60).optional(),
+  materialProcessing: z
+    .array(
+      z.strictObject({
+        materialId: z.string().uuid(),
+        goalVersion: z.number().int().positive(),
+        targetUrl: z.url(),
+        approvalId: z.string().uuid(),
+        actionId: z.string(),
+        status: z.enum(['pending', 'unknown', 'complete']),
+        resultId: z.string().uuid().nullable(),
+      }),
+    )
+    .optional(),
+  learnedWorkflows: z.array(learnedWorkflowSchema).max(60).optional(),
+  workflowAdoption: z
+    .strictObject({
+      version: z.string().uuid(),
+      sha256: z.string(),
+      expectedParent: z.string().uuid().nullable(),
+    })
+    .optional(),
   prepared: z
     .strictObject({
       goalVersion: z.number().int().positive(),
@@ -283,6 +278,10 @@ export const executionControlSchema = z.strictObject({
   system: z.boolean().optional(),
 });
 export const nextStepSchema = z.strictObject({
+  effect: actionFactSchema.shape.effect,
+  result: publicationResultProposalSchema.optional(),
+  anomalies: z.array(z.string().min(1).max(2000)).max(20).optional(),
+  extraResults: z.array(z.url()).max(50).optional(),
   decision: z.enum([
     'observe',
     'material',

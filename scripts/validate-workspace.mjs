@@ -24,6 +24,7 @@ const { values: options } = parseArgs({
     'participation-review': flag,
     'task-groups': flag,
     material: flag,
+    publication: flag,
     interactive: flag,
     fault: flag,
     'blocked-host': flag,
@@ -66,10 +67,10 @@ assert(
   !options['input-preparation'] || (!options.interactive && !options.fault),
   'INPUT_PREPARATION_IS_A_SINGLE_CHECK',
 );
-if (options.participation || options['participation-review'] || options['task-groups'] || options.material) {
+if (options.participation || options['participation-review'] || options['task-groups'] || options.material || options.publication) {
   assert(
     options.fixture && !systemStorage && !options.interactive && !options.fault &&
-      !options['input-preparation'] && [options.participation, options['participation-review'], options['task-groups'], options.material].filter(Boolean).length === 1,
+      !options['input-preparation'] && [options.participation, options['participation-review'], options['task-groups'], options.material, options.publication].filter(Boolean).length === 1,
     'PARTICIPATION_FIXTURE_REQUIRED',
   );
 }
@@ -215,11 +216,11 @@ if (fs.realpathSync(profileRoot) !== profileRoot)
 const data = fs.mkdtempSync(path.join(profileRoot, 'run-'));
 const materialSource = path.join(data, '原始素材.bin');
 const materialBytes = Buffer.from([0, 1, 99, 128, 255, 2, 3, 4]);
-if (options.material) fs.writeFileSync(materialSource, materialBytes);
+if (options.material || options.publication) fs.writeFileSync(materialSource, materialBytes);
 const website = await fixture({
   participation: options.participation || options['task-groups'],
   review: options['participation-review'],
-  material: options.material ? { source: materialSource } : undefined,
+  material: (options.material || options.publication) ? { source: materialSource, publication: options.publication } : undefined,
 });
 if (!systemStorage) {
   // 版本检查也留在回环地址。此 HTTP 夹具对 HTTPS 版本查询呈现离线状态。
@@ -651,6 +652,80 @@ async function verifyTaskGroups(client) {
   );
   await reopened.quit();
 }
+async function verifyPublication(client) {
+  const taskId = (await client.request(command('create', { goal: `使用“${materialSource}”在 ${website.base}/page?task=A 上传附件并发布到公告。` }))).taskId;
+  await waitFor(async () => (await client.request({ kind: 'snapshot' })).tasks[0]?.phase === 'manual');
+  // main frame 的 manual 不证明 iframe 观察已经稳定。只读核对两次完整文档后才开始本轮。
+  let lastInitialFingerprint;
+  const initialObservations = [];
+  await waitFor(async () => {
+    const frames = await client.request({ kind: 'observe', taskId, method: 'Page.getFrameTree' });
+    const urls = [];
+    const collect = tree => { urls.push(tree.frame.url); tree.childFrames?.forEach(collect); };
+    collect(frames.frameTree);
+    if (!urls.includes(website.base + '/form')) return false;
+    const dom = await client.request({ kind: 'observe', taskId, method: 'DOMSnapshot.captureSnapshot' });
+    if (dom.documents.length < 2) return false;
+    const fingerprint = createHash('sha256').update(JSON.stringify(dom.strings)).digest('hex');
+    initialObservations.push({ urls, documents: dom.documents.length, fingerprint, observedAt: Date.now() });
+    const stable = fingerprint === lastInitialFingerprint;
+    lastInitialFingerprint = fingerprint;
+    return stable;
+  }, 15000);
+  evidence.publicationReadiness = initialObservations;
+  await client.request(command('model-save', { protocol: 'chat-completions', expectedVersion: 0, endpoint: website.base + '/v1', model: 'fixture', apiKey: 'local-fixture-not-a-secret' }));
+  await client.request(command('execution-intent', { taskId, intent: 'start' }));
+  const get = async current => (await current.request({ kind: 'snapshot' })).tasks.find(t => t.id === taskId).execution;
+  const review = await waitFor(async () => {
+    const e = await get(client);
+    if (e?.question?.type === 'review') return e;
+    if (e && ['unknown', 'failed', 'paused'].includes(e.phase)) throw Error(e.summary);
+    return false;
+  }, 50000);
+  const sha256 = createHash('sha256').update(materialBytes).digest('hex');
+  check('本次确认绑定固定素材、目标、附件及发布全文，批准前没有发布', () => {
+    assert.equal(review.publication.attachment.materialId, review.materials[0].id);
+    assert.equal(review.materials[0].sha256, sha256);
+    assert.equal(review.publication.attachment.targetUrl, website.base + '/page?task=A');
+    assert.equal(website.receipts.filter(r => r.kind === 'published').length, 0);
+  });
+  await client.request({ kind: 'participation-decision', taskId, questionId: review.question.id, operation: 'approve' });
+  const complete = await waitFor(async () => {
+    const e = await get(client);
+    if (e?.phase === 'complete') return e;
+    if (e && ['unknown', 'failed', 'paused'].includes(e.phase)) throw Error(e.summary);
+    return false;
+  }, 50000);
+  const downloaded = Buffer.from(await (await fetch(complete.publication.attachment.url, { signal: AbortSignal.timeout(5000) })).arrayBuffer());
+  const publicHtml = await (await fetch(complete.publicationChecks[0].proposal.url, { signal: AbortSignal.timeout(5000) })).text();
+  check('独立站点和下载核对一次发布、原始字节及公开栏目内容', () => {
+    assert.deepEqual(downloaded, materialBytes);
+    assert(publicHtml.includes('附件日报') && publicHtml.includes('公告'));
+    assert.equal(website.receipts.filter(r => r.kind === 'upload').length, 1);
+    assert.equal(website.receipts.filter(r => r.kind === 'draft').length, 1);
+    assert.deepEqual(website.receipts.filter(r => r.kind === 'published'), [{ kind: 'published', content: '附件日报', destination: '公告', sha256 }]);
+    assert.equal(complete.materialProcessing[0].status, 'complete');
+    assert.equal(complete.publicationChecks[0].download.sha256, sha256);
+    assert.equal(complete.learnedWorkflows[0].authority, 'none');
+    assert.equal(complete.learnedWorkflows[0].applicability.validated, 'same-inputs-only');
+    assert.equal(complete.workflowAdoption.version, complete.learnedWorkflows[0].version);
+  });
+  evidence.publication = { taskId, sha256, execution: complete, modelCalls: website.receipts.filter(r => r.kind === 'planning').length, realModelCalls: 0, remoteWrites: 0 };
+  await client.quit();
+  const reopened = await launch();
+  await waitFor(async () => (await reopened.request({ kind: 'snapshot' })).tasks.find(t => t.id === taskId)?.phase === 'manual');
+  const restored = await get(reopened);
+  check('冷重开保留发布、素材处理和流程引用，没有重新发布', () => {
+    assert.equal(restored.phase, 'complete');
+    assert.deepEqual(restored.publicationChecks, complete.publicationChecks);
+    assert.deepEqual(restored.learnedWorkflows, complete.learnedWorkflows);
+    assert.deepEqual(restored.materialProcessing, complete.materialProcessing);
+    assert.deepEqual(restored.workflowAdoption, complete.workflowAdoption);
+    assert.equal(website.receipts.filter(r => r.kind === 'published').length, 1);
+    assert.equal(website.receipts.filter(r => r.kind === 'planning').length, evidence.publication.modelCalls);
+  });
+  await reopened.quit();
+}
 async function verifyMaterial(client) {
   const taskId = (await client.request(command('create', { goal: `使用“${materialSource}”在 ${website.base}/page?task=A 上传并保存草稿，不发布。` }))).taskId;
   await waitFor(async () => (await client.request({ kind: 'snapshot' })).tasks[0]?.phase === 'manual');
@@ -705,6 +780,7 @@ async function verifyMaterial(client) {
 }
 async function validate() {
   let client = await launch();
+  if (options.publication) return verifyPublication(client);
   if (options.material) return verifyMaterial(client);
   if (options['task-groups']) return verifyTaskGroups(client);
   const goal = options['participation-review']

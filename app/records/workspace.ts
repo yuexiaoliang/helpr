@@ -1,3 +1,4 @@
+import { validPublicationReferences } from './workflow';
 import { endedExecution, splitDelegation } from '../shared/task-groups';
 import { hideTaskTab } from './task-tab';
 import Database from 'better-sqlite3';
@@ -109,7 +110,7 @@ export class WorkspaceRecords {
         : CURRENT_DATA_FORMAT;
       if (
         !priorVersion ||
-        ![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, CURRENT_DATA_FORMAT].includes(
+        ![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, CURRENT_DATA_FORMAT].includes(
           priorVersion,
         )
       )
@@ -117,17 +118,19 @@ export class WorkspaceRecords {
       if (legacy && priorVersion !== CURRENT_DATA_FORMAT) {
         const backup = path.join(
           folder,
-          (priorVersion === 10
-            ? 'workspace-before-material-12-'
-            : priorVersion === 9
-              ? 'workspace-before-task-groups-11-'
-              : priorVersion >= 7
-                ? 'workspace-before-participation-10-'
-                : priorVersion === 6
-                  ? 'workspace-before-upgrade-09-'
-                  : priorVersion === 5
-                    ? 'workspace-before-backup-07-'
-                    : 'workspace-before-recovery-05-') +
+          (priorVersion === 11
+            ? 'workspace-before-publication-13-'
+            : priorVersion === 10
+              ? 'workspace-before-material-12-'
+              : priorVersion === 9
+                ? 'workspace-before-task-groups-11-'
+                : priorVersion >= 7
+                  ? 'workspace-before-participation-10-'
+                  : priorVersion === 6
+                    ? 'workspace-before-upgrade-09-'
+                    : priorVersion === 5
+                      ? 'workspace-before-backup-07-'
+                      : 'workspace-before-recovery-05-') +
             randomUUID() +
             '.sqlite',
         );
@@ -144,7 +147,10 @@ export class WorkspaceRecords {
           body.modelVersion !== CURRENT_STATE_MODEL
         )
           throw Error('STATE_MODEL_UNSUPPORTED');
-        if (!executionSchema.safeParse(body).success)
+        if (
+          !executionSchema.safeParse(body).success ||
+          !validPublicationReferences(row.taskId, executionSchema.parse(body))
+        )
           throw Error('DATA_CORRUPT');
       }
       this.db
@@ -172,6 +178,7 @@ export class WorkspaceRecords {
         version !== 8 &&
         version !== 9 &&
         version !== 10 &&
+        version !== 11 &&
         version !== CURRENT_DATA_FORMAT
       )
         throw new Error('DATA_VERSION_UNSUPPORTED');

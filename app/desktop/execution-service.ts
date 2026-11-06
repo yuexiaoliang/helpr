@@ -1,3 +1,5 @@
+import { verifyAttachment, verifyPublication } from './publication-verifier';
+import { samePublication, type DownloadCheck } from '../shared/publication';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { snapshotSchema, type WorkspaceSnapshot } from '../shared/contracts';
@@ -265,7 +267,10 @@ export class ExecutionService {
           'MATERIAL_ALREADY_FIXED',
           'PREPARATION_TARGET_CHANGED',
           'PREPARATION_INCOMPLETE',
-          'PREPARATION_ONLY',
+          'PUBLICATION_RESULT_REQUIRED',
+          'PUBLICATION_BINDING_MISMATCH',
+          'PUBLICATION_BYTES_UNVERIFIED',
+          'PUBLICATION_ALREADY_DISPATCHED',
         ].includes(code)
       ) {
         this.latestRecordFailure = Math.max(this.latestRecordFailure, sequence);
@@ -974,6 +979,17 @@ export class ExecutionService {
           });
           if (!this.live(job)) return;
         }
+        if (step.anomalies?.length || step.extraResults?.length) {
+          await this.record({
+            kind: 'anomaly',
+            taskId: job.taskId,
+            runId: job.runId,
+            source: observed.observation,
+            anomalies: step.anomalies ?? [],
+            extraResults: step.extraResults ?? [],
+          });
+          return;
+        }
         if (step.decision === 'observe') {
           // 仅再取一次受控观察；保留未知派发，不给任何重送资格。
           await this.abortable(
@@ -981,6 +997,47 @@ export class ExecutionService {
             job.abort.signal,
           );
           continue;
+        }
+        // 最终提交的页面后条件不能单独消除未知；必须核对公开结果和原始字节。
+        const submitted = current.actions.find(
+          (a) =>
+            a.goalVersion === current.goalVersion &&
+            a.submission &&
+            a.status !== 'cancelled',
+        );
+        if (
+          step.decision === 'complete' &&
+          current.materials?.some((m) => m.goalVersion === current.goalVersion)
+        ) {
+          if (!submitted || !step.result || !current.publication?.attachment)
+            throw Error('PUBLICATION_RESULT_REQUIRED');
+          const check = await this.abortable(
+            () =>
+              verifyPublication({
+                execution: current,
+                source: observed.observation,
+                proposal: step.result!,
+                actionId: submitted.id,
+                signal: job.abort.signal,
+              }),
+            job.abort.signal,
+          );
+          if (!this.live(job)) return;
+          await this.record({
+            kind: 'publication-result',
+            taskId: job.taskId,
+            runId: job.runId,
+            check,
+          });
+          return;
+        }
+        if (submitted) {
+          await this.finish(
+            job,
+            'unknown',
+            '最终提交已有派发记录，尚未取得可核对的结果；不会重复提交。',
+          );
+          return;
         }
         if (pending) {
           if (
@@ -1070,13 +1127,6 @@ export class ExecutionService {
           });
           return;
         }
-        if (
-          current.materials?.some(
-            (m) => m.goalVersion === current.goalVersion,
-          ) &&
-          (step.decision === 'complete' || step.publication)
-        )
-          throw Error('PREPARATION_ONLY');
         if (step.decision === 'authenticated' && !current.loginOrigin)
           throw Error('MODEL_FORMAT');
         const p = current.publication;
@@ -1104,8 +1154,7 @@ export class ExecutionService {
             (!p?.approvalId ||
               !candidate ||
               p.approvalId !== step.approvalId ||
-              p.content !== candidate.content ||
-              p.destination !== candidate.destination ||
+              !samePublication(p, candidate) ||
               p.origin !== new URL(observed.observation.url).origin)) ||
           (p && !p.approvalId);
         if (requiresLogin || needsReview || step.decision === 'ask') {
@@ -1125,6 +1174,9 @@ export class ExecutionService {
                     publication: {
                       content: preview.content,
                       destination: preview.destination,
+                      ...(preview.attachment
+                        ? { attachment: preview.attachment }
+                        : {}),
                     },
                   }
                 : {}),
@@ -1153,9 +1205,36 @@ export class ExecutionService {
           await this.finish(job, 'unknown', step.summary);
           return;
         }
+        let dispatchObservation = observed;
+        let download: DownloadCheck | undefined;
+        const finalAttachment =
+          p?.attachment &&
+          step.action.kind === 'click' &&
+          (step.effect ?? 'publication') === 'publication';
+        if (finalAttachment) {
+          const material = current.materials?.find(
+            (m) =>
+              m.id === p.attachment!.materialId &&
+              m.goalVersion === current.goalVersion,
+          );
+          if (!material) throw Error('PUBLICATION_BINDING_MISMATCH');
+          download = await this.abortable(
+            () => verifyAttachment(p, material, job.abort.signal),
+            job.abort.signal,
+          );
+          if (!this.live(job)) return;
+          dispatchObservation = await this.abortable(
+            () => this.ports.observe(job.taskId, job.abort.signal),
+            job.abort.signal,
+          );
+          if (!this.live(job)) return;
+        }
         const actionId = randomUUID();
         const reserved = await this.record({
           kind: 'reserve',
+          effect: step.effect,
+          evidence: step.evidence,
+          ...(download ? { download } : {}),
           ...(step.publication
             ? {
                 publication: step.publication,
@@ -1167,8 +1246,8 @@ export class ExecutionService {
           id: actionId,
           summary: step.summary,
           action: step.action,
-          source: observed.observation,
-          binding: observed.binding,
+          source: dispatchObservation.observation,
+          binding: dispatchObservation.binding,
         });
         if (!this.live(job) || reserved.created !== true) return;
         const dispatched = await this.record({
@@ -1185,8 +1264,8 @@ export class ExecutionService {
             runId: job.runId,
             actionId,
             action: step.action,
-            source: observed.observation,
-            binding: observed.binding,
+            source: dispatchObservation.observation,
+            binding: dispatchObservation.binding,
             signal: job.abort.signal,
             qualified: () => this.live(job),
           });

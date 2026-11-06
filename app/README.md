@@ -160,3 +160,11 @@ Node-API 8 原生模块经 node-gyp `13.1.0` 构建，固定 arm64／macOS 14 �
 记录格式 11 接续格式 10，升级前保留原库。备份携带所有被引用的固定素材（受既有 64 MiB 备份限制），恢复前校验摘要、字节长度和任务引用，先可靠写入文件再提交记录；恢复仍暂停并逐项核对。草稿准备不能被备份核对误记为最终完成。
 
 源码入口：`pnpm exec vitest run tests/workspace/material.test.ts`。隔离签名包入口：`pnpm validate:workspace --fixture --candidate=material-12-diagnostic --material`。本机网站及替代模型不充抵真实 WordPress 证据；两次 iframe 点击超时的唯一根因仍未确认，后续成功不抹去原失败。实际覆盖、剩余检查和真实批次范围见 [12 检查报告](../docs/testing/evidence/material-12/REPORT.md)、[验证安排](../docs/testing/material-12-plan.md)与[真实批次提案](../docs/testing/material-12-real-batch.md)。
+
+## 首次附件发布与流程候选（13）
+
+附件发布先在所属任务预览完整文字、栏目、固定素材、编辑目标和附件链接。确认只适用于这一版。最终点击前独立下载附件并再次观察网页；动作返回后单独核对公开内容、栏目和附件字节，关键证据不足则保持未知，明确继续也不直接重发。结果卡提供实际结果入口和下载摘要。
+
+核实结果、素材处理、本次进度及学得候选由独立记录进程同事务保存。候选包含参数来源、步骤前后条件、结果／恢复规则、版本、摘要与证据，只验证过原输入；新输入和固定版本重放由 15 继续，流程本身不授予发布权限。当前独立结果读取限同站匿名可读且无重定向的公开 HTML 与附件，私有或动态结果保持待核对。
+
+记录格式 12 接续 11，升级前保留原库，新增结果／素材处理／候选／采用引用进入备份和冷开检查。源码入口为 `pnpm exec vitest run tests/workspace/publication.test.ts`；实际候选入口为 `pnpm validate:workspace --fixture --candidate=publication-13-final --publication`。本机通过不等于真实 WordPress 或模型学习验收，覆盖、失败与待验见[13 检查报告](../docs/testing/evidence/publication-13/REPORT.md)。
