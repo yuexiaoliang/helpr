@@ -1,4 +1,8 @@
-import { verifyAttachment, verifyPublication } from './publication-verifier';
+import {
+  verifyAttachment,
+  verifyPublication,
+  verifyRecoveredPublication,
+} from './publication-verifier';
 import { samePublication, type DownloadCheck } from '../shared/publication';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
@@ -821,10 +825,23 @@ export class ExecutionService {
       if (
         task.execution?.phase !== 'queued' ||
         this.jobs.has(task.id) ||
+        this.reviews.has(task.id) ||
+        this.reviews.size + this.jobs.size >= 2 ||
         this.blocked.has(task.id) ||
         this.pendingIntents.has(task.id)
       )
         continue;
+      const submitted = task.execution.actions.find(
+        (a) =>
+          a.goalVersion === task.execution!.goalVersion &&
+          a.submission?.recovery &&
+          a.dispatchState === 'possible' &&
+          ['dispatched', 'unknown'].includes(a.status),
+      );
+      if (submitted) {
+        this.recoverPublication(task.id, task.execution, submitted);
+        continue;
+      }
       if (task.execution.recoveryPending) {
         const version = task.execution.version;
         const sequence = this.intents.get(task.id);
@@ -918,8 +935,77 @@ export class ExecutionService {
       });
     }
   }
+  private recoverPublication(
+    taskId: string,
+    execution: TaskExecution,
+    action: ActionFact,
+  ) {
+    const review = { abort: new AbortController(), work: Promise.resolve() };
+    this.reviews.set(taskId, review);
+    review.work = (async () => {
+      try {
+        const check = await verifyRecoveredPublication(
+          execution,
+          action,
+          review.abort.signal,
+        );
+        const verified = await this.ports.material?.({
+          kind: 'verify',
+          taskId,
+          materialId: check.materialId,
+          goalVersion: check.goalVersion,
+        });
+        check.localMaterial = z
+          .object({ valid: z.boolean() })
+          .parse(verified ?? { valid: false }).valid
+          ? 'verified'
+          : 'unavailable';
+        if (check.localMaterial !== 'verified') {
+          check.status = 'unknown';
+          check.failure = 'material';
+        }
+        if (review.abort.signal.aborted) return;
+        // 记录进程按版本处理核对期间的新停止；只读完成也不取得下一动作的资格。
+        await this.record({
+          kind: 'publication-recovery-result',
+          taskId,
+          expectedVersion: execution.version,
+          check,
+        });
+      } catch {
+        // 不自动重试未分类失败；已有网页效果与动作记录留存。
+        if (!review.abort.signal.aborted && this.available)
+          await this.suspend(taskId, 'record-unavailable', randomUUID()).catch(
+            () => {},
+          );
+      }
+    })().finally(() => {
+      if (this.reviews.get(taskId) === review) this.reviews.delete(taskId);
+      this.pump();
+    });
+  }
   private async run(job: Job) {
     try {
+      const initial = this.ports
+        .current()
+        .tasks.find((t) => t.id === job.taskId)?.execution;
+      for (const material of initial?.materials?.filter(
+        (m) => m.goalVersion === initial.goalVersion,
+      ) ?? []) {
+        if (!this.live(job)) return;
+        const checked = await this.ports.material?.({
+          kind: 'verify',
+          taskId: job.taskId,
+          materialId: material.id,
+          goalVersion: material.goalVersion,
+        });
+        if (!this.live(job)) return;
+        if (
+          !z.object({ valid: z.boolean() }).parse(checked ?? { valid: false })
+            .valid
+        )
+          throw Error('MATERIAL_CORRUPT');
+      }
       for (let index = 0; index < 20; index++) {
         if (!this.live(job)) return;
         const observed = await this.abortable(
@@ -1057,6 +1143,39 @@ export class ExecutionService {
             )
           )
             throw Error('EXECUTION_EVIDENCE_MISSING');
+          let download: DownloadCheck | undefined;
+          if (pending.runId !== job.runId && pending.action.kind === 'upload') {
+            const current = this.ports
+              .current()
+              .tasks.find((t) => t.id === job.taskId)!.execution!;
+            const materialId = pending.action.materialId;
+            const material = current.materials?.find(
+              (m) => m.id === materialId,
+            );
+            const upload = current.preparation?.find(
+              (f) => f.kind === 'upload' && f.actionId === pending.id,
+            );
+            const target = current.preparation?.find(
+              (f) =>
+                f.kind === 'target' && f.goalVersion === current.goalVersion,
+            );
+            if (!material || !upload || !target)
+              throw Error('EXECUTION_RESULT_UNKNOWN');
+            download = await verifyAttachment(
+              {
+                content: current.goal,
+                destination: target.url,
+                attachment: {
+                  materialId,
+                  targetUrl: target.url,
+                  url: upload.url,
+                },
+              },
+              material,
+              job.abort.signal,
+            );
+            if (!this.live(job)) return;
+          }
           await this.record({
             kind: 'resolve',
             taskId: job.taskId,
@@ -1064,6 +1183,7 @@ export class ExecutionService {
             id: pending.id,
             source: observed.observation,
             evidence: step.previous.evidence,
+            ...(download ? { download } : {}),
           });
         }
         if (!this.live(job)) return;
@@ -1233,6 +1353,7 @@ export class ExecutionService {
         const reserved = await this.record({
           kind: 'reserve',
           effect: step.effect,
+          recovery: step.recovery,
           evidence: step.evidence,
           ...(download ? { download } : {}),
           ...(step.publication
@@ -1293,7 +1414,9 @@ export class ExecutionService {
           code === 'EXECUTION_PAGE_CHANGED' ? 'unknown' : 'paused',
           code === 'EXECUTION_PAGE_CHANGED'
             ? '网页已变化，先核对现有结果。'
-            : '执行暂时无法继续，已暂停后续操作。已有结果与记录保留。',
+            : code === 'MATERIAL_CORRUPT'
+              ? '本机固定素材缺失或损坏，已保留原记录并暂停；不会重读来源替换或继续提交。'
+              : '执行暂时无法继续，已暂停后续操作。已有结果与记录保留。',
         ).catch(() => {});
       }
     }
@@ -1314,6 +1437,10 @@ export class ExecutionService {
       await Promise.allSettled([...this.interruptions, ...this.pendingReplies]);
       if (pump) await pump;
       const jobs = [...this.jobs.values()];
+      if (this.reviews.size) {
+        await Promise.allSettled([...this.reviews.values()].map((r) => r.work));
+        continue;
+      }
       if (!jobs.length && !this.pumping) return;
       await Promise.all(jobs.map((j) => j.work));
     }

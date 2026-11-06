@@ -6,6 +6,7 @@ import {
   learnedWorkflowSchema,
   type LearnedWorkflow,
 } from '../shared/workflow';
+import { samePublication } from '../shared/publication';
 
 const hash = (body: unknown) =>
   createHash('sha256')
@@ -138,14 +139,16 @@ export function validPublicationReferences(
   e: TaskExecution,
 ): boolean {
   const checks = e.publicationChecks ?? [],
+    history = e.publicationHistory?.map((h) => h.check) ?? [],
     workflows = e.learnedWorkflows ?? [];
   if (
-    new Set(checks.map((c) => c.id)).size !== checks.length ||
+    new Set([...checks, ...history].map((c) => c.id)).size !==
+      checks.length + history.length ||
     new Set(workflows.map((w) => w.version)).size !== workflows.length
   )
     return false;
   if (
-    checks.some(
+    [...checks, ...history].some(
       (c) =>
         !e.materials?.some(
           (m) => m.id === c.materialId && m.goalVersion === c.goalVersion,
@@ -153,6 +156,55 @@ export function validPublicationReferences(
         !e.actions.some(
           (a) =>
             a.id === c.actionId && a.publicationApprovalId === c.approvalId,
+        ),
+    )
+  )
+    return false;
+  if (
+    e.actions.some((a) => {
+      const s = a.submission,
+        r = s?.recovery;
+      if (!r) return false;
+      return (
+        !s?.publication.attachment ||
+        r.targetUrl !== s.publication.attachment.targetUrl ||
+        r.attachmentUrl !== s.publication.attachment.url ||
+        r.url === r.targetUrl ||
+        r.url === r.attachmentUrl ||
+        new URL(r.url).origin !== new URL(r.targetUrl).origin ||
+        a.source.url !== r.targetUrl ||
+        !a.observedUrls?.includes(r.url) ||
+        !e.preparation?.some(
+          (f) =>
+            f.id === r.targetFactId &&
+            f.kind === 'target' &&
+            f.url === r.targetUrl &&
+            f.goalVersion === a.goalVersion,
+        ) ||
+        !e.preparation?.some(
+          (f) =>
+            f.id === r.uploadFactId &&
+            f.kind === 'upload' &&
+            f.url === r.attachmentUrl &&
+            f.goalVersion === a.goalVersion &&
+            f.materialId === s.publication.attachment!.materialId,
+        ) ||
+        (a.goalVersion === e.goalVersion &&
+          e.publication?.approvalId === a.publicationApprovalId &&
+          !samePublication(e.publication!, s.publication))
+      );
+    })
+  )
+    return false;
+  if (
+    [...checks, ...history].some(
+      (c) =>
+        c.recovery &&
+        !e.actions.some(
+          (a) =>
+            a.id === c.actionId &&
+            a.submission?.recovery?.rule === c.recovery &&
+            a.submission?.recovery?.url === c.proposal.url,
         ),
     )
   )

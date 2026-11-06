@@ -29,6 +29,15 @@ export const publicationSchema = z.strictObject({
   attachment: attachmentBindingSchema.optional(),
 });
 export type Publication = z.infer<typeof publicationSchema>;
+// 只保存正常网页中已观察到的精确地址，不接受搜索条件、URL 模板或脚本。
+export const publicationRecoverySchema = z.strictObject({
+  rule: z.literal('public-attachment-v1'),
+  url,
+  targetUrl: url,
+  attachmentUrl: url,
+  evidence: z.array(z.string().min(1).max(2000)).min(1).max(10),
+});
+export type PublicationRecovery = z.infer<typeof publicationRecoverySchema>;
 export const downloadCheckSchema = z.strictObject({
   url,
   sha256: materialVersionSchema.shape.sha256,
@@ -65,13 +74,22 @@ export const publicationCheckSchema = z.strictObject({
     attachment: z.boolean(),
     bytes: z.boolean(),
   }),
-  failure: z.enum(['none', 'evidence', 'network', 'content', 'bytes']),
+  failure: z.enum([
+    'none',
+    'evidence',
+    'network',
+    'content',
+    'bytes',
+    'material',
+  ]),
   coverage: z.literal('public-page-and-attachment'),
   // 只报告实际覆盖；独立 GET 不能证明网站没有其它写入。
   extraResults: z.array(url).max(50),
   anomalies: z.array(z.string().min(1).max(2000)).max(20),
   unobservedWrites: z.literal('unknown'),
   screenshot: z.literal('not-required'),
+  recovery: z.literal('public-attachment-v1').optional(),
+  localMaterial: z.enum(['verified', 'unavailable']).optional(),
 });
 export type PublicationCheck = z.infer<typeof publicationCheckSchema>;
 

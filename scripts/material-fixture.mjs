@@ -40,6 +40,7 @@ export function materialFixture(config, receipts) {
                 proposal.publication = { content: p.content, destination: p.destination, attachment: p.attachment };
                 proposal.approvalId = p.approvalId;
                 proposal.effect = typed ? 'publication' : 'interaction';
+                if (typed && config.recovery) proposal.recovery = { rule: 'public-attachment-v1', url: base + '/result/1', targetUrl: base + '/page?task=A', attachmentUrl, evidence: ['永久链接'] };
                 proposal.action = typed ? { kind: 'click', target: { role: 'button', name: '发布附件' } } : { kind: 'fill', target: { role: 'textbox', name: '发布标题' }, value: p.content };
               }
             }
@@ -91,11 +92,11 @@ export function materialFixture(config, receipts) {
       if (!published) { res.writeHead(404); res.end(); return true; }
       const escape = text => text.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.end(`<article><h1>${escape(title)}</h1><p>公告</p><a href="/files/${uploaded.sha256}">原始附件</a></article>`); receipts.push({ kind: 'public-read' }); return true;
+      res.end(`${config.recovery ? '<link rel="canonical" href="/result/1">' : ''}<article><h1>${escape(title)}</h1><p>公告</p><a href="/files/${uploaded.sha256}">原始附件</a></article>`); receipts.push({ kind: 'public-read' }); return true;
     }
     if (url.pathname === '/page') {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.end('<!doctype html><meta charset="utf-8"><title>素材准备</title><h1>素材准备</h1>' + (config.publication ? `<p>栏目：公告</p><label>发布标题<input aria-label="发布标题"></label><output id="preview"></output><button id="publish">发布附件</button><p id="result">${published ? '已发布到公告 <a href="/result/1">查看结果</a>' : '尚未发布'}</p><script>const box=document.querySelector('input');box.oninput=()=>document.querySelector('#preview').textContent='预览：'+box.value;document.querySelector('#publish').onclick=async()=>{await fetch('/publish',{method:'POST',body:box.value});document.querySelector('#result').innerHTML='已发布到公告 <a href="/result/1">查看结果</a>'}</script>` : '') + '<iframe title="素材表单" src="/form" style="width:90%;height:500px;border:0"></iframe>');
+      res.end('<!doctype html><meta charset="utf-8"><title>素材准备</title><h1>素材准备</h1>' + (config.publication ? `<p>栏目：公告</p>${config.recovery ? '<a href="/result/1">永久链接</a>' : ''}<label>发布标题<input aria-label="发布标题"></label><output id="preview"></output><button id="publish">发布附件</button><p id="result">${published ? '已发布到公告 <a href="/result/1">查看结果</a>' : '尚未发布'}</p><script>const box=document.querySelector('input');box.oninput=()=>document.querySelector('#preview').textContent='预览：'+box.value;document.querySelector('#publish').onclick=async()=>{await fetch('/publish',{method:'POST',body:box.value});document.querySelector('#result').innerHTML='已发布到公告 <a href="/result/1">查看结果</a>'}</script>` : '') + '<iframe title="素材表单" src="/form" style="width:90%;height:500px;border:0"></iframe>');
       receipts.push({ kind: 'page' }); return true;
     }
     if (url.pathname === '/form') {

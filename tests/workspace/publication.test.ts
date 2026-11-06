@@ -1,4 +1,4 @@
-import { afterEach, expect, test } from 'vitest';
+import { afterEach, expect, test, vi } from 'vitest';
 import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
 import { mkdtemp, writeFile, rm, readFile } from 'node:fs/promises';
@@ -10,12 +10,13 @@ import { ExecutionService } from '../../app/desktop/execution-service';
 import {
   verifyAttachment,
   verifyPublication,
+  verifyRecoveredPublication,
 } from '../../app/desktop/publication-verifier';
 import type {
   Publication,
   PublicationCheck,
 } from '../../app/shared/publication';
-import type { NextStep } from '../../app/shared/execution';
+import { executionSchema, type NextStep } from '../../app/shared/execution';
 import type { PageObservation } from '../../app/shared/model';
 
 const cleanups: (() => Promise<void>)[] = [];
@@ -23,7 +24,10 @@ afterEach(async () => {
   for (const cleanup of cleanups.splice(0).reverse()) await cleanup();
 });
 
-async function fixture() {
+async function fixture({
+  recovery = false,
+  store,
+}: { recovery?: boolean; store?: WorkspaceRecords } = {}) {
   const folder = await mkdtemp(path.join(tmpdir(), 'helpr-publication-'));
   cleanups.push(() => rm(folder, { recursive: true, force: true }));
   const original = Buffer.from([0, 1, 2, 255, 73]);
@@ -59,7 +63,7 @@ async function fixture() {
   const base = `http://127.0.0.1:${address.port}`;
   const sourceFile = path.join(folder, 'original.bin');
   await writeFile(sourceFile, original);
-  const records = new WorkspaceRecords(folder, 'app/records/migrations');
+  let records = store ?? new WorkspaceRecords(folder, 'app/records/migrations');
   cleanups.push(() => {
     records.close();
     return Promise.resolve();
@@ -79,7 +83,9 @@ async function fixture() {
   const post = (c: Record<string, unknown>) =>
     records.execution({
       taskId,
-      ...(['intent', 'reported'].includes(String(c.kind))
+      ...(['intent', 'reported', 'publication-recovery-result'].includes(
+        String(c.kind),
+      )
         ? {}
         : { runId: 'prepare' }),
       ...c,
@@ -113,7 +119,7 @@ async function fixture() {
   const observe = (): PageObservation => ({
     url: base + '/edit',
     title: '编辑附件',
-    text: `编辑附件\n[file 0] ${base}/edit\n本次附件报告\n公告\n附件已上传\n[link-url] ${base}/file\n${published ? '已发布\n[link-url] ' + base + '/result' : '准备发布'}`,
+    text: `编辑附件\n[file 0] ${base}/edit\n本次附件报告\n公告\n附件已上传\n[link-url] ${base}/file\n${published ? '已发布\n[link-url] ' + base + '/result' : '准备发布' + (recovery ? '\n永久链接\n[link-url] ' + base + '/result' : '')}`,
     fingerprint: published ? 'published' : 'draft',
     generation: 1,
     observedAt: Date.now(),
@@ -168,6 +174,7 @@ async function fixture() {
     publication,
   });
   html =
+    (recovery ? '<link rel="canonical" href="/result">' : '') +
     '<article><h1>本次附件报告</h1><p>公告</p><a href="/file">下载</a></article>';
   const proposal = {
     url: base + '/result',
@@ -209,6 +216,17 @@ async function fixture() {
       binding: { targetId: 'page', generation: 1 },
       evidence: ['编辑附件'],
       download,
+      ...(recovery
+        ? {
+            recovery: {
+              rule: 'public-attachment-v1',
+              url: base + '/result',
+              targetUrl: base + '/edit',
+              attachmentUrl: base + '/file',
+              evidence: ['永久链接'],
+            },
+          }
+        : {}),
       ...overrides,
     });
   const dispatched = async () => {
@@ -243,6 +261,7 @@ async function fixture() {
         await options.beforeRecord?.(c);
         return records.execution(c);
       },
+      material: (c) => records.material(c),
       current: () => state,
       publish: (next) => {
         state = next;
@@ -278,6 +297,17 @@ async function fixture() {
               },
               publication,
               approvalId: input.publication!.approvalId,
+              ...(recovery
+                ? {
+                    recovery: {
+                      rule: 'public-attachment-v1' as const,
+                      url: base + '/result',
+                      targetUrl: base + '/edit',
+                      attachmentUrl: base + '/file',
+                      evidence: ['永久链接'],
+                    },
+                  }
+                : {}),
             };
         return Promise.resolve(options.propose?.(step) ?? step);
       },
@@ -292,7 +322,16 @@ async function fixture() {
   };
   return {
     folder,
-    records,
+    get records() {
+      return records;
+    },
+    reopen: () => {
+      records.close();
+      records = new WorkspaceRecords(folder, 'app/records/migrations');
+    },
+    publish: () => {
+      published = true;
+    },
     taskId,
     post,
     execution,
@@ -685,4 +724,508 @@ test('新增结果、素材处理、流程摘要和采用引用随备份恢复�
   expect(
     () => new WorkspaceRecords(f.folder, 'app/records/migrations'),
   ).toThrow('DATA_CORRUPT');
+});
+
+async function interruptSubmission(
+  f: Awaited<ReturnType<typeof fixture>>,
+  dispatch = true,
+) {
+  f.approve();
+  f.reserve(
+    await verifyAttachment(
+      f.publication,
+      f.material,
+      new AbortController().signal,
+    ),
+  );
+  if (dispatch) {
+    f.post({ kind: 'dispatch', runId: 'publish', id: 'submit' });
+    f.publish();
+  }
+}
+
+test('派发前冻结正常页面的精确关联；冷进程无模型、无网页工作者补记已发布结果', async () => {
+  const f = await fixture({ recovery: true });
+  await interruptSubmission(f);
+  const old = f.execution().actions.at(-1)!;
+  expect(old).toMatchObject({
+    returned: false,
+    dispatchState: 'possible',
+    submission: { recovery: { rule: 'public-attachment-v1' } },
+  });
+  f.reopen();
+  const service = f.service({
+    propose: () => {
+      throw Error('NO_MODEL_ALLOWED');
+    },
+  });
+  service.refresh();
+  await service.settled();
+  expect(f.execution()).toMatchObject({
+    phase: 'complete',
+    materialProcessing: [{ status: 'complete' }],
+    publicationChecks: [
+      { recovery: 'public-attachment-v1', localMaterial: 'verified' },
+    ],
+  });
+  expect(f.execution().actions.at(-1)!.returned).toBe(false);
+  expect(f.sends()).toBe(0);
+  expect(f.execution().learnedWorkflows).toHaveLength(1);
+  await service.stopAll();
+});
+
+test('可信未派发检查点只取消旧预留，用当前观察和原有效确认派发剩余动作一次', async () => {
+  const f = await fixture({ recovery: true });
+  await interruptSubmission(f, false);
+  f.reopen();
+  expect(f.execution().actions.at(-1)).toMatchObject({
+    status: 'cancelled',
+    dispatchState: 'not-dispatched',
+  });
+  expect(
+    f.post({ kind: 'dispatch', id: 'submit', runId: 'publish' }).permitted,
+  ).toBe(false);
+  const service = f.service();
+  service.refresh();
+  await service.settled();
+  expect(f.sends()).toBe(1);
+  expect(f.execution().phase).toBe('complete');
+  expect(f.execution().materialProcessing).toHaveLength(1);
+  expect(f.execution().materialProcessing![0]!.status).toBe('complete');
+  expect(
+    f
+      .execution()
+      .actions.filter(
+        (a) => a.effect === 'publication' && a.status === 'confirmed',
+      ),
+  ).toHaveLength(1);
+  await service.stopAll();
+});
+
+test.each(['content', 'canonical', 'ambiguous', 'bytes', 'missing'] as const)(
+  '恢复结果 %s 不符保留未知，明确继续仅再次读取不重发',
+  async (failure) => {
+    const f = await fixture({ recovery: true });
+    // missing 模拟已派发但网站还没有可读结果；不以暂时未找到批准重送。
+    f.approve();
+    f.reserve(
+      await verifyAttachment(
+        f.publication,
+        f.material,
+        new AbortController().signal,
+      ),
+    );
+    f.post({ kind: 'dispatch', runId: 'publish', id: 'submit' });
+    if (failure !== 'missing') f.publish();
+    if (failure === 'content')
+      f.setHtml(
+        '<link rel="canonical" href="/result"><h1>同名结果，正文被替换</h1><p>公告</p><a href="/file">附件</a>',
+      );
+    if (failure === 'canonical')
+      f.setHtml(
+        '<link rel="canonical" href="/other"><h1>本次附件报告 公告</h1><a href="/file">附件</a>',
+      );
+    if (failure === 'ambiguous')
+      f.setHtml(
+        '<link rel="canonical" href="/result"><link rel="canonical" href="/other"><h1>本次附件报告 公告</h1><a href="/file">附件</a>',
+      );
+    if (failure === 'bytes') f.setBytes(Buffer.from('wrong bytes'));
+    f.reopen();
+    const service = f.service({
+      propose: () => {
+        throw Error('NO_MODEL_ALLOWED');
+      },
+    });
+    service.refresh();
+    await service.settled();
+    expect(f.execution().publicationChecks?.at(-1)?.status).toBe('unknown');
+    expect(f.execution().materialProcessing![0]!.status).toBe('unknown');
+    await service.intent({
+      kind: 'execution-intent',
+      taskId: f.taskId,
+      intent: 'continue',
+      requestId: 'retry-read',
+    });
+    await service.settled();
+    expect(f.execution().publicationChecks).toHaveLength(2);
+    expect(f.execution().result).toBeUndefined();
+    expect(f.sends()).toBe(0);
+    await service.stopAll();
+  },
+);
+
+test('核对结果保存前新停止优先，迟到证明只进历史；同回执重送不重复应用', async () => {
+  const f = await fixture({ recovery: true });
+  await interruptSubmission(f);
+  f.reopen();
+  let reached!: () => void, release!: () => void, delayed: unknown;
+  const entered = new Promise<void>((r) => {
+    reached = r;
+  });
+  const wait = new Promise<void>((r) => {
+    release = r;
+  });
+  const service = f.service({
+    beforeRecord: async (c) => {
+      if ((c as { kind: string }).kind === 'publication-recovery-result') {
+        delayed = c;
+        reached();
+        await wait;
+      }
+    },
+  });
+  service.refresh();
+  await entered;
+  await service.intent({
+    kind: 'execution-intent',
+    taskId: f.taskId,
+    intent: 'stop',
+    requestId: 'stop-new',
+  });
+  release();
+  await service.settled();
+  expect(f.execution()).toMatchObject({
+    intent: 'stopped',
+    phase: 'stopped',
+    publicationHistory: [
+      { reason: 'changed-intent', check: { status: 'verified' } },
+    ],
+  });
+  expect(f.execution().result).toBeUndefined();
+  f.records.execution(delayed);
+  expect(f.execution().publicationHistory).toHaveLength(1);
+  await service.stopAll();
+  f.reopen();
+  expect(f.execution().intent).toBe('stopped');
+  expect(f.sends()).toBe(0);
+});
+
+test('旧工作者结果仅属于历史目标，不能覆盖修改后的当前事实或恢复资格', async () => {
+  const f = await fixture();
+  const check = await f.dispatched();
+  f.post({ kind: 'intent', intent: 'stop', requestId: 'stop' });
+  f.post({
+    kind: 'intent',
+    intent: 'revise',
+    requestId: 'revise',
+    text: '改为另一篇公告，保持停止',
+  });
+  f.post({ kind: 'publication-result', runId: 'publish', check });
+  expect(f.execution()).toMatchObject({
+    intent: 'stopped',
+    goalVersion: 2,
+    publicationHistory: [{ reason: 'stale-worker', check: { goalVersion: 1 } }],
+  });
+  expect(f.execution().result).toBeUndefined();
+  expect(f.execution().materialProcessing![0]!.status).toBe('unknown');
+  f.reopen();
+  expect(f.execution().publicationHistory).toHaveLength(1);
+});
+
+test('已经提交但确认丢失的恢复重送返回既有事实，停止与旧回执不恢复派发资格', async () => {
+  const f = await fixture({ recovery: true });
+  await interruptSubmission(f);
+  f.reopen();
+  const version = f.execution().version;
+  const check = await verifyRecoveredPublication(
+    f.execution(),
+    f.execution().actions.at(-1)!,
+    new AbortController().signal,
+  );
+  check.localMaterial = 'verified';
+  const command = {
+    kind: 'publication-recovery-result',
+    expectedVersion: version,
+    check,
+  };
+  f.post(command); // 提交后假设调用方丢失回执。
+  f.post({ kind: 'intent', intent: 'stop', requestId: 'stop-after-commit' });
+  expect(f.post(command).created).toBe(false);
+  expect(f.execution()).toMatchObject({
+    intent: 'stopped',
+    phase: 'stopped',
+    materialProcessing: [{ status: 'complete' }],
+  });
+  expect(f.execution().learnedWorkflows).toHaveLength(1);
+  expect(
+    f.post({ kind: 'dispatch', runId: 'publish', id: 'submit' }).permitted,
+  ).toBe(false);
+});
+
+test('本机固定素材损坏与已发生的网站效果同时保留，不释放素材或重新发送', async () => {
+  const f = await fixture({ recovery: true });
+  await interruptSubmission(f);
+  await rm(path.join(f.folder, 'materials', f.material.sha256));
+  await writeFile(
+    path.join(f.folder, 'materials', f.material.sha256),
+    'damaged',
+  );
+  f.reopen();
+  const service = f.service();
+  service.refresh();
+  await service.settled();
+  expect(f.execution().publicationChecks).toMatchObject([
+    {
+      status: 'unknown',
+      failure: 'material',
+      localMaterial: 'unavailable',
+      checks: { published: true, bytes: true },
+    },
+  ]);
+  expect(f.execution().materialProcessing![0]!.status).toBe('unknown');
+  expect(f.execution().result).toBeUndefined();
+  expect(f.sends()).toBe(0);
+  await service.stopAll();
+});
+
+test('缺少稳定关联的规则拒绝保存；未知版本或损坏引用拒绝冷开且保留原记录', async () => {
+  const f = await fixture({ recovery: true });
+  f.approve();
+  const download = await verifyAttachment(
+    f.publication,
+    f.material,
+    new AbortController().signal,
+  );
+  expect(() =>
+    f.reserve(download, {
+      recovery: {
+        rule: 'public-attachment-v1',
+        url: f.proposal.url + '-guessed',
+        targetUrl: f.proposal.targetUrl,
+        attachmentUrl: f.proposal.attachmentUrl,
+        evidence: ['永久链接'],
+      },
+    }),
+  ).toThrow('EXECUTION_EVIDENCE_MISSING');
+  f.reserve(download);
+  f.records.close();
+  const db = new Database(path.join(f.folder, 'workspace.sqlite'));
+  db.exec(
+    "UPDATE task_executions SET body=json_set(body,'$.actions[1].submission.recovery.rule','future-rule')",
+  );
+  db.close();
+  const before = await readFile(path.join(f.folder, 'workspace.sqlite'));
+  expect(() => f.reopen()).toThrow('DATA_CORRUPT');
+  expect(await readFile(path.join(f.folder, 'workspace.sqlite'))).toEqual(
+    before,
+  );
+});
+
+test('两项已派发任务冷启动分别只读恢复，无模型、无写入，原确认各自保留', async () => {
+  const f = await fixture({ recovery: true });
+  await interruptSubmission(f);
+  const g = await fixture({ recovery: true, store: f.records });
+  await interruptSubmission(g);
+  const approvals = f.records
+    .snapshot()
+    .tasks.map((t) => t.execution!.publication!.approvalId);
+  f.reopen();
+  expect(
+    f.records.snapshot().tasks.every((t) => t.execution!.recoveryPending),
+  ).toBe(true);
+  const service = f.service({
+    propose: () => {
+      throw Error('NO_MODEL_ALLOWED');
+    },
+  });
+  service.refresh();
+  await service.settled();
+  const executions = f.records.snapshot().tasks.map((t) => t.execution!);
+  expect(executions.map((e) => e.phase)).toEqual(['complete', 'complete']);
+  expect(executions.map((e) => e.publication!.approvalId)).toEqual(approvals);
+  expect(executions.map((e) => e.publicationChecks![0]!.proposal.url)).toEqual([
+    f.proposal.url,
+    g.proposal.url,
+  ]);
+  expect(f.sends() + g.sends()).toBe(0);
+  await service.stopAll();
+});
+
+test('结果读取超时只保存网络未知，不隐式重试或重新派发', async () => {
+  const f = await fixture({ recovery: true });
+  await interruptSubmission(f);
+  let release!: () => void;
+  f.hold(
+    new Promise<void>((r) => {
+      release = r;
+    }),
+  );
+  const before = f.reads();
+  f.reopen();
+  const service = f.service();
+  service.refresh();
+  try {
+    await service.settled();
+    expect(f.execution().publicationChecks).toMatchObject([
+      { status: 'unknown', failure: 'network' },
+    ]);
+    expect(f.reads() - before).toBe(1);
+    expect(f.sends()).toBe(0);
+  } finally {
+    release();
+    await service.stopAll();
+  }
+}, 15000);
+
+test('冻结恢复规则及迟到历史进入备份，旧资料恢复仍暂停，篡改关联拒绝读取', async () => {
+  const f = await fixture({ recovery: true });
+  await interruptSubmission(f);
+  const check = await verifyRecoveredPublication(
+    f.execution(),
+    f.execution().actions.at(-1)!,
+    new AbortController().signal,
+  );
+  check.localMaterial = 'verified';
+  f.post({ kind: 'intent', intent: 'stop', requestId: 'stop-before-history' });
+  f.post({
+    kind: 'publication-recovery-result',
+    expectedVersion: f.execution().version - 1,
+    check,
+  });
+  const file = path.join(f.folder, 'recovery.helpr-backup');
+  const saved = await f.records.backup({
+    kind: 'create',
+    requestId: 'backup-recovery',
+    file,
+  });
+  const g = await fixture();
+  await g.records.backup({
+    kind: 'restore',
+    requestId: 'restore-recovery',
+    file,
+    checksum: saved.archive.checksum,
+  });
+  const restored = g.records
+    .snapshot()
+    .tasks.find((t) => t.id === f.taskId)!.execution!;
+  expect(restored.actions.at(-1)!.submission).toEqual(
+    f.execution().actions.at(-1)!.submission,
+  );
+  expect(restored.publicationHistory).toEqual(f.execution().publicationHistory);
+  expect(restored).toMatchObject({
+    intent: 'stopped',
+    restoreReview: 'required',
+  });
+  f.records.close();
+  const db = new Database(path.join(f.folder, 'workspace.sqlite'));
+  db.exec(
+    "UPDATE task_executions SET body=json_set(body,'$.actions[1].submission.recovery.targetFactId','00000000-0000-4000-8000-000000000000')",
+  );
+  db.close();
+  expect(() => f.reopen()).toThrow('DATA_CORRUPT');
+});
+
+test('格式12迁移保留原库，不为旧提交凭空制造恢复规则', async () => {
+  const f = await fixture();
+  await interruptSubmission(f);
+  const before = f.execution().actions;
+  f.records.close();
+  const db = new Database(path.join(f.folder, 'workspace.sqlite'));
+  db.exec('UPDATE workspace SET schema_version=12');
+  db.close();
+  f.reopen();
+  expect(f.execution().actions.at(-1)!.submission?.recovery).toBeUndefined();
+  const { readdir } = await import('node:fs/promises');
+  const copy = (await readdir(f.folder)).find((name) =>
+    name.startsWith('workspace-before-publication-recovery-14-'),
+  )!;
+  const backup = new Database(path.join(f.folder, copy), { readonly: true });
+  expect(
+    backup.prepare('SELECT schema_version FROM workspace').pluck().get(),
+  ).toBe(12);
+  expect(
+    executionSchema.parse(
+      JSON.parse(
+        backup
+          .prepare('SELECT body FROM task_executions')
+          .pluck()
+          .get() as string,
+      ),
+    ).actions,
+  ).toEqual(before);
+  backup.close();
+});
+
+test('未派发检查点的固定素材已经缺失时，冷开不得继续发布', async () => {
+  const f = await fixture({ recovery: true });
+  await interruptSubmission(f, false);
+  await rm(path.join(f.folder, 'materials', f.material.sha256));
+  f.reopen();
+  const service = f.service();
+  service.refresh();
+  await service.settled();
+  expect(f.sends()).toBe(0);
+  expect(f.execution().phase).toBe('paused');
+  expect(f.execution().summary).toContain('固定素材');
+  expect(f.execution().materialProcessing![0]!.status).toBe('pending');
+  await service.stopAll();
+});
+
+test('两项只读恢复占用自动推进容量，第三项保持排队', async () => {
+  const f = await fixture({ recovery: true });
+  await interruptSubmission(f);
+  const g = await fixture({ recovery: true, store: f.records });
+  await interruptSubmission(g);
+  const third = f.records.execute({
+    kind: 'create',
+    requestId: 'third',
+    goal: '核对 https://third.test/',
+  }).taskId;
+  f.records.execute({
+    kind: 'page',
+    requestId: 'third-page',
+    taskId: third,
+    url: 'https://third.test/',
+    phase: 'manual',
+  });
+  f.records.execution({
+    kind: 'intent',
+    requestId: 'third-start',
+    taskId: third,
+    intent: 'start',
+  });
+  f.reopen();
+  let releaseF!: () => void, releaseG!: () => void;
+  f.hold(
+    new Promise<void>((r) => {
+      releaseF = r;
+    }),
+  );
+  g.hold(
+    new Promise<void>((r) => {
+      releaseG = r;
+    }),
+  );
+  const beforeF = f.reads(),
+    beforeG = g.reads();
+  const claims: string[] = [];
+  const service = f.service({
+    beforeRecord: (c) => {
+      const command = c as { kind: string; taskId: string };
+      if (command.kind === 'claim') claims.push(command.taskId);
+      return Promise.resolve();
+    },
+  });
+  service.refresh();
+  try {
+    await vi.waitFor(() => {
+      expect(f.reads()).toBeGreaterThan(beforeF);
+      expect(g.reads()).toBeGreaterThan(beforeG);
+    });
+    expect(claims).not.toContain(third);
+    expect(
+      f.records.snapshot().tasks.find((t) => t.id === third)!.execution!.phase,
+    ).toBe('queued');
+  } finally {
+    await service.intent({
+      kind: 'execution-intent',
+      taskId: third,
+      requestId: 'stop-third',
+      intent: 'stop',
+    });
+    releaseF();
+    releaseG();
+    await service.settled();
+    await service.stopAll();
+  }
 });

@@ -6,6 +6,7 @@ import {
   downloadCheckSchema,
   publicationResultProposalSchema,
   publicationCheckSchema,
+  publicationRecoverySchema,
 } from './publication';
 import { learnedWorkflowSchema } from './workflow';
 import {
@@ -82,6 +83,12 @@ export const actionFactSchema = z.strictObject({
     .strictObject({
       publication: publicationSchema,
       download: downloadCheckSchema,
+      recovery: publicationRecoverySchema
+        .extend({
+          targetFactId: z.string().uuid(),
+          uploadFactId: z.string().uuid(),
+        })
+        .optional(),
     })
     .optional(),
   publicationApprovalId: z.string().uuid().optional(),
@@ -179,6 +186,15 @@ export const executionSchema = z.strictObject({
     )
     .optional(),
   publicationChecks: z.array(publicationCheckSchema).max(60).optional(),
+  publicationHistory: z
+    .array(
+      z.strictObject({
+        check: publicationCheckSchema,
+        reason: z.enum(['stale-worker', 'changed-intent']),
+      }),
+    )
+    .max(60)
+    .optional(),
   materialProcessing: z
     .array(
       z.strictObject({
@@ -278,6 +294,7 @@ export const executionControlSchema = z.strictObject({
   system: z.boolean().optional(),
 });
 export const nextStepSchema = z.strictObject({
+  recovery: publicationRecoverySchema.optional(),
   effect: actionFactSchema.shape.effect,
   result: publicationResultProposalSchema.optional(),
   anomalies: z.array(z.string().min(1).max(2000)).max(20).optional(),

@@ -1,0 +1,26 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/publication.test.ts (28 tests | 1 failed | 27 skipped) 719ms
+   × 两项只读恢复占用自动推进容量，第三项保持排队 718ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/publication.test.ts > 两项只读恢复占用自动推进容量，第三项保持排队
+AssertionError: expected [ Array(1) ] to not include '663c230f-996f-412f-8f05-e7ab0d2fd8cc'
+ ❯ tests/workspace/publication.test.ts:1213:24
+    1211|       expect(g.reads()).toBeGreaterThan(beforeG);
+    1212|     });
+    1213|     expect(claims).not.toContain(third);
+       |                        ^
+    1214|     expect(
+    1215|       f.records.snapshot().tasks.find((t) => t.id === third)!.executio…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 27 skipped (28)
+   Start at  23:02:51
+   Duration  1.21s (tests 63%, import 30%, transform 7%)
+

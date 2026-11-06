@@ -110,7 +110,7 @@ export class WorkspaceRecords {
         : CURRENT_DATA_FORMAT;
       if (
         !priorVersion ||
-        ![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, CURRENT_DATA_FORMAT].includes(
+        ![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, CURRENT_DATA_FORMAT].includes(
           priorVersion,
         )
       )
@@ -118,19 +118,21 @@ export class WorkspaceRecords {
       if (legacy && priorVersion !== CURRENT_DATA_FORMAT) {
         const backup = path.join(
           folder,
-          (priorVersion === 11
-            ? 'workspace-before-publication-13-'
-            : priorVersion === 10
-              ? 'workspace-before-material-12-'
-              : priorVersion === 9
-                ? 'workspace-before-task-groups-11-'
-                : priorVersion >= 7
-                  ? 'workspace-before-participation-10-'
-                  : priorVersion === 6
-                    ? 'workspace-before-upgrade-09-'
-                    : priorVersion === 5
-                      ? 'workspace-before-backup-07-'
-                      : 'workspace-before-recovery-05-') +
+          (priorVersion === 12
+            ? 'workspace-before-publication-recovery-14-'
+            : priorVersion === 11
+              ? 'workspace-before-publication-13-'
+              : priorVersion === 10
+                ? 'workspace-before-material-12-'
+                : priorVersion === 9
+                  ? 'workspace-before-task-groups-11-'
+                  : priorVersion >= 7
+                    ? 'workspace-before-participation-10-'
+                    : priorVersion === 6
+                      ? 'workspace-before-upgrade-09-'
+                      : priorVersion === 5
+                        ? 'workspace-before-backup-07-'
+                        : 'workspace-before-recovery-05-') +
             randomUUID() +
             '.sqlite',
         );
@@ -179,6 +181,7 @@ export class WorkspaceRecords {
         version !== 9 &&
         version !== 10 &&
         version !== 11 &&
+        version !== 12 &&
         version !== CURRENT_DATA_FORMAT
       )
         throw new Error('DATA_VERSION_UNSUPPORTED');
@@ -263,6 +266,12 @@ export class WorkspaceRecords {
     const c = z
       .discriminatedUnion('kind', [
         z.strictObject({
+          kind: z.literal('verify'),
+          taskId: z.string(),
+          materialId: z.string().uuid(),
+          goalVersion: z.number().int().positive(),
+        }),
+        z.strictObject({
           kind: z.literal('select'),
           ...base,
           selection: materialSelectionSchema,
@@ -274,6 +283,20 @@ export class WorkspaceRecords {
         }),
       ])
       .parse(input);
+    if (c.kind === 'verify') {
+      const material = this.executions
+        .get(c.taskId)
+        ?.materials?.find(
+          (m) => m.id === c.materialId && m.goalVersion === c.goalVersion,
+        );
+      if (!material) return { valid: false };
+      try {
+        await this.materials.read(material);
+        return { valid: true };
+      } catch {
+        return { valid: false };
+      }
+    }
     const active = () => {
       const e = this.executions.get(c.taskId);
       if (

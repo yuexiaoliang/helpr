@@ -2,6 +2,8 @@ import {
   attachmentBinding,
   submissionReady,
   recordPublicationResult,
+  freezeRecovery,
+  validateHistoricalCheck,
 } from './publication';
 import {
   downloadCheckSchema,
@@ -52,6 +54,7 @@ const lifecycle = createMachine(
     states: {
       queued: {
         on: {
+          WAIT: { target: 'unknown', guard: 'automatic' },
           CLAIM: { target: 'checking', guard: 'automatic' },
           BLOCK: { target: 'paused', guard: 'automatic' },
         },
@@ -113,6 +116,12 @@ const commandSchema = z.discriminatedUnion('kind', [
     source: observation,
     anomalies: z.array(z.string().min(1).max(2000)).max(20),
     extraResults: z.array(z.url()).max(50),
+  }),
+  z.strictObject({
+    kind: z.literal('publication-recovery-result'),
+    taskId: z.string(),
+    expectedVersion: z.number().int().positive(),
+    check: publicationCheckSchema,
   }),
   z.strictObject({
     kind: z.literal('publication-result'),
@@ -187,6 +196,7 @@ const commandSchema = z.discriminatedUnion('kind', [
     effect: nextStepSchema.shape.effect,
     evidence: nextStepSchema.shape.evidence.optional(),
     download: downloadCheckSchema.optional(),
+    recovery: nextStepSchema.shape.recovery,
     publication: publicationSchema.optional(),
     approvalId: z.string().uuid().optional(),
     ...work,
@@ -205,6 +215,7 @@ const commandSchema = z.discriminatedUnion('kind', [
   }),
   z.strictObject({
     kind: z.literal('resolve'),
+    download: downloadCheckSchema.optional(),
     ...work,
     id: z.string(),
     source: observation,
@@ -770,12 +781,63 @@ export class ExecutionRecords {
           e.intent === 'automatic' &&
           e.runId === c.runId &&
           ['checking', 'running'].includes(e.phase);
-        if (c.kind === 'publication-result') {
-          const prior = e.publicationChecks?.find((r) => r.id === c.check.id);
+        if (
+          c.kind === 'publication-result' ||
+          c.kind === 'publication-recovery-result'
+        ) {
+          const prior =
+            e.publicationChecks?.find((r) => r.id === c.check.id) ??
+            e.publicationHistory?.find((r) => r.check.id === c.check.id)?.check;
           if (prior) {
             if (JSON.stringify(prior) !== JSON.stringify(c.check))
               throw Error('REQUEST_CONTENT_CONFLICT');
             return { created: false };
+          }
+          const action = e.actions.find((a) => a.id === c.check.actionId);
+          if (!action) throw Error('PUBLICATION_BINDING_MISMATCH');
+          validateHistoricalCheck(e, c.check, action);
+          const recovery = c.kind === 'publication-recovery-result';
+          const currentRecovery =
+            recovery &&
+            c.expectedVersion === e.version &&
+            e.intent === 'automatic' &&
+            e.phase === 'queued' &&
+            !e.pauseReason &&
+            !e.question &&
+            !e.restoreReview &&
+            action.goalVersion === e.goalVersion;
+          if (
+            recovery &&
+            (!c.check.recovery ||
+              (c.check.status === 'verified' &&
+                c.check.localMaterial !== 'verified'))
+          )
+            throw Error('EXECUTION_EVIDENCE_MISSING');
+          if (recovery ? !currentRecovery : !active) {
+            if ((e.publicationHistory?.length ?? 0) >= 60)
+              throw Error('EXECUTION_LIMIT');
+            (e.publicationHistory ??= []).push({
+              check: c.check,
+              reason: recovery ? 'changed-intent' : 'stale-worker',
+            });
+            this.save(task.id, e);
+            return { created: true, historical: true };
+          }
+          if (recovery) {
+            recordPublicationResult(task.id, e, c.check, action);
+            move(e, c.check.status === 'verified' ? 'REVIEW_COMPLETE' : 'WAIT');
+            delete e.recoveryPending;
+            delete e.recoverySource;
+            e.runId = null;
+            e.summary =
+              c.check.status === 'verified'
+                ? '已从提交前保存的位置核对发布结果和附件，无需再次提交。'
+                : c.check.failure === 'material'
+                  ? '本机固定素材缺失或损坏，网站核对证据已保留，暂停且不重复提交。'
+                  : '已只读核对原结果位置，证据仍不足；已有提交保持未知，不重复发送。';
+            if (c.check.status === 'verified') e.resource = null;
+            this.save(task.id, e);
+            return { created: true };
           }
         }
         if (c.kind === 'reported') {
@@ -1167,6 +1229,12 @@ export class ExecutionRecords {
                   submission: {
                     publication: c.publication!,
                     download: c.download,
+                    recovery: freezeRecovery(
+                      e,
+                      c.publication!,
+                      c.source,
+                      c.recovery,
+                    ),
                   },
                 }
               : {}),
@@ -1195,16 +1263,36 @@ export class ExecutionRecords {
             returned: false,
             dispatchState: 'not-dispatched',
           });
-          if (hasMaterial && effect === 'publication')
-            (e.materialProcessing ??= []).push({
-              materialId: p!.attachment!.materialId,
-              goalVersion: e.goalVersion,
-              targetUrl: p!.attachment!.targetUrl,
-              approvalId: p!.approvalId!,
-              actionId: c.id,
-              status: 'pending',
-              resultId: null,
-            });
+          if (hasMaterial && effect === 'publication') {
+            const work = (e.materialProcessing ??= []);
+            const pending = work.find(
+              (m) =>
+                m.goalVersion === e.goalVersion &&
+                m.materialId === p!.attachment!.materialId &&
+                m.targetUrl === p!.attachment!.targetUrl &&
+                m.approvalId === p!.approvalId &&
+                m.status === 'pending' &&
+                m.resultId === null &&
+                e.actions.some(
+                  (a) =>
+                    a.id === m.actionId &&
+                    a.status === 'cancelled' &&
+                    a.dispatchState === 'not-dispatched',
+                ),
+            );
+            // 尚未派发的旧预留留在动作历史；同一份待处理工作关联新的剩余动作。
+            if (pending) pending.actionId = c.id;
+            else
+              work.push({
+                materialId: p!.attachment!.materialId,
+                goalVersion: e.goalVersion,
+                targetUrl: p!.attachment!.targetUrl,
+                approvalId: p!.approvalId!,
+                actionId: c.id,
+                status: 'pending',
+                resultId: null,
+              });
+          }
           e.summary = c.summary;
           this.save(task.id, e);
           return { created: true };
@@ -1213,6 +1301,44 @@ export class ExecutionRecords {
           const a = e.actions.find((a) => a.id === c.id);
           if (!a) throw new Error('ACTION_NOT_OWNED');
           if (a.submission) throw Error('PUBLICATION_RESULT_REQUIRED');
+          if (
+            a.runId !== c.runId &&
+            e.materials?.some((m) => m.goalVersion === e.goalVersion)
+          ) {
+            const target = e.preparation?.find(
+              (f) => f.kind === 'target' && f.goalVersion === a.goalVersion,
+            );
+            if (!target || target.url !== c.source.url)
+              throw Error('EXECUTION_RESULT_UNKNOWN');
+            if (a.action.kind === 'upload') {
+              const materialId = a.action.materialId;
+              const m = e.materials.find((m) => m.id === materialId);
+              const upload = e.preparation?.find(
+                (f) =>
+                  f.kind === 'upload' &&
+                  f.actionId === a.id &&
+                  f.materialId === materialId,
+              );
+              if (
+                !m ||
+                !upload ||
+                !c.download ||
+                c.download.url !== upload.url ||
+                c.download.sha256 !== m.sha256 ||
+                c.download.bytes !== m.bytes ||
+                c.download.checkedAt < c.source.observedAt
+              )
+                throw Error('EXECUTION_RESULT_UNKNOWN');
+            } else if (
+              !e.preparation?.some(
+                (f) =>
+                  f.kind === 'draft' &&
+                  f.actionId === a.id &&
+                  f.url === target.url,
+              )
+            )
+              throw Error('EXECUTION_RESULT_UNKNOWN');
+          }
           if (!['dispatched', 'unknown'].includes(a.status))
             throw new Error('EXECUTION_RESULT_UNKNOWN');
           if (!c.evidence.every((v) => c.source.text.includes(v)))

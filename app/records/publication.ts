@@ -4,9 +4,92 @@ import type {
   Publication,
   DownloadCheck,
   PublicationCheck,
+  PublicationRecovery,
 } from '../shared/publication';
 import { samePublication } from '../shared/publication';
 import { learnWorkflow } from './workflow';
+
+export function freezeRecovery(
+  e: TaskExecution,
+  p: Publication,
+  source: PageObservation,
+  recovery?: PublicationRecovery,
+) {
+  if (!recovery) return undefined;
+  const attachment = p.attachment!,
+    target = e.preparation?.find(
+      (f) =>
+        f.goalVersion === e.goalVersion &&
+        f.kind === 'target' &&
+        f.url === attachment.targetUrl,
+    ),
+    upload = e.preparation?.find(
+      (f) =>
+        f.goalVersion === e.goalVersion &&
+        f.kind === 'upload' &&
+        f.url === attachment.url &&
+        f.materialId === attachment.materialId,
+    );
+  if (
+    !target ||
+    !upload ||
+    source.url !== target.url ||
+    recovery.targetUrl !== target.url ||
+    recovery.attachmentUrl !== upload.url ||
+    recovery.url === target.url ||
+    recovery.url === upload.url ||
+    new URL(recovery.url).origin !== new URL(target.url).origin ||
+    source.text.split('\n').filter((s) => s === '[link-url] ' + recovery.url)
+      .length !== 1 ||
+    !recovery.evidence.every((s) => source.text.includes(s))
+  )
+    throw Error('EXECUTION_EVIDENCE_MISSING');
+  return { ...recovery, targetFactId: target.id, uploadFactId: upload.id };
+}
+
+/** 迟到结果只检验它所属的不可变动作，不借用当前目标或新的内容确认。 */
+export function validateHistoricalCheck(
+  e: TaskExecution,
+  check: PublicationCheck,
+  action: ActionFact,
+) {
+  const p = action.submission?.publication,
+    m = e.materials?.find(
+      (m) => m.id === check.materialId && m.goalVersion === action.goalVersion,
+    );
+  if (
+    !p?.attachment ||
+    !m ||
+    action.status === 'cancelled' ||
+    action.dispatchState !== 'possible' ||
+    action.effect !== 'publication' ||
+    check.actionId !== action.id ||
+    check.goalVersion !== action.goalVersion ||
+    check.approvalId !== action.publicationApprovalId ||
+    check.materialId !== p.attachment.materialId ||
+    check.proposal.targetUrl !== p.attachment.targetUrl ||
+    check.proposal.attachmentUrl !== p.attachment.url ||
+    check.source.observedAt < action.source.observedAt ||
+    (check.recovery &&
+      (action.submission?.recovery?.rule !== check.recovery ||
+        action.submission.recovery.url !== check.proposal.url))
+  )
+    throw Error('PUBLICATION_BINDING_MISMATCH');
+  if (
+    check.status === 'verified' &&
+    (!Object.values(check.checks).every(Boolean) ||
+      check.failure !== 'none' ||
+      check.anomalies.length ||
+      check.extraResults.length ||
+      !check.pageSha256 ||
+      !check.download ||
+      check.download.sha256 !== m.sha256 ||
+      check.download.bytes !== m.bytes ||
+      check.download.url !== p.attachment.url ||
+      check.download.checkedAt < action.source.observedAt)
+  )
+    throw Error('EXECUTION_EVIDENCE_MISSING');
+}
 
 export function attachmentBinding(e: TaskExecution, p: Publication) {
   const a = p.attachment;
@@ -78,6 +161,7 @@ export function recordPublicationResult(
   check: PublicationCheck,
   action: ActionFact,
 ) {
+  validateHistoricalCheck(e, check, action);
   const p = e.publication!,
     material = attachmentBinding(e, p);
   if (

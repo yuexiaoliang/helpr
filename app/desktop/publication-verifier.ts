@@ -1,6 +1,6 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { parse, type DefaultTreeAdapterMap } from 'parse5';
-import type { TaskExecution } from '../shared/execution';
+import type { TaskExecution, ActionFact } from '../shared/execution';
 import { pageSourceSchema, type PageObservation } from '../shared/model';
 import { MATERIAL_LIMIT, type MaterialVersion } from '../shared/material';
 import { websiteURL } from '../shared/url-policy';
@@ -92,7 +92,28 @@ export async function verifyAttachment(
 
 function publicContent(html: string, url: string) {
   const texts: string[] = [],
-    links: string[] = [];
+    links: string[] = [],
+    canonical: string[] = [];
+  const document = parse(html);
+  const identities = (node: DefaultTreeAdapterMap['node']) => {
+    if ('tagName' in node && node.tagName === 'link') {
+      const attrs = Object.fromEntries(
+        node.attrs.map((a) => [a.name, a.value]),
+      );
+      if (
+        attrs.rel?.toLowerCase().split(/\s+/).includes('canonical') &&
+        attrs.href
+      ) {
+        try {
+          canonical.push(websiteURL(new URL(attrs.href, url).href));
+        } catch {
+          /* 非网页地址不作为身份。 */
+        }
+      }
+    }
+    if ('childNodes' in node) node.childNodes.forEach(identities);
+  };
+  identities(document);
   const visit = (node: DefaultTreeAdapterMap['node']) => {
     if ('tagName' in node) {
       const attrs = Object.fromEntries(
@@ -125,8 +146,120 @@ function publicContent(html: string, url: string) {
     if ('value' in node && node.nodeName === '#text') texts.push(node.value);
     if ('childNodes' in node) node.childNodes.forEach(visit);
   };
-  visit(parse(html));
-  return { text: texts.join(' '), links };
+  visit(document);
+  return { text: texts.join(' '), links, canonical };
+}
+
+/** 冷进程仅消费派发前冻结的关联；不访问搜索、测试收件或模型服务。 */
+export async function verifyRecoveredPublication(
+  e: TaskExecution,
+  action: ActionFact,
+  signal: AbortSignal,
+): Promise<PublicationCheck> {
+  const submission = action.submission!,
+    p = submission.publication,
+    a = p.attachment!,
+    rule = submission.recovery!,
+    material = e.materials!.find(
+      (m) => m.id === a.materialId && m.goalVersion === action.goalVersion,
+    )!;
+  const known =
+    e.observedAnomalies?.filter((o) => o.goalVersion === action.goalVersion) ??
+    [];
+  const check: PublicationCheck = {
+    id: randomUUID(),
+    actionId: action.id,
+    approvalId: action.publicationApprovalId!,
+    materialId: material.id,
+    goalVersion: action.goalVersion,
+    status: 'unknown',
+    proposal: {
+      url: rule.url,
+      targetUrl: rule.targetUrl,
+      attachmentUrl: rule.attachmentUrl,
+      publishedEvidence: ['核对规则：唯一公开地址、确认内容、栏目和附件字节'],
+    },
+    source: { ...action.source },
+    checkedAt: Date.now(),
+    checks: {
+      target: false,
+      published: false,
+      content: false,
+      destination: false,
+      attachment: false,
+      bytes: false,
+    },
+    failure: 'evidence',
+    coverage: 'public-page-and-attachment',
+    extraResults: known.flatMap((o) => o.extraResults).slice(0, 50),
+    anomalies: known.flatMap((o) => o.anomalies).slice(0, 20),
+    unobservedWrites: 'unknown',
+    screenshot: 'not-required',
+    recovery: rule.rule,
+  };
+  if (check.anomalies.length || check.extraResults.length) return check;
+  // 冷开已验证结构与引用；仍不把旧观察当作当前网站证据。
+  check.checks.target =
+    rule.targetUrl === a.targetUrl &&
+    rule.attachmentUrl === a.url &&
+    action.source.url === rule.targetUrl &&
+    !!action.observedUrls?.includes(rule.url) &&
+    new URL(rule.url).origin === new URL(rule.targetUrl).origin;
+  if (!check.checks.target) return check;
+  return readPublicResult(p, material, check, signal, true);
+}
+
+async function readPublicResult(
+  p: Publication,
+  material: MaterialVersion,
+  result: PublicationCheck,
+  signal: AbortSignal,
+  requireCanonical = false,
+) {
+  try {
+    const bytes = await read(result.proposal.url, 2 * 1024 * 1024, signal);
+    result.pageSha256 = digest(bytes);
+    const page = publicContent(bytes.toString('utf8'), result.proposal.url);
+    if (requireCanonical) {
+      result.source = {
+        ...result.source,
+        url: result.proposal.url,
+        fingerprint: result.pageSha256,
+        observedAt: Date.now(),
+        title: '独立公开结果核对',
+        truncated: false,
+      };
+      result.checks.published =
+        page.canonical.length === 1 &&
+        page.canonical[0] === result.proposal.url;
+    }
+    result.checks.content = has(page.text, p.content);
+    result.checks.destination = has(page.text, p.destination);
+    result.checks.attachment =
+      page.links.filter((link) => link === p.attachment!.url).length === 1;
+    if (
+      !result.checks.published ||
+      !result.checks.content ||
+      !result.checks.destination ||
+      !result.checks.attachment
+    ) {
+      result.failure = 'content';
+      return result;
+    }
+    result.download = await verifyAttachment(p, material, signal);
+    result.checks.bytes = true;
+    result.status = 'verified';
+    result.failure = 'none';
+  } catch (error) {
+    if (signal.aborted) throw error;
+    result.failure =
+      error instanceof Error && error.message === 'PUBLICATION_BYTES_MISMATCH'
+        ? 'bytes'
+        : 'network';
+  } finally {
+    result.checkedAt = Date.now();
+  }
+  return result;
 }
 
 export async function verifyPublication(
@@ -192,34 +325,5 @@ export async function verifyPublication(
     source.text.includes(v),
   );
   if (!result.checks.target || !result.checks.published) return result;
-  try {
-    const bytes = await read(proposal.url, 2 * 1024 * 1024, signal);
-    result.pageSha256 = digest(bytes);
-    const page = publicContent(bytes.toString('utf8'), proposal.url);
-    result.checks.content = has(page.text, p.content);
-    result.checks.destination = has(page.text, p.destination);
-    result.checks.attachment =
-      page.links.filter((link) => link === a.url).length === 1;
-    if (
-      !result.checks.content ||
-      !result.checks.destination ||
-      !result.checks.attachment
-    ) {
-      result.failure = 'content';
-      return result;
-    }
-    result.download = await verifyAttachment(p, material, signal);
-    result.checks.bytes = true;
-    result.status = 'verified';
-    result.failure = 'none';
-  } catch (error) {
-    if (signal.aborted) throw error;
-    result.failure =
-      error instanceof Error && error.message === 'PUBLICATION_BYTES_MISMATCH'
-        ? 'bytes'
-        : 'network';
-  } finally {
-    result.checkedAt = Date.now();
-  }
-  return result;
+  return readPublicResult(p, material, result, signal);
 }

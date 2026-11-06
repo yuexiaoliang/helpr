@@ -25,6 +25,7 @@ const { values: options } = parseArgs({
     'task-groups': flag,
     material: flag,
     publication: flag,
+    'publication-recovery': { type: 'string' },
     interactive: flag,
     fault: flag,
     'blocked-host': flag,
@@ -60,6 +61,11 @@ if (args.length === 0) {
   process.exit(0);
 }
 
+const recoveryPoint = options['publication-recovery'];
+if (recoveryPoint) {
+  assert(['reserved', 'result', 'committed'].includes(recoveryPoint), 'INVALID_RECOVERY_POINT');
+  options.publication = true;
+}
 const systemStorage = options['system-storage'] === true;
 assert(!(systemStorage && options.fixture), 'CONFLICTING_STORAGE_MODES');
 assert(!options['blocked-host'] || options.fault, 'FAULT_FLAG_REQUIRED');
@@ -220,7 +226,7 @@ if (options.material || options.publication) fs.writeFileSync(materialSource, ma
 const website = await fixture({
   participation: options.participation || options['task-groups'],
   review: options['participation-review'],
-  material: (options.material || options.publication) ? { source: materialSource, publication: options.publication } : undefined,
+  material: (options.material || options.publication) ? { source: materialSource, publication: options.publication, recovery: Boolean(recoveryPoint) } : undefined,
 });
 if (!systemStorage) {
   // 版本检查也留在回环地址。此 HTTP 夹具对 HTTPS 版本查询呈现离线状态。
@@ -321,7 +327,7 @@ function alive(pid) {
     return false;
   }
 }
-async function launch() {
+async function launch({ holdRecovery = false } = {}) {
   if (timedOut) throw Error('VALIDATION_TIME_LIMIT');
   assert.equal(remainingOwned().length, 0, 'PREVIOUS_PROCESSES_REMAIN');
   const number = spend('starts').used.starts;
@@ -340,6 +346,7 @@ async function launch() {
       env: {
         ...env,
         HELPR_VALIDATION_DATA: data,
+        ...(holdRecovery ? { HELPR_VALIDATION_HOLD_RECOVERY: '1' } : {}),
         ...(!systemStorage && { HELPR_FIXTURE_ORIGIN: website.base }),
       },
       stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
@@ -689,9 +696,66 @@ async function verifyPublication(client) {
     assert.equal(review.publication.attachment.targetUrl, website.base + '/page?task=A');
     assert.equal(website.receipts.filter(r => r.kind === 'published').length, 0);
   });
+  let companion;
+  const point = { reserved: 'publication-reserved', result: 'publication-result-before', committed: 'publication-result-after' }[recoveryPoint];
+  if (point) {
+    companion = (await client.request(command('create', { goal: `保留另一项停止任务 ${website.base}/page?task=B` }))).taskId;
+    await client.request(command('execution-intent', { taskId: companion, intent: 'stop' }));
+    await client.request(command('select', { taskId }));
+    await client.request({ kind: 'validation-barrier', control: { action: 'arm', point, taskId } });
+  }
   await client.request({ kind: 'participation-decision', taskId, questionId: review.question.id, operation: 'approve' });
+  let active = client;
+  if (point) {
+    const reached = await waitFor(async () => {
+      const status = await client.request({ kind: 'validation-barrier', control: { action: 'status' } });
+      return status.waits.some(w => w.key === point + ':' + taskId && w.reached) && status;
+    }, 50000);
+    const before = await client.request({ kind: 'snapshot' });
+    const calls = website.receipts.filter(r => r.kind === 'planning').length;
+    const writes = website.receipts.filter(r => ['upload', 'draft', 'published'].includes(r.kind));
+    const durable = JSON.parse(execFileSync('/usr/bin/python3', ['-c', 'import sqlite3,json,sys; c=sqlite3.connect("file:"+sys.argv[1]+"?mode=ro",uri=True,timeout=2); print(c.execute("SELECT body FROM task_executions WHERE task_id=?",(sys.argv[2],)).fetchone()[0]); c.close()', path.join(data, 'workspace.sqlite'), taskId], { encoding: 'utf8', timeout: 5000 }));
+    evidence.recovery = { point, reached, before, durable, callsBefore: calls, writesBefore: writes, powerLoss: false, fault: 'SIGKILL-controller' };
+    check('独立网站确认准确中断位置与实际写入次数', () => {
+      assert.equal(writes.filter(r => r.kind === 'published').length, recoveryPoint === 'reserved' ? 0 : 1);
+      const last = durable.actions.at(-1);
+      assert.equal(last.dispatchState, recoveryPoint === 'reserved' ? 'not-dispatched' : 'possible');
+      assert.equal(last.submission.recovery.rule, 'public-attachment-v1');
+      assert.equal(durable.publicationChecks?.length ?? 0, recoveryPoint === 'committed' ? 1 : 0);
+    });
+    remainingOwned();
+    spend('faults');
+    client.child.kill('SIGKILL');
+    await waitFor(() => remainingOwned().length === 0, 15000);
+    active = await launch({ holdRecovery: recoveryPoint === 'reserved' });
+    if (recoveryPoint === 'reserved') {
+      await waitFor(async () => (await active.request({ kind: 'validation-barrier', control: { action: 'status' } })).waits.some(w => w.key === 'recovery:*' && w.reached));
+      // LocalFixture key 仅进程内有效；重新配置虚构值，不冒充钥匙串延续。
+      const state = await active.request({ kind: 'snapshot' });
+      await active.request(command('model-save', { protocol: 'chat-completions', expectedVersion: state.modelSettings.version, endpoint: website.base + '/v1', model: 'fixture', apiKey: 'local-fixture-not-a-secret' }));
+      let coldFingerprint, coldAttempts = 0;
+      evidence.recovery.coldReadiness = [];
+      await waitFor(async () => {
+        if (++coldAttempts > 8) throw Error('COLD_OBSERVATION_ATTEMPTS_EXHAUSTED');
+        let dom;
+        try { dom = await active.request({ kind: 'observe', taskId, method: 'DOMSnapshot.captureSnapshot' }); }
+        catch (error) {
+          evidence.recovery.coldReadiness.push({ at: Date.now(), error: error.message });
+          if (['PAGE_NOT_AVAILABLE', 'OBSERVATION_NOT_AUTHORIZED', 'STALE_OBSERVATION'].includes(error.message)) { coldFingerprint = undefined; return false; }
+          throw error;
+        }
+        const fingerprint = createHash('sha256').update(JSON.stringify(dom.strings)).digest('hex');
+        const ready = dom.documents.length >= 2 && dom.strings.includes('草稿已保存');
+        evidence.recovery.coldReadiness.push({ at: Date.now(), documents: dom.documents.length, fingerprint, ready });
+        const stable = ready && fingerprint === coldFingerprint;
+        coldFingerprint = ready ? fingerprint : undefined;
+        return stable;
+      }, 15000);
+      await active.request({ kind: 'validation-barrier', control: { action: 'release', point: 'recovery', taskId: '*' } });
+    }
+  }
   const complete = await waitFor(async () => {
-    const e = await get(client);
+    const e = await get(active);
     if (e?.phase === 'complete') return e;
     if (e && ['unknown', 'failed', 'paused'].includes(e.phase)) throw Error(e.summary);
     return false;
@@ -711,6 +775,18 @@ async function verifyPublication(client) {
     assert.equal(complete.workflowAdoption.version, complete.learnedWorkflows[0].version);
   });
   evidence.publication = { taskId, sha256, execution: complete, modelCalls: website.receipts.filter(r => r.kind === 'planning').length, realModelCalls: 0, remoteWrites: 0 };
+  if (point) {
+    const final = await active.request({ kind: 'snapshot' });
+    evidence.recovery.final = final;
+    check('恢复后只完成原目标，另一任务的停止保持且没有重复上传或发布', () => {
+      assert.equal(final.tasks.find(t => t.id === companion).execution.intent, 'stopped');
+      assert.equal(final.tasks.find(t => t.id === companion).execution.phase, 'stopped');
+      if (recoveryPoint === 'result') assert.equal(complete.publicationChecks[0].recovery, 'public-attachment-v1');
+      if (recoveryPoint !== 'reserved') assert.equal(website.receipts.filter(r => r.kind === 'planning').length, evidence.recovery.callsBefore);
+    });
+    await active.quit();
+    return;
+  }
   await client.quit();
   const reopened = await launch();
   await waitFor(async () => (await reopened.request({ kind: 'snapshot' })).tasks.find(t => t.id === taskId)?.phase === 'manual');

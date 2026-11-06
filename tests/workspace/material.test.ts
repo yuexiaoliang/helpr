@@ -730,3 +730,120 @@ test('冷重开后页面未就绪时继续失败，仍可可靠退出且不派�
   expect(sent).not.toHaveBeenCalled();
   await service.stopAll();
 });
+
+test.each(['upload', 'draft'] as const)(
+  '中断后的 %s 不能凭同名页面消除未知，必须有对应准备事实',
+  async (effect) => {
+    const f = await fixture();
+    f.records.execution({ kind: 'claim', taskId: f.taskId, runId: f.runId });
+    await f.records.material({
+      kind: 'select',
+      taskId: f.taskId,
+      runId: f.runId,
+      selection: f.selection,
+    });
+    const material = f.records.snapshot().tasks[0]!.execution!.materials![0]!;
+    f.records.execution({
+      kind: 'reserve',
+      taskId: f.taskId,
+      runId: f.runId,
+      id: 'interrupted',
+      effect,
+      summary: '准备附件',
+      source: f.observation,
+      binding: { targetId: 'owned-page', generation: 1 },
+      action:
+        effect === 'upload'
+          ? {
+              kind: 'upload',
+              materialId: material.id,
+              target: { fileIndex: 0 },
+            }
+          : { kind: 'click', target: { role: 'button', name: '保存草稿' } },
+    });
+    f.records.execution({
+      kind: 'dispatch',
+      taskId: f.taskId,
+      runId: f.runId,
+      id: 'interrupted',
+    });
+    f.records.execution({
+      kind: 'intent',
+      taskId: f.taskId,
+      requestId: 'continue-after-interruption',
+      intent: 'continue',
+    });
+    f.records.execution({ kind: 'claim', taskId: f.taskId, runId: 'new' });
+    const source = {
+      ...f.observation,
+      text:
+        f.observation.text +
+        '\n准备已保存\n[link-url] https://example.com/new-upload',
+    };
+    const resolve = {
+      kind: 'resolve',
+      taskId: f.taskId,
+      runId: 'new',
+      id: 'interrupted',
+      source,
+      evidence: ['准备已保存'],
+    };
+    expect(() => f.records.execution(resolve)).toThrow(
+      'EXECUTION_RESULT_UNKNOWN',
+    );
+    f.records.execution({
+      kind: 'preparation-observed',
+      taskId: f.taskId,
+      runId: 'new',
+      source,
+      facts: [
+        {
+          kind: 'target',
+          url: source.url,
+          materialId: null,
+          evidence: ['编辑'],
+        },
+        {
+          kind: effect,
+          url:
+            effect === 'upload' ? 'https://example.com/new-upload' : source.url,
+          materialId: effect === 'upload' ? material.id : null,
+          evidence: ['准备已保存'],
+        },
+      ],
+    });
+    if (effect === 'upload') {
+      expect(() => f.records.execution(resolve)).toThrow(
+        'EXECUTION_RESULT_UNKNOWN',
+      );
+      expect(() =>
+        f.records.execution({
+          ...resolve,
+          download: {
+            url: 'https://example.com/new-upload',
+            sha256: '0'.repeat(64),
+            bytes: material.bytes,
+            checkedAt: Date.now(),
+          },
+        }),
+      ).toThrow('EXECUTION_RESULT_UNKNOWN');
+    }
+    f.records.execution({
+      ...resolve,
+      ...(effect === 'upload'
+        ? {
+            download: {
+              url: 'https://example.com/new-upload',
+              sha256: material.sha256,
+              bytes: material.bytes,
+              checkedAt: Date.now(),
+            },
+          }
+        : {}),
+    });
+    expect(
+      f.records.snapshot().tasks[0]!.execution!.actions.at(-1)!.status,
+    ).toBe('confirmed');
+    expect(f.records.snapshot().tasks[0]!.execution!.result).toBeUndefined();
+  },
+);

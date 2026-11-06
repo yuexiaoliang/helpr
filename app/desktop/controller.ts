@@ -422,7 +422,26 @@ export async function startController(
             .safeParse(command);
           if (delayed.success)
             await barriers.pass('records-before', delayed.data.taskId);
+          const publication = z
+            .object({
+              kind: z.string(),
+              taskId: z.string(),
+              effect: z.string().optional(),
+            })
+            .parse(command);
+          if (publication.kind === 'publication-result')
+            await barriers.pass(
+              'publication-result-before',
+              publication.taskId,
+            );
           const result = await saveExecution(command);
+          if (
+            publication.kind === 'reserve' &&
+            publication.effect === 'publication'
+          )
+            await barriers.pass('publication-reserved', publication.taskId);
+          if (publication.kind === 'publication-result')
+            await barriers.pass('publication-result-after', publication.taskId);
           if (delayed.success)
             await barriers.pass('records-after', delayed.data.taskId);
           return result;

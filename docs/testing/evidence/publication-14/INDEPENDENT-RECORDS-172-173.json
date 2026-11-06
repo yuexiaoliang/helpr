@@ -1,0 +1,843 @@
+{
+  "profile": "/private/tmp/helpr-workspace-validation-501/run-6BB1yq",
+  "dataFormat": 13,
+  "executions": [
+    {
+      "taskId": "dfd2c6c4-0c52-491e-8e0c-eadca710e52c",
+      "execution": {
+        "materialProcessing": [
+          {
+            "materialId": "affffc93-63ab-4e45-9a24-3cb234c1ad13",
+            "goalVersion": 1,
+            "targetUrl": "http://127.0.0.1:56493/page?task=A",
+            "approvalId": "ac54425f-7a03-4188-81e2-bbb54cdc74b0",
+            "actionId": "c563fdb0-d202-43f2-8b5f-fd8e5717d04c",
+            "status": "complete",
+            "resultId": "75a647e9-f137-47a9-9c43-93b9c551e53f"
+          }
+        ],
+        "materials": [
+          {
+            "id": "affffc93-63ab-4e45-9a24-3cb234c1ad13",
+            "goalVersion": 1,
+            "sha256": "7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334",
+            "bytes": 8,
+            "name": "原始素材.bin",
+            "source": "/private/tmp/helpr-workspace-validation-501/run-6BB1yq/原始素材.bin",
+            "selectedAt": 1793978228315,
+            "selection": {
+              "scope": "/private/tmp/helpr-workspace-validation-501/run-6BB1yq/原始素材.bin",
+              "rule": "exact",
+              "name": null,
+              "extension": null,
+              "basis": "使用“/private/tmp/helpr-workspace-validation-501/run-6BB1yq/原始素材.bin”"
+            }
+          }
+        ],
+        "preparation": [
+          {
+            "kind": "target",
+            "url": "http://127.0.0.1:56493/page?task=A",
+            "materialId": null,
+            "evidence": [
+              "素材准备"
+            ],
+            "id": "b220b7b2-16cb-4a87-b29c-3ea4e2b4a53a",
+            "goalVersion": 1,
+            "actionId": "c30c6551-93f9-4a88-bbe5-1429644c5cf2",
+            "source": {
+              "url": "http://127.0.0.1:56493/page?task=A",
+              "title": "素材准备",
+              "fingerprint": "0d1d3201f85b50c846a81310d8d793191c33f51f9b7d66a2e6581b20bacae173",
+              "generation": 2,
+              "observedAt": 1793978228725,
+              "truncated": false
+            },
+            "verification": "page-observed"
+          },
+          {
+            "kind": "upload",
+            "url": "http://127.0.0.1:56493/files/7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334",
+            "materialId": "affffc93-63ab-4e45-9a24-3cb234c1ad13",
+            "evidence": [
+              "附件已上传"
+            ],
+            "id": "116910f4-1379-463d-b6af-419c48daa82e",
+            "goalVersion": 1,
+            "actionId": "c30c6551-93f9-4a88-bbe5-1429644c5cf2",
+            "source": {
+              "url": "http://127.0.0.1:56493/page?task=A",
+              "title": "素材准备",
+              "fingerprint": "0d1d3201f85b50c846a81310d8d793191c33f51f9b7d66a2e6581b20bacae173",
+              "generation": 2,
+              "observedAt": 1793978228725,
+              "truncated": false
+            },
+            "verification": "page-observed"
+          },
+          {
+            "kind": "draft",
+            "url": "http://127.0.0.1:56493/page?task=A",
+            "materialId": null,
+            "evidence": [
+              "草稿已保存"
+            ],
+            "id": "c6373f07-0f71-48a0-b6fb-a465fff16927",
+            "goalVersion": 1,
+            "actionId": "09d86c39-ec54-4d21-9506-3aa6b0f1417a",
+            "source": {
+              "url": "http://127.0.0.1:56493/page?task=A",
+              "title": "素材准备",
+              "fingerprint": "223347e1484787cfff858a1ae49a62440225100a9b506e6661157205cd171791",
+              "generation": 2,
+              "observedAt": 1793978229178,
+              "truncated": false
+            },
+            "verification": "page-observed"
+          }
+        ],
+        "publication": {
+          "destination": "公告",
+          "content": "附件日报",
+          "attachment": {
+            "materialId": "affffc93-63ab-4e45-9a24-3cb234c1ad13",
+            "targetUrl": "http://127.0.0.1:56493/page?task=A",
+            "url": "http://127.0.0.1:56493/files/7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334"
+          },
+          "revision": 1,
+          "approvalId": "ac54425f-7a03-4188-81e2-bbb54cdc74b0",
+          "origin": "http://127.0.0.1:56493"
+        },
+        "modelVersion": 1,
+        "intent": "automatic",
+        "phase": "complete",
+        "version": 5,
+        "intentId": "a0932e7b-3369-4001-9d49-ce3361889dc8",
+        "goalVersion": 1,
+        "goal": "使用“/private/tmp/helpr-workspace-validation-501/run-6BB1yq/原始素材.bin”在 http://127.0.0.1:56493/page?task=A 上传附件并发布到公告。",
+        "runId": null,
+        "resource": null,
+        "summary": "已核对发布结果和附件内容。已保存本次学到的做法；新输入仍需验证。",
+        "actions": [
+          {
+            "id": "c30c6551-93f9-4a88-bbe5-1429644c5cf2",
+            "runId": "bf2287cd-16ec-4dc6-9f95-2f377b368e8d",
+            "goalVersion": 1,
+            "status": "confirmed",
+            "summary": "准备测试草稿",
+            "action": {
+              "kind": "upload",
+              "materialId": "affffc93-63ab-4e45-9a24-3cb234c1ad13",
+              "target": {
+                "fileIndex": 0,
+                "frameUrl": "http://127.0.0.1:56493/form"
+              }
+            },
+            "effect": "upload",
+            "preconditions": [
+              "素材准备"
+            ],
+            "source": {
+              "url": "http://127.0.0.1:56493/page?task=A",
+              "title": "素材准备",
+              "fingerprint": "9d4803b923f2f8a4804cb6ad5cabb5acf7b6c252174797dcaecf56c202f83632",
+              "generation": 2,
+              "observedAt": 1793978228333,
+              "truncated": false
+            },
+            "observedUrls": [
+              "http://127.0.0.1:56493/page?task=A",
+              "http://127.0.0.1:56493/result/1"
+            ],
+            "resultSource": {
+              "url": "http://127.0.0.1:56493/page?task=A",
+              "title": "素材准备",
+              "fingerprint": "0d1d3201f85b50c846a81310d8d793191c33f51f9b7d66a2e6581b20bacae173",
+              "generation": 2,
+              "observedAt": 1793978228725,
+              "truncated": false
+            },
+            "binding": {
+              "targetId": "CA70F3910638417C1D2D5E96861E452E",
+              "generation": 2
+            },
+            "evidence": [
+              "附件已上传"
+            ],
+            "returned": true,
+            "dispatchState": "possible"
+          },
+          {
+            "id": "09d86c39-ec54-4d21-9506-3aa6b0f1417a",
+            "runId": "bf2287cd-16ec-4dc6-9f95-2f377b368e8d",
+            "goalVersion": 1,
+            "status": "confirmed",
+            "summary": "准备测试草稿",
+            "action": {
+              "kind": "click",
+              "target": {
+                "role": "button",
+                "name": "保存草稿",
+                "exact": true,
+                "frameUrl": "http://127.0.0.1:56493/form"
+              }
+            },
+            "effect": "draft",
+            "preconditions": [
+              "素材准备"
+            ],
+            "source": {
+              "url": "http://127.0.0.1:56493/page?task=A",
+              "title": "素材准备",
+              "fingerprint": "0d1d3201f85b50c846a81310d8d793191c33f51f9b7d66a2e6581b20bacae173",
+              "generation": 2,
+              "observedAt": 1793978228725,
+              "truncated": false
+            },
+            "observedUrls": [
+              "http://127.0.0.1:56493/page?task=A",
+              "http://127.0.0.1:56493/result/1",
+              "http://127.0.0.1:56493/files/7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334"
+            ],
+            "resultSource": {
+              "url": "http://127.0.0.1:56493/page?task=A",
+              "title": "素材准备",
+              "fingerprint": "223347e1484787cfff858a1ae49a62440225100a9b506e6661157205cd171791",
+              "generation": 2,
+              "observedAt": 1793978229178,
+              "truncated": false
+            },
+            "binding": {
+              "targetId": "CA70F3910638417C1D2D5E96861E452E",
+              "generation": 2
+            },
+            "evidence": [
+              "草稿已保存"
+            ],
+            "returned": true,
+            "dispatchState": "possible"
+          },
+          {
+            "id": "2239f0f7-65c9-41b0-abfc-b3f0c6b06d84",
+            "runId": "bffca470-72f1-4efb-af3b-282013484c91",
+            "goalVersion": 1,
+            "status": "confirmed",
+            "summary": "准备测试草稿",
+            "action": {
+              "kind": "fill",
+              "target": {
+                "role": "textbox",
+                "name": "发布标题",
+                "exact": true
+              },
+              "value": "附件日报"
+            },
+            "effect": "interaction",
+            "preconditions": [
+              "素材准备"
+            ],
+            "source": {
+              "url": "http://127.0.0.1:56493/page?task=A",
+              "title": "素材准备",
+              "fingerprint": "223347e1484787cfff858a1ae49a62440225100a9b506e6661157205cd171791",
+              "generation": 2,
+              "observedAt": 1793978229455,
+              "truncated": false
+            },
+            "observedUrls": [
+              "http://127.0.0.1:56493/page?task=A",
+              "http://127.0.0.1:56493/result/1",
+              "http://127.0.0.1:56493/files/7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334"
+            ],
+            "resultSource": {
+              "url": "http://127.0.0.1:56493/page?task=A",
+              "title": "素材准备",
+              "fingerprint": "9e9924ae839566f33b0ed763a031605c88aff2c935d5da7985200f57fd65a08c",
+              "generation": 2,
+              "observedAt": 1793978229878,
+              "truncated": false
+            },
+            "binding": {
+              "targetId": "CA70F3910638417C1D2D5E96861E452E",
+              "generation": 2
+            },
+            "evidence": [
+              "草稿已保存"
+            ],
+            "returned": true,
+            "dispatchState": "possible"
+          },
+          {
+            "id": "09576e24-d397-49a9-bf62-cc24433b2a18",
+            "runId": "bffca470-72f1-4efb-af3b-282013484c91",
+            "goalVersion": 1,
+            "status": "cancelled",
+            "summary": "准备测试草稿",
+            "action": {
+              "kind": "click",
+              "target": {
+                "role": "button",
+                "name": "发布附件",
+                "exact": true
+              }
+            },
+            "effect": "publication",
+            "preconditions": [
+              "素材准备"
+            ],
+            "submission": {
+              "publication": {
+                "destination": "公告",
+                "content": "附件日报",
+                "attachment": {
+                  "materialId": "affffc93-63ab-4e45-9a24-3cb234c1ad13",
+                  "targetUrl": "http://127.0.0.1:56493/page?task=A",
+                  "url": "http://127.0.0.1:56493/files/7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334"
+                }
+              },
+              "download": {
+                "url": "http://127.0.0.1:56493/files/7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334",
+                "sha256": "7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334",
+                "bytes": 8,
+                "checkedAt": 1793978229969
+              },
+              "recovery": {
+                "rule": "public-attachment-v1",
+                "url": "http://127.0.0.1:56493/result/1",
+                "targetUrl": "http://127.0.0.1:56493/page?task=A",
+                "attachmentUrl": "http://127.0.0.1:56493/files/7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334",
+                "evidence": [
+                  "永久链接"
+                ],
+                "targetFactId": "b220b7b2-16cb-4a87-b29c-3ea4e2b4a53a",
+                "uploadFactId": "116910f4-1379-463d-b6af-419c48daa82e"
+              }
+            },
+            "publicationApprovalId": "ac54425f-7a03-4188-81e2-bbb54cdc74b0",
+            "source": {
+              "url": "http://127.0.0.1:56493/page?task=A",
+              "title": "素材准备",
+              "fingerprint": "9e9924ae839566f33b0ed763a031605c88aff2c935d5da7985200f57fd65a08c",
+              "generation": 2,
+              "observedAt": 1793978229972,
+              "truncated": false
+            },
+            "observedUrls": [
+              "http://127.0.0.1:56493/page?task=A",
+              "http://127.0.0.1:56493/result/1",
+              "http://127.0.0.1:56493/files/7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334"
+            ],
+            "binding": {
+              "targetId": "CA70F3910638417C1D2D5E96861E452E",
+              "generation": 2
+            },
+            "evidence": [],
+            "returned": false,
+            "dispatchState": "not-dispatched"
+          },
+          {
+            "id": "bfeec936-8af6-48f0-b9f2-31917d33f105",
+            "runId": "f300015b-cf8a-4dfb-94c5-8c72816a15c2",
+            "goalVersion": 1,
+            "status": "confirmed",
+            "summary": "准备测试草稿",
+            "action": {
+              "kind": "fill",
+              "target": {
+                "role": "textbox",
+                "name": "发布标题",
+                "exact": true
+              },
+              "value": "附件日报"
+            },
+            "effect": "interaction",
+            "preconditions": [
+              "素材准备"
+            ],
+            "source": {
+              "url": "http://127.0.0.1:56493/page?task=A",
+              "title": "素材准备",
+              "fingerprint": "1e5c6e7abe16cc491c176da28992f2390aafe485ecf52aab5caeb30873b3734a",
+              "generation": 2,
+              "observedAt": 1793978231965,
+              "truncated": false
+            },
+            "observedUrls": [
+              "http://127.0.0.1:56493/page?task=A",
+              "http://127.0.0.1:56493/result/1",
+              "http://127.0.0.1:56493/files/7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334"
+            ],
+            "resultSource": {
+              "url": "http://127.0.0.1:56493/page?task=A",
+              "title": "素材准备",
+              "fingerprint": "994e4276a92624ae342fbbe7cdfd5a87081462b6cb1e0a2dd0be8f7e28b80df6",
+              "generation": 2,
+              "observedAt": 1793978232421,
+              "truncated": false
+            },
+            "binding": {
+              "targetId": "D1F8615D475009F25269B13823E2931F",
+              "generation": 2
+            },
+            "evidence": [
+              "草稿已保存"
+            ],
+            "returned": true,
+            "dispatchState": "possible"
+          },
+          {
+            "id": "c563fdb0-d202-43f2-8b5f-fd8e5717d04c",
+            "runId": "f300015b-cf8a-4dfb-94c5-8c72816a15c2",
+            "goalVersion": 1,
+            "status": "confirmed",
+            "summary": "准备测试草稿",
+            "action": {
+              "kind": "click",
+              "target": {
+                "role": "button",
+                "name": "发布附件",
+                "exact": true
+              }
+            },
+            "effect": "publication",
+            "preconditions": [
+              "素材准备"
+            ],
+            "submission": {
+              "publication": {
+                "destination": "公告",
+                "content": "附件日报",
+                "attachment": {
+                  "materialId": "affffc93-63ab-4e45-9a24-3cb234c1ad13",
+                  "targetUrl": "http://127.0.0.1:56493/page?task=A",
+                  "url": "http://127.0.0.1:56493/files/7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334"
+                }
+              },
+              "download": {
+                "url": "http://127.0.0.1:56493/files/7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334",
+                "sha256": "7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334",
+                "bytes": 8,
+                "checkedAt": 1793978232530
+              },
+              "recovery": {
+                "rule": "public-attachment-v1",
+                "url": "http://127.0.0.1:56493/result/1",
+                "targetUrl": "http://127.0.0.1:56493/page?task=A",
+                "attachmentUrl": "http://127.0.0.1:56493/files/7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334",
+                "evidence": [
+                  "永久链接"
+                ],
+                "targetFactId": "b220b7b2-16cb-4a87-b29c-3ea4e2b4a53a",
+                "uploadFactId": "116910f4-1379-463d-b6af-419c48daa82e"
+              }
+            },
+            "publicationApprovalId": "ac54425f-7a03-4188-81e2-bbb54cdc74b0",
+            "source": {
+              "url": "http://127.0.0.1:56493/page?task=A",
+              "title": "素材准备",
+              "fingerprint": "994e4276a92624ae342fbbe7cdfd5a87081462b6cb1e0a2dd0be8f7e28b80df6",
+              "generation": 2,
+              "observedAt": 1793978232533,
+              "truncated": false
+            },
+            "observedUrls": [
+              "http://127.0.0.1:56493/page?task=A",
+              "http://127.0.0.1:56493/result/1",
+              "http://127.0.0.1:56493/files/7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334"
+            ],
+            "binding": {
+              "targetId": "D1F8615D475009F25269B13823E2931F",
+              "generation": 2
+            },
+            "evidence": [
+              "已发布到公告"
+            ],
+            "returned": true,
+            "dispatchState": "possible",
+            "resultSource": {
+              "url": "http://127.0.0.1:56493/page?task=A",
+              "title": "素材准备",
+              "fingerprint": "778daa412d419c358fe0356ea726c8a1e04673c9966da9501b53e646ae542709",
+              "generation": 2,
+              "observedAt": 1793978232879,
+              "truncated": false
+            }
+          }
+        ],
+        "publicationChecks": [
+          {
+            "id": "75a647e9-f137-47a9-9c43-93b9c551e53f",
+            "actionId": "c563fdb0-d202-43f2-8b5f-fd8e5717d04c",
+            "approvalId": "ac54425f-7a03-4188-81e2-bbb54cdc74b0",
+            "materialId": "affffc93-63ab-4e45-9a24-3cb234c1ad13",
+            "goalVersion": 1,
+            "status": "verified",
+            "proposal": {
+              "url": "http://127.0.0.1:56493/result/1",
+              "targetUrl": "http://127.0.0.1:56493/page?task=A",
+              "attachmentUrl": "http://127.0.0.1:56493/files/7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334",
+              "publishedEvidence": [
+                "已发布到公告"
+              ]
+            },
+            "source": {
+              "url": "http://127.0.0.1:56493/page?task=A",
+              "title": "素材准备",
+              "fingerprint": "778daa412d419c358fe0356ea726c8a1e04673c9966da9501b53e646ae542709",
+              "generation": 2,
+              "observedAt": 1793978232879,
+              "truncated": false
+            },
+            "checkedAt": 1793978232970,
+            "download": {
+              "url": "http://127.0.0.1:56493/files/7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334",
+              "sha256": "7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334",
+              "bytes": 8,
+              "checkedAt": 1793978232970
+            },
+            "pageSha256": "086077c68ef8dc0c2253de71829b211945fd314be65e60a3f003233ea1df28e8",
+            "checks": {
+              "target": true,
+              "published": true,
+              "content": true,
+              "destination": true,
+              "attachment": true,
+              "bytes": true
+            },
+            "failure": "none",
+            "coverage": "public-page-and-attachment",
+            "extraResults": [],
+            "anomalies": [],
+            "unobservedWrites": "unknown",
+            "screenshot": "not-required"
+          }
+        ],
+        "result": {
+          "goalVersion": 1,
+          "source": {
+            "url": "http://127.0.0.1:56493/page?task=A",
+            "title": "素材准备",
+            "fingerprint": "778daa412d419c358fe0356ea726c8a1e04673c9966da9501b53e646ae542709",
+            "generation": 2,
+            "observedAt": 1793978232879,
+            "truncated": false
+          },
+          "evidence": [
+            "已独立核对公开内容、目标栏目和附件字节：http://127.0.0.1:56493/result/1",
+            "SHA-256：7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334"
+          ]
+        },
+        "learnedWorkflows": [
+          {
+            "format": 1,
+            "version": "ccab80b7-1379-4b8e-9b56-0a87dc3acd7a",
+            "parentVersion": null,
+            "taskId": "dfd2c6c4-0c52-491e-8e0c-eadca710e52c",
+            "goalVersion": 1,
+            "goal": "使用“/private/tmp/helpr-workspace-validation-501/run-6BB1yq/原始素材.bin”在 http://127.0.0.1:56493/page?task=A 上传附件并发布到公告。",
+            "createdAt": 1793978232970,
+            "applicability": {
+              "origin": "http://127.0.0.1:56493",
+              "entryUrl": "http://127.0.0.1:56493/page?task=A",
+              "mode": "attachment-publication",
+              "validated": "same-inputs-only",
+              "newInputs": "requires-validation"
+            },
+            "parameters": [
+              {
+                "name": "materialId",
+                "value": "affffc93-63ab-4e45-9a24-3cb234c1ad13",
+                "source": "material-version",
+                "sourceId": "affffc93-63ab-4e45-9a24-3cb234c1ad13"
+              },
+              {
+                "name": "content",
+                "value": "附件日报",
+                "source": "approved-publication",
+                "sourceId": "ac54425f-7a03-4188-81e2-bbb54cdc74b0"
+              },
+              {
+                "name": "destination",
+                "value": "公告",
+                "source": "approved-publication",
+                "sourceId": "ac54425f-7a03-4188-81e2-bbb54cdc74b0"
+              },
+              {
+                "name": "targetUrl",
+                "value": "http://127.0.0.1:56493/page?task=A",
+                "source": "preparation",
+                "sourceId": "b220b7b2-16cb-4a87-b29c-3ea4e2b4a53a"
+              },
+              {
+                "name": "attachmentUrl",
+                "value": "http://127.0.0.1:56493/files/7ffa57e7fe27ecf1e1602c2e1f8d1118bca699392a6c4fdcb35828d121319334",
+                "source": "preparation",
+                "sourceId": "116910f4-1379-463d-b6af-419c48daa82e"
+              }
+            ],
+            "steps": [
+              {
+                "actionId": "c30c6551-93f9-4a88-bbe5-1429644c5cf2",
+                "runId": "bf2287cd-16ec-4dc6-9f95-2f377b368e8d",
+                "action": {
+                  "kind": "upload",
+                  "materialId": "affffc93-63ab-4e45-9a24-3cb234c1ad13",
+                  "target": {
+                    "fileIndex": 0,
+                    "frameUrl": "http://127.0.0.1:56493/form"
+                  }
+                },
+                "effect": "upload",
+                "bindings": [
+                  {
+                    "field": "materialId",
+                    "parameter": "materialId"
+                  }
+                ],
+                "before": {
+                  "source": {
+                    "url": "http://127.0.0.1:56493/page?task=A",
+                    "title": "素材准备",
+                    "fingerprint": "9d4803b923f2f8a4804cb6ad5cabb5acf7b6c252174797dcaecf56c202f83632",
+                    "generation": 2,
+                    "observedAt": 1793978228333,
+                    "truncated": false
+                  },
+                  "evidence": [
+                    "素材准备"
+                  ]
+                },
+                "after": {
+                  "source": {
+                    "url": "http://127.0.0.1:56493/page?task=A",
+                    "title": "素材准备",
+                    "fingerprint": "0d1d3201f85b50c846a81310d8d793191c33f51f9b7d66a2e6581b20bacae173",
+                    "generation": 2,
+                    "observedAt": 1793978228725,
+                    "truncated": false
+                  },
+                  "evidence": [
+                    "附件已上传"
+                  ]
+                },
+                "returned": true
+              },
+              {
+                "actionId": "09d86c39-ec54-4d21-9506-3aa6b0f1417a",
+                "runId": "bf2287cd-16ec-4dc6-9f95-2f377b368e8d",
+                "action": {
+                  "kind": "click",
+                  "target": {
+                    "role": "button",
+                    "name": "保存草稿",
+                    "exact": true,
+                    "frameUrl": "http://127.0.0.1:56493/form"
+                  }
+                },
+                "effect": "draft",
+                "bindings": [],
+                "before": {
+                  "source": {
+                    "url": "http://127.0.0.1:56493/page?task=A",
+                    "title": "素材准备",
+                    "fingerprint": "0d1d3201f85b50c846a81310d8d793191c33f51f9b7d66a2e6581b20bacae173",
+                    "generation": 2,
+                    "observedAt": 1793978228725,
+                    "truncated": false
+                  },
+                  "evidence": [
+                    "素材准备"
+                  ]
+                },
+                "after": {
+                  "source": {
+                    "url": "http://127.0.0.1:56493/page?task=A",
+                    "title": "素材准备",
+                    "fingerprint": "223347e1484787cfff858a1ae49a62440225100a9b506e6661157205cd171791",
+                    "generation": 2,
+                    "observedAt": 1793978229178,
+                    "truncated": false
+                  },
+                  "evidence": [
+                    "草稿已保存"
+                  ]
+                },
+                "returned": true
+              },
+              {
+                "actionId": "2239f0f7-65c9-41b0-abfc-b3f0c6b06d84",
+                "runId": "bffca470-72f1-4efb-af3b-282013484c91",
+                "action": {
+                  "kind": "fill",
+                  "target": {
+                    "role": "textbox",
+                    "name": "发布标题",
+                    "exact": true
+                  },
+                  "value": "附件日报"
+                },
+                "effect": "interaction",
+                "bindings": [
+                  {
+                    "field": "value",
+                    "parameter": "content"
+                  }
+                ],
+                "before": {
+                  "source": {
+                    "url": "http://127.0.0.1:56493/page?task=A",
+                    "title": "素材准备",
+                    "fingerprint": "223347e1484787cfff858a1ae49a62440225100a9b506e6661157205cd171791",
+                    "generation": 2,
+                    "observedAt": 1793978229455,
+                    "truncated": false
+                  },
+                  "evidence": [
+                    "素材准备"
+                  ]
+                },
+                "after": {
+                  "source": {
+                    "url": "http://127.0.0.1:56493/page?task=A",
+                    "title": "素材准备",
+                    "fingerprint": "9e9924ae839566f33b0ed763a031605c88aff2c935d5da7985200f57fd65a08c",
+                    "generation": 2,
+                    "observedAt": 1793978229878,
+                    "truncated": false
+                  },
+                  "evidence": [
+                    "草稿已保存"
+                  ]
+                },
+                "returned": true
+              },
+              {
+                "actionId": "bfeec936-8af6-48f0-b9f2-31917d33f105",
+                "runId": "f300015b-cf8a-4dfb-94c5-8c72816a15c2",
+                "action": {
+                  "kind": "fill",
+                  "target": {
+                    "role": "textbox",
+                    "name": "发布标题",
+                    "exact": true
+                  },
+                  "value": "附件日报"
+                },
+                "effect": "interaction",
+                "bindings": [
+                  {
+                    "field": "value",
+                    "parameter": "content"
+                  }
+                ],
+                "before": {
+                  "source": {
+                    "url": "http://127.0.0.1:56493/page?task=A",
+                    "title": "素材准备",
+                    "fingerprint": "1e5c6e7abe16cc491c176da28992f2390aafe485ecf52aab5caeb30873b3734a",
+                    "generation": 2,
+                    "observedAt": 1793978231965,
+                    "truncated": false
+                  },
+                  "evidence": [
+                    "素材准备"
+                  ]
+                },
+                "after": {
+                  "source": {
+                    "url": "http://127.0.0.1:56493/page?task=A",
+                    "title": "素材准备",
+                    "fingerprint": "994e4276a92624ae342fbbe7cdfd5a87081462b6cb1e0a2dd0be8f7e28b80df6",
+                    "generation": 2,
+                    "observedAt": 1793978232421,
+                    "truncated": false
+                  },
+                  "evidence": [
+                    "草稿已保存"
+                  ]
+                },
+                "returned": true
+              },
+              {
+                "actionId": "c563fdb0-d202-43f2-8b5f-fd8e5717d04c",
+                "runId": "f300015b-cf8a-4dfb-94c5-8c72816a15c2",
+                "action": {
+                  "kind": "click",
+                  "target": {
+                    "role": "button",
+                    "name": "发布附件",
+                    "exact": true
+                  }
+                },
+                "effect": "publication",
+                "bindings": [],
+                "before": {
+                  "source": {
+                    "url": "http://127.0.0.1:56493/page?task=A",
+                    "title": "素材准备",
+                    "fingerprint": "994e4276a92624ae342fbbe7cdfd5a87081462b6cb1e0a2dd0be8f7e28b80df6",
+                    "generation": 2,
+                    "observedAt": 1793978232533,
+                    "truncated": false
+                  },
+                  "evidence": [
+                    "素材准备"
+                  ]
+                },
+                "after": {
+                  "source": {
+                    "url": "http://127.0.0.1:56493/page?task=A",
+                    "title": "素材准备",
+                    "fingerprint": "778daa412d419c358fe0356ea726c8a1e04673c9966da9501b53e646ae542709",
+                    "generation": 2,
+                    "observedAt": 1793978232879,
+                    "truncated": false
+                  },
+                  "evidence": [
+                    "已发布到公告"
+                  ]
+                },
+                "returned": true
+              }
+            ],
+            "resultRule": "unique-target-approved-content-destination-and-attachment-sha256",
+            "recovery": {
+              "targetUrl": "http://127.0.0.1:56493/page?task=A",
+              "targetFactId": "b220b7b2-16cb-4a87-b29c-3ea4e2b4a53a",
+              "resultUrl": "http://127.0.0.1:56493/result/1",
+              "uncertainDispatch": "read-only-no-resend"
+            },
+            "evidence": {
+              "resultId": "75a647e9-f137-47a9-9c43-93b9c551e53f",
+              "materialId": "affffc93-63ab-4e45-9a24-3cb234c1ad13",
+              "approvalId": "ac54425f-7a03-4188-81e2-bbb54cdc74b0"
+            },
+            "authority": "none",
+            "sha256": "28d444f7250178a15f435477d9396cc43006342f59f0ab89a80a4eb21ae9bcb9"
+          }
+        ],
+        "workflowAdoption": {
+          "version": "ccab80b7-1379-4b8e-9b56-0a87dc3acd7a",
+          "sha256": "28d444f7250178a15f435477d9396cc43006342f59f0ab89a80a4eb21ae9bcb9",
+          "expectedParent": null
+        }
+      }
+    },
+    {
+      "taskId": "0a496b00-5d94-4aa9-abee-ce3caf864a41",
+      "execution": {
+        "modelVersion": 1,
+        "intent": "stopped",
+        "phase": "stopped",
+        "version": 2,
+        "intentId": "c30b1f5e-f220-4f09-8753-af7681f1e171",
+        "goalVersion": 1,
+        "goal": "保留另一项停止任务 http://127.0.0.1:56493/page?task=B",
+        "runId": null,
+        "resource": null,
+        "summary": "任务已停止，页面与已有结果保留。",
+        "actions": []
+      }
+    }
+  ]
+}

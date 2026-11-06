@@ -1,5 +1,7 @@
 # helpr 首版实现事项
 
+2026-11-06 最新交接：[14 提交中断后的真实网站结果核对](issues/14-recover-real-publication-outcomes.md#开发结果)已交付独立实现和当前自动检查，195 应用／8 验证器／25 旧回归通过。最终候选 60 在 166／167、172／173、174／175 通过三个中断位置，保持停止且不重复提交；[报告](../../docs/testing/evidence/publication-14/REPORT.md)保留两次冷开观察失败、清理错误和源码反例。14 当前 6/10 条关闭，真实模型／WordPress 和双活动网页原生组合待验，13 前置保持。下一会话推进 [15](issues/15-parameterized-and-cold-workflow-reuse.md) 独立参数化与冷启动流程复用；普通提交不推送或发布。
+
 2026-11-06 最新交接：[13 首次附件发布并保存学到的流程](issues/13-first-publication-and-learned-workflow.md#开发结果)已交付独立代码与当前自动检查，175 应用／8 验证器／25 旧回归通过。最终候选 57、启动 160／161 完成一次本机上传、草稿、确认发布及冷开，独立字节和进程清理通过；[报告](../../docs/testing/evidence/publication-13/REPORT.md)保留启动 157 的旧观察拒绝、异常优先级修正和所有限制。13 当前 5/9 条关闭，真实模型／WordPress 学习发布及固定版本重放仍待验，12 前置不整体解除。下一会话推进 [14](issues/14-recover-real-publication-outcomes.md) 独立恢复代码和本机检查，真实费用与远程写入另按授权。
 
 2026-11-06 最新交接：[12 固定素材版本并准备真实上传](issues/12-material-version-and-upload-preparation.md#开发结果)已实现并完成当前可自动验证的路径，164 项应用／8 项验证器／25 项旧回归通过；候选 54、启动 155／156 的固定字节上传、下载、草稿及冷开续查通过，自有进程清空。[检查报告](../../docs/testing/evidence/material-12/REPORT.md)保留两次未定位的 iframe 点击超时。12 当前 3/9 条关闭，真实模型、WordPress 及原生操作待验；下一会话推进 [13](issues/13-first-publication-and-learned-workflow.md) 的独立代码和本机验证，不将 12 的真实前置记为整体解除，不使用未授权真实费用或远程写入。

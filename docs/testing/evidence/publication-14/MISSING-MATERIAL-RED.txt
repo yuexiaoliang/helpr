@@ -1,0 +1,33 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/publication.test.ts (27 tests | 1 failed | 26 skipped) 427ms
+   × 未派发检查点的固定素材已经缺失时，冷开不得继续发布 426ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/publication.test.ts > 未派发检查点的固定素材已经缺失时，冷开不得继续发布
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ tests/workspace/publication.test.ts:1155:21
+    1153|   service.refresh();
+    1154|   await service.settled();
+    1155|   expect(f.sends()).toBe(0);
+       |                     ^
+    1156|   expect(f.execution().phase).toBe('paused');
+    1157|   expect(f.execution().summary).toContain('固定素材');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 26 skipped (27)
+   Start at  22:56:43
+   Duration  918ms (tests 51%, import 40%, transform 9%)
+

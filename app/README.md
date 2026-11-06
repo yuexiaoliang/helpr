@@ -168,3 +168,11 @@ Node-API 8 原生模块经 node-gyp `13.1.0` 构建，固定 arm64／macOS 14 �
 核实结果、素材处理、本次进度及学得候选由独立记录进程同事务保存。候选包含参数来源、步骤前后条件、结果／恢复规则、版本、摘要与证据，只验证过原输入；新输入和固定版本重放由 15 继续，流程本身不授予发布权限。当前独立结果读取限同站匿名可读且无重定向的公开 HTML 与附件，私有或动态结果保持待核对。
 
 记录格式 12 接续 11，升级前保留原库，新增结果／素材处理／候选／采用引用进入备份和冷开检查。源码入口为 `pnpm exec vitest run tests/workspace/publication.test.ts`；实际候选入口为 `pnpm validate:workspace --fixture --candidate=publication-13-final --publication`。本机通过不等于真实 WordPress 或模型学习验收，覆盖、失败与待验见[13 检查报告](../docs/testing/evidence/publication-13/REPORT.md)。
+
+## 提交中断后的结果核对（14）
+
+提交预留可保存正常编辑页已经观察到的精确永久链接、规则版本与目标／附件准备事实引用。冷进程先按这些记录只读核对公开页和下载，不调用模型、不创建网页动作工作者；只有 canonical 唯一且匹配、确认全文／栏目／附件和固定字节都满足时补记完成。结果、素材处理和流程候选仍同事务保存。核对中较新的停止、接管或目标修改优先，迟到结果只进入历史观察，不恢复派发资格。
+
+可靠未派发的旧预留取消，新执行先核对本机固定素材，再按当前网页和原有效确认经统一入口续做。已经可能派发、缺少稳定关联、超时、404、内容或素材不符均不批准重送。中断的上传需要保存的目标／上传关联和下载字节，旧草稿需要对应动作的准备事实；不把草稿当成发布完成。
+
+记录格式 13 接续 12，升级前保留原库，冻结规则和历史核对进入备份及引用检查。当前规则只支持同站匿名公开 HTML／附件和精确永久链接；私有、动态或不兼容结果保持未知。定向检查见 `tests/workspace/publication.test.ts`、`material.test.ts`、`recovery.test.ts`；实际候选用 `pnpm validate:workspace --fixture --candidate=publication-recovery-14-checked --publication-recovery=result`，另有 `reserved` 和 `committed` 两个中断位置。范围、失败与真实待验见[14 检查报告](../docs/testing/evidence/publication-14/REPORT.md)和[验证安排](../docs/testing/publication-14-plan.md)。

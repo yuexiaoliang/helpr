@@ -1,0 +1,33 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/publication.test.ts (28 tests | 1 failed | 27 skipped) 431ms
+   × 可信未派发检查点只取消旧预留，用当前观察和原有效确认派发剩余动作一次 430ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/publication.test.ts > 可信未派发检查点只取消旧预留，用当前观察和原有效确认派发剩余动作一次
+AssertionError: expected [ { …(7) }, { …(7) } ] to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ tests/workspace/publication.test.ts:793:44
+    791|   expect(f.sends()).toBe(1);
+    792|   expect(f.execution().phase).toBe('complete');
+    793|   expect(f.execution().materialProcessing).toHaveLength(1);
+       |                                            ^
+    794|   expect(f.execution().materialProcessing![0]!.status).toBe('complete'…
+    795|   expect(
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 27 skipped (28)
+   Start at  23:04:29
+   Duration  907ms (tests 52%, import 40%, transform 8%)
+

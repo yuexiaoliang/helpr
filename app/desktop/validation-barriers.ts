@@ -7,6 +7,9 @@ const point = z.enum([
   'input',
   'recovery',
   'exit-checkpoint',
+  'publication-reserved',
+  'publication-result-before',
+  'publication-result-after',
 ]);
 const command = z.discriminatedUnion('action', [
   z.strictObject({
