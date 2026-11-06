@@ -69,6 +69,14 @@ const labels: Record<string, string> = {
   MODEL_RESPONSE_REDACTED:
     '服务回复包含受保护信息，已停止接收，原始内容不展示。',
 
+  AGREEMENT_EXPIRED: '这个约定版本已失效，请查看最新复述或单独确认本次内容。',
+  AGREEMENT_SCOPE_INVALID: '素材或目标不符合约定范围，请修改约定或本次委托。',
+  AGREEMENT_PERIOD_REQUIRED: '请明确本次日期或期次；同内容一次的约定无需填写。',
+  AGREEMENT_NEEDS_DETAILS:
+    '还需要补充发布约定，请按会话中的说明完善后重新复述。',
+  AGREEMENT_TASK_BUSY: '请先停止或等待当前任务，再整理发布约定。',
+  MATERIAL_WORK_UNSETTLED:
+    '这份工作尚未核对完成，请先到原任务核对，不能直接重发。',
   INVALID_REQUEST: '输入内容不符合要求，请检查后重试。',
   RECORD_VERSION_CONFLICT: '这项任务刚有新记录，请核对最新内容后重试。',
   REQUEST_CONTENT_CONFLICT:

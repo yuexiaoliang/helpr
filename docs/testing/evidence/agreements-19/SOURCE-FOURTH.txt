@@ -1,0 +1,60 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/agreement.test.ts (10 tests | 3 failed) 4291ms
+   × 同一工作 unknown 状态的重复通知不另发，未核对完成不能再发 505ms
+   × 撤销在预留后使旧派发失效，单次确认与已送出的结果分别处理 458ms
+   × 已送出后撤销，迟到核对只记录原工作完成，不恢复自动执行 475ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/agreement.test.ts > 同一工作 unknown 状态的重复通知不另发，未核对完成不能再发
+Error: EXECUTION_STOPPED
+ ❯ active app/records/workspace.ts:385:15
+    383|         !['checking', 'running'].includes(e.phase)
+    384|       )
+    385|         throw Error('EXECUTION_STOPPED');
+       |               ^
+    386|       return e;
+    387|     };
+ ❯ WorkspaceRecords.materialCommand app/records/workspace.ts:388:15
+ ❯ WorkspaceRecords.material app/records/workspace.ts:330:23
+ ❯ Object.select tests/workspace/agreement.test.ts:42:19
+ ❯ tests/workspace/agreement.test.ts:134:30
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/workspace/agreement.test.ts > 撤销在预留后使旧派发失效，单次确认与已送出的结果分别处理
+AssertionError: expected [Function] to throw an error
+ ❯ tests/workspace/agreement.test.ts:145:64
+    143|   expect(f.get(id).publication!.approvalId).toBeNull();
+    144|   expect(f.get(id).question!.type).toBe('review');
+    145|   expect(() => f.post(id, { kind: 'dispatch', id: 'submit' })).toThrow…
+       |                                                                ^
+    146|   expect(() => f.use()).toThrow('AGREEMENT_EXPIRED');
+    147|   expect(() => f.records.execution({ kind: 'agreement-accept', taskId:…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/workspace/agreement.test.ts > 已送出后撤销，迟到核对只记录原工作完成，不恢复自动执行
+AssertionError: expected 'pending' to be 'complete' // Object.is equality
+
+Expected: "complete"
+Received: "pending"
+
+ ❯ tests/workspace/agreement.test.ts:153:47
+    151|   const f = await fixture(); f.accept(); const id = f.use(); await f.s…
+    152|   const p = await f.review(id); f.reserve(id, p); f.post(id, { kind: '…
+    153|   expect(f.get(id).materialWorks![0]!.status).toBe('complete');
+       |                                               ^
+    154|   expect(f.get(id).runId).toBeNull();
+    155|   expect(f.get(id).actions).toHaveLength(2);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 7 passed (10)
+   Start at  02:34:00
+   Duration  4.82s (tests 90%, import 7%, transform 2%)
+

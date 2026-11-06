@@ -1,3 +1,4 @@
+import { validAgreementCatalog } from './agreement';
 import { validPublicationReferences, validWorkflowCatalog } from './workflow';
 import { validArticleModelCalls } from './article';
 import { z } from 'zod';
@@ -73,6 +74,7 @@ const envelope = z.strictObject({
     z.literal(14),
     z.literal(15),
     z.literal(16),
+    z.literal(17),
     z.literal(CURRENT_DATA_FORMAT),
   ]),
   stateModel: z.literal(CURRENT_STATE_MODEL),
@@ -483,6 +485,12 @@ export async function readBackup(
     materials.size !== (value.payload.materials?.length ?? 0) ||
     [...materials].some(([sha, data]) => materialDigest(data) !== sha) ||
     !validWorkflowCatalog(value.payload.tasks) ||
+    !validAgreementCatalog(
+      value.payload.tasks.map((t) => ({
+        taskId: t.id,
+        execution: t.execution,
+      })),
+    ) ||
     value.payload.tasks.some((t) => {
       const versions = t.execution?.materials ?? [];
       return (

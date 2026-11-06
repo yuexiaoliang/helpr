@@ -317,9 +317,10 @@ function layout(): void {
   for (const [taskId, { view, chat }] of pages) {
     const task = state.tasks.find((t) => t.id === taskId);
     const active = taskId === state.active && !task?.hidden;
+    // 初始尺寸必须先于隐藏；从未选中的新页也需要真实视口。
+    view.setBounds({ x: 0, y: 88, width, height: Math.max(1, height - 88) });
     view.setVisible(active && Boolean(task?.url));
     chat.setVisible(active);
-    view.setBounds({ x: 0, y: 88, width, height: Math.max(1, height - 88) });
     const cw = Math.min(340, width - 32),
       ch = task?.minimized ? 48 : Math.min(410, height - 130);
     chat.setBounds({
@@ -390,7 +391,10 @@ function bindPage(task: Task): void {
   const watch = (view: WebContentsView) => {
     const wc = view.webContents;
     let initialLoad = true;
-    wc.once('did-finish-load', () => {
+    wc.on('did-finish-load', () => {
+      // 从未选中的新页在最终渲染视图建立前就已隐藏；此时再应用后台绘制，
+      // 让 Playwright 的真实稳定性检查可推进，不切换标签或放宽点击条件。
+      wc.setBackgroundThrottling(false);
       initialLoad = false;
     });
     if (startup.validation)
@@ -1058,6 +1062,10 @@ ipcMain.handle('workspace-request', (event, input: unknown) => {
   const command = uiCommandSchema.parse(input);
   if (
     [
+      'agreement-prepare',
+      'agreement-accept',
+      'agreement-revoke',
+      'agreement-use',
       'participation-draft',
       'participation-open',
       'participation-reply',
@@ -1120,6 +1128,10 @@ ipcMain.handle('workspace-request', (event, input: unknown) => {
         'minimize',
         'model-cancel',
         'execution-intent',
+        'agreement-prepare',
+        'agreement-accept',
+        'agreement-revoke',
+        'agreement-use',
         'participation-reply',
         'participation-decision',
         'participation-draft',

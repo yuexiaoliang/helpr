@@ -1,3 +1,10 @@
+import { agreementSummary } from '../shared/agreement';
+import { materialFailureMessage } from '../shared/material';
+import {
+  boundAgreement,
+  activeAgreement,
+  validAgreementCatalog,
+} from './agreement';
 import { validPublicationReferences, validWorkflowCatalog } from './workflow';
 import { endedExecution, splitDelegation } from '../shared/task-groups';
 import { hideTaskTab } from './task-tab';
@@ -135,6 +142,7 @@ export class WorkspaceRecords {
           14,
           15,
           16,
+          17,
           CURRENT_DATA_FORMAT,
         ].includes(priorVersion)
       )
@@ -142,29 +150,31 @@ export class WorkspaceRecords {
       if (legacy && priorVersion !== CURRENT_DATA_FORMAT) {
         const backup = path.join(
           folder,
-          (priorVersion === 16
-            ? 'workspace-before-excel-article-18-'
-            : priorVersion === 15
-              ? 'workspace-before-workflow-repair-17-'
-              : priorVersion === 14
-                ? 'workspace-before-coordination-16-'
-                : priorVersion === 13
-                  ? 'workspace-before-workflow-reuse-15-'
-                  : priorVersion === 12
-                    ? 'workspace-before-publication-recovery-14-'
-                    : priorVersion === 11
-                      ? 'workspace-before-publication-13-'
-                      : priorVersion === 10
-                        ? 'workspace-before-material-12-'
-                        : priorVersion === 9
-                          ? 'workspace-before-task-groups-11-'
-                          : priorVersion >= 7
-                            ? 'workspace-before-participation-10-'
-                            : priorVersion === 6
-                              ? 'workspace-before-upgrade-09-'
-                              : priorVersion === 5
-                                ? 'workspace-before-backup-07-'
-                                : 'workspace-before-recovery-05-') +
+          (priorVersion === 17
+            ? 'workspace-before-agreements-19-'
+            : priorVersion === 16
+              ? 'workspace-before-excel-article-18-'
+              : priorVersion === 15
+                ? 'workspace-before-workflow-repair-17-'
+                : priorVersion === 14
+                  ? 'workspace-before-coordination-16-'
+                  : priorVersion === 13
+                    ? 'workspace-before-workflow-reuse-15-'
+                    : priorVersion === 12
+                      ? 'workspace-before-publication-recovery-14-'
+                      : priorVersion === 11
+                        ? 'workspace-before-publication-13-'
+                        : priorVersion === 10
+                          ? 'workspace-before-material-12-'
+                          : priorVersion === 9
+                            ? 'workspace-before-task-groups-11-'
+                            : priorVersion >= 7
+                              ? 'workspace-before-participation-10-'
+                              : priorVersion === 6
+                                ? 'workspace-before-upgrade-09-'
+                                : priorVersion === 5
+                                  ? 'workspace-before-backup-07-'
+                                  : 'workspace-before-recovery-05-') +
             randomUUID() +
             '.sqlite',
         );
@@ -214,6 +224,19 @@ export class WorkspaceRecords {
             .from(schema.executions)
             .all()
             .map((row) => ({ execution: executionSchema.parse(row.body) })),
+        )
+      )
+        throw Error('DATA_CORRUPT');
+      if (
+        !validAgreementCatalog(
+          this.db
+            .select()
+            .from(schema.executions)
+            .all()
+            .map((r) => ({
+              taskId: r.taskId,
+              execution: executionSchema.parse(r.body),
+            })),
         )
       )
         throw Error('DATA_CORRUPT');
@@ -315,7 +338,13 @@ export class WorkspaceRecords {
       .parse(input);
     if (
       this.upgrades.held() &&
-      (['claim', 'reserve', 'dispatch'].includes(c.kind) ||
+      ([
+        'claim',
+        'reserve',
+        'dispatch',
+        'agreement-use',
+        'agreement-accept',
+      ].includes(c.kind) ||
         (c.kind === 'intent' && ['start', 'continue'].includes(c.intent ?? '')))
     )
       throw Error('UPGRADE_PENDING');
@@ -331,6 +360,11 @@ export class WorkspaceRecords {
     const base = { taskId: z.string(), runId: z.string() };
     const c = z
       .discriminatedUnion('kind', [
+        z.strictObject({
+          kind: z.literal('agreement-select'),
+          taskId: z.string(),
+          expectedVersion: z.number().int().positive(),
+        }),
         z.strictObject({
           kind: z.literal('parse'),
           ...base,
@@ -354,6 +388,51 @@ export class WorkspaceRecords {
         }),
       ])
       .parse(input);
+    if (c.kind === 'agreement-select') {
+      const e = this.executions.get(c.taskId);
+      if (
+        !e ||
+        e.version !== c.expectedVersion ||
+        e.phase !== 'queued' ||
+        e.intent !== 'automatic' ||
+        e.pauseReason ||
+        e.restoreReview ||
+        this.upgrades.held()
+      )
+        throw Error('EXECUTION_STOPPED');
+      const a = boundAgreement(
+        e,
+        this.snapshot().tasks.map((t) => ({
+          taskId: t.id,
+          execution: t.execution,
+        })),
+      );
+      if (!a || !activeAgreement(a)) throw Error('AGREEMENT_EXPIRED');
+      let material;
+      try {
+        material = await this.materials.select(
+          { ...a.terms.selection, basis: agreementSummary(a.terms) },
+          [e.goal],
+          e.goalVersion,
+        );
+      } catch (error) {
+        const code = error instanceof Error ? error.message : '';
+        return this.execution({
+          kind: 'agreement-material',
+          taskId: c.taskId,
+          expectedVersion: c.expectedVersion,
+          failure:
+            materialFailureMessage[code] ??
+            '无法按发布约定取得素材，请核对范围并修改委托。',
+        });
+      }
+      return this.execution({
+        kind: 'agreement-material',
+        taskId: c.taskId,
+        expectedVersion: c.expectedVersion,
+        material,
+      });
+    }
     if (c.kind === 'verify') {
       const material = this.executions
         .get(c.taskId)

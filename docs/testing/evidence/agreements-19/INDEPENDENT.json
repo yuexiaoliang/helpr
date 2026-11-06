@@ -1,0 +1,148 @@
+{
+  "checkedAt": "2026-11-06T19:14:22.995303+00:00",
+  "profile": "/private/tmp/helpr-workspace-validation-501/run-SH30GZ",
+  "scope": "Independent read-only SQLite, source ZIP/XML, recorded website receipts, package hashes and OS processes; publication GET/download already recorded by runtime. Script accepted agreements and explicitly continued each navigation; no native UI acceptance.",
+  "sources": {
+    "eea601acdb8408d902b378a13fb95e57fed287483554600274a56c2d9cae33b8": {
+      "file": "tests/workspace/fixtures/excel/report-a.xlsx",
+      "bytes": 1840,
+      "cells": {
+        "A1": "项目",
+        "B1": "数量",
+        "A2": "甲",
+        "B2": "7",
+        "A3": "乙",
+        "B3": "5",
+        "A4": "合计",
+        "B4": "999"
+      },
+      "expected": "项目：数量。\n\n甲：7。\n\n乙：5。"
+    },
+    "dc3e3f563aee297fc40e128434ddc3a2e98818cac08529ea3df93f25b6737d88": {
+      "file": "tests/workspace/fixtures/excel/report-b.xlsx",
+      "bytes": 1840,
+      "cells": {
+        "A1": "项目",
+        "B1": "数量",
+        "A2": "甲",
+        "B2": "11",
+        "A3": "乙",
+        "B3": "2",
+        "A4": "合计",
+        "B4": "999"
+      },
+      "expected": "项目：数量。\n\n甲：11。\n\n乙：2。"
+    }
+  },
+  "publications": [
+    {
+      "taskId": "0b13e773-eabd-4e3c-84bf-5901da05df27",
+      "item": "W1",
+      "destination": "公告",
+      "content": "项目：数量。\n\n甲：7。\n\n乙：5。",
+      "sha256": "eea601acdb8408d902b378a13fb95e57fed287483554600274a56c2d9cae33b8",
+      "workId": "f1f64c90-1c44-4a9f-89b2-ffd53423e7ed",
+      "agreementVersionId": "35f5870c-0424-4369-8653-eb870de2d0e8",
+      "publicationCount": 1,
+      "target": "http://127.0.0.1:57888/edit?item=W1"
+    },
+    {
+      "taskId": "156acd1f-a8a6-4c3a-97b7-c12d0cbb63ec",
+      "item": "W2",
+      "destination": "公告",
+      "content": "项目：数量。\n\n甲：11。\n\n乙：2。",
+      "sha256": "dc3e3f563aee297fc40e128434ddc3a2e98818cac08529ea3df93f25b6737d88",
+      "workId": "6178259e-b11c-4d7b-9cc1-c84c41b10f97",
+      "agreementVersionId": "35f5870c-0424-4369-8653-eb870de2d0e8",
+      "publicationCount": 1,
+      "target": "http://127.0.0.1:57888/edit?item=W2"
+    },
+    {
+      "taskId": "2f45913f-0af3-4dcb-be26-727696c7cddc",
+      "item": "W3",
+      "destination": "公告",
+      "content": "项目：数量。\n\n甲：7。\n\n乙：5。",
+      "sha256": "eea601acdb8408d902b378a13fb95e57fed287483554600274a56c2d9cae33b8",
+      "workId": "da09178c-1d06-4aa3-bb4b-a6f6e6df5b6c",
+      "agreementVersionId": "35f5870c-0424-4369-8653-eb870de2d0e8",
+      "publicationCount": 1,
+      "target": "http://127.0.0.1:57888/edit?item=W3"
+    },
+    {
+      "taskId": "603b54ec-664c-4bc2-9342-6834b1a7b596",
+      "item": "W4",
+      "destination": "通知",
+      "content": "项目：数量。\n\n甲：11。\n\n乙：2。",
+      "sha256": "dc3e3f563aee297fc40e128434ddc3a2e98818cac08529ea3df93f25b6737d88",
+      "workId": "2f91e82b-0a85-4691-827a-91c370bc1966",
+      "agreementVersionId": "99e0f46f-dcb1-4550-b479-469d68fe1dd1",
+      "publicationCount": 1,
+      "target": "http://127.0.0.1:57888/edit?item=W4"
+    }
+  ],
+  "sameScopeRenameDuplicate": "907dc37a-58db-436f-a6e9-6d74b924f8d5",
+  "coldAndSQLiteFields": [
+    "agreements",
+    "agreementBinding",
+    "materialWorks",
+    "duplicateWork",
+    "publicationChecks"
+  ],
+  "format": 18,
+  "taskCount": 6,
+  "ownerAndActiveUnchanged": true,
+  "acceptedAndRevokedVersions": 2,
+  "scriptedNavigationContinuations": [
+    {
+      "taskId": "0b13e773-eabd-4e3c-84bf-5901da05df27",
+      "version": 3,
+      "reason": "page-change",
+      "url": "http://127.0.0.1:57888/edit?item=W1",
+      "operation": "explicit-continue",
+      "by": "validation-script"
+    },
+    {
+      "taskId": "156acd1f-a8a6-4c3a-97b7-c12d0cbb63ec",
+      "version": 3,
+      "reason": "page-change",
+      "url": "http://127.0.0.1:57888/edit?item=W2",
+      "operation": "explicit-continue",
+      "by": "validation-script"
+    },
+    {
+      "taskId": "2f45913f-0af3-4dcb-be26-727696c7cddc",
+      "version": 2,
+      "reason": "page-change",
+      "url": "http://127.0.0.1:57888/edit?item=W3",
+      "operation": "explicit-continue",
+      "by": "validation-script"
+    },
+    {
+      "taskId": "603b54ec-664c-4bc2-9342-6834b1a7b596",
+      "version": 3,
+      "reason": "page-change",
+      "url": "http://127.0.0.1:57888/edit?item=W4",
+      "operation": "explicit-continue",
+      "by": "validation-script"
+    }
+  ],
+  "processes": {
+    "seenPids": 46,
+    "groups": 6,
+    "remaining": [],
+    "exitCodes": [
+      {
+        "code": 0,
+        "signal": null
+      },
+      {
+        "code": 0,
+        "signal": null
+      }
+    ]
+  },
+  "packageHashesMatch": true,
+  "realModelCalls": 0,
+  "remoteWrites": 0,
+  "passed": true
+}

@@ -1,5 +1,11 @@
 import { z } from 'zod';
 import {
+  agreementVersionSchema,
+  agreementBindingSchema,
+  materialWorkSchema,
+  agreementTermsSchema,
+} from './agreement';
+import {
   contentSourceSchema,
   articleVersionSchema,
   articleDraftSchema,
@@ -204,6 +210,16 @@ export const participationDecisionSchema = z.discriminatedUnion('operation', [
 ]);
 export type ParticipationDecision = z.infer<typeof participationDecisionSchema>;
 export const executionSchema = z.strictObject({
+  agreements: z.array(agreementVersionSchema).max(60).optional(),
+  agreementBinding: agreementBindingSchema.optional(),
+  materialWorks: z.array(materialWorkSchema).max(60).optional(),
+  duplicateWork: z
+    .strictObject({
+      taskId: z.string(),
+      workId: z.string().uuid(),
+      goalVersion: z.number().int().positive(),
+    })
+    .optional(),
   contentSources: z.array(contentSourceSchema).max(60).optional(),
   articles: z.array(articleVersionSchema).max(60).optional(),
   coordination: coordinationSchema.optional(),
@@ -234,6 +250,7 @@ export const executionSchema = z.strictObject({
   materialProcessing: z
     .array(
       z.strictObject({
+        workId: z.string().uuid().optional(),
         materialId: z.string().uuid(),
         goalVersion: z.number().int().positive(),
         targetUrl: z.url(),
@@ -273,6 +290,8 @@ export const executionSchema = z.strictObject({
     .optional(),
   publication: publicationSchema
     .extend({
+      agreementVersionId: z.string().uuid().optional(),
+      workId: z.string().uuid().optional(),
       revision: z.number().int().positive(),
       approvalId: z.string().uuid().nullable(),
       origin: z.string(),
@@ -330,6 +349,7 @@ export const executionControlSchema = z.strictObject({
   system: z.boolean().optional(),
 });
 export const nextStepSchema = z.strictObject({
+  agreement: agreementTermsSchema.optional(),
   compose: z.strictObject({ materialId: z.string().uuid() }).optional(),
   article: articleDraftSchema.optional(),
   modelCallId: z.string().optional(),

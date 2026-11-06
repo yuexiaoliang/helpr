@@ -455,7 +455,7 @@ export function validPublicationReferences(
             a.id === p.actionId && a.publicationApprovalId === p.approvalId,
         ) ||
         (p.status === 'complete' &&
-          !checks.some(
+          !(p.workId ? [...checks, ...history] : checks).some(
             (c) =>
               c.id === p.resultId &&
               c.status === 'verified' &&

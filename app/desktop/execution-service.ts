@@ -1,4 +1,9 @@
 import {
+  agreementUICommandSchema,
+  type AgreementUICommand,
+} from '../shared/agreement';
+import type { AgreementTerms } from '../shared/agreement';
+import {
   verifyAttachment,
   verifyPublication,
   verifyRecoveredPublication,
@@ -50,6 +55,8 @@ export type BoundObservation = {
   binding: { targetId: string; generation: number };
 };
 export type ProposalInput = {
+  publishingAgreement?: AgreementTerms;
+  agreementRequest?: { text: string; current: AgreementTerms | null };
   contentSource?: ContentSource;
   article?: ArticleVersion;
   repair?: {
@@ -108,6 +115,7 @@ const receipt = z
     current: z.boolean().optional(),
     claimed: z.boolean().optional(),
     permitted: z.boolean().optional(),
+    autoApproved: z.boolean().optional(),
     recovered: z.boolean().optional(),
   })
   .passthrough();
@@ -295,6 +303,13 @@ export class ExecutionService {
       if (
         sequence > this.latestRecordSuccess &&
         ![
+          'AGREEMENT_EXPIRED',
+          'AGREEMENT_SCOPE_INVALID',
+          'AGREEMENT_PERIOD_REQUIRED',
+          'AGREEMENT_NEEDS_DETAILS',
+          'MATERIAL_WORK_EXISTS',
+          'MATERIAL_WORK_UNSETTLED',
+          'MATERIAL_REPEAT_CHANGED',
           'REQUEST_CONTENT_CONFLICT',
           'RECORD_VERSION_CONFLICT',
           'TASK_NOT_FOUND',
@@ -393,6 +408,122 @@ export class ExecutionService {
     } finally {
       if (this.intents.get(taskId) === sequence)
         this.pendingIntents.delete(taskId);
+      this.pump();
+    }
+  }
+  async agreement(input: AgreementUICommand): Promise<WorkspaceSnapshot> {
+    const c = agreementUICommandSchema.parse(input);
+    if (this.closing) throw Error('APPLICATION_EXITING');
+    if (!this.available) throw Error('RECORDS_UNAVAILABLE');
+    if (c.kind !== 'agreement-revoke' && !this.systemReady())
+      throw Error('SYSTEM_SUSPENDED');
+    const task = this.ports.current().tasks.find((t) => t.id === c.taskId);
+    if (!task?.execution) throw Error('EXECUTION_NOT_FOUND');
+    if (c.kind === 'agreement-prepare') {
+      const saved = task.execution.agreements?.find(
+        (a) => a.requestId === c.requestId,
+      );
+      if (saved) {
+        if (saved.request !== c.text) throw Error('REQUEST_CONTENT_CONFLICT');
+        return this.decorate(this.ports.current());
+      }
+      if (['queued', 'running', 'checking'].includes(task.execution.phase))
+        throw Error('AGREEMENT_TASK_BUSY');
+      if (task.execution.version !== c.expectedVersion)
+        throw Error('RECORD_VERSION_CONFLICT');
+      const old = task.execution.agreements?.at(-1);
+      if (old && old.revokedAt === null)
+        await this.agreement({
+          kind: 'agreement-revoke',
+          taskId: c.taskId,
+          requestId: randomUUID(),
+          versionId: old.versionId,
+        });
+      const expectedVersion = this.ports
+        .current()
+        .tasks.find((t) => t.id === c.taskId)!.execution!.version;
+      const abort = new AbortController();
+      const qualified = () =>
+        !this.closing &&
+        this.systemReady() &&
+        this.ports.current().tasks.find((t) => t.id === c.taskId)?.execution
+          ?.version === expectedVersion;
+      const job = (async () => {
+        const observed = await this.ports.observe(c.taskId, abort.signal);
+        if (!qualified()) throw Error('RECORD_VERSION_CONFLICT');
+        const step = await this.ports.propose({
+          taskId: c.taskId,
+          runId: c.requestId,
+          goal: task.execution!.goal,
+          observation: observed.observation,
+          history: [],
+          pending: null,
+          materials: task.execution!.materials,
+          publication: task.execution!.publication,
+          agreementRequest: {
+            text: c.text,
+            current: task.execution!.agreements?.at(-1)?.terms ?? null,
+          },
+          signal: abort.signal,
+          permit: (send) => {
+            if (!qualified()) throw Error('RECORD_VERSION_CONFLICT');
+            return send();
+          },
+        });
+        if (!step.agreement) throw Error('AGREEMENT_NEEDS_DETAILS');
+        await this.record({
+          ...c,
+          expectedVersion,
+          kind: 'agreement-propose',
+          terms: step.agreement,
+        });
+      })();
+      this.pendingReplies.add(job);
+      try {
+        await job;
+      } finally {
+        this.pendingReplies.delete(job);
+      }
+      return this.decorate(this.ports.current());
+    }
+    const version = task.execution.agreements?.find(
+      (a) => a.versionId === c.versionId,
+    );
+    if (!version) throw Error('AGREEMENT_EXPIRED');
+    const affected =
+      c.kind === 'agreement-revoke' && version.revokedAt === null
+        ? this.ports
+            .current()
+            .tasks.filter(
+              (t) =>
+                t.execution?.agreementBinding?.versionId === c.versionId &&
+                t.execution.phase !== 'complete',
+            )
+        : [];
+    // 即时撤权先于记录等待；数据库提交后也不恢复旧工作者。
+    for (const t of affected)
+      this.stopImmediately(t.id, '正在保存发布约定撤销；新动作已阻断。');
+    const job = this.record(c);
+    this.pendingReplies.add(job);
+    try {
+      await job;
+      for (const t of affected) {
+        const latest = this.ports
+          .current()
+          .tasks.find((v) => v.id === t.id)?.execution;
+        if (latest?.intent !== 'stopped' && !latest?.pauseReason)
+          this.blocked.delete(t.id);
+        else if (latest)
+          this.blocked.set(t.id, {
+            saved: true,
+            message: latest.summary,
+            reason: latest.pauseReason,
+          });
+      }
+      this.publish();
+      return this.decorate(this.ports.current());
+    } finally {
+      this.pendingReplies.delete(job);
       this.pump();
     }
   }
@@ -946,6 +1077,30 @@ export class ExecutionService {
         this.sessionUpdates.has(task.id)
       )
         continue;
+      if (
+        task.execution.agreementBinding?.goalVersion ===
+          task.execution.goalVersion &&
+        !task.execution.materials?.some(
+          (m) => m.goalVersion === task.execution!.goalVersion,
+        ) &&
+        this.ports.material
+      ) {
+        try {
+          const result = receipt.parse(
+            await this.ports.material({
+              kind: 'agreement-select',
+              taskId: task.id,
+              expectedVersion: task.execution.version,
+            }),
+          );
+          if (result.state.revision >= this.ports.current().revision)
+            this.publish(result.state);
+          this.wake = result.created === true;
+        } catch {
+          /* 停止、撤销和旧版本不放行；等待新意图。 */
+        }
+        continue;
+      }
       const submitted = task.execution.actions.find(
         (a) =>
           a.goalVersion === task.execution!.goalVersion &&
@@ -1234,6 +1389,19 @@ export class ExecutionService {
                       taskId: job.taskId,
                       runId: job.runId,
                       goal: current.goal,
+                      publishingAgreement: current.agreementBinding
+                        ? this.ports
+                            .current()
+                            .tasks.find(
+                              (t) =>
+                                t.id === current.agreementBinding!.ownerTaskId,
+                            )
+                            ?.execution?.agreements?.find(
+                              (a) =>
+                                a.versionId ===
+                                current.agreementBinding!.versionId,
+                            )?.terms
+                        : undefined,
                       observation: observed.observation,
                       pending,
                       history: current.actions,
@@ -1720,7 +1888,7 @@ export class ExecutionService {
             throw Error('MODEL_FORMAT');
           if (requiresLogin && observed.session)
             this.blockSessionPeers(job, observed.session);
-          await this.record({
+          const reviewResult = await this.record({
             kind: 'ask',
             taskId: job.taskId,
             runId: job.runId,
@@ -1749,6 +1917,7 @@ export class ExecutionService {
                 : step.summary,
             url: observed.observation.url,
           });
+          if (reviewResult.autoApproved === true) continue;
           return;
         }
         if (step.decision === 'complete') {

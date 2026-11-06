@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { agreementUICommandSchema } from './agreement';
 import { backupUICommandSchema } from './backup';
 import { versionUICommandSchema, type VersionStatus } from './version';
 import { upgradeUICommandSchema, type UpgradeStatus } from './upgrade';
@@ -163,6 +164,7 @@ export const panelSchema = z.strictObject({
   delayed: z.boolean().optional(),
 });
 export const uiCommandSchema = z.union([
+  agreementUICommandSchema,
   backupUICommandSchema,
   versionUICommandSchema,
   upgradeUICommandSchema,

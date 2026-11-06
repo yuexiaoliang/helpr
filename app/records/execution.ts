@@ -1,3 +1,20 @@
+import {
+  agreementUICommandSchema,
+  agreementTermsSchema,
+  agreementGoal,
+  agreementSummary,
+  type AgreementVersion,
+} from '../shared/agreement';
+import {
+  agreementApplies,
+  boundAgreement,
+  activeAgreement,
+  validateAgreementTerms,
+  workKey,
+  canAutoApprove,
+  assertAgreementAuthority,
+  syncMaterialWorks,
+} from './agreement';
 import { contentSourceSchema, articleDraftSchema } from '../shared/article';
 import {
   contentRequirements,
@@ -154,6 +171,24 @@ const intentSchema = executionIntentSchema.extend({
   controlSequence: z.number().int().positive().optional(),
 });
 const commandSchema = z.discriminatedUnion('kind', [
+  z.strictObject({
+    kind: z.literal('agreement-material'),
+    taskId: z.string(),
+    expectedVersion: z.number().int().positive(),
+    material: materialVersionSchema.optional(),
+    failure: z.string().min(1).max(1500).optional(),
+  }),
+  agreementUICommandSchema.options[1],
+  agreementUICommandSchema.options[2],
+  agreementUICommandSchema.options[3],
+  z.strictObject({
+    kind: z.literal('agreement-propose'),
+    taskId: z.string(),
+    requestId: z.string().min(1).max(100),
+    expectedVersion: z.number().int().positive(),
+    text: z.string().min(1).max(4000),
+    terms: agreementTermsSchema,
+  }),
   z.strictObject({
     kind: z.literal('workflow-repair'),
     ...work,
@@ -396,6 +431,7 @@ export class ExecutionRecords {
     return row ? executionSchema.parse(row.body) : null;
   }
   private save(taskId: string, e: TaskExecution) {
+    syncMaterialWorks(e);
     releaseUnusedClaims(e);
     this.db
       .insert(schema.executions)
@@ -409,6 +445,69 @@ export class ExecutionRecords {
       .update(schema.workspace)
       .set({ revision: sql`${schema.workspace.revision}+1` })
       .run();
+  }
+  private claimMaterialWork(
+    taskId: string,
+    e: TaskExecution,
+    material: import('../shared/material').MaterialVersion,
+  ) {
+    if (e.agreementBinding?.goalVersion === e.goalVersion) {
+      const rows = [{ taskId: taskId, execution: e }, ...this.others(taskId)];
+      const a = boundAgreement(e, rows);
+      if (!a || !agreementApplies(e, rows))
+        throw Error('AGREEMENT_SCOPE_INVALID');
+      const all = rows.flatMap((r) =>
+        (r.execution.materialWorks ?? []).map((w) => ({
+          taskId: r.taskId,
+          work: w,
+        })),
+      );
+      const binding = e.agreementBinding;
+      const key = workKey(a, { binding, sha256: material.sha256 });
+      const old = all.find((r) => r.work.key === key);
+      if (old) {
+        e.duplicateWork = {
+          taskId: old.taskId,
+          workId: old.work.id,
+          goalVersion: e.goalVersion,
+        };
+        e.runId = null;
+        e.version++;
+        move(e, 'BLOCK');
+        e.summary =
+          old.work.status === 'complete'
+            ? '这份素材在相同约定、目标和期次下已完成，未重复发布。'
+            : '这份工作已有所属任务，保留其等待、停止或结果核对状态，未另开一份重做。';
+      } else {
+        if (
+          binding.repeatOf &&
+          !all.some(
+            (r) =>
+              r.work.id === binding.repeatOf &&
+              r.work.sha256 === material.sha256 &&
+              r.work.status === 'complete',
+          )
+        )
+          throw Error('MATERIAL_REPEAT_CHANGED');
+        (e.materialWorks ??= []).push({
+          id: randomUUID(),
+          key,
+          binding: structuredClone(binding),
+          materialId: material.id,
+          sha256: material.sha256,
+          requiresReview:
+            a.terms.changedBytes === 'ask' &&
+            all.some(
+              (r) =>
+                r.work.binding.agreementId === a.id &&
+                r.work.sha256 !== material.sha256,
+            ),
+          status: 'pending',
+          actionId: null,
+          resultId: null,
+        });
+      }
+    }
   }
   private others(taskId: string) {
     return this.db
@@ -495,6 +594,268 @@ export class ExecutionRecords {
         .get();
       if (!task) throw new Error('TASK_NOT_FOUND');
       let e = this.get(c.taskId);
+      if (
+        c.kind === 'agreement-propose' ||
+        c.kind === 'agreement-accept' ||
+        c.kind === 'agreement-revoke' ||
+        c.kind === 'agreement-use'
+      ) {
+        const hash = createHash('sha256')
+          .update(JSON.stringify(c))
+          .digest('hex');
+        const prior = this.db
+          .select()
+          .from(schema.executionRequests)
+          .where(eq(schema.executionRequests.id, c.requestId))
+          .get();
+        if (prior) {
+          if (prior.hash !== hash) throw Error('REQUEST_CONTENT_CONFLICT');
+          return { created: false, taskId: prior.taskId };
+        }
+        if (!e) throw Error('EXECUTION_NOT_FOUND');
+        const rows = [
+          { taskId: task.id, execution: e },
+          ...this.others(task.id),
+        ];
+        const versions = (e.agreements ??= []);
+        const a =
+          c.kind === 'agreement-propose'
+            ? versions.at(-1)
+            : versions.find((a) => a.versionId === c.versionId);
+        let resultTaskId = task.id;
+        const invalidate = (old: AgreementVersion) => {
+          if (old.revokedAt !== null) return;
+          old.revokedAt = Date.now();
+          old.revocation =
+            c.kind === 'agreement-propose' ? c.text : '撤销发布约定';
+          for (const row of rows) {
+            const other = row.execution;
+            if (
+              other.agreementBinding?.versionId !== old.versionId ||
+              other.phase === 'complete'
+            )
+              continue;
+            invalidateRun(other);
+            const possible = other.actions.some(
+              (v) =>
+                v.goalVersion === other.goalVersion &&
+                v.dispatchState === 'possible' &&
+                ['unknown', 'dispatched'].includes(v.status),
+            );
+            if (!possible && other.publication?.agreementVersionId) {
+              other.publication.approvalId = null;
+              delete other.publication.agreementVersionId;
+              delete other.publication.workId;
+              other.question = {
+                id: randomUUID(),
+                type: 'review',
+                goalVersion: other.goalVersion,
+                url: this.db
+                  .select()
+                  .from(schema.tasks)
+                  .where(eq(schema.tasks.id, row.taskId))
+                  .get()!.url,
+                text: '发布约定已变更或撤销，请核对本次内容后单独确认。',
+              };
+            }
+            if (other.intent !== 'stopped') move(other, 'SUSPEND');
+            other.summary = possible
+              ? '约定已撤销；已送出的效果只核对，不回滚或重发。'
+              : '约定已变更或撤销，自动工作暂停。';
+            this.save(row.taskId, other);
+          }
+        };
+        if (c.kind === 'agreement-propose') {
+          if (e.version !== c.expectedVersion)
+            throw Error('RECORD_VERSION_CONFLICT');
+          validateAgreementTerms(c.terms);
+          if (versions.length >= 60) throw Error('EXECUTION_LIMIT');
+          if (a) invalidate(a);
+          versions.push({
+            id: a?.id ?? randomUUID(),
+            versionId: randomUUID(),
+            version: (a?.version ?? 0) + 1,
+            terms: c.terms,
+            requestId: c.requestId,
+            request: c.text,
+            createdAt: Date.now(),
+            acceptedAt: null,
+            revokedAt: null,
+            revocation: null,
+          });
+          this.db
+            .insert(schema.messages)
+            .values({
+              taskId: task.id,
+              role: 'system',
+              text: '待接受的发布约定：' + agreementSummary(c.terms),
+            })
+            .run();
+        } else {
+          if (a && c.kind === 'agreement-revoke' && a.revokedAt !== null) {
+            this.db
+              .insert(schema.executionRequests)
+              .values({ id: c.requestId, hash, taskId: task.id })
+              .run();
+            return { created: false, taskId: task.id };
+          }
+          if (!a || a !== versions.at(-1) || a.revokedAt !== null)
+            throw Error('AGREEMENT_EXPIRED');
+          if (c.kind === 'agreement-accept') {
+            if (a.acceptedAt !== null) throw Error('AGREEMENT_EXPIRED');
+            a.acceptedAt = Date.now();
+          } else if (c.kind === 'agreement-revoke') invalidate(a);
+          else {
+            if (!activeAgreement(a)) throw Error('AGREEMENT_EXPIRED');
+            if ((a.terms.period === 'per-period') !== !!c.periodKey.trim())
+              throw Error('AGREEMENT_PERIOD_REQUIRED');
+            const previous = c.repeatOf
+              ? rows
+                  .flatMap((r) => r.execution.materialWorks ?? [])
+                  .find((w) => w.id === c.repeatOf)
+              : undefined;
+            if (
+              c.repeatOf &&
+              (!previous ||
+                previous.status !== 'complete' ||
+                previous.binding.agreementId !== a.id ||
+                previous.binding.periodKey !== c.periodKey)
+            )
+              throw Error('MATERIAL_WORK_UNSETTLED');
+            resultTaskId = randomUUID();
+            const goal = agreementGoal(a.terms, c.periodKey);
+            // 从接受的条款生成委托；模型不能自行选择其它约定或换规则。
+            this.db
+              .insert(schema.tasks)
+              .values({
+                id: resultTaskId,
+                goal,
+                created: Date.now(),
+                url: a.terms.entryUrl,
+                draft: '',
+                hidden: false,
+                minimized: false,
+                phase: 'loading',
+                error: '',
+                version: 1,
+              })
+              .run();
+            const next: TaskExecution = {
+              modelVersion: 1,
+              intent: 'automatic',
+              phase: 'queued',
+              version: 1,
+              intentId: c.requestId,
+              goalVersion: 1,
+              goal,
+              runId: null,
+              resource: null,
+              recoveryPending: true,
+              recoverySource: { url: a.terms.entryUrl, goalVersion: 1 },
+              summary: '按已接受的约定取材，先核对已有工作。',
+              actions: [],
+              agreementBinding: {
+                ownerTaskId: task.id,
+                agreementId: a.id,
+                versionId: a.versionId,
+                goalVersion: 1,
+                periodKey: c.periodKey,
+                repeatIntent: c.repeatOf ? c.requestId : '',
+                repeatOf: c.repeatOf,
+              },
+            };
+            if (previous) {
+              const original = rows
+                .flatMap((r) => r.execution.materials ?? [])
+                .find((m) => m.id === previous.materialId);
+              if (!original) throw Error('MATERIAL_NOT_AUTHORIZED');
+              const material = {
+                ...original,
+                id: randomUUID(),
+                goalVersion: 1,
+                selectedAt: Date.now(),
+              };
+              next.materials = [material];
+              if (!agreementApplies(next, rows))
+                throw Error('AGREEMENT_SCOPE_INVALID');
+              next.materialWorks = [
+                {
+                  id: randomUUID(),
+                  key: workKey(a, {
+                    binding: next.agreementBinding!,
+                    sha256: material.sha256,
+                  }),
+                  binding: structuredClone(next.agreementBinding!),
+                  materialId: material.id,
+                  sha256: material.sha256,
+                  requiresReview: false,
+                  status: 'pending',
+                  actionId: null,
+                  resultId: null,
+                },
+              ];
+            }
+            this.save(resultTaskId, next);
+            this.db
+              .insert(schema.messages)
+              .values({ taskId: resultTaskId, role: 'user', text: goal })
+              .run();
+          }
+          this.db
+            .insert(schema.messages)
+            .values({
+              taskId: task.id,
+              role: 'user',
+              text:
+                c.kind === 'agreement-accept'
+                  ? `接受第 ${a.version} 版发布约定：${agreementSummary(a.terms)}`
+                  : c.kind === 'agreement-revoke'
+                    ? `撤销第 ${a.version} 版发布约定`
+                    : c.repeatOf
+                      ? '按约定明确再发一次'
+                      : '按约定处理新素材',
+            })
+            .run();
+        }
+        e.version++;
+        this.save(task.id, e);
+        this.db
+          .insert(schema.executionRequests)
+          .values({ id: c.requestId, hash, taskId: resultTaskId })
+          .run();
+        return { created: true, taskId: resultTaskId };
+      }
+      if (c.kind === 'agreement-material') {
+        if (
+          !e ||
+          e.version !== c.expectedVersion ||
+          e.intent !== 'automatic' ||
+          e.phase !== 'queued' ||
+          e.pauseReason ||
+          e.restoreReview ||
+          !e.agreementBinding ||
+          e.materials?.some((m) => m.goalVersion === e!.goalVersion)
+        )
+          return { created: false };
+        if (c.material && !c.failure) {
+          if (c.material.goalVersion !== e.goalVersion)
+            throw Error('MATERIAL_NOT_AUTHORIZED');
+          (e.materials ??= []).push(c.material);
+          this.claimMaterialWork(task.id, e, c.material);
+        } else if (c.failure && !c.material) {
+          move(e, 'BLOCK');
+          e.question = {
+            id: randomUUID(),
+            goalVersion: e.goalVersion,
+            text: c.failure,
+            url: task.url,
+          };
+          e.summary = c.failure;
+        } else throw Error('INVALID_REQUEST');
+        e.version++;
+        this.save(task.id, e);
+        return { created: true };
+      }
       if (c.kind === 'session-invalidated') {
         if (!e?.coordination || !sameSession(e.coordination.session, c.session))
           return { invalidated: false };
@@ -559,10 +920,14 @@ export class ExecutionRecords {
           e.version++;
           p.revision++;
           p.approvalId = null;
+          delete p.agreementVersionId;
+          delete p.workId;
           q.id = randomUUID();
         } else {
           publicationArticle(e, p);
           p.approvalId = q.id;
+          delete p.agreementVersionId;
+          delete p.workId;
           const use = currentWorkflow(e);
           if (use) use.approved = { id: q.id, content: p.content };
           delete e.question;
@@ -732,9 +1097,24 @@ export class ExecutionRecords {
           task.phase !== 'manual'
         )
           return { recovered: false };
+        const agreement = boundAgreement(e, [
+          { taskId: task.id, execution: e },
+          ...this.others(task.id),
+        ]);
+        // 刚建立的约定任务尚无网页效果或固定目标，允许入口正常跳转到同站编辑页。
+        // 一旦已有动作或准备事实，继续采用原有精确 URL 恢复边界。
+        const initialAgreementPage = !!(
+          agreement &&
+          activeAgreement(agreement) &&
+          e.agreementBinding?.goalVersion === e.goalVersion &&
+          !e.actions.length &&
+          !e.preparation?.length &&
+          e.recoverySource?.url === agreement.terms.entryUrl &&
+          new URL(task.url).origin === new URL(agreement.terms.entryUrl).origin
+        );
         if (
           !e.recoverySource ||
-          e.recoverySource.url !== task.url ||
+          (e.recoverySource.url !== task.url && !initialAgreementPage) ||
           e.recoverySource.goalVersion !== e.goalVersion
         ) {
           move(e, 'BLOCK');
@@ -906,6 +1286,8 @@ export class ExecutionRecords {
         if (c.intent === 'start' && e.pauseReason)
           throw Error('EXECUTION_CONTINUE_REQUIRED');
         if (c.intent === 'revise') {
+          delete e.agreementBinding;
+          delete e.duplicateWork;
           if (!c.text?.trim()) throw new Error('INVALID_REQUEST');
           delete e.publication;
           delete e.loginOrigin;
@@ -1029,6 +1411,19 @@ export class ExecutionRecords {
               check: c.check,
               reason: recovery ? 'changed-intent' : 'stale-worker',
             });
+            const processing = e.materialProcessing?.find(
+              (p) => p.actionId === action.id && p.workId,
+            );
+            if (processing && processing.status !== 'complete') {
+              processing.status =
+                c.check.status === 'verified' &&
+                !e.observedAnomalies?.some(
+                  (o) => o.goalVersion === action.goalVersion,
+                )
+                  ? 'complete'
+                  : 'unknown';
+              processing.resultId = c.check.id;
+            }
             this.save(task.id, e);
             return { created: true, historical: true };
           }
@@ -1327,6 +1722,7 @@ export class ExecutionRecords {
           (e.materials ??= []).push(c.material);
           // 改变素材后不能继承旧的内容确认。
           delete e.publication;
+          this.claimMaterialWork(task.id, e, c.material);
           this.db
             .insert(schema.messages)
             .values({
@@ -1637,6 +2033,28 @@ export class ExecutionRecords {
               approvalId: null,
               revision: (old?.revision ?? 0) + 1,
             };
+            if (
+              canAutoApprove(e, [
+                { taskId: task.id, execution: e },
+                ...this.others(task.id),
+              ])
+            ) {
+              e.publication.approvalId = randomUUID();
+              e.publication.agreementVersionId = e.agreementBinding!.versionId;
+              e.publication.workId = e.materialWorks!.find(
+                (w) => w.binding.goalVersion === e.goalVersion,
+              )!.id;
+              const use = currentWorkflow(e);
+              if (use)
+                use.approved = {
+                  id: e.publication.approvalId,
+                  content: e.publication.content,
+                };
+              e.summary =
+                '本次素材、目标和内容要求符合已接受的发布约定，继续核对后发布。';
+              this.save(task.id, e);
+              return { created: true, autoApproved: true };
+            }
           }
           if (task.archived)
             this.db
@@ -1669,6 +2087,10 @@ export class ExecutionRecords {
           return { created: true };
         }
         if (c.kind === 'dispatch') {
+          assertAgreementAuthority(e, [
+            { taskId: task.id, execution: e },
+            ...this.others(task.id),
+          ]);
           const a = e.actions.find((a) => a.id === c.id);
           if (!a || a.runId !== c.runId || a.status !== 'reserved')
             return { permitted: false };
@@ -1709,6 +2131,23 @@ export class ExecutionRecords {
           return { permitted: true };
         }
         if (c.kind === 'reserve') {
+          if (e.duplicateWork?.goalVersion === e.goalVersion)
+            throw Error('MATERIAL_WORK_EXISTS');
+          if (
+            e.agreementBinding?.goalVersion === e.goalVersion &&
+            !activeAgreement(
+              boundAgreement(e, [
+                { taskId: task.id, execution: e },
+                ...this.others(task.id),
+              ]),
+            ) &&
+            (!e.publication?.approvalId || e.publication.agreementVersionId)
+          )
+            throw Error('AGREEMENT_EXPIRED');
+          assertAgreementAuthority(e, [
+            { taskId: task.id, execution: e },
+            ...this.others(task.id),
+          ]);
           const recorded = e.actions.find((a) => a.id === c.id);
           if (recorded) {
             if (
@@ -1959,6 +2398,9 @@ export class ExecutionRecords {
             if (pending) pending.actionId = c.id;
             else
               work.push({
+                workId: e.materialWorks?.find(
+                  (w) => w.binding.goalVersion === e.goalVersion,
+                )?.id,
                 materialId: p!.attachment!.materialId,
                 goalVersion: e.goalVersion,
                 targetUrl: p!.attachment!.targetUrl,

@@ -1,0 +1,44 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/agreement.test.ts (10 tests | 6 failed) 3269ms
+   × 符合约定的有来源新文章自动确认，编辑/改目标不继承；网页流程不授予权限 414ms
+   × 同内容改名仍返回已完成 A；不同目标 B 独立领取；明确再发形成新意图 402ms
+   × 同一工作 unknown 状态的重复通知不另发，未核对完成不能再发 381ms
+   × 撤销在预留后使旧派发失效，单次确认与已送出的结果分别处理 375ms
+   × 已送出后撤销，迟到核对只记录原工作完成，不恢复自动执行 378ms
+   × 备份、恢复、冷开保留版本、撤销与最小完成事实，拒绝破坏跨任务归属 378ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/agreement.test.ts > 符合约定的有来源新文章自动确认，编辑/改目标不继承；网页流程不授予权限
+ FAIL  tests/workspace/agreement.test.ts > 同内容改名仍返回已完成 A；不同目标 B 独立领取；明确再发形成新意图
+ FAIL  tests/workspace/agreement.test.ts > 同一工作 unknown 状态的重复通知不另发，未核对完成不能再发
+ FAIL  tests/workspace/agreement.test.ts > 撤销在预留后使旧派发失效，单次确认与已送出的结果分别处理
+ FAIL  tests/workspace/agreement.test.ts > 已送出后撤销，迟到核对只记录原工作完成，不恢复自动执行
+ FAIL  tests/workspace/agreement.test.ts > 备份、恢复、冷开保留版本、撤销与最小完成事实，拒绝破坏跨任务归属
+Error: MATERIAL_NOT_AUTHORIZED
+ ❯ apply app/records/execution.ts:1539:23
+    1537|                 new URL(action.source.url).origin !== new URL(fact.url…
+    1538|               )
+    1539|                 throw Error('MATERIAL_NOT_AUTHORIZED');
+       |                       ^
+    1540|             } else if (
+    1541|               !target ||
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:2338:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:2337:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:327:33
+ ❯ post tests/workspace/agreement.test.ts:36:68
+ ❯ Object.review tests/workspace/agreement.test.ts:59:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 4 passed (10)
+   Start at  02:33:10
+   Duration  3.74s (tests 89%, import 9%, transform 2%)
+

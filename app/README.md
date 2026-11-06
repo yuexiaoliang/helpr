@@ -216,3 +216,15 @@ Node-API 8 原生模块经 node-gyp `13.1.0` 构建，固定 arm64／macOS 14 �
 记录格式 **17** 接续 16，迁移前保留原库。解析、要求、生成与用户版本、模型来源、预览确认及派发关联进入冷开和备份校验。最终发布仍走已有资格、当前网页全文／目标、附件字节及公开结果检查，失败不把素材标为完成。引用及数值核对不等于通用语义证明；真实模型和远程后台继续待验。
 
 定向入口：`pnpm exec vitest run tests/workspace/article.test.ts tests/workspace/article-ui.test.tsx`。实包入口：`pnpm validate:workspace --fixture --candidate=excel-article-18 --article`。证据及剩余范围见 [18 检查报告](../docs/testing/evidence/article-18/REPORT.md)。
+
+## 发布约定与素材工作（19）
+
+任务对话的“发布约定”接收自然语言要求，复述素材范围与选择规则、网站入口、栏目、内容要求、新字节处理策略和日期／期次含义。只有点击“接受这个发布约定”或明确发送“接受发布约定”，才保存接受事实。修改先撤销旧版并重新复述；“撤销发布约定”即时阻断相关新动作，再可靠保存。此前已经派发的效果只核对，不回滚或重发。接受约定与当前文章的单次确认分别保存。
+
+“按约定处理新素材”创建独立任务，先在本地固定素材和原子领取工作，再进入已有原生资格、共享会话与网页执行路径。同内容改名仍在取材范围内、工作含义未变时返回原工作；等待、停止或未知都不另发。不同栏目／工作期次分别处理。明确“再发一次”选择已经核对完成的工作，沿用它的固定副本，不重新读取后来变化的来源文件。当前取材范围沿用 exact／only／latest 和单层目录；目录内移动只在仍符合已接受范围时成立。
+
+自动确认仅适用于当前有效版本、新工作、匹配的固定素材、网站与栏目、按该约定生成且未被人工改写的文章。改目标／要求清除当前绑定；没有约定或字节变化策略为“先确认”的新版本仍走单次内容确认。流程版本不授予权限；未知提交仍不重送。定时期次由 20 叠加，本项按明确的期次字符串区分工作，不解释时间或自动触发。
+
+记录格式 **18** 接续 17，升级前保留原库。约定版本、接受／撤销、工作身份、重复归属和最小完成事实随任务进入备份；冷开与恢复校验跨任务引用，备份恢复后仍逐项核对、等待明确继续。后续历史清理必须保留这些跨任务完成与授权引用。
+
+检查入口：`pnpm exec vitest run tests/workspace/agreement.test.ts tests/workspace/agreement-ui.test.tsx`。固定候选为构建 73 `publishing-agreements-19-viewport`。`pnpm validate:workspace --fixture --candidate=publishing-agreements-19-viewport --agreements` 保留全程自动用例，创建后的导航会按原归属规则暂停。增加 `--agreements-navigation-confirm` 明确启用脚本模拟导航后继续，已核对四次发布、改名去重、固定版本再发、改栏目／撤销及冷开，不能充抵自动跨页或本人操作。具体证据、失败及待验边界见 [19 检查安排](../docs/testing/agreements-19-plan.md)与[检查报告](../docs/testing/evidence/agreements-19/REPORT.md)。

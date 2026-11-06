@@ -1,3 +1,4 @@
+import { PublishingAgreement } from './PublishingAgreement';
 import {
   useSyncExternalStore,
   useState,
@@ -614,6 +615,7 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
                 })()}
             </div>
           )}
+          <PublishingAgreement task={task} store={store} />
           <div className={styles.feed} aria-label="对话记录">
             {task.messages.map((message, i) => (
               <div

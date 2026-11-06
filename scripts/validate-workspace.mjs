@@ -12,6 +12,7 @@ import { spend, validationRoot } from './workspace-budget.mjs';
 import { fixture } from './workspace-fixture.mjs';
 import { verifyWorkflowRepair } from './workflow-repair-validation.mjs';
 import { verifyWorkflow } from './workflow-validation.mjs';
+import { verifyAgreements } from './agreement-validation.mjs';
 import { verifyArticle } from './article-validation.mjs';
 import { verifyCoordination } from './coordination-validation.mjs';
 
@@ -32,6 +33,8 @@ const { values: options } = parseArgs({
     'workflow-reuse': flag,
     'workflow-repair': flag,
     article: flag,
+    agreements: flag,
+    'agreements-navigation-confirm': flag,
     coordination: flag,
     'publication-recovery': { type: 'string' },
     interactive: flag,
@@ -75,16 +78,17 @@ if (recoveryPoint) {
   options.publication = true;
 }
 const systemStorage = options['system-storage'] === true;
+assert(!options['agreements-navigation-confirm'] || options.agreements, 'AGREEMENTS_CASE_REQUIRED');
 assert(!(systemStorage && options.fixture), 'CONFLICTING_STORAGE_MODES');
 assert(!options['blocked-host'] || options.fault, 'FAULT_FLAG_REQUIRED');
 assert(
   !options['input-preparation'] || (!options.interactive && !options.fault),
   'INPUT_PREPARATION_IS_A_SINGLE_CHECK',
 );
-if (options.participation || options['participation-review'] || options['task-groups'] || options.material || options.publication || options['workflow-reuse'] || options['workflow-repair'] || options.article || options.coordination) {
+if (options.participation || options['participation-review'] || options['task-groups'] || options.material || options.publication || options['workflow-reuse'] || options['workflow-repair'] || options.article || options.agreements || options.coordination) {
   assert(
     options.fixture && !systemStorage && !options.interactive && !options.fault &&
-      !options['input-preparation'] && [options.participation, options['participation-review'], options['task-groups'], options.material, options.publication, options['workflow-reuse'], options['workflow-repair'], options.article, options.coordination].filter(Boolean).length === 1,
+      !options['input-preparation'] && [options.participation, options['participation-review'], options['task-groups'], options.material, options.publication, options['workflow-reuse'], options['workflow-repair'], options.article, options.agreements, options.coordination].filter(Boolean).length === 1,
     'PARTICIPATION_FIXTURE_REQUIRED',
   );
 }
@@ -233,8 +237,9 @@ const materialBytes = Buffer.from([0, 1, 99, 128, 255, 2, 3, 4]);
 if (options.material || options.publication) fs.writeFileSync(materialSource, materialBytes);
 const website = await fixture({
   coordination: options.coordination,
-  workflow: options['workflow-reuse'] || options['workflow-repair'] || options.article,
-  article: options.article,
+  workflow: options['workflow-reuse'] || options['workflow-repair'] || options.article || options.agreements,
+  article: options.article || options.agreements,
+  agreements: options.agreements,
   repair: options['workflow-repair'],
   participation: options.participation || options['task-groups'],
   review: options['participation-review'],
@@ -284,7 +289,7 @@ const deadline = setTimeout(
     ? 60000
     : options.interactive || systemStorage
       ? 30 * 60 * 1000
-      : (options.coordination || options['workflow-repair']) ? 5 * 60000 : options['workflow-reuse'] ? 3 * 60000 : 2 * 60000,
+      : (options.coordination || options['workflow-repair'] || options.agreements) ? 5 * 60000 : options['workflow-reuse'] ? 3 * 60000 : 2 * 60000,
 );
 function check(name, test) {
   test();
@@ -384,6 +389,7 @@ async function launch({ holdRecovery = false } = {}) {
   );
   const pending = new Map();
   let sequence = 0;
+  let quitSequence, quitError;
   let ready;
   const readiness = new Promise((resolve, reject) => {
     const timer = setTimeout(
@@ -395,6 +401,10 @@ async function launch({ holdRecovery = false } = {}) {
       reject(error);
     });
     child.on('message', (message) => {
+      if (message.id === quitSequence && message.error) {
+        quitError = message.error;
+        run.quitError = message.error;
+      }
       if (message.launching) {
         for (const pid of [message.launcherPid, message.hostPid])
           if (Number.isSafeInteger(pid) && pid > 1) lastPids.push(pid);
@@ -460,8 +470,13 @@ async function launch({ holdRecovery = false } = {}) {
       }),
     quit: async () => {
       remainingOwned();
-      child.send({ id: ++sequence, command: { kind: 'quit' } });
-      await waitFor(() => child.exitCode !== null || child.signalCode !== null);
+      quitError = undefined;
+      quitSequence = ++sequence;
+      child.send({ id: quitSequence, command: { kind: 'quit' } });
+      await waitFor(() => {
+        if (quitError) throw Error(quitError);
+        return child.exitCode !== null || child.signalCode !== null;
+      });
       assert.equal(child.exitCode, 0);
       await waitFor(() => remainingOwned().length === 0);
     },
@@ -869,6 +884,7 @@ async function verifyMaterial(client) {
 async function validate() {
   let client = await launch();
   if (options.coordination) return verifyCoordination({client, website, evidence, command, waitFor, check, launch, remainingOwned});
+  if (options.agreements) return verifyAgreements({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, confirmNavigation:options['agreements-navigation-confirm']===true});
   if (options.article) return verifyArticle({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
   if (options['workflow-repair']) return verifyWorkflowRepair({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
   if (options['workflow-reuse']) return verifyWorkflow({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});

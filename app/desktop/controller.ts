@@ -1,3 +1,4 @@
+import { agreementUICommandSchema } from '../shared/agreement';
 import {
   app,
   utilityProcess,
@@ -811,12 +812,81 @@ export async function startController(
         throw Error('UNSAVED_CHANGES');
       return { state: await executions.intent(command) };
     }
+    if (command.kind.startsWith('agreement-'))
+      return {
+        state: await executions.agreement(
+          agreementUICommandSchema.parse(command),
+        ),
+      };
     if (command.kind === 'model-save') return models.configure(command);
     if (command.kind === 'model-cancel')
       return models.cancel(command.taskId, command.callId);
     if (command.kind === 'model-test') return models.testConnection(command);
     if (command.kind === 'message') {
       const text = command.text.trim();
+      const task = state.tasks.find((t) => t.id === command.taskId);
+      const agreement = task?.execution?.agreements?.at(-1);
+      const base = { taskId: command.taskId, requestId: command.requestId };
+      if (/^(明确)?再(发|发布)一次[。！!]?$/u.test(text)) {
+        const work = task?.execution?.materialWorks?.findLast(
+          (w) =>
+            w.binding.goalVersion === task.execution?.goalVersion &&
+            w.status === 'complete',
+        );
+        if (!work) throw Error('MATERIAL_WORK_UNSETTLED');
+        return {
+          state: await executions.agreement({
+            kind: 'agreement-use',
+            taskId: work.binding.ownerTaskId,
+            requestId: command.requestId,
+            versionId: work.binding.versionId,
+            periodKey: work.binding.periodKey,
+            repeatOf: work.id,
+          }),
+        };
+      }
+      if (/^(撤销|取消)(这个)?发布约定[。！!]?$/u.test(text) && agreement)
+        return {
+          state: await executions.agreement({
+            ...base,
+            kind: 'agreement-revoke',
+            versionId: agreement.versionId,
+          }),
+        };
+      if (/^接受(这个)?发布约定[。！!]?$/u.test(text) && agreement)
+        return {
+          state: await executions.agreement({
+            ...base,
+            kind: 'agreement-accept',
+            versionId: agreement.versionId,
+          }),
+        };
+      if (
+        /^(发布约定|修改发布约定|以后按)[：:\s]?/u.test(text) &&
+        task?.execution
+      )
+        return {
+          state: await executions.agreement({
+            ...base,
+            kind: 'agreement-prepare',
+            expectedVersion: task.execution.version,
+            text,
+          }),
+        };
+      if (
+        /^按(这个)?约定(处理|发布)(新素材)?[。！!]?$/u.test(text) &&
+        agreement
+      )
+        return {
+          state: await executions.agreement({
+            ...base,
+            kind: 'agreement-use',
+            versionId: agreement.versionId,
+            periodKey: '',
+            repeatOf: null,
+          }),
+        };
+
       const intent = /^(停止|停下|暂停)[。！!]?$/u.test(text)
         ? 'stop'
         : /^继续[。！!]?$/u.test(text)

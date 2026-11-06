@@ -1,6 +1,6 @@
 // 本机替代模型从委托提取参数并提议首次动作；复用阶段只回答绑定，不提供网页步骤。
-export function workflowFixture(receipts, { repair = false, article = false } = {}) {
-  let calls = 0, writes = 0;
+export function workflowFixture(receipts, { repair = false, article = false, agreements = false } = {}) {
+  let calls = 0, writes = 0, newItems = 0;
   const waitingDrafts = new Map();
   const labels = id => !repair || id === 'A' ? {draft: '保存草稿', title: '发布标题', publish: '发布附件'} : id === 'C' ? {draft: '暂存附件', title: '正文内容', publish: '确认送出'} : {draft: '暂存附件', title: '公告全文', publish: '发布附件'};
   const pages = new Map();
@@ -17,6 +17,16 @@ export function workflowFixture(receipts, { repair = false, article = false } = 
         try {
           if (++calls > 80) throw Error('FIXTURE_MODEL_LIMIT');
           const input = JSON.parse(body), plan = JSON.parse(input.messages.at(-1).content);
+          if (agreements && plan.request) {
+            const match = plan.request.text.match(/从“(.+?)”取唯一 xlsx，在 (http\S+) 的“(.+?)”栏目，按“(.+?)”自动发布，新内容另发，同内容一次/);
+            if (!match) throw Error('AGREEMENT_FIXTURE_INPUT');
+            const [,scope,entryUrl,destination,contentRules] = match;
+            const answer = {decision:'review',summary:'请接受完整发布约定',evidence:['用户发布约定要求'],previous:null,action:null,agreement:{selection:{scope,rule:'only',name:null,extension:'.xlsx'},entryUrl,destination,contentRules,changedBytes:'new-publication',period:'once-per-material'}};
+            receipts.push({kind:'agreement-model',at:Date.now()});
+            res.writeHead(200, {'Content-Type':'text/event-stream'});
+            res.end('data: '+JSON.stringify({choices:[{index:0,delta:{content:JSON.stringify(answer)},finish_reason:null}]})+'\n\ndata: '+JSON.stringify({choices:[{index:0,delta:{},finish_reason:'stop'}],usage:{prompt_tokens:100,completion_tokens:100,total_tokens:200}})+'\n\ndata: [DONE]\n\n');
+            return;
+          }
           if (article && plan.source) {
             const source = plan.source;
             const blocks = [];
@@ -26,22 +36,27 @@ export function workflowFixture(receipts, { repair = false, article = false } = 
                 if (value) blocks.push({ kind: 'fact', text: cell.display + '：' + value.display + '。', citations: [cell,value].map(c => ({sheet:sheet.name,address:c.address,quote:c.display})) });
               }
             }
-            const answer = {decision:'review', summary:'已按固定表格生成文章建议', evidence:['基于固定素材提出建议'], previous:null, action:null, article:{destination:'公告',blocks}};
+            const answer = {decision:'review', summary:'已按固定表格生成文章建议', evidence:['基于固定素材提出建议'], previous:null, action:null, article:{destination:agreements ? source.requirements.goal.match(/的“(.+?)”。/)?.[1] ?? '公告' : '公告',blocks}};
             receipts.push({kind:'content-model', sourceId:source.id, at:Date.now()});
             res.writeHead(200, {'Content-Type':'text/event-stream'});
             res.end('data: ' + JSON.stringify({choices:[{index:0,delta:{content:JSON.stringify(answer)},finish_reason:null}]}) + '\n\ndata: ' + JSON.stringify({choices:[{index:0,delta:{},finish_reason:'stop'}],usage:{prompt_tokens:100,completion_tokens:100,total_tokens:200}}) + '\n\ndata: [DONE]\n\n');
             return;
           }
           const observed = input.messages.at(-2).content;
-          const [, source, target, content, destination] = plan.goal.match(/使用“(.+?)”在 (http\S+) 发布“(.+?)”到“(.+?)”/);
+          const bound = plan.publishingAgreement;
+          const normal = bound ? null : plan.goal.match(/使用“(.+?)”在 (http\S+) 发布“(.+?)”到“(.+?)”/);
+          const source = bound?.selection.scope ?? normal[1];
+          const target = bound ? observed.match(/页面观察[^\n]*\n(http[^\s]+)/)[1] : normal[2];
+          const content = bound ? '' : normal[3], destination = bound?.destination ?? normal[4];
           const targetURL = new URL(target), id = targetURL.searchParams.get('item');
-          const material = { scope: source, rule: 'exact', name: null, extension: null, basis: `使用“${source}”` };
+          const material = bound ? {...bound.selection,basis:plan.goal} : { scope: source, rule: 'exact', name: null, extension: null, basis: `使用“${source}”` };
           const p = plan.publication, m = plan.materials?.[0];
           const buttons = [...observed.matchAll(/\[button\] ([^\n]+)/g)].map(m => m[1]);
           const titleControl = /\[textbox\] ([^\n：]+)/.exec(observed)?.[1];
-          const previous = plan.previous ? { id: plan.previous.id, status: 'confirmed', evidence: [observed.includes('已正式发布') ? '已正式发布' : observed.includes('栏目已填写') ? '栏目已填写' : observed.includes('标题已填写') ? '标题已填写' : observed.includes('草稿已保存') ? '草稿已保存' : '附件已上传'] } : null;
+          const previous = plan.previous ? { id: plan.previous.id, status: 'confirmed', evidence: [observed.includes('已正式发布') ? '已正式发布' : observed.includes('栏目已填写') ? '栏目已填写' : observed.includes('标题已填写') ? '标题已填写' : observed.includes('草稿已保存') ? '草稿已保存' : observed.includes('附件已上传') ? '附件已上传' : '附件编辑'] } : null;
           let step = { decision: 'act', summary: '核对本次附件', evidence: ['附件编辑'], previous, action: null };
-          if (!article && plan.workflows?.length) {
+          if (agreements && targetURL.pathname === '/new') step = {...step,evidence:['创建文章'],effect:'draft',action:{kind:'click',target:{role:'button',name:'创建文章'}}};
+          else if (!article && plan.workflows?.length) {
             const w = plan.workflows[0];
             step = { ...step, decision: 'reuse', material, workflow: { taskId: w.taskId, version: w.version, sha256: w.sha256, content, destination } };
           } else if (/正在(上传|保存|发布)附件/.test(observed)) step = { ...step, decision: 'observe', previous: null };
@@ -64,6 +79,8 @@ export function workflowFixture(receipts, { repair = false, article = false } = 
               }
             }
           }
+          if (agreements && targetURL.pathname === '/edit' && !plan.preparation?.some(f=>f.kind==='target')) step.preparation=[{kind:'target',url:target,materialId:null,evidence:['附件编辑']},...(step.preparation??[]).filter(f=>f.kind!=='target')];
+          if (agreements && targetURL.pathname === '/edit' && observed.includes('草稿已保存') && !plan.preparation?.some(f=>f.kind==='draft') && !step.preparation?.some(f=>f.kind==='draft')) (step.preparation??=[]).push({kind:'draft',url:target,materialId:null,evidence:['草稿已保存']});
           if (repair) step.coordination = {account: {name: '账号 fixture', url: base + '/users/fixture'}, target: {name: '当前记录', url: target}, permissionEvidence: ['可编辑此记录']};
           receipts.push({ kind: 'planning', item: id, decision: step.decision, repair: !!plan.repair, at: Date.now() });
           res.writeHead(200, { 'Content-Type': 'text/event-stream' });
@@ -71,8 +88,14 @@ export function workflowFixture(receipts, { repair = false, article = false } = 
         } catch (error) { receipts.push({ kind: 'fixture-error', error: error.message }); res.writeHead(400); res.end(); }
       }); return true;
     }
+    if (agreements && url.pathname === '/readiness') {receipts.push({kind:'readiness',state:Object.fromEntries(url.searchParams),at:Date.now()});res.end('ok');return true;}
+    if (agreements && url.pathname === '/new') {res.setHeader('Content-Type','text/html; charset=utf-8');res.end(`<!doctype html><meta charset="utf-8"><title>新文章</title><button onclick="location.href='/create'">创建文章</button><script>
+let frames=0;const started=performance.timeOrigin;function tick(){frames++;if(performance.now()<6500)requestAnimationFrame(tick)}requestAnimationFrame(tick);
+for(const delay of [1000,3000,6000])setTimeout(()=>fetch('/readiness?'+new URLSearchParams({started,frames,visibility:document.visibilityState,ready:document.readyState,focus:document.hasFocus(),width:innerWidth,height:innerHeight,button:JSON.stringify(document.querySelector('button').getBoundingClientRect().toJSON())})),delay);
+</script>`);return true;}
+    if (agreements && url.pathname === '/create') {const id='W'+(++newItems);get(id).draft=true;receipts.push({kind:'created',item:id},{kind:'draft',item:id,at:Date.now()});res.writeHead(302,{Location:'/edit?item='+id});res.end();return true;}
     const id = url.searchParams.get('item');
-    if (!id || !['A', 'B', 'C', 'D'].includes(id)) return false;
+    if (!id || !(agreements ? /^W[1-9][0-9]*$/.test(id) : ['A', 'B', 'C', 'D'].includes(id))) return false;
     const p = get(id), query = '?item=' + id;
     if (req.method === 'POST') {
       const chunks = []; req.on('data', b => chunks.push(b)); req.on('end', () => {

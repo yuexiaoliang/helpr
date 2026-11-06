@@ -152,7 +152,7 @@ async function fixture(name = 'report-a.xlsx', base = 'https://example.com') {
     taskId,
     runId: 'prepare',
     materialId: material.id,
-  })) as { source: ContentSource };
+  })) as unknown as { source: ContentSource };
   const source = parsed.source;
   const observation = (): PageObservation => ({
     url: base + '/edit',
