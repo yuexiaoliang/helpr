@@ -12,6 +12,8 @@ import {
 import { spend, validationRoot } from './workspace-budget.mjs';
 import { packageWorkspaceHost } from './package-workspace-host.mjs';
 import { developmentIdentity, verifyDevelopmentSignature, signDevelopmentPackage } from './development-signing.mjs';
+import { captureReleaseInputs, assertSameInputs, inventoryDirectory, fileHash } from './release-inputs.mjs';
+import { prepareReleaseNotices } from './release-notices.mjs';
 
 if (process.platform !== 'darwin' || process.arch !== 'arm64')
   throw Error('MAC_ARM64_REQUIRED');
@@ -27,18 +29,24 @@ if (process.argv.length === 3 && process.argv[2] === '--check-signing') {
 }
 const candidate = process.argv[2]?.match(/^--candidate=([a-z0-9-]{1,40})$/)?.[1];
 if (process.argv.length > 3 || (process.argv[2] && !candidate)) throw Error('INVALID_BUILD_CANDIDATE');
-const budget = spend('builds');
 const output = path.resolve(candidate ? `dist/candidates/${candidate}` : 'dist/packages');
+if (candidate && fs.existsSync(output)) throw Error('BUILD_CANDIDATE_ALREADY_EXISTS');
+const source = captureReleaseInputs();
+const budget = spend('builds');
 const manifest = {
   build: budget.used.builds,
   started: new Date().toISOString(),
-  toolchain: { node: process.version, pnpm: '11.7.0' },
+  toolchain: source.toolchain,
+  source,
   appId: 'local.helpr.desktop',
   signature: 'pinned local development certificate, current Mac self-use only',
   signing,
   hashes: {},
 };
 try {
+  const notices = path.resolve(`dist/release-notices-${manifest.build}`);
+  manifest.dependencies = prepareReleaseNotices(notices);
+  fs.writeFileSync(path.join(notices, 'SOURCE.json'), JSON.stringify(source, null, 2) + '\n');
   execFileSync(process.execPath, ['scripts/build-native.mjs'], { stdio: 'inherit' });
   execFileSync('./node_modules/.bin/electron-vite', ['build'], {
     stdio: 'inherit',
@@ -65,6 +73,7 @@ try {
         { from: 'dist/native/input-bridge.node', to: 'input-bridge.node' },
         { from: 'dist/native/input-bridge.build.json', to: 'input-bridge.build.json' },
         { from: 'app/renderer/assets/PHOSPHOR-LICENSE.txt', to: 'licenses/PHOSPHOR-LICENSE.txt' },
+        { from: notices, to: 'release' },
       ],
       asar: true,
       asarUnpack: ['**/*.node'],
@@ -115,6 +124,11 @@ try {
       .digest('hex');
   manifest.prepared = true;
   manifest.app = appPath;
+  assertSameInputs(source, captureReleaseInputs());
+  manifest.bundle = inventoryDirectory(appPath);
+  manifest.releaseMetadataSha256 = fileHash(path.join(appPath, 'Contents/Resources/release/DEPENDENCIES.json'));
+  // 构建成功不授予真实业务、费用、安装或交付资格。
+  manifest.releaseAccepted = false;
 } catch (error) {
   manifest.prepared = false;
   manifest.error = error.message;
