@@ -1,0 +1,26 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/rich-text-frame.test.ts (33 tests | 1 failed) 82ms
+   × 274真实blank已生成普通编辑根，归属核对应取得文档 26ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/rich-text-frame.test.ts > 274真实blank已生成普通编辑根，归属核对应取得文档
+AssertionError: expected undefined to be defined
+ ❯ tests/workspace/rich-text-frame.test.ts:326:76
+    324|   const {default:sample}=await import('./fixtures/inline-frame-observa…
+    325|   const child=sample.tree.childFrames[0]!.frame;
+    326|   expect(richTextFrameDocument(sample.dom,sample.tree,child.id,sample.…
+       |                                                                            ^
+    327| });
+    328|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 32 passed (33)
+   Start at  15:30:34
+   Duration  506ms (import 42%, tests 29%, transform 27%, worker 3%)
+

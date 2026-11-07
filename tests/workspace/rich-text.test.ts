@@ -449,3 +449,39 @@ test('真实占位BR在AX缺值时仍不能冒充空正文', async () => {
     source.controls!.find((c) => c.name === '正文')?.textValue,
   ).toBeUndefined();
 });
+
+test.each(['about:blank', 'about:srcdoc'])(
+  '内联正文%s可靠保存并冷开，来源变化不确认',
+  (frameUrl) => {
+    const f = recordsFixture();
+    const read = (value?: string) => {
+      const source = observed(value).read();
+      source.controls![0]!.frameUrl = frameUrl;
+      return source;
+    };
+    f.post({
+      ...f.reserve,
+      action: { ...action, target: { ...action.target, frameUrl } },
+      source: read(),
+    });
+    f.post({ kind: 'dispatch', runId: 'rich', id: 'fill' });
+    f.post({ kind: 'reported', id: 'fill', returned: true });
+    const resolve = {
+      kind: 'resolve',
+      runId: 'rich',
+      id: 'fill',
+      evidence: ['正文'],
+      binding: f.binding,
+    };
+    const wrong = read(action.value);
+    wrong.controls![0]!.frameUrl = 'about:blank#changed';
+    expect(() => f.post({ ...resolve, source: wrong })).toThrow(
+      'EXECUTION_RICH_TEXT_UNVERIFIED',
+    );
+    f.post({ ...resolve, source: read(action.value) });
+    const saved = f.cold().actions[0]!;
+    expect(saved.status).toBe('confirmed');
+    expect(saved.richTextResult!.frameUrl).toBe(frameUrl);
+    expect(actionFactSchema.safeParse(saved).success).toBe(true);
+  },
+);

@@ -1,5 +1,6 @@
 import type { PageObservation } from './model';
 import type { WebAction } from './web-action';
+import { isInlineFrameURL } from './url-policy';
 
 /** 富文本仅支持显式命名且已有 DOM 证明的同站 textbox，纯文本整体替换；不承诺保留格式。 */
 export function richTextControl(
@@ -28,6 +29,7 @@ export function richTextControl(
     !target.exact ||
     target.within ||
     (target.frameUrl &&
+      !isInlineFrameURL(target.frameUrl) &&
       new URL(target.frameUrl).origin !== new URL(source.url).origin) ||
     matches.length !== 1 ||
     !control?.richText ||

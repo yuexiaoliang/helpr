@@ -1,0 +1,25 @@
+✔ 段落原样保留，每个输入事件独立收件并有有限上限 (129.932958ms)
+✔ frame夹具使用独立同站URL，BODY内无脚本，替换和外层焦点反例保留 (10.217042ms)
+✔ inline夹具保留blank初始生成、srcdoc属性和实际frameUrl，不用输入脚本代写 (5.83475ms)
+✖ 执行前观察遇代次失效时记录并重取两份连续稳定样本，仍最多八次 (0.492458ms)
+✔ 执行前准备不吞掉其它观察错误 (0.28825ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 4
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 208.657041
+
+✖ failing tests:
+
+test at scripts/rich-text-lines-fixture.test.mjs:39:1
+✖ 执行前观察遇代次失效时记录并重取两份连续稳定样本，仍最多八次 (0.492458ms)
+  Error: OBSERVATION_NOT_AUTHORIZED
+      at Object.request (file:///Users/yuexiaoliang/projects/helpr/scripts/rich-text-lines-fixture.test.mjs:41:94)
+      at file:///Users/yuexiaoliang/projects/helpr/scripts/rich-text-lines-validation.mjs:55:33
+      at TestContext.<anonymous> (file:///Users/yuexiaoliang/projects/helpr/scripts/rich-text-lines-fixture.test.mjs:42:55)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7)

@@ -1,7 +1,13 @@
 import { z } from 'zod';
+import { isInlineFrameURL, websiteURL } from '../shared/url-policy';
+import { frameOriginMatches } from './frame-origins';
 
 const treeNode = z.object({
-  frame: z.object({ id: z.string(), url: z.string() }),
+  frame: z.object({
+    id: z.string(),
+    url: z.string(),
+    securityOrigin: z.string().optional(),
+  }),
   childFrames: z.array(z.unknown()).optional(),
 });
 const documentSchema = z
@@ -34,6 +40,7 @@ export function richTextFrameDocument(
   frameTree: unknown,
   frameId: string,
   accessibility: unknown,
+  nativeOrigins?: unknown,
 ): unknown {
   const parsed = z
     .object({
@@ -43,7 +50,12 @@ export function richTextFrameDocument(
     .safeParse(snapshot);
   if (!parsed.success) return undefined;
   const { strings, documents } = parsed.data;
-  const frames: { id: string; url: string; parent?: string }[] = [];
+  const frames: {
+    id: string;
+    url: string;
+    securityOrigin?: string;
+    parent?: string;
+  }[] = [];
   const collect = (raw: unknown, parent?: string): boolean => {
     const item = treeNode.safeParse(raw);
     if (!item.success) return false;
@@ -87,10 +99,25 @@ export function richTextFrameDocument(
   let current: typeof frame | undefined = frame;
   while (current) {
     try {
+      const origin = new URL(websiteURL(root.url)).origin;
       if (
-        new URL(current.url).origin !== new URL(root.url).origin ||
-        !/^https?:/.test(current.url)
+        nativeOrigins !== undefined &&
+        !frameOriginMatches(
+          nativeOrigins,
+          current.url,
+          frames.find((f) => f.id === current!.parent)?.url,
+          origin,
+        )
       )
+        return undefined;
+      if (isInlineFrameURL(current.url)) {
+        if (
+          !current.parent ||
+          !nativeOrigins ||
+          ![origin, '://'].includes(current.securityOrigin ?? '')
+        )
+          return undefined;
+      } else if (new URL(websiteURL(current.url)).origin !== origin)
         return undefined;
     } catch {
       return undefined;
@@ -144,6 +171,17 @@ export function richTextFrameDocument(
         if (!name || value === undefined || attributes.has(name))
           return undefined;
         attributes.set(name, value);
+      }
+      if (index === owner && isInlineFrameURL(current.url)) {
+        // URL 只能用当前文档事实；不接受脚本URL、片段或srcdoc/blank矛盾。
+        const src = attributes.get('src');
+        if (
+          current.url === 'about:srcdoc'
+            ? !attributes.has('srcdoc')
+            : attributes.has('srcdoc') ||
+              (src !== undefined && src !== '' && src !== 'about:blank')
+        )
+          return undefined;
       }
       if (
         attributes.has('hidden') ||

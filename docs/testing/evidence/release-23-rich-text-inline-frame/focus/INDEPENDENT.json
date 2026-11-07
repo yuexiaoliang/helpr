@@ -1,0 +1,178 @@
+{
+  "checkedAt": "2026-11-07T07:48:04.852543+00:00",
+  "build": 103,
+  "sourceCommit": "cce402dae4134e14cbbf2439bfd9110292bad0c9",
+  "sourceDirty": true,
+  "rawRun": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/run-1794037544609",
+  "profile": "/private/tmp/helpr-workspace-validation-501/run-7AlXav",
+  "dataFormat": 32,
+  "mode": "inline-focus",
+  "quickCheck": "ok",
+  "sqliteSha256": "a4f4b5226dab71b58581e74edcec9562412399120355bfe8d909dc3eebbfc9bc",
+  "cases": [
+    {
+      "item": "F",
+      "taskId": "d189c07d-00d1-4135-962b-e5916667d0af",
+      "phase": "paused",
+      "action": {
+        "coordination": {
+          "session": {
+            "id": "helpr-fixture-web",
+            "epoch": "b61725d0-90e0-404f-9244-21e02c41dd1f:0",
+            "origin": "http://127.0.0.1:62993"
+          },
+          "claimId": "3819af64-4c8d-435b-9d16-373f01bcfa03"
+        },
+        "observedLinks": [],
+        "richTextSource": {
+          "role": "textbox",
+          "name": "正文",
+          "frameUrl": "about:blank",
+          "disabled": false,
+          "textValue": "",
+          "readOnly": false,
+          "richText": {
+            "rule": "contenteditable-ax-v1",
+            "backendNodeId": 24,
+            "valueSource": "empty-dom"
+          }
+        },
+        "id": "40cfd465-9573-4a54-8f2d-cb3cac30cfbc",
+        "runId": "3d43f6cd-c380-4518-96b4-af920b512f83",
+        "goalVersion": 1,
+        "status": "unknown",
+        "summary": "填写纯文本正文",
+        "action": {
+          "kind": "fill",
+          "target": {
+            "role": "textbox",
+            "name": "正文",
+            "exact": true,
+            "frameUrl": "about:blank"
+          },
+          "value": "第一行：中文 <标题> & 正文\n第二行：保留换行与标点。"
+        },
+        "effect": "interaction",
+        "preconditions": [
+          "正文"
+        ],
+        "source": {
+          "url": "http://127.0.0.1:62993/rich-edit?item=F",
+          "title": "内联子frame编辑",
+          "fingerprint": "f012cd3e8058358dcd967b28dc395558171cb63d19bbd2ef5ef85165d1e7c62d",
+          "generation": 2,
+          "observedAt": 1794037550961,
+          "truncated": false
+        },
+        "observedUrls": [
+          "http://127.0.0.1:62993/rich-edit?item=F"
+        ],
+        "binding": {
+          "targetId": "CA5783149405B60C0C2B9B74D00289FB",
+          "generation": 2
+        },
+        "evidence": [],
+        "returned": false,
+        "dispatchState": "possible"
+      },
+      "receipts": [
+        {
+          "kind": "rich-input",
+          "item": "F",
+          "sent": "第一行：中文 <标题> & 正文",
+          "actual": "第一行：中文 <标题> & 正文",
+          "html": "第一行：中文 &lt;标题&gt; &amp; 正文",
+          "inputType": "insertText",
+          "active": "外层字段",
+          "at": 1794037551717
+        }
+      ]
+    }
+  ],
+  "pids": [
+    13259,
+    13261,
+    13262,
+    13263,
+    13264,
+    13265,
+    13270,
+    13271,
+    13272,
+    13273,
+    13274,
+    13276,
+    13277,
+    13290,
+    13291,
+    13292,
+    13293,
+    13294,
+    13295,
+    13300,
+    13301,
+    13302,
+    13303,
+    13304
+  ],
+  "groups": [
+    13259,
+    13263,
+    13265,
+    13290,
+    13293,
+    13295
+  ],
+  "remainingPids": [],
+  "remainingGroups": [],
+  "leaseReleased": true,
+  "starts": [
+    {
+      "kind": "startup",
+      "number": 280,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:62993",
+        "persistent": false
+      },
+      "ms": 4626,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    },
+    {
+      "kind": "startup",
+      "number": 281,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:62993",
+        "persistent": false
+      },
+      "ms": 3384,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    }
+  ],
+  "modelPlans": 1,
+  "inputs": 1,
+  "milliseconds": 13873,
+  "bundleSha256": "d12f303054f0814e8ac829b932c16d8d8f61d31c40a09674c8d0f1cd1f3abcf3",
+  "bundleUnchangedAfterRun": true,
+  "inputsUnchangedAfterBuild": false,
+  "productInputsUnchangedAfterBuild": true,
+  "validationInputDifferences": [
+    {
+      "file": "scripts/rich-text-lines-fixture.test.mjs",
+      "before": "e6ad40dc54757911ff7e8aa019e04e8167f442540c07401385e49cfa39b03032",
+      "after": "f8794fd2974edb2e5dbe2cb6fa66afb9d545b0e17897716d3fb95bc7dffa5eb9"
+    },
+    {
+      "file": "scripts/rich-text-lines-validation.mjs",
+      "before": "8d24a7976aea72b46d4afbe4b67171bd21e052f65a1b58b6cc16b5872da5f8ce",
+      "after": "3d1dd0e35c0f1c3f2fb59b126fc2866d72f134ac69aacebd1d362f9c8a5b9a80"
+    }
+  ]
+}

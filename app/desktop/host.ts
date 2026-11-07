@@ -32,6 +32,7 @@ import {
   type Task,
 } from '../shared/contracts';
 import { websiteURL } from '../shared/url-policy';
+import { frameOriginsSchema } from './frame-origins';
 import { diagnostics } from '../shared/diagnostics';
 import { resolveStartup, debuggingSwitches, runtimeImages } from './startup';
 import { InputGate } from './input-gate';
@@ -674,6 +675,38 @@ function reconcile(): void {
 }
 async function perform(input: unknown): Promise<unknown> {
   const command = z.object({ kind: z.string() }).parse(input);
+  if (command.kind === 'frame-origins') {
+    const request = z
+      .object({
+        taskId: z.string(),
+        targetId: z.string(),
+        generation: z.number().int(),
+      })
+      .parse(input);
+    const page = pages.get(request.taskId),
+      wc = page?.view.webContents;
+    if (
+      !page ||
+      !wc ||
+      wc.isDestroyed() ||
+      page.generation !== request.generation ||
+      wc.getOrCreateDevToolsTargetId() !== request.targetId
+    )
+      throw Error('PAGE_NOT_AVAILABLE');
+    return frameOriginsSchema.parse({
+      targetId: request.targetId,
+      generation: request.generation,
+      frames: wc.mainFrame.framesInSubtree.map((frame) => ({
+        id: frame.frameTreeNodeId,
+        parentId: frame.parent?.frameTreeNodeId ?? null,
+        token: frame.frameToken,
+        processId: frame.processId,
+        url: frame.url,
+        origin: frame.origin,
+        detached: frame.detached,
+      })),
+    });
+  }
   if (
     command.kind === 'action-window-arm' ||
     command.kind === 'action-window-disarm'

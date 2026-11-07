@@ -8,7 +8,7 @@ import type {
 import type { ExecutionProtocol } from '../../app/desktop/execution-protocol';
 const mocks = vi.hoisted(() => ({ fork: vi.fn() }));
 vi.mock('electron', () => ({ utilityProcess: { fork: mocks.fork } }));
-function fixture(subframe = false) {
+function fixture(subframe: boolean | string = false) {
   const worker = Object.assign(new EventEmitter(), {
     postMessage: vi.fn(),
     kill: vi.fn(),
@@ -30,7 +30,9 @@ function fixture(subframe = false) {
           role: 'textbox',
           name: '正文',
           frameUrl: subframe
-            ? 'https://example.test/body'
+            ? typeof subframe === 'string'
+              ? subframe
+              : 'https://example.test/body'
             : 'https://example.test/',
           disabled: false,
           readOnly: false,
@@ -58,7 +60,14 @@ function fixture(subframe = false) {
         role: 'textbox',
         name: '正文',
         exact: true,
-        ...(subframe ? { frameUrl: 'https://example.test/body' } : {}),
+        ...(subframe
+          ? {
+              frameUrl:
+                typeof subframe === 'string'
+                  ? subframe
+                  : 'https://example.test/body',
+            }
+          : {}),
       },
       value: '甲\n乙',
     },
@@ -96,7 +105,7 @@ async function ready(f: ReturnType<typeof fixture>) {
     .toBe(true);
   await new Promise((r) => setTimeout(r, 0));
 }
-test.each([false, true])(
+test.each([false, true, 'about:blank', 'about:srcdoc'])(
   '同一backend节点精确前缀逐段核对（子frame=%s）',
   async (subframe) => {
     const f = fixture(subframe);

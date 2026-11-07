@@ -1,4 +1,6 @@
 import { richTextFrameDocument } from './rich-text-frame';
+import { frameOriginsSchema } from './frame-origins';
+import { isInlineFrameURL } from '../shared/url-policy';
 import { hostFormChainSchema } from '../shared/form-navigation-chain';
 import { LinkNavigationWatch } from './link-navigation';
 import { actionNavigationEventSchema } from '../shared/action-navigation';
@@ -346,6 +348,26 @@ export async function startController(
     observe: async (taskId, signal) =>
       (await observePage(taskId, signal)).observation,
   });
+  async function readFrameOrigins(
+    taskId: string,
+    qualification: ReturnType<ObservationBroker['client']>,
+  ) {
+    const value = frameOriginsSchema.parse(
+      await hostClient.request({
+        kind: 'frame-origins',
+        taskId,
+        targetId: qualification.targetId,
+        generation: qualification.generation,
+      }),
+    );
+    if (
+      value.targetId !== qualification.targetId ||
+      value.generation !== qualification.generation ||
+      !broker.owns(qualification)
+    )
+      throw Error('MODEL_PAGE_UNAVAILABLE');
+    return value;
+  }
   async function observePage(
     taskId: string,
     signal: AbortSignal,
@@ -382,6 +404,9 @@ export async function startController(
         item.childFrames?.forEach((child) => collectFrames(child));
       };
       collectFrames(frame.frameTree, true);
+      const nativeOrigins = childFrames.some((f) => isInlineFrameURL(f.url))
+        ? await readFrameOrigins(taskId, qualification)
+        : undefined;
       for (const child of childFrames.slice(0, 8)) {
         // 无法读取的跨进程 frame 明示缺口；不以维护者脚本补写内容。
         try {
@@ -392,7 +417,13 @@ export async function startController(
             qualification.generation,
             '',
             undefined,
-            richTextFrameDocument(document, frame.frameTree, child.id, ax),
+            richTextFrameDocument(
+              document,
+              frame.frameTree,
+              child.id,
+              ax,
+              nativeOrigins,
+            ),
           );
           childObservations.push(observation);
           supplements.push(`[frame] ${child.url}\n` + observation.text);
@@ -402,7 +433,11 @@ export async function startController(
       }
       const frameAfter = await read('Page.getFrameTree');
       if (
-        JSON.stringify(frame.frameTree) !== JSON.stringify(frameAfter.frameTree)
+        JSON.stringify(frame.frameTree) !==
+          JSON.stringify(frameAfter.frameTree) ||
+        (nativeOrigins &&
+          JSON.stringify(nativeOrigins) !==
+            JSON.stringify(await readFrameOrigins(taskId, qualification)))
       )
         throw Error('MODEL_PAGE_UNAVAILABLE');
       if (signal.aborted) throw new Error('MODEL_CANCELLED');
@@ -1291,7 +1326,7 @@ export async function startController(
     );
     workers.add(worker);
     try {
-      return await new Promise((resolve, reject) => {
+      const result = await new Promise<unknown>((resolve, reject) => {
         const timer = setTimeout(
           () => reject(new Error('OBSERVATION_TIMEOUT')),
           10000,
@@ -1342,6 +1377,12 @@ export async function startController(
           });
         });
       });
+      if (method === 'Page.getFrameTree')
+        return {
+          ...z.record(z.string(), z.unknown()).parse(result),
+          nativeOrigins: await readFrameOrigins(taskId, qualification),
+        };
+      return result;
     } finally {
       await broker.close(qualification);
       worker.kill();

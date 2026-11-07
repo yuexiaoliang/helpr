@@ -98,7 +98,7 @@ if (args.length === 0) {
   process.exit(0);
 }
 
-if (options['rich-text-lines'] && !['success','rewrite','focus','stop','frame-success','frame-replace','frame-focus'].includes(options['rich-text-lines'])) throw Error('INVALID_RICH_TEXT_CASE');
+if (options['rich-text-lines'] && !['success','rewrite','focus','stop','frame-success','frame-replace','frame-focus','inline-success','inline-replace','inline-focus'].includes(options['rich-text-lines'])) throw Error('INVALID_RICH_TEXT_CASE');
 if (options['rich-text'] || options['rich-text-paragraph']) options['rich-text-lines'] ??= 'success';
 if (options['blank-creation']) options['form-chain'] = true;
 if (options['form-chain']) options['form-navigation'] = true;
@@ -280,7 +280,8 @@ const website = await fixture({
   formChain: options['form-chain'],
   blankCreation: options['blank-creation'],
   richLines: !!options['rich-text-lines'],
-  richFrame: options['rich-text-lines']?.startsWith('frame-'),
+  richFrame: /^(frame|inline)-/.test(options['rich-text-lines'] ?? ''),
+  richInline: options['rich-text-lines']?.startsWith('inline-'),
   richText: options['rich-text'],
   richParagraph: options['rich-text-paragraph'],
   dynamicResult: options['dynamic-result'],

@@ -2,7 +2,7 @@ import { richTextObservation } from './rich-text-observation';
 import { emptyTextObservation } from './empty-text-observation';
 import { z } from 'zod';
 import { createHash } from 'node:crypto';
-import { websiteURL } from '../shared/url-policy';
+import { isInlineFrameURL, websiteURL } from '../shared/url-policy';
 import type { PageObservation } from '../shared/model';
 
 const axValue = z.object({ value: z.unknown().optional() });
@@ -31,11 +31,16 @@ export function pageObservation(
   document?: unknown,
   richDocument: unknown = document,
 ): PageObservation {
-  const url = websiteURL(
-    z
-      .object({ frameTree: z.object({ frame: z.object({ url: z.string() }) }) })
-      .parse(frame).frameTree.frame.url,
-  );
+  const rawUrl = z
+    .object({ frameTree: z.object({ frame: z.object({ url: z.string() }) }) })
+    .parse(frame).frameTree.frame.url;
+  // 内联子文档只接收控制拥有者已核对的独立富文本快照。
+  // 不使about地址成为网站入口，不补原生字段、链接或其它动作定位。
+  const inline =
+    document === undefined &&
+    richDocument !== undefined &&
+    isInlineFrameURL(rawUrl);
+  const url = inline ? rawUrl : websiteURL(rawUrl);
   const { nodes } = treeSchema.parse(accessibility);
   const empty = emptyTextObservation(document, url);
   const rich = richTextObservation(richDocument, url);
@@ -111,7 +116,8 @@ export function pageObservation(
         'row',
         'tab',
         'switch',
-      ].includes(role)
+      ].includes(role) &&
+      (!inline || isRich)
     )
       controls.push({
         role,
@@ -201,7 +207,7 @@ export function pageObservation(
       : '';
     if (line && line !== lines.at(-1)) lines.push(line);
     const link = node.properties?.find((p) => p.name === 'url')?.value.value;
-    if (role === 'link' && name && typeof link === 'string') {
+    if (!inline && role === 'link' && name && typeof link === 'string') {
       try {
         const href = websiteURL(link);
         links.push({ name: name.slice(0, 1000), url: href });
