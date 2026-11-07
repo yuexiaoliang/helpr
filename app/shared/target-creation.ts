@@ -9,7 +9,7 @@ import { websiteURL } from './url-policy';
 import { actionNavigationSchema } from './action-navigation';
 
 // 创建前冻结已经填写的主文档字段；不包含结果地址或网站专用规则。
-export const targetCreationSchema = z.strictObject({
+const filledCreationSchema = z.strictObject({
   rule: z.literal('same-site-editor-v1'),
   fields: z
     .array(
@@ -22,6 +22,33 @@ export const targetCreationSchema = z.strictObject({
     .max(12),
   destination: z.string().trim().min(1).max(600),
 });
+// 空白字段自身不是身份。只接受页面已提供的唯一只读文本框标识，
+// 保留旧规则的非空限制，模型不能通过空数组获得创建许可。
+const blankCreationSchema = z.strictObject({
+  rule: z.literal('readonly-identity-editor-v1'),
+  identity: z.strictObject({
+    name: z.string().trim().min(1).max(500),
+    value: z
+      .string()
+      .min(1)
+      .max(2000)
+      .refine((v) => v.trim().length > 0),
+  }),
+  fields: z
+    .array(
+      z.strictObject({
+        name: z.string().trim().min(1).max(500),
+        value: z.literal(''),
+      }),
+    )
+    .min(1)
+    .max(12),
+  destination: z.string().trim().min(1).max(600),
+});
+export const targetCreationSchema = z.discriminatedUnion('rule', [
+  filledCreationSchema,
+  blankCreationSchema,
+]);
 export const discoveredTargetSchema = z.strictObject({
   source: pageSourceSchema,
   binding: z.strictObject({
@@ -38,6 +65,35 @@ export function creationFieldsMatch(
   creation: z.infer<typeof targetCreationSchema>,
   source: PageObservation,
 ) {
+  if (creation.rule === 'readonly-identity-editor-v1') {
+    const controls = source.controls ?? [];
+    const identity = controls.filter((c) => c.name === creation.identity.name);
+    if (
+      identity.length !== 1 ||
+      identity[0]!.role !== 'textbox' ||
+      identity[0]!.frameUrl !== source.url ||
+      identity[0]!.disabled ||
+      identity[0]!.readOnly !== true ||
+      identity[0]!.textValue !== creation.identity.value ||
+      creation.fields.some((f) => f.name === creation.identity.name)
+    )
+      return false;
+    const editable = controls.filter(
+      (c) =>
+        c.role === 'textbox' &&
+        c.frameUrl === source.url &&
+        c.readOnly !== true,
+    );
+    if (
+      editable.length !== creation.fields.length ||
+      editable.some(
+        (c) =>
+          c.readOnly !== false ||
+          !creation.fields.some((f) => f.name === c.name),
+      )
+    )
+      return false;
+  }
   return (
     !source.truncated &&
     new Set(creation.fields.map((f) => f.name)).size ===

@@ -1,0 +1,1162 @@
+{
+  "app": "/Users/yuexiaoliang/projects/helpr/dist/candidates/blank-creation-23/mac-arm64/helpr.app",
+  "storage": "fixture",
+  "pendingAcceptance": [
+    "系统钥匙串与跨重启登录",
+    "原生窗口与真人输入"
+  ],
+  "started": "2026-11-07T05:33:38.604Z",
+  "checks": [],
+  "samples": [
+    {
+      "kind": "startup",
+      "number": 245,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:51332",
+        "persistent": false
+      },
+      "ms": 9279,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    }
+  ],
+  "processes": [
+    {
+      "number": 245,
+      "controller": 73974,
+      "seen": {
+        "73974": {
+          "parent": 73959,
+          "group": 73974
+        },
+        "73975": {
+          "parent": 73974,
+          "group": 73943
+        },
+        "73976": {
+          "parent": 73974,
+          "group": 73943
+        },
+        "73977": {
+          "parent": 73974,
+          "group": 73977
+        },
+        "73978": {
+          "parent": 73974,
+          "group": 73974
+        },
+        "73979": {
+          "parent": 73977,
+          "group": 73979
+        },
+        "73987": {
+          "parent": 73979,
+          "group": 73979
+        },
+        "73988": {
+          "parent": 73979,
+          "group": 73979
+        },
+        "73989": {
+          "parent": 73979,
+          "group": 73979
+        },
+        "73990": {
+          "parent": 73979,
+          "group": 73979
+        },
+        "73991": {
+          "parent": 73979,
+          "group": 73979
+        },
+        "73994": {
+          "parent": 73979,
+          "group": 73979
+        },
+        "73995": {
+          "parent": 73979,
+          "group": 73979
+        }
+      },
+      "groups": [
+        73974,
+        73977,
+        73979
+      ],
+      "remaining": [],
+      "exit": {
+        "code": 0,
+        "signal": null
+      }
+    }
+  ],
+  "fixture": [
+    {
+      "kind": "blank-observation-rejected",
+      "identity": {
+        "role": "textbox",
+        "name": "创建编号",
+        "frameUrl": "http://127.0.0.1:51332/form-new?item=A",
+        "disabled": false,
+        "readOnly": true,
+        "textValue": "request-73afdea0-b2c1-4335-b3ee-cee9a6604cd2"
+      },
+      "field": {
+        "role": "textbox",
+        "name": "正文",
+        "frameUrl": "http://127.0.0.1:51332/form-new?item=A",
+        "disabled": false,
+        "readOnly": false
+      },
+      "controls": [
+        {
+          "role": "button",
+          "name": "创建草稿",
+          "frameUrl": "http://127.0.0.1:51332/form-new?item=A",
+          "disabled": false
+        },
+        {
+          "role": "textbox",
+          "name": "创建编号",
+          "frameUrl": "http://127.0.0.1:51332/form-new?item=A",
+          "disabled": false,
+          "readOnly": true,
+          "textValue": "request-73afdea0-b2c1-4335-b3ee-cee9a6604cd2"
+        },
+        {
+          "role": "textbox",
+          "name": "正文",
+          "frameUrl": "http://127.0.0.1:51332/form-new?item=A",
+          "disabled": false,
+          "readOnly": false
+        }
+      ]
+    },
+    {
+      "kind": "fixture-error",
+      "error": "IDENTITY_MISSING"
+    }
+  ],
+  "formNavigation": {
+    "profile": "/private/tmp/helpr-workspace-validation-501/run-YY1hRa",
+    "realModelCalls": 0,
+    "remoteWrites": 0,
+    "scriptedContinuation": false,
+    "blank": true,
+    "cases": [
+      {
+        "item": "A",
+        "taskId": "c541c524-1592-42f6-86b0-75952e8bd848",
+        "entry": "http://127.0.0.1:51332/form-new?item=A",
+        "readiness": [
+          "26c64028979f50dc33e4190c5c58932b75f497398c3a308ffa3ef34b38a8facb",
+          "26c64028979f50dc33e4190c5c58932b75f497398c3a308ffa3ef34b38a8facb"
+        ],
+        "axBefore": {
+          "nodes": [
+            {
+              "nodeId": "1",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "RootWebArea"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 144
+              },
+              "name": {
+                "type": "computedString",
+                "value": "空白草稿",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label",
+                    "superseded": true
+                  },
+                  {
+                    "type": "relatedElement",
+                    "value": {
+                      "type": "computedString",
+                      "value": "空白草稿"
+                    },
+                    "nativeSource": "title"
+                  }
+                ]
+              },
+              "properties": [
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "url",
+                  "value": {
+                    "type": "string",
+                    "value": "http://127.0.0.1:51332/form-new?item=A"
+                  }
+                }
+              ],
+              "childIds": [
+                "3"
+              ],
+              "backendDOMNodeId": 1,
+              "frameId": "ED74870AC15D2DFE90F0BA416C8D19DF"
+            },
+            {
+              "nodeId": "3",
+              "ignored": true,
+              "ignoredReasons": [
+                {
+                  "name": "uninteresting",
+                  "value": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                }
+              ],
+              "role": {
+                "type": "role",
+                "value": "none"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 0
+              },
+              "parentId": "1",
+              "childIds": [
+                "8"
+              ],
+              "backendDOMNodeId": 3
+            },
+            {
+              "nodeId": "8",
+              "ignored": true,
+              "ignoredReasons": [
+                {
+                  "name": "uninteresting",
+                  "value": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                }
+              ],
+              "role": {
+                "type": "role",
+                "value": "none"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 0
+              },
+              "parentId": "3",
+              "childIds": [
+                "9",
+                "11"
+              ],
+              "backendDOMNodeId": 8
+            },
+            {
+              "nodeId": "9",
+              "ignored": false,
+              "role": {
+                "type": "role",
+                "value": "paragraph"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 133
+              },
+              "name": {
+                "type": "computedString",
+                "value": "",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label"
+                  }
+                ]
+              },
+              "properties": [],
+              "parentId": "8",
+              "childIds": [
+                "10"
+              ],
+              "backendDOMNodeId": 9
+            },
+            {
+              "nodeId": "11",
+              "ignored": false,
+              "role": {
+                "type": "role",
+                "value": "form"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 87
+              },
+              "name": {
+                "type": "computedString",
+                "value": "",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "title"
+                  }
+                ]
+              },
+              "properties": [],
+              "parentId": "8",
+              "childIds": [
+                "12",
+                "15",
+                "18"
+              ],
+              "backendDOMNodeId": 11
+            },
+            {
+              "nodeId": "10",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "StaticText"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 158
+              },
+              "name": {
+                "type": "computedString",
+                "value": "公告",
+                "sources": [
+                  {
+                    "type": "contents",
+                    "value": {
+                      "type": "computedString",
+                      "value": "公告"
+                    }
+                  }
+                ]
+              },
+              "properties": [],
+              "parentId": "9",
+              "childIds": [
+                "-1000000002"
+              ],
+              "backendDOMNodeId": 10
+            },
+            {
+              "nodeId": "12",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "LabelText"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 104
+              },
+              "name": {
+                "type": "computedString",
+                "value": "",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "title"
+                  }
+                ]
+              },
+              "properties": [],
+              "parentId": "11",
+              "childIds": [
+                "13",
+                "14"
+              ],
+              "backendDOMNodeId": 12
+            },
+            {
+              "nodeId": "15",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "LabelText"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 104
+              },
+              "name": {
+                "type": "computedString",
+                "value": "",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "title"
+                  }
+                ]
+              },
+              "properties": [],
+              "parentId": "11",
+              "childIds": [
+                "16",
+                "17"
+              ],
+              "backendDOMNodeId": 15
+            },
+            {
+              "nodeId": "18",
+              "ignored": false,
+              "role": {
+                "type": "role",
+                "value": "button"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 9
+              },
+              "name": {
+                "type": "computedString",
+                "value": "创建草稿",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label"
+                  },
+                  {
+                    "type": "relatedElement",
+                    "nativeSource": "label"
+                  },
+                  {
+                    "type": "contents",
+                    "value": {
+                      "type": "computedString",
+                      "value": "创建草稿"
+                    }
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "title",
+                    "superseded": true
+                  }
+                ]
+              },
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                }
+              ],
+              "parentId": "11",
+              "childIds": [
+                "19"
+              ],
+              "backendDOMNodeId": 18
+            },
+            {
+              "nodeId": "-1000000002",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "InlineTextBox"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 101
+              },
+              "name": {
+                "type": "computedString",
+                "value": "公告"
+              },
+              "properties": [],
+              "parentId": "10",
+              "childIds": []
+            },
+            {
+              "nodeId": "13",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "StaticText"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 158
+              },
+              "name": {
+                "type": "computedString",
+                "value": "创建编号",
+                "sources": [
+                  {
+                    "type": "contents",
+                    "value": {
+                      "type": "computedString",
+                      "value": "创建编号"
+                    }
+                  }
+                ]
+              },
+              "properties": [],
+              "parentId": "12",
+              "childIds": [
+                "-1000000003"
+              ],
+              "backendDOMNodeId": 13
+            },
+            {
+              "nodeId": "14",
+              "ignored": false,
+              "role": {
+                "type": "role",
+                "value": "textbox"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 170
+              },
+              "name": {
+                "type": "computedString",
+                "value": "创建编号",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label"
+                  },
+                  {
+                    "type": "relatedElement",
+                    "value": {
+                      "type": "computedString",
+                      "value": "创建编号"
+                    },
+                    "nativeSource": "labelwrapped",
+                    "nativeSourceValue": {
+                      "type": "nodeList",
+                      "relatedNodes": [
+                        {
+                          "backendDOMNodeId": 12,
+                          "text": "创建编号"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "title",
+                    "superseded": true
+                  },
+                  {
+                    "type": "placeholder",
+                    "attribute": "placeholder",
+                    "superseded": true
+                  },
+                  {
+                    "type": "placeholder",
+                    "attribute": "aria-placeholder",
+                    "superseded": true
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "title",
+                    "superseded": true
+                  }
+                ]
+              },
+              "value": {
+                "type": "string",
+                "value": "request-73afdea0-b2c1-4335-b3ee-cee9a6604cd2"
+              },
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "editable",
+                  "value": {
+                    "type": "token",
+                    "value": "plaintext"
+                  }
+                },
+                {
+                  "name": "multiline",
+                  "value": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                },
+                {
+                  "name": "readonly",
+                  "value": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "required",
+                  "value": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                },
+                {
+                  "name": "labelledby",
+                  "value": {
+                    "type": "nodeList",
+                    "relatedNodes": [
+                      {
+                        "backendDOMNodeId": 12,
+                        "text": "创建编号"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "parentId": "12",
+              "childIds": [
+                "20"
+              ],
+              "backendDOMNodeId": 14
+            },
+            {
+              "nodeId": "16",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "StaticText"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 158
+              },
+              "name": {
+                "type": "computedString",
+                "value": "正文",
+                "sources": [
+                  {
+                    "type": "contents",
+                    "value": {
+                      "type": "computedString",
+                      "value": "正文"
+                    }
+                  }
+                ]
+              },
+              "properties": [],
+              "parentId": "15",
+              "childIds": [
+                "-1000000005"
+              ],
+              "backendDOMNodeId": 16
+            },
+            {
+              "nodeId": "17",
+              "ignored": false,
+              "role": {
+                "type": "role",
+                "value": "textbox"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 170
+              },
+              "name": {
+                "type": "computedString",
+                "value": "正文",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label"
+                  },
+                  {
+                    "type": "relatedElement",
+                    "value": {
+                      "type": "computedString",
+                      "value": "正文"
+                    },
+                    "nativeSource": "labelwrapped",
+                    "nativeSourceValue": {
+                      "type": "nodeList",
+                      "relatedNodes": [
+                        {
+                          "backendDOMNodeId": 15,
+                          "text": "正文"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "title",
+                    "superseded": true
+                  },
+                  {
+                    "type": "placeholder",
+                    "attribute": "placeholder",
+                    "superseded": true
+                  },
+                  {
+                    "type": "placeholder",
+                    "attribute": "aria-placeholder",
+                    "superseded": true
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "title",
+                    "superseded": true
+                  }
+                ]
+              },
+              "properties": [
+                {
+                  "name": "invalid",
+                  "value": {
+                    "type": "token",
+                    "value": "false"
+                  }
+                },
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "editable",
+                  "value": {
+                    "type": "token",
+                    "value": "plaintext"
+                  }
+                },
+                {
+                  "name": "settable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "multiline",
+                  "value": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "readonly",
+                  "value": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                },
+                {
+                  "name": "required",
+                  "value": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                },
+                {
+                  "name": "labelledby",
+                  "value": {
+                    "type": "nodeList",
+                    "relatedNodes": [
+                      {
+                        "backendDOMNodeId": 15,
+                        "text": "正文"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "parentId": "15",
+              "childIds": [
+                "21"
+              ],
+              "backendDOMNodeId": 17
+            },
+            {
+              "nodeId": "19",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "StaticText"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 158
+              },
+              "name": {
+                "type": "computedString",
+                "value": "创建草稿",
+                "sources": [
+                  {
+                    "type": "contents",
+                    "value": {
+                      "type": "computedString",
+                      "value": "创建草稿"
+                    }
+                  }
+                ]
+              },
+              "properties": [],
+              "parentId": "18",
+              "childIds": [
+                "-1000000006"
+              ],
+              "backendDOMNodeId": 19
+            },
+            {
+              "nodeId": "-1000000003",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "InlineTextBox"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 101
+              },
+              "name": {
+                "type": "computedString",
+                "value": "创建编号"
+              },
+              "properties": [],
+              "parentId": "13",
+              "childIds": []
+            },
+            {
+              "nodeId": "20",
+              "ignored": false,
+              "role": {
+                "type": "role",
+                "value": "generic"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 88
+              },
+              "name": {
+                "type": "computedString",
+                "value": "",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label"
+                  }
+                ]
+              },
+              "properties": [],
+              "parentId": "14",
+              "childIds": [
+                "23"
+              ],
+              "backendDOMNodeId": 20
+            },
+            {
+              "nodeId": "-1000000005",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "InlineTextBox"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 101
+              },
+              "name": {
+                "type": "computedString",
+                "value": "正文"
+              },
+              "properties": [],
+              "parentId": "16",
+              "childIds": []
+            },
+            {
+              "nodeId": "21",
+              "ignored": false,
+              "role": {
+                "type": "role",
+                "value": "generic"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 88
+              },
+              "name": {
+                "type": "computedString",
+                "value": "",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label"
+                  }
+                ]
+              },
+              "properties": [
+                {
+                  "name": "editable",
+                  "value": {
+                    "type": "token",
+                    "value": "plaintext"
+                  }
+                }
+              ],
+              "parentId": "17",
+              "childIds": [],
+              "backendDOMNodeId": 21
+            },
+            {
+              "nodeId": "-1000000006",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "InlineTextBox"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 101
+              },
+              "name": {
+                "type": "computedString",
+                "value": "创建草稿"
+              },
+              "properties": [],
+              "parentId": "19",
+              "childIds": []
+            },
+            {
+              "nodeId": "23",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "StaticText"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 158
+              },
+              "name": {
+                "type": "computedString",
+                "value": "request-73afdea0-b2c1-4335-b3ee-cee9a6604cd2",
+                "sources": [
+                  {
+                    "type": "contents",
+                    "value": {
+                      "type": "computedString",
+                      "value": "request-73afdea0-b2c1-4335-b3ee-cee9a6604cd2"
+                    }
+                  }
+                ]
+              },
+              "properties": [],
+              "parentId": "20",
+              "childIds": [
+                "-1000000004"
+              ],
+              "backendDOMNodeId": 23
+            },
+            {
+              "nodeId": "-1000000004",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "InlineTextBox"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 101
+              },
+              "name": {
+                "type": "computedString",
+                "value": "request-73afdea0-b2c1-4335-b3ee-cee9a6604cd2"
+              },
+              "properties": [],
+              "parentId": "23",
+              "childIds": []
+            }
+          ]
+        },
+        "last": {
+          "id": "c541c524-1592-42f6-86b0-75952e8bd848",
+          "goal": "在 http://127.0.0.1:51332/form-new?item=A 按页面创建编号创建空白草稿到公告，再填写正文为“自动续行正文”",
+          "created": 1794029628190,
+          "url": "http://127.0.0.1:51332/form-new?item=A",
+          "draft": "",
+          "archived": false,
+          "groupId": null,
+          "groupGoal": null,
+          "hidden": false,
+          "minimized": false,
+          "phase": "manual",
+          "execution": {
+            "coordination": {
+              "session": {
+                "id": "helpr-fixture-web",
+                "epoch": "8936ecab-d1c9-477d-8e9e-0389897d5248:0",
+                "origin": "http://127.0.0.1:51332"
+              },
+              "status": "unverified"
+            },
+            "modelVersion": 1,
+            "intent": "automatic",
+            "phase": "paused",
+            "version": 2,
+            "intentId": "9f2fb77f-4c34-4cad-930c-622390ba4780",
+            "goalVersion": 1,
+            "goal": "在 http://127.0.0.1:51332/form-new?item=A 按页面创建编号创建空白草稿到公告，再填写正文为“自动续行正文”",
+            "runId": null,
+            "resource": null,
+            "summary": "执行暂时无法继续，已暂停后续操作。已有结果与记录保留。",
+            "actions": []
+          },
+          "error": "",
+          "version": 3,
+          "messages": [
+            {
+              "role": "user",
+              "text": "在 http://127.0.0.1:51332/form-new?item=A 按页面创建编号创建空白草稿到公告，再填写正文为“自动续行正文”"
+            },
+            {
+              "role": "system",
+              "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+            },
+            {
+              "role": "user",
+              "text": "开始执行"
+            },
+            {
+              "role": "assistant",
+              "text": "",
+              "call": {
+                "usageKind": "web-planning",
+                "id": "369de570-46fe-46bf-8d4c-64b69932bd41",
+                "taskId": "c541c524-1592-42f6-86b0-75952e8bd848",
+                "model": "fixture",
+                "configurationVersion": 1,
+                "phase": "error",
+                "source": {
+                  "url": "http://127.0.0.1:51332/form-new?item=A",
+                  "title": "空白草稿",
+                  "fingerprint": "0b8458f6b20f7fc17ee4b8e8ae2d8881498f64ab198a46c93949f0fff8f97aab",
+                  "generation": 1,
+                  "observedAt": 1794029631481,
+                  "truncated": false
+                },
+                "pageChanged": false,
+                "dispatched": true,
+                "reservedTokens": 33247,
+                "inputTokens": null,
+                "outputTokens": null,
+                "totalTokens": null,
+                "error": "MODEL_CAPABILITY"
+              }
+            }
+          ]
+        },
+        "nativeTrace": {
+          "rows": [
+            {
+              "stage": "permit-send",
+              "owner": "c541c524-1592-42f6-86b0-75952e8bd848",
+              "serial": 0,
+              "epoch": 1,
+              "at": 1794029631663.288
+            }
+          ],
+          "overflow": false
+        },
+        "nativeGate": {
+          "epoch": 1,
+          "available": true,
+          "blocked": false
+        }
+      }
+    ]
+  },
+  "passed": false,
+  "error": "FORM_NAVIGATION_INTERRUPTED:undefined",
+  "remaining": [],
+  "ms": 14430
+}

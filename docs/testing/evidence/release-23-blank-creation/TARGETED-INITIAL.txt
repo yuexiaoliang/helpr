@@ -1,0 +1,30 @@
+$ vitest run tests/workspace/created-target.test.ts tests/workspace/publication-fields.test.ts tests/workspace/link-navigation.test.ts
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/created-target.test.ts (54 tests | 1 failed) 22247ms
+   × 空白身份源证据随格式30迁移、冷开、真实备份保留；丢失或篡改证据拒绝 228ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/created-target.test.ts > 空白身份源证据随格式30迁移、冷开、真实备份保留；丢失或篡改证据拒绝
+Error: DATA_VERSION_UNSUPPORTED
+ ❯ new WorkspaceRecords app/records/workspace.ts:332:15
+    330|         version !== CURRENT_DATA_FORMAT
+    331|       )
+    332|         throw new Error('DATA_VERSION_UNSUPPORTED');
+       |               ^
+    333|       if (version !== CURRENT_DATA_FORMAT)
+    334|         this.db
+ ❯ Object.reopen tests/workspace/created-target.test.ts:269:17
+ ❯ tests/workspace/created-target.test.ts:1048:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 71 passed (72)
+   Start at  13:14:37
+   Duration  36.73s (tests 90%, import 8%, transform 2%)
+
+[ELIFECYCLE] Command failed with exit code 1.

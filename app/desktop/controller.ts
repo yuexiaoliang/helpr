@@ -407,6 +407,7 @@ export async function startController(
         tree,
         qualification.generation,
         supplements.join('\n'),
+        document,
       );
       const controls = [observation, ...childObservations].flatMap(
         (o) => o.controls ?? [],

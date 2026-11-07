@@ -20,7 +20,7 @@ afterEach(() =>
     .reverse()
     .forEach((f) => f()),
 );
-function fixture(direct = false) {
+function fixture(direct = false, blank = false) {
   const folder = mkdtempSync(path.join(tmpdir(), 'helpr-created-target-'));
   cleanups.push(() => rmSync(folder, { recursive: true, force: true }));
   let records = new WorkspaceRecords(folder, 'app/records/migrations');
@@ -69,6 +69,18 @@ function fixture(direct = false) {
     ],
     links: [],
   };
+  if (blank) {
+    source.controls![0]!.textValue = '';
+    source.controls![0]!.readOnly = false;
+    source.controls!.push({
+      role: 'textbox',
+      name: '创建编号',
+      textValue: 'request-' + randomUUID(),
+      readOnly: true,
+      disabled: false,
+      frameUrl: entry,
+    });
+  }
   if (direct)
     post({ kind: 'coordination-observed', runId: 'create', session, source });
   const reserve = {
@@ -84,11 +96,21 @@ function fixture(direct = false) {
     source,
     binding: { targetId: 'page', generation: 1 },
     evidence: ['公告'],
-    targetCreation: {
-      rule: 'same-site-editor-v1',
-      fields: [{ name: '标题', value: '独立草稿' }],
-      destination: '公告',
-    },
+    targetCreation: blank
+      ? {
+          rule: 'readonly-identity-editor-v1',
+          identity: {
+            name: '创建编号',
+            value: source.controls![1]!.textValue!,
+          },
+          fields: [{ name: '标题', value: '' }],
+          destination: '公告',
+        }
+      : {
+          rule: 'same-site-editor-v1',
+          fields: [{ name: '标题', value: '独立草稿' }],
+          destination: '公告',
+        },
   };
   const observation: PageObservation = {
     ...source,
@@ -97,7 +119,7 @@ function fixture(direct = false) {
     generation: direct ? 2 : 3,
     observedAt: 10,
     fingerprint: 'saved',
-    controls: [{ ...source.controls![0]!, frameUrl: url }],
+    controls: source.controls!.map((c) => ({ ...c, frameUrl: url })),
     links: [
       { name: '编辑此草稿', url },
       { name: '新建入口', url: entry },
@@ -690,107 +712,116 @@ test('表单检查点拒绝坏epoch、代次、指纹及无已保存目标；28�
   ).toMatchObject({ restoreReview: 'required', actions: savedActions });
 });
 
-test.each([
-  'valid',
-  'same-source',
-  'missing-host',
-  'epoch-gap',
-  'wrong-hop',
-  'stop-before-save',
-  'input-after-save',
-  'save-failure',
-  'session-change',
-] as const)('POST303请求链逐事件核对与自动续行：%s', async (variant) => {
-  const f = fixture(true);
-  f.dispatch();
-  const requested =
-    variant === 'same-source' ? f.source.url : f.source.url + '/submit';
-  f.event.navigation.url = requested;
-  const proof = {
-    ...formProof(f),
-    url: requested,
-    chain: {
-      requestId: 'req',
-      loaderId: 'loader',
-      frameId: 'main',
-      sessionId: 'cdp',
-      requests: [
-        { url: requested, method: 'POST' as const },
-        { url: f.url, method: 'GET' as const, redirectStatus: 303 },
+test.each(
+  [false, true].flatMap((blank) =>
+    [
+      'valid',
+      'same-source',
+      'missing-host',
+      'epoch-gap',
+      'wrong-hop',
+      'stop-before-save',
+      'input-after-save',
+      'save-failure',
+      'session-change',
+    ].map((variant) => ({ blank, variant })),
+  ),
+)(
+  'POST303请求链逐事件核对与自动续行：$variant 空白=$blank',
+  async ({ blank, variant }) => {
+    const f = fixture(true, blank);
+    f.dispatch();
+    const requested =
+      variant === 'same-source' ? f.source.url : f.source.url + '/submit';
+    f.event.navigation.url = requested;
+    const proof = {
+      ...formProof(f),
+      url: requested,
+      chain: {
+        requestId: 'req',
+        loaderId: 'loader',
+        frameId: 'main',
+        sessionId: 'cdp',
+        requests: [
+          { url: requested, method: 'POST' as const },
+          { url: f.url, method: 'GET' as const, redirectStatus: 303 },
+        ],
+        finalUrl: f.url,
+        status: 200,
+      },
+    };
+    const host: HostFormChain = {
+      navigationId: f.event.navigation.id,
+      targetId: 'page',
+      generation: 2,
+      events: [
+        {
+          kind: 'start',
+          url: requested,
+          requestId: 'start',
+          before: 4,
+          after: 5,
+        },
+        {
+          kind: 'redirect',
+          url: variant === 'wrong-hop' ? f.url + '/wrong' : f.url,
+          requestId: 'redirect',
+          before: 6,
+          after: 7,
+        },
       ],
-      finalUrl: f.url,
-      status: 200,
-    },
-  };
-  const host: HostFormChain = {
-    navigationId: f.event.navigation.id,
-    targetId: 'page',
-    generation: 2,
-    events: [
-      {
-        kind: 'start',
-        url: requested,
-        requestId: 'start',
-        before: 4,
-        after: 5,
+    };
+    let entered = false;
+    const s = f.service({
+      changedSession: variant === 'session-change',
+      formChainReady: () =>
+        Promise.resolve(variant === 'missing-host' ? null : host),
+      beforeRecord: (c) => {
+        if (c.kind === 'form-navigation-resolved') {
+          entered = true;
+          if (variant === 'stop-before-save')
+            f.post({ kind: 'intent', requestId: randomUUID(), intent: 'stop' });
+          if (variant === 'save-failure') throw Error('DISK_FAILURE');
+        }
       },
-      {
-        kind: 'redirect',
-        url: variant === 'wrong-hop' ? f.url + '/wrong' : f.url,
-        requestId: 'redirect',
-        before: 6,
-        after: 7,
+      afterRecord: (c) => {
+        if (
+          c.kind === 'form-navigation-resolved' &&
+          variant === 'input-after-save'
+        )
+          s.nativeChange();
       },
-    ],
-  };
-  let entered = false;
-  const s = f.service({
-    changedSession: variant === 'session-change',
-    formChainReady: () =>
-      Promise.resolve(variant === 'missing-host' ? null : host),
-    beforeRecord: (c) => {
-      if (c.kind === 'form-navigation-resolved') {
-        entered = true;
-        if (variant === 'stop-before-save')
-          f.post({ kind: 'intent', requestId: randomUUID(), intent: 'stop' });
-        if (variant === 'save-failure') throw Error('DISK_FAILURE');
-      }
-    },
-    afterRecord: (c) => {
-      if (
-        c.kind === 'form-navigation-resolved' &&
-        variant === 'input-after-save'
-      )
-        s.nativeChange();
-    },
-  });
-  // 首次宿主撤权4→5，控制侧保存5→6，重定向宿主撤权6→7。
-  await s.instance.suspend(f.taskId, 'page-change', 'start');
-  s.nativeChange();
-  if (variant === 'epoch-gap') s.nativeChange();
-  f.arrive();
-  s.instance.acceptFormNavigation(proof);
-  await s.instance.recordNavigation(f.event);
-  await s.instance.settled();
-  if (variant === 'valid' || variant === 'same-source') {
-    expect(s.allow).toHaveBeenCalledTimes(1);
-    expect(s.propose).toHaveBeenCalledTimes(1);
-    expect(f.execution().actions[0]?.formNavigationResolution).toMatchObject({
-      proof,
-      pausedInputEpoch: 7,
-      chain: { host, control: [{ requestId: 'start', before: 5, after: 6 }] },
     });
-  } else {
-    expect(s.allow).not.toHaveBeenCalled();
-    expect(s.propose).not.toHaveBeenCalled();
-    if (
-      ['stop-before-save', 'input-after-save', 'save-failure'].includes(variant)
-    )
-      expect(entered).toBe(true);
-  }
-  expect(s.perform).not.toHaveBeenCalled();
-  await s.instance.stopAll();
-});
+    // 首次宿主撤权4→5，控制侧保存5→6，重定向宿主撤权6→7。
+    await s.instance.suspend(f.taskId, 'page-change', 'start');
+    s.nativeChange();
+    if (variant === 'epoch-gap') s.nativeChange();
+    f.arrive();
+    s.instance.acceptFormNavigation(proof);
+    await s.instance.recordNavigation(f.event);
+    await s.instance.settled();
+    if (variant === 'valid' || variant === 'same-source') {
+      expect(s.allow).toHaveBeenCalledTimes(1);
+      expect(s.propose).toHaveBeenCalledTimes(1);
+      expect(f.execution().actions[0]?.formNavigationResolution).toMatchObject({
+        proof,
+        pausedInputEpoch: 7,
+        chain: { host, control: [{ requestId: 'start', before: 5, after: 6 }] },
+      });
+    } else {
+      expect(s.allow).not.toHaveBeenCalled();
+      expect(s.propose).not.toHaveBeenCalled();
+      if (
+        ['stop-before-save', 'input-after-save', 'save-failure'].includes(
+          variant,
+        )
+      )
+        expect(entered).toBe(true);
+    }
+    expect(s.perform).not.toHaveBeenCalled();
+    await s.instance.stopAll();
+  },
+);
 
 test('请求链检查点拒绝缺失/乱序证据；格式29备份迁移、冷开与备份导入保留已确认动作', async () => {
   const f = fixture(true);
@@ -919,4 +950,122 @@ test('请求链检查点拒绝缺失/乱序证据；格式29备份迁移、冷�
   expect(
     g.records.snapshot().tasks.find((t) => t.id === f.taskId)?.execution,
   ).toMatchObject({ restoreReview: 'required', actions: saved });
+});
+
+test('空白创建拒绝无身份、可写身份、歧义、子frame、缺字段、非空字段和截断；旧非空规则不放宽', () => {
+  const f = fixture(true, true);
+  const variants = [
+    { ...f.source, truncated: true },
+    { ...f.source, controls: f.source.controls!.slice(0, 1) },
+    { ...f.source, controls: [...f.source.controls!, f.source.controls![1]!] },
+    ...[
+      { readOnly: false },
+      { textValue: 'wrong' },
+      { frameUrl: f.source.url + '/frame' },
+      { disabled: true },
+    ].map((change) => ({
+      ...f.source,
+      controls: [
+        f.source.controls![0]!,
+        { ...f.source.controls![1]!, ...change },
+      ],
+    })),
+    ...[
+      { textValue: 'not blank' },
+      { readOnly: undefined },
+      { readOnly: true },
+      { disabled: true },
+    ].map((change) => ({
+      ...f.source,
+      controls: [
+        { ...f.source.controls![0]!, ...change },
+        f.source.controls![1]!,
+      ],
+    })),
+    {
+      ...f.source,
+      controls: [
+        ...f.source.controls!,
+        { ...f.source.controls![0]!, name: '遗漏正文' },
+      ],
+    },
+  ];
+  for (const source of variants)
+    expect(() => f.post({ ...f.reserve, source })).toThrow(
+      'PREPARATION_TARGET_CHANGED',
+    );
+  expect(() =>
+    f.post({
+      ...f.reserve,
+      targetCreation: {
+        rule: 'same-site-editor-v1',
+        fields: [{ name: '标题', value: '' }],
+        destination: '公告',
+      },
+    }),
+  ).toThrow();
+  expect(f.execution().actions).toHaveLength(0);
+});
+
+test.each(['identity', 'readonly', 'source-link', 'self-link', 'field'])(
+  '空白目标核对失败保留unknown：%s',
+  (variant) => {
+    const f = fixture(true, true);
+    f.dispatch();
+    f.pause();
+    const o = structuredClone(f.observation);
+    if (variant === 'identity') o.controls![1]!.textValue = 'other';
+    if (variant === 'readonly') o.controls![1]!.readOnly = false;
+    if (variant === 'field') o.controls![0]!.textValue = 'not blank';
+    if (variant === 'source-link')
+      o.links = o.links!.filter((l) => l.url !== f.source.url);
+    if (variant === 'self-link')
+      o.links = o.links!.filter((l) => l.url !== f.url);
+    expect(() => f.freeze(o)).toThrow();
+    expect(f.execution().actions[0]!.status).toBe('unknown');
+    expect(f.execution().preparation).toBeUndefined();
+  },
+);
+
+test('空白身份源证据随格式30迁移、冷开、真实备份保留；丢失或篡改证据拒绝', async () => {
+  const f = fixture(true, true);
+  f.dispatch();
+  f.pause();
+  f.freeze();
+  const a = f.execution().actions[0]!;
+  expect(a.creationSourceControls).toEqual(f.source.controls);
+  expect(
+    actionFactSchema.safeParse({ ...a, creationSourceControls: undefined })
+      .success,
+  ).toBe(false);
+  const bad = structuredClone(a);
+  bad.creationSourceControls![1]!.readOnly = false;
+  expect(actionFactSchema.safeParse(bad).success).toBe(false);
+  f.records.close();
+  const db = new Database(path.join(f.folder, 'workspace.sqlite'));
+  db.exec('UPDATE workspace SET schema_version=30');
+  db.close();
+  f.reopen();
+  expect(
+    readdirSync(f.folder).some((n) =>
+      n.startsWith('workspace-before-blank-creation-23-'),
+    ),
+  ).toBe(true);
+  expect(f.execution().actions[0]).toEqual(a);
+  const file = path.join(f.folder, 'blank.helpr-backup');
+  const backup = await f.records.backup({
+    kind: 'create',
+    requestId: randomUUID(),
+    file,
+  });
+  const g = fixture();
+  await g.records.backup({
+    kind: 'restore',
+    requestId: randomUUID(),
+    file,
+    checksum: backup.archive.checksum,
+  });
+  expect(
+    g.records.snapshot().tasks.find((t) => t.id === f.taskId)!.execution,
+  ).toMatchObject({ restoreReview: 'required', actions: [a] });
 });

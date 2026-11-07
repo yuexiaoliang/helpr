@@ -288,3 +288,11 @@ Node-API 8 原生模块经 node-gyp `13.1.0` 构建，固定 arm64／macOS 14 �
 事项23直接表单导航验证：`pnpm validate:workspace --fixture --candidate=form-navigation-23 --form-navigation`。已冻结完整AX字段的创建动作，实际主文档POST直接返回新编辑页时，先保存目标／草稿，再核对请求、字段、指纹、代次、原生epoch和会话，可靠保存独立表单检查点后自动续做剩余动作。重定向（包括回到原POST地址）仍暂停；无证明、停止、接管、会话变化和保存失败不放行，不重复创建。格式29接续28，旧资料先备份；此分支不支持POST/303自动续行、空白创建或跨页流程复用，不替代真实后台与真人验收。
 
 事项23请求链验证：`pnpm validate:workspace --fixture --candidate=form-chain-23 --form-chain`。创建POST可经同站303转换GET及后续GET重定向；独立CDP会话核对requestId/loaderId/主frame、响应与提交，宿主每跳URL另行匹配，全部撤权回执须连续覆盖原生epoch。原始动作、目标字段、会话、恰好下一代及保存守卫仍有效；额外脚本导航即使返回相同URL也暂停。格式30接续29并先备份。旧`--form-navigation`入口现核对A直接POST与B合法重定向均自动续行；旧候选92的原报告边界不改写。空白创建、富文本、跨页附件及流程复用尚未由本分支覆盖。
+
+具有唯一只读主文档文本框身份的空白创建可使用 `readonly-identity-editor-v1`：冻结身份名称/完整值、全部可编辑空白文本框和栏目，目标页须保留身份、空白结构及唯一自身/来源链接。自动续行仍要求完整 POST 请求链和逐事件撤权回执；无身份不发起可自动核对的空白创建，未知结果不重发。格式31保存创建前控件证据，接续30前先备份；不是任意空白表单、富文本或跨页流程复用支持。
+
+```sh
+pnpm validate:workspace --fixture --candidate=blank-creation-23 --blank-creation
+```
+
+Chromium 对空的原生文本框可能省略 AX `value`。观察层仅在同一主文档 DOM 快照提供该 AX 控件唯一 `backendNodeId` 的显式空值条目时补足 `textValue=""`，保存 `emptyValue` 来源并计入指纹；缺条目不等同空值，不读取密码/隐藏字段，也不借此支持一般富文本。修后候选入口使用 `--candidate=blank-creation-empty-23 --blank-creation`。

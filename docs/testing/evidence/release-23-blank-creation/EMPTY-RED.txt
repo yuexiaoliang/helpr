@@ -1,0 +1,47 @@
+$ vitest run tests/workspace/blank-observation.test.ts
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/blank-observation.test.ts (1 test | 1 failed) 36ms
+   × 真实Chromium省略空textarea AX值时，仅同节点快照的显式空值可补足 33ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/blank-observation.test.ts > 真实Chromium省略空textarea AX值时，仅同节点快照的显式空值可补足
+AssertionError: expected { role: 'textbox', name: '正文', …(3) } to match object { textValue: '', emptyValue: { …(3) } }
+(5 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "emptyValue": {
+-     "backendNodeId": 17,
+-     "nodeName": "TEXTAREA",
+-     "rule": "native-empty-snapshot-v1",
+-   },
+-   "textValue": "",
++   "disabled": false,
++   "frameUrl": "http://127.0.0.1:51390/form-new?item=A",
++   "name": "正文",
++   "readOnly": false,
++   "role": "textbox",
+  }
+
+ ❯ tests/workspace/blank-observation.test.ts:7:46
+      5| test('真实Chromium省略空textarea AX值时，仅同节点快照的显式空值可补足', () => {
+      6|   const o = pageObservation({frameTree:{frame:{url:sample.url}}},sampl…
+      7|   expect(o.controls!.find(c=>c.name==='正文')).toMatchObject({textValue:…
+       |                                              ^
+      8|   expect(pageObservation({frameTree:{frame:{url:sample.url}}},sample.a…
+      9| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  13:36:07
+   Duration  671ms (import 57%, transform 30%, tests 11%, worker 2%)
+
+[ELIFECYCLE] Command failed with exit code 1.

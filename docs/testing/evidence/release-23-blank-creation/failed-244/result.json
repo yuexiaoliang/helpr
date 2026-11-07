@@ -1,0 +1,218 @@
+{
+  "app": "/Users/yuexiaoliang/projects/helpr/dist/candidates/blank-creation-23/mac-arm64/helpr.app",
+  "storage": "fixture",
+  "pendingAcceptance": [
+    "系统钥匙串与跨重启登录",
+    "原生窗口与真人输入"
+  ],
+  "started": "2026-11-07T05:31:42.902Z",
+  "checks": [],
+  "samples": [
+    {
+      "kind": "startup",
+      "number": 244,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:51221",
+        "persistent": false
+      },
+      "ms": 8226,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    }
+  ],
+  "processes": [
+    {
+      "number": 244,
+      "controller": 73400,
+      "seen": {
+        "73400": {
+          "parent": 73385,
+          "group": 73400
+        },
+        "73404": {
+          "parent": 73400,
+          "group": 73372
+        },
+        "73405": {
+          "parent": 73400,
+          "group": 73372
+        },
+        "73406": {
+          "parent": 73400,
+          "group": 73406
+        },
+        "73407": {
+          "parent": 73400,
+          "group": 73400
+        },
+        "73408": {
+          "parent": 73406,
+          "group": 73408
+        },
+        "73414": {
+          "parent": 73408,
+          "group": 73408
+        },
+        "73415": {
+          "parent": 73408,
+          "group": 73408
+        },
+        "73416": {
+          "parent": 73408,
+          "group": 73408
+        },
+        "73417": {
+          "parent": 73408,
+          "group": 73408
+        },
+        "73418": {
+          "parent": 73408,
+          "group": 73408
+        },
+        "73420": {
+          "parent": 73408,
+          "group": 73408
+        },
+        "73421": {
+          "parent": 73408,
+          "group": 73408
+        }
+      },
+      "groups": [
+        73400,
+        73406,
+        73408
+      ],
+      "remaining": [],
+      "exit": {
+        "code": 0,
+        "signal": null
+      }
+    }
+  ],
+  "fixture": [
+    {
+      "kind": "fixture-error",
+      "error": "IDENTITY_MISSING"
+    }
+  ],
+  "formNavigation": {
+    "profile": "/private/tmp/helpr-workspace-validation-501/run-KGYtXm",
+    "realModelCalls": 0,
+    "remoteWrites": 0,
+    "scriptedContinuation": false,
+    "blank": true,
+    "cases": [
+      {
+        "item": "A",
+        "taskId": "dff798b5-e6a1-4f52-b5aa-5b3c249cc539",
+        "entry": "http://127.0.0.1:51221/form-new?item=A",
+        "readiness": [
+          "ec065f6c81bd19ac856589deed4f4988c8b5cf782423a75882e575bcfe05fcba",
+          "ec065f6c81bd19ac856589deed4f4988c8b5cf782423a75882e575bcfe05fcba"
+        ],
+        "last": {
+          "id": "dff798b5-e6a1-4f52-b5aa-5b3c249cc539",
+          "goal": "在 http://127.0.0.1:51221/form-new?item=A 按页面创建编号创建空白草稿到公告，再填写正文为“自动续行正文”",
+          "created": 1794029511415,
+          "url": "http://127.0.0.1:51221/form-new?item=A",
+          "draft": "",
+          "archived": false,
+          "groupId": null,
+          "groupGoal": null,
+          "hidden": false,
+          "minimized": false,
+          "phase": "manual",
+          "execution": {
+            "coordination": {
+              "session": {
+                "id": "helpr-fixture-web",
+                "epoch": "f77c8d3d-7a90-4bfb-8ed9-bcae218f5d02:0",
+                "origin": "http://127.0.0.1:51221"
+              },
+              "status": "unverified"
+            },
+            "modelVersion": 1,
+            "intent": "automatic",
+            "phase": "paused",
+            "version": 2,
+            "intentId": "7e042d68-110a-4d7b-b79b-95cc2a2a0ffd",
+            "goalVersion": 1,
+            "goal": "在 http://127.0.0.1:51221/form-new?item=A 按页面创建编号创建空白草稿到公告，再填写正文为“自动续行正文”",
+            "runId": null,
+            "resource": null,
+            "summary": "执行暂时无法继续，已暂停后续操作。已有结果与记录保留。",
+            "actions": []
+          },
+          "error": "",
+          "version": 3,
+          "messages": [
+            {
+              "role": "user",
+              "text": "在 http://127.0.0.1:51221/form-new?item=A 按页面创建编号创建空白草稿到公告，再填写正文为“自动续行正文”"
+            },
+            {
+              "role": "system",
+              "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+            },
+            {
+              "role": "user",
+              "text": "开始执行"
+            },
+            {
+              "role": "assistant",
+              "text": "",
+              "call": {
+                "usageKind": "web-planning",
+                "id": "ff8cf7b2-52bb-4067-b694-56725202b1d3",
+                "taskId": "dff798b5-e6a1-4f52-b5aa-5b3c249cc539",
+                "model": "fixture",
+                "configurationVersion": 1,
+                "phase": "error",
+                "source": {
+                  "url": "http://127.0.0.1:51221/form-new?item=A",
+                  "title": "空白草稿",
+                  "fingerprint": "701e81237e09393df925101afc496eeb1edf7aa2083c0bfd6e2145e3fec4ea76",
+                  "generation": 1,
+                  "observedAt": 1794029514451,
+                  "truncated": false
+                },
+                "pageChanged": false,
+                "dispatched": true,
+                "reservedTokens": 33247,
+                "inputTokens": null,
+                "outputTokens": null,
+                "totalTokens": null,
+                "error": "MODEL_CAPABILITY"
+              }
+            }
+          ]
+        },
+        "nativeTrace": {
+          "rows": [
+            {
+              "stage": "permit-send",
+              "owner": "dff798b5-e6a1-4f52-b5aa-5b3c249cc539",
+              "serial": 0,
+              "epoch": 1,
+              "at": 1794029514567.729
+            }
+          ],
+          "overflow": false
+        },
+        "nativeGate": {
+          "epoch": 1,
+          "available": true,
+          "blocked": false
+        }
+      }
+    ]
+  },
+  "passed": false,
+  "error": "VALIDATION_TIMEOUT",
+  "remaining": [],
+  "ms": 62200
+}

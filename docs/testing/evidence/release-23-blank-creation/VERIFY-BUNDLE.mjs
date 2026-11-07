@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import { captureReleaseInputs, inventoryDirectory, assertSameInputs } from '../../../../scripts/release-inputs.mjs';
+const dir = 'docs/testing/evidence/release-23-blank-creation';
+const build = JSON.parse(fs.readFileSync(dir + '/BUILD-95.json'));
+assertSameInputs(build.source, captureReleaseInputs());
+assert.deepEqual(inventoryDirectory(build.app), build.bundle);
+const report = JSON.parse(fs.readFileSync(dir + '/INDEPENDENT.json'));
+Object.assign(report, { bundleSha256: build.bundle.sha256, bundleUnchangedAfterRun: true, inputsUnchangedAfterBuild: true });
+fs.writeFileSync(dir + '/INDEPENDENT.json', JSON.stringify(report, null, 2) + '\n');

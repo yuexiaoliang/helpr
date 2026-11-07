@@ -48,6 +48,7 @@ const { values: options } = parseArgs({
     'created-target': flag,
     'form-navigation': flag,
     'form-chain': flag,
+    'blank-creation': flag,
     'created-target-mismatch': flag,
     'cross-site-controls': flag,
     'ambiguous-selection': flag,
@@ -93,6 +94,7 @@ if (args.length === 0) {
   process.exit(0);
 }
 
+if (options['blank-creation']) options['form-chain'] = true;
 if (options['form-chain']) options['form-navigation'] = true;
 if (options['form-navigation']) options['created-target'] = true;
 if (options['created-target-mismatch']) options['created-target'] = true;
@@ -270,6 +272,7 @@ const website = await fixture({
   createdTarget: options['created-target'],
   formNavigation: options['form-navigation'],
   formChain: options['form-chain'],
+  blankCreation: options['blank-creation'],
   dynamicResult: options['dynamic-result'],
   managementResult: options['management-result'],
   navigation: options['action-navigation'],
@@ -925,7 +928,7 @@ async function verifyMaterial(client) {
 async function validate() {
   let client = await launch();
   if (options['upload-ready']) return verifyUploadReady({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
-  if (options['form-navigation']) return verifyFormNavigation({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, chain:options['form-chain']});
+  if (options['form-navigation']) return verifyFormNavigation({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, chain:options['form-chain'], blank:options['blank-creation']});
   if (options['created-target']) return verifyCreatedTarget({client, website, evidence, command, waitFor, check, launch, remainingOwned,mismatch:options['created-target-mismatch']});
   if (options['dynamic-result']) return verifyDynamicResult({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, management: options['management-result']});
   if (options['link-navigation']) return verifyLinkNavigation({client, website, evidence, command, waitFor, check, launch, remainingOwned});

@@ -7,6 +7,7 @@ import {
 import {
   targetCreationSchema,
   discoveredTargetSchema,
+  creationFieldsMatch,
   validDiscoveredTarget,
 } from './target-creation';
 import {
@@ -137,6 +138,7 @@ export const actionFactSchema = z
     selectionResult: observedControlSchema.optional(),
     fieldResults: z.array(observedControlSchema).max(12).optional(),
     targetCreation: targetCreationSchema.optional(),
+    creationSourceControls: z.array(observedControlSchema).max(300).optional(),
     discoveredTarget: discoveredTargetSchema.optional(),
     discoveredRecovery: publicationRecoveryCheckpointSchema.optional(),
     navigation: actionNavigationSchema.optional(),
@@ -197,6 +199,15 @@ export const actionFactSchema = z
         !a.publicationApprovalId &&
         !a.workflowStep),
   )
+  .refine(
+    (a) =>
+      a.targetCreation?.rule !== 'readonly-identity-editor-v1' ||
+      creationFieldsMatch(a.targetCreation, {
+        ...a.source,
+        text: a.targetCreation.destination,
+        controls: a.creationSourceControls,
+      }),
+  )
   .refine((a) => validUploadCheck(a))
   .refine((a) => validDiscoveredTarget(a))
   .refine((a) => {
@@ -239,6 +250,8 @@ export const actionFactSchema = z
       !!n &&
       !!d &&
       !!a.targetCreation &&
+      (a.targetCreation.rule !== 'readonly-identity-editor-v1' ||
+        !!r.proof.chain) &&
       !a.navigationResolution &&
       directFormButton(a.action, a.source) &&
       sameSiteFormURL(a.source.url, r.proof.url, !!r.proof.chain) &&

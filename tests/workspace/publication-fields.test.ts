@@ -251,3 +251,43 @@ test('旧备份恢复不替换较新字段改稿和停止事实，损坏字段�
     () => new WorkspaceRecords(corrupt.folder, 'app/records/migrations'),
   ).toThrow();
 });
+
+test('只读身份来自AX readonly属性，受保护标识不进入观察，属性变化改变指纹', () => {
+  const frame = { frameTree: { frame: { url: 'https://example.test/new' } } };
+  const node = {
+    nodeId: 'identity',
+    role: { value: 'textbox' },
+    name: { value: '创建编号' },
+    value: { value: 'request-123' },
+    properties: [{ name: 'readonly', value: { value: true } }],
+  };
+  const readonly = pageObservation(frame, { nodes: [node] }, 1);
+  expect(readonly.controls![0]).toMatchObject({
+    readOnly: true,
+    textValue: 'request-123',
+  });
+  const editable = pageObservation(
+    frame,
+    { nodes: [{ ...node, properties: [] }] },
+    1,
+  );
+  expect(editable.controls![0]!.readOnly).toBe(false);
+  expect(editable.fingerprint).not.toBe(readonly.fingerprint);
+  expect(
+    pageObservation(
+      frame,
+      {
+        nodes: [
+          {
+            ...node,
+            properties: [
+              ...node.properties,
+              { name: 'protected', value: { value: true } },
+            ],
+          },
+        ],
+      },
+      1,
+    ).controls,
+  ).toEqual([]);
+});

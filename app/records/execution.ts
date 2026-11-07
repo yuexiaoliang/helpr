@@ -2707,6 +2707,9 @@ export class ExecutionRecords {
             ...(e.coordination ? { coordination: acquireResource(e) } : {}),
             ...(c.workflowStep ? { workflowStep: c.workflowStep } : {}),
             targetCreation: c.targetCreation,
+            ...(c.targetCreation?.rule === 'readonly-identity-editor-v1'
+              ? { creationSourceControls: c.source.controls }
+              : {}),
             observedLinks: c.source.links ?? [],
             effect,
             preconditions: c.evidence,

@@ -1,3 +1,4 @@
+import { emptyTextObservation } from './empty-text-observation';
 import { z } from 'zod';
 import { createHash } from 'node:crypto';
 import { websiteURL } from '../shared/url-policy';
@@ -8,6 +9,7 @@ const treeSchema = z.object({
   nodes: z.array(
     z.object({
       nodeId: z.string(),
+      backendDOMNodeId: z.number().int().positive().optional(),
       ignored: z.boolean().optional(),
       childIds: z.array(z.string()).optional(),
       role: axValue.optional(),
@@ -25,6 +27,7 @@ export function pageObservation(
   accessibility: unknown,
   generation: number,
   supplements = '',
+  document?: unknown,
 ): PageObservation {
   const url = websiteURL(
     z
@@ -32,6 +35,14 @@ export function pageObservation(
       .parse(frame).frameTree.frame.url,
   );
   const { nodes } = treeSchema.parse(accessibility);
+  const empty = emptyTextObservation(document, url);
+  const backendCounts = new Map<number, number>();
+  for (const n of nodes)
+    if (n.backendDOMNodeId)
+      backendCounts.set(
+        n.backendDOMNodeId,
+        (backendCounts.get(n.backendDOMNodeId) ?? 0) + 1,
+      );
   const excluded = new Set(
     nodes
       .filter((node) =>
@@ -61,6 +72,10 @@ export function pageObservation(
     const name = typeof node.name?.value === 'string' ? node.name.value : '';
     const value = typeof node.value?.value === 'string' ? node.value.value : '';
     const role = typeof node.role?.value === 'string' ? node.role.value : '';
+    const emptyNode =
+      node.backendDOMNodeId && backendCounts.get(node.backendDOMNodeId) === 1
+        ? empty.get(node.backendDOMNodeId)
+        : undefined;
     if (
       [
         'button',
@@ -83,6 +98,14 @@ export function pageObservation(
         disabled: !!node.properties?.some(
           (p) => p.name === 'disabled' && p.value.value === true,
         ),
+        ...(role === 'textbox'
+          ? {
+              readOnly:
+                node.properties?.some(
+                  (p) => p.name === 'readonly' && p.value.value === true,
+                ) ?? false,
+            }
+          : {}),
         ...(role === 'combobox' &&
         typeof node.value?.value === 'string' &&
         value.length <= 500
@@ -92,11 +115,31 @@ export function pageObservation(
         typeof node.value?.value === 'string' &&
         value.length <= 4000
           ? { textValue: value }
-          : {}),
+          : role === 'textbox' && node.value === undefined && emptyNode
+            ? {
+                textValue: '',
+                emptyValue: {
+                  rule: 'native-empty-snapshot-v1' as const,
+                  backendNodeId: node.backendDOMNodeId!,
+                  nodeName: emptyNode,
+                },
+              }
+            : {}),
       });
+    if (role === 'textbox' && node.value === undefined && emptyNode)
+      lines.push(
+        '[native-empty] ' +
+          JSON.stringify({
+            id: node.backendDOMNodeId,
+            name,
+            nodeName: emptyNode,
+          }),
+      );
     const flags = (node.properties ?? [])
       .filter((p) =>
-        ['checked', 'selected', 'expanded', 'disabled'].includes(p.name),
+        ['checked', 'selected', 'expanded', 'disabled', 'readonly'].includes(
+          p.name,
+        ),
       )
       .map((p) => `${p.name}=${String(p.value.value)}`);
     const content = [name, value].filter(Boolean).join('：').trim();
