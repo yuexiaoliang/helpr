@@ -1,0 +1,41 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/rich-text.test.ts (25 tests | 1 failed | 24 skipped) 610ms
+   × 实际段落改写后的富文本不符必须保存暂停，不能误判为记录故障而停在running 606ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/rich-text.test.ts > 实际段落改写后的富文本不符必须保存暂停，不能误判为记录故障而停在running
+AssertionError: expected { modelVersion: 1, …(10) } to match object { phase: 'paused', …(1) }
+(9 matching properties omitted from actual)
+
+- Expected
++ Received
+
+@@ -2,7 +2,7 @@
+    "actions": [
+      {
+        "status": "unknown",
+      },
+    ],
+-   "phase": "paused",
++   "phase": "running",
+  }
+
+ ❯ tests/workspace/rich-text.test.ts:402:22
+    400|     await service.settled();
+    401|     expect(writes).toBe(1);
+    402|     expect(f.read()).toMatchObject({
+       |                      ^
+    403|       phase: 'paused',
+    404|       actions: [{ status: 'unknown' }],
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 24 skipped (25)
+   Start at  14:14:08
+   Duration  2.81s (import 64%, tests 25%, transform 10%)
+

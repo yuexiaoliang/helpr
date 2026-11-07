@@ -1,3 +1,4 @@
+import { richTextControl, verifiedRichText } from '../shared/rich-text';
 import { uploadedLink } from '../shared/upload-readiness';
 import {
   creationFieldsMatch,
@@ -1092,6 +1093,7 @@ export class ExecutionRecords {
         if (
           pending &&
           !pending.targetCreation &&
+          !pending.richTextSource &&
           pending.action.kind !== 'upload' &&
           c.step.previous?.id === pending.id &&
           c.step.previous.status === 'confirmed' &&
@@ -2540,6 +2542,7 @@ export class ExecutionRecords {
               !observedControl(c.action, c.source))
           )
             throw Error('EXECUTION_SELECTION_UNVERIFIED');
+          const richTextSource = richTextControl(c.action, c.source);
           if (c.action.kind === 'upload') {
             const id = c.action.materialId;
             if (
@@ -2698,6 +2701,7 @@ export class ExecutionRecords {
           if (c.evidence && !c.evidence.every((v) => c.source.text.includes(v)))
             throw Error('EXECUTION_EVIDENCE_MISSING');
           e.actions.push({
+            ...(richTextSource ? { richTextSource } : {}),
             ...(hasMaterial &&
             effect === 'publication' &&
             p?.fields &&
@@ -2863,6 +2867,19 @@ export class ExecutionRecords {
             if (a.source.url !== c.source.url)
               throw Error('EXECUTION_SELECTION_UNVERIFIED');
             a.selectionResult = selectedControl(a.action, c.source);
+          }
+          if (a.richTextSource) {
+            if (
+              a.navigation ||
+              a.source.url !== c.source.url ||
+              !c.binding ||
+              c.binding.generation !== c.source.generation ||
+              (a.runId === c.runId &&
+                (c.binding.targetId !== a.binding.targetId ||
+                  c.binding.generation !== a.binding.generation))
+            )
+              throw Error('EXECUTION_RICH_TEXT_UNVERIFIED');
+            a.richTextResult = verifiedRichText(a.action, c.source);
           }
           a.status = 'confirmed';
           a.evidence = c.evidence;

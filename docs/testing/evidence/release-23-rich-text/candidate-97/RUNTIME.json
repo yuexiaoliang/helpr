@@ -1,0 +1,4511 @@
+{
+  "app": "/Users/yuexiaoliang/projects/helpr/dist/candidates/rich-text-checked-23/mac-arm64/helpr.app",
+  "storage": "fixture",
+  "pendingAcceptance": [
+    "系统钥匙串与跨重启登录",
+    "原生窗口与真人输入"
+  ],
+  "started": "2026-11-07T06:19:57.502Z",
+  "checks": [
+    {
+      "name": "A 富文本实际全文核对",
+      "passed": true
+    },
+    {
+      "name": "B 富文本实际全文核对",
+      "passed": true
+    },
+    {
+      "name": "A 冷开不重填",
+      "passed": true
+    },
+    {
+      "name": "B 冷开不重填",
+      "passed": true
+    }
+  ],
+  "samples": [
+    {
+      "kind": "startup",
+      "number": 250,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:55393",
+        "persistent": false
+      },
+      "ms": 8711,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    },
+    {
+      "kind": "startup",
+      "number": 251,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:55393",
+        "persistent": false
+      },
+      "ms": 3745,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    }
+  ],
+  "processes": [
+    {
+      "number": 250,
+      "controller": 86898,
+      "seen": {
+        "86898": {
+          "parent": 86883,
+          "group": 86898
+        },
+        "86902": {
+          "parent": 86898,
+          "group": 86870
+        },
+        "86903": {
+          "parent": 86898,
+          "group": 86870
+        },
+        "86904": {
+          "parent": 86898,
+          "group": 86904
+        },
+        "86905": {
+          "parent": 86898,
+          "group": 86898
+        },
+        "86906": {
+          "parent": 86904,
+          "group": 86906
+        },
+        "86911": {
+          "parent": 86906,
+          "group": 86906
+        },
+        "86912": {
+          "parent": 86906,
+          "group": 86906
+        },
+        "86913": {
+          "parent": 86906,
+          "group": 86906
+        },
+        "86914": {
+          "parent": 86906,
+          "group": 86906
+        },
+        "86915": {
+          "parent": 86906,
+          "group": 86906
+        },
+        "86917": {
+          "parent": 86906,
+          "group": 86906
+        },
+        "86918": {
+          "parent": 86906,
+          "group": 86906
+        },
+        "86925": {
+          "parent": 86906,
+          "group": 86906
+        },
+        "86926": {
+          "parent": 86906,
+          "group": 86906
+        }
+      },
+      "groups": [
+        86898,
+        86904,
+        86906
+      ],
+      "remaining": [],
+      "exit": {
+        "code": 0,
+        "signal": null
+      }
+    },
+    {
+      "number": 251,
+      "controller": 86937,
+      "seen": {
+        "86937": {
+          "parent": 86883,
+          "group": 86937
+        },
+        "86940": {
+          "parent": 86937,
+          "group": 86870
+        },
+        "86941": {
+          "parent": 86937,
+          "group": 86870
+        },
+        "86942": {
+          "parent": 86937,
+          "group": 86942
+        },
+        "86943": {
+          "parent": 86937,
+          "group": 86937
+        },
+        "86944": {
+          "parent": 86942,
+          "group": 86944
+        },
+        "86968": {
+          "parent": 86944,
+          "group": 86944
+        },
+        "86969": {
+          "parent": 86944,
+          "group": 86944
+        },
+        "86986": {
+          "parent": 86944,
+          "group": 86944
+        },
+        "86987": {
+          "parent": 86944,
+          "group": 86944
+        },
+        "86988": {
+          "parent": 86944,
+          "group": 86944
+        }
+      },
+      "groups": [
+        86937,
+        86942,
+        86944
+      ],
+      "remaining": [],
+      "exit": {
+        "code": 0,
+        "signal": null
+      }
+    }
+  ],
+  "fixture": [
+    {
+      "kind": "rich-planning",
+      "control": {
+        "role": "textbox",
+        "name": "正文",
+        "frameUrl": "http://127.0.0.1:55393/rich-edit?item=A",
+        "disabled": false,
+        "readOnly": false,
+        "richText": {
+          "rule": "contenteditable-ax-v1",
+          "backendNodeId": 11,
+          "valueSource": "empty-dom"
+        },
+        "textValue": ""
+      },
+      "previous": null,
+      "at": 1794032407433
+    },
+    {
+      "kind": "rich-input",
+      "item": "A",
+      "sent": "第一行：中文 <标题> & 正文\n第二行：保留换行与标点。",
+      "actual": "第一行：中文 <标题> & 正文\n第二行：保留换行与标点。",
+      "html": "第一行：中文 &lt;标题&gt; &amp; 正文<div>第二行：保留换行与标点。</div>",
+      "at": 1794032407936
+    },
+    {
+      "kind": "rich-planning",
+      "control": {
+        "role": "textbox",
+        "name": "正文",
+        "frameUrl": "http://127.0.0.1:55393/rich-edit?item=A",
+        "disabled": false,
+        "readOnly": false,
+        "richText": {
+          "rule": "contenteditable-ax-v1",
+          "backendNodeId": 11,
+          "valueSource": "ax"
+        },
+        "textValue": "第一行：中文 <标题> & 正文\n第二行：保留换行与标点。"
+      },
+      "previous": "4678bb20-c481-48fb-9b22-6942bde8b1f4",
+      "at": 1794032407997
+    },
+    {
+      "kind": "rich-planning",
+      "control": {
+        "role": "textbox",
+        "name": "正文",
+        "frameUrl": "http://127.0.0.1:55393/rich-edit?item=B",
+        "disabled": false,
+        "readOnly": false,
+        "richText": {
+          "rule": "contenteditable-ax-v1",
+          "backendNodeId": 11,
+          "valueSource": "ax"
+        },
+        "textValue": "原有段落\n\n原有正文"
+      },
+      "previous": null,
+      "at": 1794032409302
+    },
+    {
+      "kind": "rich-input",
+      "item": "B",
+      "sent": "另一份：正文改写反例",
+      "actual": "网站改写正文",
+      "html": "网站改写正文",
+      "at": 1794032409762
+    },
+    {
+      "kind": "rich-planning",
+      "control": {
+        "role": "textbox",
+        "name": "正文",
+        "frameUrl": "http://127.0.0.1:55393/rich-edit?item=B",
+        "disabled": false,
+        "readOnly": false,
+        "richText": {
+          "rule": "contenteditable-ax-v1",
+          "backendNodeId": 11,
+          "valueSource": "ax"
+        },
+        "textValue": "网站改写正文"
+      },
+      "previous": "73ffd6c5-9b49-4204-8cba-fc03eb1ffe39",
+      "at": 1794032409826
+    }
+  ],
+  "richText": {
+    "profile": "/private/tmp/helpr-workspace-validation-501/run-Gd63Vf",
+    "realModelCalls": 0,
+    "remoteWrites": 0,
+    "scriptedContinuation": false,
+    "paragraph": false,
+    "cases": [
+      {
+        "item": "A",
+        "taskId": "50513ffa-3409-4314-937c-231bc7504b48",
+        "entry": "http://127.0.0.1:55393/rich-edit?item=A",
+        "readiness": [
+          "9240602e6ccb4cbf0a52783db1d0ffc8397d6ffeea354120199a28f53ff8c785",
+          "9240602e6ccb4cbf0a52783db1d0ffc8397d6ffeea354120199a28f53ff8c785"
+        ],
+        "domBefore": {
+          "documents": [
+            {
+              "documentURL": 0,
+              "title": 1,
+              "baseURL": 0,
+              "contentLanguage": -1,
+              "encodingName": 2,
+              "publicId": -1,
+              "systemId": -1,
+              "frameId": 3,
+              "nodes": {
+                "parentIndex": [
+                  -1,
+                  0,
+                  0,
+                  2,
+                  3,
+                  3,
+                  5,
+                  2,
+                  7,
+                  8,
+                  7,
+                  7,
+                  11
+                ],
+                "nodeType": [
+                  9,
+                  10,
+                  1,
+                  1,
+                  1,
+                  1,
+                  3,
+                  1,
+                  1,
+                  3,
+                  1,
+                  1,
+                  3
+                ],
+                "shadowRootType": {
+                  "index": [],
+                  "value": []
+                },
+                "nodeName": [
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  11,
+                  12,
+                  13,
+                  14,
+                  12,
+                  16,
+                  26,
+                  12
+                ],
+                "nodeValue": [
+                  -1,
+                  -1,
+                  -1,
+                  -1,
+                  -1,
+                  -1,
+                  1,
+                  -1,
+                  -1,
+                  15,
+                  -1,
+                  -1,
+                  27
+                ],
+                "backendNodeId": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13
+                ],
+                "attributes": [
+                  [],
+                  [],
+                  [],
+                  [],
+                  [
+                    9,
+                    10
+                  ],
+                  [],
+                  [],
+                  [],
+                  [],
+                  [],
+                  [
+                    17,
+                    18,
+                    19,
+                    20,
+                    21,
+                    22,
+                    23,
+                    22,
+                    24,
+                    25
+                  ],
+                  [],
+                  []
+                ],
+                "textValue": {
+                  "index": [],
+                  "value": []
+                },
+                "inputValue": {
+                  "index": [],
+                  "value": []
+                },
+                "inputChecked": {
+                  "index": []
+                },
+                "optionSelected": {
+                  "index": []
+                },
+                "contentDocumentIndex": {
+                  "index": [],
+                  "value": []
+                },
+                "pseudoType": {
+                  "index": [],
+                  "value": []
+                },
+                "pseudoIdentifier": {
+                  "index": [],
+                  "value": []
+                },
+                "isClickable": {
+                  "index": [
+                    10
+                  ]
+                },
+                "currentSourceURL": {
+                  "index": [],
+                  "value": []
+                },
+                "originURL": {
+                  "index": [],
+                  "value": []
+                }
+              },
+              "layout": {
+                "nodeIndex": [
+                  0,
+                  2,
+                  7,
+                  8,
+                  9,
+                  10
+                ],
+                "styles": [
+                  [],
+                  [],
+                  [],
+                  [],
+                  [],
+                  []
+                ],
+                "bounds": [
+                  [
+                    0,
+                    0,
+                    2560,
+                    1584
+                  ],
+                  [
+                    0,
+                    0,
+                    2560,
+                    329
+                  ],
+                  [
+                    16,
+                    32,
+                    2528,
+                    281
+                  ],
+                  [
+                    16,
+                    32,
+                    2528,
+                    45
+                  ],
+                  [
+                    16,
+                    37,
+                    128,
+                    37
+                  ],
+                  [
+                    16,
+                    109,
+                    2528,
+                    204
+                  ]
+                ],
+                "text": [
+                  -1,
+                  -1,
+                  -1,
+                  -1,
+                  15,
+                  -1
+                ],
+                "stackingContexts": {
+                  "index": [
+                    0,
+                    1
+                  ]
+                }
+              },
+              "textBoxes": {
+                "layoutIndex": [
+                  4
+                ],
+                "bounds": [
+                  [
+                    16,
+                    37,
+                    128,
+                    37
+                  ]
+                ],
+                "start": [
+                  0
+                ],
+                "length": [
+                  4
+                ]
+              },
+              "scrollOffsetX": 0,
+              "scrollOffsetY": 0,
+              "contentWidth": 2560,
+              "contentHeight": 1584
+            }
+          ],
+          "strings": [
+            "http://127.0.0.1:55393/rich-edit?item=A",
+            "富文本核对",
+            "UTF-8",
+            "E2B486D950E134749CA6BD5BE24E2EA1",
+            "#document",
+            "html",
+            "HTML",
+            "HEAD",
+            "META",
+            "charset",
+            "utf-8",
+            "TITLE",
+            "#text",
+            "BODY",
+            "P",
+            "正文编辑",
+            "DIV",
+            "role",
+            "textbox",
+            "aria-label",
+            "正文",
+            "aria-multiline",
+            "true",
+            "contenteditable",
+            "style",
+            "white-space:pre-wrap;border:1px solid #888;min-height:100px",
+            "SCRIPT",
+            "document.querySelector('[contenteditable]').oninput=e=>{const sent=e.target.innerText;if(\"A\"==='B')e.target.textContent='网站改写正文';fetch('/rich-input?item=A',{method:'POST',body:JSON.stringify({sent,actual:e.target.innerText,html:e.target.innerHTML})})}"
+          ]
+        },
+        "axBefore": {
+          "nodes": [
+            {
+              "nodeId": "1",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "RootWebArea"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 144
+              },
+              "name": {
+                "type": "computedString",
+                "value": "富文本核对",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label",
+                    "superseded": true
+                  },
+                  {
+                    "type": "relatedElement",
+                    "value": {
+                      "type": "computedString",
+                      "value": "富文本核对"
+                    },
+                    "nativeSource": "title"
+                  }
+                ]
+              },
+              "properties": [
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "url",
+                  "value": {
+                    "type": "string",
+                    "value": "http://127.0.0.1:55393/rich-edit?item=A"
+                  }
+                }
+              ],
+              "childIds": [
+                "3"
+              ],
+              "backendDOMNodeId": 1,
+              "frameId": "E2B486D950E134749CA6BD5BE24E2EA1"
+            },
+            {
+              "nodeId": "3",
+              "ignored": true,
+              "ignoredReasons": [
+                {
+                  "name": "uninteresting",
+                  "value": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                }
+              ],
+              "role": {
+                "type": "role",
+                "value": "none"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 0
+              },
+              "parentId": "1",
+              "childIds": [
+                "8"
+              ],
+              "backendDOMNodeId": 3
+            },
+            {
+              "nodeId": "8",
+              "ignored": true,
+              "ignoredReasons": [
+                {
+                  "name": "uninteresting",
+                  "value": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                }
+              ],
+              "role": {
+                "type": "role",
+                "value": "none"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 0
+              },
+              "parentId": "3",
+              "childIds": [
+                "9",
+                "11"
+              ],
+              "backendDOMNodeId": 8
+            },
+            {
+              "nodeId": "9",
+              "ignored": false,
+              "role": {
+                "type": "role",
+                "value": "paragraph"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 133
+              },
+              "name": {
+                "type": "computedString",
+                "value": "",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label"
+                  }
+                ]
+              },
+              "properties": [],
+              "parentId": "8",
+              "childIds": [
+                "10"
+              ],
+              "backendDOMNodeId": 9
+            },
+            {
+              "nodeId": "11",
+              "ignored": false,
+              "role": {
+                "type": "role",
+                "value": "textbox"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 170
+              },
+              "name": {
+                "type": "computedString",
+                "value": "正文",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "value": {
+                      "type": "computedString",
+                      "value": "正文"
+                    },
+                    "attribute": "aria-label",
+                    "attributeValue": {
+                      "type": "string",
+                      "value": "正文"
+                    }
+                  },
+                  {
+                    "type": "placeholder",
+                    "attribute": "aria-placeholder",
+                    "superseded": true
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "title",
+                    "superseded": true
+                  }
+                ]
+              },
+              "properties": [
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "editable",
+                  "value": {
+                    "type": "token",
+                    "value": "richtext"
+                  }
+                },
+                {
+                  "name": "settable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "multiline",
+                  "value": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "readonly",
+                  "value": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                },
+                {
+                  "name": "required",
+                  "value": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              ],
+              "parentId": "8",
+              "childIds": [],
+              "backendDOMNodeId": 11
+            },
+            {
+              "nodeId": "10",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "StaticText"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 158
+              },
+              "name": {
+                "type": "computedString",
+                "value": "正文编辑",
+                "sources": [
+                  {
+                    "type": "contents",
+                    "value": {
+                      "type": "computedString",
+                      "value": "正文编辑"
+                    }
+                  }
+                ]
+              },
+              "properties": [],
+              "parentId": "9",
+              "childIds": [
+                "-1000000002"
+              ],
+              "backendDOMNodeId": 10
+            },
+            {
+              "nodeId": "-1000000002",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "InlineTextBox"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 101
+              },
+              "name": {
+                "type": "computedString",
+                "value": "正文编辑"
+              },
+              "properties": [],
+              "parentId": "10",
+              "childIds": []
+            }
+          ]
+        },
+        "last": {
+          "id": "50513ffa-3409-4314-937c-231bc7504b48",
+          "goal": "在 http://127.0.0.1:55393/rich-edit?item=A 将正文整体替换为以下纯文本：第一行：中文 <标题> & 正文\n第二行：保留换行与标点。",
+          "created": 1794032406297,
+          "url": "http://127.0.0.1:55393/rich-edit?item=A",
+          "draft": "",
+          "archived": false,
+          "groupId": null,
+          "groupGoal": null,
+          "hidden": false,
+          "minimized": false,
+          "phase": "manual",
+          "execution": {
+            "coordination": {
+              "session": {
+                "id": "helpr-fixture-web",
+                "epoch": "e06c8aff-52aa-4db4-b661-b4a88247c61e:0",
+                "origin": "http://127.0.0.1:55393"
+              },
+              "status": "ready",
+              "source": {
+                "url": "http://127.0.0.1:55393/rich-edit?item=A",
+                "title": "富文本核对",
+                "fingerprint": "2433c769f8b506515d8db9ad447524cf87365c2225fd21e089105b0055aeefa3",
+                "generation": 1,
+                "observedAt": 1794032407373,
+                "truncated": false
+              }
+            },
+            "resourceClaims": [
+              {
+                "status": "released",
+                "id": "bae48d42-32b4-43f5-8c58-7bf73471c0ea",
+                "runId": "2015bf44-e152-476e-9621-5c9a2f3c2a9a",
+                "goalVersion": 1,
+                "origin": "http://127.0.0.1:55393",
+                "targetUrl": null
+              }
+            ],
+            "modelVersion": 1,
+            "intent": "automatic",
+            "phase": "complete",
+            "version": 2,
+            "intentId": "cf27e2f1-e4a2-48f4-86f4-198486e014aa",
+            "goalVersion": 1,
+            "goal": "在 http://127.0.0.1:55393/rich-edit?item=A 将正文整体替换为以下纯文本：第一行：中文 <标题> & 正文\n第二行：保留换行与标点。",
+            "runId": null,
+            "resource": null,
+            "summary": "声称正文已完成",
+            "actions": [
+              {
+                "coordination": {
+                  "session": {
+                    "id": "helpr-fixture-web",
+                    "epoch": "e06c8aff-52aa-4db4-b661-b4a88247c61e:0",
+                    "origin": "http://127.0.0.1:55393"
+                  },
+                  "claimId": "bae48d42-32b4-43f5-8c58-7bf73471c0ea"
+                },
+                "observedLinks": [],
+                "resultLinks": [],
+                "richTextSource": {
+                  "role": "textbox",
+                  "name": "正文",
+                  "frameUrl": "http://127.0.0.1:55393/rich-edit?item=A",
+                  "disabled": false,
+                  "textValue": "",
+                  "readOnly": false,
+                  "richText": {
+                    "rule": "contenteditable-ax-v1",
+                    "backendNodeId": 11,
+                    "valueSource": "empty-dom"
+                  }
+                },
+                "richTextResult": {
+                  "role": "textbox",
+                  "name": "正文",
+                  "frameUrl": "http://127.0.0.1:55393/rich-edit?item=A",
+                  "disabled": false,
+                  "textValue": "第一行：中文 <标题> & 正文\n第二行：保留换行与标点。",
+                  "readOnly": false,
+                  "richText": {
+                    "rule": "contenteditable-ax-v1",
+                    "backendNodeId": 11,
+                    "valueSource": "ax"
+                  }
+                },
+                "id": "4678bb20-c481-48fb-9b22-6942bde8b1f4",
+                "runId": "2015bf44-e152-476e-9621-5c9a2f3c2a9a",
+                "goalVersion": 1,
+                "status": "confirmed",
+                "summary": "填写纯文本正文",
+                "action": {
+                  "kind": "fill",
+                  "target": {
+                    "role": "textbox",
+                    "name": "正文",
+                    "exact": true
+                  },
+                  "value": "第一行：中文 <标题> & 正文\n第二行：保留换行与标点。"
+                },
+                "effect": "interaction",
+                "preconditions": [
+                  "正文"
+                ],
+                "source": {
+                  "url": "http://127.0.0.1:55393/rich-edit?item=A",
+                  "title": "富文本核对",
+                  "fingerprint": "2433c769f8b506515d8db9ad447524cf87365c2225fd21e089105b0055aeefa3",
+                  "generation": 1,
+                  "observedAt": 1794032407373,
+                  "truncated": false
+                },
+                "observedUrls": [
+                  "http://127.0.0.1:55393/rich-edit?item=A"
+                ],
+                "resultSource": {
+                  "url": "http://127.0.0.1:55393/rich-edit?item=A",
+                  "title": "富文本核对",
+                  "fingerprint": "5d0a51f003d176669bb9bc2203d7535acf8e00c924a1727e2981fd6512f8fbf1",
+                  "generation": 1,
+                  "observedAt": 1794032407959,
+                  "truncated": false
+                },
+                "binding": {
+                  "targetId": "E2B486D950E134749CA6BD5BE24E2EA1",
+                  "generation": 1
+                },
+                "evidence": [
+                  "正文"
+                ],
+                "returned": true,
+                "dispatchState": "possible"
+              }
+            ],
+            "result": {
+              "goalVersion": 1,
+              "source": {
+                "url": "http://127.0.0.1:55393/rich-edit?item=A",
+                "title": "富文本核对",
+                "fingerprint": "5d0a51f003d176669bb9bc2203d7535acf8e00c924a1727e2981fd6512f8fbf1",
+                "generation": 1,
+                "observedAt": 1794032407959,
+                "truncated": false
+              },
+              "evidence": [
+                "正文"
+              ]
+            }
+          },
+          "error": "",
+          "version": 4,
+          "messages": [
+            {
+              "role": "user",
+              "text": "在 http://127.0.0.1:55393/rich-edit?item=A 将正文整体替换为以下纯文本：第一行：中文 <标题> & 正文\n第二行：保留换行与标点。"
+            },
+            {
+              "role": "system",
+              "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+            },
+            {
+              "role": "user",
+              "text": "开始执行"
+            },
+            {
+              "role": "assistant",
+              "text": "填写纯文本正文",
+              "call": {
+                "usageKind": "web-planning",
+                "id": "5b02d91d-df6d-4855-b167-18e2ee09c9cc",
+                "taskId": "50513ffa-3409-4314-937c-231bc7504b48",
+                "model": "fixture",
+                "configurationVersion": 1,
+                "phase": "complete",
+                "source": {
+                  "url": "http://127.0.0.1:55393/rich-edit?item=A",
+                  "title": "富文本核对",
+                  "fingerprint": "2433c769f8b506515d8db9ad447524cf87365c2225fd21e089105b0055aeefa3",
+                  "generation": 1,
+                  "observedAt": 1794032407373,
+                  "truncated": false
+                },
+                "pageChanged": false,
+                "dispatched": true,
+                "reservedTokens": 33229,
+                "inputTokens": null,
+                "outputTokens": null,
+                "totalTokens": null,
+                "error": null
+              }
+            },
+            {
+              "role": "assistant",
+              "text": "声称正文已完成",
+              "call": {
+                "usageKind": "web-planning",
+                "id": "b467bc4f-0dc7-454c-a6f1-f8514224b79b",
+                "taskId": "50513ffa-3409-4314-937c-231bc7504b48",
+                "model": "fixture",
+                "configurationVersion": 1,
+                "phase": "complete",
+                "source": {
+                  "url": "http://127.0.0.1:55393/rich-edit?item=A",
+                  "title": "富文本核对",
+                  "fingerprint": "5d0a51f003d176669bb9bc2203d7535acf8e00c924a1727e2981fd6512f8fbf1",
+                  "generation": 1,
+                  "observedAt": 1794032407959,
+                  "truncated": false
+                },
+                "pageChanged": false,
+                "dispatched": true,
+                "reservedTokens": 35104,
+                "inputTokens": null,
+                "outputTokens": null,
+                "totalTokens": null,
+                "error": null
+              }
+            }
+          ]
+        },
+        "result": {
+          "id": "50513ffa-3409-4314-937c-231bc7504b48",
+          "goal": "在 http://127.0.0.1:55393/rich-edit?item=A 将正文整体替换为以下纯文本：第一行：中文 <标题> & 正文\n第二行：保留换行与标点。",
+          "created": 1794032406297,
+          "url": "http://127.0.0.1:55393/rich-edit?item=A",
+          "draft": "",
+          "archived": false,
+          "groupId": null,
+          "groupGoal": null,
+          "hidden": false,
+          "minimized": false,
+          "phase": "manual",
+          "execution": {
+            "coordination": {
+              "session": {
+                "id": "helpr-fixture-web",
+                "epoch": "e06c8aff-52aa-4db4-b661-b4a88247c61e:0",
+                "origin": "http://127.0.0.1:55393"
+              },
+              "status": "ready",
+              "source": {
+                "url": "http://127.0.0.1:55393/rich-edit?item=A",
+                "title": "富文本核对",
+                "fingerprint": "2433c769f8b506515d8db9ad447524cf87365c2225fd21e089105b0055aeefa3",
+                "generation": 1,
+                "observedAt": 1794032407373,
+                "truncated": false
+              }
+            },
+            "resourceClaims": [
+              {
+                "status": "released",
+                "id": "bae48d42-32b4-43f5-8c58-7bf73471c0ea",
+                "runId": "2015bf44-e152-476e-9621-5c9a2f3c2a9a",
+                "goalVersion": 1,
+                "origin": "http://127.0.0.1:55393",
+                "targetUrl": null
+              }
+            ],
+            "modelVersion": 1,
+            "intent": "automatic",
+            "phase": "complete",
+            "version": 2,
+            "intentId": "cf27e2f1-e4a2-48f4-86f4-198486e014aa",
+            "goalVersion": 1,
+            "goal": "在 http://127.0.0.1:55393/rich-edit?item=A 将正文整体替换为以下纯文本：第一行：中文 <标题> & 正文\n第二行：保留换行与标点。",
+            "runId": null,
+            "resource": null,
+            "summary": "声称正文已完成",
+            "actions": [
+              {
+                "coordination": {
+                  "session": {
+                    "id": "helpr-fixture-web",
+                    "epoch": "e06c8aff-52aa-4db4-b661-b4a88247c61e:0",
+                    "origin": "http://127.0.0.1:55393"
+                  },
+                  "claimId": "bae48d42-32b4-43f5-8c58-7bf73471c0ea"
+                },
+                "observedLinks": [],
+                "resultLinks": [],
+                "richTextSource": {
+                  "role": "textbox",
+                  "name": "正文",
+                  "frameUrl": "http://127.0.0.1:55393/rich-edit?item=A",
+                  "disabled": false,
+                  "textValue": "",
+                  "readOnly": false,
+                  "richText": {
+                    "rule": "contenteditable-ax-v1",
+                    "backendNodeId": 11,
+                    "valueSource": "empty-dom"
+                  }
+                },
+                "richTextResult": {
+                  "role": "textbox",
+                  "name": "正文",
+                  "frameUrl": "http://127.0.0.1:55393/rich-edit?item=A",
+                  "disabled": false,
+                  "textValue": "第一行：中文 <标题> & 正文\n第二行：保留换行与标点。",
+                  "readOnly": false,
+                  "richText": {
+                    "rule": "contenteditable-ax-v1",
+                    "backendNodeId": 11,
+                    "valueSource": "ax"
+                  }
+                },
+                "id": "4678bb20-c481-48fb-9b22-6942bde8b1f4",
+                "runId": "2015bf44-e152-476e-9621-5c9a2f3c2a9a",
+                "goalVersion": 1,
+                "status": "confirmed",
+                "summary": "填写纯文本正文",
+                "action": {
+                  "kind": "fill",
+                  "target": {
+                    "role": "textbox",
+                    "name": "正文",
+                    "exact": true
+                  },
+                  "value": "第一行：中文 <标题> & 正文\n第二行：保留换行与标点。"
+                },
+                "effect": "interaction",
+                "preconditions": [
+                  "正文"
+                ],
+                "source": {
+                  "url": "http://127.0.0.1:55393/rich-edit?item=A",
+                  "title": "富文本核对",
+                  "fingerprint": "2433c769f8b506515d8db9ad447524cf87365c2225fd21e089105b0055aeefa3",
+                  "generation": 1,
+                  "observedAt": 1794032407373,
+                  "truncated": false
+                },
+                "observedUrls": [
+                  "http://127.0.0.1:55393/rich-edit?item=A"
+                ],
+                "resultSource": {
+                  "url": "http://127.0.0.1:55393/rich-edit?item=A",
+                  "title": "富文本核对",
+                  "fingerprint": "5d0a51f003d176669bb9bc2203d7535acf8e00c924a1727e2981fd6512f8fbf1",
+                  "generation": 1,
+                  "observedAt": 1794032407959,
+                  "truncated": false
+                },
+                "binding": {
+                  "targetId": "E2B486D950E134749CA6BD5BE24E2EA1",
+                  "generation": 1
+                },
+                "evidence": [
+                  "正文"
+                ],
+                "returned": true,
+                "dispatchState": "possible"
+              }
+            ],
+            "result": {
+              "goalVersion": 1,
+              "source": {
+                "url": "http://127.0.0.1:55393/rich-edit?item=A",
+                "title": "富文本核对",
+                "fingerprint": "5d0a51f003d176669bb9bc2203d7535acf8e00c924a1727e2981fd6512f8fbf1",
+                "generation": 1,
+                "observedAt": 1794032407959,
+                "truncated": false
+              },
+              "evidence": [
+                "正文"
+              ]
+            }
+          },
+          "error": "",
+          "version": 4,
+          "messages": [
+            {
+              "role": "user",
+              "text": "在 http://127.0.0.1:55393/rich-edit?item=A 将正文整体替换为以下纯文本：第一行：中文 <标题> & 正文\n第二行：保留换行与标点。"
+            },
+            {
+              "role": "system",
+              "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+            },
+            {
+              "role": "user",
+              "text": "开始执行"
+            },
+            {
+              "role": "assistant",
+              "text": "填写纯文本正文",
+              "call": {
+                "usageKind": "web-planning",
+                "id": "5b02d91d-df6d-4855-b167-18e2ee09c9cc",
+                "taskId": "50513ffa-3409-4314-937c-231bc7504b48",
+                "model": "fixture",
+                "configurationVersion": 1,
+                "phase": "complete",
+                "source": {
+                  "url": "http://127.0.0.1:55393/rich-edit?item=A",
+                  "title": "富文本核对",
+                  "fingerprint": "2433c769f8b506515d8db9ad447524cf87365c2225fd21e089105b0055aeefa3",
+                  "generation": 1,
+                  "observedAt": 1794032407373,
+                  "truncated": false
+                },
+                "pageChanged": false,
+                "dispatched": true,
+                "reservedTokens": 33229,
+                "inputTokens": null,
+                "outputTokens": null,
+                "totalTokens": null,
+                "error": null
+              }
+            },
+            {
+              "role": "assistant",
+              "text": "声称正文已完成",
+              "call": {
+                "usageKind": "web-planning",
+                "id": "b467bc4f-0dc7-454c-a6f1-f8514224b79b",
+                "taskId": "50513ffa-3409-4314-937c-231bc7504b48",
+                "model": "fixture",
+                "configurationVersion": 1,
+                "phase": "complete",
+                "source": {
+                  "url": "http://127.0.0.1:55393/rich-edit?item=A",
+                  "title": "富文本核对",
+                  "fingerprint": "5d0a51f003d176669bb9bc2203d7535acf8e00c924a1727e2981fd6512f8fbf1",
+                  "generation": 1,
+                  "observedAt": 1794032407959,
+                  "truncated": false
+                },
+                "pageChanged": false,
+                "dispatched": true,
+                "reservedTokens": 35104,
+                "inputTokens": null,
+                "outputTokens": null,
+                "totalTokens": null,
+                "error": null
+              }
+            }
+          ]
+        },
+        "domAfter": {
+          "documents": [
+            {
+              "documentURL": 0,
+              "title": 1,
+              "baseURL": 0,
+              "contentLanguage": -1,
+              "encodingName": 2,
+              "publicId": -1,
+              "systemId": -1,
+              "frameId": 3,
+              "nodes": {
+                "parentIndex": [
+                  -1,
+                  0,
+                  0,
+                  2,
+                  3,
+                  3,
+                  5,
+                  2,
+                  7,
+                  8,
+                  7,
+                  10,
+                  10,
+                  12,
+                  7,
+                  14
+                ],
+                "nodeType": [
+                  9,
+                  10,
+                  1,
+                  1,
+                  1,
+                  1,
+                  3,
+                  1,
+                  1,
+                  3,
+                  1,
+                  3,
+                  1,
+                  3,
+                  1,
+                  3
+                ],
+                "shadowRootType": {
+                  "index": [],
+                  "value": []
+                },
+                "nodeName": [
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  11,
+                  12,
+                  13,
+                  14,
+                  12,
+                  16,
+                  12,
+                  16,
+                  12,
+                  28,
+                  12
+                ],
+                "nodeValue": [
+                  -1,
+                  -1,
+                  -1,
+                  -1,
+                  -1,
+                  -1,
+                  1,
+                  -1,
+                  -1,
+                  15,
+                  -1,
+                  26,
+                  -1,
+                  27,
+                  -1,
+                  29
+                ],
+                "backendNodeId": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  14,
+                  15,
+                  17,
+                  12,
+                  13
+                ],
+                "attributes": [
+                  [],
+                  [],
+                  [],
+                  [],
+                  [
+                    9,
+                    10
+                  ],
+                  [],
+                  [],
+                  [],
+                  [],
+                  [],
+                  [
+                    17,
+                    18,
+                    19,
+                    20,
+                    21,
+                    22,
+                    23,
+                    22,
+                    24,
+                    25
+                  ],
+                  [],
+                  [],
+                  [],
+                  [],
+                  []
+                ],
+                "textValue": {
+                  "index": [],
+                  "value": []
+                },
+                "inputValue": {
+                  "index": [],
+                  "value": []
+                },
+                "inputChecked": {
+                  "index": []
+                },
+                "optionSelected": {
+                  "index": []
+                },
+                "contentDocumentIndex": {
+                  "index": [],
+                  "value": []
+                },
+                "pseudoType": {
+                  "index": [],
+                  "value": []
+                },
+                "pseudoIdentifier": {
+                  "index": [],
+                  "value": []
+                },
+                "isClickable": {
+                  "index": [
+                    10,
+                    11,
+                    12,
+                    13
+                  ]
+                },
+                "currentSourceURL": {
+                  "index": [],
+                  "value": []
+                },
+                "originURL": {
+                  "index": [],
+                  "value": []
+                }
+              },
+              "layout": {
+                "nodeIndex": [
+                  0,
+                  2,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13
+                ],
+                "styles": [
+                  [],
+                  [],
+                  [],
+                  [],
+                  [],
+                  [],
+                  [],
+                  [],
+                  []
+                ],
+                "bounds": [
+                  [
+                    0,
+                    0,
+                    2560,
+                    1584
+                  ],
+                  [
+                    0,
+                    0,
+                    2560,
+                    329
+                  ],
+                  [
+                    16,
+                    32,
+                    2528,
+                    281
+                  ],
+                  [
+                    16,
+                    32,
+                    2528,
+                    45
+                  ],
+                  [
+                    16,
+                    37,
+                    128,
+                    37
+                  ],
+                  [
+                    16,
+                    109,
+                    2528,
+                    204
+                  ],
+                  [
+                    18,
+                    116,
+                    404.984375,
+                    37
+                  ],
+                  [
+                    18,
+                    156,
+                    2524,
+                    45
+                  ],
+                  [
+                    18,
+                    161,
+                    384,
+                    37
+                  ]
+                ],
+                "text": [
+                  -1,
+                  -1,
+                  -1,
+                  -1,
+                  15,
+                  -1,
+                  26,
+                  -1,
+                  27
+                ],
+                "stackingContexts": {
+                  "index": [
+                    0,
+                    1
+                  ]
+                }
+              },
+              "textBoxes": {
+                "layoutIndex": [
+                  4,
+                  6,
+                  8
+                ],
+                "bounds": [
+                  [
+                    16,
+                    37,
+                    128,
+                    37
+                  ],
+                  [
+                    18,
+                    116,
+                    404.984375,
+                    37
+                  ],
+                  [
+                    18,
+                    161,
+                    384,
+                    37
+                  ]
+                ],
+                "start": [
+                  0,
+                  0,
+                  0
+                ],
+                "length": [
+                  4,
+                  16,
+                  12
+                ]
+              },
+              "scrollOffsetX": 0,
+              "scrollOffsetY": 0,
+              "contentWidth": 2560,
+              "contentHeight": 1584
+            }
+          ],
+          "strings": [
+            "http://127.0.0.1:55393/rich-edit?item=A",
+            "富文本核对",
+            "UTF-8",
+            "E2B486D950E134749CA6BD5BE24E2EA1",
+            "#document",
+            "html",
+            "HTML",
+            "HEAD",
+            "META",
+            "charset",
+            "utf-8",
+            "TITLE",
+            "#text",
+            "BODY",
+            "P",
+            "正文编辑",
+            "DIV",
+            "role",
+            "textbox",
+            "aria-label",
+            "正文",
+            "aria-multiline",
+            "true",
+            "contenteditable",
+            "style",
+            "white-space:pre-wrap;border:1px solid #888;min-height:100px",
+            "第一行：中文 <标题> & 正文",
+            "第二行：保留换行与标点。",
+            "SCRIPT",
+            "document.querySelector('[contenteditable]').oninput=e=>{const sent=e.target.innerText;if(\"A\"==='B')e.target.textContent='网站改写正文';fetch('/rich-input?item=A',{method:'POST',body:JSON.stringify({sent,actual:e.target.innerText,html:e.target.innerHTML})})}"
+          ]
+        },
+        "axAfter": {
+          "nodes": [
+            {
+              "nodeId": "1",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "RootWebArea"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 144
+              },
+              "name": {
+                "type": "computedString",
+                "value": "富文本核对",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label",
+                    "superseded": true
+                  },
+                  {
+                    "type": "relatedElement",
+                    "value": {
+                      "type": "computedString",
+                      "value": "富文本核对"
+                    },
+                    "nativeSource": "title"
+                  }
+                ]
+              },
+              "properties": [
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "focused",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "url",
+                  "value": {
+                    "type": "string",
+                    "value": "http://127.0.0.1:55393/rich-edit?item=A"
+                  }
+                }
+              ],
+              "childIds": [
+                "3"
+              ],
+              "backendDOMNodeId": 1,
+              "frameId": "E2B486D950E134749CA6BD5BE24E2EA1"
+            },
+            {
+              "nodeId": "3",
+              "ignored": true,
+              "ignoredReasons": [
+                {
+                  "name": "uninteresting",
+                  "value": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                }
+              ],
+              "role": {
+                "type": "role",
+                "value": "none"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 0
+              },
+              "parentId": "1",
+              "childIds": [
+                "8"
+              ],
+              "backendDOMNodeId": 3
+            },
+            {
+              "nodeId": "8",
+              "ignored": true,
+              "ignoredReasons": [
+                {
+                  "name": "uninteresting",
+                  "value": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                }
+              ],
+              "role": {
+                "type": "role",
+                "value": "none"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 0
+              },
+              "parentId": "3",
+              "childIds": [
+                "9",
+                "11"
+              ],
+              "backendDOMNodeId": 8
+            },
+            {
+              "nodeId": "9",
+              "ignored": false,
+              "role": {
+                "type": "role",
+                "value": "paragraph"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 133
+              },
+              "name": {
+                "type": "computedString",
+                "value": "",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label"
+                  }
+                ]
+              },
+              "properties": [],
+              "parentId": "8",
+              "childIds": [
+                "10"
+              ],
+              "backendDOMNodeId": 9
+            },
+            {
+              "nodeId": "11",
+              "ignored": false,
+              "role": {
+                "type": "role",
+                "value": "textbox"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 170
+              },
+              "name": {
+                "type": "computedString",
+                "value": "正文",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "value": {
+                      "type": "computedString",
+                      "value": "正文"
+                    },
+                    "attribute": "aria-label",
+                    "attributeValue": {
+                      "type": "string",
+                      "value": "正文"
+                    }
+                  },
+                  {
+                    "type": "placeholder",
+                    "attribute": "aria-placeholder",
+                    "superseded": true
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "title",
+                    "superseded": true
+                  }
+                ]
+              },
+              "value": {
+                "type": "string",
+                "value": "第一行：中文 <标题> & 正文\n第二行：保留换行与标点。"
+              },
+              "properties": [
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "focused",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "editable",
+                  "value": {
+                    "type": "token",
+                    "value": "richtext"
+                  }
+                },
+                {
+                  "name": "settable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "multiline",
+                  "value": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "readonly",
+                  "value": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                },
+                {
+                  "name": "required",
+                  "value": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              ],
+              "parentId": "8",
+              "childIds": [
+                "14",
+                "15"
+              ],
+              "backendDOMNodeId": 11
+            },
+            {
+              "nodeId": "10",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "StaticText"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 158
+              },
+              "name": {
+                "type": "computedString",
+                "value": "正文编辑",
+                "sources": [
+                  {
+                    "type": "contents",
+                    "value": {
+                      "type": "computedString",
+                      "value": "正文编辑"
+                    }
+                  }
+                ]
+              },
+              "properties": [],
+              "parentId": "9",
+              "childIds": [
+                "-1000000002"
+              ],
+              "backendDOMNodeId": 10
+            },
+            {
+              "nodeId": "14",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "StaticText"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 158
+              },
+              "name": {
+                "type": "computedString",
+                "value": "第一行：中文 <标题> & 正文",
+                "sources": [
+                  {
+                    "type": "contents",
+                    "value": {
+                      "type": "computedString",
+                      "value": "第一行：中文 <标题> & 正文"
+                    }
+                  }
+                ]
+              },
+              "properties": [
+                {
+                  "name": "editable",
+                  "value": {
+                    "type": "token",
+                    "value": "richtext"
+                  }
+                }
+              ],
+              "parentId": "11",
+              "childIds": [
+                "-1000000006"
+              ],
+              "backendDOMNodeId": 14
+            },
+            {
+              "nodeId": "15",
+              "ignored": false,
+              "role": {
+                "type": "role",
+                "value": "generic"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 88
+              },
+              "name": {
+                "type": "computedString",
+                "value": "",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label"
+                  }
+                ]
+              },
+              "properties": [
+                {
+                  "name": "editable",
+                  "value": {
+                    "type": "token",
+                    "value": "richtext"
+                  }
+                }
+              ],
+              "parentId": "11",
+              "childIds": [
+                "17"
+              ],
+              "backendDOMNodeId": 15
+            },
+            {
+              "nodeId": "-1000000002",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "InlineTextBox"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 101
+              },
+              "name": {
+                "type": "computedString",
+                "value": "正文编辑"
+              },
+              "properties": [],
+              "parentId": "10",
+              "childIds": []
+            },
+            {
+              "nodeId": "-1000000006",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "InlineTextBox"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 101
+              },
+              "name": {
+                "type": "computedString",
+                "value": "第一行：中文 <标题> & 正文"
+              },
+              "properties": [
+                {
+                  "name": "editable",
+                  "value": {
+                    "type": "token",
+                    "value": "richtext"
+                  }
+                }
+              ],
+              "parentId": "14",
+              "childIds": []
+            },
+            {
+              "nodeId": "17",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "StaticText"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 158
+              },
+              "name": {
+                "type": "computedString",
+                "value": "第二行：保留换行与标点。",
+                "sources": [
+                  {
+                    "type": "contents",
+                    "value": {
+                      "type": "computedString",
+                      "value": "第二行：保留换行与标点。"
+                    }
+                  }
+                ]
+              },
+              "properties": [
+                {
+                  "name": "editable",
+                  "value": {
+                    "type": "token",
+                    "value": "richtext"
+                  }
+                }
+              ],
+              "parentId": "15",
+              "childIds": [
+                "-1000000007"
+              ],
+              "backendDOMNodeId": 17
+            },
+            {
+              "nodeId": "-1000000007",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "InlineTextBox"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 101
+              },
+              "name": {
+                "type": "computedString",
+                "value": "第二行：保留换行与标点。"
+              },
+              "properties": [
+                {
+                  "name": "editable",
+                  "value": {
+                    "type": "token",
+                    "value": "richtext"
+                  }
+                }
+              ],
+              "parentId": "17",
+              "childIds": []
+            }
+          ]
+        },
+        "html": "<!doctype html><meta charset=\"utf-8\"><title>富文本核对</title><p>正文编辑</p><div role=\"textbox\" aria-label=\"正文\" aria-multiline=\"true\" contenteditable=\"true\" style=\"white-space:pre-wrap;border:1px solid #888;min-height:100px\"><p>第一行：中文 &lt;标题&gt; &amp; 正文</p><p>第二行：保留换行与标点。</p></div><script>document.querySelector('[contenteditable]').oninput=e=>{const sent=e.target.innerText;if(\"A\"==='B')e.target.textContent='网站改写正文';fetch('/rich-input?item=A',{method:'POST',body:JSON.stringify({sent,actual:e.target.innerText,html:e.target.innerHTML})})}</script>",
+        "cold": {
+          "id": "50513ffa-3409-4314-937c-231bc7504b48",
+          "goal": "在 http://127.0.0.1:55393/rich-edit?item=A 将正文整体替换为以下纯文本：第一行：中文 <标题> & 正文\n第二行：保留换行与标点。",
+          "created": 1794032406297,
+          "url": "http://127.0.0.1:55393/rich-edit?item=A",
+          "draft": "",
+          "archived": false,
+          "groupId": null,
+          "groupGoal": null,
+          "hidden": false,
+          "minimized": false,
+          "phase": "manual",
+          "execution": {
+            "coordination": {
+              "session": {
+                "id": "helpr-fixture-web",
+                "epoch": "e06c8aff-52aa-4db4-b661-b4a88247c61e:0",
+                "origin": "http://127.0.0.1:55393"
+              },
+              "status": "ready",
+              "source": {
+                "url": "http://127.0.0.1:55393/rich-edit?item=A",
+                "title": "富文本核对",
+                "fingerprint": "2433c769f8b506515d8db9ad447524cf87365c2225fd21e089105b0055aeefa3",
+                "generation": 1,
+                "observedAt": 1794032407373,
+                "truncated": false
+              }
+            },
+            "resourceClaims": [
+              {
+                "status": "released",
+                "id": "bae48d42-32b4-43f5-8c58-7bf73471c0ea",
+                "runId": "2015bf44-e152-476e-9621-5c9a2f3c2a9a",
+                "goalVersion": 1,
+                "origin": "http://127.0.0.1:55393",
+                "targetUrl": null
+              }
+            ],
+            "modelVersion": 1,
+            "intent": "automatic",
+            "phase": "complete",
+            "version": 2,
+            "intentId": "cf27e2f1-e4a2-48f4-86f4-198486e014aa",
+            "goalVersion": 1,
+            "goal": "在 http://127.0.0.1:55393/rich-edit?item=A 将正文整体替换为以下纯文本：第一行：中文 <标题> & 正文\n第二行：保留换行与标点。",
+            "runId": null,
+            "resource": null,
+            "summary": "声称正文已完成",
+            "actions": [
+              {
+                "coordination": {
+                  "session": {
+                    "id": "helpr-fixture-web",
+                    "epoch": "e06c8aff-52aa-4db4-b661-b4a88247c61e:0",
+                    "origin": "http://127.0.0.1:55393"
+                  },
+                  "claimId": "bae48d42-32b4-43f5-8c58-7bf73471c0ea"
+                },
+                "observedLinks": [],
+                "resultLinks": [],
+                "richTextSource": {
+                  "role": "textbox",
+                  "name": "正文",
+                  "frameUrl": "http://127.0.0.1:55393/rich-edit?item=A",
+                  "disabled": false,
+                  "textValue": "",
+                  "readOnly": false,
+                  "richText": {
+                    "rule": "contenteditable-ax-v1",
+                    "backendNodeId": 11,
+                    "valueSource": "empty-dom"
+                  }
+                },
+                "richTextResult": {
+                  "role": "textbox",
+                  "name": "正文",
+                  "frameUrl": "http://127.0.0.1:55393/rich-edit?item=A",
+                  "disabled": false,
+                  "textValue": "第一行：中文 <标题> & 正文\n第二行：保留换行与标点。",
+                  "readOnly": false,
+                  "richText": {
+                    "rule": "contenteditable-ax-v1",
+                    "backendNodeId": 11,
+                    "valueSource": "ax"
+                  }
+                },
+                "id": "4678bb20-c481-48fb-9b22-6942bde8b1f4",
+                "runId": "2015bf44-e152-476e-9621-5c9a2f3c2a9a",
+                "goalVersion": 1,
+                "status": "confirmed",
+                "summary": "填写纯文本正文",
+                "action": {
+                  "kind": "fill",
+                  "target": {
+                    "role": "textbox",
+                    "name": "正文",
+                    "exact": true
+                  },
+                  "value": "第一行：中文 <标题> & 正文\n第二行：保留换行与标点。"
+                },
+                "effect": "interaction",
+                "preconditions": [
+                  "正文"
+                ],
+                "source": {
+                  "url": "http://127.0.0.1:55393/rich-edit?item=A",
+                  "title": "富文本核对",
+                  "fingerprint": "2433c769f8b506515d8db9ad447524cf87365c2225fd21e089105b0055aeefa3",
+                  "generation": 1,
+                  "observedAt": 1794032407373,
+                  "truncated": false
+                },
+                "observedUrls": [
+                  "http://127.0.0.1:55393/rich-edit?item=A"
+                ],
+                "resultSource": {
+                  "url": "http://127.0.0.1:55393/rich-edit?item=A",
+                  "title": "富文本核对",
+                  "fingerprint": "5d0a51f003d176669bb9bc2203d7535acf8e00c924a1727e2981fd6512f8fbf1",
+                  "generation": 1,
+                  "observedAt": 1794032407959,
+                  "truncated": false
+                },
+                "binding": {
+                  "targetId": "E2B486D950E134749CA6BD5BE24E2EA1",
+                  "generation": 1
+                },
+                "evidence": [
+                  "正文"
+                ],
+                "returned": true,
+                "dispatchState": "possible"
+              }
+            ],
+            "result": {
+              "goalVersion": 1,
+              "source": {
+                "url": "http://127.0.0.1:55393/rich-edit?item=A",
+                "title": "富文本核对",
+                "fingerprint": "5d0a51f003d176669bb9bc2203d7535acf8e00c924a1727e2981fd6512f8fbf1",
+                "generation": 1,
+                "observedAt": 1794032407959,
+                "truncated": false
+              },
+              "evidence": [
+                "正文"
+              ]
+            }
+          },
+          "error": "",
+          "version": 4,
+          "messages": [
+            {
+              "role": "user",
+              "text": "在 http://127.0.0.1:55393/rich-edit?item=A 将正文整体替换为以下纯文本：第一行：中文 <标题> & 正文\n第二行：保留换行与标点。"
+            },
+            {
+              "role": "system",
+              "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+            },
+            {
+              "role": "user",
+              "text": "开始执行"
+            },
+            {
+              "role": "assistant",
+              "text": "填写纯文本正文",
+              "call": {
+                "usageKind": "web-planning",
+                "id": "5b02d91d-df6d-4855-b167-18e2ee09c9cc",
+                "taskId": "50513ffa-3409-4314-937c-231bc7504b48",
+                "model": "fixture",
+                "configurationVersion": 1,
+                "phase": "complete",
+                "source": {
+                  "url": "http://127.0.0.1:55393/rich-edit?item=A",
+                  "title": "富文本核对",
+                  "fingerprint": "2433c769f8b506515d8db9ad447524cf87365c2225fd21e089105b0055aeefa3",
+                  "generation": 1,
+                  "observedAt": 1794032407373,
+                  "truncated": false
+                },
+                "pageChanged": false,
+                "dispatched": true,
+                "reservedTokens": 33229,
+                "inputTokens": null,
+                "outputTokens": null,
+                "totalTokens": null,
+                "error": null
+              }
+            },
+            {
+              "role": "assistant",
+              "text": "声称正文已完成",
+              "call": {
+                "usageKind": "web-planning",
+                "id": "b467bc4f-0dc7-454c-a6f1-f8514224b79b",
+                "taskId": "50513ffa-3409-4314-937c-231bc7504b48",
+                "model": "fixture",
+                "configurationVersion": 1,
+                "phase": "complete",
+                "source": {
+                  "url": "http://127.0.0.1:55393/rich-edit?item=A",
+                  "title": "富文本核对",
+                  "fingerprint": "5d0a51f003d176669bb9bc2203d7535acf8e00c924a1727e2981fd6512f8fbf1",
+                  "generation": 1,
+                  "observedAt": 1794032407959,
+                  "truncated": false
+                },
+                "pageChanged": false,
+                "dispatched": true,
+                "reservedTokens": 35104,
+                "inputTokens": null,
+                "outputTokens": null,
+                "totalTokens": null,
+                "error": null
+              }
+            }
+          ]
+        }
+      },
+      {
+        "item": "B",
+        "taskId": "b0270812-4c2d-420f-90b5-205eef3468a1",
+        "entry": "http://127.0.0.1:55393/rich-edit?item=B",
+        "readiness": [
+          "17b607edc910883209e27be3b6b93de2191edeb7d4a811c77cb807699d886a03",
+          "17b607edc910883209e27be3b6b93de2191edeb7d4a811c77cb807699d886a03"
+        ],
+        "domBefore": {
+          "documents": [
+            {
+              "documentURL": 0,
+              "title": 1,
+              "baseURL": 0,
+              "contentLanguage": -1,
+              "encodingName": 2,
+              "publicId": -1,
+              "systemId": -1,
+              "frameId": 3,
+              "nodes": {
+                "parentIndex": [
+                  -1,
+                  0,
+                  0,
+                  2,
+                  3,
+                  3,
+                  5,
+                  2,
+                  7,
+                  8,
+                  7,
+                  10,
+                  11,
+                  10,
+                  13,
+                  7,
+                  15
+                ],
+                "nodeType": [
+                  9,
+                  10,
+                  1,
+                  1,
+                  1,
+                  1,
+                  3,
+                  1,
+                  1,
+                  3,
+                  1,
+                  1,
+                  3,
+                  1,
+                  3,
+                  1,
+                  3
+                ],
+                "shadowRootType": {
+                  "index": [],
+                  "value": []
+                },
+                "nodeName": [
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  11,
+                  12,
+                  13,
+                  14,
+                  12,
+                  16,
+                  14,
+                  12,
+                  14,
+                  12,
+                  28,
+                  12
+                ],
+                "nodeValue": [
+                  -1,
+                  -1,
+                  -1,
+                  -1,
+                  -1,
+                  -1,
+                  1,
+                  -1,
+                  -1,
+                  15,
+                  -1,
+                  -1,
+                  26,
+                  -1,
+                  27,
+                  -1,
+                  29
+                ],
+                "backendNodeId": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13,
+                  14,
+                  15,
+                  16,
+                  17
+                ],
+                "attributes": [
+                  [],
+                  [],
+                  [],
+                  [],
+                  [
+                    9,
+                    10
+                  ],
+                  [],
+                  [],
+                  [],
+                  [],
+                  [],
+                  [
+                    17,
+                    18,
+                    19,
+                    20,
+                    21,
+                    22,
+                    23,
+                    22,
+                    24,
+                    25
+                  ],
+                  [],
+                  [],
+                  [],
+                  [],
+                  [],
+                  []
+                ],
+                "textValue": {
+                  "index": [],
+                  "value": []
+                },
+                "inputValue": {
+                  "index": [],
+                  "value": []
+                },
+                "inputChecked": {
+                  "index": []
+                },
+                "optionSelected": {
+                  "index": []
+                },
+                "contentDocumentIndex": {
+                  "index": [],
+                  "value": []
+                },
+                "pseudoType": {
+                  "index": [],
+                  "value": []
+                },
+                "pseudoIdentifier": {
+                  "index": [],
+                  "value": []
+                },
+                "isClickable": {
+                  "index": [
+                    10,
+                    11,
+                    12,
+                    13,
+                    14
+                  ]
+                },
+                "currentSourceURL": {
+                  "index": [],
+                  "value": []
+                },
+                "originURL": {
+                  "index": [],
+                  "value": []
+                }
+              },
+              "layout": {
+                "nodeIndex": [
+                  0,
+                  2,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13,
+                  14
+                ],
+                "styles": [
+                  [],
+                  [],
+                  [],
+                  [],
+                  [],
+                  [],
+                  [],
+                  [],
+                  [],
+                  []
+                ],
+                "bounds": [
+                  [
+                    0,
+                    0,
+                    2560,
+                    1584
+                  ],
+                  [
+                    0,
+                    0,
+                    2560,
+                    329
+                  ],
+                  [
+                    16,
+                    32,
+                    2528,
+                    281
+                  ],
+                  [
+                    16,
+                    32,
+                    2528,
+                    45
+                  ],
+                  [
+                    16,
+                    37,
+                    128,
+                    37
+                  ],
+                  [
+                    16,
+                    109,
+                    2528,
+                    204
+                  ],
+                  [
+                    18,
+                    143,
+                    2524,
+                    45
+                  ],
+                  [
+                    18,
+                    148,
+                    128,
+                    37
+                  ],
+                  [
+                    18,
+                    220,
+                    2524,
+                    45
+                  ],
+                  [
+                    18,
+                    225,
+                    128,
+                    37
+                  ]
+                ],
+                "text": [
+                  -1,
+                  -1,
+                  -1,
+                  -1,
+                  15,
+                  -1,
+                  -1,
+                  26,
+                  -1,
+                  27
+                ],
+                "stackingContexts": {
+                  "index": [
+                    0,
+                    1
+                  ]
+                }
+              },
+              "textBoxes": {
+                "layoutIndex": [
+                  4,
+                  7,
+                  9
+                ],
+                "bounds": [
+                  [
+                    16,
+                    37,
+                    128,
+                    37
+                  ],
+                  [
+                    18,
+                    148,
+                    128,
+                    37
+                  ],
+                  [
+                    18,
+                    225,
+                    128,
+                    37
+                  ]
+                ],
+                "start": [
+                  0,
+                  0,
+                  0
+                ],
+                "length": [
+                  4,
+                  4,
+                  4
+                ]
+              },
+              "scrollOffsetX": 0,
+              "scrollOffsetY": 0,
+              "contentWidth": 2560,
+              "contentHeight": 1584
+            }
+          ],
+          "strings": [
+            "http://127.0.0.1:55393/rich-edit?item=B",
+            "富文本核对",
+            "UTF-8",
+            "7871AED6D3FA88A858D25D07401DD407",
+            "#document",
+            "html",
+            "HTML",
+            "HEAD",
+            "META",
+            "charset",
+            "utf-8",
+            "TITLE",
+            "#text",
+            "BODY",
+            "P",
+            "正文编辑",
+            "DIV",
+            "role",
+            "textbox",
+            "aria-label",
+            "正文",
+            "aria-multiline",
+            "true",
+            "contenteditable",
+            "style",
+            "white-space:pre-wrap;border:1px solid #888;min-height:100px",
+            "原有段落",
+            "原有正文",
+            "SCRIPT",
+            "document.querySelector('[contenteditable]').oninput=e=>{const sent=e.target.innerText;if(\"B\"==='B')e.target.textContent='网站改写正文';fetch('/rich-input?item=B',{method:'POST',body:JSON.stringify({sent,actual:e.target.innerText,html:e.target.innerHTML})})}"
+          ]
+        },
+        "axBefore": {
+          "nodes": [
+            {
+              "nodeId": "1",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "RootWebArea"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 144
+              },
+              "name": {
+                "type": "computedString",
+                "value": "富文本核对",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label",
+                    "superseded": true
+                  },
+                  {
+                    "type": "relatedElement",
+                    "value": {
+                      "type": "computedString",
+                      "value": "富文本核对"
+                    },
+                    "nativeSource": "title"
+                  }
+                ]
+              },
+              "properties": [
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "url",
+                  "value": {
+                    "type": "string",
+                    "value": "http://127.0.0.1:55393/rich-edit?item=B"
+                  }
+                }
+              ],
+              "childIds": [
+                "3"
+              ],
+              "backendDOMNodeId": 1,
+              "frameId": "7871AED6D3FA88A858D25D07401DD407"
+            },
+            {
+              "nodeId": "3",
+              "ignored": true,
+              "ignoredReasons": [
+                {
+                  "name": "uninteresting",
+                  "value": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                }
+              ],
+              "role": {
+                "type": "role",
+                "value": "none"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 0
+              },
+              "parentId": "1",
+              "childIds": [
+                "8"
+              ],
+              "backendDOMNodeId": 3
+            },
+            {
+              "nodeId": "8",
+              "ignored": true,
+              "ignoredReasons": [
+                {
+                  "name": "uninteresting",
+                  "value": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                }
+              ],
+              "role": {
+                "type": "role",
+                "value": "none"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 0
+              },
+              "parentId": "3",
+              "childIds": [
+                "9",
+                "11"
+              ],
+              "backendDOMNodeId": 8
+            },
+            {
+              "nodeId": "9",
+              "ignored": false,
+              "role": {
+                "type": "role",
+                "value": "paragraph"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 133
+              },
+              "name": {
+                "type": "computedString",
+                "value": "",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label"
+                  }
+                ]
+              },
+              "properties": [],
+              "parentId": "8",
+              "childIds": [
+                "10"
+              ],
+              "backendDOMNodeId": 9
+            },
+            {
+              "nodeId": "11",
+              "ignored": false,
+              "role": {
+                "type": "role",
+                "value": "textbox"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 170
+              },
+              "name": {
+                "type": "computedString",
+                "value": "正文",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "value": {
+                      "type": "computedString",
+                      "value": "正文"
+                    },
+                    "attribute": "aria-label",
+                    "attributeValue": {
+                      "type": "string",
+                      "value": "正文"
+                    }
+                  },
+                  {
+                    "type": "placeholder",
+                    "attribute": "aria-placeholder",
+                    "superseded": true
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "title",
+                    "superseded": true
+                  }
+                ]
+              },
+              "value": {
+                "type": "string",
+                "value": "原有段落\n\n原有正文"
+              },
+              "properties": [
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "editable",
+                  "value": {
+                    "type": "token",
+                    "value": "richtext"
+                  }
+                },
+                {
+                  "name": "settable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "multiline",
+                  "value": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "readonly",
+                  "value": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                },
+                {
+                  "name": "required",
+                  "value": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              ],
+              "parentId": "8",
+              "childIds": [
+                "12",
+                "14"
+              ],
+              "backendDOMNodeId": 11
+            },
+            {
+              "nodeId": "10",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "StaticText"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 158
+              },
+              "name": {
+                "type": "computedString",
+                "value": "正文编辑",
+                "sources": [
+                  {
+                    "type": "contents",
+                    "value": {
+                      "type": "computedString",
+                      "value": "正文编辑"
+                    }
+                  }
+                ]
+              },
+              "properties": [],
+              "parentId": "9",
+              "childIds": [
+                "-1000000002"
+              ],
+              "backendDOMNodeId": 10
+            },
+            {
+              "nodeId": "12",
+              "ignored": false,
+              "role": {
+                "type": "role",
+                "value": "paragraph"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 133
+              },
+              "name": {
+                "type": "computedString",
+                "value": "",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label"
+                  }
+                ]
+              },
+              "properties": [
+                {
+                  "name": "editable",
+                  "value": {
+                    "type": "token",
+                    "value": "richtext"
+                  }
+                }
+              ],
+              "parentId": "11",
+              "childIds": [
+                "13"
+              ],
+              "backendDOMNodeId": 12
+            },
+            {
+              "nodeId": "14",
+              "ignored": false,
+              "role": {
+                "type": "role",
+                "value": "paragraph"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 133
+              },
+              "name": {
+                "type": "computedString",
+                "value": "",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label"
+                  }
+                ]
+              },
+              "properties": [
+                {
+                  "name": "editable",
+                  "value": {
+                    "type": "token",
+                    "value": "richtext"
+                  }
+                }
+              ],
+              "parentId": "11",
+              "childIds": [
+                "15"
+              ],
+              "backendDOMNodeId": 14
+            },
+            {
+              "nodeId": "-1000000002",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "InlineTextBox"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 101
+              },
+              "name": {
+                "type": "computedString",
+                "value": "正文编辑"
+              },
+              "properties": [],
+              "parentId": "10",
+              "childIds": []
+            },
+            {
+              "nodeId": "13",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "StaticText"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 158
+              },
+              "name": {
+                "type": "computedString",
+                "value": "原有段落",
+                "sources": [
+                  {
+                    "type": "contents",
+                    "value": {
+                      "type": "computedString",
+                      "value": "原有段落"
+                    }
+                  }
+                ]
+              },
+              "properties": [
+                {
+                  "name": "editable",
+                  "value": {
+                    "type": "token",
+                    "value": "richtext"
+                  }
+                }
+              ],
+              "parentId": "12",
+              "childIds": [
+                "-1000000003"
+              ],
+              "backendDOMNodeId": 13
+            },
+            {
+              "nodeId": "15",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "StaticText"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 158
+              },
+              "name": {
+                "type": "computedString",
+                "value": "原有正文",
+                "sources": [
+                  {
+                    "type": "contents",
+                    "value": {
+                      "type": "computedString",
+                      "value": "原有正文"
+                    }
+                  }
+                ]
+              },
+              "properties": [
+                {
+                  "name": "editable",
+                  "value": {
+                    "type": "token",
+                    "value": "richtext"
+                  }
+                }
+              ],
+              "parentId": "14",
+              "childIds": [
+                "-1000000004"
+              ],
+              "backendDOMNodeId": 15
+            },
+            {
+              "nodeId": "-1000000003",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "InlineTextBox"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 101
+              },
+              "name": {
+                "type": "computedString",
+                "value": "原有段落"
+              },
+              "properties": [
+                {
+                  "name": "editable",
+                  "value": {
+                    "type": "token",
+                    "value": "richtext"
+                  }
+                }
+              ],
+              "parentId": "13",
+              "childIds": []
+            },
+            {
+              "nodeId": "-1000000004",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "InlineTextBox"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 101
+              },
+              "name": {
+                "type": "computedString",
+                "value": "原有正文"
+              },
+              "properties": [
+                {
+                  "name": "editable",
+                  "value": {
+                    "type": "token",
+                    "value": "richtext"
+                  }
+                }
+              ],
+              "parentId": "15",
+              "childIds": []
+            }
+          ]
+        },
+        "last": {
+          "id": "b0270812-4c2d-420f-90b5-205eef3468a1",
+          "goal": "在 http://127.0.0.1:55393/rich-edit?item=B 将正文整体替换为以下纯文本：另一份：正文改写反例",
+          "created": 1794032408489,
+          "url": "http://127.0.0.1:55393/rich-edit?item=B",
+          "draft": "",
+          "archived": false,
+          "groupId": null,
+          "groupGoal": null,
+          "hidden": false,
+          "minimized": false,
+          "phase": "manual",
+          "execution": {
+            "coordination": {
+              "session": {
+                "id": "helpr-fixture-web",
+                "epoch": "e06c8aff-52aa-4db4-b661-b4a88247c61e:0",
+                "origin": "http://127.0.0.1:55393"
+              },
+              "status": "ready",
+              "source": {
+                "url": "http://127.0.0.1:55393/rich-edit?item=B",
+                "title": "富文本核对",
+                "fingerprint": "f26b5ca87f8239bfbd6763543a82d6bc19f5fb72673cf8e74ebafa0945c87043",
+                "generation": 1,
+                "observedAt": 1794032409266,
+                "truncated": false
+              }
+            },
+            "resourceClaims": [
+              {
+                "status": "held",
+                "id": "c4c16a8f-dfa1-4a86-893a-8430b51189f5",
+                "runId": "6a726668-e22f-40dd-bfb4-0a60b120481c",
+                "goalVersion": 1,
+                "origin": "http://127.0.0.1:55393",
+                "targetUrl": null
+              }
+            ],
+            "modelVersion": 1,
+            "intent": "automatic",
+            "phase": "paused",
+            "version": 2,
+            "intentId": "100aa903-3839-4b39-977b-0969f012dafe",
+            "goalVersion": 1,
+            "goal": "在 http://127.0.0.1:55393/rich-edit?item=B 将正文整体替换为以下纯文本：另一份：正文改写反例",
+            "runId": null,
+            "resource": null,
+            "summary": "尚不能核对富文本编辑器的完整正文，已暂停后续操作，不会重复填写或继续提交。",
+            "actions": [
+              {
+                "coordination": {
+                  "session": {
+                    "id": "helpr-fixture-web",
+                    "epoch": "e06c8aff-52aa-4db4-b661-b4a88247c61e:0",
+                    "origin": "http://127.0.0.1:55393"
+                  },
+                  "claimId": "c4c16a8f-dfa1-4a86-893a-8430b51189f5"
+                },
+                "observedLinks": [],
+                "richTextSource": {
+                  "role": "textbox",
+                  "name": "正文",
+                  "frameUrl": "http://127.0.0.1:55393/rich-edit?item=B",
+                  "disabled": false,
+                  "textValue": "原有段落\n\n原有正文",
+                  "readOnly": false,
+                  "richText": {
+                    "rule": "contenteditable-ax-v1",
+                    "backendNodeId": 11,
+                    "valueSource": "ax"
+                  }
+                },
+                "id": "73ffd6c5-9b49-4204-8cba-fc03eb1ffe39",
+                "runId": "6a726668-e22f-40dd-bfb4-0a60b120481c",
+                "goalVersion": 1,
+                "status": "unknown",
+                "summary": "填写纯文本正文",
+                "action": {
+                  "kind": "fill",
+                  "target": {
+                    "role": "textbox",
+                    "name": "正文",
+                    "exact": true
+                  },
+                  "value": "另一份：正文改写反例"
+                },
+                "effect": "interaction",
+                "preconditions": [
+                  "正文"
+                ],
+                "source": {
+                  "url": "http://127.0.0.1:55393/rich-edit?item=B",
+                  "title": "富文本核对",
+                  "fingerprint": "f26b5ca87f8239bfbd6763543a82d6bc19f5fb72673cf8e74ebafa0945c87043",
+                  "generation": 1,
+                  "observedAt": 1794032409266,
+                  "truncated": false
+                },
+                "observedUrls": [
+                  "http://127.0.0.1:55393/rich-edit?item=B"
+                ],
+                "binding": {
+                  "targetId": "7871AED6D3FA88A858D25D07401DD407",
+                  "generation": 1
+                },
+                "evidence": [],
+                "returned": true,
+                "dispatchState": "possible"
+              }
+            ]
+          },
+          "error": "",
+          "version": 4,
+          "messages": [
+            {
+              "role": "user",
+              "text": "在 http://127.0.0.1:55393/rich-edit?item=B 将正文整体替换为以下纯文本：另一份：正文改写反例"
+            },
+            {
+              "role": "system",
+              "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+            },
+            {
+              "role": "user",
+              "text": "开始执行"
+            },
+            {
+              "role": "assistant",
+              "text": "填写纯文本正文",
+              "call": {
+                "usageKind": "web-planning",
+                "id": "02bddf32-7924-4f0d-82fa-7a7cf422883b",
+                "taskId": "b0270812-4c2d-420f-90b5-205eef3468a1",
+                "model": "fixture",
+                "configurationVersion": 1,
+                "phase": "complete",
+                "source": {
+                  "url": "http://127.0.0.1:55393/rich-edit?item=B",
+                  "title": "富文本核对",
+                  "fingerprint": "f26b5ca87f8239bfbd6763543a82d6bc19f5fb72673cf8e74ebafa0945c87043",
+                  "generation": 1,
+                  "observedAt": 1794032409266,
+                  "truncated": false
+                },
+                "pageChanged": false,
+                "dispatched": true,
+                "reservedTokens": 33287,
+                "inputTokens": null,
+                "outputTokens": null,
+                "totalTokens": null,
+                "error": null
+              }
+            },
+            {
+              "role": "assistant",
+              "text": "声称正文已完成",
+              "call": {
+                "usageKind": "web-planning",
+                "id": "5f4ee622-5819-4f3a-bfa7-46af4960d30e",
+                "taskId": "b0270812-4c2d-420f-90b5-205eef3468a1",
+                "model": "fixture",
+                "configurationVersion": 1,
+                "phase": "complete",
+                "source": {
+                  "url": "http://127.0.0.1:55393/rich-edit?item=B",
+                  "title": "富文本核对",
+                  "fingerprint": "3425a3f655aa89cd1050aca309813f7400e347a820e84f49f8ef41182bd38aab",
+                  "generation": 1,
+                  "observedAt": 1794032409789,
+                  "truncated": false
+                },
+                "pageChanged": false,
+                "dispatched": true,
+                "reservedTokens": 34570,
+                "inputTokens": null,
+                "outputTokens": null,
+                "totalTokens": null,
+                "error": null
+              }
+            }
+          ]
+        },
+        "result": {
+          "id": "b0270812-4c2d-420f-90b5-205eef3468a1",
+          "goal": "在 http://127.0.0.1:55393/rich-edit?item=B 将正文整体替换为以下纯文本：另一份：正文改写反例",
+          "created": 1794032408489,
+          "url": "http://127.0.0.1:55393/rich-edit?item=B",
+          "draft": "",
+          "archived": false,
+          "groupId": null,
+          "groupGoal": null,
+          "hidden": false,
+          "minimized": false,
+          "phase": "manual",
+          "execution": {
+            "coordination": {
+              "session": {
+                "id": "helpr-fixture-web",
+                "epoch": "e06c8aff-52aa-4db4-b661-b4a88247c61e:0",
+                "origin": "http://127.0.0.1:55393"
+              },
+              "status": "ready",
+              "source": {
+                "url": "http://127.0.0.1:55393/rich-edit?item=B",
+                "title": "富文本核对",
+                "fingerprint": "f26b5ca87f8239bfbd6763543a82d6bc19f5fb72673cf8e74ebafa0945c87043",
+                "generation": 1,
+                "observedAt": 1794032409266,
+                "truncated": false
+              }
+            },
+            "resourceClaims": [
+              {
+                "status": "held",
+                "id": "c4c16a8f-dfa1-4a86-893a-8430b51189f5",
+                "runId": "6a726668-e22f-40dd-bfb4-0a60b120481c",
+                "goalVersion": 1,
+                "origin": "http://127.0.0.1:55393",
+                "targetUrl": null
+              }
+            ],
+            "modelVersion": 1,
+            "intent": "automatic",
+            "phase": "paused",
+            "version": 2,
+            "intentId": "100aa903-3839-4b39-977b-0969f012dafe",
+            "goalVersion": 1,
+            "goal": "在 http://127.0.0.1:55393/rich-edit?item=B 将正文整体替换为以下纯文本：另一份：正文改写反例",
+            "runId": null,
+            "resource": null,
+            "summary": "尚不能核对富文本编辑器的完整正文，已暂停后续操作，不会重复填写或继续提交。",
+            "actions": [
+              {
+                "coordination": {
+                  "session": {
+                    "id": "helpr-fixture-web",
+                    "epoch": "e06c8aff-52aa-4db4-b661-b4a88247c61e:0",
+                    "origin": "http://127.0.0.1:55393"
+                  },
+                  "claimId": "c4c16a8f-dfa1-4a86-893a-8430b51189f5"
+                },
+                "observedLinks": [],
+                "richTextSource": {
+                  "role": "textbox",
+                  "name": "正文",
+                  "frameUrl": "http://127.0.0.1:55393/rich-edit?item=B",
+                  "disabled": false,
+                  "textValue": "原有段落\n\n原有正文",
+                  "readOnly": false,
+                  "richText": {
+                    "rule": "contenteditable-ax-v1",
+                    "backendNodeId": 11,
+                    "valueSource": "ax"
+                  }
+                },
+                "id": "73ffd6c5-9b49-4204-8cba-fc03eb1ffe39",
+                "runId": "6a726668-e22f-40dd-bfb4-0a60b120481c",
+                "goalVersion": 1,
+                "status": "unknown",
+                "summary": "填写纯文本正文",
+                "action": {
+                  "kind": "fill",
+                  "target": {
+                    "role": "textbox",
+                    "name": "正文",
+                    "exact": true
+                  },
+                  "value": "另一份：正文改写反例"
+                },
+                "effect": "interaction",
+                "preconditions": [
+                  "正文"
+                ],
+                "source": {
+                  "url": "http://127.0.0.1:55393/rich-edit?item=B",
+                  "title": "富文本核对",
+                  "fingerprint": "f26b5ca87f8239bfbd6763543a82d6bc19f5fb72673cf8e74ebafa0945c87043",
+                  "generation": 1,
+                  "observedAt": 1794032409266,
+                  "truncated": false
+                },
+                "observedUrls": [
+                  "http://127.0.0.1:55393/rich-edit?item=B"
+                ],
+                "binding": {
+                  "targetId": "7871AED6D3FA88A858D25D07401DD407",
+                  "generation": 1
+                },
+                "evidence": [],
+                "returned": true,
+                "dispatchState": "possible"
+              }
+            ]
+          },
+          "error": "",
+          "version": 4,
+          "messages": [
+            {
+              "role": "user",
+              "text": "在 http://127.0.0.1:55393/rich-edit?item=B 将正文整体替换为以下纯文本：另一份：正文改写反例"
+            },
+            {
+              "role": "system",
+              "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+            },
+            {
+              "role": "user",
+              "text": "开始执行"
+            },
+            {
+              "role": "assistant",
+              "text": "填写纯文本正文",
+              "call": {
+                "usageKind": "web-planning",
+                "id": "02bddf32-7924-4f0d-82fa-7a7cf422883b",
+                "taskId": "b0270812-4c2d-420f-90b5-205eef3468a1",
+                "model": "fixture",
+                "configurationVersion": 1,
+                "phase": "complete",
+                "source": {
+                  "url": "http://127.0.0.1:55393/rich-edit?item=B",
+                  "title": "富文本核对",
+                  "fingerprint": "f26b5ca87f8239bfbd6763543a82d6bc19f5fb72673cf8e74ebafa0945c87043",
+                  "generation": 1,
+                  "observedAt": 1794032409266,
+                  "truncated": false
+                },
+                "pageChanged": false,
+                "dispatched": true,
+                "reservedTokens": 33287,
+                "inputTokens": null,
+                "outputTokens": null,
+                "totalTokens": null,
+                "error": null
+              }
+            },
+            {
+              "role": "assistant",
+              "text": "声称正文已完成",
+              "call": {
+                "usageKind": "web-planning",
+                "id": "5f4ee622-5819-4f3a-bfa7-46af4960d30e",
+                "taskId": "b0270812-4c2d-420f-90b5-205eef3468a1",
+                "model": "fixture",
+                "configurationVersion": 1,
+                "phase": "complete",
+                "source": {
+                  "url": "http://127.0.0.1:55393/rich-edit?item=B",
+                  "title": "富文本核对",
+                  "fingerprint": "3425a3f655aa89cd1050aca309813f7400e347a820e84f49f8ef41182bd38aab",
+                  "generation": 1,
+                  "observedAt": 1794032409789,
+                  "truncated": false
+                },
+                "pageChanged": false,
+                "dispatched": true,
+                "reservedTokens": 34570,
+                "inputTokens": null,
+                "outputTokens": null,
+                "totalTokens": null,
+                "error": null
+              }
+            }
+          ]
+        },
+        "domAfter": {
+          "documents": [
+            {
+              "documentURL": 0,
+              "title": 1,
+              "baseURL": 0,
+              "contentLanguage": -1,
+              "encodingName": 2,
+              "publicId": -1,
+              "systemId": -1,
+              "frameId": 3,
+              "nodes": {
+                "parentIndex": [
+                  -1,
+                  0,
+                  0,
+                  2,
+                  3,
+                  3,
+                  5,
+                  2,
+                  7,
+                  8,
+                  7,
+                  10,
+                  7,
+                  12
+                ],
+                "nodeType": [
+                  9,
+                  10,
+                  1,
+                  1,
+                  1,
+                  1,
+                  3,
+                  1,
+                  1,
+                  3,
+                  1,
+                  3,
+                  1,
+                  3
+                ],
+                "shadowRootType": {
+                  "index": [],
+                  "value": []
+                },
+                "nodeName": [
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  11,
+                  12,
+                  13,
+                  14,
+                  12,
+                  16,
+                  12,
+                  27,
+                  12
+                ],
+                "nodeValue": [
+                  -1,
+                  -1,
+                  -1,
+                  -1,
+                  -1,
+                  -1,
+                  1,
+                  -1,
+                  -1,
+                  15,
+                  -1,
+                  26,
+                  -1,
+                  28
+                ],
+                "backendNodeId": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  20,
+                  16,
+                  17
+                ],
+                "attributes": [
+                  [],
+                  [],
+                  [],
+                  [],
+                  [
+                    9,
+                    10
+                  ],
+                  [],
+                  [],
+                  [],
+                  [],
+                  [],
+                  [
+                    17,
+                    18,
+                    19,
+                    20,
+                    21,
+                    22,
+                    23,
+                    22,
+                    24,
+                    25
+                  ],
+                  [],
+                  [],
+                  []
+                ],
+                "textValue": {
+                  "index": [],
+                  "value": []
+                },
+                "inputValue": {
+                  "index": [],
+                  "value": []
+                },
+                "inputChecked": {
+                  "index": []
+                },
+                "optionSelected": {
+                  "index": []
+                },
+                "contentDocumentIndex": {
+                  "index": [],
+                  "value": []
+                },
+                "pseudoType": {
+                  "index": [],
+                  "value": []
+                },
+                "pseudoIdentifier": {
+                  "index": [],
+                  "value": []
+                },
+                "isClickable": {
+                  "index": [
+                    10,
+                    11
+                  ]
+                },
+                "currentSourceURL": {
+                  "index": [],
+                  "value": []
+                },
+                "originURL": {
+                  "index": [],
+                  "value": []
+                }
+              },
+              "layout": {
+                "nodeIndex": [
+                  0,
+                  2,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11
+                ],
+                "styles": [
+                  [],
+                  [],
+                  [],
+                  [],
+                  [],
+                  [],
+                  []
+                ],
+                "bounds": [
+                  [
+                    0,
+                    0,
+                    2560,
+                    1584
+                  ],
+                  [
+                    0,
+                    0,
+                    2560,
+                    329
+                  ],
+                  [
+                    16,
+                    32,
+                    2528,
+                    281
+                  ],
+                  [
+                    16,
+                    32,
+                    2528,
+                    45
+                  ],
+                  [
+                    16,
+                    37,
+                    128,
+                    37
+                  ],
+                  [
+                    16,
+                    109,
+                    2528,
+                    204
+                  ],
+                  [
+                    18,
+                    116,
+                    192,
+                    37
+                  ]
+                ],
+                "text": [
+                  -1,
+                  -1,
+                  -1,
+                  -1,
+                  15,
+                  -1,
+                  26
+                ],
+                "stackingContexts": {
+                  "index": [
+                    0,
+                    1
+                  ]
+                }
+              },
+              "textBoxes": {
+                "layoutIndex": [
+                  4,
+                  6
+                ],
+                "bounds": [
+                  [
+                    16,
+                    37,
+                    128,
+                    37
+                  ],
+                  [
+                    18,
+                    116,
+                    192,
+                    37
+                  ]
+                ],
+                "start": [
+                  0,
+                  0
+                ],
+                "length": [
+                  4,
+                  6
+                ]
+              },
+              "scrollOffsetX": 0,
+              "scrollOffsetY": 0,
+              "contentWidth": 2560,
+              "contentHeight": 1584
+            }
+          ],
+          "strings": [
+            "http://127.0.0.1:55393/rich-edit?item=B",
+            "富文本核对",
+            "UTF-8",
+            "7871AED6D3FA88A858D25D07401DD407",
+            "#document",
+            "html",
+            "HTML",
+            "HEAD",
+            "META",
+            "charset",
+            "utf-8",
+            "TITLE",
+            "#text",
+            "BODY",
+            "P",
+            "正文编辑",
+            "DIV",
+            "role",
+            "textbox",
+            "aria-label",
+            "正文",
+            "aria-multiline",
+            "true",
+            "contenteditable",
+            "style",
+            "white-space:pre-wrap;border:1px solid #888;min-height:100px",
+            "网站改写正文",
+            "SCRIPT",
+            "document.querySelector('[contenteditable]').oninput=e=>{const sent=e.target.innerText;if(\"B\"==='B')e.target.textContent='网站改写正文';fetch('/rich-input?item=B',{method:'POST',body:JSON.stringify({sent,actual:e.target.innerText,html:e.target.innerHTML})})}"
+          ]
+        },
+        "axAfter": {
+          "nodes": [
+            {
+              "nodeId": "1",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "RootWebArea"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 144
+              },
+              "name": {
+                "type": "computedString",
+                "value": "富文本核对",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label",
+                    "superseded": true
+                  },
+                  {
+                    "type": "relatedElement",
+                    "value": {
+                      "type": "computedString",
+                      "value": "富文本核对"
+                    },
+                    "nativeSource": "title"
+                  }
+                ]
+              },
+              "properties": [
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "focused",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "url",
+                  "value": {
+                    "type": "string",
+                    "value": "http://127.0.0.1:55393/rich-edit?item=B"
+                  }
+                }
+              ],
+              "childIds": [
+                "3"
+              ],
+              "backendDOMNodeId": 1,
+              "frameId": "7871AED6D3FA88A858D25D07401DD407"
+            },
+            {
+              "nodeId": "3",
+              "ignored": true,
+              "ignoredReasons": [
+                {
+                  "name": "uninteresting",
+                  "value": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                }
+              ],
+              "role": {
+                "type": "role",
+                "value": "none"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 0
+              },
+              "parentId": "1",
+              "childIds": [
+                "8"
+              ],
+              "backendDOMNodeId": 3
+            },
+            {
+              "nodeId": "8",
+              "ignored": true,
+              "ignoredReasons": [
+                {
+                  "name": "uninteresting",
+                  "value": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                }
+              ],
+              "role": {
+                "type": "role",
+                "value": "none"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 0
+              },
+              "parentId": "3",
+              "childIds": [
+                "9",
+                "11"
+              ],
+              "backendDOMNodeId": 8
+            },
+            {
+              "nodeId": "9",
+              "ignored": false,
+              "role": {
+                "type": "role",
+                "value": "paragraph"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 133
+              },
+              "name": {
+                "type": "computedString",
+                "value": "",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "aria-label"
+                  }
+                ]
+              },
+              "properties": [],
+              "parentId": "8",
+              "childIds": [
+                "10"
+              ],
+              "backendDOMNodeId": 9
+            },
+            {
+              "nodeId": "11",
+              "ignored": false,
+              "role": {
+                "type": "role",
+                "value": "textbox"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 170
+              },
+              "name": {
+                "type": "computedString",
+                "value": "正文",
+                "sources": [
+                  {
+                    "type": "relatedElement",
+                    "attribute": "aria-labelledby"
+                  },
+                  {
+                    "type": "attribute",
+                    "value": {
+                      "type": "computedString",
+                      "value": "正文"
+                    },
+                    "attribute": "aria-label",
+                    "attributeValue": {
+                      "type": "string",
+                      "value": "正文"
+                    }
+                  },
+                  {
+                    "type": "placeholder",
+                    "attribute": "aria-placeholder",
+                    "superseded": true
+                  },
+                  {
+                    "type": "attribute",
+                    "attribute": "title",
+                    "superseded": true
+                  }
+                ]
+              },
+              "value": {
+                "type": "string",
+                "value": "网站改写正文"
+              },
+              "properties": [
+                {
+                  "name": "focusable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "focused",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "editable",
+                  "value": {
+                    "type": "token",
+                    "value": "richtext"
+                  }
+                },
+                {
+                  "name": "settable",
+                  "value": {
+                    "type": "booleanOrUndefined",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "multiline",
+                  "value": {
+                    "type": "boolean",
+                    "value": true
+                  }
+                },
+                {
+                  "name": "readonly",
+                  "value": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                },
+                {
+                  "name": "required",
+                  "value": {
+                    "type": "boolean",
+                    "value": false
+                  }
+                }
+              ],
+              "parentId": "8",
+              "childIds": [
+                "20"
+              ],
+              "backendDOMNodeId": 11
+            },
+            {
+              "nodeId": "10",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "StaticText"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 158
+              },
+              "name": {
+                "type": "computedString",
+                "value": "正文编辑",
+                "sources": [
+                  {
+                    "type": "contents",
+                    "value": {
+                      "type": "computedString",
+                      "value": "正文编辑"
+                    }
+                  }
+                ]
+              },
+              "properties": [],
+              "parentId": "9",
+              "childIds": [
+                "-1000000002"
+              ],
+              "backendDOMNodeId": 10
+            },
+            {
+              "nodeId": "20",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "StaticText"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 158
+              },
+              "name": {
+                "type": "computedString",
+                "value": "网站改写正文",
+                "sources": [
+                  {
+                    "type": "contents",
+                    "value": {
+                      "type": "computedString",
+                      "value": "网站改写正文"
+                    }
+                  }
+                ]
+              },
+              "properties": [
+                {
+                  "name": "editable",
+                  "value": {
+                    "type": "token",
+                    "value": "richtext"
+                  }
+                }
+              ],
+              "parentId": "11",
+              "childIds": [
+                "-1000000006"
+              ],
+              "backendDOMNodeId": 20
+            },
+            {
+              "nodeId": "-1000000002",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "InlineTextBox"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 101
+              },
+              "name": {
+                "type": "computedString",
+                "value": "正文编辑"
+              },
+              "properties": [],
+              "parentId": "10",
+              "childIds": []
+            },
+            {
+              "nodeId": "-1000000006",
+              "ignored": false,
+              "role": {
+                "type": "internalRole",
+                "value": "InlineTextBox"
+              },
+              "chromeRole": {
+                "type": "internalRole",
+                "value": 101
+              },
+              "name": {
+                "type": "computedString",
+                "value": "网站改写正文"
+              },
+              "properties": [
+                {
+                  "name": "editable",
+                  "value": {
+                    "type": "token",
+                    "value": "richtext"
+                  }
+                }
+              ],
+              "parentId": "20",
+              "childIds": []
+            }
+          ]
+        },
+        "html": "<!doctype html><meta charset=\"utf-8\"><title>富文本核对</title><p>正文编辑</p><div role=\"textbox\" aria-label=\"正文\" aria-multiline=\"true\" contenteditable=\"true\" style=\"white-space:pre-wrap;border:1px solid #888;min-height:100px\"><p>网站改写正文</p></div><script>document.querySelector('[contenteditable]').oninput=e=>{const sent=e.target.innerText;if(\"B\"==='B')e.target.textContent='网站改写正文';fetch('/rich-input?item=B',{method:'POST',body:JSON.stringify({sent,actual:e.target.innerText,html:e.target.innerHTML})})}</script>",
+        "cold": {
+          "id": "b0270812-4c2d-420f-90b5-205eef3468a1",
+          "goal": "在 http://127.0.0.1:55393/rich-edit?item=B 将正文整体替换为以下纯文本：另一份：正文改写反例",
+          "created": 1794032408489,
+          "url": "http://127.0.0.1:55393/rich-edit?item=B",
+          "draft": "",
+          "archived": false,
+          "groupId": null,
+          "groupGoal": null,
+          "hidden": false,
+          "minimized": false,
+          "phase": "manual",
+          "execution": {
+            "coordination": {
+              "session": {
+                "id": "helpr-fixture-web",
+                "epoch": "e06c8aff-52aa-4db4-b661-b4a88247c61e:0",
+                "origin": "http://127.0.0.1:55393"
+              },
+              "status": "ready",
+              "source": {
+                "url": "http://127.0.0.1:55393/rich-edit?item=B",
+                "title": "富文本核对",
+                "fingerprint": "f26b5ca87f8239bfbd6763543a82d6bc19f5fb72673cf8e74ebafa0945c87043",
+                "generation": 1,
+                "observedAt": 1794032409266,
+                "truncated": false
+              }
+            },
+            "resourceClaims": [
+              {
+                "status": "held",
+                "id": "c4c16a8f-dfa1-4a86-893a-8430b51189f5",
+                "runId": "6a726668-e22f-40dd-bfb4-0a60b120481c",
+                "goalVersion": 1,
+                "origin": "http://127.0.0.1:55393",
+                "targetUrl": null
+              }
+            ],
+            "modelVersion": 1,
+            "intent": "automatic",
+            "phase": "paused",
+            "version": 2,
+            "intentId": "100aa903-3839-4b39-977b-0969f012dafe",
+            "goalVersion": 1,
+            "goal": "在 http://127.0.0.1:55393/rich-edit?item=B 将正文整体替换为以下纯文本：另一份：正文改写反例",
+            "runId": null,
+            "resource": null,
+            "summary": "尚不能核对富文本编辑器的完整正文，已暂停后续操作，不会重复填写或继续提交。",
+            "actions": [
+              {
+                "coordination": {
+                  "session": {
+                    "id": "helpr-fixture-web",
+                    "epoch": "e06c8aff-52aa-4db4-b661-b4a88247c61e:0",
+                    "origin": "http://127.0.0.1:55393"
+                  },
+                  "claimId": "c4c16a8f-dfa1-4a86-893a-8430b51189f5"
+                },
+                "observedLinks": [],
+                "richTextSource": {
+                  "role": "textbox",
+                  "name": "正文",
+                  "frameUrl": "http://127.0.0.1:55393/rich-edit?item=B",
+                  "disabled": false,
+                  "textValue": "原有段落\n\n原有正文",
+                  "readOnly": false,
+                  "richText": {
+                    "rule": "contenteditable-ax-v1",
+                    "backendNodeId": 11,
+                    "valueSource": "ax"
+                  }
+                },
+                "id": "73ffd6c5-9b49-4204-8cba-fc03eb1ffe39",
+                "runId": "6a726668-e22f-40dd-bfb4-0a60b120481c",
+                "goalVersion": 1,
+                "status": "unknown",
+                "summary": "填写纯文本正文",
+                "action": {
+                  "kind": "fill",
+                  "target": {
+                    "role": "textbox",
+                    "name": "正文",
+                    "exact": true
+                  },
+                  "value": "另一份：正文改写反例"
+                },
+                "effect": "interaction",
+                "preconditions": [
+                  "正文"
+                ],
+                "source": {
+                  "url": "http://127.0.0.1:55393/rich-edit?item=B",
+                  "title": "富文本核对",
+                  "fingerprint": "f26b5ca87f8239bfbd6763543a82d6bc19f5fb72673cf8e74ebafa0945c87043",
+                  "generation": 1,
+                  "observedAt": 1794032409266,
+                  "truncated": false
+                },
+                "observedUrls": [
+                  "http://127.0.0.1:55393/rich-edit?item=B"
+                ],
+                "binding": {
+                  "targetId": "7871AED6D3FA88A858D25D07401DD407",
+                  "generation": 1
+                },
+                "evidence": [],
+                "returned": true,
+                "dispatchState": "possible"
+              }
+            ]
+          },
+          "error": "",
+          "version": 4,
+          "messages": [
+            {
+              "role": "user",
+              "text": "在 http://127.0.0.1:55393/rich-edit?item=B 将正文整体替换为以下纯文本：另一份：正文改写反例"
+            },
+            {
+              "role": "system",
+              "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+            },
+            {
+              "role": "user",
+              "text": "开始执行"
+            },
+            {
+              "role": "assistant",
+              "text": "填写纯文本正文",
+              "call": {
+                "usageKind": "web-planning",
+                "id": "02bddf32-7924-4f0d-82fa-7a7cf422883b",
+                "taskId": "b0270812-4c2d-420f-90b5-205eef3468a1",
+                "model": "fixture",
+                "configurationVersion": 1,
+                "phase": "complete",
+                "source": {
+                  "url": "http://127.0.0.1:55393/rich-edit?item=B",
+                  "title": "富文本核对",
+                  "fingerprint": "f26b5ca87f8239bfbd6763543a82d6bc19f5fb72673cf8e74ebafa0945c87043",
+                  "generation": 1,
+                  "observedAt": 1794032409266,
+                  "truncated": false
+                },
+                "pageChanged": false,
+                "dispatched": true,
+                "reservedTokens": 33287,
+                "inputTokens": null,
+                "outputTokens": null,
+                "totalTokens": null,
+                "error": null
+              }
+            },
+            {
+              "role": "assistant",
+              "text": "声称正文已完成",
+              "call": {
+                "usageKind": "web-planning",
+                "id": "5f4ee622-5819-4f3a-bfa7-46af4960d30e",
+                "taskId": "b0270812-4c2d-420f-90b5-205eef3468a1",
+                "model": "fixture",
+                "configurationVersion": 1,
+                "phase": "complete",
+                "source": {
+                  "url": "http://127.0.0.1:55393/rich-edit?item=B",
+                  "title": "富文本核对",
+                  "fingerprint": "3425a3f655aa89cd1050aca309813f7400e347a820e84f49f8ef41182bd38aab",
+                  "generation": 1,
+                  "observedAt": 1794032409789,
+                  "truncated": false
+                },
+                "pageChanged": false,
+                "dispatched": true,
+                "reservedTokens": 34570,
+                "inputTokens": null,
+                "outputTokens": null,
+                "totalTokens": null,
+                "error": null
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "plans": 4
+  },
+  "automatedPassed": true,
+  "passed": true,
+  "remaining": [],
+  "ms": 20007
+}

@@ -1,3 +1,4 @@
+import { richTextObservation } from './rich-text-observation';
 import { emptyTextObservation } from './empty-text-observation';
 import { z } from 'zod';
 import { createHash } from 'node:crypto';
@@ -36,6 +37,7 @@ export function pageObservation(
   );
   const { nodes } = treeSchema.parse(accessibility);
   const empty = emptyTextObservation(document, url);
+  const rich = richTextObservation(document, url);
   const backendCounts = new Map<number, number>();
   for (const n of nodes)
     if (n.backendDOMNodeId)
@@ -76,6 +78,25 @@ export function pageObservation(
       node.backendDOMNodeId && backendCounts.get(node.backendDOMNodeId) === 1
         ? empty.get(node.backendDOMNodeId)
         : undefined;
+    const richNode =
+      node.backendDOMNodeId && backendCounts.get(node.backendDOMNodeId) === 1
+        ? rich.get(node.backendDOMNodeId)
+        : undefined;
+    const isRich =
+      role === 'textbox' &&
+      (richNode ||
+        node.properties?.some(
+          (p) => p.name === 'editable' && p.value.value === 'richtext',
+        ));
+    const richValue = richNode?.supported
+      ? typeof node.value?.value === 'string' &&
+        value.length <= 4000 &&
+        value.replaceAll('\n', '') === richNode.text.replaceAll('\n', '')
+        ? value
+        : node.value === undefined && richNode.empty
+          ? ''
+          : undefined
+      : undefined;
     if (
       [
         'button',
@@ -106,16 +127,35 @@ export function pageObservation(
                 ) ?? false,
             }
           : {}),
+        ...(isRich
+          ? richValue !== undefined
+            ? {
+                richText: {
+                  rule: 'contenteditable-ax-v1' as const,
+                  backendNodeId: node.backendDOMNodeId!,
+                  valueSource:
+                    typeof node.value?.value === 'string'
+                      ? ('ax' as const)
+                      : ('empty-dom' as const),
+                },
+                textValue: richValue,
+              }
+            : { richTextUnavailable: true as const }
+          : {}),
         ...(role === 'combobox' &&
         typeof node.value?.value === 'string' &&
         value.length <= 500
           ? { selectedLabel: value }
           : {}),
-        ...(role === 'textbox' &&
+        ...(!isRich &&
+        role === 'textbox' &&
         typeof node.value?.value === 'string' &&
         value.length <= 4000
           ? { textValue: value }
-          : role === 'textbox' && node.value === undefined && emptyNode
+          : !isRich &&
+              role === 'textbox' &&
+              node.value === undefined &&
+              emptyNode
             ? {
                 textValue: '',
                 emptyValue: {
@@ -126,6 +166,18 @@ export function pageObservation(
               }
             : {}),
       });
+    if (isRich)
+      lines.push(
+        '[rich-text] ' +
+          JSON.stringify({
+            id: node.backendDOMNodeId,
+            name,
+            value: richValue,
+            valueSource:
+              typeof node.value?.value === 'string' ? 'ax' : 'empty-dom',
+            unavailable: richValue === undefined,
+          }),
+      );
     if (role === 'textbox' && node.value === undefined && emptyNode)
       lines.push(
         '[native-empty] ' +

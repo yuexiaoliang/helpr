@@ -1,3 +1,4 @@
+import { richTextControl } from './rich-text';
 import type { TaskExecution, NextStep, WebAction } from './execution';
 import type { PageObservation } from './model';
 import { type WorkflowUse } from './workflow';
@@ -64,6 +65,11 @@ export function observedControl(action: WebAction, source: PageObservation) {
       `[file ${action.target.fileIndex}] ${action.target.frameUrl ?? source.url}`,
     );
   if (!source.controls) return false;
+  try {
+    richTextControl(action, source);
+  } catch {
+    return false;
+  }
   const target = action.target;
   const matches = source.controls.filter(
     (c) =>

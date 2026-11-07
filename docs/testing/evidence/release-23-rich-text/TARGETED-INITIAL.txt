@@ -1,0 +1,44 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/rich-text.test.ts (22 tests | 2 failed) 487ms
+   × 冻结源控件；模型确认不能绕过实际全文；冷开保留核对 197ms
+   × 格式31迁移先备份；损坏的确认正文阻止冷开 144ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/rich-text.test.ts > 冻结源控件；模型确认不能绕过实际全文；冷开保留核对
+AssertionError: expected 'unknown' to be 'dispatched' // Object.is equality
+
+Expected: "dispatched"
+Received: "unknown"
+
+ ❯ tests/workspace/rich-text.test.ts:210:39
+    208|     f.post({ ...resolve, source: observed('网站改写').read() }),
+    209|   ).toThrow('EXECUTION_RICH_TEXT_UNVERIFIED');
+    210|   expect(f.read().actions[0]!.status).toBe('dispatched');
+       |                                       ^
+    211|   f.post({ ...resolve, source: observed(action.value).read() });
+    212|   expect(f.read().actions[0]).toMatchObject({
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/workspace/rich-text.test.ts > 格式31迁移先备份；损坏的确认正文阻止冷开
+SqliteError: no such table: app_meta
+ ❯ Database.prepare node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/wrappers.js:5:21
+ ❯ tests/workspace/rich-text.test.ts:258:6
+    256|   const file = path.join(f.dir, 'workspace.sqlite');
+    257|   const db = new Database(file);
+    258|   db.prepare('UPDATE app_meta SET schema_version = 31').run();
+       |      ^
+    259|   db.close();
+    260|   expect(f.cold().actions[0]!.status).toBe('confirmed');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 30 passed (32)
+   Start at  13:56:41
+   Duration  1.58s (import 41%, tests 37%, transform 21%, worker 1%)
+

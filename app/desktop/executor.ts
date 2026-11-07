@@ -56,7 +56,11 @@ port.on('message', ({ data }: { data: unknown }) => {
     return;
   }
   const job = z
-    .object({ job: webActionSchema, payload: materialPayloadSchema.optional() })
+    .object({
+      job: webActionSchema,
+      payload: materialPayloadSchema.optional(),
+      richText: z.boolean().default(false),
+    })
     .safeParse(data);
   if (!job.success || started) return;
   started = true;
@@ -95,9 +99,16 @@ port.on('message', ({ data }: { data: unknown }) => {
       if ((await target.count()) !== 1)
         throw Error('EXECUTION_LOCATOR_MISSING');
       if (action.kind === 'click') await target.click({ timeout: 7000 });
-      else if (action.kind === 'fill')
+      else if (action.kind === 'fill') {
+        // 实际节点若是富文本，必须已有独立观察；不允许模糊名称或子frame绕过。
+        const editable = await target.evaluate(
+          (element) =>
+            element instanceof HTMLElement && element.isContentEditable,
+        );
+        if (editable !== job.data.richText)
+          throw Error('EXECUTION_CAPABILITY_REVOKED_OR_DENIED');
         await target.fill(action.value, { timeout: 7000 });
-      else if (action.kind === 'check')
+      } else if (action.kind === 'check')
         await target.setChecked(action.checked, { timeout: 7000 });
       else {
         // Playwright 按标签选择前，拒绝重复标签、多选与自定义组合框。

@@ -1,3 +1,4 @@
+import { richTextControl } from '../shared/rich-text';
 import { utilityProcess } from 'electron';
 import path from 'node:path';
 import { z } from 'zod';
@@ -50,6 +51,7 @@ export class WebExecutor {
       current.observation.fingerprint !== job.source.fingerprint
     )
       throw Error('EXECUTION_PAGE_CHANGED');
+    const richText = !!richTextControl(job.action, current.observation);
     try {
       await this.watchNavigation?.(job);
       await this.actionWindow?.({
@@ -141,7 +143,7 @@ export class WebExecutor {
             finish(Error('RUNTIME_GROUP_UNAVAILABLE'));
             return;
           }
-          worker.postMessage({ job: job.action, payload });
+          worker.postMessage({ job: job.action, payload, richText });
         });
       });
     } finally {

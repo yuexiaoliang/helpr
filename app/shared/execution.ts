@@ -1,3 +1,4 @@
+import { validRichTextFact } from './rich-text';
 import { validFormRequestChain, formChainEpoch } from './form-navigation-chain';
 import {
   uploadCheckSchema,
@@ -135,6 +136,8 @@ export const actionFactSchema = z
     observedLinks: z.array(observedLinkSchema).max(300).optional(),
     resultLinks: z.array(observedLinkSchema).max(300).optional(),
     uploadCheck: uploadCheckSchema.optional(),
+    richTextSource: observedControlSchema.optional(),
+    richTextResult: observedControlSchema.optional(),
     selectionResult: observedControlSchema.optional(),
     fieldResults: z.array(observedControlSchema).max(12).optional(),
     targetCreation: targetCreationSchema.optional(),
@@ -208,6 +211,7 @@ export const actionFactSchema = z
         controls: a.creationSourceControls,
       }),
   )
+  .refine(validRichTextFact)
   .refine((a) => validUploadCheck(a))
   .refine((a) => validDiscoveredTarget(a))
   .refine((a) => {

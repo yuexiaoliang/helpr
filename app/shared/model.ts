@@ -66,6 +66,14 @@ export const observedControlSchema = z.strictObject({
   selectedLabel: z.string().max(500).optional(),
   textValue: z.string().max(4000).optional(),
   readOnly: z.boolean().optional(),
+  richTextUnavailable: z.literal(true).optional(),
+  richText: z
+    .strictObject({
+      rule: z.literal('contenteditable-ax-v1'),
+      backendNodeId: z.number().int().positive(),
+      valueSource: z.enum(['ax', 'empty-dom']),
+    })
+    .optional(),
   emptyValue: z
     .strictObject({
       rule: z.literal('native-empty-snapshot-v1'),

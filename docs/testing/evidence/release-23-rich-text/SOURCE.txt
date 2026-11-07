@@ -1,0 +1,59 @@
+$ node scripts/validate-workspace.mjs
+$ pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:workspace && pnpm test:validation && pnpm check:legacy
+$ tsc --noEmit
+$ eslint app tests/workspace electron.vite.config.ts drizzle.config.ts vitest.config.ts
+$ prettier --check app tests/workspace *.ts *.json *.mjs pnpm-workspace.yaml
+Checking formatting...
+All matched files use Prettier code style!
+$ vitest run
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/rich-text.test.ts (24 tests | 1 failed) 1068ms
+   × 空段落歧义、循环父节点和伪造空值来源均拒绝 4ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/rich-text.test.ts > 空段落歧义、循环父节点和伪造空值来源均拒绝
+AssertionError: expected [Function] to throw an error
+ ❯ tests/workspace/rich-text.test.ts:354:48
+    352|   const full = observed(action.value).read();
+    353|   full.controls![0]!.richText!.valueSource = 'empty-dom';
+    354|   expect(() => verifiedRichText(action, full)).toThrow();
+       |                                                ^
+    355| });
+    356|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 43 passed (44)
+      Tests  1 failed | 472 passed (473)
+   Start at  13:59:58
+   Duration  264.90s (tests 92%, import 6%, environment 1%)
+
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.
+node:internal/errors:985
+  const err = new Error(message);
+              ^
+
+Error: Command failed: pnpm check
+    at genericNodeError (node:internal/errors:985:15)
+    at wrappedFn (node:internal/errors:539:14)
+    at checkExecSyncError (node:child_process:925:11)
+    at execFileSync (node:child_process:961:15)
+    at file:///Users/yuexiaoliang/projects/helpr/scripts/validate-workspace.mjs:92:3
+    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+    at async node:internal/modules/esm/loader:643:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  status: 1,
+  signal: null,
+  output: [ null, null, null ],
+  pid: 80199,
+  stdout: null,
+  stderr: null
+}
+
+Node.js v24.18.0
+[ELIFECYCLE] Command failed with exit code 1.
