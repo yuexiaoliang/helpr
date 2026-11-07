@@ -1,3 +1,4 @@
+import { actionNavigationEventSchema } from '../shared/action-navigation';
 import { agreementUICommandSchema } from '../shared/agreement';
 import { scheduleUICommandSchema } from '../shared/schedule';
 import {
@@ -439,6 +440,7 @@ export async function startController(
     (taskId, code) => log.event('failure', { taskId, code }),
     (pid) => ownership.owns(pid),
     (command) => recordClient.request({ kind: 'material', command }),
+    (command) => hostClient.request(command),
   );
   const saveExecution = (command: unknown) =>
     recordClient.request({ kind: 'execution', command });
@@ -1095,6 +1097,20 @@ export async function startController(
   });
   const lastSuspensionSerial = new Map<string, number>();
   host.on('message', (input: unknown) => {
+    const navigation = z
+      .object({ actionNavigation: actionNavigationEventSchema })
+      .safeParse(input);
+    if (navigation.success) {
+      void executions
+        .recordNavigation(navigation.data.actionNavigation)
+        .catch(() => {
+          log.event('failure', {
+            taskId: navigation.data.actionNavigation.taskId,
+            code: 'ACTION_NAVIGATION_NOT_SAVED',
+          });
+        });
+      return;
+    }
     const sessionChange = z
       .object({
         websiteSessionChanged: z.object({

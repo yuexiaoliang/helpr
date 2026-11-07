@@ -1,3 +1,4 @@
+import { verifyNavigation } from './navigation-validation.mjs';
 import { verifySchedules } from './schedule-validation.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -34,6 +35,7 @@ const { values: options } = parseArgs({
     'workflow-reuse': flag,
     'history-cleanup': flag,
     'publication-fields': flag,
+    'action-navigation': flag,
     'cross-site-controls': flag,
     'ambiguous-selection': flag,
     'workflow-repair': flag,
@@ -94,10 +96,10 @@ assert(
   !options['input-preparation'] || (!options.interactive && !options.fault),
   'INPUT_PREPARATION_IS_A_SINGLE_CHECK',
 );
-if (options.participation || options['participation-review'] || options['task-groups'] || options.material || options.publication || options['workflow-reuse'] || options['workflow-repair'] || options.article || options.agreements || options.schedules || options.coordination) {
+if (options['action-navigation'] || options.participation || options['participation-review'] || options['task-groups'] || options.material || options.publication || options['workflow-reuse'] || options['workflow-repair'] || options.article || options.agreements || options.schedules || options.coordination) {
   assert(
     options.fixture && !systemStorage && !options.interactive && !options.fault &&
-      !options['input-preparation'] && [options.participation, options['participation-review'], options['task-groups'], options.material, options.publication, options['workflow-reuse'], options['workflow-repair'], options.article, options.agreements, options.schedules, options.coordination].filter(Boolean).length === 1,
+      !options['input-preparation'] && [options['action-navigation'], options.participation, options['participation-review'], options['task-groups'], options.material, options.publication, options['workflow-reuse'], options['workflow-repair'], options.article, options.agreements, options.schedules, options.coordination].filter(Boolean).length === 1,
     'PARTICIPATION_FIXTURE_REQUIRED',
   );
 }
@@ -245,6 +247,7 @@ const materialSource = path.join(data, '原始素材.bin');
 const materialBytes = Buffer.from([0, 1, 99, 128, 255, 2, 3, 4]);
 if (options.material || options.publication) fs.writeFileSync(materialSource, materialBytes);
 const website = await fixture({
+  navigation: options['action-navigation'],
   coordination: options.coordination,
   workflow: options['workflow-reuse'] || options['workflow-repair'] || options.article || options.agreements || options.schedules,
   article: options.article || options.agreements || options.schedules,
@@ -895,6 +898,7 @@ async function verifyMaterial(client) {
 }
 async function validate() {
   let client = await launch();
+  if (options['action-navigation']) return verifyNavigation({client, website, evidence, command, waitFor, check, launch, remainingOwned});
   if (options.coordination) return verifyCoordination({client, website, evidence, command, waitFor, check, launch, remainingOwned});
   if (options.schedules) return verifySchedules({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
   if (options.agreements) return verifyAgreements({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, confirmNavigation:options['agreements-navigation-confirm']===true});

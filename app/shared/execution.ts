@@ -1,3 +1,4 @@
+import { actionNavigationSchema } from './action-navigation';
 import { z } from 'zod';
 import { scheduleStateSchema, scheduleTermsSchema } from './schedule';
 import {
@@ -95,56 +96,72 @@ export const pageBindingSchema = z.strictObject({
   targetId: z.string().min(1),
   generation: z.number().int().nonnegative(),
 });
-export const actionFactSchema = z.strictObject({
-  coordination: z
-    .strictObject({ session: sessionContextSchema, claimId: z.string().uuid() })
-    .optional(),
-  workflowStep: z
-    .strictObject({
-      useId: z.string().uuid(),
-      index: z.number().int().nonnegative().max(59),
-      repairId: z.string().uuid().optional(),
-    })
-    .optional(),
-  observedLinks: z.array(observedLinkSchema).max(300).optional(),
-  resultLinks: z.array(observedLinkSchema).max(300).optional(),
-  selectionResult: observedControlSchema.optional(),
-  fieldResults: z.array(observedControlSchema).max(12).optional(),
-  id: z.string().min(1),
-  runId: z.string(),
-  goalVersion: z.number().int(),
-  status: z.enum([
-    'reserved',
-    'dispatched',
-    'unknown',
-    'confirmed',
-    'cancelled',
-  ]),
-  summary: z.string().max(1500),
-  action: webActionSchema,
-  effect: z.enum(['interaction', 'upload', 'draft', 'publication']).optional(),
-  preconditions: z.array(z.string().min(1).max(2000)).max(10).optional(),
-  submission: z
-    .strictObject({
-      publication: publicationSchema,
-      download: downloadCheckSchema,
-      recovery: publicationRecoverySchema
-        .extend({
-          targetFactId: z.string().uuid(),
-          uploadFactId: z.string().uuid(),
-        })
-        .optional(),
-    })
-    .optional(),
-  publicationApprovalId: z.string().uuid().optional(),
-  source: pageSourceSchema,
-  observedUrls: z.array(z.url().max(4096)).max(300).optional(),
-  resultSource: pageSourceSchema.optional(),
-  binding: pageBindingSchema,
-  evidence: z.array(z.string().max(2000)).max(10),
-  returned: z.boolean(),
-  dispatchState: z.enum(['not-dispatched', 'possible']).optional(),
-});
+export const actionFactSchema = z
+  .strictObject({
+    coordination: z
+      .strictObject({
+        session: sessionContextSchema,
+        claimId: z.string().uuid(),
+      })
+      .optional(),
+    workflowStep: z
+      .strictObject({
+        useId: z.string().uuid(),
+        index: z.number().int().nonnegative().max(59),
+        repairId: z.string().uuid().optional(),
+      })
+      .optional(),
+    observedLinks: z.array(observedLinkSchema).max(300).optional(),
+    resultLinks: z.array(observedLinkSchema).max(300).optional(),
+    selectionResult: observedControlSchema.optional(),
+    fieldResults: z.array(observedControlSchema).max(12).optional(),
+    navigation: actionNavigationSchema.optional(),
+    id: z.string().min(1),
+    runId: z.string(),
+    goalVersion: z.number().int(),
+    status: z.enum([
+      'reserved',
+      'dispatched',
+      'unknown',
+      'confirmed',
+      'cancelled',
+    ]),
+    summary: z.string().max(1500),
+    action: webActionSchema,
+    effect: z
+      .enum(['interaction', 'upload', 'draft', 'publication'])
+      .optional(),
+    preconditions: z.array(z.string().min(1).max(2000)).max(10).optional(),
+    submission: z
+      .strictObject({
+        publication: publicationSchema,
+        download: downloadCheckSchema,
+        recovery: publicationRecoverySchema
+          .extend({
+            targetFactId: z.string().uuid(),
+            uploadFactId: z.string().uuid(),
+          })
+          .optional(),
+      })
+      .optional(),
+    publicationApprovalId: z.string().uuid().optional(),
+    source: pageSourceSchema,
+    observedUrls: z.array(z.url().max(4096)).max(300).optional(),
+    resultSource: pageSourceSchema.optional(),
+    binding: pageBindingSchema,
+    evidence: z.array(z.string().max(2000)).max(10),
+    returned: z.boolean(),
+    dispatchState: z.enum(['not-dispatched', 'possible']).optional(),
+  })
+  .refine(
+    (a) =>
+      !a.navigation ||
+      (a.dispatchState === 'possible' &&
+        a.status !== 'reserved' &&
+        a.status !== 'cancelled' &&
+        a.navigation.targetId === a.binding.targetId &&
+        a.navigation.sourceGeneration === a.binding.generation),
+  );
 export type ActionFact = z.infer<typeof actionFactSchema>;
 export const executionPauseReasonSchema = z.enum([
   'takeover',

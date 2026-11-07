@@ -1,0 +1,523 @@
+{
+  "app": "/Users/yuexiaoliang/projects/helpr/dist/candidates/action-navigation-audit-fixed-23/mac-arm64/helpr.app",
+  "storage": "fixture",
+  "pendingAcceptance": [
+    "系统钥匙串与跨重启登录",
+    "原生窗口与真人输入"
+  ],
+  "started": "2026-11-07T02:19:38.163Z",
+  "checks": [
+    {
+      "name": "实际POST与303导航仅产生一个条目，记录首个导航且保持暂停和未知",
+      "passed": true
+    },
+    {
+      "name": "正常退出和冷开保留导航事实，未代答继续、未重建条目",
+      "passed": true
+    }
+  ],
+  "samples": [
+    {
+      "kind": "startup",
+      "number": 221,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:50081",
+        "persistent": false
+      },
+      "ms": 4921,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    },
+    {
+      "kind": "startup",
+      "number": 222,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:50081",
+        "persistent": false
+      },
+      "ms": 1250,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    }
+  ],
+  "processes": [
+    {
+      "number": 221,
+      "controller": 12681,
+      "seen": {
+        "12681": {
+          "parent": 12666,
+          "group": 12681
+        },
+        "12685": {
+          "parent": 12681,
+          "group": 12650
+        },
+        "12686": {
+          "parent": 12681,
+          "group": 12650
+        },
+        "12687": {
+          "parent": 1,
+          "group": 12687
+        },
+        "12688": {
+          "parent": 12681,
+          "group": 12681
+        },
+        "12689": {
+          "parent": 12687,
+          "group": 12689
+        },
+        "12694": {
+          "parent": 12689,
+          "group": 12689
+        },
+        "12695": {
+          "parent": 12689,
+          "group": 12689
+        },
+        "12696": {
+          "parent": 12689,
+          "group": 12689
+        },
+        "12697": {
+          "parent": 12689,
+          "group": 12689
+        },
+        "12698": {
+          "parent": 12689,
+          "group": 12689
+        },
+        "12700": {
+          "parent": 12689,
+          "group": 12689
+        },
+        "12701": {
+          "parent": 12689,
+          "group": 12689
+        }
+      },
+      "groups": [
+        12681,
+        12687,
+        12689
+      ],
+      "remaining": [],
+      "exit": {
+        "code": 0,
+        "signal": null
+      }
+    },
+    {
+      "number": 222,
+      "controller": 12712,
+      "seen": {
+        "12712": {
+          "parent": 12666,
+          "group": 12712
+        },
+        "12713": {
+          "parent": 12712,
+          "group": 12650
+        },
+        "12714": {
+          "parent": 12712,
+          "group": 12650
+        },
+        "12715": {
+          "parent": 1,
+          "group": 12715
+        },
+        "12716": {
+          "parent": 12712,
+          "group": 12712
+        },
+        "12717": {
+          "parent": 12715,
+          "group": 12717
+        },
+        "12722": {
+          "parent": 12717,
+          "group": 12717
+        },
+        "12723": {
+          "parent": 12717,
+          "group": 12717
+        },
+        "12724": {
+          "parent": 12717,
+          "group": 12717
+        },
+        "12725": {
+          "parent": 12717,
+          "group": 12717
+        },
+        "12726": {
+          "parent": 12717,
+          "group": 12717
+        }
+      },
+      "groups": [
+        12712,
+        12715,
+        12717
+      ],
+      "remaining": [],
+      "exit": {
+        "code": 0,
+        "signal": null
+      }
+    }
+  ],
+  "fixture": [
+    {
+      "kind": "navigation-planning",
+      "pending": null
+    },
+    {
+      "kind": "navigation-created",
+      "id": 1
+    },
+    {
+      "kind": "navigation-result-read",
+      "path": "/navigation-result/1"
+    }
+  ],
+  "navigation": {
+    "realModelCalls": 0,
+    "remoteWrites": 0,
+    "automaticContinuation": false,
+    "readiness": [
+      "f6362c4b48dbcef194ba9f5115f1d560dc057d69a38f2f9a5eb44bc8135d6cf2",
+      "f6362c4b48dbcef194ba9f5115f1d560dc057d69a38f2f9a5eb44bc8135d6cf2"
+    ],
+    "taskId": "08d1ed10-f99b-498e-9b02-9c0801b7f7b8",
+    "paused": {
+      "id": "08d1ed10-f99b-498e-9b02-9c0801b7f7b8",
+      "goal": "在 http://127.0.0.1:50081/navigation-start 新建一个条目并核对。",
+      "created": 1794017983182,
+      "url": "http://127.0.0.1:50081/navigation-result/1",
+      "draft": "",
+      "archived": false,
+      "groupId": null,
+      "groupGoal": null,
+      "hidden": false,
+      "minimized": false,
+      "phase": "manual",
+      "execution": {
+        "coordination": {
+          "session": {
+            "id": "helpr-fixture-web",
+            "epoch": "aea1f202-23cd-4f58-b58e-0d036e0aa251:0",
+            "origin": "http://127.0.0.1:50081"
+          },
+          "status": "ready",
+          "source": {
+            "url": "http://127.0.0.1:50081/navigation-start",
+            "title": "条目清单",
+            "fingerprint": "8de09f59cfffec855e59f562cf4c018509808d2a6041de73f1b91a2210396a69",
+            "generation": 1,
+            "observedAt": 1794017984035,
+            "truncated": false
+          }
+        },
+        "resourceClaims": [
+          {
+            "status": "held",
+            "id": "68bcf884-400c-4816-a74a-8ede6ba12ae6",
+            "runId": "db923931-c54f-4230-982f-48b6268afc0f",
+            "goalVersion": 1,
+            "origin": "http://127.0.0.1:50081",
+            "targetUrl": null
+          }
+        ],
+        "modelVersion": 1,
+        "intent": "automatic",
+        "phase": "paused",
+        "version": 3,
+        "intentId": "602283a6-a1f9-4596-ac69-b5214dfd5955",
+        "goalVersion": 1,
+        "goal": "在 http://127.0.0.1:50081/navigation-start 新建一个条目并核对。",
+        "runId": null,
+        "resource": null,
+        "summary": "页面或控制归属已变化，旧操作资格失效。重新识别后仍需明确继续，先核对现有结果。",
+        "pauseReason": "page-change",
+        "actions": [
+          {
+            "coordination": {
+              "session": {
+                "id": "helpr-fixture-web",
+                "epoch": "aea1f202-23cd-4f58-b58e-0d036e0aa251:0",
+                "origin": "http://127.0.0.1:50081"
+              },
+              "claimId": "68bcf884-400c-4816-a74a-8ede6ba12ae6"
+            },
+            "observedLinks": [],
+            "navigation": {
+              "id": "a7955497-e34a-4784-9ae0-8891ebd1f510",
+              "association": "during-action",
+              "targetId": "F9622FEFE748B14CDC691558497F7316",
+              "sourceGeneration": 1,
+              "generation": 2,
+              "url": "http://127.0.0.1:50081/navigation-create",
+              "mainFrame": true,
+              "sameDocument": false,
+              "inputEpoch": 1,
+              "observedAt": 1794017984531
+            },
+            "id": "06c6f988-23fb-455b-b613-45783fdd4b69",
+            "runId": "db923931-c54f-4230-982f-48b6268afc0f",
+            "goalVersion": 1,
+            "status": "unknown",
+            "summary": "打开新建条目",
+            "action": {
+              "kind": "click",
+              "target": {
+                "role": "button",
+                "name": "新建条目",
+                "exact": true
+              }
+            },
+            "effect": "interaction",
+            "preconditions": [
+              "新建条目"
+            ],
+            "source": {
+              "url": "http://127.0.0.1:50081/navigation-start",
+              "title": "条目清单",
+              "fingerprint": "8de09f59cfffec855e59f562cf4c018509808d2a6041de73f1b91a2210396a69",
+              "generation": 1,
+              "observedAt": 1794017984035,
+              "truncated": false
+            },
+            "observedUrls": [
+              "http://127.0.0.1:50081/navigation-start"
+            ],
+            "binding": {
+              "targetId": "F9622FEFE748B14CDC691558497F7316",
+              "generation": 1
+            },
+            "evidence": [],
+            "returned": false,
+            "dispatchState": "possible"
+          }
+        ]
+      },
+      "executionControl": {
+        "blocked": true,
+        "stopSaved": true,
+        "message": "页面或控制归属已变化，旧操作资格失效。重新识别后仍需明确继续，先核对现有结果。",
+        "reason": "page-change"
+      },
+      "error": "",
+      "version": 5,
+      "messages": [
+        {
+          "role": "user",
+          "text": "在 http://127.0.0.1:50081/navigation-start 新建一个条目并核对。"
+        },
+        {
+          "role": "system",
+          "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+        },
+        {
+          "role": "user",
+          "text": "开始执行"
+        },
+        {
+          "role": "assistant",
+          "text": "打开新建条目",
+          "call": {
+            "usageKind": "web-planning",
+            "id": "d2ab5a4a-3e28-442d-9978-a1509931fb8e",
+            "taskId": "08d1ed10-f99b-498e-9b02-9c0801b7f7b8",
+            "model": "fixture",
+            "configurationVersion": 1,
+            "phase": "complete",
+            "source": {
+              "url": "http://127.0.0.1:50081/navigation-start",
+              "title": "条目清单",
+              "fingerprint": "8de09f59cfffec855e59f562cf4c018509808d2a6041de73f1b91a2210396a69",
+              "generation": 1,
+              "observedAt": 1794017984035,
+              "truncated": false
+            },
+            "pageChanged": false,
+            "dispatched": true,
+            "reservedTokens": 29840,
+            "inputTokens": null,
+            "outputTokens": null,
+            "totalTokens": null,
+            "error": null
+          }
+        }
+      ]
+    },
+    "cold": {
+      "id": "08d1ed10-f99b-498e-9b02-9c0801b7f7b8",
+      "goal": "在 http://127.0.0.1:50081/navigation-start 新建一个条目并核对。",
+      "created": 1794017983182,
+      "url": "http://127.0.0.1:50081/navigation-result/1",
+      "draft": "",
+      "archived": false,
+      "groupId": null,
+      "groupGoal": null,
+      "hidden": false,
+      "minimized": false,
+      "phase": "manual",
+      "execution": {
+        "coordination": {
+          "session": {
+            "id": "helpr-fixture-web",
+            "epoch": "aea1f202-23cd-4f58-b58e-0d036e0aa251:0",
+            "origin": "http://127.0.0.1:50081"
+          },
+          "status": "ready",
+          "source": {
+            "url": "http://127.0.0.1:50081/navigation-start",
+            "title": "条目清单",
+            "fingerprint": "8de09f59cfffec855e59f562cf4c018509808d2a6041de73f1b91a2210396a69",
+            "generation": 1,
+            "observedAt": 1794017984035,
+            "truncated": false
+          }
+        },
+        "resourceClaims": [
+          {
+            "status": "held",
+            "id": "68bcf884-400c-4816-a74a-8ede6ba12ae6",
+            "runId": "db923931-c54f-4230-982f-48b6268afc0f",
+            "goalVersion": 1,
+            "origin": "http://127.0.0.1:50081",
+            "targetUrl": null
+          }
+        ],
+        "modelVersion": 1,
+        "intent": "automatic",
+        "phase": "paused",
+        "version": 3,
+        "intentId": "602283a6-a1f9-4596-ac69-b5214dfd5955",
+        "goalVersion": 1,
+        "goal": "在 http://127.0.0.1:50081/navigation-start 新建一个条目并核对。",
+        "runId": null,
+        "resource": null,
+        "summary": "页面或控制归属已变化，旧操作资格失效。重新识别后仍需明确继续，先核对现有结果。",
+        "pauseReason": "page-change",
+        "actions": [
+          {
+            "coordination": {
+              "session": {
+                "id": "helpr-fixture-web",
+                "epoch": "aea1f202-23cd-4f58-b58e-0d036e0aa251:0",
+                "origin": "http://127.0.0.1:50081"
+              },
+              "claimId": "68bcf884-400c-4816-a74a-8ede6ba12ae6"
+            },
+            "observedLinks": [],
+            "navigation": {
+              "id": "a7955497-e34a-4784-9ae0-8891ebd1f510",
+              "association": "during-action",
+              "targetId": "F9622FEFE748B14CDC691558497F7316",
+              "sourceGeneration": 1,
+              "generation": 2,
+              "url": "http://127.0.0.1:50081/navigation-create",
+              "mainFrame": true,
+              "sameDocument": false,
+              "inputEpoch": 1,
+              "observedAt": 1794017984531
+            },
+            "id": "06c6f988-23fb-455b-b613-45783fdd4b69",
+            "runId": "db923931-c54f-4230-982f-48b6268afc0f",
+            "goalVersion": 1,
+            "status": "unknown",
+            "summary": "打开新建条目",
+            "action": {
+              "kind": "click",
+              "target": {
+                "role": "button",
+                "name": "新建条目",
+                "exact": true
+              }
+            },
+            "effect": "interaction",
+            "preconditions": [
+              "新建条目"
+            ],
+            "source": {
+              "url": "http://127.0.0.1:50081/navigation-start",
+              "title": "条目清单",
+              "fingerprint": "8de09f59cfffec855e59f562cf4c018509808d2a6041de73f1b91a2210396a69",
+              "generation": 1,
+              "observedAt": 1794017984035,
+              "truncated": false
+            },
+            "observedUrls": [
+              "http://127.0.0.1:50081/navigation-start"
+            ],
+            "binding": {
+              "targetId": "F9622FEFE748B14CDC691558497F7316",
+              "generation": 1
+            },
+            "evidence": [],
+            "returned": false,
+            "dispatchState": "possible"
+          }
+        ]
+      },
+      "error": "",
+      "version": 5,
+      "messages": [
+        {
+          "role": "user",
+          "text": "在 http://127.0.0.1:50081/navigation-start 新建一个条目并核对。"
+        },
+        {
+          "role": "system",
+          "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+        },
+        {
+          "role": "user",
+          "text": "开始执行"
+        },
+        {
+          "role": "assistant",
+          "text": "打开新建条目",
+          "call": {
+            "usageKind": "web-planning",
+            "id": "d2ab5a4a-3e28-442d-9978-a1509931fb8e",
+            "taskId": "08d1ed10-f99b-498e-9b02-9c0801b7f7b8",
+            "model": "fixture",
+            "configurationVersion": 1,
+            "phase": "complete",
+            "source": {
+              "url": "http://127.0.0.1:50081/navigation-start",
+              "title": "条目清单",
+              "fingerprint": "8de09f59cfffec855e59f562cf4c018509808d2a6041de73f1b91a2210396a69",
+              "generation": 1,
+              "observedAt": 1794017984035,
+              "truncated": false
+            },
+            "pageChanged": false,
+            "dispatched": true,
+            "reservedTokens": 29840,
+            "inputTokens": null,
+            "outputTokens": null,
+            "totalTokens": null,
+            "error": null
+          }
+        }
+      ]
+    }
+  },
+  "automatedPassed": true,
+  "passed": true,
+  "remaining": [],
+  "ms": 8673
+}

@@ -1,3 +1,4 @@
+import { actionNavigationEventSchema } from '../shared/action-navigation';
 import {
   agreementUICommandSchema,
   agreementTermsSchema,
@@ -333,6 +334,7 @@ const commandSchema = z.discriminatedUnion('kind', [
     binding: pageBindingSchema,
   }),
   z.strictObject({ kind: z.literal('dispatch'), ...work, id: z.string() }),
+  actionNavigationEventSchema.extend({ kind: z.literal('action-navigation') }),
   z.strictObject({
     kind: z.literal('reported'),
     taskId: z.string(),
@@ -1482,6 +1484,28 @@ export class ExecutionRecords {
             this.save(task.id, e);
             return { created: true };
           }
+        }
+        if (c.kind === 'action-navigation') {
+          const a = e.actions.find((a) => a.id === c.actionId);
+          if (
+            !a ||
+            a.runId !== c.runId ||
+            a.dispatchState !== 'possible' ||
+            a.status === 'cancelled' ||
+            a.status === 'reserved' ||
+            a.binding.targetId !== c.navigation.targetId ||
+            a.binding.generation !== c.navigation.sourceGeneration
+          )
+            throw Error('ACTION_NOT_OWNED');
+          if (a.navigation) {
+            if (JSON.stringify(a.navigation) !== JSON.stringify(c.navigation))
+              throw Error('REQUEST_CONTENT_CONFLICT');
+            return { recorded: false };
+          }
+          a.navigation = c.navigation;
+          // 迟到证据只补事实，不改意图、状态、确认或结果，也不代表点击成功。
+          this.save(task.id, e);
+          return { recorded: true };
         }
         if (c.kind === 'reported') {
           const a = e.actions.find((a) => a.id === c.id);

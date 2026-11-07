@@ -256,3 +256,9 @@ Node-API 8 原生模块经 node-gyp `13.1.0` 构建，固定 arm64／macOS 14 �
 关键记录／素材保存失败会阻断依赖保存的自动工作。修复空间或权限后，在同一面板“重新检查本机保存”；可写恢复后仍先暂停和核对原任务，需要明确继续。诊断失败另行提示，不表示业务事实已保存或已丢失；诊断轮转只处理各角色日志，未知异常只记录固定分类。
 
 源码专项：`cleanup.test.ts`、`cleanup-ui.test.tsx`、`diagnostics.test.ts`、`process.test.ts`。实际签名包：`pnpm validate:workspace --fixture --candidate=history-cleanup-22 --history-cleanup`。覆盖、原失败和未验条件见[22报告](../docs/testing/evidence/cleanup-22/REPORT.md)与[检查安排](../docs/testing/cleanup-22-plan.md)。
+
+## 动作窗口内导航记录（23阶段）
+
+可靠保存派发后，宿主在单步工作者启动前登记任务、执行、动作、页面target／代次和原生epoch，窗口最多16秒。首个导航只记录`during-action`时间关联；页面变化仍即时撤权并暂停，不代表由动作触发、动作完成或新页面归属。人工输入使epoch变化、窗口过期、页面替换或旧动作结束后不关联。重定向终点不能替代实际观察到的首个导航。
+
+格式23接续22并在迁移前备份；迟到事实可以补入原已派发动作，但不恢复停止、不确认结果、不重发。冷开和备份保留并校验此关联。自动跨页续行、新目标身份和动态结果仍待补齐，不能仅凭这份记录放行。源码专项见`tests/workspace/action-navigation.test.ts`；隔离包用`pnpm validate:workspace --fixture --candidate=<名称> --action-navigation`核对一次POST／303、暂停及冷开不重发，不能抵算真实后台或原生接管验收。

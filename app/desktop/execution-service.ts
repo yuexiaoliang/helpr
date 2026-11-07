@@ -1,3 +1,4 @@
+import type { ActionNavigationEvent } from '../shared/action-navigation';
 import {
   agreementUICommandSchema,
   type AgreementUICommand,
@@ -170,6 +171,7 @@ export class ExecutionService {
     { abort: AbortController; work: Promise<void>; epoch?: number }
   >();
   private readonly interruptions = new Set<Promise<unknown>>();
+  private readonly pendingNavigations = new Set<Promise<unknown>>();
   private readonly sessionUpdates = new Map<string, Promise<unknown>>();
   constructor(
     private readonly ports: {
@@ -202,9 +204,19 @@ export class ExecutionService {
   ) {
     this.upgradeHeld = ports.initialUpgradeHold ?? false;
   }
+  async recordNavigation(event: ActionNavigationEvent) {
+    const saving = this.record({ kind: 'action-navigation', ...event });
+    this.pendingNavigations.add(saving);
+    try {
+      await saving;
+    } finally {
+      this.pendingNavigations.delete(saving);
+    }
+  }
   canExit() {
     return (
       this.pendingReplies.size === 0 &&
+      this.pendingNavigations.size === 0 &&
       this.pendingIntents.size === 0 &&
       this.reviews.size === 0 &&
       this.interruptions.size === 0 &&
@@ -2332,7 +2344,11 @@ export class ExecutionService {
     await Promise.allSettled([...this.reviews.values()].map((r) => r.work));
     for (;;) {
       const pump = this.pumping;
-      await Promise.allSettled([...this.interruptions, ...this.pendingReplies]);
+      await Promise.allSettled([
+        ...this.interruptions,
+        ...this.pendingReplies,
+        ...this.pendingNavigations,
+      ]);
       await Promise.allSettled([...this.sessionUpdates.values()]);
       if (pump) await pump;
       const jobs = [...this.jobs.values()];

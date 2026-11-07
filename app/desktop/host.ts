@@ -1,3 +1,4 @@
+import { ActionNavigationWindows } from './action-navigation';
 import {
   app,
   BrowserWindow,
@@ -43,6 +44,7 @@ import {
 } from '../shared/upgrade';
 
 const images = runtimeImages(process.execPath, app.isPackaged);
+const actionNavigation = new ActionNavigationWindows();
 const coordinatedRefresh = new Map<string, { url: string; epoch: number }>();
 const startup = resolveStartup({
   argv: process.argv,
@@ -158,6 +160,8 @@ const renderer = path.join(__dirname, '../renderer');
 const preload = path.join(__dirname, '../preload/preload.cjs');
 function suspend(taskId: string | null, reason: ExecutionPauseReason) {
   if (upgradeClosing) return;
+  if (taskId) actionNavigation.disarm(taskId);
+  else for (const id of pages.keys()) actionNavigation.disarm(id);
   inputGate.block(taskId ?? '*');
   notify({
     suspension: {
@@ -410,7 +414,7 @@ function bindPage(task: Task): void {
           generation: page.generation,
         },
       });
-    wc.on('did-start-navigation', (_event, url, _inPlace, main) => {
+    wc.on('did-start-navigation', (_event, url, inPlace, main) => {
       if (page.view === view) {
         // 首次重建页面仍在阻断门内；其加载不能覆盖从记录恢复的原暂停原因。
         const refresh = coordinatedRefresh.get(task.id);
@@ -419,7 +423,21 @@ function bindPage(task: Task): void {
           refresh?.url === url &&
           refresh.epoch === inputGate.state(task.id).epoch;
         if (main) coordinatedRefresh.delete(task.id);
+        const ticket = inputGate.state(task.id);
+        const navigation = actionNavigation.started({
+          taskId: task.id,
+          targetId: wc.getOrCreateDevToolsTargetId(),
+          generation: page.generation,
+          inputEpoch: ticket.epoch,
+          blocked: ticket.blocked,
+          available: ticket.available,
+          url,
+          mainFrame: main,
+          sameDocument: inPlace,
+        });
         if (!initialLoad && !expected) suspend(task.id, 'page-change');
+        // 关联信息不绕过原生撤权，也不将导航当作动作成功。
+        if (navigation) notify({ actionNavigation: navigation });
         page.generation++;
         register();
         if (main) pageState(task.id, 'loading');
@@ -625,6 +643,52 @@ function reconcile(): void {
 }
 async function perform(input: unknown): Promise<unknown> {
   const command = z.object({ kind: z.string() }).parse(input);
+  if (
+    command.kind === 'action-window-arm' ||
+    command.kind === 'action-window-disarm'
+  ) {
+    const c = z
+      .object({ taskId: z.string(), actionId: z.string() })
+      .parse(input);
+    if (command.kind === 'action-window-disarm') {
+      actionNavigation.disarm(c.taskId, c.actionId);
+      return null;
+    }
+    const request = z
+      .object({
+        runId: z.string(),
+        targetId: z.string(),
+        generation: z.number().int(),
+      })
+      .parse(input);
+    const page = pages.get(c.taskId);
+    const e = state.tasks.find((t) => t.id === c.taskId)?.execution;
+    const a = e?.actions.find((a) => a.id === c.actionId);
+    const ticket = inputGate.state(c.taskId);
+    if (
+      !page ||
+      page.view.webContents.isDestroyed() ||
+      page.view.webContents.getOrCreateDevToolsTargetId() !==
+        request.targetId ||
+      page.generation !== request.generation ||
+      ticket.blocked ||
+      !ticket.available ||
+      !e ||
+      e.intent !== 'automatic' ||
+      e.pauseReason ||
+      e.question ||
+      e.runId !== request.runId ||
+      !a ||
+      a.runId !== request.runId ||
+      a.status !== 'dispatched' ||
+      a.dispatchState !== 'possible' ||
+      a.binding.targetId !== request.targetId ||
+      a.binding.generation !== request.generation
+    )
+      throw Error('EXECUTION_PAGE_CHANGED');
+    actionNavigation.arm({ ...c, ...request, inputEpoch: ticket.epoch });
+    return null;
+  }
   if (command.kind === 'storage-session-change') {
     const { origin } = z.object({ origin: z.url() }).parse(input);
     const session = websiteSessions.storageChanged(new URL(origin).origin);
