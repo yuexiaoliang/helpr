@@ -1,3 +1,8 @@
+import {
+  formChainEpoch,
+  type FormChainResolution,
+  type HostFormChain,
+} from '../shared/form-navigation-chain';
 import { uploadedLink } from '../shared/upload-readiness';
 import { creationFieldsMatch } from '../shared/target-creation';
 import type {
@@ -180,6 +185,11 @@ export class ExecutionService {
   >();
   private readonly interruptions = new Set<Promise<unknown>>();
   private readonly resultDiscoveries = new Set<string>();
+  private readonly navigationBlocks = new Map<
+    string,
+    FormChainResolution['control']
+  >();
+  private readonly chainDiscoveries = new Set<string>();
   private readonly formProofs = new Map<string, FormNavigationProof>();
   private readonly linkProofs = new Map<string, LinkNavigationProof>();
   private readonly navigationRecoveries = new Set<string>();
@@ -203,6 +213,9 @@ export class ExecutionService {
       beforeRecovery?: () => Promise<void>;
       session?: (taskId: string) => Promise<SessionContext>;
       resultPageReady?: (event: ActionNavigationEvent) => Promise<boolean>;
+      formChainReady?: (
+        proof: FormNavigationProof,
+      ) => Promise<HostFormChain | null>;
       navigationReady?: (event: ActionNavigationEvent) => Promise<boolean>;
       refreshPage?: (taskId: string) => Promise<void>;
       initialUpgradeHold?: boolean;
@@ -235,7 +248,21 @@ export class ExecutionService {
   }
   acceptFormNavigation(proof: FormNavigationProof) {
     this.formProofs.set(proof.taskId, proof);
+    this.tryFormDiscovery(proof.taskId);
     this.tryActionNavigation(proof.taskId, true);
+  }
+  private tryFormDiscovery(taskId: string) {
+    const proof = this.formProofs.get(taskId);
+    if (
+      !proof?.chain ||
+      this.reviews.has(taskId) ||
+      this.chainDiscoveries.has(proof.actionId) ||
+      !this.blocked.get(taskId)?.saved
+    )
+      return;
+    this.chainDiscoveries.add(proof.actionId);
+    this.resultDiscoveries.delete(proof.actionId);
+    this.tryDynamicResult(taskId);
   }
   /** 已有提交只读核对；导航是候选观察的触发，不是成功或恢复输入的许可。 */
   private tryDynamicResult(taskId: string) {
@@ -385,6 +412,7 @@ export class ExecutionService {
       }
     })().finally(() => {
       if (this.reviews.get(taskId) === review) this.reviews.delete(taskId);
+      this.tryFormDiscovery(taskId);
       this.tryActionNavigation(taskId, true);
       this.pump();
     });
@@ -417,8 +445,12 @@ export class ExecutionService {
     };
     const sequence = this.intents.get(taskId),
       systemGeneration = this.systemGeneration;
-    // 恰好两次撤权：宿主导航开始、控制侧保存暂停。额外原生/停止/页面事件不能被重新prepare吞掉。
-    const epoch = event.navigation.inputEpoch + 2;
+    // 旧直接导航仍恰好两次撤权；网络链只采用逐事件无缺口的回执，不以当前epoch作基线。
+    const requestChain = form
+      ? (proof as FormNavigationProof).chain
+      : undefined;
+    let epoch = event.navigation.inputEpoch + 2;
+    let chain: FormChainResolution | undefined;
     const unchanged = () =>
       this.available &&
       !this.closing &&
@@ -431,6 +463,25 @@ export class ExecutionService {
     const work = (async () => {
       try {
         await this.jobs.get(taskId)?.work;
+        if (requestChain) {
+          const host = await this.ports.formChainReady?.(
+            proof as FormNavigationProof,
+          );
+          if (!host) return;
+          chain = {
+            host,
+            control: (this.navigationBlocks.get(taskId) ?? []).filter(
+              (r) => r.before >= event.navigation.inputEpoch,
+            ),
+          };
+          const verified = formChainEpoch(
+            requestChain,
+            chain,
+            event.navigation,
+          );
+          if (verified === undefined) return;
+          epoch = verified;
+        }
         if (!unchanged()) return;
         const signal = AbortSignal.timeout(6000);
         let observed: BoundObservation | undefined;
@@ -440,7 +491,10 @@ export class ExecutionService {
           attempt++
         ) {
           const ready = await this.abortable(
-            () => this.ports.navigationReady!(event),
+            () =>
+              requestChain
+                ? Promise.resolve(true)
+                : this.ports.navigationReady!(event),
             signal,
           );
           if (ready) {
@@ -457,7 +511,7 @@ export class ExecutionService {
           !unchanged() ||
           observed.binding.targetId !== event.navigation.targetId ||
           observed.binding.generation !== event.navigation.generation ||
-          observed.observation.url !== proof.url ||
+          observed.observation.url !== (requestChain?.finalUrl ?? proof.url) ||
           observed.observation.truncated ||
           proof.url !== event.navigation.url ||
           proof.inputEpoch !== event.navigation.inputEpoch ||
@@ -485,6 +539,7 @@ export class ExecutionService {
           proof,
           source: pageSourceSchema.strip().parse(observed.observation),
           pausedInputEpoch: epoch,
+          ...(chain ? { chain } : {}),
         };
         if (
           !actionFactSchema.safeParse({
@@ -718,7 +773,20 @@ export class ExecutionService {
         execution.intent !== 'stopped' &&
         execution.phase !== 'complete');
     this.intents.set(taskId, sequence);
+    const before = this.ports.input?.epoch(taskId);
     this.ports.input?.block(taskId);
+    const after = this.ports.input?.epoch(taskId);
+    if (
+      reason === 'page-change' &&
+      before !== undefined &&
+      after !== undefined
+    ) {
+      const blocks = this.navigationBlocks.get(taskId) ?? [];
+      this.navigationBlocks.set(taskId, [
+        ...blocks.slice(-17),
+        { requestId, before, after },
+      ]);
+    }
     this.jobs.get(taskId)?.abort.abort(Error('EXECUTION_STOPPED'));
     this.ports.revoke(taskId);
     this.ports.stopModels(taskId);
@@ -749,6 +817,8 @@ export class ExecutionService {
       if (this.intents.get(taskId) === sequence)
         this.pendingIntents.delete(taskId);
       this.tryActionNavigation(taskId);
+      this.tryFormDiscovery(taskId);
+      this.tryActionNavigation(taskId, true);
       this.tryDynamicResult(taskId);
       this.pump();
     }

@@ -87,6 +87,7 @@ const envelope = z.strictObject({
     z.literal(26),
     z.literal(27),
     z.literal(28),
+    z.literal(29),
     z.literal(CURRENT_DATA_FORMAT),
   ]),
   stateModel: z.literal(CURRENT_STATE_MODEL),

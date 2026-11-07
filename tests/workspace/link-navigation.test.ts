@@ -606,6 +606,28 @@ test('表单订阅仅接受实际点击后同站主frame POST；拒绝链接、�
               : to,
       },
     });
+    if (scenario === 'valid') {
+      const send = (method: string, params: unknown) =>
+        listener({ sessionId: 'session', method, params });
+      send('Network.requestWillBeSent', {
+        requestId: 'req',
+        loaderId: 'loader',
+        frameId: 'main',
+        type: 'Document',
+        request: { url: to, method: 'POST' },
+      });
+      send('Network.responseReceived', {
+        requestId: 'req',
+        loaderId: 'loader',
+        frameId: 'main',
+        type: 'Document',
+        response: { url: to, status: 200 },
+      });
+      send('Page.frameNavigated', {
+        frame: { id: 'main', loaderId: 'loader', url: to },
+      });
+      send('Network.loadingFinished', { requestId: 'req' });
+    }
     expect(proofs).toHaveLength(scenario === 'valid' ? 1 : 0);
     expect(closed).toBe(
       ['truncated', 'no-creation'].includes(scenario) ? 0 : 1,

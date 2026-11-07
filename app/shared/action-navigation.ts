@@ -1,3 +1,7 @@
+import {
+  formRequestChainSchema,
+  formChainResolutionSchema,
+} from './form-navigation-chain';
 import { z } from 'zod';
 import { pageSourceSchema } from './model';
 import type { WebAction } from './web-action';
@@ -44,14 +48,16 @@ export const linkNavigationResolutionSchema = z.strictObject({
   source: pageSourceSchema,
   pausedInputEpoch: z.number().int().nonnegative(),
 });
-// 表单使用独立证明；当前只准无重定向的主文档POST，不能套用链接许可。
+// 表单独立证明；旧直接POST记录保留，新请求链须另核对宿主及逐次撤权回执。
 export const formNavigationProofSchema = linkNavigationProofSchema.extend({
   reason: z.literal('formSubmissionPost'),
+  chain: formRequestChainSchema.optional(),
 });
 export type FormNavigationProof = z.infer<typeof formNavigationProofSchema>;
 export const formNavigationResolutionSchema =
   linkNavigationResolutionSchema.extend({
     proof: formNavigationProofSchema,
+    chain: formChainResolutionSchema.optional(),
   });
 export function directFormButton(
   action: WebAction,
@@ -66,14 +72,14 @@ export function directFormButton(
     (!action.target.frameUrl || action.target.frameUrl === source.url)
   );
 }
-export function sameSiteFormURL(from: string, to: string) {
+export function sameSiteFormURL(from: string, to: string, allowSame = false) {
   try {
     const a = new URL(from),
       b = new URL(to);
     return (
       ['http:', 'https:'].includes(b.protocol) &&
       a.origin === b.origin &&
-      a.href !== b.href &&
+      (allowSame || a.href !== b.href) &&
       b.href === to &&
       !b.hash &&
       !b.username &&

@@ -1,3 +1,4 @@
+import type { HostFormChain } from '../../app/shared/form-navigation-chain';
 import { afterEach, expect, test, vi } from 'vitest';
 import { mkdtempSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -150,6 +151,7 @@ function fixture(direct = false) {
       afterRecord?: (c: Record<string, unknown>) => void;
       observe?: () => PageObservation;
       changedSession?: boolean;
+      formChainReady?: () => Promise<HostFormChain | null>;
     } = {},
   ) => {
     let state = records.snapshot(),
@@ -194,6 +196,7 @@ function fixture(direct = false) {
       ...(direct ? { session: () => Promise.resolve(session) } : {}),
       resultPageReady: () => Promise.resolve(true),
       navigationReady: () => Promise.resolve(true),
+      formChainReady: options.formChainReady,
       propose,
       perform,
       revoke: () => {},
@@ -685,4 +688,235 @@ test('表单检查点拒绝坏epoch、代次、指纹及无已保存目标；28�
   expect(
     g.records.snapshot().tasks.find((t) => t.id === f.taskId)!.execution,
   ).toMatchObject({ restoreReview: 'required', actions: savedActions });
+});
+
+test.each([
+  'valid',
+  'same-source',
+  'missing-host',
+  'epoch-gap',
+  'wrong-hop',
+  'stop-before-save',
+  'input-after-save',
+  'save-failure',
+  'session-change',
+] as const)('POST303请求链逐事件核对与自动续行：%s', async (variant) => {
+  const f = fixture(true);
+  f.dispatch();
+  const requested =
+    variant === 'same-source' ? f.source.url : f.source.url + '/submit';
+  f.event.navigation.url = requested;
+  const proof = {
+    ...formProof(f),
+    url: requested,
+    chain: {
+      requestId: 'req',
+      loaderId: 'loader',
+      frameId: 'main',
+      sessionId: 'cdp',
+      requests: [
+        { url: requested, method: 'POST' as const },
+        { url: f.url, method: 'GET' as const, redirectStatus: 303 },
+      ],
+      finalUrl: f.url,
+      status: 200,
+    },
+  };
+  const host: HostFormChain = {
+    navigationId: f.event.navigation.id,
+    targetId: 'page',
+    generation: 2,
+    events: [
+      {
+        kind: 'start',
+        url: requested,
+        requestId: 'start',
+        before: 4,
+        after: 5,
+      },
+      {
+        kind: 'redirect',
+        url: variant === 'wrong-hop' ? f.url + '/wrong' : f.url,
+        requestId: 'redirect',
+        before: 6,
+        after: 7,
+      },
+    ],
+  };
+  let entered = false;
+  const s = f.service({
+    changedSession: variant === 'session-change',
+    formChainReady: () =>
+      Promise.resolve(variant === 'missing-host' ? null : host),
+    beforeRecord: (c) => {
+      if (c.kind === 'form-navigation-resolved') {
+        entered = true;
+        if (variant === 'stop-before-save')
+          f.post({ kind: 'intent', requestId: randomUUID(), intent: 'stop' });
+        if (variant === 'save-failure') throw Error('DISK_FAILURE');
+      }
+    },
+    afterRecord: (c) => {
+      if (
+        c.kind === 'form-navigation-resolved' &&
+        variant === 'input-after-save'
+      )
+        s.nativeChange();
+    },
+  });
+  // 首次宿主撤权4→5，控制侧保存5→6，重定向宿主撤权6→7。
+  await s.instance.suspend(f.taskId, 'page-change', 'start');
+  s.nativeChange();
+  if (variant === 'epoch-gap') s.nativeChange();
+  f.arrive();
+  s.instance.acceptFormNavigation(proof);
+  await s.instance.recordNavigation(f.event);
+  await s.instance.settled();
+  if (variant === 'valid' || variant === 'same-source') {
+    expect(s.allow).toHaveBeenCalledTimes(1);
+    expect(s.propose).toHaveBeenCalledTimes(1);
+    expect(f.execution().actions[0]?.formNavigationResolution).toMatchObject({
+      proof,
+      pausedInputEpoch: 7,
+      chain: { host, control: [{ requestId: 'start', before: 5, after: 6 }] },
+    });
+  } else {
+    expect(s.allow).not.toHaveBeenCalled();
+    expect(s.propose).not.toHaveBeenCalled();
+    if (
+      ['stop-before-save', 'input-after-save', 'save-failure'].includes(variant)
+    )
+      expect(entered).toBe(true);
+  }
+  expect(s.perform).not.toHaveBeenCalled();
+  await s.instance.stopAll();
+});
+
+test('请求链检查点拒绝缺失/乱序证据；格式29备份迁移、冷开与备份导入保留已确认动作', async () => {
+  const f = fixture(true);
+  f.dispatch();
+  const requested = f.source.url + '/submit';
+  f.event.navigation.url = requested;
+  f.pause();
+  f.freeze();
+  const a = f.execution().actions[0]!;
+  const proof = {
+    ...formProof(f),
+    url: requested,
+    chain: {
+      requestId: 'req',
+      loaderId: 'loader',
+      frameId: 'main',
+      sessionId: 'cdp',
+      requests: [
+        { url: requested, method: 'POST' as const },
+        { url: f.url, method: 'GET' as const, redirectStatus: 303 },
+      ],
+      finalUrl: f.url,
+      status: 200,
+    },
+  };
+  const host = {
+    navigationId: f.event.navigation.id,
+    targetId: 'page',
+    generation: 2,
+    events: [
+      {
+        kind: 'start' as const,
+        url: requested,
+        requestId: 'start',
+        before: 4,
+        after: 5,
+      },
+      {
+        kind: 'redirect' as const,
+        url: f.url,
+        requestId: 'redirect',
+        before: 6,
+        after: 7,
+      },
+    ],
+  };
+  const resolution = {
+    proof,
+    source: a.discoveredTarget!.source,
+    pausedInputEpoch: 7,
+    chain: { host, control: [{ requestId: 'start', before: 5, after: 6 }] },
+  };
+  expect(
+    actionFactSchema.safeParse({ ...a, formNavigationResolution: resolution })
+      .success,
+  ).toBe(true);
+  for (const change of [
+    { chain: undefined },
+    { pausedInputEpoch: 8 },
+    { source: { ...resolution.source, generation: 3 } },
+    { proof: { ...proof, chain: { ...proof.chain, finalUrl: requested } } },
+    {
+      proof: {
+        ...proof,
+        chain: {
+          ...proof.chain,
+          requests: [
+            proof.chain.requests[0],
+            { ...proof.chain.requests[1], redirectStatus: 307 },
+          ],
+        },
+      },
+    },
+    { chain: { ...resolution.chain, host: { ...host, targetId: 'other' } } },
+    {
+      chain: {
+        ...resolution.chain,
+        host: { ...host, events: [...host.events].reverse() },
+      },
+    },
+    {
+      chain: {
+        ...resolution.chain,
+        control: [{ requestId: 'redirect', before: 5, after: 6 }],
+      },
+    },
+  ])
+    expect(
+      actionFactSchema.safeParse({
+        ...a,
+        formNavigationResolution: { ...resolution, ...change },
+      }).success,
+    ).toBe(false);
+  expect(
+    f.post({
+      kind: 'form-navigation-resolved',
+      expectedVersion: f.execution().version,
+      resolution,
+    }).recovered,
+  ).toBe(true);
+  const saved = f.execution().actions;
+  f.records.close();
+  const db = new Database(path.join(f.folder, 'workspace.sqlite'));
+  db.exec('UPDATE workspace SET schema_version=29');
+  db.close();
+  f.reopen();
+  expect(
+    readdirSync(f.folder).some((n) =>
+      n.startsWith('workspace-before-form-chain-23-'),
+    ),
+  ).toBe(true);
+  expect(f.execution().actions).toEqual(saved);
+  const file = path.join(f.folder, 'chain.helpr-backup');
+  const backup = await f.records.backup({
+    kind: 'create',
+    requestId: randomUUID(),
+    file,
+  });
+  const g = fixture();
+  await g.records.backup({
+    kind: 'restore',
+    requestId: randomUUID(),
+    file,
+    checksum: backup.archive.checksum,
+  });
+  expect(
+    g.records.snapshot().tasks.find((t) => t.id === f.taskId)?.execution,
+  ).toMatchObject({ restoreReview: 'required', actions: saved });
 });

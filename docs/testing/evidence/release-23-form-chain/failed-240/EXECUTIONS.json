@@ -1,0 +1,111 @@
+[
+  {
+    "coordination": {
+      "session": {
+        "id": "helpr-fixture-web",
+        "epoch": "8f95c4ca-466a-4b0b-90c9-c2ce9b6bb3dd:0",
+        "origin": "http://127.0.0.1:65153"
+      },
+      "status": "ready",
+      "source": {
+        "url": "http://127.0.0.1:65153/form-new?item=A",
+        "title": "新建",
+        "fingerprint": "3769a1a94fa93a1b03d357753139d26abd165bb1fe9c71a6b24e43937e0ca594",
+        "generation": 1,
+        "observedAt": 1794027718793,
+        "truncated": false
+      }
+    },
+    "resourceClaims": [
+      {
+        "status": "held",
+        "id": "cfb9ab3f-42f6-4bb6-8714-f8d7f7de1df9",
+        "runId": "33d00e48-fdd6-48a3-be90-58fef2ca2df0",
+        "goalVersion": 1,
+        "origin": "http://127.0.0.1:65153",
+        "targetUrl": null
+      }
+    ],
+    "modelVersion": 1,
+    "intent": "automatic",
+    "phase": "paused",
+    "version": 4,
+    "intentId": "753c62e5-2b20-4d6f-8f12-9543be0b03a1",
+    "goalVersion": 1,
+    "goal": "在 http://127.0.0.1:65153/form-new?item=A 创建“独立草稿A”到公告，并将正文填写为“自动续行正文”",
+    "runId": null,
+    "resource": null,
+    "summary": "你已接手网页，我已让出操作。页面与文字保留，明确继续后先核对再续做。",
+    "pauseReason": "takeover",
+    "actions": [
+      {
+        "coordination": {
+          "session": {
+            "id": "helpr-fixture-web",
+            "epoch": "8f95c4ca-466a-4b0b-90c9-c2ce9b6bb3dd:0",
+            "origin": "http://127.0.0.1:65153"
+          },
+          "claimId": "cfb9ab3f-42f6-4bb6-8714-f8d7f7de1df9"
+        },
+        "observedLinks": [],
+        "targetCreation": {
+          "rule": "same-site-editor-v1",
+          "fields": [
+            {
+              "name": "草稿标题",
+              "value": "独立草稿A"
+            }
+          ],
+          "destination": "公告"
+        },
+        "navigation": {
+          "id": "f47ee308-1fae-4264-8f3a-5e9f12f01541",
+          "association": "during-action",
+          "targetId": "BE8105C8E562243CACFD3C314B814234",
+          "sourceGeneration": 1,
+          "generation": 2,
+          "url": "http://127.0.0.1:65153/form-post/8813b76d-ff7a-4f9f-840e-a6dfb884f2a9",
+          "mainFrame": true,
+          "sameDocument": false,
+          "inputEpoch": 1,
+          "observedAt": 1794027719643
+        },
+        "id": "8dbc498e-8468-4b60-a250-5a9e731724f8",
+        "runId": "33d00e48-fdd6-48a3-be90-58fef2ca2df0",
+        "goalVersion": 1,
+        "status": "unknown",
+        "summary": "创建草稿",
+        "action": {
+          "kind": "click",
+          "target": {
+            "role": "button",
+            "name": "创建草稿",
+            "exact": true
+          }
+        },
+        "effect": "draft",
+        "preconditions": [
+          "公告"
+        ],
+        "source": {
+          "url": "http://127.0.0.1:65153/form-new?item=A",
+          "title": "新建",
+          "fingerprint": "3769a1a94fa93a1b03d357753139d26abd165bb1fe9c71a6b24e43937e0ca594",
+          "generation": 1,
+          "observedAt": 1794027718793,
+          "truncated": false
+        },
+        "observedUrls": [
+          "http://127.0.0.1:65153/form-new?item=A"
+        ],
+        "binding": {
+          "targetId": "BE8105C8E562243CACFD3C314B814234",
+          "generation": 1
+        },
+        "evidence": [],
+        "returned": false,
+        "dispatchState": "possible"
+      }
+    ]
+  }
+]

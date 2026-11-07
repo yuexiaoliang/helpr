@@ -1,3 +1,4 @@
+import { validFormRequestChain, formChainEpoch } from './form-navigation-chain';
 import {
   uploadCheckSchema,
   validUploadCheck,
@@ -240,7 +241,7 @@ export const actionFactSchema = z
       !!a.targetCreation &&
       !a.navigationResolution &&
       directFormButton(a.action, a.source) &&
-      sameSiteFormURL(a.source.url, r.proof.url) &&
+      sameSiteFormURL(a.source.url, r.proof.url, !!r.proof.chain) &&
       n.mainFrame &&
       !n.sameDocument &&
       a.status === 'confirmed' &&
@@ -249,9 +250,13 @@ export const actionFactSchema = z
       r.proof.targetId === n.targetId &&
       r.proof.generation === n.sourceGeneration &&
       r.proof.inputEpoch === n.inputEpoch &&
-      r.pausedInputEpoch === n.inputEpoch + 2 &&
+      (r.proof.chain
+        ? !!r.chain &&
+          validFormRequestChain(r.proof.chain, a.source.url, r.proof.url) &&
+          r.pausedInputEpoch === formChainEpoch(r.proof.chain, r.chain, n)
+        : !r.chain && r.pausedInputEpoch === n.inputEpoch + 2) &&
       r.proof.url === n.url &&
-      r.source.url === n.url &&
+      r.source.url === (r.proof.chain?.finalUrl ?? n.url) &&
       r.source.generation === n.generation &&
       !r.source.truncated &&
       r.source.observedAt >= d.source.observedAt &&

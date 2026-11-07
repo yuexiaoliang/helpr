@@ -1,3 +1,4 @@
+import { FormRequestChainWatch } from './form-request-chain';
 import { creationFieldsMatch } from '../shared/target-creation';
 import { z } from 'zod';
 import {
@@ -44,6 +45,8 @@ export class LinkNavigationWatch {
     let removeEvent = () => {},
       removeInput = () => {},
       released = false,
+      formProof: FormNavigationProof | undefined,
+      chainWatch: FormRequestChainWatch | undefined,
       closed = false;
     const close = () => {
       if (closed) return;
@@ -84,6 +87,26 @@ export class LinkNavigationWatch {
           released = true;
       });
       removeEvent = this.broker.onEvent((input) => {
+        if (chainWatch) {
+          const message = z
+            .object({
+              sessionId: z.string(),
+              method: z.string(),
+              params: z.unknown(),
+            })
+            .safeParse(input);
+          if (!message.success || message.data.sessionId !== q.sessionId)
+            return;
+          const chain = chainWatch.event(
+            message.data.method,
+            message.data.params,
+          );
+          if (chain && formProof) {
+            close();
+            this.receivedForm?.({ ...formProof, chain });
+          }
+          return;
+        }
         const event = z
           .object({
             sessionId: z.string(),
@@ -99,15 +122,16 @@ export class LinkNavigationWatch {
         if (!event.success || event.data.sessionId !== q.sessionId) return;
         const p = event.data.params;
         // 首个请求不匹配就关闭，不在其它导航之后寻找一个可放行事件。
-        close();
         if (
           !released ||
           p.frameId !== frame ||
           p.reason !== (form ? 'formSubmissionPost' : 'anchorClick') ||
           p.disposition !== 'currentTab' ||
-          (form ? !sameSiteFormURL(job.source.url, p.url) : p.url !== url)
-        )
+          (form ? !sameSiteFormURL(job.source.url, p.url, true) : p.url !== url)
+        ) {
+          close();
           return;
+        }
         const proof = {
           taskId: job.taskId,
           runId: job.runId,
@@ -118,10 +142,21 @@ export class LinkNavigationWatch {
           url: p.url,
           requestedAt: Date.now(),
         };
-        if (form) this.receivedForm({ ...proof, reason: 'formSubmissionPost' });
-        else this.received({ ...proof, reason: 'anchorClick' });
+        if (form) {
+          formProof = { ...proof, reason: 'formSubmissionPost' };
+          chainWatch = new FormRequestChainWatch(
+            job.source.url,
+            p.url,
+            frame,
+            q.sessionId,
+          );
+        } else {
+          close();
+          this.received({ ...proof, reason: 'anchorClick' });
+        }
       });
       await this.broker.protocol('Page.enable', {}, q.sessionId);
+      if (form) await this.broker.protocol('Network.enable', {}, q.sessionId);
       if (closed || !job.qualified() || job.signal.aborted)
         throw Error('EXECUTION_STOPPED');
     } catch (error) {

@@ -8,9 +8,9 @@ import { materialFixture } from './material-fixture.mjs';
 import { workflowFixture } from './workflow-fixture.mjs';
 import { coordinationFixture } from './coordination-fixture.mjs';
 
-export async function fixture({ formNavigation = false, asyncUpload = false, createdTarget = false, managementResult = false, dynamicResult = false, linkNavigation = false, navigation = false, participation = false, review = false, material, workflow = false, repair = false, article = false, agreements = false, schedules = false, crossSite = false, separateFields = false, coordination = false } = {}) {
+export async function fixture({ formChain = false, formNavigation = false, asyncUpload = false, createdTarget = false, managementResult = false, dynamicResult = false, linkNavigation = false, navigation = false, participation = false, review = false, material, workflow = false, repair = false, article = false, agreements = false, schedules = false, crossSite = false, separateFields = false, coordination = false } = {}) {
   const receipts = [];
-  const handleNavigation = formNavigation ? formNavigationFixture(receipts) : createdTarget ? createdTargetFixture(receipts) : linkNavigation ? linkNavigationFixture(receipts) : navigation ? navigationFixture(receipts) : null;
+  const handleNavigation = formNavigation ? formNavigationFixture(receipts, {chain:formChain}) : createdTarget ? createdTargetFixture(receipts) : linkNavigation ? linkNavigationFixture(receipts) : navigation ? navigationFixture(receipts) : null;
   const handleMaterial = material ? materialFixture(material, receipts) : null;
   const handleWorkflow = workflow ? workflowFixture(receipts, {repair, article, agreements, schedules, crossSite, separateFields, dynamicResult, managementResult, asyncUpload}) : null;
   const coordinated = coordination ? coordinationFixture(receipts) : null;

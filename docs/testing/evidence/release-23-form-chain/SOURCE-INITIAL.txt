@@ -1,0 +1,15 @@
+$ pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:workspace && pnpm test:validation && pnpm check:legacy
+$ tsc --noEmit
+$ eslint app tests/workspace electron.vite.config.ts drizzle.config.ts vitest.config.ts
+
+/Users/yuexiaoliang/projects/helpr/app/desktop/link-navigation.ts
+  151:13  error  This assertion is unnecessary since it does not change the type of the expression  @typescript-eslint/no-unnecessary-type-assertion
+
+/Users/yuexiaoliang/projects/helpr/tests/workspace/created-target.test.ts
+  747:5  error  Async method 'formChainReady' has no 'await' expression  @typescript-eslint/require-await
+
+✖ 2 problems (2 errors, 0 warnings)
+  1 error and 0 warnings potentially fixable with the `--fix` option.
+
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.

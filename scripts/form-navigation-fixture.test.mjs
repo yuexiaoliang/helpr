@@ -19,3 +19,23 @@ test('表单夹具：A直接POST响应，B重定向回同一地址；模型只�
     assert.equal(site.receipts.filter(r=>r.kind==='form-created').length,2);
   }finally{await site.close();}
 });
+test('请求链夹具：C仅首次最终GET触发额外同URL脚本导航，后续页面完整',async()=>{
+ const site=await fixture({formNavigation:true,formChain:true});
+ try{
+  const page=await fetch(site.base+'/form-new?item=C').then(r=>r.text());const route=page.match(/action="([^"]+)"/)[1];
+  const response=await fetch(site.base+route,{method:'POST',body:'title=独立草稿C'});const html=await response.text();
+  assert.equal(response.url,site.base+route);assert(html.includes('location.replace(location.href)'));
+  const after=await fetch(site.base+route).then(r=>r.text());assert(!after.includes('location.replace'));assert(after.includes('当前草稿'));
+  assert.equal(site.receipts.filter(r=>r.kind==='form-created').length,1);
+ }finally{await site.close();}
+});
+test('请求链夹具：B向当前地址POST后才生成新的编辑URL，303/302后保持来源链接',async()=>{
+ const site=await fixture({formNavigation:true,formChain:true});
+ try{
+  const entry='/form-new?item=B',page=await fetch(site.base+entry).then(r=>r.text());assert.equal(page.match(/action="([^"]+)"/)[1],entry);
+  const response=await fetch(site.base+entry,{method:'POST',body:'title=独立草稿B'}),html=await response.text();
+  assert(response.url.startsWith(site.base+'/form-post/'));assert(html.includes('href="'+entry+'"'));
+  assert.equal(site.receipts.filter(r=>r.kind==='form-redirect').length,2);
+  assert.equal(site.receipts.find(r=>r.kind==='form-created').request,entry);
+ }finally{await site.close();}
+});

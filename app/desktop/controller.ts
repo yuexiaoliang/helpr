@@ -1,3 +1,4 @@
+import { hostFormChainSchema } from '../shared/form-navigation-chain';
 import { LinkNavigationWatch } from './link-navigation';
 import { actionNavigationEventSchema } from '../shared/action-navigation';
 import { agreementUICommandSchema } from '../shared/agreement';
@@ -507,6 +508,10 @@ export async function startController(
         .parse(
           await hostClient.request({ kind: 'result-page-ready', ...event }),
         ),
+    formChainReady: async (proof) =>
+      hostFormChainSchema
+        .nullable()
+        .parse(await hostClient.request({ kind: 'form-chain-ready', proof })),
     navigationReady: async (event) =>
       z
         .boolean()

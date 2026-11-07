@@ -1,0 +1,55 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/created-target.test.ts (36 tests | 8 failed) 12094ms
+   × POST303请求链逐事件核对与自动续行：valid 191ms
+   × POST303请求链逐事件核对与自动续行：missing-host 201ms
+   × POST303请求链逐事件核对与自动续行：epoch-gap 191ms
+   × POST303请求链逐事件核对与自动续行：wrong-hop 192ms
+   × POST303请求链逐事件核对与自动续行：stop-before-save 193ms
+   × POST303请求链逐事件核对与自动续行：input-after-save 192ms
+   × POST303请求链逐事件核对与自动续行：save-failure 189ms
+   × POST303请求链逐事件核对与自动续行：session-change 194ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/created-target.test.ts > POST303请求链逐事件核对与自动续行：valid
+ FAIL  tests/workspace/created-target.test.ts > POST303请求链逐事件核对与自动续行：missing-host
+ FAIL  tests/workspace/created-target.test.ts > POST303请求链逐事件核对与自动续行：epoch-gap
+ FAIL  tests/workspace/created-target.test.ts > POST303请求链逐事件核对与自动续行：wrong-hop
+ FAIL  tests/workspace/created-target.test.ts > POST303请求链逐事件核对与自动续行：stop-before-save
+ FAIL  tests/workspace/created-target.test.ts > POST303请求链逐事件核对与自动续行：input-after-save
+ FAIL  tests/workspace/created-target.test.ts > POST303请求链逐事件核对与自动续行：save-failure
+ FAIL  tests/workspace/created-target.test.ts > POST303请求链逐事件核对与自动续行：session-change
+ZodError: [
+  {
+    "code": "invalid_format",
+    "format": "url",
+    "path": [
+      "navigation",
+      "url"
+    ],
+    "message": "Invalid URL"
+  }
+]
+ ❯ ExecutionRecords.execute app/records/execution.ts:638:29
+    636|   }
+    637|   execute(input: unknown): Record<string, unknown> {
+    638|     const c = commandSchema.parse(input);
+       |                             ^
+    639|     let acceptedControl = false;
+    640|     const apply = (): Record<string, unknown> => {
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:446:33
+ ❯ Object.records tests/workspace/created-target.test.ts:176:32
+ ❯ ExecutionService.record app/desktop/execution-service.ts:689:53
+ ❯ ExecutionService.recordNavigation app/desktop/execution-service.ts:235:25
+ ❯ tests/workspace/created-target.test.ts:770:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  8 failed | 57 passed (65)
+   Start at  12:46:08
+   Duration  16.37s (tests 88%, import 10%, transform 2%)
+

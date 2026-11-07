@@ -47,6 +47,7 @@ const { values: options } = parseArgs({
     'upload-ready': flag,
     'created-target': flag,
     'form-navigation': flag,
+    'form-chain': flag,
     'created-target-mismatch': flag,
     'cross-site-controls': flag,
     'ambiguous-selection': flag,
@@ -92,6 +93,7 @@ if (args.length === 0) {
   process.exit(0);
 }
 
+if (options['form-chain']) options['form-navigation'] = true;
 if (options['form-navigation']) options['created-target'] = true;
 if (options['created-target-mismatch']) options['created-target'] = true;
 const recoveryPoint = options['publication-recovery'];
@@ -267,6 +269,7 @@ const website = await fixture({
   asyncUpload: options['upload-ready'],
   createdTarget: options['created-target'],
   formNavigation: options['form-navigation'],
+  formChain: options['form-chain'],
   dynamicResult: options['dynamic-result'],
   managementResult: options['management-result'],
   navigation: options['action-navigation'],
@@ -327,7 +330,7 @@ const deadline = setTimeout(
     ? 60000
     : options.interactive || systemStorage
       ? 30 * 60 * 1000
-      : (options.coordination || options['workflow-repair'] || options.agreements || options.schedules || options['cross-site-controls'] || options['history-cleanup']) ? 5 * 60000 : options['workflow-reuse'] ? 3 * 60000 : 2 * 60000,
+      : (options.coordination || options['workflow-repair'] || options.agreements || options.schedules || options['cross-site-controls'] || options['history-cleanup']) ? 5 * 60000 : (options['workflow-reuse'] || options['form-chain']) ? 3 * 60000 : 2 * 60000,
 );
 function check(name, test) {
   test();
@@ -922,7 +925,7 @@ async function verifyMaterial(client) {
 async function validate() {
   let client = await launch();
   if (options['upload-ready']) return verifyUploadReady({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
-  if (options['form-navigation']) return verifyFormNavigation({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
+  if (options['form-navigation']) return verifyFormNavigation({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, chain:options['form-chain']});
   if (options['created-target']) return verifyCreatedTarget({client, website, evidence, command, waitFor, check, launch, remainingOwned,mismatch:options['created-target-mismatch']});
   if (options['dynamic-result']) return verifyDynamicResult({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, management: options['management-result']});
   if (options['link-navigation']) return verifyLinkNavigation({client, website, evidence, command, waitFor, check, launch, remainingOwned});

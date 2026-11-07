@@ -1,3 +1,5 @@
+import { HostFormChains } from './host-form-chain';
+import { formNavigationProofSchema } from '../shared/action-navigation';
 import { actionNavigationEventSchema } from '../shared/action-navigation';
 import { ActionNavigationWindows } from './action-navigation';
 import {
@@ -46,6 +48,7 @@ import {
 
 const images = runtimeImages(process.execPath, app.isPackaged);
 const actionNavigation = new ActionNavigationWindows();
+const formChains = new HostFormChains();
 const coordinatedRefresh = new Map<string, { url: string; epoch: number }>();
 const startup = resolveStartup({
   argv: process.argv,
@@ -159,19 +162,28 @@ const prefs = {
 };
 const renderer = path.join(__dirname, '../renderer');
 const preload = path.join(__dirname, '../preload/preload.cjs');
-function suspend(taskId: string | null, reason: ExecutionPauseReason) {
+function suspend(
+  taskId: string | null,
+  reason: ExecutionPauseReason,
+  preserveChain = false,
+) {
   if (upgradeClosing) return;
   if (taskId) actionNavigation.disarm(taskId);
   else for (const id of pages.keys()) actionNavigation.disarm(id);
+  if (!preserveChain) formChains.invalidate(taskId);
+  const before = taskId ? inputGate.state(taskId).epoch : 0;
   inputGate.block(taskId ?? '*');
+  const after = taskId ? inputGate.state(taskId).epoch : 0;
+  const requestId = randomUUID();
   notify({
     suspension: {
       taskId,
       reason,
-      requestId: randomUUID(),
+      requestId,
       serial: ++suspensionSerial,
     },
   });
+  return { requestId: `${requestId}:${taskId}`, before, after };
 }
 function editFocused(command: 'undo' | 'redo' | 'cut' | 'paste' | 'selectAll') {
   const target = webContents.getFocusedWebContents();
@@ -436,7 +448,11 @@ function bindPage(task: Task): void {
           mainFrame: main,
           sameDocument: inPlace,
         });
-        if (!initialLoad && !expected) suspend(task.id, 'page-change');
+        const receipt =
+          !initialLoad && !expected
+            ? suspend(task.id, 'page-change')
+            : undefined;
+        if (navigation && receipt) formChains.start(navigation, receipt);
         // 关联信息不绕过原生撤权，也不将导航当作动作成功。
         if (navigation) notify({ actionNavigation: navigation });
         page.generation++;
@@ -481,11 +497,20 @@ function bindPage(task: Task): void {
       }
     };
     wc.on('will-frame-navigate', (event) => guard(event, event.url));
-    wc.on('will-redirect', (event, url) => {
+    wc.on('will-redirect', (event, url, _inPlace, main) => {
       guard(event, url);
-      // 即使重定向最终返回原href，也不能把中途未知去向当作直接链接到达。
-      // 额外撤权使原生epoch不再满足本次链接恢复的两次撤权条件。
-      if (page.view === view && !initialLoad) suspend(task.id, 'page-change');
+      if (page.view === view && !initialLoad) {
+        const receipt = suspend(task.id, 'page-change', true);
+        if (receipt)
+          formChains.redirect(
+            task.id,
+            wc.getOrCreateDevToolsTargetId(),
+            page.generation,
+            url,
+            main,
+            receipt,
+          );
+      }
     });
     wc.on('will-attach-webview', (event) => event.preventDefault());
     wc.on('render-process-gone', () => {
@@ -692,6 +717,7 @@ async function perform(input: unknown): Promise<unknown> {
       a.binding.generation !== request.generation
     )
       throw Error('EXECUTION_PAGE_CHANGED');
+    formChains.invalidate(c.taskId);
     actionNavigation.arm({ ...c, ...request, inputEpoch: ticket.epoch });
     return null;
   }
@@ -998,6 +1024,33 @@ async function perform(input: unknown): Promise<unknown> {
           },
     );
     return { file: result.canceled ? null : (result.filePaths[0] ?? null) };
+  }
+  if (command.kind === 'form-chain-ready') {
+    const { proof } = z
+      .object({ proof: formNavigationProofSchema })
+      .parse(input);
+    const chain = formChains.get(proof.taskId),
+      page = pages.get(proof.taskId),
+      wc = page?.view.webContents;
+    nativeBindings();
+    const ticket = inputGate.state(proof.taskId);
+    if (
+      !proof.chain ||
+      !chain ||
+      !wc ||
+      wc.isDestroyed() ||
+      wc.isLoading() ||
+      !nativeAvailable ||
+      !ticket.available ||
+      !ticket.blocked ||
+      wc.getOrCreateDevToolsTargetId() !== proof.targetId ||
+      page.generation !== proof.generation + 1 ||
+      chain.targetId !== proof.targetId ||
+      chain.generation !== page.generation ||
+      wc.getURL() !== proof.chain.finalUrl
+    )
+      return null;
+    return chain;
   }
   if (
     command.kind === 'navigation-ready' ||
