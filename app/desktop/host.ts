@@ -999,7 +999,10 @@ async function perform(input: unknown): Promise<unknown> {
     );
     return { file: result.canceled ? null : (result.filePaths[0] ?? null) };
   }
-  if (command.kind === 'navigation-ready') {
+  if (
+    command.kind === 'navigation-ready' ||
+    command.kind === 'result-page-ready'
+  ) {
     const event = actionNavigationEventSchema.parse(
       z
         .object({
@@ -1014,6 +1017,17 @@ async function perform(input: unknown): Promise<unknown> {
       wc = page?.view.webContents;
     nativeBindings();
     const ticket = inputGate.state(event.taskId);
+    // 仅供已提交结果的只读发现；允许重定向后的页面，绝不作为输入资格。
+    if (command.kind === 'result-page-ready')
+      return (
+        !!wc &&
+        !wc.isDestroyed() &&
+        !wc.isLoading() &&
+        ticket.blocked &&
+        wc.getOrCreateDevToolsTargetId() === event.navigation.targetId &&
+        page.generation >= event.navigation.generation &&
+        new URL(wc.getURL()).origin === new URL(event.navigation.url).origin
+      );
     return (
       !!wc &&
       !wc.isDestroyed() &&

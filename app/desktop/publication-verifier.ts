@@ -151,7 +151,7 @@ function publicContent(html: string, url: string) {
   return { text: texts.join(' '), links, canonical };
 }
 
-/** 冷进程仅消费派发前冻结的关联；不访问搜索、测试收件或模型服务。 */
+/** 冷进程仅消费可靠保存的关联；不访问搜索、测试收件或模型服务。 */
 export async function verifyRecoveredPublication(
   e: TaskExecution,
   action: ActionFact,
@@ -160,7 +160,7 @@ export async function verifyRecoveredPublication(
   const submission = action.submission!,
     p = submission.publication,
     a = p.attachment!,
-    rule = submission.recovery!,
+    rule = (action.discoveredRecovery?.recovery ?? submission.recovery)!,
     material = e.materials!.find(
       (m) => m.id === a.materialId && m.goalVersion === action.goalVersion,
     )!;
@@ -204,7 +204,9 @@ export async function verifyRecoveredPublication(
     rule.targetUrl === a.targetUrl &&
     rule.attachmentUrl === a.url &&
     action.source.url === rule.targetUrl &&
-    !!action.observedUrls?.includes(rule.url) &&
+    (action.discoveredRecovery
+      ? action.discoveredRecovery.source.url === rule.url
+      : !!action.observedUrls?.includes(rule.url)) &&
     new URL(rule.url).origin === new URL(rule.targetUrl).origin;
   if (!check.checks.target) return check;
   return readPublicResult(p, material, check, signal, true);

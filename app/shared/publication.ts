@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { materialVersionSchema } from './material';
-import { pageSourceSchema } from './model';
+import { pageSourceSchema, observedLinkSchema } from './model';
 import { websiteURL } from './url-policy';
 import type { WebAction } from './web-action';
 import type { PageObservation } from './model';
@@ -127,6 +127,19 @@ export const publicationRecoverySchema = z.strictObject({
   evidence: z.array(z.string().min(1).max(2000)).min(1).max(10),
 });
 export type PublicationRecovery = z.infer<typeof publicationRecoverySchema>;
+// 提交后的页面观察只登记候选入口，不证明动作因果，也不授予输入资格。
+export const publicationRecoveryCheckpointSchema = z.strictObject({
+  recovery: publicationRecoverySchema.extend({
+    targetFactId: z.string().uuid(),
+    uploadFactId: z.string().uuid(),
+  }),
+  source: pageSourceSchema,
+  binding: z.strictObject({
+    targetId: z.string().min(1),
+    generation: z.number().int().nonnegative(),
+  }),
+  links: z.array(observedLinkSchema).max(300),
+});
 export const downloadCheckSchema = z.strictObject({
   url,
   sha256: materialVersionSchema.shape.sha256,

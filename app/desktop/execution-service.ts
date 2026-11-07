@@ -175,6 +175,7 @@ export class ExecutionService {
     { abort: AbortController; work: Promise<void>; epoch?: number }
   >();
   private readonly interruptions = new Set<Promise<unknown>>();
+  private readonly resultDiscoveries = new Set<string>();
   private readonly linkProofs = new Map<string, LinkNavigationProof>();
   private readonly navigationRecoveries = new Set<string>();
   private readonly pendingNavigations = new Set<Promise<unknown>>();
@@ -196,6 +197,7 @@ export class ExecutionService {
       stopModels: (taskId: string) => void;
       beforeRecovery?: () => Promise<void>;
       session?: (taskId: string) => Promise<SessionContext>;
+      resultPageReady?: (event: ActionNavigationEvent) => Promise<boolean>;
       navigationReady?: (event: ActionNavigationEvent) => Promise<boolean>;
       refreshPage?: (taskId: string) => Promise<void>;
       initialUpgradeHold?: boolean;
@@ -220,10 +222,156 @@ export class ExecutionService {
       this.pendingNavigations.delete(saving);
     }
     this.tryLinkNavigation(event.taskId);
+    this.tryDynamicResult(event.taskId);
   }
   acceptLinkNavigation(proof: LinkNavigationProof) {
     this.linkProofs.set(proof.taskId, proof);
     this.tryLinkNavigation(proof.taskId);
+  }
+  /** 已有提交只读核对；导航是候选观察的触发，不是成功或恢复输入的许可。 */
+  private tryDynamicResult(taskId: string) {
+    const e = this.ports
+      .current()
+      .tasks.find((t) => t.id === taskId)?.execution;
+    const action = e?.actions.find(
+      (a) =>
+        a.goalVersion === e.goalVersion &&
+        a.effect === 'publication' &&
+        a.submission &&
+        !a.submission.recovery &&
+        !a.discoveredRecovery &&
+        a.navigation?.mainFrame &&
+        !a.navigation.sameDocument &&
+        a.status === 'unknown' &&
+        a.dispatchState === 'possible',
+    );
+    if (
+      !e ||
+      !action ||
+      this.blocked.get(taskId)?.reason !== 'page-change' ||
+      !this.blocked.get(taskId)?.saved ||
+      this.resultDiscoveries.has(action.id) ||
+      this.reviews.has(taskId)
+    )
+      return;
+    this.resultDiscoveries.add(action.id);
+    const sequence = this.intents.get(taskId),
+      systemGeneration = this.systemGeneration;
+    const review = { abort: new AbortController(), work: Promise.resolve() };
+    this.reviews.set(taskId, review);
+    const signal = AbortSignal.any([
+      review.abort.signal,
+      AbortSignal.timeout(6000),
+    ]);
+    const current = () => {
+      const latest = this.ports
+        .current()
+        .tasks.find((t) => t.id === taskId)?.execution;
+      return (
+        !signal.aborted &&
+        this.available &&
+        !this.closing &&
+        this.systemReady() &&
+        this.systemGeneration === systemGeneration &&
+        this.intents.get(taskId) === sequence &&
+        !this.pendingIntents.has(taskId) &&
+        !this.sessionUpdates.has(taskId) &&
+        latest?.intent === 'automatic' &&
+        latest.phase === 'paused' &&
+        latest.pauseReason === 'page-change'
+      );
+    };
+    review.work = (async () => {
+      try {
+        await this.jobs.get(taskId)?.work;
+        let previous: BoundObservation | undefined;
+        for (let attempt = 0; attempt < 20 && current(); attempt++) {
+          const epoch = this.ports.input?.epoch(taskId);
+          let observed: BoundObservation;
+          try {
+            if (
+              this.ports.resultPageReady &&
+              !(await this.abortable(
+                () =>
+                  this.ports.resultPageReady!({
+                    taskId,
+                    runId: action.runId,
+                    actionId: action.id,
+                    navigation: action.navigation!,
+                  }),
+                signal,
+              ))
+            ) {
+              await new Promise<void>((r) => setTimeout(r, 250));
+              continue;
+            }
+            observed = await this.abortable(
+              () => this.ports.observe(taskId, signal),
+              signal,
+            );
+          } catch {
+            if (!current()) return;
+            await new Promise<void>((r) => setTimeout(r, 250));
+            continue;
+          }
+          if (!current() || this.ports.input?.epoch(taskId) !== epoch) return;
+          if (
+            observed.binding.targetId !== action.binding.targetId ||
+            observed.binding.generation < action.navigation!.generation ||
+            observed.observation.generation !== observed.binding.generation ||
+            observed.observation.truncated ||
+            (action.coordination &&
+              (!observed.session ||
+                !sameSession(action.coordination.session, observed.session) ||
+                action.coordination.session.epoch !== observed.session.epoch))
+          )
+            return;
+          if (
+            previous?.observation.fingerprint ===
+              observed.observation.fingerprint &&
+            previous.observation.url === observed.observation.url &&
+            previous.binding.generation === observed.binding.generation
+          ) {
+            const latest = this.ports
+              .current()
+              .tasks.find((t) => t.id === taskId)!.execution!;
+            const saved = await this.record({
+              kind: 'publication-result-entry',
+              taskId,
+              expectedVersion: latest.version,
+              actionId: action.id,
+              source: observed.observation,
+              binding: observed.binding,
+            });
+            if (
+              !saved.created ||
+              !current() ||
+              this.ports.input?.epoch(taskId) !== epoch
+            )
+              return;
+            const execution = this.ports
+              .current()
+              .tasks.find((t) => t.id === taskId)!.execution!;
+            const frozen = execution.actions.find((a) => a.id === action.id)!;
+            // 核对与持久化均不调用原生prepare/allow，也不启动模型或工作者。
+            await this.checkRecoveredPublication(
+              taskId,
+              execution,
+              frozen,
+              review.abort.signal,
+            );
+            return;
+          }
+          previous = observed;
+          await new Promise<void>((r) => setTimeout(r, 250));
+        }
+      } catch {
+        // 缺少关联、保存失败或观察失效均保留原暂停与未知，不自动重试提交。
+      }
+    })().finally(() => {
+      if (this.reviews.get(taskId) === review) this.reviews.delete(taskId);
+      this.pump();
+    });
   }
   private tryLinkNavigation(taskId: string) {
     const proof = this.linkProofs.get(taskId);
@@ -574,6 +722,7 @@ export class ExecutionService {
       if (this.intents.get(taskId) === sequence)
         this.pendingIntents.delete(taskId);
       this.tryLinkNavigation(taskId);
+      this.tryDynamicResult(taskId);
       this.pump();
     }
   }
@@ -1440,6 +1589,28 @@ export class ExecutionService {
         systemGeneration !== this.systemGeneration
       )
         return;
+      const pausedResult = task.execution?.actions.find(
+        (a) =>
+          a.discoveredRecovery &&
+          a.goalVersion === task.execution!.goalVersion &&
+          a.status === 'unknown' &&
+          !task.execution!.publicationChecks?.some((c) => c.actionId === a.id),
+      );
+      if (
+        task.execution?.intent === 'automatic' &&
+        task.execution.phase === 'paused' &&
+        task.execution.pauseReason === 'page-change' &&
+        !task.execution.restoreReview &&
+        !task.execution.question &&
+        !task.execution.loginOrigin &&
+        pausedResult &&
+        !this.jobs.has(task.id) &&
+        !this.reviews.has(task.id) &&
+        !this.pendingIntents.has(task.id)
+      ) {
+        this.recoverPublication(task.id, task.execution, pausedResult);
+        continue;
+      }
       if (
         (task.execution?.agreementBinding &&
           this.planMutations.has(
@@ -1481,7 +1652,7 @@ export class ExecutionService {
       const submitted = task.execution.actions.find(
         (a) =>
           a.goalVersion === task.execution!.goalVersion &&
-          a.submission?.recovery &&
+          (a.submission?.recovery || a.discoveredRecovery) &&
           a.dispatchState === 'possible' &&
           ['dispatched', 'unknown'].includes(a.status),
       );
@@ -1600,34 +1771,12 @@ export class ExecutionService {
     this.reviews.set(taskId, review);
     review.work = (async () => {
       try {
-        const check = await verifyRecoveredPublication(
+        await this.checkRecoveredPublication(
+          taskId,
           execution,
           action,
           review.abort.signal,
         );
-        const verified = await this.ports.material?.({
-          kind: 'verify',
-          taskId,
-          materialId: check.materialId,
-          goalVersion: check.goalVersion,
-        });
-        check.localMaterial = z
-          .object({ valid: z.boolean() })
-          .parse(verified ?? { valid: false }).valid
-          ? 'verified'
-          : 'unavailable';
-        if (check.localMaterial !== 'verified') {
-          check.status = 'unknown';
-          check.failure = 'material';
-        }
-        if (review.abort.signal.aborted) return;
-        // 记录进程按版本处理核对期间的新停止；只读完成也不取得下一动作的资格。
-        await this.record({
-          kind: 'publication-recovery-result',
-          taskId,
-          expectedVersion: execution.version,
-          check,
-        });
       } catch {
         // 不自动重试未分类失败；已有网页效果与动作记录留存。
         if (!review.abort.signal.aborted && this.available)
@@ -1639,6 +1788,48 @@ export class ExecutionService {
       if (this.reviews.get(taskId) === review) this.reviews.delete(taskId);
       this.pump();
     });
+  }
+  private async checkRecoveredPublication(
+    taskId: string,
+    execution: TaskExecution,
+    action: ActionFact,
+    signal: AbortSignal,
+  ) {
+    const check = await verifyRecoveredPublication(execution, action, signal);
+    const verified = await this.ports.material?.({
+      kind: 'verify',
+      taskId,
+      materialId: check.materialId,
+      goalVersion: check.goalVersion,
+    });
+    check.localMaterial = z
+      .object({ valid: z.boolean() })
+      .parse(verified ?? { valid: false }).valid
+      ? 'verified'
+      : 'unavailable';
+    if (check.localMaterial !== 'verified') {
+      check.status = 'unknown';
+      check.failure = 'material';
+    }
+    if (signal.aborted) return;
+    // 记录进程按版本处理核对期间的新停止；只读完成也不取得下一动作的资格。
+    await this.record({
+      kind: 'publication-recovery-result',
+      taskId,
+      expectedVersion: execution.version,
+      check,
+    });
+    const latest = this.ports
+      .current()
+      .tasks.find((t) => t.id === taskId)?.execution;
+    if (
+      latest?.intent === 'automatic' &&
+      latest.phase === 'complete' &&
+      this.blocked.get(taskId)?.reason === 'page-change'
+    ) {
+      this.blocked.delete(taskId);
+      this.publish();
+    }
   }
   private async run(job: Job) {
     try {

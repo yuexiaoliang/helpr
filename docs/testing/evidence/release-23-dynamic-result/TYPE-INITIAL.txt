@@ -1,0 +1,12 @@
+$ pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:workspace && pnpm test:validation && pnpm check:legacy
+$ tsc --noEmit
+tests/workspace/publication.test.ts(536,5): error TS2322: Type '(c: unknown) => void' is not assignable to type '(c: unknown) => Promise<void>'.
+  Type 'void' is not assignable to type 'Promise<void>'.
+tests/workspace/publication.test.ts(539,9): error TS1308: 'await' expressions are only allowed within async functions and at the top levels of modules.
+tests/workspace/publication.test.ts(869,5): error TS2322: Type '(c: unknown) => void' is not assignable to type '(c: unknown) => Promise<void>'.
+  Type 'void' is not assignable to type 'Promise<void>'.
+tests/workspace/publication.test.ts(873,9): error TS1308: 'await' expressions are only allowed within async functions and at the top levels of modules.
+tests/workspace/publication.test.ts(1482,5): error TS2322: Type '(c: Record<string, unknown>) => void' is not assignable to type '(command: Record<string, unknown>) => Promise<void>'.
+  Type 'void' is not assignable to type 'Promise<void>'.
+[ELIFECYCLE] Command failed with exit code 2.
+[ELIFECYCLE] Command failed with exit code 2.

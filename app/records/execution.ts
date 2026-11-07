@@ -33,6 +33,7 @@ import {
   submissionReady,
   recordPublicationResult,
   freezeRecovery,
+  discoverRecovery,
   validateHistoricalCheck,
 } from './publication';
 import {
@@ -230,6 +231,14 @@ const commandSchema = z.discriminatedUnion('kind', [
     source: observation,
     anomalies: z.array(z.string().min(1).max(2000)).max(20),
     extraResults: z.array(z.url()).max(50),
+  }),
+  z.strictObject({
+    kind: z.literal('publication-result-entry'),
+    taskId: z.string(),
+    expectedVersion: z.number().int().positive(),
+    actionId: z.string(),
+    source: observation,
+    binding: pageBindingSchema,
   }),
   z.strictObject({
     kind: z.literal('publication-recovery-result'),
@@ -1420,6 +1429,50 @@ export class ExecutionRecords {
           e.intent === 'automatic' &&
           e.runId === c.runId &&
           ['checking', 'running'].includes(e.phase);
+        if (c.kind === 'publication-result-entry') {
+          const action = e.actions.find((a) => a.id === c.actionId);
+          if (
+            e.version !== c.expectedVersion ||
+            e.intent !== 'automatic' ||
+            e.phase !== 'paused' ||
+            e.pauseReason !== 'page-change' ||
+            e.question ||
+            e.restoreReview ||
+            e.loginOrigin ||
+            task.url !== c.source.url ||
+            task.phase !== 'manual' ||
+            !action ||
+            action.goalVersion !== e.goalVersion ||
+            action.status !== 'unknown' ||
+            action.dispatchState !== 'possible' ||
+            action.effect !== 'publication' ||
+            !action.submission ||
+            action.submission.recovery ||
+            !e.publication ||
+            !samePublication(e.publication, action.submission.publication) ||
+            e.publication.approvalId !== action.publicationApprovalId ||
+            e.observedAnomalies?.some((o) => o.goalVersion === e.goalVersion) ||
+            e.actions.some(
+              (a) =>
+                a !== action &&
+                ['reserved', 'unknown', 'dispatched'].includes(a.status),
+            )
+          )
+            return { created: false };
+          const checkpoint = discoverRecovery(e, action, c.source, c.binding);
+          if (action.discoveredRecovery) {
+            if (
+              JSON.stringify(action.discoveredRecovery) !==
+              JSON.stringify(checkpoint)
+            )
+              throw Error('REQUEST_CONTENT_CONFLICT');
+            return { created: false };
+          }
+          action.discoveredRecovery = checkpoint;
+          executionSchema.parse(e);
+          this.save(task.id, e);
+          return { created: true };
+        }
         if (
           c.kind === 'publication-result' ||
           c.kind === 'publication-recovery-result'
@@ -1440,8 +1493,10 @@ export class ExecutionRecords {
             recovery &&
             c.expectedVersion === e.version &&
             e.intent === 'automatic' &&
-            e.phase === 'queued' &&
-            !e.pauseReason &&
+            ((e.phase === 'queued' && !e.pauseReason) ||
+              (e.phase === 'paused' &&
+                e.pauseReason === 'page-change' &&
+                !!action.discoveredRecovery)) &&
             !e.question &&
             !e.restoreReview &&
             action.goalVersion === e.goalVersion;
@@ -1479,13 +1534,16 @@ export class ExecutionRecords {
             recordPublicationResult(task.id, e, c.check, action);
             if (c.check.status === 'verified')
               adoptWorkflow(e, this.others(task.id));
-            move(e, c.check.status === 'verified' ? 'REVIEW_COMPLETE' : 'WAIT');
+            if (c.check.status === 'verified') {
+              move(e, 'REVIEW_COMPLETE');
+              delete e.pauseReason;
+            } else if (e.phase !== 'paused') move(e, 'WAIT');
             delete e.recoveryPending;
             delete e.recoverySource;
             e.runId = null;
             e.summary =
               c.check.status === 'verified'
-                ? '已从提交前保存的位置核对发布结果和附件，无需再次提交。'
+                ? '已从可靠保存的位置核对发布结果和附件，无需再次提交。'
                 : c.check.failure === 'material'
                   ? '本机固定素材缺失或损坏，网站核对证据已保留，暂停且不重复提交。'
                   : '已只读核对原结果位置，证据仍不足；已有提交保持未知，不重复发送。';

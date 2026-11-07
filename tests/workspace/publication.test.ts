@@ -1200,7 +1200,7 @@ test('两项只读恢复占用自动推进容量，第三项保持排队', async
     beforeG = g.reads();
   const claims: string[] = [];
   const service = f.service({
-    beforeRecord: (c) => {
+    beforeRecord: async (c) => {
       const command = c as { kind: string; taskId: string };
       if (command.kind === 'claim') claims.push(command.taskId);
       return Promise.resolve();
@@ -1228,4 +1228,336 @@ test('两项只读恢复占用自动推进容量，第三项保持排队', async
     await service.settled();
     await service.stopAll();
   }
+});
+
+async function dynamicResultFixture() {
+  const f = await fixture();
+  await f.dispatched();
+  f.setHtml(
+    '<link rel="canonical" href="/result"><article>本次附件报告 公告 <a href="/file">下载</a></article>',
+  );
+  const observation: PageObservation = {
+    ...f.observe(),
+    url: f.proposal.url,
+    generation: 3,
+    fingerprint: 'dynamic-result',
+    observedAt: Date.now(),
+    links: [
+      { name: '编辑原条目', url: f.proposal.targetUrl },
+      { name: '下载', url: f.proposal.attachmentUrl },
+    ],
+    text: '本次附件报告 公告 已发布',
+  };
+  const event = {
+    taskId: f.taskId,
+    runId: 'publish',
+    actionId: 'submit',
+    navigation: {
+      id: randomUUID(),
+      association: 'during-action' as const,
+      targetId: 'page',
+      sourceGeneration: 1,
+      generation: 2,
+      url: f.proposal.targetUrl + '/submit',
+      mainFrame: true,
+      sameDocument: false,
+      inputEpoch: 8,
+      observedAt: observation.observedAt,
+    },
+  };
+  const arrive = () =>
+    f.records.execute({
+      kind: 'page',
+      requestId: randomUUID(),
+      taskId: f.taskId,
+      url: f.proposal.url,
+      phase: 'manual',
+    });
+  const freeze = (source = observation, targetId = 'page') =>
+    f.records.execution({
+      kind: 'publication-result-entry',
+      taskId: f.taskId,
+      expectedVersion: f.execution().version,
+      actionId: 'submit',
+      source,
+      binding: { targetId, generation: source.generation },
+    });
+  const pause = () => {
+    f.records.execution({
+      kind: 'suspend',
+      taskId: f.taskId,
+      requestId: randomUUID(),
+      reason: 'page-change',
+    });
+    arrive();
+    f.records.execution({ kind: 'action-navigation', ...event });
+  };
+  const service = (
+    options: {
+      beforeRecord?: (command: Record<string, unknown>) => Promise<void> | void;
+      observe?: () => Promise<PageObservation>;
+    } = {},
+  ) => {
+    let state = f.records.snapshot(),
+      epoch = 12;
+    const allow = vi.fn(() => {
+      throw Error('NO_INPUT_ALLOW');
+    });
+    const prepare = vi.fn(() => {
+      throw Error('NO_INPUT_PREPARE');
+    });
+    const propose = vi.fn(() => {
+      throw Error('NO_MODEL');
+    });
+    const perform = vi.fn(() => {
+      throw Error('NO_REDISPATCH');
+    });
+    const instance = new ExecutionService({
+      records: async (command) => {
+        await options.beforeRecord?.(command as Record<string, unknown>);
+        return f.records.execution(command);
+      },
+      current: () => state,
+      publish: (next) => {
+        state = next;
+      },
+      observe: async () => ({
+        observation: (await options.observe?.()) ?? observation,
+        binding: { targetId: 'page', generation: 3 },
+      }),
+      material: (c) => f.records.material(c),
+      propose,
+      perform,
+      revoke: () => {},
+      stopModels: () => {},
+      input: {
+        epoch: () => epoch,
+        block: () => {
+          epoch++;
+        },
+        allow,
+        prepare,
+        valid: () => false,
+        permit: () => {
+          throw Error('NO_INPUT');
+        },
+      },
+    });
+    return {
+      instance,
+      allow,
+      prepare,
+      propose,
+      perform,
+      nativeChange: () => {
+        epoch++;
+      },
+    };
+  };
+  return {
+    ...f,
+    observation,
+    event,
+    arrive,
+    freeze,
+    pause,
+    dynamicService: service,
+  };
+}
+
+test('动态结果入口在发布前未知，暂停后冻结并只读完成，不恢复原生输入或模型', async () => {
+  const f = await dynamicResultFixture();
+  expect(f.execution().actions.at(-1)!.submission!.recovery).toBeUndefined();
+  const s = f.dynamicService();
+  f.arrive();
+  await s.instance.recordNavigation(f.event);
+  await s.instance.suspend(f.taskId, 'page-change', randomUUID());
+  await s.instance.settled();
+  expect(f.execution()).toMatchObject({
+    phase: 'complete',
+    result: { source: { url: f.proposal.url } },
+  });
+  const a = f.execution().actions.at(-1)!;
+  expect(a.navigation!.association).toBe('during-action');
+  expect(a.discoveredRecovery!.recovery.url).toBe(f.proposal.url);
+  expect(a.navigationResolution).toBeUndefined();
+  for (const spy of [s.allow, s.prepare, s.propose, s.perform])
+    expect(spy).not.toHaveBeenCalled();
+  await s.instance.stopAll();
+});
+
+test('动态检查点保存后冷开仅GET核对，旧发布不重发；24迁移留备份', async () => {
+  const f = await dynamicResultFixture();
+  f.pause();
+  f.freeze();
+  const before = f.execution().actions.at(-1)!.discoveredRecovery;
+  f.records.close();
+  const db = new Database(path.join(f.folder, 'workspace.sqlite'));
+  db.prepare('UPDATE workspace SET schema_version=24').run();
+  db.close();
+  f.reopen();
+  const { readdir } = await import('node:fs/promises');
+  expect(
+    (await readdir(f.folder)).some((n) =>
+      n.startsWith('workspace-before-dynamic-result-23-'),
+    ),
+  ).toBe(true);
+  const s = f.dynamicService();
+  s.instance.refresh();
+  await s.instance.settled();
+  expect(f.execution().phase).toBe('complete');
+  expect(f.execution().actions.at(-1)!.discoveredRecovery).toEqual(before);
+  expect(f.sends()).toBe(0);
+  expect(s.perform).not.toHaveBeenCalled();
+  await s.instance.stopAll();
+});
+
+test('动态入口缺原目标、重名目标、附件、确认内容、完整观察或同target证据均拒绝', async () => {
+  const f = await dynamicResultFixture();
+  f.pause();
+  for (const source of [
+    { ...f.observation, links: [] },
+    {
+      ...f.observation,
+      links: [...f.observation.links!, f.observation.links![0]!],
+    },
+    { ...f.observation, links: [f.observation.links![0]!] },
+    { ...f.observation, text: '别人的内容 公告' },
+    { ...f.observation, truncated: true },
+    { ...f.observation, generation: 1 },
+  ]) {
+    expect(() => f.freeze(source)).toThrow();
+    expect(f.execution().actions.at(-1)!.discoveredRecovery).toBeUndefined();
+  }
+  expect(() => f.freeze(f.observation, 'other-target')).toThrow();
+  expect(f.execution().phase).toBe('paused');
+});
+
+test('动态入口只是候选：公开页缺唯一canonical、内容或字节不符都不能完成', async () => {
+  for (const failure of [
+    'canonical',
+    'duplicate-canonical',
+    'content',
+    'bytes',
+  ]) {
+    const f = await dynamicResultFixture();
+    f.pause();
+    f.freeze();
+    if (failure === 'canonical')
+      f.setHtml(
+        '<article>本次附件报告 公告 <a href="/file">下载</a></article>',
+      );
+    if (failure === 'duplicate-canonical')
+      f.setHtml(
+        '<link rel="canonical" href="/result"><link rel="canonical" href="/result"><article>本次附件报告 公告 <a href="/file">下载</a></article>',
+      );
+    if (failure === 'content')
+      f.setHtml('<link rel="canonical" href="/result"><p>别人的文章</p>');
+    if (failure === 'bytes') f.setBytes(Buffer.from('different'));
+    const s = f.dynamicService();
+    s.instance.refresh();
+    await s.instance.settled();
+    expect(f.execution().publicationChecks).toMatchObject([
+      { status: 'unknown' },
+    ]);
+    expect(f.execution().phase).toBe('paused');
+    expect(f.execution().result).toBeUndefined();
+    const reads = f.reads();
+    s.instance.refresh();
+    await s.instance.settled();
+    expect(f.reads()).toBe(reads);
+    await s.instance.stopAll();
+  }
+});
+
+test('动态结果保存前的新停止拒绝入口；核对结果保存竞争只留历史，不完成或派发', async () => {
+  const f = await dynamicResultFixture();
+  f.pause();
+  f.post({ kind: 'intent', intent: 'stop', requestId: randomUUID() });
+  expect(f.freeze().created).toBe(false);
+  const g = await dynamicResultFixture();
+  g.pause();
+  g.freeze();
+  const s = g.dynamicService({
+    beforeRecord: (c) => {
+      if (c.kind === 'publication-recovery-result')
+        g.post({ kind: 'intent', intent: 'stop', requestId: randomUUID() });
+    },
+  });
+  s.instance.refresh();
+  await s.instance.settled();
+  expect(g.execution()).toMatchObject({
+    intent: 'stopped',
+    phase: 'stopped',
+    publicationHistory: [{ check: { status: 'verified' } }],
+  });
+  expect(g.execution().result).toBeUndefined();
+  expect(s.allow).not.toHaveBeenCalled();
+  await s.instance.stopAll();
+});
+
+test('动态入口保存失败不发GET或输入；观察期间的原生变化放弃新候选', async () => {
+  const f = await dynamicResultFixture();
+  f.arrive();
+  const s = f.dynamicService({
+    beforeRecord: (c) => {
+      if (c.kind === 'publication-result-entry')
+        return Promise.reject(Error('DISK_FULL'));
+      return Promise.resolve();
+    },
+  });
+  const reads = f.reads();
+  await s.instance.recordNavigation(f.event);
+  await s.instance.suspend(f.taskId, 'page-change', randomUUID());
+  await s.instance.settled();
+  expect(f.execution().actions.at(-1)!.discoveredRecovery).toBeUndefined();
+  expect(f.reads()).toBe(reads);
+  await s.instance.stopAll();
+  const g = await dynamicResultFixture();
+  g.arrive();
+  const t = g.dynamicService({
+    observe: () => {
+      t.nativeChange();
+      return Promise.resolve(g.observation);
+    },
+  });
+  await t.instance.recordNavigation(g.event);
+  await t.instance.suspend(g.taskId, 'page-change', randomUUID());
+  await t.instance.settled();
+  expect(g.execution().actions.at(-1)!.discoveredRecovery).toBeUndefined();
+  expect(t.allow).not.toHaveBeenCalled();
+  await t.instance.stopAll();
+});
+
+test('动态检查点进入真实备份导入；损坏目标引用拒绝冷开', async () => {
+  const f = await dynamicResultFixture();
+  f.pause();
+  f.freeze();
+  const file = path.join(f.folder, 'dynamic.helpr-backup');
+  const saved = await f.records.backup({
+    kind: 'create',
+    requestId: randomUUID(),
+    file,
+  });
+  const g = await fixture();
+  await g.records.backup({
+    kind: 'restore',
+    requestId: randomUUID(),
+    file,
+    checksum: saved.archive.checksum,
+  });
+  const restored = g.records
+    .snapshot()
+    .tasks.find((t) => t.id === f.taskId)!.execution!;
+  expect(restored.restoreReview).toBe('required');
+  expect(restored.actions.at(-1)!.discoveredRecovery).toEqual(
+    f.execution().actions.at(-1)!.discoveredRecovery,
+  );
+  f.records.close();
+  const db = new Database(path.join(f.folder, 'workspace.sqlite'));
+  db.exec(
+    "UPDATE task_executions SET body=json_set(body,'$.actions[1].discoveredRecovery.recovery.targetFactId','00000000-0000-4000-8000-000000000000')",
+  );
+  db.close();
+  expect(() => f.reopen()).toThrow('DATA_CORRUPT');
 });

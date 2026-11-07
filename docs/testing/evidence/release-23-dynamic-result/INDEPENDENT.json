@@ -1,0 +1,436 @@
+{
+  "checkedAt": "2026-11-07T03:05:03.451449+00:00",
+  "build": 87,
+  "sourceCommit": "c32c9780053b40807157c9623df463613a829c80",
+  "sourceDirty": true,
+  "testOnlyChangesAfterBuild": [
+    "scripts/workflow-fixture.test.mjs",
+    "tests/workspace/backup.test.ts"
+  ],
+  "bundleSha256": "6690de2a6c1ed6440e27f8e0c08617035d76b6674943b52f4ea2c9bee73c910a",
+  "bundleUnchangedAfterRun": true,
+  "rawRun": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/run-1794020636195",
+  "profile": "/private/tmp/helpr-workspace-validation-501/run-EUjtJy",
+  "dataFormat": 25,
+  "quickCheck": "ok",
+  "sqliteSha256": "71607848b216b43084ac5f5b4732931f0dcc74c1d8bd8c2711337fa32c828e15",
+  "cases": [
+    {
+      "item": "A",
+      "taskId": "33172982-b2ac-49fe-bbe0-aae1c14c7b89",
+      "phase": "complete",
+      "action": {
+        "coordination": {
+          "session": {
+            "id": "helpr-fixture-web",
+            "epoch": "56793580-ee96-4199-92bb-e4ab8bdc0beb:0",
+            "origin": "http://127.0.0.1:53943"
+          },
+          "claimId": "2b20b1b9-085b-4f20-bbf0-e03413b3c539"
+        },
+        "observedLinks": [
+          {
+            "name": "下载附件",
+            "url": "http://127.0.0.1:53943/file?item=A"
+          }
+        ],
+        "fieldResults": [
+          {
+            "role": "textbox",
+            "name": "发布标题",
+            "frameUrl": "http://127.0.0.1:53943/edit?item=A",
+            "disabled": false,
+            "textValue": "动态结果标题A"
+          },
+          {
+            "role": "textbox",
+            "name": "文章正文",
+            "frameUrl": "http://127.0.0.1:53943/edit?item=A",
+            "disabled": false,
+            "textValue": "动态正文A"
+          }
+        ],
+        "discoveredRecovery": {
+          "recovery": {
+            "rule": "public-attachment-v1",
+            "url": "http://127.0.0.1:53943/dynamic/d6b763ea-732b-4418-88f1-ae59a5509b44?item=A",
+            "targetUrl": "http://127.0.0.1:53943/edit?item=A",
+            "attachmentUrl": "http://127.0.0.1:53943/file?item=A",
+            "evidence": [
+              "提交后的完整页面同时呈现原目标链接、确认内容、栏目和附件链接"
+            ],
+            "targetFactId": "a6da088c-7505-4ead-a5b5-07924d9330f2",
+            "uploadFactId": "4ec57030-5514-4a06-adac-849b54bced99"
+          },
+          "source": {
+            "url": "http://127.0.0.1:53943/dynamic/d6b763ea-732b-4418-88f1-ae59a5509b44?item=A",
+            "title": "",
+            "fingerprint": "79673a8c83552c6ac032f569e32cdf00ede7d1d19299fc6ab66ebf6ce9482342",
+            "generation": 2,
+            "observedAt": 1794020648271,
+            "truncated": false
+          },
+          "binding": {
+            "targetId": "C6F0745A9B846C012C87F5C022EAAE16",
+            "generation": 2
+          },
+          "links": [
+            {
+              "name": "下载附件",
+              "url": "http://127.0.0.1:53943/file?item=A"
+            },
+            {
+              "name": "编辑原条目",
+              "url": "http://127.0.0.1:53943/edit?item=A"
+            }
+          ]
+        },
+        "navigation": {
+          "id": "450e2482-49d8-47f1-bea5-7cdcb2264255",
+          "association": "during-action",
+          "targetId": "C6F0745A9B846C012C87F5C022EAAE16",
+          "sourceGeneration": 1,
+          "generation": 2,
+          "url": "http://127.0.0.1:53943/publish?item=A",
+          "mainFrame": true,
+          "sameDocument": false,
+          "inputEpoch": 1,
+          "observedAt": 1794020647895
+        },
+        "id": "b598e8d2-2b89-4d57-b586-34aa5c20ecde",
+        "runId": "bc2b15b4-20f8-4c97-b5ce-94ef8475d63a",
+        "goalVersion": 1,
+        "status": "confirmed",
+        "summary": "核对本次附件",
+        "action": {
+          "kind": "click",
+          "target": {
+            "role": "button",
+            "name": "发布附件",
+            "exact": true
+          }
+        },
+        "effect": "publication",
+        "preconditions": [
+          "附件编辑"
+        ],
+        "submission": {
+          "publication": {
+            "fields": [
+              {
+                "id": "title",
+                "name": "发布标题",
+                "value": "动态结果标题A"
+              },
+              {
+                "id": "body",
+                "name": "文章正文",
+                "value": "动态正文A"
+              }
+            ],
+            "destination": "公告",
+            "content": "动态结果标题A\n\n动态正文A",
+            "attachment": {
+              "materialId": "a086674d-6db5-47fb-9621-9e75898da980",
+              "targetUrl": "http://127.0.0.1:53943/edit?item=A",
+              "url": "http://127.0.0.1:53943/file?item=A"
+            }
+          },
+          "download": {
+            "url": "http://127.0.0.1:53943/file?item=A",
+            "sha256": "5e071f50aec4d9bd36452c5a15aae0668c1c09ed1cc0cd53e830d0f0dde8a46e",
+            "bytes": 16,
+            "checkedAt": 1794020647503
+          }
+        },
+        "publicationApprovalId": "ed3856a6-33f2-401a-a2de-687d398dc2ba",
+        "source": {
+          "url": "http://127.0.0.1:53943/edit?item=A",
+          "title": "附件编辑",
+          "fingerprint": "6de39b6a279cdcacacd3cce8e5df4cce35c87f7e98bd300fb6a4e1184aa14146",
+          "generation": 1,
+          "observedAt": 1794020647508,
+          "truncated": false
+        },
+        "observedUrls": [
+          "http://127.0.0.1:53943/edit?item=A",
+          "http://127.0.0.1:53943/file?item=A"
+        ],
+        "binding": {
+          "targetId": "C6F0745A9B846C012C87F5C022EAAE16",
+          "generation": 1
+        },
+        "evidence": [
+          "核对规则：唯一公开地址、确认内容、栏目和附件字节"
+        ],
+        "returned": false,
+        "dispatchState": "possible",
+        "resultSource": {
+          "url": "http://127.0.0.1:53943/dynamic/d6b763ea-732b-4418-88f1-ae59a5509b44?item=A",
+          "title": "独立公开结果核对",
+          "fingerprint": "25d34e8af85f69a2d4bf9b3e81833f37b24c2f22694ec1b3b2d8e50868ab618a",
+          "generation": 1,
+          "observedAt": 1794020648290,
+          "truncated": false
+        }
+      },
+      "checks": [
+        {
+          "id": "f623482b-e4e5-43a5-86cf-0b45c4734b85",
+          "actionId": "b598e8d2-2b89-4d57-b586-34aa5c20ecde",
+          "approvalId": "ed3856a6-33f2-401a-a2de-687d398dc2ba",
+          "materialId": "a086674d-6db5-47fb-9621-9e75898da980",
+          "goalVersion": 1,
+          "status": "verified",
+          "proposal": {
+            "url": "http://127.0.0.1:53943/dynamic/d6b763ea-732b-4418-88f1-ae59a5509b44?item=A",
+            "targetUrl": "http://127.0.0.1:53943/edit?item=A",
+            "attachmentUrl": "http://127.0.0.1:53943/file?item=A",
+            "publishedEvidence": [
+              "核对规则：唯一公开地址、确认内容、栏目和附件字节"
+            ]
+          },
+          "source": {
+            "url": "http://127.0.0.1:53943/dynamic/d6b763ea-732b-4418-88f1-ae59a5509b44?item=A",
+            "title": "独立公开结果核对",
+            "fingerprint": "25d34e8af85f69a2d4bf9b3e81833f37b24c2f22694ec1b3b2d8e50868ab618a",
+            "generation": 1,
+            "observedAt": 1794020648290,
+            "truncated": false
+          },
+          "checkedAt": 1794020648291,
+          "download": {
+            "url": "http://127.0.0.1:53943/file?item=A",
+            "sha256": "5e071f50aec4d9bd36452c5a15aae0668c1c09ed1cc0cd53e830d0f0dde8a46e",
+            "bytes": 16,
+            "checkedAt": 1794020648291
+          },
+          "pageSha256": "25d34e8af85f69a2d4bf9b3e81833f37b24c2f22694ec1b3b2d8e50868ab618a",
+          "checks": {
+            "target": true,
+            "published": true,
+            "content": true,
+            "destination": true,
+            "attachment": true,
+            "bytes": true
+          },
+          "failure": "none",
+          "coverage": "public-page-and-attachment",
+          "extraResults": [],
+          "anomalies": [],
+          "unobservedWrites": "unknown",
+          "screenshot": "not-required",
+          "recovery": "public-attachment-v1",
+          "localMaterial": "verified"
+        }
+      ],
+      "writes": [
+        {
+          "kind": "upload",
+          "item": "A",
+          "bytes": 16
+        },
+        {
+          "kind": "draft",
+          "item": "A",
+          "at": 1794020645383
+        },
+        {
+          "kind": "published",
+          "item": "A",
+          "content": "动态结果标题A\n\n动态正文A",
+          "heading": "动态结果标题A",
+          "body": "动态正文A",
+          "destination": "公告"
+        }
+      ]
+    },
+    {
+      "item": "B",
+      "taskId": "1c1f1c81-7df0-4fe6-89e9-5b705f71497f",
+      "phase": "paused",
+      "action": {
+        "coordination": {
+          "session": {
+            "id": "helpr-fixture-web",
+            "epoch": "56793580-ee96-4199-92bb-e4ab8bdc0beb:0",
+            "origin": "http://127.0.0.1:53943"
+          },
+          "claimId": "6a70f946-9956-4f3d-aec5-b4f3932ca3eb"
+        },
+        "observedLinks": [
+          {
+            "name": "下载附件",
+            "url": "http://127.0.0.1:53943/file?item=B"
+          }
+        ],
+        "fieldResults": [
+          {
+            "role": "textbox",
+            "name": "发布标题",
+            "frameUrl": "http://127.0.0.1:53943/edit?item=B",
+            "disabled": false,
+            "textValue": "动态结果标题B"
+          },
+          {
+            "role": "textbox",
+            "name": "文章正文",
+            "frameUrl": "http://127.0.0.1:53943/edit?item=B",
+            "disabled": false,
+            "textValue": "动态正文B"
+          }
+        ],
+        "navigation": {
+          "id": "70530e29-37df-401b-8421-feb18fe6b3d8",
+          "association": "during-action",
+          "targetId": "2C11F98654F54C448031EFEF45ED0CEF",
+          "sourceGeneration": 1,
+          "generation": 2,
+          "url": "http://127.0.0.1:53943/publish?item=B",
+          "mainFrame": true,
+          "sameDocument": false,
+          "inputEpoch": 1,
+          "observedAt": 1794020652762
+        },
+        "id": "86b5e543-adcb-4227-8abd-ffbe18320c7a",
+        "runId": "0a0692e0-146f-4e4e-9008-5967a6ea5083",
+        "goalVersion": 1,
+        "status": "unknown",
+        "summary": "核对本次附件",
+        "action": {
+          "kind": "click",
+          "target": {
+            "role": "button",
+            "name": "发布附件",
+            "exact": true
+          }
+        },
+        "effect": "publication",
+        "preconditions": [
+          "附件编辑"
+        ],
+        "submission": {
+          "publication": {
+            "fields": [
+              {
+                "id": "title",
+                "name": "发布标题",
+                "value": "动态结果标题B"
+              },
+              {
+                "id": "body",
+                "name": "文章正文",
+                "value": "动态正文B"
+              }
+            ],
+            "destination": "公告",
+            "content": "动态结果标题B\n\n动态正文B",
+            "attachment": {
+              "materialId": "1364a68d-21f8-448c-b611-a8fc600fb652",
+              "targetUrl": "http://127.0.0.1:53943/edit?item=B",
+              "url": "http://127.0.0.1:53943/file?item=B"
+            }
+          },
+          "download": {
+            "url": "http://127.0.0.1:53943/file?item=B",
+            "sha256": "817e5196c3b84d76a6217cda59e056b5519a253c1e36acd4e4d38bc67a496262",
+            "bytes": 16,
+            "checkedAt": 1794020652366
+          }
+        },
+        "publicationApprovalId": "eed6bdab-b3e7-4b6d-9c4c-12e08e2fe49b",
+        "source": {
+          "url": "http://127.0.0.1:53943/edit?item=B",
+          "title": "附件编辑",
+          "fingerprint": "47500799c00a1373ee46e7cc5458982f65dad6b66e2a7de0928db18ab8295240",
+          "generation": 1,
+          "observedAt": 1794020652372,
+          "truncated": false
+        },
+        "observedUrls": [
+          "http://127.0.0.1:53943/edit?item=B",
+          "http://127.0.0.1:53943/file?item=B"
+        ],
+        "binding": {
+          "targetId": "2C11F98654F54C448031EFEF45ED0CEF",
+          "generation": 1
+        },
+        "evidence": [],
+        "returned": false,
+        "dispatchState": "possible"
+      },
+      "checks": [],
+      "writes": [
+        {
+          "kind": "upload",
+          "item": "B",
+          "bytes": 16
+        },
+        {
+          "kind": "draft",
+          "item": "B",
+          "at": 1794020650266
+        },
+        {
+          "kind": "published",
+          "item": "B",
+          "content": "动态结果标题B\n\n动态正文B",
+          "heading": "动态结果标题B",
+          "body": "动态正文B",
+          "destination": "公告"
+        }
+      ]
+    }
+  ],
+  "processCount": 26,
+  "groups": [
+    30455,
+    30462,
+    30464,
+    30511,
+    30514,
+    30516
+  ],
+  "remainingPids": [],
+  "remainingGroups": [],
+  "leaseReleased": true,
+  "startup": [
+    {
+      "kind": "startup",
+      "number": 226,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:53943",
+        "persistent": false
+      },
+      "ms": 6869,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    },
+    {
+      "kind": "startup",
+      "number": 227,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:53943",
+        "persistent": false
+      },
+      "ms": 2066,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    }
+  ],
+  "ms": 26931,
+  "planningCalls": 16,
+  "budget": {
+    "builds": 87,
+    "installs": 19,
+    "starts": 227,
+    "faults": 52,
+    "cleanups": 25
+  }
+}

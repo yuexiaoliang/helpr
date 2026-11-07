@@ -490,7 +490,7 @@ export function validPublicationReferences(
   if (
     e.actions.some((a) => {
       const s = a.submission,
-        r = s?.recovery;
+        r = a.discoveredRecovery?.recovery ?? s?.recovery;
       if (!r) return false;
       return (
         !s?.publication.attachment ||
@@ -500,7 +500,7 @@ export function validPublicationReferences(
         r.url === r.attachmentUrl ||
         new URL(r.url).origin !== new URL(r.targetUrl).origin ||
         a.source.url !== r.targetUrl ||
-        !a.observedUrls?.includes(r.url) ||
+        (!a.discoveredRecovery && !a.observedUrls?.includes(r.url)) ||
         !e.preparation?.some(
           (f) =>
             f.id === r.targetFactId &&
@@ -530,8 +530,10 @@ export function validPublicationReferences(
         !e.actions.some(
           (a) =>
             a.id === c.actionId &&
-            a.submission?.recovery?.rule === c.recovery &&
-            a.submission?.recovery?.url === c.proposal.url,
+            (a.discoveredRecovery?.recovery ?? a.submission?.recovery)?.rule ===
+              c.recovery &&
+            (a.discoveredRecovery?.recovery ?? a.submission?.recovery)?.url ===
+              c.proposal.url,
         ),
     )
   )

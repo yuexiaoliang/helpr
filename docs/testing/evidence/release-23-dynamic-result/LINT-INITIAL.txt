@@ -1,0 +1,13 @@
+$ pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:workspace && pnpm test:validation && pnpm check:legacy
+$ tsc --noEmit
+$ eslint app tests/workspace electron.vite.config.ts drizzle.config.ts vitest.config.ts
+
+/Users/yuexiaoliang/projects/helpr/tests/workspace/publication.test.ts
+  1482:5  error  Async method 'beforeRecord' has no 'await' expression  @typescript-eslint/require-await
+  1503:5  error  Async method 'beforeRecord' has no 'await' expression  @typescript-eslint/require-await
+  1517:5  error  Async method 'observe' has no 'await' expression       @typescript-eslint/require-await
+
+✖ 3 problems (3 errors, 0 warnings)
+
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.

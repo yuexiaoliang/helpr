@@ -27,7 +27,7 @@ test('多字段夹具保留换行、生成独立输入及合法页面脚本，�
   const handler = workflowFixture([], {separateFields:true});
   let html;
   handler({headers:{host:'127.0.0.1:1234'},method:'GET'}, {setHeader(){},end(value){html=value;}}, new URL('http://localhost/edit?item=A'));
-  assert(html.includes('<textarea id="body">'));
+  assert(html.includes('<textarea id="body" name="body">'));
   new Script(html.match(/<script>([\s\S]*)<\/script>/)[1]);
   for(const reuse of [false,true]) {
     const req=Object.assign(new EventEmitter(),{headers:{host:'127.0.0.1:1234'},method:'POST'});

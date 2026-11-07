@@ -34,6 +34,7 @@ import {
   publicationResultProposalSchema,
   publicationCheckSchema,
   publicationRecoverySchema,
+  publicationRecoveryCheckpointSchema,
 } from './publication';
 import {
   learnedWorkflowSchema,
@@ -119,6 +120,7 @@ export const actionFactSchema = z
     resultLinks: z.array(observedLinkSchema).max(300).optional(),
     selectionResult: observedControlSchema.optional(),
     fieldResults: z.array(observedControlSchema).max(12).optional(),
+    discoveredRecovery: publicationRecoveryCheckpointSchema.optional(),
     navigation: actionNavigationSchema.optional(),
     navigationResolution: linkNavigationResolutionSchema.optional(),
     id: z.string().min(1),
@@ -167,6 +169,37 @@ export const actionFactSchema = z
         a.navigation.targetId === a.binding.targetId &&
         a.navigation.sourceGeneration === a.binding.generation),
   )
+  .refine((a) => {
+    const d = a.discoveredRecovery,
+      n = a.navigation,
+      p = a.submission?.publication;
+    if (!d) return true;
+    return (
+      !!n &&
+      !!p?.attachment &&
+      !a.submission?.recovery &&
+      a.effect === 'publication' &&
+      !!a.publicationApprovalId &&
+      n.mainFrame &&
+      !n.sameDocument &&
+      d.binding.targetId === n.targetId &&
+      d.binding.generation === d.source.generation &&
+      d.source.generation >= n.generation &&
+      !d.source.truncated &&
+      d.source.observedAt >= n.observedAt &&
+      d.recovery.url === d.source.url &&
+      !new URL(d.recovery.url).hash &&
+      d.recovery.url !== p.attachment.targetUrl &&
+      d.recovery.url !== p.attachment.url &&
+      new URL(d.recovery.url).origin ===
+        new URL(p.attachment.targetUrl).origin &&
+      d.recovery.targetUrl === p.attachment.targetUrl &&
+      d.recovery.attachmentUrl === p.attachment.url &&
+      a.source.url === p.attachment.targetUrl &&
+      d.links.filter((l) => l.url === p.attachment!.targetUrl).length === 1 &&
+      d.links.filter((l) => l.url === p.attachment!.url).length === 1
+    );
+  })
   .refine((a) => {
     const r = a.navigationResolution,
       n = a.navigation;

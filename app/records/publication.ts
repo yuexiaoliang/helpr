@@ -1,5 +1,5 @@
 import type { TaskExecution, ActionFact } from '../shared/execution';
-import type { PageObservation } from '../shared/model';
+import { pageSourceSchema, type PageObservation } from '../shared/model';
 import type {
   Publication,
   DownloadCheck,
@@ -10,6 +10,7 @@ import {
   samePublication,
   publicationParts,
   verifyPublicationFields,
+  publicationRecoveryCheckpointSchema,
 } from '../shared/publication';
 import { learnWorkflow } from './workflow';
 import { publicationArticle } from './article';
@@ -52,6 +53,55 @@ export function freezeRecovery(
   return { ...recovery, targetFactId: target.id, uploadFactId: upload.id };
 }
 
+/** 完整新页必须同时呈现原编辑目标、附件及确认内容；只冻结已加载的当前地址。 */
+export function discoverRecovery(
+  e: TaskExecution,
+  action: ActionFact,
+  source: PageObservation,
+  binding: { targetId: string; generation: number },
+) {
+  const p = action.submission?.publication,
+    a = p?.attachment;
+  if (
+    !p ||
+    !a ||
+    action.submission?.recovery ||
+    !publicationParts(p).every((part) => source.text.includes(part)) ||
+    !source.text.includes(p.destination)
+  )
+    throw Error('EXECUTION_EVIDENCE_MISSING');
+  const target = e.preparation?.find(
+    (f) =>
+      f.goalVersion === action.goalVersion &&
+      f.kind === 'target' &&
+      f.url === a.targetUrl,
+  );
+  const upload = e.preparation?.find(
+    (f) =>
+      f.goalVersion === action.goalVersion &&
+      f.kind === 'upload' &&
+      f.url === a.url &&
+      f.materialId === a.materialId,
+  );
+  if (!target || !upload) throw Error('PUBLICATION_BINDING_MISMATCH');
+  return publicationRecoveryCheckpointSchema.parse({
+    recovery: {
+      rule: 'public-attachment-v1',
+      url: source.url,
+      targetUrl: a.targetUrl,
+      attachmentUrl: a.url,
+      targetFactId: target.id,
+      uploadFactId: upload.id,
+      evidence: [
+        '提交后的完整页面同时呈现原目标链接、确认内容、栏目和附件链接',
+      ],
+    },
+    source: pageSourceSchema.strip().parse(source),
+    binding,
+    links: source.links ?? [],
+  });
+}
+
 /** 迟到结果只检验它所属的不可变动作，不借用当前目标或新的内容确认。 */
 export function validateHistoricalCheck(
   e: TaskExecution,
@@ -76,8 +126,10 @@ export function validateHistoricalCheck(
     check.proposal.attachmentUrl !== p.attachment.url ||
     check.source.observedAt < action.source.observedAt ||
     (check.recovery &&
-      (action.submission?.recovery?.rule !== check.recovery ||
-        action.submission.recovery.url !== check.proposal.url))
+      ((action.discoveredRecovery?.recovery ?? action.submission?.recovery)
+        ?.rule !== check.recovery ||
+        (action.discoveredRecovery?.recovery ?? action.submission?.recovery)
+          ?.url !== check.proposal.url))
   )
     throw Error('PUBLICATION_BINDING_MISMATCH');
   if (

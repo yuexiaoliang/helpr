@@ -499,6 +499,12 @@ export async function startController(
       sessionContextSchema.parse(
         await hostClient.request({ kind: 'session-context', taskId }),
       ),
+    resultPageReady: async (event) =>
+      z
+        .boolean()
+        .parse(
+          await hostClient.request({ kind: 'result-page-ready', ...event }),
+        ),
     navigationReady: async (event) =>
       z
         .boolean()

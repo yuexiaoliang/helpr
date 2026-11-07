@@ -6,11 +6,11 @@ import { materialFixture } from './material-fixture.mjs';
 import { workflowFixture } from './workflow-fixture.mjs';
 import { coordinationFixture } from './coordination-fixture.mjs';
 
-export async function fixture({ linkNavigation = false, navigation = false, participation = false, review = false, material, workflow = false, repair = false, article = false, agreements = false, schedules = false, crossSite = false, separateFields = false, coordination = false } = {}) {
+export async function fixture({ dynamicResult = false, linkNavigation = false, navigation = false, participation = false, review = false, material, workflow = false, repair = false, article = false, agreements = false, schedules = false, crossSite = false, separateFields = false, coordination = false } = {}) {
   const receipts = [];
   const handleNavigation = linkNavigation ? linkNavigationFixture(receipts) : navigation ? navigationFixture(receipts) : null;
   const handleMaterial = material ? materialFixture(material, receipts) : null;
-  const handleWorkflow = workflow ? workflowFixture(receipts, {repair, article, agreements, schedules, crossSite, separateFields}) : null;
+  const handleWorkflow = workflow ? workflowFixture(receipts, {repair, article, agreements, schedules, crossSite, separateFields, dynamicResult}) : null;
   const coordinated = coordination ? coordinationFixture(receipts) : null;
   const login = 'fixture-' + randomUUID();
   const server = http.createServer((req, res) => {
