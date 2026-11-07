@@ -382,6 +382,10 @@ export function pauseForBackup(e: TaskExecution): TaskExecution {
   }
   delete next.question;
   next.restoreReview = 'required';
+  if (next.schedule) {
+    next.schedule.restoreReview = true;
+    next.schedule.revision++;
+  }
   delete next.recoveryPending;
   delete next.recoverySource;
   next.pauseReason ??= 'backup-restore';

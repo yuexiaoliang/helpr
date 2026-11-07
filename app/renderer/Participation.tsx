@@ -1,3 +1,4 @@
+import { ScheduledPlan } from './ScheduledPlan';
 import { useRef, useState, useSyncExternalStore } from 'react';
 import type { Task, UICommand } from '../shared/contracts';
 import type { WorkspaceStore } from './store';
@@ -239,6 +240,9 @@ export function ParticipationInbox({
   close: () => void;
 }) {
   const pending = tasks.filter((t) => t.execution?.question);
+  const plans = tasks.filter((t) =>
+    t.execution?.schedule?.rounds.some((r) => r.status === 'waiting'),
+  );
   return (
     <section
       aria-label="待回复"
@@ -253,7 +257,12 @@ export function ParticipationInbox({
           ×
         </button>
       </header>
-      {pending.length === 0 && <p role="status">当前没有需要回复的问题。</p>}
+      {pending.length === 0 && plans.length === 0 && (
+        <p role="status">当前没有需要回复的问题。</p>
+      )}
+      {plans.map((task) => (
+        <ScheduledPlan key={task.id} task={task} store={store} pendingOnly />
+      ))}
       {pending.map((task) => (
         <div key={task.execution!.question!.id}>
           <strong>{task.goal}</strong>

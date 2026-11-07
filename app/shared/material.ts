@@ -3,7 +3,15 @@ import { z } from 'zod';
 export const MATERIAL_LIMIT = 8 * 1024 * 1024;
 export const materialSelectionSchema = z.strictObject({
   scope: z.string().min(1).max(4096),
-  rule: z.enum(['exact', 'only', 'latest']),
+  rule: z.enum([
+    'exact',
+    'only',
+    'latest',
+    'latest-unprocessed',
+    'all-unprocessed',
+    'date',
+  ]),
+  dateName: z.string().max(255).optional(),
   name: z.string().min(1).max(255).nullable(),
   extension: z
     .string()

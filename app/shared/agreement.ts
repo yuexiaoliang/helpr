@@ -79,6 +79,9 @@ export function agreementSummary(t: AgreementTerms) {
     exact: '指定文件',
     only: '唯一符合的文件',
     latest: '最新文件',
+    'latest-unprocessed': '最新且未完成的文件',
+    'all-unprocessed': '所有未完成的文件',
+    date: `按预定日期取文件（${t.selection.dateName ?? '待明确日期文件名'}，{date} 为 YYYY-MM-DD）`,
   };
   return `从“${t.selection.scope}”取${rule[t.selection.rule]}${t.selection.name ? `“${t.selection.name}”` : ''}${t.selection.extension ? `（${t.selection.extension}）` : ''}，读取 Excel 并按“${t.contentRules}”生成文章，附上原始文件，发布到 ${t.entryUrl} 的“${t.destination}”。${t.changedBytes === 'new-publication' ? '新的素材内容另发一篇。' : '素材字节变化后先确认再发布。'}${t.period === 'per-period' ? '每个明确期次分别处理。' : '同一内容只处理一次。'}符合约定时自动发布；结果不明先核对，明确要求再发才另建工作。`;
 }

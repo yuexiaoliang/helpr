@@ -2,6 +2,11 @@ import {
   agreementUICommandSchema,
   type AgreementUICommand,
 } from '../shared/agreement';
+import {
+  scheduleUICommandSchema,
+  type ScheduleUICommand,
+  type ScheduleTerms,
+} from '../shared/schedule';
 import type { AgreementTerms } from '../shared/agreement';
 import {
   verifyAttachment,
@@ -55,6 +60,12 @@ export type BoundObservation = {
   binding: { targetId: string; generation: number };
 };
 export type ProposalInput = {
+  scheduleRequest?: {
+    text: string;
+    current: ScheduleTerms | null;
+    now: string;
+    zone: string;
+  };
   publishingAgreement?: AgreementTerms;
   agreementRequest?: { text: string; current: AgreementTerms | null };
   contentSource?: ContentSource;
@@ -121,6 +132,8 @@ const receipt = z
   .passthrough();
 /** 任务意图与派发公开入口。记录进程之外保留即时阻断，所有等待之后重新核对。 */
 export class ExecutionService {
+  private planTick = false;
+  private readonly planMutations = new Set<string>();
   private available = true;
   private closing = false;
   private pumping: Promise<void> | null = null;
@@ -165,6 +178,7 @@ export class ExecutionService {
       propose: (input: ProposalInput) => Promise<NextStep>;
       perform: (job: WebActionJob) => Promise<void>;
       material?: (command: unknown) => Promise<unknown>;
+      scheduled?: (command: unknown) => Promise<unknown>;
       revoke: (taskId: string) => void;
       stopModels: (taskId: string) => void;
       beforeRecovery?: () => Promise<void>;
@@ -408,6 +422,210 @@ export class ExecutionService {
     } finally {
       if (this.intents.get(taskId) === sequence)
         this.pendingIntents.delete(taskId);
+      this.pump();
+    }
+  }
+  private async scheduleRecord(command: unknown) {
+    if (!this.ports.scheduled) throw Error('SCHEDULE_UNAVAILABLE');
+    try {
+      const result = receipt
+        .extend({ token: z.string().nullable().optional() })
+        .parse(await this.ports.scheduled(command));
+      if (result.state.revision >= this.ports.current().revision)
+        this.publish(result.state);
+      return result;
+    } catch (error) {
+      const code = error instanceof Error ? error.message : '';
+      if (
+        !/^(SCHEDULE_|AGREEMENT_|RECORD_VERSION_CONFLICT|REQUEST_CONTENT_CONFLICT|UPGRADE_PENDING|BACKUP_REVIEW_REQUIRED|INVALID_REQUEST)/.test(
+          code,
+        )
+      )
+        this.disable();
+      throw error;
+    }
+  }
+  async tickPlans(now = Date.now()) {
+    if (
+      this.planTick ||
+      !this.ports.scheduled ||
+      !this.available ||
+      this.closing ||
+      !this.systemReady()
+    )
+      return;
+    this.planTick = true;
+    const generation = this.systemGeneration;
+    const qualified = (taskId: string) =>
+      this.available &&
+      !this.closing &&
+      this.systemReady() &&
+      generation === this.systemGeneration &&
+      !this.planMutations.has(taskId) &&
+      !this.workspaceUnsettled.has(taskId);
+    const work = (async () => {
+      for (const task of this.ports.current().tasks) {
+        const s = task.execution?.schedule,
+          v = s?.versions.at(-1);
+        if (
+          !s ||
+          !v ||
+          s.restoreReview ||
+          v.acceptedAt === null ||
+          v.cancelledAt !== null ||
+          !qualified(task.id)
+        )
+          continue;
+        if (
+          !task.execution?.agreements?.some(
+            (a) =>
+              a.versionId === v.agreementVersionId &&
+              a.acceptedAt !== null &&
+              a.revokedAt === null,
+          )
+        )
+          continue;
+        const prepared = await this.scheduleRecord({
+          kind: 'prepare',
+          taskId: task.id,
+          now,
+        });
+        if (prepared.token && qualified(task.id))
+          await this.scheduleRecord({ kind: 'commit', token: prepared.token });
+      }
+    })();
+    this.pendingReplies.add(work);
+    try {
+      await work;
+    } finally {
+      this.pendingReplies.delete(work);
+      this.planTick = false;
+      this.pump();
+    }
+  }
+  async scheduled(input: ScheduleUICommand): Promise<WorkspaceSnapshot> {
+    const c = scheduleUICommandSchema.parse(input);
+    if (this.closing || !this.available) throw Error('RECORDS_UNAVAILABLE');
+    if (c.kind !== 'schedule-cancel' && !this.systemReady())
+      throw Error('SYSTEM_SUSPENDED');
+    if (this.planMutations.has(c.taskId))
+      throw Error('RECORD_VERSION_CONFLICT');
+    const task = this.ports.current().tasks.find((t) => t.id === c.taskId);
+    if (!task?.execution) throw Error('EXECUTION_NOT_FOUND');
+    const plan = task.execution.schedule;
+    if (c.kind === 'schedule-prepare') {
+      const saved = plan?.versions.find((v) => v.requestId === c.requestId);
+      if (saved) {
+        if (saved.request !== c.text) throw Error('REQUEST_CONTENT_CONFLICT');
+        return this.decorate(this.ports.current());
+      }
+      if ((plan?.revision ?? 0) !== c.expectedRevision)
+        throw Error('RECORD_VERSION_CONFLICT');
+      if (['queued', 'checking', 'running'].includes(task.execution.phase))
+        throw Error('AGREEMENT_TASK_BUSY');
+    } else if (
+      'versionId' in c &&
+      c.versionId !== plan?.versions.at(-1)?.versionId
+    )
+      throw Error('SCHEDULE_EXPIRED');
+    this.planMutations.add(c.taskId);
+    const generation = this.systemGeneration;
+    const qualified = () =>
+      this.available &&
+      !this.closing &&
+      this.systemReady() &&
+      generation === this.systemGeneration;
+    const affected =
+      c.kind === 'schedule-cancel' || c.kind === 'schedule-prepare'
+        ? new Set(
+            task.execution.schedule?.rounds.flatMap((r) =>
+              r.links.filter((l) => l.created).map((l) => l.taskId),
+            ) ?? [],
+          )
+        : new Set<string>();
+    for (const id of affected) {
+      const e = this.ports.current().tasks.find((t) => t.id === id)?.execution;
+      if (e && e.phase !== 'complete')
+        this.stopImmediately(id, '计划正在修改或取消，新动作已阻断。');
+    }
+    const work = (async () => {
+      if (c.kind === 'schedule-prepare') {
+        const prior = task.execution!.schedule;
+        const saved = prior?.versions.find((v) => v.requestId === c.requestId);
+        if (saved) {
+          if (saved.request !== c.text) throw Error('REQUEST_CONTENT_CONFLICT');
+          return;
+        }
+        if ((prior?.revision ?? 0) !== c.expectedRevision)
+          throw Error('RECORD_VERSION_CONFLICT');
+        if (['queued', 'checking', 'running'].includes(task.execution!.phase))
+          throw Error('AGREEMENT_TASK_BUSY');
+        const old = prior?.versions.at(-1);
+        if (old && old.cancelledAt === null)
+          await this.scheduleRecord({
+            kind: 'schedule-cancel',
+            taskId: c.taskId,
+            requestId: randomUUID(),
+            versionId: old.versionId,
+          });
+        const current = this.ports
+          .current()
+          .tasks.find((t) => t.id === c.taskId)!.execution!;
+        const revision = current.schedule?.revision ?? 0;
+        const abort = new AbortController();
+        const observation = await this.ports.observe(c.taskId, abort.signal);
+        const step = await this.ports.propose({
+          taskId: c.taskId,
+          runId: c.requestId,
+          goal: current.goal,
+          observation: observation.observation,
+          pending: null,
+          history: [],
+          publishingAgreement: current.agreements?.at(-1)?.terms,
+          scheduleRequest: {
+            text: c.text,
+            current: old?.terms ?? null,
+            now: new Date().toISOString(),
+            zone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          },
+          signal: abort.signal,
+          permit: (send) => {
+            if (!qualified()) throw Error('SYSTEM_SUSPENDED');
+            return send();
+          },
+        });
+        if (!qualified()) throw Error('SYSTEM_SUSPENDED');
+        if (!step.schedule) throw Error('SCHEDULE_NEEDS_DETAILS');
+        await this.scheduleRecord({
+          ...c,
+          kind: 'schedule-propose',
+          expectedRevision: revision,
+          terms: step.schedule,
+        });
+      } else {
+        const prepared = await this.scheduleRecord(c);
+        if (prepared.token && qualified())
+          await this.scheduleRecord({ kind: 'commit', token: prepared.token });
+      }
+      for (const id of affected) {
+        const e = this.ports
+          .current()
+          .tasks.find((t) => t.id === id)?.execution;
+        if (e?.intent === 'stopped')
+          this.blocked.set(id, {
+            saved: true,
+            message: e.summary,
+            control: 'stop',
+          });
+      }
+    })();
+    this.pendingReplies.add(work);
+    try {
+      await work;
+      return this.decorate(this.ports.current());
+    } finally {
+      this.pendingReplies.delete(work);
+      this.planMutations.delete(c.taskId);
       this.pump();
     }
   }
@@ -1068,6 +1286,10 @@ export class ExecutionService {
       )
         return;
       if (
+        (task.execution?.agreementBinding &&
+          this.planMutations.has(
+            task.execution.agreementBinding.ownerTaskId,
+          )) ||
         task.execution?.phase !== 'queued' ||
         this.jobs.has(task.id) ||
         this.reviews.has(task.id) ||

@@ -1,3 +1,4 @@
+import { ScheduleRecords, validScheduleCatalog } from './schedule';
 import { agreementSummary } from '../shared/agreement';
 import { materialFailureMessage } from '../shared/material';
 import {
@@ -81,6 +82,7 @@ export class WorkspaceRecords {
   private readonly db: ReturnType<typeof drizzle<typeof schema>>;
   private readonly backups: BackupRecords;
   private readonly upgrades: UpgradeRecords;
+  private readonly schedules: ScheduleRecords;
   private readonly materials: MaterialFiles;
   private readonly materialWork = new Set<Promise<unknown>>();
   constructor(folder: string, migrations: string, validation = false) {
@@ -143,6 +145,7 @@ export class WorkspaceRecords {
           15,
           16,
           17,
+          18,
           CURRENT_DATA_FORMAT,
         ].includes(priorVersion)
       )
@@ -150,31 +153,33 @@ export class WorkspaceRecords {
       if (legacy && priorVersion !== CURRENT_DATA_FORMAT) {
         const backup = path.join(
           folder,
-          (priorVersion === 17
-            ? 'workspace-before-agreements-19-'
-            : priorVersion === 16
-              ? 'workspace-before-excel-article-18-'
-              : priorVersion === 15
-                ? 'workspace-before-workflow-repair-17-'
-                : priorVersion === 14
-                  ? 'workspace-before-coordination-16-'
-                  : priorVersion === 13
-                    ? 'workspace-before-workflow-reuse-15-'
-                    : priorVersion === 12
-                      ? 'workspace-before-publication-recovery-14-'
-                      : priorVersion === 11
-                        ? 'workspace-before-publication-13-'
-                        : priorVersion === 10
-                          ? 'workspace-before-material-12-'
-                          : priorVersion === 9
-                            ? 'workspace-before-task-groups-11-'
-                            : priorVersion >= 7
-                              ? 'workspace-before-participation-10-'
-                              : priorVersion === 6
-                                ? 'workspace-before-upgrade-09-'
-                                : priorVersion === 5
-                                  ? 'workspace-before-backup-07-'
-                                  : 'workspace-before-recovery-05-') +
+          (priorVersion === 18
+            ? 'workspace-before-schedules-20-'
+            : priorVersion === 17
+              ? 'workspace-before-agreements-19-'
+              : priorVersion === 16
+                ? 'workspace-before-excel-article-18-'
+                : priorVersion === 15
+                  ? 'workspace-before-workflow-repair-17-'
+                  : priorVersion === 14
+                    ? 'workspace-before-coordination-16-'
+                    : priorVersion === 13
+                      ? 'workspace-before-workflow-reuse-15-'
+                      : priorVersion === 12
+                        ? 'workspace-before-publication-recovery-14-'
+                        : priorVersion === 11
+                          ? 'workspace-before-publication-13-'
+                          : priorVersion === 10
+                            ? 'workspace-before-material-12-'
+                            : priorVersion === 9
+                              ? 'workspace-before-task-groups-11-'
+                              : priorVersion >= 7
+                                ? 'workspace-before-participation-10-'
+                                : priorVersion === 6
+                                  ? 'workspace-before-upgrade-09-'
+                                  : priorVersion === 5
+                                    ? 'workspace-before-backup-07-'
+                                    : 'workspace-before-recovery-05-') +
             randomUUID() +
             '.sqlite',
         );
@@ -271,6 +276,8 @@ export class WorkspaceRecords {
         version !== 14 &&
         version !== 15 &&
         version !== 16 &&
+        version !== 17 &&
+        version !== 18 &&
         version !== CURRENT_DATA_FORMAT
       )
         throw new Error('DATA_VERSION_UNSUPPORTED');
@@ -283,6 +290,21 @@ export class WorkspaceRecords {
       this.executions = new ExecutionRecords(this.db);
       this.backups = new BackupRecords(this.db, () => this.snapshot(), folder);
       this.upgrades = new UpgradeRecords(this.db, () => this.snapshot());
+      this.schedules = new ScheduleRecords(
+        this.db,
+        this.executions,
+        this.materials,
+        () => this.upgrades.held(),
+      );
+      if (
+        !validScheduleCatalog(
+          this.snapshot().tasks.map((t) => ({
+            taskId: t.id,
+            execution: t.execution,
+          })),
+        )
+      )
+        throw Error('DATA_CORRUPT');
       if (!existsSync(marker)) {
         const fd = openSync(marker, 'wx', 0o600);
         try {
@@ -350,6 +372,16 @@ export class WorkspaceRecords {
       throw Error('UPGRADE_PENDING');
     return { ...this.executions.execute(input), state: this.snapshot() };
   }
+  scheduled(
+    input: unknown,
+  ): Promise<Record<string, unknown> & { state: WorkspaceSnapshot }> {
+    const work = this.schedules
+      .execute(input)
+      .then((result) => ({ ...result, state: this.snapshot() }));
+    this.materialWork.add(work);
+    void work.finally(() => this.materialWork.delete(work)).catch(() => {});
+    return work;
+  }
   material(input: unknown) {
     const work = this.materialCommand(input);
     this.materialWork.add(work);
@@ -410,11 +442,15 @@ export class WorkspaceRecords {
       if (!a || !activeAgreement(a)) throw Error('AGREEMENT_EXPIRED');
       let material;
       try {
-        material = await this.materials.select(
+        const selected = await this.materials.selectMany(
           { ...a.terms.selection, basis: agreementSummary(a.terms) },
           [e.goal],
           e.goalVersion,
+          e.scheduleOrigin?.date ?? '',
+          new Set(),
         );
+        if (selected.length !== 1) throw Error('MATERIAL_AMBIGUOUS');
+        material = selected[0]!;
       } catch (error) {
         const code = error instanceof Error ? error.message : '';
         return this.execution({

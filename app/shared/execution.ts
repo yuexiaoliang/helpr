@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { scheduleStateSchema, scheduleTermsSchema } from './schedule';
 import {
   agreementVersionSchema,
   agreementBindingSchema,
@@ -210,6 +211,15 @@ export const participationDecisionSchema = z.discriminatedUnion('operation', [
 ]);
 export type ParticipationDecision = z.infer<typeof participationDecisionSchema>;
 export const executionSchema = z.strictObject({
+  schedule: scheduleStateSchema.optional(),
+  scheduleOrigin: z
+    .strictObject({
+      ownerTaskId: z.string(),
+      roundId: z.string().uuid(),
+      versionId: z.string().uuid(),
+      date: z.string(),
+    })
+    .optional(),
   agreements: z.array(agreementVersionSchema).max(60).optional(),
   agreementBinding: agreementBindingSchema.optional(),
   materialWorks: z.array(materialWorkSchema).max(60).optional(),
@@ -349,6 +359,7 @@ export const executionControlSchema = z.strictObject({
   system: z.boolean().optional(),
 });
 export const nextStepSchema = z.strictObject({
+  schedule: scheduleTermsSchema.optional(),
   agreement: agreementTermsSchema.optional(),
   compose: z.strictObject({ materialId: z.string().uuid() }).optional(),
   article: articleDraftSchema.optional(),

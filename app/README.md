@@ -228,3 +228,13 @@ Node-API 8 原生模块经 node-gyp `13.1.0` 构建，固定 arm64／macOS 14 �
 记录格式 **18** 接续 17，升级前保留原库。约定版本、接受／撤销、工作身份、重复归属和最小完成事实随任务进入备份；冷开与恢复校验跨任务引用，备份恢复后仍逐项核对、等待明确继续。后续历史清理必须保留这些跨任务完成与授权引用。
 
 检查入口：`pnpm exec vitest run tests/workspace/agreement.test.ts tests/workspace/agreement-ui.test.tsx`。固定候选为构建 73 `publishing-agreements-19-viewport`。`pnpm validate:workspace --fixture --candidate=publishing-agreements-19-viewport --agreements` 保留全程自动用例，创建后的导航会按原归属规则暂停。增加 `--agreements-navigation-confirm` 明确启用脚本模拟导航后继续，已核对四次发布、改名去重、固定版本再发、改栏目／撤销及冷开，不能充抵自动跨页或本人操作。具体证据、失败及待验边界见 [19 检查安排](../docs/testing/agreements-19-plan.md)与[检查报告](../docs/testing/evidence/agreements-19/REPORT.md)。
+
+## 定时计划与旧工作（20）
+
+在已有发布约定的任务中展开“定时计划”，或发送“定时计划：…”／“修改定时计划：…”，说明时间、命名时区及错过规则。复述显示完整取材与发布要求、具体候选时间、容许延迟、夏令时及期次方式；接受后只处理未来轮次。未明确错过策略，或日历计划缺少夏令时策略，不能启用。“取消定时计划”阻止新派发；停止、隐藏某次任务不取消未来计划。
+
+记录进程先固定素材候选，控制入口再次检查系统与修改资格，才提交轮次、取材／等待决定和任务关联。旧工作直接链接原任务，不新建网页或代答继续；新素材进入原有两项容量、会话和网页守卫。取材支持原 exact／only／latest，以及 latest-unprocessed、all-unprocessed 和 date（dateName 使用 {date} 表示预定时区日期）；歧义或缺素材请求参与。
+
+错过未开始轮次按本计划的补最近一次、跳过或询问处理，较早范围保留在轮次记录。备份格式19接续18，包含计划、轮次、原任务关联和取消事实；旧备份恢复不覆盖较新事实，计划暂停并须先核对关联工作，再逐项选择继续。时间库与运行时边界见[调研](../docs/research/scheduled-time-library.md)。
+
+源码检查：`pnpm exec vitest run tests/workspace/schedule.test.ts tests/workspace/schedule-ui.test.tsx`；实包：`pnpm validate:workspace --fixture --candidate=scheduled-material-20 --schedules`。限定范围及尚待真实业务、原生窗口和系统组合验证见[检查安排](../docs/testing/schedules-20-plan.md)。

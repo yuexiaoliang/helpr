@@ -1,3 +1,4 @@
+import { ScheduledPlan } from './ScheduledPlan';
 import { PublishingAgreement } from './PublishingAgreement';
 import {
   useSyncExternalStore,
@@ -159,14 +160,26 @@ export function App({
         </button>
         <div className={styles.tools}>
           <FoldFeedback store={store} />
-          {view.state.tasks.some((t) => t.execution?.question) && (
+          {view.state.tasks.some(
+            (t) =>
+              t.execution?.question ||
+              t.execution?.schedule?.rounds.some((r) => r.status === 'waiting'),
+          ) && (
             <button
               onClick={() =>
                 send({ kind: 'panel', panel: 'participation', focus: true })
               }
             >
               待回复 ·{' '}
-              {view.state.tasks.filter((t) => t.execution?.question).length}
+              {
+                view.state.tasks.filter(
+                  (t) =>
+                    t.execution?.question ||
+                    t.execution?.schedule?.rounds.some(
+                      (r) => r.status === 'waiting',
+                    ),
+                ).length
+              }
             </button>
           )}
           <button
@@ -616,6 +629,7 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
             </div>
           )}
           <PublishingAgreement task={task} store={store} />
+          <ScheduledPlan task={task} store={store} />
           <div className={styles.feed} aria-label="对话记录">
             {task.messages.map((message, i) => (
               <div

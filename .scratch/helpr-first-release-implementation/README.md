@@ -1,5 +1,7 @@
 # helpr 首版实现事项
 
+2026-11-07 最新交接：[20 定时选材与错过处理](issues/20-scheduled-material-work-and-missed-runs.md#开发结果)已完成独立实现与限定验收，格式19；293应用／9验证器／25旧回归，定时专项18项通过。候选74，202／203三轮取材、去重、旧目标占用等待、取消及冷开通过，34PID／6组清空。201期待第二次创建而超时的失败保留；实际1次创建、0发布，自动跨页未通过。当前6/11，真实模型／后台及原生组合待验，下一聊天推进[21](issues/21-drupal-cross-site-workflow.md)。[报告](../../docs/testing/evidence/schedules-20/REPORT.md)。
+
 2026-11-07 最新交接：[19 发布约定与素材处理归属](issues/19-publishing-agreements-and-material-work.md#开发结果)完成独立实现和限定实包核对，格式 18；275 应用／9 验证器／25 旧回归通过。候选 73、启动 199／200 完成四次发布、去重、固定版本再发、改栏目／撤销和冷开，46 PID／6 组清空。[报告](../../docs/testing/evidence/agreements-19/REPORT.md)完整保留失败与模拟导航继续边界。当前 6/8，自动跨页、真实模型／后台和原生组合待验，18 前置保持；下一聊天推进 [20](issues/20-scheduled-material-work-and-missed-runs.md) 的独立计划／轮次能力，不能用定时代答明确继续。普通提交不推送或发布。
 
 2026-11-07 最新交接：[18 Excel 成文与确认](issues/18-excel-article-preview-and-publish.md#开发结果)完成独立实现与自动核对，格式 17。候选 68、启动 187／188 通过两份表格成文、改稿旧确认拒绝、固定字节发布及冷开；26 PID／6 组清空。[报告](../../docs/testing/evidence/article-18/REPORT.md)保留源码反例与 CUA 超时。当前 6/9，真实内容模型／WordPress 和原生窗口待验，13 前置保持；下一会话推进 [19](issues/19-publishing-agreements-and-material-work.md) 独立发布约定。普通提交不推送或发布。

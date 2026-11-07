@@ -70,6 +70,12 @@ const labels: Record<string, string> = {
     '服务回复包含受保护信息，已停止接收，原始内容不展示。',
 
   AGREEMENT_EXPIRED: '这个约定版本已失效，请查看最新复述或单独确认本次内容。',
+  SCHEDULE_EXPIRED: '这个计划版本或待处理轮次已失效，请查看最新记录。',
+  SCHEDULE_ZONE_REQUIRED: '请明确有效的命名时区，例如 Asia/Shanghai。',
+  SCHEDULE_POLICY_REQUIRED:
+    '请先约定错过策略及夏令时重复、不存在时刻的处理方式。',
+  SCHEDULE_NEEDS_DETAILS:
+    '请根据会话中的补问明确时间、时区和错过规则，再复述计划。',
   AGREEMENT_SCOPE_INVALID: '素材或目标不符合约定范围，请修改约定或本次委托。',
   AGREEMENT_PERIOD_REQUIRED: '请明确本次日期或期次；同内容一次的约定无需填写。',
   AGREEMENT_NEEDS_DETAILS:

@@ -1062,6 +1062,11 @@ ipcMain.handle('workspace-request', (event, input: unknown) => {
   const command = uiCommandSchema.parse(input);
   if (
     [
+      'schedule-prepare',
+      'schedule-accept',
+      'schedule-cancel',
+      'schedule-resume',
+      'schedule-decide',
       'agreement-prepare',
       'agreement-accept',
       'agreement-revoke',
@@ -1085,6 +1090,7 @@ ipcMain.handle('workspace-request', (event, input: unknown) => {
       ![
         'snapshot',
         'participation-draft',
+        'schedule-decide',
         'participation-open',
         'participation-decision',
         'participation-reply',
@@ -1128,6 +1134,11 @@ ipcMain.handle('workspace-request', (event, input: unknown) => {
         'minimize',
         'model-cancel',
         'execution-intent',
+        'schedule-prepare',
+        'schedule-accept',
+        'schedule-cancel',
+        'schedule-resume',
+        'schedule-decide',
         'agreement-prepare',
         'agreement-accept',
         'agreement-revoke',
@@ -1135,6 +1146,7 @@ ipcMain.handle('workspace-request', (event, input: unknown) => {
         'participation-reply',
         'participation-decision',
         'participation-draft',
+        'schedule-decide',
         'participation-open',
       ].includes(command.kind) ||
       !('taskId' in command) ||
@@ -1235,7 +1247,12 @@ process.on('message', (input: unknown) => {
   const update = z.object({ state: snapshotSchema }).safeParse(input);
   if (update.success && update.data.state.revision >= state.revision) {
     const previousQuestions = new Set(
-      state.tasks.map((task) => task.execution?.question?.id),
+      state.tasks.flatMap((task) => [
+        task.execution?.question?.id,
+        ...(task.execution?.schedule?.rounds
+          .filter((r) => r.status === 'waiting')
+          .map((r) => r.id) ?? []),
+      ]),
     );
     state = update.data.state;
     for (const id of Object.keys(replyDrafts))
@@ -1245,8 +1262,11 @@ process.on('message', (input: unknown) => {
       }
     const incoming = state.tasks.some(
       (task) =>
-        task.execution?.question &&
-        !previousQuestions.has(task.execution.question.id),
+        (task.execution?.question &&
+          !previousQuestions.has(task.execution.question.id)) ||
+        task.execution?.schedule?.rounds.some(
+          (r) => r.status === 'waiting' && !previousQuestions.has(r.id),
+        ),
     );
     if (win && incoming && panel.panel === 'none') {
       clearTimeout(panelTimer);

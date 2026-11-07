@@ -1,4 +1,5 @@
 import { agreementUICommandSchema } from '../shared/agreement';
+import { scheduleUICommandSchema } from '../shared/schedule';
 import {
   app,
   utilityProcess,
@@ -496,6 +497,7 @@ export async function startController(
     propose: (input) => models.propose(input),
     perform: (job) => webExecutor.perform(job),
     material: (command) => recordClient.request({ kind: 'material', command }),
+    scheduled: (command) => recordClient.request({ kind: 'schedule', command }),
     revoke: (taskId) => webExecutor.revoke(taskId),
     stopModels: (taskId) => models.cancelTask(taskId),
     beforeRecovery: barriers ? () => barriers.pass('recovery', '*') : undefined,
@@ -812,6 +814,12 @@ export async function startController(
         throw Error('UNSAVED_CHANGES');
       return { state: await executions.intent(command) };
     }
+    if (command.kind.startsWith('schedule-'))
+      return {
+        state: await executions.scheduled(
+          scheduleUICommandSchema.parse(command),
+        ),
+      };
     if (command.kind.startsWith('agreement-'))
       return {
         state: await executions.agreement(
@@ -827,6 +835,35 @@ export async function startController(
       const task = state.tasks.find((t) => t.id === command.taskId);
       const agreement = task?.execution?.agreements?.at(-1);
       const base = { taskId: command.taskId, requestId: command.requestId };
+      const plan = task?.execution?.schedule?.versions.at(-1);
+      if (/^(取消|撤销)(这个)?定时计划[。！!]?$/u.test(text) && plan)
+        return {
+          state: await executions.scheduled({
+            ...base,
+            kind: 'schedule-cancel',
+            versionId: plan.versionId,
+          }),
+        };
+      if (/^接受(这个)?定时计划[。！!]?$/u.test(text) && plan)
+        return {
+          state: await executions.scheduled({
+            ...base,
+            kind: 'schedule-accept',
+            versionId: plan.versionId,
+          }),
+        };
+      if (
+        /^(定时计划|修改定时计划|定时|每天|每周|每隔)[：:\s]?/u.test(text) &&
+        task?.execution
+      )
+        return {
+          state: await executions.scheduled({
+            ...base,
+            kind: 'schedule-prepare',
+            expectedRevision: task.execution.schedule?.revision ?? 0,
+            text,
+          }),
+        };
       if (/^(明确)?再(发|发布)一次[。！!]?$/u.test(text)) {
         const work = task?.execution?.materialWorks?.findLast(
           (w) =>
@@ -1254,7 +1291,11 @@ export async function startController(
     });
   };
   trayUpdates.refresh = () => {
-    const count = state.tasks.filter((t) => t.execution?.question).length;
+    const count = state.tasks.filter(
+      (t) =>
+        t.execution?.question ||
+        t.execution?.schedule?.rounds.some((r) => r.status === 'waiting'),
+    ).length;
     if (count === lastCount) return;
     lastCount = count;
     tray.setTitle(count ? 'helpr · 待办 ' + count : 'helpr');
@@ -1280,6 +1321,14 @@ export async function startController(
     );
   };
   trayUpdates.refresh();
+  const planTimer = setInterval(() => {
+    void executions
+      .tickPlans()
+      .catch((error: unknown) =>
+        log.event('failure', { code: errorCode(error) }),
+      );
+  }, 1000);
+  planTimer.unref();
   host.on('message', (input: unknown) => {
     const ready = z
       .object({

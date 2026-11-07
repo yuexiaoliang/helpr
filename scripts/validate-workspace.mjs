@@ -1,3 +1,4 @@
+import { verifySchedules } from './schedule-validation.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
@@ -34,6 +35,7 @@ const { values: options } = parseArgs({
     'workflow-repair': flag,
     article: flag,
     agreements: flag,
+    schedules: flag,
     'agreements-navigation-confirm': flag,
     coordination: flag,
     'publication-recovery': { type: 'string' },
@@ -85,10 +87,10 @@ assert(
   !options['input-preparation'] || (!options.interactive && !options.fault),
   'INPUT_PREPARATION_IS_A_SINGLE_CHECK',
 );
-if (options.participation || options['participation-review'] || options['task-groups'] || options.material || options.publication || options['workflow-reuse'] || options['workflow-repair'] || options.article || options.agreements || options.coordination) {
+if (options.participation || options['participation-review'] || options['task-groups'] || options.material || options.publication || options['workflow-reuse'] || options['workflow-repair'] || options.article || options.agreements || options.schedules || options.coordination) {
   assert(
     options.fixture && !systemStorage && !options.interactive && !options.fault &&
-      !options['input-preparation'] && [options.participation, options['participation-review'], options['task-groups'], options.material, options.publication, options['workflow-reuse'], options['workflow-repair'], options.article, options.agreements, options.coordination].filter(Boolean).length === 1,
+      !options['input-preparation'] && [options.participation, options['participation-review'], options['task-groups'], options.material, options.publication, options['workflow-reuse'], options['workflow-repair'], options.article, options.agreements, options.schedules, options.coordination].filter(Boolean).length === 1,
     'PARTICIPATION_FIXTURE_REQUIRED',
   );
 }
@@ -237,9 +239,10 @@ const materialBytes = Buffer.from([0, 1, 99, 128, 255, 2, 3, 4]);
 if (options.material || options.publication) fs.writeFileSync(materialSource, materialBytes);
 const website = await fixture({
   coordination: options.coordination,
-  workflow: options['workflow-reuse'] || options['workflow-repair'] || options.article || options.agreements,
-  article: options.article || options.agreements,
-  agreements: options.agreements,
+  workflow: options['workflow-reuse'] || options['workflow-repair'] || options.article || options.agreements || options.schedules,
+  article: options.article || options.agreements || options.schedules,
+  agreements: options.agreements || options.schedules,
+  schedules: options.schedules,
   repair: options['workflow-repair'],
   participation: options.participation || options['task-groups'],
   review: options['participation-review'],
@@ -289,7 +292,7 @@ const deadline = setTimeout(
     ? 60000
     : options.interactive || systemStorage
       ? 30 * 60 * 1000
-      : (options.coordination || options['workflow-repair'] || options.agreements) ? 5 * 60000 : options['workflow-reuse'] ? 3 * 60000 : 2 * 60000,
+      : (options.coordination || options['workflow-repair'] || options.agreements || options.schedules) ? 5 * 60000 : options['workflow-reuse'] ? 3 * 60000 : 2 * 60000,
 );
 function check(name, test) {
   test();
@@ -884,6 +887,7 @@ async function verifyMaterial(client) {
 async function validate() {
   let client = await launch();
   if (options.coordination) return verifyCoordination({client, website, evidence, command, waitFor, check, launch, remainingOwned});
+  if (options.schedules) return verifySchedules({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
   if (options.agreements) return verifyAgreements({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, confirmNavigation:options['agreements-navigation-confirm']===true});
   if (options.article) return verifyArticle({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
   if (options['workflow-repair']) return verifyWorkflowRepair({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});

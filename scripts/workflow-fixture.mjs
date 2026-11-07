@@ -1,5 +1,5 @@
 // 本机替代模型从委托提取参数并提议首次动作；复用阶段只回答绑定，不提供网页步骤。
-export function workflowFixture(receipts, { repair = false, article = false, agreements = false } = {}) {
+export function workflowFixture(receipts, { repair = false, article = false, agreements = false, schedules = false } = {}) {
   let calls = 0, writes = 0, newItems = 0;
   const waitingDrafts = new Map();
   const labels = id => !repair || id === 'A' ? {draft: '保存草稿', title: '发布标题', publish: '发布附件'} : id === 'C' ? {draft: '暂存附件', title: '正文内容', publish: '确认送出'} : {draft: '暂存附件', title: '公告全文', publish: '发布附件'};
@@ -17,6 +17,15 @@ export function workflowFixture(receipts, { repair = false, article = false, agr
         try {
           if (++calls > 80) throw Error('FIXTURE_MODEL_LIMIT');
           const input = JSON.parse(body), plan = JSON.parse(input.messages.at(-1).content);
+          if (schedules && plan.request?.now) {
+            const startAt=plan.request.text.match(/(\d{4}-\d{2}-\d{2}T[0-9:.]+Z)/)?.[1];
+            if(!startAt)throw Error('SCHEDULE_FIXTURE_INPUT');
+            const answer={decision:'review',summary:'Review the explicit schedule',evidence:['User request'],previous:null,action:null,schedule:{zone:'Asia/Shanghai',startAt,cadence:{kind:'interval',seconds:60},overlap:'ask',gap:'ask',missed:'latest',graceSeconds:60,periodKey:'date'}};
+            receipts.push({kind:'schedule-model',at:Date.now()});
+            res.writeHead(200, {'Content-Type':'text/event-stream'});
+            res.end('data: '+JSON.stringify({choices:[{index:0,delta:{content:JSON.stringify(answer)},finish_reason:null}]})+'\n\ndata: '+JSON.stringify({choices:[{index:0,delta:{},finish_reason:'stop'}],usage:{prompt_tokens:100,completion_tokens:100,total_tokens:200}})+'\n\ndata: [DONE]\n\n');
+            return;
+          }
           if (agreements && plan.request) {
             const match = plan.request.text.match(/从“(.+?)”取唯一 xlsx，在 (http\S+) 的“(.+?)”栏目，按“(.+?)”自动发布，新内容另发，同内容一次/);
             if (!match) throw Error('AGREEMENT_FIXTURE_INPUT');

@@ -37,6 +37,10 @@ export function validateAgreementTerms(a: AgreementVersion['terms']) {
     path.normalize(a.selection.scope) !== a.selection.scope ||
     (a.selection.name &&
       path.basename(a.selection.name) !== a.selection.name) ||
+    (a.selection.rule === 'date' &&
+      (!a.selection.dateName?.includes('{date}') ||
+        path.basename(a.selection.dateName) !== a.selection.dateName ||
+        !!a.selection.name)) ||
     websiteURL(a.entryUrl) !== a.entryUrl
   )
     throw Error('AGREEMENT_SCOPE_INVALID');
@@ -48,6 +52,7 @@ function inScope(a: AgreementVersion, m: MaterialVersion) {
     m.selection.rule === s.rule &&
     m.selection.name === s.name &&
     m.selection.extension === s.extension &&
+    m.selection.dateName === s.dateName &&
     (m.source === s.scope || path.dirname(m.source) === s.scope) &&
     (!s.name || m.name === s.name) &&
     (!s.extension ||
