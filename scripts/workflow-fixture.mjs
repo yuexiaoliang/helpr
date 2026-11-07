@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 // 本机替代模型从委托提取参数并提议首次动作；复用阶段只回答绑定，不提供网页步骤。
-export function workflowFixture(receipts, { repair = false, article = false, agreements = false, schedules = false, crossSite = false, separateFields = false, dynamicResult = false } = {}) {
+export function workflowFixture(receipts, { repair = false, article = false, agreements = false, schedules = false, crossSite = false, separateFields = false, dynamicResult = false, managementResult = false } = {}) {
   let calls = 0, writes = 0, newItems = 0;
   const waitingDrafts = new Map();
   const labels = id => crossSite ? {draft: '保存草稿', title: '正文：纯文本', publish: '发布附件'} : !repair || id === 'A' ? {draft: '保存草稿', title: '发布标题', publish: '发布附件'} : id === 'C' ? {draft: '暂存附件', title: '正文内容', publish: '确认送出'} : {draft: '暂存附件', title: '公告全文', publish: '发布附件'};
@@ -128,15 +128,21 @@ for(const delay of [1000,3000,6000])setTimeout(()=>fetch('/readiness?'+new URLSe
         }
         else if (url.pathname === '/publish') { Object.assign(p, dynamicResult ? Object.fromEntries(new URLSearchParams(bytes.toString())) : JSON.parse(bytes.toString()), { published: true }); if (dynamicResult) { p.content = p.heading + '\n\n' + p.body; p.resultPath = '/dynamic/' + randomUUID(); } receipts.push({ kind: 'published', item: id, content: p.content, heading:p.heading, body:p.body, destination: p.destination }); }
         else { res.writeHead(404); }
-        if (dynamicResult && url.pathname === '/publish') res.writeHead(303, { Location: p.resultPath + query });
+        if (dynamicResult && url.pathname === '/publish') res.writeHead(303, { Location: (managementResult ? '/management' : p.resultPath) + query });
         res.end('ok');
       }); return true;
     }
     if (url.pathname === '/file') { if (p.bytes) { receipts.push({ kind: 'download', item: id }); res.end(p.bytes); } else { res.writeHead(404); res.end(); } return true; }
+    if (managementResult && url.pathname === '/management') {
+      if (!p.published) { res.writeHead(404); res.end(); return true; }
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.end(`<!doctype html><meta charset="utf-8"><title>发布管理</title><h1>发布管理</h1><article><a href="${p.resultPath}${query}">${escape(p.heading)}</a><p>${escape(p.body)}</p><p>${escape(p.destination)}</p><a href="/edit${query}">编辑原条目</a><a href="/file${query}">下载附件</a>${id === 'B' ? `<a href="/ambiguous${query}">${escape(p.heading)}</a>` : ''}</article>`);
+      return true;
+    }
     if ((!dynamicResult && url.pathname === '/result') || (dynamicResult && url.pathname === p.resultPath)) {
       if (!p.published) { res.writeHead(404); res.end(); return true; }
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.end(`<link rel="canonical" href="${dynamicResult ? p.resultPath : '/result'}${query}"><article><h1>${escape(separateFields ? p.heading : p.content)}</h1><p>${escape(p.destination)}</p>${separateFields ? `<section>${escape(p.body)}</section>` : ''}<a href="/file${query}">下载附件</a>${dynamicResult ? `<a href="/edit?item=${id === 'B' ? 'wrong' : id}">编辑原条目</a>` : ''}</article>`);
+      res.end(`<link rel="canonical" href="${dynamicResult ? p.resultPath : '/result'}${query}"><article><h1>${escape(separateFields ? p.heading : p.content)}</h1><p>${escape(p.destination)}</p>${separateFields ? `<section>${escape(p.body)}</section>` : ''}<a href="/file${query}">下载附件</a>${dynamicResult ? `<a href="/edit?item=${id === 'B' && !managementResult ? 'wrong' : id}">编辑原条目</a>` : ''}</article>`);
       receipts.push({ kind: 'public-read', item: id }); return true;
     }
     if (url.pathname === '/edit') {

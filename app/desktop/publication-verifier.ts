@@ -6,6 +6,7 @@ import { MATERIAL_LIMIT, type MaterialVersion } from '../shared/material';
 import { websiteURL } from '../shared/url-policy';
 import {
   publicationParts,
+  validRecoveryEntry,
   type Publication,
   type PublicationResultProposal,
   type PublicationCheck,
@@ -205,11 +206,18 @@ export async function verifyRecoveredPublication(
     rule.attachmentUrl === a.url &&
     action.source.url === rule.targetUrl &&
     (action.discoveredRecovery
-      ? action.discoveredRecovery.source.url === rule.url
+      ? validRecoveryEntry(p, action.discoveredRecovery)
       : !!action.observedUrls?.includes(rule.url)) &&
     new URL(rule.url).origin === new URL(rule.targetUrl).origin;
   if (!check.checks.target) return check;
-  return readPublicResult(p, material, check, signal, true);
+  return readPublicResult(
+    p,
+    material,
+    check,
+    signal,
+    true,
+    !!action.discoveredRecovery?.entry,
+  );
 }
 
 async function readPublicResult(
@@ -218,6 +226,7 @@ async function readPublicResult(
   result: PublicationCheck,
   signal: AbortSignal,
   requireCanonical = false,
+  requireTargetLink = false,
 ) {
   try {
     const bytes = await read(result.proposal.url, 2 * 1024 * 1024, signal);
@@ -235,6 +244,12 @@ async function readPublicResult(
       result.checks.published =
         page.canonical.length === 1 &&
         page.canonical[0] === result.proposal.url;
+    }
+    if (requireTargetLink) {
+      result.checks.target =
+        page.links.filter((link) => link === p.attachment!.targetUrl).length ===
+        1;
+      if (!result.checks.target) return result;
     }
     result.checks.content = publicationParts(p).every((part) =>
       has(page.text, part),

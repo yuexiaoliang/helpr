@@ -276,3 +276,9 @@ Node-API 8 原生模块经 node-gyp `13.1.0` 构建，固定 arm64／macOS 14 �
 创建前可冻结 `targetCreation` 的主文档完整文本框值和栏目。表单导航仍撤权并暂停；只读核对新编辑页的同站未知URL、唯一自身／来源链接及冻结字段后，保存 `discoveredTarget` 和目标／草稿事实。冷开不重建；明确继续先核对现场，再执行剩余工作。无检查点的创建不能由模型自报成功解除未知。格式26迁移前备份，导入保留恢复待验。
 
 源码入口 `tests/workspace/created-target.test.ts`；受管隔离包入口 `pnpm validate:workspace --fixture --candidate=created-target-23 --created-target`。两次本机POST／303及冷开不代答继续，不能抵算自动表单续行或真实业务。范围与用量见[本阶段方案](../docs/testing/release-23-created-target-plan.md)。
+
+### 管理页中的动态结果链接（23阶段）
+
+发布后的完整管理页可按已冻结确认内容取得结果入口：链接名称须精确等于确认全文或某个完整字段值，唯一同站URL，管理页同时包含原编辑目标／附件唯一链接、确认全文和栏目。可靠保存入口后只读获取公开页，核对唯一canonical、内容、栏目、附件与字节，并核对公开页唯一原编辑目标链接。不会点击候选、重新发布或取得新页面输入资格；歧义、缺身份、保存失败保持未知。仅有通用“查看”标签或缺全文的缩略列表仍不支持。
+
+格式27接续26，先备份`workspace-before-management-result-23-*`；冷开消费已保存入口，备份导入保持restoreReview。源码入口`tests/workspace/publication.test.ts`；隔离包入口`pnpm validate:workspace --fixture --candidate=management-result-23 --management-result`。A唯一标题链接、B同名不同地址及冷开均不代答继续。具体边界与有界用量见[本阶段方案](../docs/testing/release-23-management-result-plan.md)，异步附件和真实后台组合仍待完成。

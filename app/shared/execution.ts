@@ -40,6 +40,7 @@ import {
   publicationCheckSchema,
   publicationRecoverySchema,
   publicationRecoveryCheckpointSchema,
+  validRecoveryEntry,
 } from './publication';
 import {
   learnedWorkflowSchema,
@@ -204,7 +205,7 @@ export const actionFactSchema = z
       d.source.generation >= n.generation &&
       !d.source.truncated &&
       d.source.observedAt >= n.observedAt &&
-      d.recovery.url === d.source.url &&
+      validRecoveryEntry(p, d) &&
       !new URL(d.recovery.url).hash &&
       d.recovery.url !== p.attachment.targetUrl &&
       d.recovery.url !== p.attachment.url &&

@@ -11,6 +11,7 @@ import {
   publicationParts,
   verifyPublicationFields,
   publicationRecoveryCheckpointSchema,
+  confirmedResultLinks,
 } from '../shared/publication';
 import { learnWorkflow } from './workflow';
 import { publicationArticle } from './article';
@@ -53,7 +54,7 @@ export function freezeRecovery(
   return { ...recovery, targetFactId: target.id, uploadFactId: upload.id };
 }
 
-/** 完整新页必须同时呈现原编辑目标、附件及确认内容；只冻结已加载的当前地址。 */
+/** 完整新页必须同时呈现原编辑目标、附件及确认内容；当前地址或唯一名称等于已确认字段完整值的链接。 */
 export function discoverRecovery(
   e: TaskExecution,
   action: ActionFact,
@@ -84,10 +85,16 @@ export function discoverRecovery(
       f.materialId === a.materialId,
   );
   if (!target || !upload) throw Error('PUBLICATION_BINDING_MISMATCH');
+  const links = confirmedResultLinks(p, source);
+  if (links.length > 1) throw Error('EXECUTION_EVIDENCE_MISSING');
+  const link = links[0];
   return publicationRecoveryCheckpointSchema.parse({
+    ...(link
+      ? { entry: { rule: 'confirmed-content-link-v1', name: link.name } }
+      : {}),
     recovery: {
       rule: 'public-attachment-v1',
-      url: source.url,
+      url: link?.url ?? source.url,
       targetUrl: a.targetUrl,
       attachmentUrl: a.url,
       targetFactId: target.id,

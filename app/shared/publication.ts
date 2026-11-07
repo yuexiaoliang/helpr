@@ -133,6 +133,12 @@ export const publicationRecoveryCheckpointSchema = z.strictObject({
     targetFactId: z.string().uuid(),
     uploadFactId: z.string().uuid(),
   }),
+  entry: z
+    .strictObject({
+      rule: z.literal('confirmed-content-link-v1'),
+      name: observedLinkSchema.shape.name,
+    })
+    .optional(),
   source: pageSourceSchema,
   binding: z.strictObject({
     targetId: z.string().min(1),
@@ -140,6 +146,38 @@ export const publicationRecoveryCheckpointSchema = z.strictObject({
   }),
   links: z.array(observedLinkSchema).max(300),
 });
+/** 仅按已批准全文/字段值匹配链接名称；不猜地址，不逐链接请求。 */
+export function confirmedResultLinks(
+  p: Publication,
+  source: Pick<PageObservation, 'url' | 'links'>,
+) {
+  return (source.links ?? []).filter(
+    (link) =>
+      publicationParts(p).includes(link.name) &&
+      link.url !== source.url &&
+      link.url !== p.attachment?.targetUrl &&
+      link.url !== p.attachment?.url,
+  );
+}
+
+export function validRecoveryEntry(
+  p: Publication,
+  checkpoint: z.infer<typeof publicationRecoveryCheckpointSchema>,
+) {
+  const { entry, source, recovery, links } = checkpoint;
+  if (new URL(source.url).origin !== new URL(recovery.targetUrl).origin)
+    return false;
+  if (!entry) return recovery.url === source.url;
+  const matches = confirmedResultLinks(p, { url: source.url, links });
+  return (
+    source.url !== recovery.url &&
+    matches.length === 1 &&
+    matches[0]!.url === recovery.url &&
+    matches[0]!.name === entry.name &&
+    links.filter((link) => link.url === recovery.url).length === 1
+  );
+}
+
 export const downloadCheckSchema = z.strictObject({
   url,
   sha256: materialVersionSchema.shape.sha256,

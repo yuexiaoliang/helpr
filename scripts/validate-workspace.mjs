@@ -41,6 +41,7 @@ const { values: options } = parseArgs({
     'action-navigation': flag,
     'link-navigation': flag,
     'dynamic-result': flag,
+    'management-result': flag,
     'created-target': flag,
     'created-target-mismatch': flag,
     'cross-site-controls': flag,
@@ -94,6 +95,7 @@ if (recoveryPoint) {
   options.publication = true;
 }
 assert(!options['ambiguous-selection'] || options['cross-site-controls'], 'CROSS_SITE_CASE_REQUIRED');
+if (options['management-result']) options['dynamic-result'] = true;
 if (options['dynamic-result']) options['publication-fields'] = true;
 if (options['cross-site-controls'] || options['history-cleanup'] || options['publication-fields']) options['workflow-reuse'] = true;
 assert(!(options['history-cleanup'] && options['cross-site-controls']), 'CLEANUP_SEPARATE_CASE_REQUIRED');
@@ -258,6 +260,7 @@ if (options.material || options.publication) fs.writeFileSync(materialSource, ma
 const website = await fixture({
   createdTarget: options['created-target'],
   dynamicResult: options['dynamic-result'],
+  managementResult: options['management-result'],
   navigation: options['action-navigation'],
   linkNavigation: options['link-navigation'],
   coordination: options.coordination,
@@ -911,7 +914,7 @@ async function verifyMaterial(client) {
 async function validate() {
   let client = await launch();
   if (options['created-target']) return verifyCreatedTarget({client, website, evidence, command, waitFor, check, launch, remainingOwned,mismatch:options['created-target-mismatch']});
-  if (options['dynamic-result']) return verifyDynamicResult({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
+  if (options['dynamic-result']) return verifyDynamicResult({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, management: options['management-result']});
   if (options['link-navigation']) return verifyLinkNavigation({client, website, evidence, command, waitFor, check, launch, remainingOwned});
   if (options['action-navigation']) return verifyNavigation({client, website, evidence, command, waitFor, check, launch, remainingOwned});
   if (options.coordination) return verifyCoordination({client, website, evidence, command, waitFor, check, launch, remainingOwned});

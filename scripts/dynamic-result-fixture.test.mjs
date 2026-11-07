@@ -22,3 +22,24 @@ test('动态夹具只有POST后生成地址，真实表单与303保留正反例�
     assert(result.includes('publication'));assert(!result.includes('public-attachment-v1'));
   }finally{await site.close();}
 });
+
+test('管理页只在POST后给出随机结果链接，B同名不同地址，公开页保留编辑关联',async()=>{
+  const site=await fixture({workflow:true,dynamicResult:true,separateFields:true,managementResult:true});
+  try{
+    for(const item of ['A','B']){
+      const before=await(await fetch(site.base+'/edit?item='+item)).text();
+      assert(!before.includes('/dynamic/'));
+      const response=await fetch(site.base+'/publish?item='+item,{method:'POST',body:new URLSearchParams({heading:'标题'+item,body:'正文'+item,destination:'公告'}),redirect:'manual'});
+      assert.equal(response.status,303);assert.equal(response.headers.get('location'),'/management?item='+item);
+      const html=await(await fetch(site.base+response.headers.get('location'))).text();
+      const result=html.match(/href="(\/dynamic\/[^\"]+)"/)[1];
+      assert.equal((html.match(new RegExp('>标题'+item+'</a>','g'))??[]).length,item==='A'?1:2);
+      assert(html.includes('href="/edit?item='+item+'"'));assert(html.includes('正文'+item));
+      assert(!html.includes('rel="canonical"'));
+      const published=await(await fetch(site.base+result)).text();
+      assert(published.includes('rel="canonical" href="'+result+'"'));
+      assert(published.includes('href="/edit?item='+item+'"'));
+    }
+    assert.equal(site.receipts.filter(r=>r.kind==='published').length,2);
+  }finally{await site.close();}
+});

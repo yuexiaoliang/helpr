@@ -3,8 +3,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 
-export async function verifyDynamicResult({client, website, data, evidence, command, waitFor, check, launch, remainingOwned}) {
-  const detail = evidence.dynamicResult = {realModelCalls:0, remoteWrites:0, cases:[], scriptedContinuation:false};
+export async function verifyDynamicResult({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, management = false}) {
+  const detail = evidence.dynamicResult = {realModelCalls:0, remoteWrites:0, cases:[], scriptedContinuation:false, management};
   const state = await client.request({kind:'snapshot'});
   await client.request(command('model-save',{protocol:'chat-completions',expectedVersion:state.modelSettings?.version??0,endpoint:website.base+'/v1',model:'fixture',apiKey:'local-fixture-not-a-secret'}));
   for (const item of ['A','B']) {
@@ -26,7 +26,7 @@ export async function verifyDynamicResult({client, website, data, evidence, comm
     assert.equal(review.publication.content,title);
     assert.equal(website.receipts.filter(r=>r.kind==='published'&&r.item===item).length,0);
     await client.request({kind:'participation-decision',taskId,questionId:review.question.id,operation:'approve'});
-    await waitFor(async()=>{const t=await get();return t.url.includes('/dynamic/')&&(item==='A'?t.execution?.phase==='complete':t.execution?.pauseReason==='page-change')&&t;},50000);
+    await waitFor(async()=>{const t=await get();return t.url.includes(management ? '/management' : '/dynamic/')&&(item==='A'?t.execution?.phase==='complete':t.execution?.pauseReason==='page-change')&&t;},50000);
     if(item==='B') await new Promise(r=>setTimeout(r,7000));
     const task=sample.result=await get(), e=task.execution, a=e.actions.at(-1);
     check(item+' POST/303动态地址与只读结果独立核对',()=>{
@@ -37,7 +37,7 @@ export async function verifyDynamicResult({client, website, data, evidence, comm
       assert.equal(website.receipts.filter(r=>r.kind==='published'&&r.item===item).length,1);
       assert.deepEqual(website.receipts.filter(r=>r.item===item&&['upload','draft','published'].includes(r.kind)).map(r=>r.kind),['upload','draft','published']);
       if(item==='A'){
-        assert.equal(e.phase,'complete');assert.equal(a.discoveredRecovery.recovery.url,task.url);
+        assert.equal(e.phase,'complete');if(management){assert.equal(a.discoveredRecovery.entry.name,title.split('\n\n')[0]);assert.equal(a.discoveredRecovery.source.url,task.url);assert.notEqual(a.discoveredRecovery.recovery.url,task.url);}else assert.equal(a.discoveredRecovery.recovery.url,task.url);
         assert.equal(e.publicationChecks[0].status,'verified');
         assert.equal(e.publicationChecks[0].download.sha256,createHash('sha256').update(bytes).digest('hex'));
         assert.equal(a.status,'confirmed');
@@ -46,10 +46,16 @@ export async function verifyDynamicResult({client, website, data, evidence, comm
         assert.equal(a.discoveredRecovery,undefined);assert.equal(e.result,undefined);
       }
     });
-    if(item==='A'){
+    if(management){
       const html=await(await fetch(task.url,{signal:AbortSignal.timeout(5000)})).text();
+      sample.managementPage={url:task.url,html,sha256:createHash('sha256').update(html).digest('hex')};
+    }
+    if(item==='A'){
+      const html=await(await fetch(a.discoveredRecovery.recovery.url,{signal:AbortSignal.timeout(5000)})).text();
       assert(title.split('\n\n').every(v=>html.includes(v)));
-      assert.deepEqual(Buffer.from(await(await fetch(e.publication.attachment.url,{signal:AbortSignal.timeout(5000)})).arrayBuffer()),bytes);
+      const download=Buffer.from(await(await fetch(e.publication.attachment.url,{signal:AbortSignal.timeout(5000)})).arrayBuffer());
+      assert.deepEqual(download,bytes);
+      sample.independentPublicRead={url:a.discoveredRecovery.recovery.url,html,pageSha256:createHash('sha256').update(html).digest('hex'),attachmentUrl:e.publication.attachment.url,bytes:download.length,sha256:createHash('sha256').update(download).digest('hex')};
     }
   }
   detail.plansBeforeCold=website.receipts.filter(r=>r.kind==='planning').length;

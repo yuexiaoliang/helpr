@@ -1230,7 +1230,7 @@ test('两项只读恢复占用自动推进容量，第三项保持排队', async
   }
 });
 
-async function dynamicResultFixture() {
+async function dynamicResultFixture(management = false) {
   const f = await fixture();
   await f.dispatched();
   f.setHtml(
@@ -1248,6 +1248,13 @@ async function dynamicResultFixture() {
     ],
     text: '本次附件报告 公告 已发布',
   };
+  if (management) {
+    observation.url = f.proposal.targetUrl + '/management';
+    observation.links!.push({ name: '本次附件报告', url: f.proposal.url });
+    f.setHtml(
+      '<link rel="canonical" href="/result"><article>本次附件报告 公告 <a href="/file">下载</a><a href="/edit">编辑</a></article>',
+    );
+  }
   const event = {
     taskId: f.taskId,
     runId: 'publish',
@@ -1270,7 +1277,7 @@ async function dynamicResultFixture() {
       kind: 'page',
       requestId: randomUUID(),
       taskId: f.taskId,
-      url: f.proposal.url,
+      url: observation.url,
       phase: 'manual',
     });
   const freeze = (source = observation, targetId = 'page') =>
@@ -1560,4 +1567,186 @@ test('动态检查点进入真实备份导入；损坏目标引用拒绝冷开',
   );
   db.close();
   expect(() => f.reopen()).toThrow('DATA_CORRUPT');
+});
+
+test('管理页从冻结确认内容唯一匹配结果链接，只读GET后完成；无输入或模型', async () => {
+  const f = await dynamicResultFixture(true);
+  const s = f.dynamicService();
+  f.arrive();
+  await s.instance.recordNavigation(f.event);
+  await s.instance.suspend(f.taskId, 'page-change', randomUUID());
+  await s.instance.settled();
+  expect(f.execution().phase).toBe('complete');
+  expect(f.execution().actions.at(-1)).toMatchObject({
+    status: 'confirmed',
+    navigation: { association: 'during-action' },
+    discoveredRecovery: {
+      entry: { rule: 'confirmed-content-link-v1', name: '本次附件报告' },
+      source: { url: f.observation.url },
+      recovery: { url: f.proposal.url },
+    },
+  });
+  expect(f.execution().result!.source.url).toBe(f.proposal.url);
+  for (const spy of [s.allow, s.prepare, s.propose, s.perform])
+    expect(spy).not.toHaveBeenCalled();
+  await s.instance.stopAll();
+});
+
+test('管理页同名不同地址、重复URL、异站、片段、错误原目标和截断均拒绝保存', async () => {
+  const f = await dynamicResultFixture(true);
+  f.pause();
+  const links = f.observation.links!;
+  for (const source of [
+    {
+      ...f.observation,
+      links: [
+        ...links,
+        { name: '本次附件报告', url: f.proposal.url + '-other' },
+      ],
+    },
+    {
+      ...f.observation,
+      links: [...links, { name: '其它名称', url: f.proposal.url }],
+    },
+    {
+      ...f.observation,
+      links: [
+        ...links.slice(0, 2),
+        { name: '本次附件报告', url: 'https://other.invalid/result' },
+      ],
+    },
+    {
+      ...f.observation,
+      links: [
+        ...links.slice(0, 2),
+        { name: '本次附件报告', url: f.proposal.url + '#fragment' },
+      ],
+    },
+    { ...f.observation, links: links.slice(1) },
+    { ...f.observation, truncated: true },
+    { ...f.observation, text: '本次附件报告 已发布' },
+  ]) {
+    expect(() => f.freeze(source)).toThrow();
+    expect(f.execution().actions.at(-1)!.discoveredRecovery).toBeUndefined();
+  }
+});
+
+test('管理页链接保存后不因同名内容误认结果：公开页缺原编辑目标或重复目标保持未知', async () => {
+  for (const targetLinks of [
+    '',
+    '<a href="/wrong">编辑</a>',
+    '<a href="/edit">编辑</a><a href="/edit">重复</a>',
+  ]) {
+    const f = await dynamicResultFixture(true);
+    f.pause();
+    f.freeze();
+    f.setHtml(
+      '<link rel="canonical" href="/result"><article>本次附件报告 公告 <a href="/file">下载</a>' +
+        targetLinks +
+        '</article>',
+    );
+    const s = f.dynamicService();
+    s.instance.refresh();
+    await s.instance.settled();
+    expect(f.execution().phase).toBe('paused');
+    expect(f.execution().publicationChecks).toMatchObject([
+      { status: 'unknown', checks: { target: false } },
+    ]);
+    expect(f.execution().actions.at(-1)!.status).toBe('unknown');
+    await s.instance.stopAll();
+  }
+});
+
+test('管理页检查点冷开只读核对且26迁移备份，不重发；真实备份导入保持待核对', async () => {
+  const f = await dynamicResultFixture(true);
+  f.pause();
+  f.freeze();
+  const before = f.execution().actions.at(-1)!.discoveredRecovery;
+  const file = path.join(f.folder, 'management.helpr-backup');
+  const saved = await f.records.backup({
+    kind: 'create',
+    requestId: randomUUID(),
+    file,
+  });
+  const g = await fixture();
+  await g.records.backup({
+    kind: 'restore',
+    requestId: randomUUID(),
+    file,
+    checksum: saved.archive.checksum,
+  });
+  const restored = g.records
+    .snapshot()
+    .tasks.find((t) => t.id === f.taskId)!.execution!;
+  expect(restored.restoreReview).toBe('required');
+  expect(restored.actions.at(-1)!.discoveredRecovery).toEqual(before);
+  f.records.close();
+  const db = new Database(path.join(f.folder, 'workspace.sqlite'));
+  db.exec('UPDATE workspace SET schema_version=26');
+  db.close();
+  f.reopen();
+  const { readdir } = await import('node:fs/promises');
+  expect(
+    (await readdir(f.folder)).some((n) =>
+      n.startsWith('workspace-before-management-result-23-'),
+    ),
+  ).toBe(true);
+  const s = f.dynamicService();
+  s.instance.refresh();
+  await s.instance.settled();
+  expect(f.execution().phase).toBe('complete');
+  expect(f.sends()).toBe(0);
+  expect(f.execution().actions.at(-1)!.discoveredRecovery).toEqual(before);
+  await s.instance.stopAll();
+});
+
+test('管理页损坏链接名称或结果地址不能在冷开伪装可信检查点', async () => {
+  for (const field of ['entry.name', 'recovery.url']) {
+    const f = await dynamicResultFixture(true);
+    f.pause();
+    f.freeze();
+    f.records.close();
+    const db = new Database(path.join(f.folder, 'workspace.sqlite'));
+    db.prepare('UPDATE task_executions SET body=json_set(body,?,?)').run(
+      '$.actions[1].discoveredRecovery.' + field,
+      field === 'entry.name' ? '别人的标题' : f.proposal.url + '-other',
+    );
+    db.close();
+    expect(() => f.reopen()).toThrow('DATA_CORRUPT');
+  }
+});
+
+test('管理页保存失败不读取候选；保存期间停止不能完成旧任务', async () => {
+  const f = await dynamicResultFixture(true);
+  f.arrive();
+  const s = f.dynamicService({
+    beforeRecord: (c) => {
+      if (c.kind === 'publication-result-entry') throw Error('DISK_FULL');
+    },
+  });
+  const reads = f.reads();
+  await s.instance.recordNavigation(f.event);
+  await s.instance.suspend(f.taskId, 'page-change', randomUUID());
+  await s.instance.settled();
+  expect(f.reads()).toBe(reads);
+  expect(f.execution().actions.at(-1)!.discoveredRecovery).toBeUndefined();
+  await s.instance.stopAll();
+  const g = await dynamicResultFixture(true);
+  g.pause();
+  g.freeze();
+  const t = g.dynamicService({
+    beforeRecord: (c) => {
+      if (c.kind === 'publication-recovery-result')
+        g.post({ kind: 'intent', intent: 'stop', requestId: randomUUID() });
+    },
+  });
+  t.instance.refresh();
+  await t.instance.settled();
+  expect(g.execution()).toMatchObject({
+    intent: 'stopped',
+    phase: 'stopped',
+    publicationHistory: [{ check: { status: 'verified' } }],
+  });
+  expect(g.execution().result).toBeUndefined();
+  await t.instance.stopAll();
 });
