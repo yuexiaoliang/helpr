@@ -1,0 +1,28 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/rich-text-input.test.ts (15 tests | 1 failed) 109ms
+   × pre-wrap的软换行允许光标后恰好一个占位LF 4ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/rich-text-input.test.ts > pre-wrap的软换行允许光标后恰好一个占位LF
+Error: EXECUTION_CAPABILITY_REVOKED_OR_DENIED
+ ❯ inspect app/desktop/rich-text-input.ts:87:15
+     85|         ))
+     86|       )
+     87|         throw Error('EXECUTION_CAPABILITY_REVOKED_OR_DENIED');
+       |               ^
+     88|     };
+     89|     await inspect(false);
+ ❯ fillRichText app/desktop/rich-text-input.ts:97:7
+ ❯ tests/workspace/rich-text-input.test.ts:178:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 14 passed (15)
+   Start at  14:49:39
+   Duration  805ms (environment 79%, tests 15%, transform 4%, import 1%, worker 1%)
+

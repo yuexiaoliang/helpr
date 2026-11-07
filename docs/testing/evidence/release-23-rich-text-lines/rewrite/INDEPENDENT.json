@@ -1,0 +1,164 @@
+{
+  "checkedAt": "2026-11-07T06:52:40.193731+00:00",
+  "build": 100,
+  "sourceCommit": "0c4e3a6f5015d292c51bff35b3c171ed16412376",
+  "sourceDirty": true,
+  "rawRun": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/run-1794034332422",
+  "profile": "/private/tmp/helpr-workspace-validation-501/run-vmUH09",
+  "dataFormat": 32,
+  "mode": "rewrite",
+  "quickCheck": "ok",
+  "sqliteSha256": "af466d8e4deb5a058f8173409998391bf0823a86feedd4708afc8aa3af98080e",
+  "cases": [
+    {
+      "item": "B",
+      "taskId": "429bff9a-de3c-4ad8-9b0b-43805382bd45",
+      "phase": "paused",
+      "action": {
+        "coordination": {
+          "session": {
+            "id": "helpr-fixture-web",
+            "epoch": "b2f833bf-aabb-48f7-977b-f304514e02eb:0",
+            "origin": "http://127.0.0.1:57902"
+          },
+          "claimId": "3b8348fd-b269-4af5-abc6-46f8ef44815c"
+        },
+        "observedLinks": [],
+        "richTextSource": {
+          "role": "textbox",
+          "name": "正文",
+          "frameUrl": "http://127.0.0.1:57902/rich-edit?item=B",
+          "disabled": false,
+          "textValue": "原有段落\n\n原有正文",
+          "readOnly": false,
+          "richText": {
+            "rule": "contenteditable-ax-v1",
+            "backendNodeId": 11,
+            "valueSource": "ax"
+          }
+        },
+        "id": "801101f4-5426-4fb5-ab9b-c3d302ce5d22",
+        "runId": "df9bbb8f-5ce8-4322-9b67-3d3e37bae409",
+        "goalVersion": 1,
+        "status": "unknown",
+        "summary": "填写纯文本正文",
+        "action": {
+          "kind": "fill",
+          "target": {
+            "role": "textbox",
+            "name": "正文",
+            "exact": true
+          },
+          "value": "另一份：正文改写反例"
+        },
+        "effect": "interaction",
+        "preconditions": [
+          "正文"
+        ],
+        "source": {
+          "url": "http://127.0.0.1:57902/rich-edit?item=B",
+          "title": "富文本核对",
+          "fingerprint": "3c91451628a241a4f6df69c7c585aada90f580c67d6136f627fc56d5ac1cd2dd",
+          "generation": 1,
+          "observedAt": 1794034335783,
+          "truncated": false
+        },
+        "observedUrls": [
+          "http://127.0.0.1:57902/rich-edit?item=B"
+        ],
+        "binding": {
+          "targetId": "AE75B430F7B2113CB0953FFAECFB8797",
+          "generation": 1
+        },
+        "evidence": [],
+        "returned": false,
+        "dispatchState": "possible"
+      },
+      "receipts": [
+        {
+          "kind": "rich-input",
+          "item": "B",
+          "sent": "另一份：正文改写反例",
+          "actual": "网站改写正文",
+          "html": "网站改写正文",
+          "inputType": "insertText",
+          "active": "正文",
+          "at": 1794034336331
+        }
+      ]
+    }
+  ],
+  "pids": [
+    97489,
+    97490,
+    97491,
+    97492,
+    97493,
+    97494,
+    97499,
+    97500,
+    97501,
+    97502,
+    97503,
+    97506,
+    97507,
+    97520,
+    97521,
+    97522,
+    97523,
+    97524,
+    97525,
+    97530,
+    97531,
+    97532,
+    97533,
+    97534
+  ],
+  "groups": [
+    97489,
+    97492,
+    97494,
+    97520,
+    97523,
+    97525
+  ],
+  "remainingPids": [],
+  "remainingGroups": [],
+  "leaseReleased": true,
+  "starts": [
+    {
+      "kind": "startup",
+      "number": 261,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:57902",
+        "persistent": false
+      },
+      "ms": 2156,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    },
+    {
+      "kind": "startup",
+      "number": 262,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:57902",
+        "persistent": false
+      },
+      "ms": 2552,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    }
+  ],
+  "modelPlans": 1,
+  "inputs": 1,
+  "milliseconds": 10016,
+  "bundleSha256": "79e8a3009eceb4ac721b9f294b0e2824a59b7b348f93fafbd3237776d0c33b84",
+  "bundleUnchangedAfterRun": true,
+  "inputsUnchangedAfterBuild": true
+}

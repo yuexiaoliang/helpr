@@ -300,3 +300,5 @@ Chromium 对空的原生文本框可能省略 AX `value`。观察层仅在同一
 事项23富文本定向验证：`pnpm validate:workspace --fixture --candidate=rich-text-empty-guard-23 --rich-text`。仅支持主文档中唯一精确命名的AX textbox、显式contenteditable与可核对的普通文字结构。非空正文由AX提供并与DOM文字序列核对；空值须有完整单一空DOM结构。受控fill整体替换最多4000字符纯文本，输入后精确核对实际全文；网站改写、结构不全或模型声称成功均不代替核对。源控件与结果随格式32保存，旧31先备份，旧备份未明输入保持待核对。子frame、无AX角色/名称、复杂嵌入和保留格式仍不支持；实包脚本不抵算真人或完整业务验收。详见[本阶段方案](../docs/testing/release-23-rich-text-plan.md)。
 
 富文本的段落反例另用 `--rich-text-paragraph`：保留 Chromium 将单换行插入为段落双换行的真实样本，必须暂停且冷开不重填。现有 fill 不保证任意段落编辑器保持换行；不放宽全文比较来接受多余空行。
+
+事项23精确换行接续入口：`pnpm validate:workspace --fixture --candidate=rich-text-lf-23 --rich-text-lines=success`；`rewrite`、`focus`、`stop`分别在独立资料核对网站改写、焦点转移和中途停止。旧`--rich-text`/`--rich-text-paragraph`改为success入口别名，旧候选证据保留。支持原观察边界内最多32个非空行、4000字符，首行fill后使用受控软换行和文字输入，逐段DOM/AX精确核对原节点、页面与会话。CR、首尾/连续空行派发前拒绝，不删除正文绕过；最终全文比较不放宽。真人接管、子frame、无名称编辑器仍待验。见[方案](../docs/testing/release-23-rich-text-lines-plan.md)。

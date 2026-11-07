@@ -7,6 +7,7 @@ import {
 } from 'playwright-core';
 import { z } from 'zod';
 import { createHash } from 'node:crypto';
+import { fillRichText } from './rich-text-input';
 import { materialPayloadSchema } from '../shared/material';
 import {
   webActionSchema,
@@ -17,6 +18,15 @@ import {
 const port = process.parentPort;
 if (!port) throw Error('WORKER_CHANNEL_REQUIRED');
 let started = false;
+let checkSequence = 0;
+let checked: { id: number; resolve: () => void } | undefined;
+function checkpoint(expected: string): Promise<void> {
+  const id = ++checkSequence;
+  return new Promise((resolve) => {
+    checked = { id, resolve };
+    port.postMessage({ richTextCheck: { id, expected } });
+  });
+}
 const transport: ConnectOverCDPTransport = {
   send: (packet) => port.postMessage({ protocol: packet }),
   close: () => {
@@ -48,6 +58,17 @@ function selectFrame(page: Page, url?: string): Frame {
   return matches[0]!;
 }
 port.on('message', ({ data }: { data: unknown }) => {
+  const receipt = z
+    .object({ richTextChecked: z.number().int() })
+    .safeParse(data);
+  if (receipt.success) {
+    if (checked?.id === receipt.data.richTextChecked) {
+      const pending = checked;
+      checked = undefined;
+      pending.resolve();
+    }
+    return;
+  }
   const incoming = z
     .object({ protocol: z.record(z.string(), z.unknown()) })
     .safeParse(data);
@@ -107,7 +128,9 @@ port.on('message', ({ data }: { data: unknown }) => {
         );
         if (editable !== job.data.richText)
           throw Error('EXECUTION_CAPABILITY_REVOKED_OR_DENIED');
-        await target.fill(action.value, { timeout: 7000 });
+        if (job.data.richText)
+          await fillRichText(page, target, action.value, checkpoint);
+        else await target.fill(action.value, { timeout: 7000 });
       } else if (action.kind === 'check')
         await target.setChecked(action.checked, { timeout: 7000 });
       else {

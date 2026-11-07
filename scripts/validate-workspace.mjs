@@ -1,4 +1,4 @@
-import {verifyRichText} from './rich-text-validation.mjs';
+import {verifyRichTextLines} from './rich-text-lines-validation.mjs';
 import { verifyFormNavigation } from './form-navigation-validation.mjs';
 import { verifyUploadReady } from './upload-ready-validation.mjs';
 import { verifyCreatedTarget } from './created-target-validation.mjs';
@@ -51,6 +51,7 @@ const { values: options } = parseArgs({
     'form-chain': flag,
     'blank-creation': flag,
     'rich-text': flag,
+    'rich-text-lines': {type:'string'},
     'rich-text-paragraph': flag,
     'created-target-mismatch': flag,
     'cross-site-controls': flag,
@@ -97,7 +98,8 @@ if (args.length === 0) {
   process.exit(0);
 }
 
-if (options['rich-text-paragraph']) options['rich-text'] = true;
+if (options['rich-text-lines'] && !['success','rewrite','focus','stop'].includes(options['rich-text-lines'])) throw Error('INVALID_RICH_TEXT_CASE');
+if (options['rich-text'] || options['rich-text-paragraph']) options['rich-text-lines'] ??= 'success';
 if (options['blank-creation']) options['form-chain'] = true;
 if (options['form-chain']) options['form-navigation'] = true;
 if (options['form-navigation']) options['created-target'] = true;
@@ -277,6 +279,7 @@ const website = await fixture({
   formNavigation: options['form-navigation'],
   formChain: options['form-chain'],
   blankCreation: options['blank-creation'],
+  richLines: !!options['rich-text-lines'],
   richText: options['rich-text'],
   richParagraph: options['rich-text-paragraph'],
   dynamicResult: options['dynamic-result'],
@@ -339,7 +342,7 @@ const deadline = setTimeout(
     ? 60000
     : options.interactive || systemStorage
       ? 30 * 60 * 1000
-      : (options.coordination || options['workflow-repair'] || options.agreements || options.schedules || options['cross-site-controls'] || options['history-cleanup']) ? 5 * 60000 : (options['workflow-reuse'] || options['form-chain'] || options['rich-text']) ? 3 * 60000 : 2 * 60000,
+      : (options.coordination || options['workflow-repair'] || options.agreements || options.schedules || options['cross-site-controls'] || options['history-cleanup']) ? 5 * 60000 : (options['workflow-reuse'] || options['form-chain'] || options['rich-text'] || options['rich-text-lines']) ? 3 * 60000 : 2 * 60000,
 );
 function check(name, test) {
   test();
@@ -934,7 +937,7 @@ async function verifyMaterial(client) {
 async function validate() {
   let client = await launch();
   if (options['upload-ready']) return verifyUploadReady({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
-  if (options['rich-text']) return verifyRichText({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, paragraph:options['rich-text-paragraph']});
+  if (options['rich-text-lines']) return verifyRichTextLines({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, mode:options['rich-text-lines']});
   if (options['form-navigation']) return verifyFormNavigation({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, chain:options['form-chain'], blank:options['blank-creation']});
   if (options['created-target']) return verifyCreatedTarget({client, website, evidence, command, waitFor, check, launch, remainingOwned,mismatch:options['created-target-mismatch']});
   if (options['dynamic-result']) return verifyDynamicResult({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, management: options['management-result']});

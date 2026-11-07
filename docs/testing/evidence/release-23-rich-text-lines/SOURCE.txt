@@ -1,0 +1,6 @@
+$ pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:workspace && pnpm test:validation && pnpm check:legacy
+$ tsc --noEmit
+tests/workspace/rich-text-checkpoint.test.ts(20,5): error TS2322: Type '{ url: string; title: string; text: string; fingerprint: string; truncated: false; controls: { role: string; name: string; frameUrl: string; disabled: false; readOnly: false; textValue: string; richText: { ...; }; }[]; }' is not assignable to type 'PageObservation'.
+  Type '{ url: string; title: string; text: string; fingerprint: string; truncated: false; controls: { role: string; name: string; frameUrl: string; disabled: false; readOnly: false; textValue: string; richText: { ...; }; }[]; }' is missing the following properties from type '{ url: string; title: string; fingerprint: string; generation: number; observedAt: number; truncated: boolean; }': generation, observedAt
+[ELIFECYCLE] Command failed with exit code 2.
+[ELIFECYCLE] Command failed with exit code 2.

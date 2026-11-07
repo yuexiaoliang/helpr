@@ -1,4 +1,5 @@
 import { richTextControl } from '../shared/rich-text';
+import { richTextLines } from './rich-text-input';
 import { utilityProcess } from 'electron';
 import path from 'node:path';
 import { z } from 'zod';
@@ -51,7 +52,14 @@ export class WebExecutor {
       current.observation.fingerprint !== job.source.fingerprint
     )
       throw Error('EXECUTION_PAGE_CHANGED');
-    const richText = !!richTextControl(job.action, current.observation);
+    const richSource = richTextControl(job.action, current.observation);
+    const richText = !!richSource;
+    const prefixes =
+      richText && job.action.kind === 'fill'
+        ? richTextLines(job.action.value).map((_, i, lines) =>
+            lines.slice(0, i + 1).join('\n'),
+          )
+        : [];
     try {
       await this.watchNavigation?.(job);
       await this.actionWindow?.({
@@ -71,6 +79,8 @@ export class WebExecutor {
         );
         let client: ProtocolClient | undefined,
           ended = false;
+        let checkpointIndex = 0;
+        let checking = false;
         const cleanup = () => {
           clearTimeout(timer);
           job.signal.removeEventListener('abort', cancel);
@@ -108,6 +118,55 @@ export class WebExecutor {
         job.signal.addEventListener('abort', cancel, { once: true });
         worker.once('exit', () => finish(Error('EXECUTION_ACTION_UNKNOWN')));
         worker.on('message', (input: unknown) => {
+          if (ended) return;
+          const check = z
+            .object({
+              richTextCheck: z.object({
+                id: z.number().int(),
+                expected: z.string(),
+              }),
+            })
+            .safeParse(input);
+          if (check.success) {
+            const { id, expected } = check.data.richTextCheck;
+            if (
+              checking ||
+              id !== checkpointIndex + 1 ||
+              expected !== prefixes[checkpointIndex]
+            ) {
+              finish(Error('EXECUTION_ACTION_UNKNOWN'));
+              return;
+            }
+            checking = true;
+            void (async () => {
+              if (ended || !job.qualified() || job.signal.aborted)
+                throw Error('EXECUTION_STOPPED');
+              const next = await this.observe(job.taskId, job.signal);
+              const control = richTextControl(
+                job.action,
+                next.observation,
+                true,
+              )!;
+              if (
+                ended ||
+                !job.qualified() ||
+                job.signal.aborted ||
+                next.binding.targetId !== job.binding.targetId ||
+                next.binding.generation !== job.binding.generation ||
+                next.observation.url !== job.source.url ||
+                JSON.stringify(next.session) !==
+                  JSON.stringify(current.session) ||
+                control.richText?.backendNodeId !==
+                  richSource?.richText?.backendNodeId ||
+                control.textValue !== expected
+              )
+                throw Error('EXECUTION_ACTION_UNKNOWN');
+              checkpointIndex++;
+              checking = false;
+              worker.postMessage({ richTextChecked: id });
+            })().catch(() => finish(Error('EXECUTION_ACTION_UNKNOWN')));
+            return;
+          }
           const protocol = z.object({ protocol: z.unknown() }).safeParse(input);
           if (protocol.success && client) {
             void this.protocol.command(client, protocol.data.protocol);
@@ -127,7 +186,10 @@ export class WebExecutor {
                 outcome.data.code ?? 'EXECUTION_ACTION_UNKNOWN',
               );
             finish(
-              outcome.data.done && job.qualified()
+              outcome.data.done &&
+                job.qualified() &&
+                !checking &&
+                checkpointIndex === prefixes.length
                 ? undefined
                 : Error('EXECUTION_ACTION_UNKNOWN'),
             );

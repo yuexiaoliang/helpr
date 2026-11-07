@@ -1,0 +1,35 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/rich-text-input.test.ts (14 tests | 1 failed) 106ms
+   × 软换行改写正文时不得追加下一行 6ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/rich-text-input.test.ts > 软换行改写正文时不得追加下一行
+AssertionError: promise resolved "undefined" instead of rejecting
+
+- Expected:
+Error {
+  "message": "rejected promise",
+}
+
++ Received:
+undefined
+
+ ❯ tests/workspace/rich-text-input.test.ts:161:80
+    159|     return Promise.resolve();
+    160|   });
+    161|   await expect(fillRichText(f.page, f.locator, '甲\n乙', () => Promise.r…
+       |                                                                                ^
+    162|   expect(f.writes).toEqual(['fill:甲']);
+    163| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 13 passed (14)
+   Start at  14:45:30
+   Duration  602ms (environment 72%, tests 21%, transform 4%, import 2%, worker 1%)
+
