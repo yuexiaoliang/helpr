@@ -1155,7 +1155,9 @@ ipcMain.handle('workspace-request', (event, input: unknown) => {
       throw new Error('TASK_NOT_OWNED');
   }
   if (
-    (['model-save', 'model-test'].includes(command.kind) ||
+    (command.kind === 'storage-recheck' ||
+      command.kind.startsWith('cleanup-') ||
+      ['model-save', 'model-test'].includes(command.kind) ||
       (command.kind.startsWith('backup-') &&
         command.kind !== 'backup-status')) &&
     binding.role !== 'panel'

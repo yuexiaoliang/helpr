@@ -21,6 +21,7 @@ export const materialSelectionSchema = z.strictObject({
 });
 export type MaterialSelection = z.infer<typeof materialSelectionSchema>;
 export const materialVersionSchema = z.strictObject({
+  discardedAt: z.number().int().nonnegative().optional(),
   id: z.string().uuid(),
   goalVersion: z.number().int().positive(),
   sha256: z.string().regex(/^[a-f0-9]{64}$/),

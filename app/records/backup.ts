@@ -78,6 +78,7 @@ const envelope = z.strictObject({
     z.literal(17),
     z.literal(18),
     z.literal(19),
+    z.literal(20),
     z.literal(CURRENT_DATA_FORMAT),
   ]),
   stateModel: z.literal(CURRENT_STATE_MODEL),
@@ -106,6 +107,9 @@ export class BackupRecords {
     command: z.infer<typeof restoreRequest>;
     work: Promise<BackupResult>;
   } | null = null;
+  busy() {
+    return this.restoring !== null || this.pending.size > 0;
+  }
   async settled() {
     if (this.restoring) await this.restoring.work;
     await Promise.all([...this.pending.values()]);
@@ -379,8 +383,10 @@ export class BackupRecords {
       ))
         throw error;
       const payload = this.payload();
-      const references = payload.tasks.flatMap(
-        (t) => t.execution?.materials ?? [],
+      const references = payload.tasks.flatMap((t) =>
+        (t.execution?.materials ?? []).filter(
+          (m) => m.discardedAt === undefined,
+        ),
       );
       if (references.length) {
         const files = new MaterialFiles(this.folder);
@@ -507,7 +513,11 @@ export async function readBackup(
         (t.execution &&
           (!validPublicationReferences(t.id, t.execution) ||
             !validArticleModelCalls(t.id, t.execution, value.payload.calls))) ||
-        versions.some((m) => materials.get(m.sha256)?.length !== m.bytes) ||
+        versions.some(
+          (m) =>
+            m.discardedAt === undefined &&
+            materials.get(m.sha256)?.length !== m.bytes,
+        ) ||
         t.execution?.actions.some(
           (a) =>
             a.action.kind === 'upload' &&

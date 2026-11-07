@@ -317,6 +317,7 @@ export class ExecutionService {
       if (
         sequence > this.latestRecordSuccess &&
         ![
+          'HISTORY_CLEANED',
           'AGREEMENT_EXPIRED',
           'AGREEMENT_SCOPE_INVALID',
           'AGREEMENT_PERIOD_REQUIRED',
@@ -513,6 +514,7 @@ export class ExecutionService {
       throw Error('RECORD_VERSION_CONFLICT');
     const task = this.ports.current().tasks.find((t) => t.id === c.taskId);
     if (!task?.execution) throw Error('EXECUTION_NOT_FOUND');
+    if (task.execution.historyCleanup) throw Error('HISTORY_CLEANED');
     const plan = task.execution.schedule;
     if (c.kind === 'schedule-prepare') {
       const saved = plan?.versions.find((v) => v.requestId === c.requestId);
@@ -638,6 +640,7 @@ export class ExecutionService {
       throw Error('SYSTEM_SUSPENDED');
     const task = this.ports.current().tasks.find((t) => t.id === c.taskId);
     if (!task?.execution) throw Error('EXECUTION_NOT_FOUND');
+    if (task.execution.historyCleanup) throw Error('HISTORY_CLEANED');
     if (c.kind === 'agreement-prepare') {
       const saved = task.execution.agreements?.find(
         (a) => a.requestId === c.requestId,
@@ -808,6 +811,7 @@ export class ExecutionService {
     const currentTask = this.ports
       .current()
       .tasks.find((t) => t.id === command.taskId);
+    if (currentTask?.execution?.historyCleanup) throw Error('HISTORY_CLEANED');
     if (
       closeAtVersion !== undefined &&
       (!currentTask ||

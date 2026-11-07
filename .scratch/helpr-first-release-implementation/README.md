@@ -1,5 +1,7 @@
 # helpr 首版实现事项
 
+2026-11-07 最新交接：[22 主动清理与关键保存失败](issues/22-history-cleanup-and-storage-failures.md#开发结果)完成独立实现与自动核对，格式21，316应用／9验证器／25旧回归与静态检查通过，当前7/9。候选78、启动213–215通过引用保护、实际副本删除、处理／选择／发布事实保留、重试与冷开；49 PID／9组清空。累计构建78／安装19／启动215／故障52／清理25。AC5／7完整计划和在途故障组合、20真实前置及原生UI保持待验，[报告](../../docs/testing/evidence/cleanup-22/REPORT.md)保留全部失败。下一聊天推进[23](issues/23-integrated-release-acceptance.md)，须面对17／21／22真实交付缺口，不把局部通过拼成首版验收；普通提交不推送或发布。
+
 2026-11-07 最新交接：[21 跨后台通用选择与消息顺序](issues/21-drupal-cross-site-workflow.md#开发结果)完成独立修订，格式20；302应用／9验证器／25旧回归通过。最终候选77，208／209通过三份Excel字节、换输入、冷开与错误选中拒绝，210重复标签明确拒绝，211／212原结构回归通过；自有PID／组清空，75／76失败保留。当前1/8，真实Drupal完整路径、WordPress回归及原生操作仍待验，15依赖保持。下一聊天推进[22](issues/22-history-cleanup-and-storage-failures.md)的独立清理与空间不足处理，普通提交不推送。[报告](../../docs/testing/evidence/cross-site-21/REPORT.md)。
 
 2026-11-07 最新交接：[20 定时选材与错过处理](issues/20-scheduled-material-work-and-missed-runs.md#开发结果)已完成独立实现与限定验收，格式19；293应用／9验证器／25旧回归，定时专项18项通过。候选74，202／203三轮取材、去重、旧目标占用等待、取消及冷开通过，34PID／6组清空。201期待第二次创建而超时的失败保留；实际1次创建、0发布，自动跨页未通过。当前6/11，真实模型／后台及原生组合待验，下一聊天推进[21](issues/21-drupal-cross-site-workflow.md)。[报告](../../docs/testing/evidence/schedules-20/REPORT.md)。

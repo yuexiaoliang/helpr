@@ -1,3 +1,4 @@
+import { storageFailure } from '../shared/storage-failure';
 import { z } from 'zod';
 import { WorkspaceRecords } from './workspace';
 import { rpcRequestSchema, errorCode } from '../shared/contracts';
@@ -11,6 +12,7 @@ const send = (message: unknown) => {
   if (port) port.postMessage(message);
   else process.send?.(message);
 };
+log.onFailure(() => send({ diagnosticsFailure: true }));
 let records: WorkspaceRecords;
 try {
   records = new WorkspaceRecords(
@@ -26,53 +28,70 @@ try {
   log.close();
   process.exit(1);
 }
+let storageBlocked: string | null = null;
 async function handle(input: unknown): Promise<void> {
   const parsed = rpcRequestSchema.safeParse(input);
   if (!parsed.success) return;
   const { id, command } = parsed.data;
   try {
     const kind = z.object({ kind: z.string() }).parse(command).kind;
+    if (
+      storageBlocked &&
+      !['snapshot', 'lookup', 'close', 'storage-recheck'].includes(kind)
+    )
+      throw Error(storageBlocked);
     if (kind === 'close' || kind === 'checkpoint')
       await records.settleBackups();
+    if (kind === 'storage-recheck') {
+      await records.settleBackups();
+      records.checkpoint();
+      storageBlocked = null;
+      send({ id, value: records.snapshot() });
+      return;
+    }
     const value =
-      kind === 'schedule'
-        ? await records.scheduled(
+      kind === 'cleanup'
+        ? records.cleanup(
             z.object({ command: z.unknown() }).parse(command).command,
           )
-        : kind === 'material'
-          ? await records.material(
+        : kind === 'schedule'
+          ? await records.scheduled(
               z.object({ command: z.unknown() }).parse(command).command,
             )
-          : kind === 'upgrade'
-            ? records.upgrade(
+          : kind === 'material'
+            ? await records.material(
                 z.object({ command: z.unknown() }).parse(command).command,
               )
-            : kind === 'backup'
-              ? await records.backup(
+            : kind === 'upgrade'
+              ? records.upgrade(
                   z.object({ command: z.unknown() }).parse(command).command,
                 )
-              : kind === 'snapshot'
-                ? records.snapshot()
-                : kind === 'checkpoint'
-                  ? records.checkpoint()
-                  : kind === 'execution'
-                    ? records.execution(
-                        z.object({ command: z.unknown() }).parse(command)
-                          .command,
-                      )
-                    : kind === 'model'
-                      ? records.model(
+              : kind === 'backup'
+                ? await records.backup(
+                    z.object({ command: z.unknown() }).parse(command).command,
+                  )
+                : kind === 'snapshot'
+                  ? records.snapshot()
+                  : kind === 'checkpoint'
+                    ? records.checkpoint()
+                    : kind === 'execution'
+                      ? records.execution(
                           z.object({ command: z.unknown() }).parse(command)
                             .command,
                         )
-                      : kind === 'lookup'
-                        ? records.lookupRequest(
+                      : kind === 'model'
+                        ? records.model(
                             z.object({ command: z.unknown() }).parse(command)
                               .command,
                           )
-                        : kind === 'close'
-                          ? null
-                          : records.execute(command);
+                        : kind === 'lookup'
+                          ? records.lookupRequest(
+                              z.object({ command: z.unknown() }).parse(command)
+                                .command,
+                            )
+                          : kind === 'close'
+                            ? null
+                            : records.execute(command);
     send({ id, value });
     log.event('command');
     if (kind === 'close') {
@@ -81,8 +100,13 @@ async function handle(input: unknown): Promise<void> {
       process.exit(0);
     }
   } catch (error) {
-    send({ id, error: errorCode(error) });
-    log.event('failure', { code: errorCode(error) });
+    const failure = storageFailure(error);
+    if (failure) {
+      storageBlocked = failure;
+      send({ storageFailure: failure });
+    }
+    send({ id, error: failure ?? errorCode(error) });
+    log.event('failure', { code: failure ?? errorCode(error) });
   }
 }
 if (port)

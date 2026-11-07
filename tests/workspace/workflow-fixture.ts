@@ -18,7 +18,7 @@ afterEach(async () => {
   for (const fn of cleanup.splice(0).reverse()) await fn();
 });
 
-export async function setup(withSession = false) {
+export async function setup(withSession = false, reuseWorkflows = true) {
   const folder = await mkdtemp(path.join(tmpdir(), 'helpr-workflow-'));
   cleanup.push(() => rm(folder, { recursive: true, force: true }));
   type Page = {
@@ -179,7 +179,7 @@ export async function setup(withSession = false) {
       previous,
       action: null,
     };
-    const candidate = input.workflows?.[0];
+    const candidate = reuseWorkflows ? input.workflows?.[0] : undefined;
     if (candidate)
       return choose({
         ...step,

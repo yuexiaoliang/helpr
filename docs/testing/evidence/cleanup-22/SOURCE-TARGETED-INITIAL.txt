@@ -1,0 +1,55 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/process.test.ts (10 tests | 1 failed) 8471ms
+   × 危险地址、旧版本与实际保存失败均保留已有资料，恢复保存后可重试 312ms
+ ❯ tests/workspace/backup.test.ts (10 tests | 1 failed) 1284ms
+   × 记录拥有者创建一致业务备份，排除模型凭据与网站会话，重送返回原备份 101ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/backup.test.ts > 记录拥有者创建一致业务备份，排除模型凭据与网站会话，重送返回原备份
+AssertionError: expected { format: 'helpr-backup', …(7) } to match object { format: 'helpr-backup', …(3) }
+(10 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "dataVersion": 20,
++   "dataVersion": 21,
+    "format": "helpr-backup",
+    "stateModel": 1,
+    "version": 1,
+  }
+
+ ❯ tests/workspace/backup.test.ts:57:29
+     55|   expect(bytes).not.toContain('PRIVATE-CREDENTIAL');
+     56|   expect(bytes).not.toContain('ciphertext');
+     57|   expect(JSON.parse(bytes)).toMatchObject({
+       |                             ^
+     58|     format: 'helpr-backup',
+     59|     version: 1,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/workspace/process.test.ts > 危险地址、旧版本与实际保存失败均保留已有资料，恢复保存后可重试
+Error: STORAGE_UNAVAILABLE
+ ❯ ProcessClient.receive app/shared/rpc.ts:31:37
+     29|     this.pending.delete(reply.id);
+     30|     clearTimeout(pending.timer);
+     31|     if (reply.error) pending.reject(new Error(reply.error));
+       |                                     ^
+     32|     else pending.resolve(reply.value);
+     33|   }
+ ❯ app/shared/rpc.ts:22:32
+ ❯ ChildProcess.<anonymous> tests/workspace/process.test.ts:44:37
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 5 passed (7)
+      Tests  2 failed | 66 passed (68)
+   Start at  09:11:30
+   Duration  29.82s (tests 93%, import 7%, transform 1%)
+

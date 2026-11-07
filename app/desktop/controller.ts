@@ -296,6 +296,7 @@ export async function startController(
     if (host.connected) host.send({ state: executions.decorate(state) });
   };
   let recordsAvailable = true;
+  let storageUnavailable = false;
   const workspace = new WorkspaceSession(
     state,
     (command) => recordClient.request(command),
@@ -715,7 +716,42 @@ export async function startController(
           });
       });
   }
+  log.onFailure(() => {
+    if (host.connected)
+      host.send({
+        notice:
+          '本机诊断日志无法写入。任务记录与素材保存状态另行核对；诊断失败不会清理业务资料。',
+      });
+  });
   function watchRecords(child: typeof records) {
+    child.on('message', (input: unknown) => {
+      if (
+        z.object({ diagnosticsFailure: z.literal(true) }).safeParse(input)
+          .success &&
+        child === records &&
+        host.connected
+      )
+        host.send({
+          notice:
+            '记录进程的诊断日志无法写入。此提示不代表业务事实保存失败，已有资料保留。',
+        });
+      const failure = z
+        .object({
+          storageFailure: z.enum(['STORAGE_FULL', 'STORAGE_UNAVAILABLE']),
+        })
+        .safeParse(input);
+      if (!failure.success || child !== records) return;
+      storageUnavailable = true;
+      models.disable();
+      executions.disable();
+      if (host.connected)
+        host.send({
+          notice:
+            failure.data.storageFailure === 'STORAGE_FULL'
+              ? '本机保存空间不足，依赖保存的自动工作已暂停。已有资料与网页保留；释放空间后到“备份与恢复”重新检查本机保存，不会自动删除历史或重发。'
+              : '关键记录或素材保存失败，依赖保存的自动工作已暂停。已有资料与网页保留，请检查保存位置后到“备份与恢复”重新检查本机保存。',
+        });
+    });
     child.once('exit', () => {
       if (child !== records) return;
       recordsAvailable = false;
@@ -750,6 +786,44 @@ export async function startController(
       if (command.apiKey !== undefined) fixture.protect(command.apiKey);
     }
     if (command.kind === 'snapshot') return executions.decorate(state);
+    if (command.kind === 'storage-recheck') {
+      if (!recordsAvailable) throw Error('RECORDS_UNAVAILABLE');
+      if (storageUnavailable) await executions.settled();
+      const checked = snapshotSchema.parse(
+        await recordClient.request({ kind: 'storage-recheck' }),
+      );
+      if (storageUnavailable) {
+        // 恢复可写不恢复旧派发；先可靠暂停原自动任务，保留停止及未知动作。
+        for (const task of checked.tasks)
+          if (
+            task.execution?.intent === 'automatic' &&
+            task.execution.phase !== 'complete'
+          )
+            await recordClient.request({
+              kind: 'execution',
+              command: {
+                kind: 'suspend',
+                taskId: task.id,
+                requestId: randomUUID(),
+                reason: 'record-unavailable',
+              },
+            });
+        await workspace.reconcileCommitted();
+        models.recordsRestored();
+        await executions.recordsRestored(
+          snapshotSchema.parse(
+            await recordClient.request({ kind: 'snapshot' }),
+          ),
+          workspace.unresolvedTasks(),
+        );
+        storageUnavailable = false;
+      }
+      return {
+        state: snapshotSchema.parse(
+          await recordClient.request({ kind: 'snapshot' }),
+        ),
+      };
+    }
     if (command.kind.startsWith('upgrade-')) return upgrades.handle(command);
     if (command.kind.startsWith('version-')) return versions.handle(command);
     if (
@@ -760,6 +834,25 @@ export async function startController(
     if (command.kind === 'backup-review')
       return { state: await executions.reviewRestored(command.taskId) };
     if (command.kind.startsWith('backup-')) return backups.handle(command);
+    if (
+      command.kind === 'cleanup-preview' ||
+      command.kind === 'cleanup-commit'
+    ) {
+      if (
+        !recordsAvailable ||
+        !workspace.canExit() ||
+        !executions.canExit() ||
+        !backups.canExit()
+      )
+        throw Error('CLEANUP_BUSY');
+      const result = await recordClient.request({ kind: 'cleanup', command });
+      const saved = z.object({ state: snapshotSchema }).safeParse(result);
+      if (saved.success && saved.data.state.revision >= state.revision) {
+        state = saved.data.state;
+        publish();
+      }
+      return result;
+    }
     if (command.kind === 'participation-open') {
       const task = state.tasks.find((t) => t.id === command.taskId);
       if (task?.execution?.question?.id !== command.questionId)

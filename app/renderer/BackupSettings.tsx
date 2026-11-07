@@ -1,3 +1,4 @@
+import { CleanupSettings } from './CleanupSettings';
 import { useEffect, useState } from 'react';
 import { Heading } from 'react-aria-components';
 import { backupStatusSchema, type BackupStatus } from '../shared/backup';
@@ -95,6 +96,7 @@ export function BackupSettings({
     <section className={styles.modelSettings}>
       <Heading slot="title">备份与恢复</Heading>
       <p>把已有任务、执行记录和必要证据保存在你选择的本机位置。</p>
+      <CleanupSettings store={store} state={state} />
       <h3>创建一份备份</h3>
       <p>{status?.location || '尚未选择保存位置'}</p>
       <div className={styles.settingsActions}>

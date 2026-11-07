@@ -246,3 +246,13 @@ Node-API 8 原生模块经 node-gyp `13.1.0` 构建，固定 arm64／macOS 14 �
 记录格式 **20** 接续19，选择证明归属于对应动作，进入冷开及备份关系校验；旧记录不补造证明。私有管道保持响应与后续事件的到达顺序，避免工作者在页面尚未登记时丢掉执行上下文，仍核对原页面、session、对象与即时资格。
 
 定向源码：`pnpm exec vitest run tests/workspace/cross-site-controls.test.ts tests/workspace/execution-protocol.test.ts`。固定包入口：`pnpm validate:workspace --fixture --candidate=cross-site-controls-21-final --cross-site-controls`，另加 `--ambiguous-selection` 在独立资料区检查重复标签拒绝。真实Drupal完整路径尚未通过；实际覆盖、两轮原失败及剩余通用能力见[21报告](../docs/testing/evidence/cross-site-21/REPORT.md)与[检查安排](../docs/testing/cross-site-21-plan.md)。
+
+## 主动清理与关键保存失败（22）
+
+“备份与恢复”提供任务选择、清理影响预览和显式提交。当前释放已核对完成且没有其它引用的固定素材副本，保留会话、素材完成事实、动作／选择／发布证明和流程；计划／约定关联、未完成、停止后可继续、未知结果及共享素材保持保护。清理不触碰原始来源、已有备份或浏览器登录区。原任务不能重新派发，需要再次发布时另建任务并重新指定来源。
+
+格式21保存清理标记，升级20前保留原库。先可靠提交标记再删副本，删除失败可在冷开后“核对上次清理”；新备份不再携带已清理副本，旧备份不覆盖本机较新的清理决定。没有自动到期删除或抹掉完成依据的入口。
+
+关键记录／素材保存失败会阻断依赖保存的自动工作。修复空间或权限后，在同一面板“重新检查本机保存”；可写恢复后仍先暂停和核对原任务，需要明确继续。诊断失败另行提示，不表示业务事实已保存或已丢失；诊断轮转只处理各角色日志，未知异常只记录固定分类。
+
+源码专项：`cleanup.test.ts`、`cleanup-ui.test.tsx`、`diagnostics.test.ts`、`process.test.ts`。实际签名包：`pnpm validate:workspace --fixture --candidate=history-cleanup-22 --history-cleanup`。覆盖、原失败和未验条件见[22报告](../docs/testing/evidence/cleanup-22/REPORT.md)与[检查安排](../docs/testing/cleanup-22-plan.md)。

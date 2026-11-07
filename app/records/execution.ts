@@ -374,6 +374,7 @@ function queueRecovery(e: TaskExecution, url: string, summary: string) {
 export function pauseForBackup(e: TaskExecution): TaskExecution {
   const next = executionSchema.parse(structuredClone(e));
   next.version++;
+  if (next.historyCleanup) return next;
   next.runId = null;
   if (next.coordination) {
     next.coordination.status = 'unverified';

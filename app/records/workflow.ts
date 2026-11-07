@@ -294,6 +294,26 @@ export function validPublicationReferences(
   taskId: string,
   e: TaskExecution,
 ): boolean {
+  if (e.historyCleanup && !e.materials?.length) return false;
+  if (
+    (e.historyCleanup ||
+      e.materials?.some((m) => m.discardedAt !== undefined)) &&
+    (!e.historyCleanup ||
+      !e.materials ||
+      e.materials.some((m) => m.discardedAt !== e.historyCleanup!.at) ||
+      e.phase !== 'complete' ||
+      e.runId ||
+      e.question ||
+      e.schedule ||
+      e.scheduleOrigin ||
+      e.agreements?.length ||
+      e.agreementBinding ||
+      e.actions.some((a) => !['confirmed', 'cancelled'].includes(a.status)) ||
+      e.resourceClaims?.some((r) => r.status !== 'released') ||
+      e.materialProcessing?.some((m) => m.status !== 'complete') ||
+      e.materialWorks?.some((m) => m.status !== 'complete'))
+  )
+    return false;
   if (!validCoordinationReferences(e) || !validArticleReferences(e))
     return false;
   for (const a of e.actions) {

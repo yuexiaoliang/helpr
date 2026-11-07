@@ -110,7 +110,10 @@ export class MaterialFiles {
     if (!/^[a-f0-9]{64}$/.test(sha256)) throw Error('MATERIAL_CORRUPT');
     return path.join(this.folder, 'materials', sha256);
   }
-  async read(version: Pick<MaterialVersion, 'sha256' | 'bytes'>) {
+  async read(
+    version: Pick<MaterialVersion, 'sha256' | 'bytes' | 'discardedAt'>,
+  ) {
+    if (version.discardedAt !== undefined) throw Error('HISTORY_CLEANED');
     const fd = await open(
       this.location(version.sha256),
       constants.O_RDONLY | constants.O_NOFOLLOW,

@@ -9,6 +9,20 @@ import { versionStatusSchema, type VersionStatus } from '../shared/version';
 import { upgradeStatusSchema, type UpgradeStatus } from '../shared/upgrade';
 
 const labels: Record<string, string> = {
+  HISTORY_CLEANED:
+    '原任务的素材副本已主动清理，处理事实仍保留。需要再次发布时请另建任务并重新指定来源。',
+  CLEANUP_BUSY:
+    '备份、恢复、取材或尚未保存的工作正在进行，请稍后重新查看清理影响。',
+  CLEANUP_CHANGED:
+    '清理预览后资料或引用发生变化，尚未删除，请重新查看清理影响。',
+  CLEANUP_PROTECTED: '所选资料仍受保护，未清理。请重新查看影响说明。',
+  CLEANUP_FILE_CHANGED:
+    '素材副本或目录发生变化，未继续删除，请保留资料并检查。',
+  STORAGE_FULL:
+    '本机保存空间不足，依赖保存的自动工作已暂停，已有资料保留。释放其它空间后到“备份与恢复”重新检查本机保存；不会自动删历史或重发。',
+  STORAGE_UNAVAILABLE:
+    '关键记录或素材无法可靠保存，自动工作已暂停，已有资料保留。请检查保存位置后到“备份与恢复”重新检查本机保存。',
+
   UPGRADE_PENDING:
     '升级准备或启动核对尚未完成，请在“关于与新版”处理；任务与现场保留。',
   UPGRADE_CHANGED: '任务或网页在准备后发生变化，已保留较新决定，请重新核对。',

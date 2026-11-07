@@ -1,0 +1,76 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/cleanup.test.ts (9 tests | 2 failed) 4937ms
+   × 同内容共享副本需所有引用均可清理；未完成引用一直保护，不按文件名删除 105ms
+   × 清理提交与新取材竞争：已有取材Promise保持保护，新引用提交后重新预览 106ms
+ ❯ tests/workspace/cleanup-ui.test.tsx (1 test | 1 failed) 141ms
+   × 界面先显示影响，再显式提交；过期预览可重新检查，保存检查与清理分开 140ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/cleanup-ui.test.tsx > 界面先显示影响，再显式提交；过期预览可重新检查，保存检查与清理分开
+Error: PUBLICATION_RESULT_REQUIRED
+ ❯ apply app/records/execution.ts:2530:19
+    2528|         if (c.phase === 'complete') {
+    2529|           if (e.materials?.some((m) => m.goalVersion === e.goalVersion…
+    2530|             throw Error('PUBLICATION_RESULT_REQUIRED');
+       |                   ^
+    2531|           if (e.loginOrigin || (e.publication && !e.publication.approv…
+    2532|             throw Error('PARTICIPATION_REQUIRED');
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:2670:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:2669:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:409:33
+ ❯ tests/workspace/cleanup-ui.test.tsx:58:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/workspace/cleanup.test.ts > 同内容共享副本需所有引用均可清理；未完成引用一直保护，不按文件名删除
+Error: PUBLICATION_RESULT_REQUIRED
+ ❯ apply app/records/execution.ts:2530:19
+    2528|         if (c.phase === 'complete') {
+    2529|           if (e.materials?.some((m) => m.goalVersion === e.goalVersion…
+    2530|             throw Error('PUBLICATION_RESULT_REQUIRED');
+       |                   ^
+    2531|           if (e.loginOrigin || (e.publication && !e.publication.approv…
+    2532|             throw Error('PARTICIPATION_REQUIRED');
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:2670:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:2669:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:409:33
+ ❯ fixedTask tests/workspace/cleanup.test.ts:278:13
+ ❯ tests/workspace/cleanup.test.ts:303:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/workspace/cleanup.test.ts > 清理提交与新取材竞争：已有取材Promise保持保护，新引用提交后重新预览
+Error: PUBLICATION_RESULT_REQUIRED
+ ❯ apply app/records/execution.ts:2530:19
+    2528|         if (c.phase === 'complete') {
+    2529|           if (e.materials?.some((m) => m.goalVersion === e.goalVersion…
+    2530|             throw Error('PUBLICATION_RESULT_REQUIRED');
+       |                   ^
+    2531|           if (e.loginOrigin || (e.publication && !e.publication.approv…
+    2532|             throw Error('PARTICIPATION_REQUIRED');
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:2670:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:2669:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:409:33
+ ❯ fixedTask tests/workspace/cleanup.test.ts:278:13
+ ❯ tests/workspace/cleanup.test.ts:340:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  3 failed | 7 passed (10)
+   Start at  09:12:59
+   Duration  6.78s (tests 77%, import 12%, environment 8%, transform 4%)
+

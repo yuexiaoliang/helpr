@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 
-export async function verifyWorkflow({ client, website, data, evidence, command, waitFor, check, launch, remainingOwned, crossSite = false, ambiguousSelection = false }) {
+export async function verifyWorkflow({ client, website, data, evidence, command, waitFor, check, launch, remainingOwned, crossSite = false, ambiguousSelection = false, historyCleanup = false }) {
   const cases = [
     { item: 'A', title: '第一次附件日报', destination: '公告', bytes: Buffer.from([0, 1, 2, 128, 255]) },
     { item: 'B', title: '换输入后的新日报', destination: '通知', bytes: Buffer.from([1, 7, 9, 128, 12, 255]) },
@@ -119,6 +119,38 @@ export async function verifyWorkflow({ client, website, data, evidence, command,
     learned = done.learnedWorkflows[0];
     evidence.workflow.cases.push({ item: sample.item, taskId, sha256, review, done, calls, writes, readiness });
 
+  }
+  if (historyCleanup) {
+    const all = await active.request({kind:'snapshot'}), task = all.tasks.at(-1), original = task.execution;
+    const protectedPreview = await active.request({kind:'cleanup-preview',taskIds:[all.tasks[0].id]});
+    check('被其它流程引用的历史保持保护',()=>assert.equal(protectedPreview.tasks[0].eligible,false));
+    const preview = await active.request({kind:'cleanup-preview',taskIds:[task.id]});
+    check('主动预览列出副本及释放大小',()=>{
+      assert.equal(preview.tasks[0].eligible,true);
+      assert.equal(preview.bytes, original.materials[0].bytes);
+    });
+    const commit = {kind:'cleanup-commit',taskIds:[task.id],requestId:randomUUID(),token:preview.token};
+    const receipt = await active.request(commit);
+    check('清理后原素材、服务器结果与关键证明保留',()=>{
+      assert.equal(receipt.phase,'complete');
+      assert.equal(fs.existsSync(path.join(data,'materials',original.materials[0].sha256)),false);
+      assert.equal(fs.existsSync(original.materials[0].source),true);
+      const e=receipt.state.tasks.find(t=>t.id===task.id).execution;
+      for(const field of ['actions','materialProcessing','publicationChecks','learnedWorkflows']) assert.deepEqual(e[field],original[field]);
+      assert.equal(website.receipts.filter(r=>r.kind==='published').length,3);
+    });
+    const retry=await active.request(commit);
+    assert.equal(retry.removedBytes,0);
+    await assert.rejects(active.request(command('execution-intent',{taskId:task.id,intent:'continue'})),/HISTORY_CLEANED/);
+    await active.quit();
+    assert.equal(remainingOwned().length,0,'CLEANUP_COLD_REQUIRES_NO_OWNED_PROCESSES');
+    active = await launch();
+    const cold = await active.request({kind:'snapshot'});
+    check('清理标记冷开保留且未增加发布',()=>{
+      assert.equal(cold.tasks.find(t=>t.id===task.id).execution.historyCleanup.requestId,commit.requestId);
+      assert.equal(website.receipts.filter(r=>r.kind==='published').length,3);
+    });
+    evidence.cleanup={protectedPreview,preview,commit,receipt,retry,cold};
   }
   await active.quit();
 }

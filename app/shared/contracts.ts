@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { cleanupCommandSchema } from './cleanup';
 import { scheduleUICommandSchema } from './schedule';
 import { agreementUICommandSchema } from './agreement';
 import { backupUICommandSchema } from './backup';
@@ -168,6 +169,8 @@ export const uiCommandSchema = z.union([
   scheduleUICommandSchema,
   agreementUICommandSchema,
   backupUICommandSchema,
+  cleanupCommandSchema,
+  z.strictObject({ kind: z.literal('storage-recheck') }),
   versionUICommandSchema,
   upgradeUICommandSchema,
   modelUICommandSchema,

@@ -1,3 +1,4 @@
+import { CleanupRecords } from './cleanup';
 import { ScheduleRecords, validScheduleCatalog } from './schedule';
 import { agreementSummary } from '../shared/agreement';
 import { materialFailureMessage } from '../shared/material';
@@ -76,6 +77,7 @@ function pagePhase(
 
 /** 记录拥有者的公开入口。仅在独立受管进程使用，提交成功后才返回投影。 */
 export class WorkspaceRecords {
+  private readonly cleanupRecords: CleanupRecords;
   private readonly models: ModelRecords;
   private readonly executions: ExecutionRecords;
   private readonly sqlite: Database.Database;
@@ -147,6 +149,7 @@ export class WorkspaceRecords {
           17,
           18,
           19,
+          20,
           CURRENT_DATA_FORMAT,
         ].includes(priorVersion)
       )
@@ -154,35 +157,37 @@ export class WorkspaceRecords {
       if (legacy && priorVersion !== CURRENT_DATA_FORMAT) {
         const backup = path.join(
           folder,
-          (priorVersion === 19
-            ? 'workspace-before-cross-site-21-'
-            : priorVersion === 18
-              ? 'workspace-before-schedules-20-'
-              : priorVersion === 17
-                ? 'workspace-before-agreements-19-'
-                : priorVersion === 16
-                  ? 'workspace-before-excel-article-18-'
-                  : priorVersion === 15
-                    ? 'workspace-before-workflow-repair-17-'
-                    : priorVersion === 14
-                      ? 'workspace-before-coordination-16-'
-                      : priorVersion === 13
-                        ? 'workspace-before-workflow-reuse-15-'
-                        : priorVersion === 12
-                          ? 'workspace-before-publication-recovery-14-'
-                          : priorVersion === 11
-                            ? 'workspace-before-publication-13-'
-                            : priorVersion === 10
-                              ? 'workspace-before-material-12-'
-                              : priorVersion === 9
-                                ? 'workspace-before-task-groups-11-'
-                                : priorVersion >= 7
-                                  ? 'workspace-before-participation-10-'
-                                  : priorVersion === 6
-                                    ? 'workspace-before-upgrade-09-'
-                                    : priorVersion === 5
-                                      ? 'workspace-before-backup-07-'
-                                      : 'workspace-before-recovery-05-') +
+          (priorVersion === 20
+            ? 'workspace-before-cleanup-22-'
+            : priorVersion === 19
+              ? 'workspace-before-cross-site-21-'
+              : priorVersion === 18
+                ? 'workspace-before-schedules-20-'
+                : priorVersion === 17
+                  ? 'workspace-before-agreements-19-'
+                  : priorVersion === 16
+                    ? 'workspace-before-excel-article-18-'
+                    : priorVersion === 15
+                      ? 'workspace-before-workflow-repair-17-'
+                      : priorVersion === 14
+                        ? 'workspace-before-coordination-16-'
+                        : priorVersion === 13
+                          ? 'workspace-before-workflow-reuse-15-'
+                          : priorVersion === 12
+                            ? 'workspace-before-publication-recovery-14-'
+                            : priorVersion === 11
+                              ? 'workspace-before-publication-13-'
+                              : priorVersion === 10
+                                ? 'workspace-before-material-12-'
+                                : priorVersion === 9
+                                  ? 'workspace-before-task-groups-11-'
+                                  : priorVersion >= 7
+                                    ? 'workspace-before-participation-10-'
+                                    : priorVersion === 6
+                                      ? 'workspace-before-upgrade-09-'
+                                      : priorVersion === 5
+                                        ? 'workspace-before-backup-07-'
+                                        : 'workspace-before-recovery-05-') +
             randomUUID() +
             '.sqlite',
         );
@@ -282,6 +287,7 @@ export class WorkspaceRecords {
         version !== 17 &&
         version !== 18 &&
         version !== 19 &&
+        version !== 20 &&
         version !== CURRENT_DATA_FORMAT
       )
         throw new Error('DATA_VERSION_UNSUPPORTED');
@@ -293,6 +299,15 @@ export class WorkspaceRecords {
       this.models = new ModelRecords(this.db);
       this.executions = new ExecutionRecords(this.db);
       this.backups = new BackupRecords(this.db, () => this.snapshot(), folder);
+      this.cleanupRecords = new CleanupRecords(
+        this.db,
+        () => this.snapshot(),
+        folder,
+        () =>
+          this.backups.busy() ||
+          this.materialWork.size > 0 ||
+          this.upgrades.held(),
+      );
       this.upgrades = new UpgradeRecords(this.db, () => this.snapshot());
       this.schedules = new ScheduleRecords(
         this.db,
@@ -374,11 +389,34 @@ export class WorkspaceRecords {
         (c.kind === 'intent' && ['start', 'continue'].includes(c.intent ?? '')))
     )
       throw Error('UPGRADE_PENDING');
+    const taskId = z
+      .object({ taskId: z.string().optional() })
+      .parse(input).taskId;
+    if (
+      taskId &&
+      this.executions.get(taskId)?.historyCleanup &&
+      [
+        'intent',
+        'claim',
+        'reserve',
+        'dispatch',
+        'agreement-use',
+        'agreement-accept',
+        'agreement-propose',
+        'repeat-material',
+      ].includes(c.kind)
+    )
+      throw Error('HISTORY_CLEANED');
     return { ...this.executions.execute(input), state: this.snapshot() };
   }
   scheduled(
     input: unknown,
   ): Promise<Record<string, unknown> & { state: WorkspaceSnapshot }> {
+    const taskId = z
+      .object({ taskId: z.string().optional() })
+      .parse(input).taskId;
+    if (taskId && this.executions.get(taskId)?.historyCleanup)
+      return Promise.reject(Error('HISTORY_CLEANED'));
     const work = this.schedules
       .execute(input)
       .then((result) => ({ ...result, state: this.snapshot() }));
@@ -424,6 +462,8 @@ export class WorkspaceRecords {
         }),
       ])
       .parse(input);
+    if (this.executions.get(c.taskId)?.historyCleanup)
+      throw Error('HISTORY_CLEANED');
     if (c.kind === 'agreement-select') {
       const e = this.executions.get(c.taskId);
       if (
@@ -759,6 +799,9 @@ export class WorkspaceRecords {
   }
   close(): void {
     this.sqlite.close();
+  }
+  cleanup(input: unknown) {
+    return this.cleanupRecords.execute(input);
   }
   backup(input: unknown) {
     return this.backups.execute(input);

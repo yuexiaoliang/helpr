@@ -219,6 +219,13 @@ export const participationDecisionSchema = z.discriminatedUnion('operation', [
 ]);
 export type ParticipationDecision = z.infer<typeof participationDecisionSchema>;
 export const executionSchema = z.strictObject({
+  historyCleanup: z
+    .strictObject({
+      requestId: z.string().uuid(),
+      token: z.string(),
+      at: z.number().int().nonnegative(),
+    })
+    .optional(),
   schedule: scheduleStateSchema.optional(),
   scheduleOrigin: z
     .strictObject({

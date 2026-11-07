@@ -1,4 +1,7 @@
 import { afterEach, expect, test } from 'vitest';
+import { randomUUID } from 'node:crypto';
+import { setup } from './workflow-fixture';
+import { cleanupPreviewSchema } from '../../app/shared/cleanup';
 import { fork, spawn, type ChildProcess } from 'node:child_process';
 import {
   mkdtempSync,
@@ -434,6 +437,7 @@ test('危险地址、旧版本与实际保存失败均保留已有资料，恢�
       .tasks[0]?.draft,
   ).toBe('先前已保存的草稿');
   chmodSync(dir, 0o700);
+  await records.client.request({ kind: 'storage-recheck' });
   await records.client.request(change);
   expect(
     snapshotSchema.parse(await records.client.request({ kind: 'snapshot' }))
@@ -667,5 +671,104 @@ test('A 的回复已保存但回执丢失，派发前中断后在 B 重开并重
   ).toBe(false);
   expect(await records.client.request(reply)).toMatchObject({ created: false });
   expect(await read()).toEqual(before);
+  await records.close();
+});
+
+test('关键存储故障由独立进程报告并阻断后续保存，修复权限后只经显式检查解除', async () => {
+  const dir = folder(),
+    records = await open(dir);
+  await records.client.request({
+    kind: 'create',
+    requestId: 'saved',
+    goal: '原资料',
+  });
+  chmodSync(dir, 0o500);
+  try {
+    await expect(
+      records.client.request({
+        kind: 'create',
+        requestId: 'rejected',
+        goal: '不得写入',
+      }),
+    ).rejects.toThrow('STORAGE_UNAVAILABLE');
+  } finally {
+    chmodSync(dir, 0o700);
+  }
+  await expect(
+    records.client.request({
+      kind: 'create',
+      requestId: 'later',
+      goal: '故障已解除仍不自动保存',
+    }),
+  ).rejects.toThrow('STORAGE_UNAVAILABLE');
+  const state = snapshotSchema.parse(
+    await records.client.request({ kind: 'snapshot' }),
+  );
+  expect(state.tasks.map((t) => t.goal)).toEqual(['原资料']);
+  await records.client.request({ kind: 'storage-recheck' });
+  await records.client.request({
+    kind: 'create',
+    requestId: 'explicit',
+    goal: '显式检查后的新任务',
+  });
+  await records.close();
+});
+
+test('清理提交回执丢失后强杀记录进程，冷开保留处理事实并按原请求核对', async () => {
+  const f = await setup(),
+    taskId = await f.add('清理丢回执');
+  await f.approve(taskId);
+  const original = f.e(taskId),
+    requestId = randomUUID();
+  let records = await open(f.folder, (input) =>
+    Boolean(
+      input &&
+      typeof input === 'object' &&
+      'value' in input &&
+      input.value &&
+      typeof input.value === 'object' &&
+      'requestId' in input.value &&
+      input.value.requestId === requestId,
+    ),
+  );
+  const preview = cleanupPreviewSchema.parse(
+    await records.client.request({
+      kind: 'cleanup',
+      command: { kind: 'cleanup-preview', taskIds: [taskId] },
+    }),
+  );
+  const command = {
+    kind: 'cleanup',
+    command: {
+      kind: 'cleanup-commit',
+      taskIds: [taskId],
+      requestId,
+      token: preview.token,
+    },
+  };
+  await expect(records.client.request(command, 1000)).rejects.toThrow(
+    'REQUEST_TIMEOUT',
+  );
+  await records.crash();
+  records = await open(f.folder);
+  const state = snapshotSchema.parse(
+    await records.client.request({ kind: 'snapshot' }),
+  );
+  expect(state.tasks[0]!.execution!.materialProcessing).toEqual(
+    original.materialProcessing,
+  );
+  expect(state.tasks[0]!.execution!.actions).toEqual(original.actions);
+  expect(state.tasks[0]!.execution!.historyCleanup!.requestId).toBe(requestId);
+  expect(await records.client.request(command)).toMatchObject({
+    phase: 'complete',
+    removedBytes: 0,
+  });
+  expect(f.page(taskId).writes).toEqual([
+    'upload',
+    'click',
+    'fill',
+    'select',
+    'click',
+  ]);
   await records.close();
 });
