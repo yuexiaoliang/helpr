@@ -2751,6 +2751,8 @@ export class ExecutionService {
               : needsReview && preview
                 ? {
                     type: 'review',
+                    source: observed.observation,
+                    binding: observed.binding,
                     publication: {
                       ...(preview.articleId
                         ? { articleId: preview.articleId }

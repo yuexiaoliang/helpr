@@ -12,6 +12,7 @@ import {
   publicationFillBinding,
   verifyPublicationFields,
   publicationSchema,
+  publicationRichTextSources,
 } from '../shared/publication';
 import { reboundAction } from '../shared/workflow-replay';
 import { sameWorkflowOperation } from '../shared/workflow-repair';
@@ -145,6 +146,7 @@ function replayRules(
     uniqueName(result.proposal.url, last?.resultLinks ?? []);
   // 只归纳已经实际走通且绑定明确的线性路径。旧证据缺字段时不补造。
   if (
+    p.fields?.some((f) => f.richText) ||
     !attachmentLink ||
     !resultLink ||
     p.content === p.destination ||
@@ -313,6 +315,26 @@ export function validPublicationReferences(
     return false;
   if (!validCoordinationReferences(e) || !validArticleReferences(e))
     return false;
+  const publication = e.publication;
+  if (publication?.fields?.some((f) => f.richText)) {
+    const review = publication.richTextReview;
+    if (
+      !review ||
+      review.binding.generation !== review.source.generation ||
+      new URL(review.source.url).origin !== publication.origin
+    )
+      return false;
+    try {
+      const controls = publicationRichTextSources(publication, {
+        ...review.source,
+        text: '',
+        controls: review.controls,
+      });
+      if (controls.length !== review.controls.length) return false;
+    } catch {
+      return false;
+    }
+  } else if (publication?.richTextReview) return false;
   for (const a of e.actions) {
     if (a.submission?.publication.fields) {
       try {
@@ -347,6 +369,12 @@ export function validPublicationReferences(
     history = e.publicationHistory?.map((h) => h.check) ?? [],
     workflows = e.learnedWorkflows ?? [];
   for (const use of e.workflowUses ?? []) {
+    if (
+      [use.fields, use.approved?.fields, use.workflow.fields].some((fields) =>
+        fields?.some((f) => f.richText),
+      )
+    )
+      return false;
     const shape = (fields: typeof use.fields, url: string) =>
       fields?.map(({ id, name, frameUrl }) => ({
         id,
@@ -379,6 +407,8 @@ export function validPublicationReferences(
       return false;
   }
   for (const workflow of workflows) {
+    if (workflow.replay && workflow.fields?.some((f) => f.richText))
+      return false;
     if (
       !publicationSchema.safeParse({
         content: workflow.parameters.find((p) => p.name === 'content')?.value,

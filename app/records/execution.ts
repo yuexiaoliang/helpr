@@ -50,6 +50,7 @@ import {
   publicationFillBinding,
   publicationParts,
   verifyPublicationFields,
+  publicationRichTextSources,
 } from '../shared/publication';
 import { z } from 'zod';
 import { hideTaskTab } from './task-tab';
@@ -316,6 +317,8 @@ const commandSchema = z.discriminatedUnion('kind', [
     coordinationDecision: z.boolean().optional(),
     type: z.enum(['review', 'login']).optional(),
     publication: publicationSchema.optional(),
+    source: observation.optional(),
+    binding: pageBindingSchema.optional(),
     ...work,
     questionId: z.string().uuid(),
     text: z.string().trim().min(1).max(1500),
@@ -969,17 +972,19 @@ export class ExecutionRecords {
         if (c.operation === 'edit') {
           if (
             JSON.stringify(
-              c.fields?.map(({ id, name, frameUrl }) => ({
+              c.fields?.map(({ id, name, frameUrl, richText }) => ({
                 id,
                 name,
                 frameUrl,
+                richText,
               })),
             ) !==
             JSON.stringify(
-              p.fields?.map(({ id, name, frameUrl }) => ({
+              p.fields?.map(({ id, name, frameUrl, richText }) => ({
                 id,
                 name,
                 frameUrl,
+                richText,
               })),
             )
           )
@@ -1883,10 +1888,11 @@ export class ExecutionRecords {
               fields: c.choice.fields,
             }).success ||
             JSON.stringify(
-              c.choice.fields?.map(({ id, name, frameUrl }) => ({
+              c.choice.fields?.map(({ id, name, frameUrl, richText }) => ({
                 id,
                 name,
                 frameUrl,
+                richText,
               })),
             ) !==
               JSON.stringify(
@@ -2343,9 +2349,29 @@ export class ExecutionRecords {
             if (!c.publication) throw Error('INVALID_REQUEST');
             if (e.materials?.some((m) => m.goalVersion === e.goalVersion))
               attachmentBinding(e, c.publication);
+            const nodeFields = c.publication.fields?.some((f) => f.richText);
+            if (
+              nodeFields &&
+              (!c.source ||
+                !c.binding ||
+                c.source.url !== c.url ||
+                c.source.generation !== c.binding.generation)
+            )
+              throw Error('EXECUTION_EVIDENCE_MISSING');
+            const richTextReview = nodeFields
+              ? {
+                  source: pageSourceSchema.strip().parse(c.source),
+                  binding: c.binding!,
+                  controls: publicationRichTextSources(
+                    c.publication,
+                    c.source!,
+                  ),
+                }
+              : undefined;
             const old = e.publication;
             e.publication = {
               ...c.publication,
+              ...(richTextReview ? { richTextReview } : {}),
               origin: new URL(c.url).origin,
               approvalId: null,
               revision: (old?.revision ?? 0) + 1,
@@ -2622,6 +2648,18 @@ export class ExecutionRecords {
             effect !== 'publication'
           )
             throw Error('PARTICIPATION_REQUIRED');
+          if (p?.fields?.some((f) => f.richText)) {
+            const review = p.richTextReview;
+            if (
+              !review ||
+              review.binding.targetId !== c.binding.targetId ||
+              review.binding.generation !== c.binding.generation ||
+              review.source.url !== c.source.url ||
+              review.source.generation !== c.source.generation
+            )
+              throw Error('EXECUTION_PAGE_CHANGED');
+            publicationRichTextSources(p, c.source);
+          }
           if (p || c.publication || c.approvalId) {
             if (
               !p?.approvalId ||
@@ -2639,7 +2677,7 @@ export class ExecutionRecords {
               throw Error('EXECUTION_EVIDENCE_MISSING');
             if (
               (c.action.kind === 'fill' &&
-                !publicationFillBinding(p, c.action)) ||
+                !publicationFillBinding(p, c.action, c.source)) ||
               (c.action.kind === 'select' &&
                 c.action.value !== p.destination) ||
               c.action.kind === 'check'

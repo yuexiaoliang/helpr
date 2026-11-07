@@ -486,6 +486,13 @@ export const executionSchema = z
       .safeExtend({
         agreementVersionId: z.string().uuid().optional(),
         workId: z.string().uuid().optional(),
+        richTextReview: z
+          .strictObject({
+            source: pageSourceSchema,
+            binding: pageBindingSchema,
+            controls: z.array(observedControlSchema).min(1).max(12),
+          })
+          .optional(),
         revision: z.number().int().positive(),
         approvalId: z.string().uuid().nullable(),
         origin: z.string(),

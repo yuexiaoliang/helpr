@@ -11,7 +11,12 @@ const parameter = z.enum([
   'attachmentUrl',
 ]);
 export const workflowChoiceSchema = z.strictObject({
-  fields: publicationFieldsSchema.optional(),
+  fields: publicationFieldsSchema
+    .refine(
+      (fields) => !fields.some((f) => f.richText),
+      'WORKFLOW_NOT_APPLICABLE',
+    )
+    .optional(),
   taskId: z.string(),
   version: z.string().uuid(),
   sha256: z.string().regex(/^[a-f0-9]{64}$/),

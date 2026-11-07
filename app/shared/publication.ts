@@ -1,8 +1,9 @@
 import { z } from 'zod';
 import { materialVersionSchema } from './material';
 import { pageSourceSchema, observedLinkSchema } from './model';
-import { websiteURL } from './url-policy';
-import type { WebAction } from './web-action';
+import { websiteURL, isInlineFrameURL } from './url-policy';
+import { richTextLocatorSchema, type WebAction } from './web-action';
+import { richTextControl } from './rich-text';
 import type { PageObservation } from './model';
 
 // 此 schema 也发送给模型，不能包含无法序列化为 JSON Schema 的 transform。
@@ -23,12 +24,24 @@ export const attachmentBindingSchema = z.strictObject({
 });
 export const publicationFieldsSchema = z
   .array(
-    z.strictObject({
-      id: z.string().regex(/^[a-z][a-z0-9-]{0,39}$/),
-      name: z.string().trim().min(1).max(500),
-      frameUrl: url.optional(),
-      value: z.string().trim().min(1).max(4000),
-    }),
+    z
+      .strictObject({
+        id: z.string().regex(/^[a-z][a-z0-9-]{0,39}$/),
+        name: z.string().trim().min(1).max(500),
+        frameUrl: z
+          .union([url, z.enum(['about:blank', 'about:srcdoc'])])
+          .optional(),
+        // 有定位证明时name是用户确认的字段语义，不冒充网页AX名称。
+        richText: richTextLocatorSchema.optional(),
+        value: z.string().trim().min(1).max(4000),
+      })
+      .refine(
+        (f) =>
+          f.richText
+            ? f.frameUrl === f.richText.frameUrl
+            : !f.frameUrl || !isInlineFrameURL(f.frameUrl),
+        'PUBLICATION_FIELD_LOCATOR_MISMATCH',
+      ),
   )
   .min(1)
   .max(12);
@@ -51,13 +64,18 @@ export const publicationSchema = z
         new Set(p.fields.map((f) => f.id)).size === p.fields.length &&
         new Set(
           p.fields.map((f) =>
-            JSON.stringify([f.name, f.frameUrl ?? p.attachment?.targetUrl]),
+            JSON.stringify(
+              f.richText
+                ? [f.richText.path, f.frameUrl]
+                : [f.name, f.frameUrl ?? p.attachment?.targetUrl],
+            ),
           ),
         ).size === p.fields.length &&
         p.fields.every(
           (f) =>
             !f.frameUrl ||
             !p.attachment ||
+            (!!f.richText && isInlineFrameURL(f.frameUrl)) ||
             new URL(f.frameUrl).origin ===
               new URL(p.attachment.targetUrl).origin,
         )),
@@ -72,6 +90,16 @@ export function verifyPublicationFields(
   source: PageObservation,
 ) {
   return p.fields?.map((field) => {
+    if (field.richText) {
+      const control = richTextControl(
+        { kind: 'fill', target: field.richText, value: field.value },
+        source,
+        true,
+      )!;
+      if (control.textValue !== field.value)
+        throw Error('EXECUTION_EVIDENCE_MISSING');
+      return control;
+    }
     const matches = source.controls?.filter(
       (c) =>
         c.role === 'textbox' &&
@@ -90,13 +118,39 @@ export function verifyPublicationFields(
 }
 
 /** 字段和定位一起确认；相同文字不能因此获得写入另一个字段的权限。 */
-export function publicationFillBinding(p: Publication, action: WebAction) {
+export function publicationFillBinding(
+  p: Publication,
+  action: WebAction,
+  source?: PageObservation,
+) {
   if (action.kind !== 'fill' && action.kind !== 'select') return undefined;
   const target = action.target;
-  if ('richTextNodeId' in target) return undefined;
+  if ('richTextNodeId' in target) {
+    const matches = p.fields?.filter(
+      (f) =>
+        f.richText &&
+        f.value === action.value &&
+        f.richText.richTextNodeId === target.richTextNodeId &&
+        f.richText.path === target.path &&
+        f.richText.frameUrl === target.frameUrl,
+    );
+    if (action.kind !== 'fill' || !source || matches?.length !== 1)
+      return undefined;
+    try {
+      richTextControl(action, source, true);
+    } catch {
+      return undefined;
+    }
+    return {
+      field: 'value' as const,
+      parameter: 'content' as const,
+      fieldId: matches[0]!.id,
+    };
+  }
   if (action.kind === 'fill' && p.fields) {
     const field = p.fields.find(
       (f) =>
+        !f.richText &&
         f.value === action.value &&
         f.name === target.name &&
         target.role === 'textbox' &&
@@ -242,5 +296,29 @@ export function samePublication(a: Publication, b: Publication) {
     JSON.stringify(a.fields) === JSON.stringify(b.fields) &&
     a.destination === b.destination &&
     JSON.stringify(a.attachment) === JSON.stringify(b.attachment)
+  );
+}
+
+/** 预览仅冻结定位和完整源值；此时网页尚未写入确认内容。 */
+export function publicationRichTextSources(
+  p: Publication,
+  source: PageObservation,
+) {
+  if (
+    p.fields?.some((f) => f.richText) &&
+    p.attachment &&
+    p.attachment.targetUrl !== source.url
+  )
+    throw Error('EXECUTION_EVIDENCE_MISSING');
+  return (
+    p.fields
+      ?.filter((f) => f.richText)
+      .map((f) =>
+        richTextControl(
+          { kind: 'fill', target: f.richText!, value: f.value },
+          source,
+          true,
+        )!,
+      ) ?? []
   );
 }

@@ -1,7 +1,7 @@
 import { afterEach, expect, test, vi } from 'vitest';
 import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
-import { mkdtemp, writeFile, rm, readFile } from 'node:fs/promises';
+import { mkdtemp, writeFile, rm, readFile, readdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import Database from 'better-sqlite3';
@@ -16,6 +16,13 @@ import type {
   Publication,
   PublicationCheck,
 } from '../../app/shared/publication';
+import {
+  publicationSchema,
+  publicationFillBinding,
+  verifyPublicationFields,
+  publicationRichTextSources,
+} from '../../app/shared/publication';
+import { validPublicationReferences } from '../../app/records/workflow';
 import { executionSchema, type NextStep } from '../../app/shared/execution';
 import type { PageObservation } from '../../app/shared/model';
 
@@ -27,7 +34,12 @@ afterEach(async () => {
 async function fixture({
   recovery = false,
   store,
-}: { recovery?: boolean; store?: WorkspaceRecords } = {}) {
+  richTextFrame,
+}: {
+  recovery?: boolean;
+  store?: WorkspaceRecords;
+  richTextFrame?: string;
+} = {}) {
   const folder = await mkdtemp(path.join(tmpdir(), 'helpr-publication-'));
   cleanups.push(() => rm(folder, { recursive: true, force: true }));
   const original = Buffer.from([0, 1, 2, 255, 73]);
@@ -116,7 +128,41 @@ async function fixture({
       url: base + '/file',
     },
   };
+  if (richTextFrame)
+    publication.fields = [
+      {
+        id: 'body',
+        name: '发布正文',
+        value: publication.content,
+        frameUrl: richTextFrame === 'main' ? base + '/edit' : richTextFrame,
+        richText: {
+          richTextNodeId: 41,
+          path: 'html:nth-child(1) > body:nth-child(2) > div:nth-child(1)',
+          frameUrl: richTextFrame === 'main' ? base + '/edit' : richTextFrame,
+        },
+      },
+    ];
   const observe = (): PageObservation => ({
+    ...(publication.fields?.[0]?.richText
+      ? {
+          controls: [
+            {
+              role: 'generic',
+              name: '',
+              frameUrl: publication.fields[0].frameUrl!,
+              disabled: false,
+              readOnly: false,
+              textValue: publication.content,
+              richText: {
+                rule: 'contenteditable-ax-v1' as const,
+                backendNodeId: 41,
+                valueSource: 'ax' as const,
+                locator: publication.fields[0].richText,
+              },
+            },
+          ],
+        }
+      : {}),
     url: base + '/edit',
     title: '编辑附件',
     links: [{ name: '附件已上传', url: base + '/file' }],
@@ -182,6 +228,8 @@ async function fixture({
     type: 'review',
     questionId,
     text: '确认本次发布',
+    source: observe(),
+    binding: { targetId: 'page', generation: 1 },
     url: base + '/edit',
     publication,
   });
@@ -1761,4 +1809,312 @@ test('管理页保存失败不读取候选；保存期间停止不能完成旧�
   });
   expect(g.execution().result).toBeUndefined();
   await t.instance.stopAll();
+});
+
+test.each(['main', 'about:blank', 'about:srcdoc'])(
+  '无AX名称富文本%s按确认字段写入和提交；冷开保存但不能复用节点',
+  async (richTextFrame) => {
+    const f = await fixture({ richTextFrame });
+    const field = f.publication.fields![0]!;
+    expect(f.execution().publication!.richTextReview!.controls[0]!.name).toBe(
+      '',
+    );
+    f.approve();
+    const action = {
+      kind: 'fill' as const,
+      target: field.richText!,
+      value: field.value,
+    };
+    const source = f.observe();
+    source.controls![0]!.textValue = '完整旧正文';
+    f.reserve(undefined, { id: 'body', effect: 'interaction', action, source });
+    f.post({ kind: 'dispatch', runId: 'publish', id: 'body' });
+    f.post({ kind: 'reported', id: 'body', returned: true });
+    f.post({
+      kind: 'resolve',
+      runId: 'publish',
+      id: 'body',
+      source: f.observe(),
+      binding: { targetId: 'page', generation: 1 },
+      evidence: ['本次附件报告'],
+    });
+    const check = await verifyAttachment(
+      f.publication,
+      f.material,
+      new AbortController().signal,
+    );
+    f.reserve(check);
+    expect(f.execution().actions.at(-1)!.fieldResults![0]).toMatchObject({
+      name: '',
+      textValue: field.value,
+    });
+    f.reopen();
+    expect(
+      f.execution().publication!.richTextReview!.controls[0]!.richText!.locator,
+    ).toEqual(field.richText);
+    expect(validPublicationReferences(f.taskId, f.execution())).toBe(true);
+    const tampered = structuredClone(f.execution());
+    delete tampered.publication!.richTextReview;
+    expect(validPublicationReferences(f.taskId, tampered)).toBe(false);
+    const badResult = structuredClone(f.execution());
+    badResult.actions.at(-1)!.fieldResults![0]!.textValue = '错误正文';
+    expect(validPublicationReferences(f.taskId, badResult)).toBe(false);
+  },
+);
+
+test.each([
+  'target',
+  'generation',
+  'node',
+  'path',
+  'frame',
+  'value',
+  'missing-proof',
+  'truncated',
+  'label-target',
+])('富文本发布字段拒绝身份或全文错配：%s', async (variant) => {
+  const f = await fixture({ richTextFrame: 'about:srcdoc' });
+  f.approve();
+  const field = f.publication.fields![0]!;
+  const source = f.observe();
+  const target = structuredClone(field.richText!);
+  const binding = { targetId: 'page', generation: 1 };
+  if (variant === 'target') binding.targetId = 'new-page';
+  if (variant === 'generation') {
+    binding.generation++;
+    source.generation++;
+  }
+  if (variant === 'node') target.richTextNodeId++;
+  if (variant === 'path') target.path += ' > div:nth-child(1)';
+  if (variant === 'frame') target.frameUrl = 'about:blank';
+  if (variant === 'missing-proof') delete source.controls![0]!.richText;
+  if (variant === 'truncated') source.truncated = true;
+  const action = {
+    kind: 'fill',
+    target:
+      variant === 'label-target'
+        ? {
+            role: 'textbox',
+            name: field.name,
+            exact: true,
+            frameUrl: field.frameUrl,
+          }
+        : target,
+    value: variant === 'value' ? '未经确认' : field.value,
+  };
+  expect(() =>
+    f.reserve(undefined, {
+      id: 'body',
+      effect: 'interaction',
+      action,
+      source,
+      binding,
+    }),
+  ).toThrow();
+  expect(f.execution().actions).toHaveLength(1);
+});
+
+test('改稿不能交换一次性节点；预览缺源或绑定不接受', async () => {
+  const f = await fixture({ richTextFrame: 'about:blank' });
+  const fields = structuredClone(f.publication.fields!);
+  fields[0]!.richText!.richTextNodeId++;
+  expect(() =>
+    f.records.execution({
+      kind: 'participation-decision',
+      taskId: f.taskId,
+      questionId: f.execution().question!.id,
+      operation: 'edit',
+      content: f.publication.content,
+      fields,
+    }),
+  ).toThrow('PARTICIPATION_EXPIRED');
+  f.approve();
+  expect(() =>
+    f.post({
+      kind: 'ask',
+      runId: 'publish',
+      type: 'review',
+      questionId: randomUUID(),
+      text: '确认',
+      url: f.observe().url,
+      publication: f.publication,
+    }),
+  ).toThrow('EXECUTION_EVIDENCE_MISSING');
+  const source = f.observe();
+  source.controls![0]!.richText!.backendNodeId++;
+  expect(() =>
+    f.post({
+      kind: 'ask',
+      runId: 'publish',
+      type: 'review',
+      questionId: randomUUID(),
+      text: '确认',
+      url: source.url,
+      publication: f.publication,
+      source,
+      binding: { targetId: 'page', generation: 1 },
+    }),
+  ).toThrow('EXECUTION_RICH_TEXT_UNVERIFIED');
+});
+
+test('结构字段schema不借about地址扩大普通字段，绑定必须有当前源证明', async () => {
+  const f = await fixture({ richTextFrame: 'about:srcdoc' });
+  const p = structuredClone(f.publication),
+    field = p.fields![0]!;
+  expect(publicationSchema.safeParse(p).success).toBe(true);
+  const action = {
+    kind: 'fill' as const,
+    target: field.richText!,
+    value: field.value,
+  };
+  expect(publicationFillBinding(p, action)).toBeUndefined();
+  expect(publicationFillBinding(p, action, f.observe())?.fieldId).toBe('body');
+  const wrong = f.observe();
+  wrong.controls![0]!.textValue = '网站改写';
+  expect(() => verifyPublicationFields(p, wrong)).toThrow(
+    'EXECUTION_EVIDENCE_MISSING',
+  );
+  delete field.richText;
+  expect(publicationSchema.safeParse(p).success).toBe(false);
+});
+
+test('服务预览冻结受管观察；编辑正文保留定位；独立GET成功只形成不可复用候选', async () => {
+  const f = await fixture({ richTextFrame: 'about:srcdoc' });
+  const service = f.service();
+  await service.reply({
+    kind: 'participation-decision',
+    taskId: f.taskId,
+    questionId: f.questionId,
+    operation: 'approve',
+  });
+  await service.settled();
+  expect(f.sends()).toBe(1);
+  expect(f.execution().phase).toBe('complete');
+  expect(f.execution().publicationChecks![0]!.status).toBe('verified');
+  expect(f.execution().learnedWorkflows![0]!.replay).toBeUndefined();
+  expect(f.execution().workflowDecisions![0]!.status).toBe('unusable');
+  f.reopen();
+  expect(f.execution().phase).toBe('complete');
+  expect(f.execution().actions.at(-1)!.fieldResults![0]!.name).toBe('');
+});
+
+test('服务实际review入口传递当前控件与页面绑定', async () => {
+  const f = await fixture();
+  const frameUrl = 'about:blank';
+  f.publication.fields = [
+    {
+      id: 'body',
+      name: '发布正文',
+      value: f.publication.content,
+      frameUrl,
+      richText: {
+        richTextNodeId: 41,
+        frameUrl,
+        path: 'html:nth-child(1) > body:nth-child(2) > div:nth-child(1)',
+      },
+    },
+  ];
+  const service = f.service();
+  await service.reply({
+    kind: 'participation-decision',
+    taskId: f.taskId,
+    questionId: f.questionId,
+    operation: 'approve',
+  });
+  await service.settled();
+  expect(f.sends()).toBe(0);
+  expect(f.execution().question!.type).toBe('review');
+  expect(f.execution().publication!.richTextReview).toMatchObject({
+    binding: { targetId: 'page', generation: 1 },
+    controls: [{ name: '', frameUrl }],
+  });
+  const fields = structuredClone(f.publication.fields);
+  fields[0]!.value = '修改后完整正文';
+  f.records.execution({
+    kind: 'participation-decision',
+    taskId: f.taskId,
+    questionId: f.execution().question!.id,
+    operation: 'edit',
+    content: fields[0]!.value,
+    fields,
+  });
+  expect(
+    f.execution().publication!.richTextReview!.controls[0]!.textValue,
+  ).toBe('本次附件报告');
+  expect(f.execution().publication!.content).toBe('修改后完整正文');
+});
+
+test('格式34备份保留原预览证明、导入待核对；格式33迁移前留副本', async () => {
+  const f = await fixture({ richTextFrame: 'about:blank' });
+  const file = path.join(f.folder, 'rich-text.helpr-backup');
+  const before = f.execution().publication;
+  const backup = await f.records.backup({
+    kind: 'create',
+    requestId: randomUUID(),
+    file,
+  });
+  expect(JSON.parse(await readFile(file, 'utf8'))).toMatchObject({
+    dataVersion: 34,
+  });
+  const folder = await mkdtemp(
+    path.join(tmpdir(), 'helpr-rich-review-restore-'),
+  );
+  cleanups.push(() => rm(folder, { recursive: true, force: true }));
+  const restored = new WorkspaceRecords(folder, 'app/records/migrations');
+  cleanups.push(() => {
+    restored.close();
+    return Promise.resolve();
+  });
+  await restored.backup({
+    kind: 'restore',
+    requestId: randomUUID(),
+    file,
+    checksum: backup.archive.checksum,
+  });
+  const e = restored
+    .snapshot()
+    .tasks.find((t) => t.id === f.taskId)!.execution!;
+  expect(e.restoreReview).toBe('required');
+  expect(e.publication).toEqual(before);
+  const old = await fixture();
+  const db = new Database(path.join(old.folder, 'workspace.sqlite'));
+  db.prepare('UPDATE workspace SET schema_version=33').run();
+  db.close();
+  old.reopen();
+  expect(
+    (await readdir(old.folder)).some((name) =>
+      name.startsWith('workspace-before-rich-text-publication-23-'),
+    ),
+  ).toBe(true);
+  expect(old.execution().publication!.richTextReview).toBeUndefined();
+});
+
+test('节点字段预览只能绑定附件的原编辑目标，不能借同站另一页面', async () => {
+  const f = await fixture({ richTextFrame: 'about:srcdoc' });
+  f.approve();
+  const source = f.observe();
+  source.url += '/another-editor';
+  expect(() => publicationRichTextSources(f.publication, source)).toThrow(
+    'EXECUTION_EVIDENCE_MISSING',
+  );
+  f.records.execute({
+    kind: 'page',
+    requestId: randomUUID(),
+    taskId: f.taskId,
+    url: source.url,
+    phase: 'manual',
+  });
+  expect(() =>
+    f.post({
+      kind: 'ask',
+      runId: 'publish',
+      type: 'review',
+      questionId: randomUUID(),
+      text: '确认',
+      url: source.url,
+      publication: f.publication,
+      source,
+      binding: { targetId: 'page', generation: 1 },
+    }),
+  ).toThrow('EXECUTION_EVIDENCE_MISSING');
 });

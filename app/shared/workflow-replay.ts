@@ -33,6 +33,7 @@ export function reboundAction(use: WorkflowUse, index: number): WebAction {
             );
             if (
               !field ||
+              !!field.richText ||
               binding.parameter !== 'content' ||
               action.kind !== 'fill'
             )

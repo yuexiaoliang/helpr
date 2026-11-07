@@ -1,0 +1,188 @@
+$ pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:workspace && pnpm test:validation && pnpm check:legacy
+$ tsc --noEmit
+$ eslint app tests/workspace electron.vite.config.ts drizzle.config.ts vitest.config.ts
+$ prettier --check app tests/workspace *.ts *.json *.mjs pnpm-workspace.yaml
+Checking formatting...
+All matched files use Prettier code style!
+$ vitest run
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+
+ Test Files  48 passed (48)
+      Tests  596 passed (596)
+   Start at  16:24:43
+   Duration  275.93s (tests 94%, import 4%, environment 1%)
+
+$ node --test scripts/*.test.mjs
+✔ 空白夹具：身份来自源页只读字段，POST之后生成编辑地址；错配页不会冒用源身份 (86.110917ms)
+✔ 草稿夹具先POST后随机身份，虚构模型仅冻结真实观察字段 (48.628458ms)
+✔ 动态夹具只有POST后生成地址，真实表单与303保留正反例目标链接 (74.598125ms)
+✔ 管理页只在POST后给出随机结果链接，B同名不同地址，公开页保留编辑关联 (28.095125ms)
+✔ 表单夹具：A直接POST响应，B重定向回同一地址；模型只按实际字段提议剩余动作 (73.029125ms)
+✔ 请求链夹具：C仅首次最终GET触发额外同URL脚本导航，后续页面完整 (24.671959ms)
+✔ 请求链夹具：B向当前地址POST后才生成新的编辑URL，303/302后保持来源链接 (16.015041ms)
+✔ 链接夹具仅提供普通href与页面文本，只有看到到达文本才提议完成 (70.5025ms)
+✔ 导航夹具由真实POST产生编号，303结果独立读取且不会重复写入 (70.558833ms)
+✔ 包清单覆盖原生文件、资源、执行位与内部链接，拒绝链接出包 (4.337625ms)
+✔ 构建途中改变、删减或伪造相同摘要的源码清单均拒绝 (0.196917ms)
+✔ 许可证正文包括嵌套第三方说明，保留字节摘要，跳过其它包与外部链接 (19.660583ms)
+✔ 富文本夹具保留独立收件，替代模型在反例仍声称成功；重复输入拒绝 (74.772125ms)
+✔ 段落原样保留，每个输入事件独立收件并有有限上限 (149.983792ms)
+✔ frame夹具使用独立同站URL，BODY内无脚本，替换和外层焦点反例保留 (9.311834ms)
+✔ inline夹具保留blank初始生成、srcdoc属性和实际frameUrl，不用输入脚本代写 (6.318792ms)
+✔ 执行前观察遇代次失效时记录并重取两份连续稳定样本，仍最多八次 (0.957333ms)
+✔ 执行前准备不吞掉其它观察错误 (0.098875ms)
+✔ 无名称夹具不注入角色或名称，虚构规划原样消费观察定位 (2.736833ms)
+✔ 服务中断后仍保留同一虚构密钥、会话、到期、原端口与效果累计，损坏时拒绝重新生成身份 (13.54025ms)
+✔ 旧版或访达的界面确认不能放行新版，过期观察不能算窗口已响应 (1.09375ms)
+✔ 强制清理的实际退出码与OS剩余同时保留，未清空不允许下一次启动 (1.060708ms)
+✔ 启动前仅清单恢复或一次陈旧成功都不够；窗口和图像须在本次预检响应 (0.520709ms)
+✔ 报告写入失败仍保留上一个完整检查点，不留下半份JSON (6.361209ms)
+✔ 异步夹具上传先返回，回填前不可下载或保存；B保留双地址 (54.072208ms)
+✔ 替代模型从发布语义识别按钮，文件选择按钮排在末尾也不被当作发布 (2.438167ms)
+✔ 多字段夹具保留换行、生成独立输入及合法页面脚本，不把合并全文塞入标题 (0.971292ms)
+✔ 旧总额用尽后仍可隔离调试，原用量、限额及已结束批次逐值保留 (26.750375ms)
+✔ 新工作副本首次记账无需配置额度；损坏的旧计数不会被重置或覆盖 (6.020291ms)
+✔ 并发构建与验证共享账本，产生的编号唯一且批次更新不会丢失 (96.655459ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 444.616042
+$ node scripts/check.mjs
+语法检查通过：267 个源码文件（排除历史快照）。
+{
+  "scope": "source replay; not packaged or real OS revalidation",
+  "source": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/macos-packaged-lifecycle/src/controller.mjs",
+  "sha256": "f99dfb172d48f408ba190a18d80f809df6e0573d5f9125afaf41844900b59c38",
+  "powerModuleSha256": "902605acf8835e15b43b3967bf738efee8a1f7474b626f4772eba9208f820ed2",
+  "checks": [
+    {
+      "name": "actual sleep → lock → resume remains blocked until unlock",
+      "pass": true
+    },
+    {
+      "name": "unlock before resume also remains blocked until both clear",
+      "pass": true
+    },
+    {
+      "name": "new lock during asynchronous reconciliation invalidates its completion",
+      "pass": true
+    },
+    {
+      "name": "rapid re-lock and unlock waits for a fresh reconciliation",
+      "pass": true
+    },
+    {
+      "name": "failed wake reconciliation remains blocked until a later successful check",
+      "pass": true
+    },
+    {
+      "name": "duplicate wake notifications do not start concurrent checks",
+      "pass": true
+    }
+  ]
+}
+{
+  "scope": "whole host source with native quit/parent order replayed; Electron effects replaced; real packaged verification still required",
+  "source": "/Users/yuexiaoliang/projects/helpr/.scratch/helpr-first-release/experiments/macos-packaged-lifecycle/src/host.cjs",
+  "sha256": "5c9a45c8d2776063441517553bfa03b26882cb06cc8a7134d18b0767dc673c94",
+  "checks": [
+    {
+      "name": "native quit after owner death must not wait for IPC disconnect",
+      "pass": true
+    },
+    {
+      "name": "closed control channel with unchanged parent also permits native quit",
+      "pass": true
+    },
+    {
+      "name": "missing native and IPC notifications still closes on changed parent",
+      "pass": true
+    },
+    {
+      "name": "live owner gets save request and views remain until acknowledgement",
+      "pass": true
+    },
+    {
+      "name": "live owner polling does not interpret idle or waiting as failure",
+      "pass": true
+    },
+    {
+      "name": "already orphaned at initialization creates no window",
+      "pass": true
+    },
+    {
+      "name": "owner death during page load cannot create a late view or ready",
+      "pass": true
+    },
+    {
+      "name": "IPC close followed by late close message cleans resources only once",
+      "pass": true
+    },
+    {
+      "name": "destroyed native views may lose webContents before will-quit; diagnostic must not throw",
+      "pass": true
+    }
+  ]
+}
+✔ 第 97 次模型请求在换输出目录并重启后仍被拒绝 (2581.595292ms)
+✔ 同一账本拒绝第二个活跃写入者 (53.326334ms)
+✔ 请求在途时进程被终止，重启保持调用和未知 token 预留 (146.451542ms)
+✔ 程序修订超限在新运行开始时被拒绝，相同版本可继续 (102.730458ms)
+✔ 截图等待期间功能结果已保存；截图失败和重启不会重复调用模型 (203.465666ms)
+✔ 取消且无 usage 的请求保留 token 预留，状态明确显示未知用量 (118.72175ms)
+✔ 只读计划随功能依赖失效，截图实现变化仍复用已通过结果 (183.816792ms)
+✔ 真实 CLI 在全新输出目录也显示历史 113 次调用和已耗尽的原预算 (59.220042ms)
+✔ 地址尾随斜杠不改变计划指纹或实际模型请求路径 (83.289ms)
+✔ 账本损坏或已登记账本丢失时拒绝续跑并保持原文件 (97.865792ms)
+✔ 补截图复用留存采集入口；清理失败保留功能结果，重启后不伪造原页面 (243.533458ms)
+✔ 请求准备期间跨过截止时间，网络请求仍被拦截 (77.438292ms)
+✔ 采集截图时进程被终止，重启跳过功能执行并标明原页面丢失 (201.280209ms)
+✔ 并发请求争用最后一次额度时只发送一次 (69.384333ms)
+✔ CLI 在预算耗尽时退出，损坏的选择计划报错，均不创建输出目录 (105.645625ms)
+✔ 配置校验拒绝 URL 内凭据和覆盖控制字段；缺 key 不创建请求 (0.992042ms)
+✔ 自定义路径和模型到达请求；secret 只在认证头，记录不包含 secret (19.450333ms)
+✔ SSE 支持 keep-alive、CRLF 跨块和 UTF-8 跨块 (15.215875ms)
+✔ 取消 A 后不消费同一缓冲中的后续 delta；B 请求继续 (4.979834ms)
+✔ HTTP 错误正文即使回显 secret，也不进入错误和记录 (1.815875ms)
+✔ 不跟随重定向到其他认证目标 (1.546917ms)
+✔ 新进程读取四种持久化意图，不改变执行身份或重建记录 (202.368666ms)
+✔ 记录缺失、截断或内容损坏时拒绝读取，保留原始文件 (32.319ms)
+✔ 有效封装中的执行身份、任务内容或素材字节不一致也必须拒绝 (95.469208ms)
+✔ 不兼容的流程和条件版本不能沿用旧进度 (65.804166ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4387.516791
+{
+  "uniqueCases": 18,
+  "passed": 18,
+  "primitiveCount": 258,
+  "observations": 166,
+  "modelInputs": 113,
+  "screenshotCount": 56,
+  "totalCalls": 113,
+  "knownTokens": 103489,
+  "missingUsageCalls": 3,
+  "peakRssMiB": 1508.46875,
+  "checks": {
+    "pageOwnership": true,
+    "stoppedGenerationFenced": true,
+    "modelPageIsolation": true,
+    "realModelOverlapBothHosts": true,
+    "realServerOverlapBothHosts": true,
+    "independentBResults": true,
+    "sameExecutionProtocolAcrossStudies": true,
+    "resumePlanReadOnly": true,
+    "historicalResultsNotReusedByCurrentDriver": true
+  }
+}
