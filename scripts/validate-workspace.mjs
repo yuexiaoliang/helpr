@@ -47,6 +47,7 @@ const { values: options } = parseArgs({
     'link-navigation': flag,
     'dynamic-result': flag,
     'management-result': flag,
+    'summary-result': {type:'string'},
     'upload-ready': flag,
     'created-target': flag,
     'form-navigation': flag,
@@ -123,6 +124,7 @@ if (recoveryPoint) {
 }
 assert(!options['ambiguous-selection'] || options['cross-site-controls'], 'CROSS_SITE_CASE_REQUIRED');
 if (options['upload-ready']) options['workflow-reuse'] = true;
+if (options['summary-result']) { assert(['links','target','content'].includes(options['summary-result']), 'INVALID_SUMMARY_CASE'); options['management-result'] = true; }
 if (options['management-result']) options['dynamic-result'] = true;
 if (options['dynamic-result']) options['publication-fields'] = true;
 if (options['cross-site-controls'] || options['history-cleanup'] || options['publication-fields']) options['workflow-reuse'] = true;
@@ -301,6 +303,7 @@ const website = await fixture({
   richParagraph: options['rich-text-paragraph'],
   dynamicResult: options['dynamic-result'],
   managementResult: options['management-result'],
+  summaryResult: options['summary-result'],
   navigation: options['action-navigation'],
   linkNavigation: options['link-navigation'],
   coordination: options.coordination,
@@ -959,7 +962,7 @@ async function validate() {
   if (options['rich-text-lines']) return verifyRichTextLines({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, mode:options['rich-text-lines']});
   if (options['form-navigation']) return verifyFormNavigation({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, chain:options['form-chain'], blank:options['blank-creation']});
   if (options['created-target']) return verifyCreatedTarget({client, website, evidence, command, waitFor, check, launch, remainingOwned,mismatch:options['created-target-mismatch']});
-  if (options['dynamic-result']) return verifyDynamicResult({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, management: options['management-result']});
+  if (options['dynamic-result']) return verifyDynamicResult({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, management: options['management-result'], summary: options['summary-result']});
   if (options['link-navigation']) return verifyLinkNavigation({client, website, evidence, command, waitFor, check, launch, remainingOwned});
   if (options['action-navigation']) return verifyNavigation({client, website, evidence, command, waitFor, check, launch, remainingOwned});
   if (options.coordination) return verifyCoordination({client, website, evidence, command, waitFor, check, launch, remainingOwned});

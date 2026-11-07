@@ -1,0 +1,36 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/publication.test.ts (65 tests | 1 failed) 44752ms
+   × 格式35备份保留原预览证明、导入待核对；格式33迁移前留副本 284ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/publication.test.ts > 格式35备份保留原预览证明、导入待核对；格式33迁移前留副本
+AssertionError: expected { format: 'helpr-backup', …(7) } to match object { dataVersion: 35 }
+(14 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "dataVersion": 35,
++   "dataVersion": 36,
+  }
+
+ ❯ tests/workspace/publication.test.ts:2054:52
+    2052|     file,
+    2053|   });
+    2054|   expect(JSON.parse(await readFile(file, 'utf8'))).toMatchObject({
+       |                                                    ^
+    2055|     dataVersion: 35,
+    2056|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 74 passed (75)
+   Start at  17:24:37
+   Duration  47.82s (tests 98%, import 2%)
+

@@ -1,0 +1,181 @@
+{
+  "checkedAt": "2026-11-07T09:44:22.014501+00:00",
+  "build": 107,
+  "sourceCommit": "b92701e15c130eed72662b03fcb193ee8fd1972f",
+  "rawRun": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/run-1794044197833",
+  "profile": "/private/tmp/helpr-workspace-validation-501/run-er65t5",
+  "dataFormat": 36,
+  "quickCheck": "ok",
+  "sqliteSha256": "a4f0bff2a151b1e5c44cae95a68f9d52c71e4681c9c221346499996a127b114b",
+  "cases": [
+    {
+      "item": "C",
+      "phase": "paused",
+      "taskId": "95f84b8e-8c70-4052-9d77-fceb2d68d7ef",
+      "confirmedFields": [
+        {
+          "id": "title",
+          "name": "发布标题",
+          "value": "动态结果标题C"
+        },
+        {
+          "id": "body",
+          "name": "文章正文",
+          "value": "动态正文C"
+        }
+      ],
+      "resultCheck": [
+        {
+          "id": "4e0f558b-70b5-48bd-b59b-ea149d2d8b10",
+          "actionId": "ed117757-308d-41fb-8677-ab9e906b154b",
+          "approvalId": "2f5201f2-024c-4ce9-a369-a2f7ac4a8a56",
+          "materialId": "4e4da77b-fb1a-42e7-af67-18070c51dbd5",
+          "goalVersion": 1,
+          "status": "unknown",
+          "proposal": {
+            "url": "http://127.0.0.1:57239/dynamic/0c33af8e-0aea-47f7-b8ed-d5dacf9e9b6c?item=C",
+            "targetUrl": "http://127.0.0.1:57239/edit?item=C",
+            "attachmentUrl": "http://127.0.0.1:57239/file?item=C",
+            "publishedEvidence": [
+              "核对规则：唯一公开地址、确认内容、栏目和附件字节"
+            ]
+          },
+          "source": {
+            "url": "http://127.0.0.1:57239/dynamic/0c33af8e-0aea-47f7-b8ed-d5dacf9e9b6c?item=C",
+            "title": "独立公开结果核对",
+            "fingerprint": "6334e01f99df4af8583e75a3b2ddbbdf99a4497715060c21f50e2eb1bb4d148b",
+            "generation": 1,
+            "observedAt": 1794044214251,
+            "truncated": false
+          },
+          "checkedAt": 1794044214251,
+          "pageSha256": "6334e01f99df4af8583e75a3b2ddbbdf99a4497715060c21f50e2eb1bb4d148b",
+          "checks": {
+            "target": false,
+            "published": true,
+            "content": false,
+            "destination": false,
+            "attachment": false,
+            "bytes": false
+          },
+          "failure": "evidence",
+          "coverage": "public-page-and-attachment",
+          "extraResults": [],
+          "anomalies": [],
+          "unobservedWrites": "unknown",
+          "screenshot": "not-required",
+          "recovery": "public-attachment-v1",
+          "localMaterial": "verified"
+        }
+      ],
+      "checkpoint": {
+        "recovery": {
+          "rule": "public-attachment-v1",
+          "url": "http://127.0.0.1:57239/dynamic/0c33af8e-0aea-47f7-b8ed-d5dacf9e9b6c?item=C",
+          "targetUrl": "http://127.0.0.1:57239/edit?item=C",
+          "attachmentUrl": "http://127.0.0.1:57239/file?item=C",
+          "evidence": [
+            "提交后的完整页面提供唯一确认内容链接，公开内容及原目标与附件仍须独立核对"
+          ],
+          "targetFactId": "602c21f3-72d5-4675-9abc-7fec5ae98ef7",
+          "uploadFactId": "d6aecc9b-1981-4b2f-ba52-7fa2d3a2533d"
+        },
+        "entry": {
+          "rule": "confirmed-content-candidate-v1",
+          "name": "动态结果标题C"
+        },
+        "source": {
+          "url": "http://127.0.0.1:57239/management?item=C",
+          "title": "发布管理",
+          "fingerprint": "08359f4ae4c795e03ad301c4b4aadc17b091413ffcbbfed02f332a582141a484",
+          "generation": 2,
+          "observedAt": 1794044214187,
+          "truncated": false
+        },
+        "binding": {
+          "targetId": "D4ADF8514E9C75D2EDFC33EF62ACA5A2",
+          "generation": 2
+        },
+        "links": [
+          {
+            "name": "动态结果标题C",
+            "url": "http://127.0.0.1:57239/dynamic/0c33af8e-0aea-47f7-b8ed-d5dacf9e9b6c?item=C"
+          }
+        ]
+      }
+    }
+  ],
+  "pids": [
+    42684,
+    42686,
+    42687,
+    42689,
+    42690,
+    42691,
+    42699,
+    42700,
+    42701,
+    42702,
+    42703,
+    42705,
+    42706,
+    42757,
+    42759,
+    42760,
+    42762,
+    42763,
+    42764,
+    42772,
+    42773,
+    42776,
+    42777,
+    42778,
+    42781,
+    42782
+  ],
+  "groups": [
+    42684,
+    42689,
+    42691,
+    42757,
+    42762,
+    42764
+  ],
+  "remainingPids": [],
+  "remainingGroups": [],
+  "actualApps": [],
+  "leaseReleased": true,
+  "starts": [
+    {
+      "kind": "startup",
+      "number": 322,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:57239",
+        "persistent": false
+      },
+      "ms": 4308,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    },
+    {
+      "kind": "startup",
+      "number": 323,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:57239",
+        "persistent": false
+      },
+      "ms": 5223,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    }
+  ],
+  "duplicateReceiptInstrumentation": false,
+  "modelPlans": 8,
+  "milliseconds": 31649
+}

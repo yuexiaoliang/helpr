@@ -191,7 +191,10 @@ export const publicationRecoveryCheckpointSchema = z.strictObject({
   }),
   entry: z
     .strictObject({
-      rule: z.literal('confirmed-content-link-v1'),
+      rule: z.enum([
+        'confirmed-content-link-v1',
+        'confirmed-content-candidate-v1',
+      ]),
       name: observedLinkSchema.shape.name,
     })
     .optional(),

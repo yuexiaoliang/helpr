@@ -316,3 +316,5 @@ Chromium 对空的原生文本框可能省略 AX `value`。观察层仅在同一
 已核实的线性附件发布流程可从真实填写源控件形成 `observed-structure-v1`：字段标识、主文档或精确子文档、有限结构路径和实际 AX 角色/名称。历史节点只作审计，模型的复用输入只能给字段语义及本次新值。程序从本次完整观察唯一匹配并取得当前 locator，随后生成本次预览；批准后原节点、target/generation、完整确认正文、每段回执及停止守卫保持，不在节点失效后改绑。`about:blank/srcdoc` 继续依赖已有原生来源及 DOM/AX 证明。结构变化、歧义、缺全文不猜测放行。
 
 格式35接续34并先备份；旧unusable候选不补造规则，备份导入仍须核对。当前仍限 `explicit-current-url` 的同站同入口线性路径，不扩为跨页流程或任意富文本编辑器。源码入口 `pnpm exec vitest run tests/workspace/workflow-rich-text.test.ts`；固定候选入口 `pnpm validate:workspace --fixture --candidate=rich-text-rebind-23 --rich-text-rebind=main`（另有 `blank`、`srcdoc`、`replace`）。阶段证据及未验项见[重新绑定报告](../docs/testing/evidence/release-23-rich-text-rebind/REPORT.md)。
+
+事项23缩略管理页入口：`pnpm validate:workspace --fixture --candidate=summary-result-23 --summary-result=links`（另有`target`、`content`独立反例组）。管理页可仅呈现唯一精确确认字段名称的同站结果链接，格式36保存`confirmed-content-candidate-v1`；旧完整页规则保留，35迁移先备份。两次稳定完整观察及原生/会话/停止/保存守卫不变，只读核对唯一候选，不点击或枚举。最终公开页仍需唯一canonical、全部确认内容、栏目、原编辑目标唯一链接及附件字节，任何错配保持未知且不重发。通用“查看”但缺内容关联、缺原目标反向链接或非公开结果仍不支持。源码入口为`tests/workspace/publication.test.ts`，范围及实包用量见[阶段方案](../docs/testing/release-23-summary-result-plan.md)。

@@ -2,12 +2,13 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
+import { richTextReadiness } from './rich-text-lines-validation.mjs';
 
-export async function verifyDynamicResult({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, management = false}) {
-  const detail = evidence.dynamicResult = {realModelCalls:0, remoteWrites:0, cases:[], scriptedContinuation:false, management};
+export async function verifyDynamicResult({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, management = false, summary = false}) {
+  const detail = evidence.dynamicResult = {realModelCalls:0, remoteWrites:0, cases:[], scriptedContinuation:false, management, summary};
   const state = await client.request({kind:'snapshot'});
   await client.request(command('model-save',{protocol:'chat-completions',expectedVersion:state.modelSettings?.version??0,endpoint:website.base+'/v1',model:'fixture',apiKey:'local-fixture-not-a-secret'}));
-  for (const item of ['A','B']) {
+  for (const item of (summary === 'target' ? ['C'] : summary === 'content' ? ['D'] : ['A','B'])) {
     const bytes=Buffer.from('dynamic-result-'+item), file=path.join(data,item+'.bin');fs.writeFileSync(file,bytes);
     const title='动态结果标题'+item+'\n\n动态正文'+item, target=website.base+'/edit?item='+item;
     const taskId=(await client.request(command('create',{goal:`使用“${file}”在 ${target} 发布“${title}”到“公告”`}))).taskId;
@@ -27,7 +28,7 @@ export async function verifyDynamicResult({client, website, data, evidence, comm
     assert.equal(website.receipts.filter(r=>r.kind==='published'&&r.item===item).length,0);
     await client.request({kind:'participation-decision',taskId,questionId:review.question.id,operation:'approve'});
     await waitFor(async()=>{const t=await get();return t.url.includes(management ? '/management' : '/dynamic/')&&(item==='A'?t.execution?.phase==='complete':t.execution?.pauseReason==='page-change')&&t;},50000);
-    if(item==='B') await new Promise(r=>setTimeout(r,7000));
+    if(item!=='A') await new Promise(r=>setTimeout(r,7000));
     const task=sample.result=await get(), e=task.execution, a=e.actions.at(-1);
     check(item+' POST/303动态地址与只读结果独立核对',()=>{
       assert.equal(a.effect,'publication');assert.equal(a.submission.recovery,undefined);
@@ -43,27 +44,38 @@ export async function verifyDynamicResult({client, website, data, evidence, comm
         assert.equal(a.status,'confirmed');
       }else{
         assert.equal(e.pauseReason,'page-change');assert.equal(a.status,'unknown');
-        assert.equal(a.discoveredRecovery,undefined);assert.equal(e.result,undefined);
+        if(summary && item!=='B'){
+          assert.equal(a.discoveredRecovery.entry.rule,'confirmed-content-candidate-v1');
+          assert.equal(e.publicationChecks[0].status,'unknown');
+          assert.equal(e.publicationChecks[0].checks[item==='C'?'target':'content'],false);
+          assert.equal(website.receipts.filter(r=>r.kind==='public-read'&&r.item===item).length,1);
+        } else assert.equal(a.discoveredRecovery,undefined);
+        assert.equal(e.result,undefined);
       }
     });
     if(management){
       const html=await(await fetch(task.url,{signal:AbortSignal.timeout(5000)})).text();
+      if(summary){ assert(!html.includes('动态正文'+item)); assert(!html.includes('下载附件')); assert(!html.includes('编辑原条目')); }
       sample.managementPage={url:task.url,html,sha256:createHash('sha256').update(html).digest('hex')};
     }
-    if(item==='A'){
+    if(item==='A' || (summary && item!=='B')){
+      sample.productPublicReads=website.receipts.filter(r=>r.kind==='public-read'&&r.item===item).length;
       const html=await(await fetch(a.discoveredRecovery.recovery.url,{signal:AbortSignal.timeout(5000)})).text();
-      assert(title.split('\n\n').every(v=>html.includes(v)));
+      assert.equal(title.split('\n\n').every(v=>html.includes(v)),item!=='D');
       const download=Buffer.from(await(await fetch(e.publication.attachment.url,{signal:AbortSignal.timeout(5000)})).arrayBuffer());
       assert.deepEqual(download,bytes);
       sample.independentPublicRead={url:a.discoveredRecovery.recovery.url,html,pageSha256:createHash('sha256').update(html).digest('hex'),attachmentUrl:e.publication.attachment.url,bytes:download.length,sha256:createHash('sha256').update(download).digest('hex')};
     }
   }
   detail.plansBeforeCold=website.receipts.filter(r=>r.kind==='planning').length;
-  assert(detail.plansBeforeCold<=24,'MODEL_FIXTURE_LIMIT');
+  assert(detail.plansBeforeCold<=(summary?40:24),'MODEL_FIXTURE_LIMIT');
+  detail.receiptsBeforeCold=website.receipts.length;
   await client.quit();assert.deepEqual(remainingOwned(),[]);
   const cold=await launch();
   for(const sample of detail.cases){
     sample.cold=await waitFor(async()=>{const t=(await cold.request({kind:'snapshot'})).tasks.find(t=>t.id===sample.taskId);return t?.phase==='manual'&&t;},15000);
+    sample.coldReadiness={readiness:[]};
+    await waitFor(resultReadiness(cold,sample.taskId,sample.coldReadiness),15000);
     check(sample.item+' 冷开保持结果与未知，不重发或规划',()=>{
       assert.deepEqual(sample.cold.execution.actions,sample.result.execution.actions);
       assert.equal(sample.cold.execution.phase,sample.result.execution.phase);
@@ -71,5 +83,10 @@ export async function verifyDynamicResult({client, website, data, evidence, comm
       assert.equal(website.receipts.filter(r=>r.kind==='planning').length,detail.plansBeforeCold);
     });
   }
+  assert.equal(website.receipts.length,detail.receiptsBeforeCold);
   await cold.quit();
+}
+
+export function resultReadiness(client,taskId,sample){
+  return richTextReadiness(client,taskId,sample);
 }

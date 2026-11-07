@@ -54,7 +54,7 @@ export function freezeRecovery(
   return { ...recovery, targetFactId: target.id, uploadFactId: upload.id };
 }
 
-/** 完整新页必须同时呈现原编辑目标、附件及确认内容；当前地址或唯一名称等于已确认字段完整值的链接。 */
+/** 管理页只提供唯一候选；最终公开页另核全文、原目标与附件字节。 */
 export function discoverRecovery(
   e: TaskExecution,
   action: ActionFact,
@@ -63,13 +63,7 @@ export function discoverRecovery(
 ) {
   const p = action.submission?.publication,
     a = p?.attachment;
-  if (
-    !p ||
-    !a ||
-    action.submission?.recovery ||
-    !publicationParts(p).every((part) => source.text.includes(part)) ||
-    !source.text.includes(p.destination)
-  )
+  if (!p || !a || action.submission?.recovery)
     throw Error('EXECUTION_EVIDENCE_MISSING');
   const target = e.preparation?.find(
     (f) =>
@@ -88,9 +82,22 @@ export function discoverRecovery(
   const links = confirmedResultLinks(p, source);
   if (links.length > 1) throw Error('EXECUTION_EVIDENCE_MISSING');
   const link = links[0];
+  const complete =
+    publicationParts(p).every((part) => source.text.includes(part)) &&
+    source.text.includes(p.destination) &&
+    source.links?.filter((l) => l.url === a.targetUrl).length === 1 &&
+    source.links?.filter((l) => l.url === a.url).length === 1;
+  if (!link && !complete) throw Error('EXECUTION_EVIDENCE_MISSING');
   return publicationRecoveryCheckpointSchema.parse({
     ...(link
-      ? { entry: { rule: 'confirmed-content-link-v1', name: link.name } }
+      ? {
+          entry: {
+            rule: complete
+              ? 'confirmed-content-link-v1'
+              : 'confirmed-content-candidate-v1',
+            name: link.name,
+          },
+        }
       : {}),
     recovery: {
       rule: 'public-attachment-v1',
@@ -100,7 +107,9 @@ export function discoverRecovery(
       targetFactId: target.id,
       uploadFactId: upload.id,
       evidence: [
-        '提交后的完整页面同时呈现原目标链接、确认内容、栏目和附件链接',
+        link
+          ? '提交后的完整页面提供唯一确认内容链接，公开内容及原目标与附件仍须独立核对'
+          : '提交后的完整页面同时呈现原目标链接、确认内容、栏目和附件链接',
       ],
     },
     source: pageSourceSchema.strip().parse(source),

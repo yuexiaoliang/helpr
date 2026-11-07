@@ -1,0 +1,181 @@
+{
+  "checkedAt": "2026-11-07T09:45:20.985509+00:00",
+  "build": 107,
+  "sourceCommit": "b92701e15c130eed72662b03fcb193ee8fd1972f",
+  "rawRun": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/run-1794044675213",
+  "profile": "/private/tmp/helpr-workspace-validation-501/run-SNaR5m",
+  "dataFormat": 36,
+  "quickCheck": "ok",
+  "sqliteSha256": "6ee405e16398544a2e75076aaf92f983bdeae35a53d362aea1dc3279ac061907",
+  "cases": [
+    {
+      "item": "D",
+      "phase": "paused",
+      "taskId": "d4431204-02fb-447e-aaca-53c71afd5b40",
+      "confirmedFields": [
+        {
+          "id": "title",
+          "name": "发布标题",
+          "value": "动态结果标题D"
+        },
+        {
+          "id": "body",
+          "name": "文章正文",
+          "value": "动态正文D"
+        }
+      ],
+      "resultCheck": [
+        {
+          "id": "20ff43dc-cc27-4714-8c9d-ef5209a979ac",
+          "actionId": "8436ab68-bc5f-441c-81d4-33cc16523962",
+          "approvalId": "d20cda7e-8031-4a12-be0e-996aa4cf3845",
+          "materialId": "9e47fe16-1e5a-40cb-8aee-d73a47931d67",
+          "goalVersion": 1,
+          "status": "unknown",
+          "proposal": {
+            "url": "http://127.0.0.1:57685/dynamic/b5a85d69-f860-4e80-9848-dd4a20776294?item=D",
+            "targetUrl": "http://127.0.0.1:57685/edit?item=D",
+            "attachmentUrl": "http://127.0.0.1:57685/file?item=D",
+            "publishedEvidence": [
+              "核对规则：唯一公开地址、确认内容、栏目和附件字节"
+            ]
+          },
+          "source": {
+            "url": "http://127.0.0.1:57685/dynamic/b5a85d69-f860-4e80-9848-dd4a20776294?item=D",
+            "title": "独立公开结果核对",
+            "fingerprint": "e1a4ca9a47733a1eec19b06ee2968a01ffb16df45931df3e63a9809f3afe3b04",
+            "generation": 1,
+            "observedAt": 1794044690220,
+            "truncated": false
+          },
+          "checkedAt": 1794044690220,
+          "pageSha256": "e1a4ca9a47733a1eec19b06ee2968a01ffb16df45931df3e63a9809f3afe3b04",
+          "checks": {
+            "target": true,
+            "published": true,
+            "content": false,
+            "destination": true,
+            "attachment": true,
+            "bytes": false
+          },
+          "failure": "content",
+          "coverage": "public-page-and-attachment",
+          "extraResults": [],
+          "anomalies": [],
+          "unobservedWrites": "unknown",
+          "screenshot": "not-required",
+          "recovery": "public-attachment-v1",
+          "localMaterial": "verified"
+        }
+      ],
+      "checkpoint": {
+        "recovery": {
+          "rule": "public-attachment-v1",
+          "url": "http://127.0.0.1:57685/dynamic/b5a85d69-f860-4e80-9848-dd4a20776294?item=D",
+          "targetUrl": "http://127.0.0.1:57685/edit?item=D",
+          "attachmentUrl": "http://127.0.0.1:57685/file?item=D",
+          "evidence": [
+            "提交后的完整页面提供唯一确认内容链接，公开内容及原目标与附件仍须独立核对"
+          ],
+          "targetFactId": "ab38e0af-0349-4a08-9c72-29d69a99d003",
+          "uploadFactId": "d28cea16-6d26-481c-b9af-a2b348b3d32c"
+        },
+        "entry": {
+          "rule": "confirmed-content-candidate-v1",
+          "name": "动态结果标题D"
+        },
+        "source": {
+          "url": "http://127.0.0.1:57685/management?item=D",
+          "title": "发布管理",
+          "fingerprint": "e1b22911179e4208535e81faf36e7bf5c1d3b26fc6e36ca44881e6fe976f1505",
+          "generation": 2,
+          "observedAt": 1794044690196,
+          "truncated": false
+        },
+        "binding": {
+          "targetId": "1FC1156721962B184EF0A4302D9632E3",
+          "generation": 2
+        },
+        "links": [
+          {
+            "name": "动态结果标题D",
+            "url": "http://127.0.0.1:57685/dynamic/b5a85d69-f860-4e80-9848-dd4a20776294?item=D"
+          }
+        ]
+      }
+    }
+  ],
+  "pids": [
+    43931,
+    43938,
+    43939,
+    43944,
+    43945,
+    43946,
+    43963,
+    43964,
+    43966,
+    43967,
+    43968,
+    43983,
+    43984,
+    44046,
+    44047,
+    44048,
+    44050,
+    44051,
+    44052,
+    44058,
+    44059,
+    44060,
+    44061,
+    44062,
+    44064,
+    44065
+  ],
+  "groups": [
+    43931,
+    43944,
+    43946,
+    44046,
+    44050,
+    44052
+  ],
+  "remainingPids": [],
+  "remainingGroups": [],
+  "actualApps": [],
+  "leaseReleased": true,
+  "starts": [
+    {
+      "kind": "startup",
+      "number": 324,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:57685",
+        "persistent": false
+      },
+      "ms": 6651,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    },
+    {
+      "kind": "startup",
+      "number": 325,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:57685",
+        "persistent": false
+      },
+      "ms": 5694,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    }
+  ],
+  "duplicateReceiptInstrumentation": false,
+  "modelPlans": 8,
+  "milliseconds": 30526
+}

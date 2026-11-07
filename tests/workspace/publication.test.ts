@@ -1652,7 +1652,7 @@ test('管理页从冻结确认内容唯一匹配结果链接，只读GET后完�
   await s.instance.stopAll();
 });
 
-test('管理页同名不同地址、重复URL、异站、片段、错误原目标和截断均拒绝保存', async () => {
+test('管理页同名不同地址、重复URL、异站、片段和截断均拒绝保存', async () => {
   const f = await dynamicResultFixture(true);
   f.pause();
   const links = f.observation.links!;
@@ -1682,9 +1682,7 @@ test('管理页同名不同地址、重复URL、异站、片段、错误原目�
         { name: '本次附件报告', url: f.proposal.url + '#fragment' },
       ],
     },
-    { ...f.observation, links: links.slice(1) },
     { ...f.observation, truncated: true },
-    { ...f.observation, text: '本次附件报告 已发布' },
   ]) {
     expect(() => f.freeze(source)).toThrow();
     expect(f.execution().actions.at(-1)!.discoveredRecovery).toBeUndefined();
@@ -2044,7 +2042,7 @@ test('服务实际review入口传递当前控件与页面绑定', async () => {
   expect(f.execution().publication!.content).toBe('修改后完整正文');
 });
 
-test('格式35备份保留原预览证明、导入待核对；格式33迁移前留副本', async () => {
+test('当前格式备份保留原预览证明、导入待核对；格式33迁移前留副本', async () => {
   const f = await fixture({ richTextFrame: 'about:blank' });
   const file = path.join(f.folder, 'rich-text.helpr-backup');
   const before = f.execution().publication;
@@ -2054,7 +2052,7 @@ test('格式35备份保留原预览证明、导入待核对；格式33迁移前�
     file,
   });
   expect(JSON.parse(await readFile(file, 'utf8'))).toMatchObject({
-    dataVersion: 35,
+    dataVersion: 36,
   });
   const folder = await mkdtemp(
     path.join(tmpdir(), 'helpr-rich-review-restore-'),
@@ -2117,4 +2115,231 @@ test('节点字段预览只能绑定附件的原编辑目标，不能借同站�
       binding: { targetId: 'page', generation: 1 },
     }),
   ).toThrow('EXECUTION_EVIDENCE_MISSING');
+});
+
+async function summaryResultFixture() {
+  const f = await dynamicResultFixture(true);
+  f.observation.text = '发布管理：本次附件报告';
+  f.observation.links = [{ name: '本次附件报告', url: f.proposal.url }];
+  return f;
+}
+
+test('缩略管理页只有确认内容链接也可冻结候选；公开页独立核全文、栏目、目标和字节', async () => {
+  const f = await summaryResultFixture();
+  const s = f.dynamicService();
+  f.arrive();
+  await s.instance.recordNavigation(f.event);
+  await s.instance.suspend(f.taskId, 'page-change', randomUUID());
+  await s.instance.settled();
+  const e = f.execution();
+  expect(e.phase).toBe('complete');
+  expect(e.actions.at(-1)!.discoveredRecovery!.entry).toEqual({
+    rule: 'confirmed-content-candidate-v1',
+    name: '本次附件报告',
+  });
+  expect(e.publicationChecks![0]).toMatchObject({
+    status: 'verified',
+    checks: {
+      target: true,
+      content: true,
+      destination: true,
+      attachment: true,
+      bytes: true,
+      published: true,
+    },
+  });
+  for (const spy of [s.allow, s.prepare, s.propose, s.perform])
+    expect(spy).not.toHaveBeenCalled();
+  await s.instance.stopAll();
+});
+
+test('缩略管理页无精确关联、同名歧义、重复URL、跨站、片段和截断不保存或GET', async () => {
+  const f = await summaryResultFixture();
+  f.pause();
+  const before = f.reads();
+  for (const source of [
+    { ...f.observation, links: [{ name: '查看', url: f.proposal.url }] },
+    { ...f.observation, links: [{ name: '本次附件报', url: f.proposal.url }] },
+    {
+      ...f.observation,
+      links: [
+        ...f.observation.links!,
+        { name: '本次附件报告', url: f.proposal.url + '-other' },
+      ],
+    },
+    {
+      ...f.observation,
+      links: [...f.observation.links!, { name: '查看', url: f.proposal.url }],
+    },
+    {
+      ...f.observation,
+      links: [{ name: '本次附件报告', url: 'https://other.invalid/result' }],
+    },
+    {
+      ...f.observation,
+      links: [{ name: '本次附件报告', url: f.proposal.url + '#x' }],
+    },
+    { ...f.observation, truncated: true },
+  ]) {
+    expect(() => f.freeze(source)).toThrow();
+    expect(f.execution().actions.at(-1)!.discoveredRecovery).toBeUndefined();
+  }
+  expect(f.reads()).toBe(before);
+});
+
+test('缩略候选的公开页缺身份、全文、栏目、附件、canonical或字节不符均未知且不重试', async () => {
+  const good =
+    '<link rel="canonical" href="/result"><article>本次附件报告 公告 <a href="/file">下载</a><a href="/edit">编辑</a></article>';
+  for (const failure of [
+    'target',
+    'duplicate-target',
+    'content',
+    'destination',
+    'attachment',
+    'canonical',
+    'bytes',
+  ]) {
+    const f = await summaryResultFixture();
+    f.pause();
+    f.freeze();
+    const html =
+      failure === 'target'
+        ? good.replace('/edit', '/wrong')
+        : failure === 'duplicate-target'
+          ? good + '<a href="/edit">重复</a>'
+          : failure === 'content'
+            ? good.replace('本次附件报告', '其他文章')
+            : failure === 'destination'
+              ? good.replace('公告', '其他栏目')
+              : failure === 'attachment'
+                ? good.replace('/file', '/other')
+                : failure === 'canonical'
+                  ? good.replace('canonical', 'alternate')
+                  : good;
+    f.setHtml(html);
+    if (failure === 'bytes') f.setBytes(Buffer.from('wrong'));
+    const s = f.dynamicService();
+    s.instance.refresh();
+    await s.instance.settled();
+    expect(f.execution().phase).toBe('paused');
+    expect(f.execution().result).toBeUndefined();
+    expect(f.execution().publicationChecks![0]!.status).toBe('unknown');
+    const reads = f.reads();
+    s.instance.refresh();
+    await s.instance.settled();
+    expect(f.reads()).toBe(reads);
+    expect(s.perform).not.toHaveBeenCalled();
+    await s.instance.stopAll();
+  }
+});
+
+test('缩略候选保存后35迁移、冷开GET与真实备份导入保留完整关联和待核对', async () => {
+  const f = await summaryResultFixture();
+  f.pause();
+  f.freeze();
+  const before = f.execution().actions.at(-1)!.discoveredRecovery;
+  const file = path.join(f.folder, 'summary.helpr-backup');
+  const saved = await f.records.backup({
+    kind: 'create',
+    requestId: randomUUID(),
+    file,
+  });
+  const g = await fixture();
+  await g.records.backup({
+    kind: 'restore',
+    requestId: randomUUID(),
+    file,
+    checksum: saved.archive.checksum,
+  });
+  const restored = g.records
+    .snapshot()
+    .tasks.find((t) => t.id === f.taskId)!.execution!;
+  expect(restored.restoreReview).toBe('required');
+  expect(restored.actions.at(-1)!.discoveredRecovery).toEqual(before);
+  f.records.close();
+  const db = new Database(path.join(f.folder, 'workspace.sqlite'));
+  db.exec('UPDATE workspace SET schema_version=35');
+  db.close();
+  f.reopen();
+  expect(
+    (await readdir(f.folder)).some((n) =>
+      n.startsWith('workspace-before-summary-result-23-'),
+    ),
+  ).toBe(true);
+  const s = f.dynamicService();
+  s.instance.refresh();
+  await s.instance.settled();
+  expect(f.execution().phase).toBe('complete');
+  expect(f.execution().actions.at(-1)!.discoveredRecovery).toEqual(before);
+  expect(f.sends()).toBe(0);
+  await s.instance.stopAll();
+});
+
+test('缩略入口保存失败、原生变化及保存期间停止不获得旧动作许可', async () => {
+  const f = await summaryResultFixture();
+  f.arrive();
+  const s = f.dynamicService({
+    beforeRecord: (c) => {
+      if (c.kind === 'publication-result-entry') throw Error('DISK_FULL');
+    },
+  });
+  const reads = f.reads();
+  await s.instance.recordNavigation(f.event);
+  await s.instance.suspend(f.taskId, 'page-change', randomUUID());
+  await s.instance.settled();
+  expect(f.reads()).toBe(reads);
+  expect(f.execution().actions.at(-1)!.discoveredRecovery).toBeUndefined();
+  await s.instance.stopAll();
+  const g = await summaryResultFixture();
+  g.arrive();
+  const t = g.dynamicService({
+    observe: () => {
+      t.nativeChange();
+      return Promise.resolve(g.observation);
+    },
+  });
+  await t.instance.recordNavigation(g.event);
+  await t.instance.suspend(g.taskId, 'page-change', randomUUID());
+  await t.instance.settled();
+  expect(g.execution().actions.at(-1)!.discoveredRecovery).toBeUndefined();
+  await t.instance.stopAll();
+  const h = await summaryResultFixture();
+  h.pause();
+  h.freeze();
+  const u = h.dynamicService({
+    beforeRecord: (c) => {
+      if (c.kind === 'publication-recovery-result')
+        h.post({ kind: 'intent', intent: 'stop', requestId: randomUUID() });
+    },
+  });
+  u.instance.refresh();
+  await u.instance.settled();
+  expect(h.execution()).toMatchObject({
+    intent: 'stopped',
+    phase: 'stopped',
+    publicationHistory: [{ check: { status: 'verified' } }],
+  });
+  expect(h.execution().result).toBeUndefined();
+  await u.instance.stopAll();
+});
+
+test('缩略检查点损坏名称、地址、事实引用或冒充旧完整规则拒绝冷开', async () => {
+  for (const [field, value] of [
+    ['entry.name', '无关标题'],
+    ['entry.rule', 'confirmed-content-link-v1'],
+    ['recovery.url', 'https://other.invalid/result'],
+    ['recovery.targetFactId', '00000000-0000-4000-8000-000000000000'],
+  ]) {
+    const f = await summaryResultFixture();
+    f.pause();
+    f.freeze();
+    f.records.close();
+    const db = new Database(path.join(f.folder, 'workspace.sqlite'));
+    db.prepare('UPDATE task_executions SET body=json_set(body,?,?)').run(
+      '$.actions[1].discoveredRecovery.' + field,
+      value,
+    );
+    db.close();
+    expect(() => f.reopen()).toThrow('DATA_CORRUPT');
+  }
 });

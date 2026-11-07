@@ -241,8 +241,10 @@ export const actionFactSchema = z
       d.recovery.targetUrl === p.attachment.targetUrl &&
       d.recovery.attachmentUrl === p.attachment.url &&
       a.source.url === p.attachment.targetUrl &&
-      d.links.filter((l) => l.url === p.attachment!.targetUrl).length === 1 &&
-      d.links.filter((l) => l.url === p.attachment!.url).length === 1
+      (d.entry?.rule === 'confirmed-content-candidate-v1' ||
+        (d.links.filter((l) => l.url === p.attachment!.targetUrl).length ===
+          1 &&
+          d.links.filter((l) => l.url === p.attachment!.url).length === 1))
     );
   })
   .refine((a) => {
