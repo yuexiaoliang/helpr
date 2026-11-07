@@ -11,7 +11,11 @@ import {
   articleVersionSchema,
   articleDraftSchema,
 } from './article';
-import { pageSourceSchema, observedLinkSchema } from './model';
+import {
+  pageSourceSchema,
+  observedLinkSchema,
+  observedControlSchema,
+} from './model';
 import { webActionSchema } from './web-action';
 import {
   coordinationSchema,
@@ -83,6 +87,9 @@ export const actionFailureCodeSchema = z.enum([
   'EXECUTION_ACT_SCROLL_WAIT',
   'EXECUTION_ACT_INPUT_WAIT',
   'EXECUTION_ACT_HIT_TARGET_WAIT',
+  'EXECUTION_ACT_SELECTION_UNAVAILABLE',
+  'EXECUTION_ACT_SELECTION_INSPECT_TIMEOUT',
+  'EXECUTION_ACT_SELECTION_CHOOSE_TIMEOUT',
 ]);
 export const pageBindingSchema = z.strictObject({
   targetId: z.string().min(1),
@@ -101,6 +108,7 @@ export const actionFactSchema = z.strictObject({
     .optional(),
   observedLinks: z.array(observedLinkSchema).max(300).optional(),
   resultLinks: z.array(observedLinkSchema).max(300).optional(),
+  selectionResult: observedControlSchema.optional(),
   id: z.string().min(1),
   runId: z.string(),
   goalVersion: z.number().int(),

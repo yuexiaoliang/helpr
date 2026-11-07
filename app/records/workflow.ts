@@ -12,6 +12,7 @@ import { reboundAction } from '../shared/workflow-replay';
 import { sameWorkflowOperation } from '../shared/workflow-repair';
 import { workflowCatalog } from '../shared/workflow-catalog';
 import { validCoordinationReferences } from './coordination';
+import { selectedControl } from '../shared/selection';
 
 export const workflowHash = (body: unknown) =>
   createHash('sha256')
@@ -148,6 +149,7 @@ function replayRules(
       (s) =>
         s.source.url !== a.targetUrl ||
         s.action.kind === 'check' ||
+        (s.action.kind === 'select' && !s.selectionResult) ||
         ((s.action.kind === 'fill' || s.action.kind === 'select') &&
           ![p.content, p.destination].includes(s.action.value)) ||
         (s.action.target.frameUrl &&
@@ -294,6 +296,25 @@ export function validPublicationReferences(
 ): boolean {
   if (!validCoordinationReferences(e) || !validArticleReferences(e))
     return false;
+  for (const a of e.actions) {
+    if (!a.selectionResult) continue;
+    if (
+      a.action.kind !== 'select' ||
+      a.status !== 'confirmed' ||
+      !a.resultSource ||
+      a.source.url !== a.resultSource.url
+    )
+      return false;
+    try {
+      selectedControl(a.action, {
+        ...a.resultSource,
+        text: '',
+        controls: [a.selectionResult],
+      });
+    } catch {
+      return false;
+    }
+  }
   const checks = e.publicationChecks ?? [],
     history = e.publicationHistory?.map((h) => h.check) ?? [],
     workflows = e.learnedWorkflows ?? [];

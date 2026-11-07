@@ -63,6 +63,7 @@ export const observedControlSchema = z.strictObject({
   name: z.string().max(1000),
   frameUrl: z.url(),
   disabled: z.boolean(),
+  selectedLabel: z.string().max(500).optional(),
 });
 export type PageObservation = PageSource & {
   text: string;

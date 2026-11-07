@@ -1,0 +1,807 @@
+{
+  "starts": [
+    206,
+    207
+  ],
+  "pids": [
+    81759,
+    81761,
+    81762,
+    81763,
+    81764,
+    81765,
+    81770,
+    81771,
+    81772,
+    81773,
+    81774,
+    81776,
+    81777,
+    81788,
+    81789,
+    81802,
+    81803,
+    81804,
+    81806,
+    81807,
+    81808,
+    81813,
+    81814,
+    81816,
+    81817,
+    81818,
+    81820,
+    81821,
+    81822,
+    81823,
+    81824,
+    81825,
+    81837,
+    81838
+  ],
+  "groups": [
+    81759,
+    81763,
+    81765,
+    81802,
+    81806,
+    81808
+  ],
+  "remaining": [],
+  "sqliteQuickCheck": "ok",
+  "failedTask": {
+    "coordination": {
+      "session": {
+        "id": "helpr-fixture-web",
+        "epoch": "c148f7b7-cc77-4668-ba00-cf32de0a25a0:0",
+        "origin": "http://127.0.0.1:57545"
+      },
+      "status": "ready",
+      "source": {
+        "url": "http://127.0.0.1:57545/edit?item=D",
+        "title": "附件编辑",
+        "fingerprint": "10242e370f99975a04c41533289494758b463cd65cf7fda3f85ea44b8206a8c0",
+        "generation": 1,
+        "observedAt": 1794012519462,
+        "truncated": false
+      }
+    },
+    "resourceClaims": [
+      {
+        "status": "held",
+        "id": "849cee21-1f84-450c-bfe9-fb2423b27e97",
+        "runId": "d16591de-24b8-4c69-89a2-ef306c9abfeb",
+        "goalVersion": 1,
+        "origin": "http://127.0.0.1:57545",
+        "targetUrl": null
+      }
+    ],
+    "workflowUses": [
+      {
+        "approved": {
+          "id": "6b1ec181-30c5-408f-8bdb-bd1db0cb433d",
+          "content": "错误选择核对"
+        },
+        "id": "ba1b3259-4f33-4a8a-9d2d-01824cb5393d",
+        "goalVersion": 1,
+        "workflow": {
+          "format": 1,
+          "version": "6c37179a-db02-4748-9eba-09068ee52823",
+          "parentVersion": "eee0b595-c649-46b8-95aa-2fd42e9f614b",
+          "taskId": "91e6760f-c8a6-4254-b975-c1497f397233",
+          "goalVersion": 1,
+          "goal": "使用“/private/tmp/helpr-workspace-validation-501/run-DgqE5r/C-新素材.xlsx”在 http://127.0.0.1:57545/edit?item=C 发布“冷开后的第三份日报”到“公告”",
+          "createdAt": 1794012517032,
+          "applicability": {
+            "origin": "http://127.0.0.1:57545",
+            "entryUrl": "http://127.0.0.1:57545/edit?item=C",
+            "mode": "attachment-publication",
+            "validated": "same-inputs-only",
+            "newInputs": "requires-validation"
+          },
+          "parameters": [
+            {
+              "name": "materialId",
+              "value": "c61a5468-196c-486e-90d9-1c19eff7b216",
+              "source": "material-version",
+              "sourceId": "c61a5468-196c-486e-90d9-1c19eff7b216"
+            },
+            {
+              "name": "content",
+              "value": "冷开后的第三份日报",
+              "source": "approved-publication",
+              "sourceId": "438b1a6c-208c-420e-87ae-5802aa6f7bb7"
+            },
+            {
+              "name": "destination",
+              "value": "公告",
+              "source": "approved-publication",
+              "sourceId": "438b1a6c-208c-420e-87ae-5802aa6f7bb7"
+            },
+            {
+              "name": "targetUrl",
+              "value": "http://127.0.0.1:57545/edit?item=C",
+              "source": "preparation",
+              "sourceId": "77515dc1-86e5-4e4d-a2ee-46ab66bfd5ec"
+            },
+            {
+              "name": "attachmentUrl",
+              "value": "http://127.0.0.1:57545/file?item=C",
+              "source": "preparation",
+              "sourceId": "0c9a2133-a74d-46e8-a76b-09a97dc66cfd"
+            }
+          ],
+          "steps": [
+            {
+              "actionId": "6565d170-eecb-4c48-a51a-e9067c8f5bed",
+              "runId": "21027057-7d4e-4f07-9f12-c6339f687c2b",
+              "action": {
+                "kind": "upload",
+                "materialId": "c61a5468-196c-486e-90d9-1c19eff7b216",
+                "target": {
+                  "fileIndex": 0
+                }
+              },
+              "effect": "upload",
+              "bindings": [
+                {
+                  "field": "materialId",
+                  "parameter": "materialId"
+                }
+              ],
+              "before": {
+                "source": {
+                  "url": "http://127.0.0.1:57545/edit?item=C",
+                  "title": "附件编辑",
+                  "fingerprint": "e6031077461d079dc8af616a24c6a6be296250da3d58da82a4e38b50d329e6cc",
+                  "generation": 1,
+                  "observedAt": 1794012514524,
+                  "truncated": false
+                },
+                "evidence": [
+                  "附件编辑"
+                ]
+              },
+              "after": {
+                "source": {
+                  "url": "http://127.0.0.1:57545/edit?item=C",
+                  "title": "附件编辑",
+                  "fingerprint": "1e58a1f87646a7fc24643ceca51b60b2d683e3657fa0ea1d5926bf768b69bbc1",
+                  "generation": 1,
+                  "observedAt": 1794012514974,
+                  "truncated": false
+                },
+                "evidence": [
+                  "附件已上传"
+                ]
+              },
+              "returned": true
+            },
+            {
+              "actionId": "414486b2-fe7e-404e-8e24-f703993203ce",
+              "runId": "21027057-7d4e-4f07-9f12-c6339f687c2b",
+              "action": {
+                "kind": "click",
+                "target": {
+                  "role": "button",
+                  "name": "保存草稿",
+                  "exact": true
+                }
+              },
+              "effect": "draft",
+              "bindings": [],
+              "before": {
+                "source": {
+                  "url": "http://127.0.0.1:57545/edit?item=C",
+                  "title": "附件编辑",
+                  "fingerprint": "1e58a1f87646a7fc24643ceca51b60b2d683e3657fa0ea1d5926bf768b69bbc1",
+                  "generation": 1,
+                  "observedAt": 1794012514974,
+                  "truncated": false
+                },
+                "evidence": [
+                  "附件编辑"
+                ]
+              },
+              "after": {
+                "source": {
+                  "url": "http://127.0.0.1:57545/edit?item=C",
+                  "title": "附件编辑",
+                  "fingerprint": "bd0f27a59ecce05b730bcab0a81c47517856c9e2edd6fdfcaf10038ef6c03282",
+                  "generation": 1,
+                  "observedAt": 1794012515443,
+                  "truncated": false
+                },
+                "evidence": [
+                  "草稿已保存"
+                ]
+              },
+              "returned": true
+            },
+            {
+              "actionId": "400db53c-dca5-4cee-83f3-67b70ac10d06",
+              "runId": "afbd78c5-a3b3-4fb2-bba7-d372bd110177",
+              "action": {
+                "kind": "fill",
+                "target": {
+                  "role": "textbox",
+                  "name": "正文：纯文本",
+                  "exact": true
+                },
+                "value": "冷开后的第三份日报"
+              },
+              "effect": "interaction",
+              "bindings": [
+                {
+                  "field": "value",
+                  "parameter": "content"
+                }
+              ],
+              "before": {
+                "source": {
+                  "url": "http://127.0.0.1:57545/edit?item=C",
+                  "title": "附件编辑",
+                  "fingerprint": "bd0f27a59ecce05b730bcab0a81c47517856c9e2edd6fdfcaf10038ef6c03282",
+                  "generation": 1,
+                  "observedAt": 1794012515650,
+                  "truncated": false
+                },
+                "evidence": [
+                  "附件编辑"
+                ]
+              },
+              "after": {
+                "source": {
+                  "url": "http://127.0.0.1:57545/edit?item=C",
+                  "title": "附件编辑",
+                  "fingerprint": "f9082651b6c7af1d6b9f4f6eae197ec8fe05e92ad77dac8b8daee8f8e18ab0b8",
+                  "generation": 1,
+                  "observedAt": 1794012516137,
+                  "truncated": false
+                },
+                "evidence": [
+                  "标题已填写"
+                ]
+              },
+              "returned": true
+            },
+            {
+              "actionId": "7f90b870-2bf5-4ab4-912c-97df3ddb1826",
+              "runId": "afbd78c5-a3b3-4fb2-bba7-d372bd110177",
+              "action": {
+                "kind": "select",
+                "target": {
+                  "role": "combobox",
+                  "name": "栏目：选择",
+                  "exact": true
+                },
+                "value": "公告"
+              },
+              "effect": "interaction",
+              "bindings": [
+                {
+                  "field": "value",
+                  "parameter": "destination"
+                }
+              ],
+              "before": {
+                "source": {
+                  "url": "http://127.0.0.1:57545/edit?item=C",
+                  "title": "附件编辑",
+                  "fingerprint": "f9082651b6c7af1d6b9f4f6eae197ec8fe05e92ad77dac8b8daee8f8e18ab0b8",
+                  "generation": 1,
+                  "observedAt": 1794012516137,
+                  "truncated": false
+                },
+                "evidence": [
+                  "附件编辑"
+                ]
+              },
+              "after": {
+                "source": {
+                  "url": "http://127.0.0.1:57545/edit?item=C",
+                  "title": "附件编辑",
+                  "fingerprint": "b79b739fc41987c924ecb36d16a0f595032886fd244316362453c97702d4bcac",
+                  "generation": 1,
+                  "observedAt": 1794012516569,
+                  "truncated": false
+                },
+                "evidence": [
+                  "栏目已填写"
+                ]
+              },
+              "returned": true
+            },
+            {
+              "actionId": "00f5a1f1-9d03-4613-984c-c38a511356d1",
+              "runId": "afbd78c5-a3b3-4fb2-bba7-d372bd110177",
+              "action": {
+                "kind": "click",
+                "target": {
+                  "role": "button",
+                  "name": "发布附件",
+                  "exact": true
+                }
+              },
+              "effect": "publication",
+              "bindings": [],
+              "before": {
+                "source": {
+                  "url": "http://127.0.0.1:57545/edit?item=C",
+                  "title": "附件编辑",
+                  "fingerprint": "b79b739fc41987c924ecb36d16a0f595032886fd244316362453c97702d4bcac",
+                  "generation": 1,
+                  "observedAt": 1794012516615,
+                  "truncated": false
+                },
+                "evidence": [
+                  "附件编辑"
+                ]
+              },
+              "after": {
+                "source": {
+                  "url": "http://127.0.0.1:57545/edit?item=C",
+                  "title": "附件编辑",
+                  "fingerprint": "ce070c26af9b88cdfba7bb8adbfa1ab08a67debb46d880aec539018e621d8b94",
+                  "generation": 1,
+                  "observedAt": 1794012517027,
+                  "truncated": false
+                },
+                "evidence": [
+                  "已正式发布"
+                ]
+              },
+              "returned": true
+            }
+          ],
+          "resultRule": "unique-target-approved-content-destination-and-attachment-sha256",
+          "recovery": {
+            "targetUrl": "http://127.0.0.1:57545/edit?item=C",
+            "targetFactId": "77515dc1-86e5-4e4d-a2ee-46ab66bfd5ec",
+            "resultUrl": "http://127.0.0.1:57545/result?item=C",
+            "uncertainDispatch": "read-only-no-resend"
+          },
+          "evidence": {
+            "resultId": "3076837f-d8ad-4858-9f50-d59536ab83b2",
+            "materialId": "c61a5468-196c-486e-90d9-1c19eff7b216",
+            "approvalId": "438b1a6c-208c-420e-87ae-5802aa6f7bb7"
+          },
+          "authority": "none",
+          "replay": {
+            "format": 1,
+            "target": "explicit-current-url",
+            "attachmentLink": "下载附件",
+            "resultLink": "永久链接",
+            "publishedEvidence": [
+              "已正式发布"
+            ]
+          },
+          "sha256": "9448b5c6b19e95e1111611bebd2a877d96e882693eeac47e35d8fa9291176861"
+        },
+        "materialId": "da8f7b49-cb06-4c53-8649-99fa0de66dc8",
+        "targetUrl": "http://127.0.0.1:57545/edit?item=D",
+        "content": "错误选择核对",
+        "destination": "通知",
+        "source": {
+          "url": "http://127.0.0.1:57545/edit?item=D",
+          "title": "附件编辑",
+          "fingerprint": "20d86ccca2719e67bfcd240c1624b544c6227737a7f7203898aebdd745a7cd43",
+          "generation": 1,
+          "observedAt": 1794012517746,
+          "truncated": false
+        }
+      }
+    ],
+    "materials": [
+      {
+        "id": "da8f7b49-cb06-4c53-8649-99fa0de66dc8",
+        "goalVersion": 1,
+        "sha256": "dc3e3f563aee297fc40e128434ddc3a2e98818cac08529ea3df93f25b6737d88",
+        "bytes": 1840,
+        "name": "D-新素材.xlsx",
+        "source": "/private/tmp/helpr-workspace-validation-501/run-DgqE5r/D-新素材.xlsx",
+        "selectedAt": 1794012517850,
+        "selection": {
+          "scope": "/private/tmp/helpr-workspace-validation-501/run-DgqE5r/D-新素材.xlsx",
+          "rule": "exact",
+          "name": null,
+          "extension": null,
+          "basis": "使用“/private/tmp/helpr-workspace-validation-501/run-DgqE5r/D-新素材.xlsx”"
+        }
+      }
+    ],
+    "preparation": [
+      {
+        "kind": "target",
+        "url": "http://127.0.0.1:57545/edit?item=D",
+        "materialId": null,
+        "evidence": [
+          "附件编辑"
+        ],
+        "id": "76821871-bf02-479b-a15a-adc2339686c2",
+        "goalVersion": 1,
+        "actionId": null,
+        "source": {
+          "url": "http://127.0.0.1:57545/edit?item=D",
+          "title": "附件编辑",
+          "fingerprint": "20d86ccca2719e67bfcd240c1624b544c6227737a7f7203898aebdd745a7cd43",
+          "generation": 1,
+          "observedAt": 1794012517897,
+          "truncated": false
+        },
+        "verification": "page-observed"
+      },
+      {
+        "kind": "upload",
+        "url": "http://127.0.0.1:57545/file?item=D",
+        "materialId": "da8f7b49-cb06-4c53-8649-99fa0de66dc8",
+        "evidence": [
+          "附件已上传"
+        ],
+        "id": "c3a62d53-696b-4445-9958-ff9229de358e",
+        "goalVersion": 1,
+        "actionId": "cfd01149-3c51-4be6-8cdc-79f2a3eab25d",
+        "source": {
+          "url": "http://127.0.0.1:57545/edit?item=D",
+          "title": "附件编辑",
+          "fingerprint": "99cf45d6b30da63416735bebdffe273e6bb0b85efa409566900b794bd72d1172",
+          "generation": 1,
+          "observedAt": 1794012518337,
+          "truncated": false
+        },
+        "verification": "page-observed"
+      },
+      {
+        "kind": "draft",
+        "url": "http://127.0.0.1:57545/edit?item=D",
+        "materialId": null,
+        "evidence": [
+          "草稿已保存"
+        ],
+        "id": "f55c9836-7b82-4ef2-b340-f9f6222d49c8",
+        "goalVersion": 1,
+        "actionId": "d12863c5-b97f-45b3-95d5-d0b275873ed9",
+        "source": {
+          "url": "http://127.0.0.1:57545/edit?item=D",
+          "title": "附件编辑",
+          "fingerprint": "b75a97f8f8748e1cc1201d664fd87658f373bdb865bd46d68e944a8177a26ff9",
+          "generation": 1,
+          "observedAt": 1794012518828,
+          "truncated": false
+        },
+        "verification": "page-observed"
+      }
+    ],
+    "publication": {
+      "destination": "通知",
+      "content": "错误选择核对",
+      "attachment": {
+        "materialId": "da8f7b49-cb06-4c53-8649-99fa0de66dc8",
+        "targetUrl": "http://127.0.0.1:57545/edit?item=D",
+        "url": "http://127.0.0.1:57545/file?item=D"
+      },
+      "revision": 1,
+      "approvalId": "6b1ec181-30c5-408f-8bdb-bd1db0cb433d",
+      "origin": "http://127.0.0.1:57545"
+    },
+    "modelVersion": 1,
+    "intent": "automatic",
+    "phase": "paused",
+    "version": 4,
+    "intentId": "addefbc1-25b2-43e2-8816-dd4eb0675a0d",
+    "goalVersion": 1,
+    "goal": "使用“/private/tmp/helpr-workspace-validation-501/run-DgqE5r/D-新素材.xlsx”在 http://127.0.0.1:57545/edit?item=D 发布“错误选择核对”到“通知”",
+    "runId": null,
+    "resource": null,
+    "summary": "执行暂时无法继续，已暂停后续操作。已有结果与记录保留。",
+    "actions": [
+      {
+        "coordination": {
+          "session": {
+            "id": "helpr-fixture-web",
+            "epoch": "c148f7b7-cc77-4668-ba00-cf32de0a25a0:0",
+            "origin": "http://127.0.0.1:57545"
+          },
+          "claimId": "849cee21-1f84-450c-bfe9-fb2423b27e97"
+        },
+        "workflowStep": {
+          "useId": "ba1b3259-4f33-4a8a-9d2d-01824cb5393d",
+          "index": 0
+        },
+        "observedLinks": [
+          {
+            "name": "永久链接",
+            "url": "http://127.0.0.1:57545/result?item=D"
+          }
+        ],
+        "resultLinks": [
+          {
+            "name": "永久链接",
+            "url": "http://127.0.0.1:57545/result?item=D"
+          },
+          {
+            "name": "下载附件",
+            "url": "http://127.0.0.1:57545/file?item=D"
+          }
+        ],
+        "id": "cfd01149-3c51-4be6-8cdc-79f2a3eab25d",
+        "runId": "1b52a52a-8b02-41c4-9e83-7b9a07605b51",
+        "goalVersion": 1,
+        "status": "confirmed",
+        "summary": "按已保存的做法核对本次网页。",
+        "action": {
+          "kind": "upload",
+          "materialId": "da8f7b49-cb06-4c53-8649-99fa0de66dc8",
+          "target": {
+            "fileIndex": 0
+          }
+        },
+        "effect": "upload",
+        "preconditions": [
+          "附件编辑"
+        ],
+        "source": {
+          "url": "http://127.0.0.1:57545/edit?item=D",
+          "title": "附件编辑",
+          "fingerprint": "20d86ccca2719e67bfcd240c1624b544c6227737a7f7203898aebdd745a7cd43",
+          "generation": 1,
+          "observedAt": 1794012517897,
+          "truncated": false
+        },
+        "observedUrls": [
+          "http://127.0.0.1:57545/edit?item=D",
+          "http://127.0.0.1:57545/result?item=D"
+        ],
+        "resultSource": {
+          "url": "http://127.0.0.1:57545/edit?item=D",
+          "title": "附件编辑",
+          "fingerprint": "99cf45d6b30da63416735bebdffe273e6bb0b85efa409566900b794bd72d1172",
+          "generation": 1,
+          "observedAt": 1794012518337,
+          "truncated": false
+        },
+        "binding": {
+          "targetId": "42803EC065A840E7987451003C823736",
+          "generation": 1
+        },
+        "evidence": [
+          "附件已上传"
+        ],
+        "returned": true,
+        "dispatchState": "possible"
+      },
+      {
+        "coordination": {
+          "session": {
+            "id": "helpr-fixture-web",
+            "epoch": "c148f7b7-cc77-4668-ba00-cf32de0a25a0:0",
+            "origin": "http://127.0.0.1:57545"
+          },
+          "claimId": "849cee21-1f84-450c-bfe9-fb2423b27e97"
+        },
+        "workflowStep": {
+          "useId": "ba1b3259-4f33-4a8a-9d2d-01824cb5393d",
+          "index": 1
+        },
+        "observedLinks": [
+          {
+            "name": "永久链接",
+            "url": "http://127.0.0.1:57545/result?item=D"
+          },
+          {
+            "name": "下载附件",
+            "url": "http://127.0.0.1:57545/file?item=D"
+          }
+        ],
+        "resultLinks": [
+          {
+            "name": "永久链接",
+            "url": "http://127.0.0.1:57545/result?item=D"
+          },
+          {
+            "name": "下载附件",
+            "url": "http://127.0.0.1:57545/file?item=D"
+          }
+        ],
+        "id": "d12863c5-b97f-45b3-95d5-d0b275873ed9",
+        "runId": "1b52a52a-8b02-41c4-9e83-7b9a07605b51",
+        "goalVersion": 1,
+        "status": "confirmed",
+        "summary": "按已保存的做法核对本次网页。",
+        "action": {
+          "kind": "click",
+          "target": {
+            "role": "button",
+            "name": "保存草稿",
+            "exact": true
+          }
+        },
+        "effect": "draft",
+        "preconditions": [
+          "附件编辑"
+        ],
+        "source": {
+          "url": "http://127.0.0.1:57545/edit?item=D",
+          "title": "附件编辑",
+          "fingerprint": "99cf45d6b30da63416735bebdffe273e6bb0b85efa409566900b794bd72d1172",
+          "generation": 1,
+          "observedAt": 1794012518337,
+          "truncated": false
+        },
+        "observedUrls": [
+          "http://127.0.0.1:57545/edit?item=D",
+          "http://127.0.0.1:57545/file?item=D",
+          "http://127.0.0.1:57545/result?item=D"
+        ],
+        "resultSource": {
+          "url": "http://127.0.0.1:57545/edit?item=D",
+          "title": "附件编辑",
+          "fingerprint": "b75a97f8f8748e1cc1201d664fd87658f373bdb865bd46d68e944a8177a26ff9",
+          "generation": 1,
+          "observedAt": 1794012518828,
+          "truncated": false
+        },
+        "binding": {
+          "targetId": "42803EC065A840E7987451003C823736",
+          "generation": 1
+        },
+        "evidence": [
+          "草稿已保存"
+        ],
+        "returned": true,
+        "dispatchState": "possible"
+      },
+      {
+        "coordination": {
+          "session": {
+            "id": "helpr-fixture-web",
+            "epoch": "c148f7b7-cc77-4668-ba00-cf32de0a25a0:0",
+            "origin": "http://127.0.0.1:57545"
+          },
+          "claimId": "849cee21-1f84-450c-bfe9-fb2423b27e97"
+        },
+        "workflowStep": {
+          "useId": "ba1b3259-4f33-4a8a-9d2d-01824cb5393d",
+          "index": 2
+        },
+        "observedLinks": [
+          {
+            "name": "永久链接",
+            "url": "http://127.0.0.1:57545/result?item=D"
+          },
+          {
+            "name": "下载附件",
+            "url": "http://127.0.0.1:57545/file?item=D"
+          }
+        ],
+        "resultLinks": [
+          {
+            "name": "永久链接",
+            "url": "http://127.0.0.1:57545/result?item=D"
+          },
+          {
+            "name": "下载附件",
+            "url": "http://127.0.0.1:57545/file?item=D"
+          }
+        ],
+        "id": "16b80650-49e9-430f-9bf7-46ab7e01397b",
+        "runId": "d16591de-24b8-4c69-89a2-ef306c9abfeb",
+        "goalVersion": 1,
+        "status": "confirmed",
+        "summary": "按已保存的做法核对本次网页。",
+        "action": {
+          "kind": "fill",
+          "target": {
+            "role": "textbox",
+            "name": "正文：纯文本",
+            "exact": true
+          },
+          "value": "错误选择核对"
+        },
+        "effect": "interaction",
+        "preconditions": [
+          "附件编辑"
+        ],
+        "source": {
+          "url": "http://127.0.0.1:57545/edit?item=D",
+          "title": "附件编辑",
+          "fingerprint": "b75a97f8f8748e1cc1201d664fd87658f373bdb865bd46d68e944a8177a26ff9",
+          "generation": 1,
+          "observedAt": 1794012519053,
+          "truncated": false
+        },
+        "observedUrls": [
+          "http://127.0.0.1:57545/edit?item=D",
+          "http://127.0.0.1:57545/file?item=D",
+          "http://127.0.0.1:57545/result?item=D"
+        ],
+        "resultSource": {
+          "url": "http://127.0.0.1:57545/edit?item=D",
+          "title": "附件编辑",
+          "fingerprint": "10242e370f99975a04c41533289494758b463cd65cf7fda3f85ea44b8206a8c0",
+          "generation": 1,
+          "observedAt": 1794012519462,
+          "truncated": false
+        },
+        "binding": {
+          "targetId": "42803EC065A840E7987451003C823736",
+          "generation": 1
+        },
+        "evidence": [
+          "标题已填写"
+        ],
+        "returned": true,
+        "dispatchState": "possible"
+      },
+      {
+        "coordination": {
+          "session": {
+            "id": "helpr-fixture-web",
+            "epoch": "c148f7b7-cc77-4668-ba00-cf32de0a25a0:0",
+            "origin": "http://127.0.0.1:57545"
+          },
+          "claimId": "849cee21-1f84-450c-bfe9-fb2423b27e97"
+        },
+        "workflowStep": {
+          "useId": "ba1b3259-4f33-4a8a-9d2d-01824cb5393d",
+          "index": 3
+        },
+        "observedLinks": [
+          {
+            "name": "永久链接",
+            "url": "http://127.0.0.1:57545/result?item=D"
+          },
+          {
+            "name": "下载附件",
+            "url": "http://127.0.0.1:57545/file?item=D"
+          }
+        ],
+        "id": "29638bf1-0a78-4218-94a0-18de757863b4",
+        "runId": "d16591de-24b8-4c69-89a2-ef306c9abfeb",
+        "goalVersion": 1,
+        "status": "unknown",
+        "summary": "按已保存的做法核对本次网页。",
+        "action": {
+          "kind": "select",
+          "target": {
+            "role": "combobox",
+            "name": "栏目：选择",
+            "exact": true
+          },
+          "value": "通知"
+        },
+        "effect": "interaction",
+        "preconditions": [
+          "附件编辑"
+        ],
+        "source": {
+          "url": "http://127.0.0.1:57545/edit?item=D",
+          "title": "附件编辑",
+          "fingerprint": "10242e370f99975a04c41533289494758b463cd65cf7fda3f85ea44b8206a8c0",
+          "generation": 1,
+          "observedAt": 1794012519462,
+          "truncated": false
+        },
+        "observedUrls": [
+          "http://127.0.0.1:57545/edit?item=D",
+          "http://127.0.0.1:57545/file?item=D",
+          "http://127.0.0.1:57545/result?item=D"
+        ],
+        "binding": {
+          "targetId": "42803EC065A840E7987451003C823736",
+          "generation": 1
+        },
+        "evidence": [],
+        "returned": false,
+        "dispatchState": "possible"
+      }
+    ]
+  },
+  "diagnosticCode": "EXECUTION_ACT_SELECTION_INSPECT_TIMEOUT",
+  "websiteEffects": {
+    "uploads": 4,
+    "drafts": 4,
+    "publications": 3,
+    "DSelectionEvents": 0
+  }
+}

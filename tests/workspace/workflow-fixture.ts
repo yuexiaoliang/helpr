@@ -114,7 +114,13 @@ export async function setup(withSession = false) {
           frameUrl: url(id),
           disabled: false,
         },
-        { role: 'combobox', name: '栏目', frameUrl: url(id), disabled: false },
+        {
+          role: 'combobox',
+          name: '栏目',
+          frameUrl: url(id),
+          disabled: false,
+          selectedLabel: p.selected ? p.destination : '公告',
+        },
       ],
       links: [
         { name: '永久链接', url: url(id, 'result') },

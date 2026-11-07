@@ -68,6 +68,7 @@ import {
   preparationProposalSchema,
 } from '../shared/material';
 import { workflowChoiceSchema, workflowUseSchema } from '../shared/workflow';
+import { selectedControl, verifyCurrentSelections } from '../shared/selection';
 import { workflowHash, adoptWorkflow } from './workflow';
 import {
   currentWorkflow,
@@ -2217,6 +2218,15 @@ export class ExecutionRecords {
           }
           if (e.observedAnomalies?.some((o) => o.goalVersion === e.goalVersion))
             throw Error('EXECUTION_RESULT_UNKNOWN');
+          if (
+            c.action.kind === 'select' &&
+            (c.action.target.role !== 'combobox' ||
+              c.action.target.within ||
+              !c.source.controls ||
+              c.source.truncated ||
+              !observedControl(c.action, c.source))
+          )
+            throw Error('EXECUTION_SELECTION_UNVERIFIED');
           if (c.action.kind === 'upload') {
             const id = c.action.materialId;
             if (
@@ -2294,6 +2304,13 @@ export class ExecutionRecords {
           }
           // 首版窄发布只允许一次提交点击，且派发前必须能在所属网页核对去向和全文。
           if (p && c.action.kind === 'click') {
+            verifyCurrentSelections(
+              e.actions.filter(
+                (a) =>
+                  a.goalVersion === e.goalVersion && a.status === 'confirmed',
+              ),
+              c.source,
+            );
             if (
               !c.source.text.includes(p.content) ||
               !c.source.text.includes(p.destination)
@@ -2464,6 +2481,11 @@ export class ExecutionRecords {
             throw new Error('EXECUTION_RESULT_UNKNOWN');
           if (!c.evidence.every((v) => c.source.text.includes(v)))
             throw new Error('EXECUTION_EVIDENCE_MISSING');
+          if (a.action.kind === 'select') {
+            if (a.source.url !== c.source.url)
+              throw Error('EXECUTION_SELECTION_UNVERIFIED');
+            a.selectionResult = selectedControl(a.action, c.source);
+          }
           a.status = 'confirmed';
           a.evidence = c.evidence;
           a.resultSource = pageSourceSchema.strip().parse(c.source);

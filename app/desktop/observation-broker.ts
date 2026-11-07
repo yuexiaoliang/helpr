@@ -30,6 +30,7 @@ export class ObservationBroker {
   private sequence = 0;
   private closed = false;
   private buffer = '';
+  private reading = false;
   private readonly pending = new Map<
     number,
     {
@@ -55,22 +56,34 @@ export class ObservationBroker {
     const output = host.stdio[4] as Readable;
     output.setEncoding('utf8');
     output.on('data', (chunk: string) => {
+      if (this.closed) return;
       this.buffer += chunk;
       if (Buffer.byteLength(this.buffer) > 32 * 1024 * 1024) {
         this.dispose();
         return;
       }
-      let end: number;
-      while ((end = this.buffer.indexOf('\0')) >= 0) {
+      if (!this.reading) void this.readPackets();
+    });
+    this.input.on('error', () => this.dispose());
+    output.on('close', () => this.dispose());
+  }
+  /** 每条消息之间交还事件循环，让前一响应的 Promise 转接完成后再交付后续事件。
+   * 同一 pipe 数据块里同步发事件会越过响应，令工作者在 frame 登记前丢掉主世界。
+   */
+  private async readPackets() {
+    this.reading = true;
+    try {
+      while (!this.closed) {
+        const end = this.buffer.indexOf('\0');
+        if (end < 0) break;
         const raw = this.buffer.slice(0, end);
         this.buffer = this.buffer.slice(end + 1);
         if (!raw) continue;
-        try {
-          const decoded: unknown = JSON.parse(raw);
-          if (typeof decoded === 'object' && decoded && 'method' in decoded)
-            for (const listener of this.listeners) listener(decoded);
-          const message = replySchema.safeParse(decoded);
-          if (!message.success) continue;
+        const decoded: unknown = JSON.parse(raw);
+        if (typeof decoded === 'object' && decoded && 'method' in decoded)
+          for (const listener of this.listeners) listener(decoded);
+        const message = replySchema.safeParse(decoded);
+        if (message.success) {
           const p = this.pending.get(message.data.id);
           if (p) {
             this.pending.delete(message.data.id);
@@ -78,14 +91,14 @@ export class ObservationBroker {
             if (message.data.error) p.reject(new Error('OBSERVATION_FAILED'));
             else p.resolve(message.data.result ?? {});
           }
-        } catch {
-          this.dispose();
-          return;
         }
+        await new Promise<void>((resolve) => setImmediate(resolve));
       }
-    });
-    this.input.on('error', () => this.dispose());
-    output.on('close', () => this.dispose());
+    } catch {
+      this.dispose();
+    } finally {
+      this.reading = false;
+    }
   }
   register(taskId: string, targetId: string, generation: number): void {
     if (this.closed) return;
@@ -255,6 +268,7 @@ export class ObservationBroker {
   dispose(): void {
     if (this.closed) return;
     this.closed = true;
+    this.buffer = '';
     for (const c of this.clients) c.revoked = true;
     for (const p of this.pending.values()) {
       clearTimeout(p.timer);

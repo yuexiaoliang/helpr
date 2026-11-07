@@ -26,6 +26,13 @@ input.on('data', chunk => {
     if (m.method==='Target.getTargets') result={targetInfos:[{targetId:'page-A'},{targetId:'page-B'}]};
     if (m.method==='Target.getTargetInfo') result={targetInfo:{targetId:m.params.targetId,type:'page'}};
     if (m.method==='Target.attachToTarget') result={sessionId:'s-'+(++sequence)};
+    if (m.method==='Page.getFrameTree') {
+      output.write([
+        {id:m.id,result:{frameTree:{frame:{id:'f-'+sequence,url:'https://example.test/'}}}},
+        {sessionId:m.sessionId,method:'Runtime.executionContextCreated',params:{context:{id:sequence*10,auxData:{frameId:'f-'+sequence,isDefault:true}}}}
+      ].map(JSON.stringify).join('\\0')+'\\0');
+      continue;
+    }
     send({id:m.id,result});
     if (m.method==='Runtime.enable') send({sessionId:m.sessionId,method:'Runtime.executionContextCreated',params:{context:{id:sequence*10,auxData:{frameId:'f-'+sequence}}}});
   }
@@ -62,6 +69,88 @@ function fixture(
     },
   };
 }
+test('同一管道数据块中的页面响应先于上下文事件送达工作者，不丢失主世界', async () => {
+  const f = fixture();
+  const replies: unknown[] = [];
+  const a = f.protocol.open(
+    'A',
+    { targetId: 'page-A', generation: 1 },
+    () => true,
+    (p) => replies.push(p),
+    () => {},
+  );
+  try {
+    await f.protocol.command(a, {
+      id: 1,
+      method: 'Target.attachToTarget',
+      params: { targetId: 'page-A' },
+    });
+    const sessionId = z
+      .object({ result: z.object({ sessionId: z.string() }) })
+      .parse(replies.at(-1)).result.sessionId;
+    replies.length = 0;
+    await f.protocol.command(a, {
+      id: 2,
+      method: 'Page.getFrameTree',
+      sessionId,
+    });
+    await expect.poll(() => replies.length).toBe(2);
+    expect(replies[0]).toMatchObject({
+      id: 2,
+      result: { frameTree: { frame: { id: 'f-1' } } },
+    });
+    expect(replies[1]).toMatchObject({
+      method: 'Runtime.executionContextCreated',
+    });
+    await f.protocol.command(a, {
+      id: 3,
+      method: 'Runtime.evaluate',
+      sessionId,
+      params: { contextId: 10, expression: '1' },
+    });
+    expect(replies.at(-1)).toMatchObject({ id: 3, result: {} });
+  } finally {
+    await f.close();
+  }
+});
+test('响应处理期间撤销任务，后续排队的上下文事件不能恢复旧资格', async () => {
+  const f = fixture();
+  const replies: unknown[] = [];
+  const a = f.protocol.open(
+    'A',
+    { targetId: 'page-A', generation: 1 },
+    () => true,
+    (p) => {
+      replies.push(p);
+      if (z.object({ id: z.literal(2) }).safeParse(p).success)
+        f.protocol.revoke('A');
+    },
+    () => {},
+  );
+  try {
+    await f.protocol.command(a, {
+      id: 1,
+      method: 'Target.attachToTarget',
+      params: { targetId: 'page-A' },
+    });
+    const sessionId = z
+      .object({ result: z.object({ sessionId: z.string() }) })
+      .parse(replies.at(-1)).result.sessionId;
+    replies.length = 0;
+    await f.protocol.command(a, {
+      id: 2,
+      method: 'Page.getFrameTree',
+      sessionId,
+    });
+    // 管道后续响应是确定性屏障，排在它之前的上下文事件已处理。
+    await f.pipe.protocol('Browser.getVersion');
+    expect(replies).toHaveLength(1);
+    expect(replies[0]).toMatchObject({ id: 2 });
+    expect(a.closed).toBe(true);
+  } finally {
+    await f.close();
+  }
+});
 test.skipIf(process.platform !== 'darwin')(
   '原生宿主先撤销跨进程资格，控制通知尚未到达时旧输入也不能送出，B不受影响',
   async () => {

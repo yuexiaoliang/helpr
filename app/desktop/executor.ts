@@ -62,6 +62,7 @@ port.on('message', ({ data }: { data: unknown }) => {
   started = true;
   void (async () => {
     let phase: 'connect' | 'act' = 'connect';
+    let selectionStage: 'inspect' | 'choose' | undefined;
     try {
       const browser = await chromium.connectOverCDP(transport, {
         noDefaults: true,
@@ -98,40 +99,72 @@ port.on('message', ({ data }: { data: unknown }) => {
         await target.fill(action.value, { timeout: 7000 });
       else if (action.kind === 'check')
         await target.setChecked(action.checked, { timeout: 7000 });
-      else
+      else {
+        // Playwright 按标签选择前，拒绝重复标签、多选与自定义组合框。
+        selectionStage = 'inspect';
+        const unique = await target.evaluate((element, label) => {
+          if (element.tagName !== 'SELECT') return false;
+          const select = element as HTMLSelectElement;
+          const options = Array.from(select.options).filter(
+            (o) => o.label === label,
+          );
+          return (
+            !select.multiple &&
+            options.length === 1 &&
+            !options[0]!.disabled &&
+            !options[0]!.closest('optgroup[disabled]')
+          );
+        }, action.value);
+        if (!unique) throw Error('EXECUTION_SELECTION_UNAVAILABLE');
+        selectionStage = 'choose';
         await target.selectOption({ label: action.value }, { timeout: 7000 });
+      }
       port.postMessage({ done: true });
     } catch (error) {
       // 只返回固定分类，禁止把含网页内容、定位文字的原始异常发到日志。
       const message = error instanceof Error ? error.message : '';
-      const reason = message.includes('EXECUTION_LOCATOR_MISSING')
-        ? 'LOCATOR_MISSING'
-        : message.includes('intercepts pointer events')
-          ? 'OBSCURED'
-          : message.includes('waiting for scheduled navigations to finish')
-            ? 'NAVIGATION'
-            : message.includes('element is not stable')
-              ? 'UNSTABLE'
-              : message.includes('element is not visible')
-                ? 'INVISIBLE'
-                : message.includes('outside of the viewport')
-                  ? 'VIEWPORT'
-                  : message.includes('EXECUTION_CAPABILITY_REVOKED_OR_DENIED')
-                    ? 'CAPABILITY'
-                    : error instanceof Error && error.name === 'TimeoutError'
-                      ? message.includes('performing click action')
-                        ? 'INPUT_WAIT'
-                        : message.includes('done scrolling')
-                          ? 'HIT_TARGET_WAIT'
-                          : message.includes('scrolling into view if needed') ||
-                              (message.includes('attempting click action') &&
-                                !message.includes('waiting for element to be'))
-                            ? 'SCROLL_WAIT'
-                            : message.includes('waiting for element to be') &&
-                                !message.includes('element is visible')
-                              ? 'STABILITY_WAIT'
-                              : 'TIMEOUT'
-                      : 'UNAVAILABLE';
+      const reason = message.includes('EXECUTION_SELECTION_UNAVAILABLE')
+        ? 'SELECTION_UNAVAILABLE'
+        : message.includes('EXECUTION_LOCATOR_MISSING')
+          ? 'LOCATOR_MISSING'
+          : message.includes('intercepts pointer events')
+            ? 'OBSCURED'
+            : message.includes('waiting for scheduled navigations to finish')
+              ? 'NAVIGATION'
+              : message.includes('element is not stable')
+                ? 'UNSTABLE'
+                : message.includes('element is not visible')
+                  ? 'INVISIBLE'
+                  : message.includes('outside of the viewport')
+                    ? 'VIEWPORT'
+                    : message.includes('EXECUTION_CAPABILITY_REVOKED_OR_DENIED')
+                      ? 'CAPABILITY'
+                      : error instanceof Error && error.name === 'TimeoutError'
+                        ? selectionStage === 'inspect'
+                          ? 'SELECTION_INSPECT_TIMEOUT'
+                          : selectionStage === 'choose'
+                            ? 'SELECTION_CHOOSE_TIMEOUT'
+                            : message.includes('performing click action')
+                              ? 'INPUT_WAIT'
+                              : message.includes('done scrolling')
+                                ? 'HIT_TARGET_WAIT'
+                                : message.includes(
+                                      'scrolling into view if needed',
+                                    ) ||
+                                    (message.includes(
+                                      'attempting click action',
+                                    ) &&
+                                      !message.includes(
+                                        'waiting for element to be',
+                                      ))
+                                  ? 'SCROLL_WAIT'
+                                  : message.includes(
+                                        'waiting for element to be',
+                                      ) &&
+                                      !message.includes('element is visible')
+                                    ? 'STABILITY_WAIT'
+                                    : 'TIMEOUT'
+                        : 'UNAVAILABLE';
       port.postMessage({
         failed: true,
         code: actionFailureCodeSchema.parse(

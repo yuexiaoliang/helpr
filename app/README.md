@@ -238,3 +238,11 @@ Node-API 8 原生模块经 node-gyp `13.1.0` 构建，固定 arm64／macOS 14 �
 错过未开始轮次按本计划的补最近一次、跳过或询问处理，较早范围保留在轮次记录。备份格式19接续18，包含计划、轮次、原任务关联和取消事实；旧备份恢复不覆盖较新事实，计划暂停并须先核对关联工作，再逐项选择继续。时间库与运行时边界见[调研](../docs/research/scheduled-time-library.md)。
 
 源码检查：`pnpm exec vitest run tests/workspace/schedule.test.ts tests/workspace/schedule-ui.test.tsx`；实包：`pnpm validate:workspace --fixture --candidate=scheduled-material-20 --schedules`。限定范围及尚待真实业务、原生窗口和系统组合验证见[检查安排](../docs/testing/schedules-20-plan.md)。
+
+## 不同结构表单的选择核对（21）
+
+下拉框按显示标签选择；实际操作前核对它是标签唯一且启用的原生单选框。确认选择结果和最终提交前读取所属网页／frame的实际选中标签；只出现栏目文字、缺少状态或同名歧义不能算选择成功，原动作保持未决并暂停，不自动重选。重复标签、多选与自定义组合框仍须另行支持。
+
+记录格式 **20** 接续19，选择证明归属于对应动作，进入冷开及备份关系校验；旧记录不补造证明。私有管道保持响应与后续事件的到达顺序，避免工作者在页面尚未登记时丢掉执行上下文，仍核对原页面、session、对象与即时资格。
+
+定向源码：`pnpm exec vitest run tests/workspace/cross-site-controls.test.ts tests/workspace/execution-protocol.test.ts`。固定包入口：`pnpm validate:workspace --fixture --candidate=cross-site-controls-21-final --cross-site-controls`，另加 `--ambiguous-selection` 在独立资料区检查重复标签拒绝。真实Drupal完整路径尚未通过；实际覆盖、两轮原失败及剩余通用能力见[21报告](../docs/testing/evidence/cross-site-21/REPORT.md)与[检查安排](../docs/testing/cross-site-21-plan.md)。

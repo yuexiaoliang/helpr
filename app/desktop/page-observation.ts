@@ -83,6 +83,11 @@ export function pageObservation(
         disabled: !!node.properties?.some(
           (p) => p.name === 'disabled' && p.value.value === true,
         ),
+        ...(role === 'combobox' &&
+        typeof node.value?.value === 'string' &&
+        value.length <= 500
+          ? { selectedLabel: value }
+          : {}),
       });
     const flags = (node.properties ?? [])
       .filter((p) =>

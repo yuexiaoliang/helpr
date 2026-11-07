@@ -340,6 +340,7 @@ export class ExecutionService {
           'COORDINATION_EVIDENCE_MISSING',
           'COORDINATION_TARGET_CHANGED',
           'EXECUTION_EVIDENCE_MISSING',
+          'EXECUTION_SELECTION_UNVERIFIED',
           'BACKUP_REVIEW_REQUIRED',
           'MATERIAL_NOT_AUTHORIZED',
           'MATERIAL_ALREADY_UPLOADED',
@@ -2293,13 +2294,15 @@ export class ExecutionService {
           code === 'EXECUTION_PAGE_CHANGED' ? 'unknown' : 'paused',
           code === 'EXECUTION_PAGE_CHANGED'
             ? '网页已变化，先核对现有结果。'
-            : code === 'MATERIAL_CORRUPT'
-              ? '本机固定素材缺失或损坏，已保留原记录并暂停；不会重读来源替换或继续提交。'
-              : code.startsWith('COORDINATION_')
-                ? '网站账号、目标或权限依据已变化，已暂停并保留原现场。请先保存需要保留的网页文字，刷新并核对原账号与目标后明确继续。'
-                : code.startsWith('WORKFLOW_')
-                  ? '已保存的做法与本次参数或网页条件不匹配，已暂停并保留记录，需要重新核对；不会套用旧值或重发。'
-                  : '执行暂时无法继续，已暂停后续操作。已有结果与记录保留。',
+            : code === 'EXECUTION_SELECTION_UNVERIFIED'
+              ? '尚不能核对网页实际选中的选项，已暂停后续操作。页面文字或旧确认不能代替当前选中状态，不会自动重选或提交。'
+              : code === 'MATERIAL_CORRUPT'
+                ? '本机固定素材缺失或损坏，已保留原记录并暂停；不会重读来源替换或继续提交。'
+                : code.startsWith('COORDINATION_')
+                  ? '网站账号、目标或权限依据已变化，已暂停并保留原现场。请先保存需要保留的网页文字，刷新并核对原账号与目标后明确继续。'
+                  : code.startsWith('WORKFLOW_')
+                    ? '已保存的做法与本次参数或网页条件不匹配，已暂停并保留记录，需要重新核对；不会套用旧值或重发。'
+                    : '执行暂时无法继续，已暂停后续操作。已有结果与记录保留。',
         ).catch(() => {});
       }
     }

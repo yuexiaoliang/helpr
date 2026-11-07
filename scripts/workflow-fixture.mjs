@@ -1,8 +1,8 @@
 // 本机替代模型从委托提取参数并提议首次动作；复用阶段只回答绑定，不提供网页步骤。
-export function workflowFixture(receipts, { repair = false, article = false, agreements = false, schedules = false } = {}) {
+export function workflowFixture(receipts, { repair = false, article = false, agreements = false, schedules = false, crossSite = false } = {}) {
   let calls = 0, writes = 0, newItems = 0;
   const waitingDrafts = new Map();
-  const labels = id => !repair || id === 'A' ? {draft: '保存草稿', title: '发布标题', publish: '发布附件'} : id === 'C' ? {draft: '暂存附件', title: '正文内容', publish: '确认送出'} : {draft: '暂存附件', title: '公告全文', publish: '发布附件'};
+  const labels = id => crossSite ? {draft: '保存草稿', title: '正文：纯文本', publish: '发布附件'} : !repair || id === 'A' ? {draft: '保存草稿', title: '发布标题', publish: '发布附件'} : id === 'C' ? {draft: '暂存附件', title: '正文内容', publish: '确认送出'} : {draft: '暂存附件', title: '公告全文', publish: '发布附件'};
   const pages = new Map();
   const get = id => {
     if (!pages.has(id)) pages.set(id, { bytes: null, draft: false, published: false, content: '', destination: '公告' });
@@ -61,7 +61,7 @@ export function workflowFixture(receipts, { repair = false, article = false, agr
           const material = bound ? {...bound.selection,basis:plan.goal} : { scope: source, rule: 'exact', name: null, extension: null, basis: `使用“${source}”` };
           const p = plan.publication, m = plan.materials?.[0];
           const buttons = [...observed.matchAll(/\[button\] ([^\n]+)/g)].map(m => m[1]);
-          const titleControl = /\[textbox\] ([^\n：]+)/.exec(observed)?.[1];
+          const titleControl = plan.controls?.find(c => c.role === 'textbox')?.name ?? /\[textbox\] ([^\n：]+)/.exec(observed)?.[1];
           const previous = plan.previous ? { id: plan.previous.id, status: 'confirmed', evidence: [observed.includes('已正式发布') ? '已正式发布' : observed.includes('栏目已填写') ? '栏目已填写' : observed.includes('标题已填写') ? '标题已填写' : observed.includes('草稿已保存') ? '草稿已保存' : observed.includes('附件已上传') ? '附件已上传' : '附件编辑'] } : null;
           let step = { decision: 'act', summary: '核对本次附件', evidence: ['附件编辑'], previous, action: null };
           if (agreements && targetURL.pathname === '/new') step = {...step,evidence:['创建文章'],effect:'draft',action:{kind:'click',target:{role:'button',name:'创建文章'}}};
@@ -83,7 +83,7 @@ export function workflowFixture(receipts, { repair = false, article = false, agr
               else {
                 step.publication = publication; step.approvalId = p.approvalId;
                 if (!observed.includes('标题已填写')) step = { ...step, effect: 'interaction', action: { kind: 'fill', target: { role: 'textbox', name: titleControl }, value: publication.content } };
-                else if (!observed.includes('栏目已填写')) step = { ...step, effect: 'interaction', action: { kind: 'select', target: { role: 'combobox', name: '栏目' }, value: destination } };
+                else if (!observed.includes('栏目已填写')) step = { ...step, effect: 'interaction', action: { kind: 'select', target: { role: 'combobox', name: plan.controls?.find(c => c.role === 'combobox')?.name ?? '栏目' }, value: destination } };
                 else step = { ...step, effect: 'publication', action: { kind: 'click', target: { role: 'button', name: buttons.find(name => /发布附件|确认送出/.test(name)) } }, recovery: { rule: 'public-attachment-v1', url: base + '/result?item=' + id, targetUrl: target, attachmentUrl: publication.attachment.url, evidence: ['永久链接'] } };
               }
             }
@@ -104,8 +104,9 @@ for(const delay of [1000,3000,6000])setTimeout(()=>fetch('/readiness?'+new URLSe
 </script>`);return true;}
     if (agreements && url.pathname === '/create') {const id='W'+(++newItems);get(id).draft=true;receipts.push({kind:'created',item:id},{kind:'draft',item:id,at:Date.now()});res.writeHead(302,{Location:'/edit?item='+id});res.end();return true;}
     const id = url.searchParams.get('item');
-    if (!id || !(agreements ? /^W[1-9][0-9]*$/.test(id) : ['A', 'B', 'C', 'D'].includes(id))) return false;
+    if (!id || !(agreements ? /^W[1-9][0-9]*$/.test(id) : ['A', 'B', 'C', 'D', 'E'].includes(id))) return false;
     const p = get(id), query = '?item=' + id;
+    if (crossSite && url.pathname === '/selection') { receipts.push({kind:'selection',item:id,value:url.searchParams.get('value'),label:url.searchParams.get('label')}); res.end('ok'); return true; }
     if (req.method === 'POST') {
       const chunks = []; req.on('data', b => chunks.push(b)); req.on('end', () => {
         if (++writes > 15) { res.writeHead(429); res.end(); return; }
@@ -136,13 +137,13 @@ for(const delay of [1000,3000,6000])setTimeout(()=>fetch('/readiness?'+new URLSe
     if (url.pathname === '/edit') {
       const names = labels(id);
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.end(`<!doctype html><meta charset="utf-8"><title>附件编辑</title><h1>附件编辑</h1>${repair ? `<a href="/users/fixture">账号 fixture</a><a href="/edit${query}">当前记录</a><p>可编辑此记录</p>` : ''}<p>固定标签：公告</p><label>附件<input type="file"></label><p id="upload">${p.bytes ? `附件已上传 <a href="/file${query}">下载附件</a>` : '等待素材'}</p><button id="draft">${names.draft}</button><p id="drafted">${p.draft ? '草稿已保存' : '尚未保存'}</p><label>${names.title}${article ? '<textarea id="title"></textarea>' : '<input id="title">'}</label><output id="preview"></output><label>栏目<select id="destination"><option>公告</option><option>通知</option></select></label><output id="selected"></output><a href="/result${query}">永久链接</a><button id="publish">${names.publish}</button><p id="result">${p.published ? '已正式发布' : '尚未发布'}</p><script>
+      res.end(`<!doctype html><meta charset="utf-8"><title>附件编辑</title><h1>附件编辑</h1>${repair ? `<a href="/users/fixture">账号 fixture</a><a href="/edit${query}">当前记录</a><p>可编辑此记录</p>` : ''}<p>固定标签：公告</p><label>附件<input type="file"></label><p id="upload">${p.bytes ? `附件已上传 <a href="/file${query}">下载附件</a>` : '等待素材'}</p><button id="draft">${names.draft}</button><p id="drafted">${p.draft ? '草稿已保存' : '尚未保存'}</p><label>${names.title}${article || crossSite ? '<textarea id="title"></textarea>' : '<input id="title">'}</label><output id="preview"></output><label>${crossSite ? '栏目：选择' : '栏目'}<select id="destination">${crossSite ? '<option value="17">公告</option><option value="42">通知</option>' + (id === 'E' ? '<option value="99">通知</option>' : '') : '<option>公告</option><option>通知</option>'}</select></label><output id="selected"></output><a href="/result${query}">永久链接</a><button id="publish">${names.publish}</button><p id="result">${p.published ? '已正式发布' : '尚未发布'}</p><script>
 const q=${JSON.stringify(query)};
 document.querySelector('[type=file]').onchange=async e=>{document.querySelector('#upload').textContent='正在上传附件';await fetch('/upload'+q,{method:'POST',body:await e.target.files[0].arrayBuffer()});document.querySelector('#upload').innerHTML='附件已上传 <a href="/file'+q+'">下载附件</a>'};
 document.querySelector('#draft').onclick=async()=>{document.querySelector('#drafted').textContent='正在保存附件';await fetch('/draft'+q,{method:'POST'});document.querySelector('#drafted').textContent='草稿已保存'};
 document.querySelector('#title').oninput=e=>{document.querySelector('#preview').textContent='标题已填写 '+e.target.value};
-document.querySelector('#destination').onchange=e=>{document.querySelector('#selected').textContent='栏目已填写 '+e.target.value};
-document.querySelector('#publish').onclick=async()=>{document.querySelector('#result').textContent='正在发布附件';await fetch('/publish'+q,{method:'POST',body:JSON.stringify({content:document.querySelector('#title').value,destination:document.querySelector('#destination').value})});document.querySelector('#result').textContent='已正式发布'};
+document.querySelector('#destination').onchange=e=>{const requested=e.target.selectedOptions[0].label; ${crossSite ? ("if(" + JSON.stringify(id) + "==='D')e.target.value='17'; fetch('/selection'+q+'&value='+e.target.value+'&label='+encodeURIComponent(e.target.selectedOptions[0].label));") : ''} document.querySelector('#selected').textContent='栏目已填写 '+requested};
+document.querySelector('#publish').onclick=async()=>{document.querySelector('#result').textContent='正在发布附件';await fetch('/publish'+q,{method:'POST',body:JSON.stringify({content:document.querySelector('#title').value,destination:document.querySelector('#destination').selectedOptions[0].label})});document.querySelector('#result').textContent='已正式发布'};
 </script>`);
       receipts.push({ kind: 'page', item: id }); return true;
     }
