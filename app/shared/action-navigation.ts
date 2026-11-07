@@ -44,6 +44,45 @@ export const linkNavigationResolutionSchema = z.strictObject({
   source: pageSourceSchema,
   pausedInputEpoch: z.number().int().nonnegative(),
 });
+// 表单使用独立证明；当前只准无重定向的主文档POST，不能套用链接许可。
+export const formNavigationProofSchema = linkNavigationProofSchema.extend({
+  reason: z.literal('formSubmissionPost'),
+});
+export type FormNavigationProof = z.infer<typeof formNavigationProofSchema>;
+export const formNavigationResolutionSchema =
+  linkNavigationResolutionSchema.extend({
+    proof: formNavigationProofSchema,
+  });
+export function directFormButton(
+  action: WebAction,
+  source: { url: string; truncated: boolean },
+) {
+  return (
+    !source.truncated &&
+    action.kind === 'click' &&
+    action.target.role === 'button' &&
+    action.target.exact &&
+    !action.target.within &&
+    (!action.target.frameUrl || action.target.frameUrl === source.url)
+  );
+}
+export function sameSiteFormURL(from: string, to: string) {
+  try {
+    const a = new URL(from),
+      b = new URL(to);
+    return (
+      ['http:', 'https:'].includes(b.protocol) &&
+      a.origin === b.origin &&
+      a.href !== b.href &&
+      b.href === to &&
+      !b.hash &&
+      !b.username &&
+      !b.password
+    );
+  } catch {
+    return false;
+  }
+}
 /** 只接受完整观察中主frame、精确且唯一的同站链接；模型不能直接指定放行URL。 */
 export function expectedNavigationLink(
   action: WebAction,

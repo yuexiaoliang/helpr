@@ -1,0 +1,48 @@
+$ pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:workspace && pnpm test:validation && pnpm check:legacy
+$ tsc --noEmit
+$ eslint app tests/workspace electron.vite.config.ts drizzle.config.ts vitest.config.ts
+$ prettier --check app tests/workspace *.ts *.json *.mjs pnpm-workspace.yaml
+Checking formatting...
+All matched files use Prettier code style!
+$ vitest run
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/startup.test.ts (7 tests | 2 failed) 7506ms
+   × 宿主在JS初始化前退出时，原生监督保留实际退出码 3045ms
+   × 安装布局中的独立宿主映像须由同包控制者经原生监督启动 4337ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/startup.test.ts > 宿主在JS初始化前退出时，原生监督保留实际退出码
+Error: NATIVE_EXIT_RECEIPT_TIMEOUT
+ ❯ Timeout._onTimeout tests/workspace/startup.test.ts:59:24
+     57|       await new Promise<void>((resolve, reject) => {
+     58|         const timer = setTimeout(
+     59|           () => reject(new Error('NATIVE_EXIT_RECEIPT_TIMEOUT')),
+       |                        ^
+     60|           3000,
+     61|         );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/workspace/startup.test.ts > 安装布局中的独立宿主映像须由同包控制者经原生监督启动
+Error: DISTINCT_HOST_NOT_STARTED
+ ❯ ChildProcess.<anonymous> tests/workspace/startup.test.ts:137:18
+    135|         child.once('exit', () => {
+    136|           clearTimeout(timer);
+    137|           reject(new Error('DISTINCT_HOST_NOT_STARTED'));
+       |                  ^
+    138|         });
+    139|       });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 40 passed (41)
+      Tests  2 failed | 393 passed (395)
+   Start at  12:23:00
+   Duration  261.52s (tests 94%, import 5%, environment 1%)
+
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.

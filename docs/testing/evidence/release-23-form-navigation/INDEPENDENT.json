@@ -1,0 +1,436 @@
+{
+  "checkedAt": "2026-11-07T04:35:33.494840+00:00",
+  "build": 92,
+  "sourceCommit": "7f81668f87e9fa3e442a9c80ef1ee72c1e19ec3f",
+  "sourceDirty": true,
+  "rawRun": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/run-1794026089882",
+  "profile": "/private/tmp/helpr-workspace-validation-501/run-mQQJ4i",
+  "dataFormat": 29,
+  "quickCheck": "ok",
+  "sqliteSha256": "3fff779f02176377cecbbaf16fecf538548396ec9f3838c440bb660cd11086a1",
+  "cases": [
+    {
+      "item": "A",
+      "taskId": "cf6e759b-5868-4229-b5fd-383176cccc34",
+      "phase": "complete",
+      "action": {
+        "coordination": {
+          "session": {
+            "id": "helpr-fixture-web",
+            "epoch": "ff7da64a-ca1b-4ee8-a39d-c1e29f79f5e8:0",
+            "origin": "http://127.0.0.1:63046"
+          },
+          "claimId": "462c4bd2-fc6d-43e2-b04f-597e43f2026f"
+        },
+        "observedLinks": [],
+        "resultLinks": [
+          {
+            "name": "当前草稿",
+            "url": "http://127.0.0.1:63046/form-post/7d607f1b-5786-4de9-9004-ba77076512e0"
+          },
+          {
+            "name": "新建来源",
+            "url": "http://127.0.0.1:63046/form-new?item=A"
+          }
+        ],
+        "targetCreation": {
+          "rule": "same-site-editor-v1",
+          "fields": [
+            {
+              "name": "草稿标题",
+              "value": "独立草稿A"
+            }
+          ],
+          "destination": "公告"
+        },
+        "discoveredTarget": {
+          "source": {
+            "url": "http://127.0.0.1:63046/form-post/7d607f1b-5786-4de9-9004-ba77076512e0",
+            "title": "草稿编辑",
+            "fingerprint": "3e90584dbc8cb944a3911519f451e76d1b1bea7e715148ede7a9692105bd044f",
+            "generation": 2,
+            "observedAt": 1794026096673,
+            "truncated": false
+          },
+          "binding": {
+            "targetId": "59FC7D7871F889447892FB34764A10E3",
+            "generation": 2
+          },
+          "links": [
+            {
+              "name": "当前草稿",
+              "url": "http://127.0.0.1:63046/form-post/7d607f1b-5786-4de9-9004-ba77076512e0"
+            },
+            {
+              "name": "新建来源",
+              "url": "http://127.0.0.1:63046/form-new?item=A"
+            }
+          ],
+          "controls": [
+            {
+              "role": "link",
+              "name": "当前草稿",
+              "frameUrl": "http://127.0.0.1:63046/form-post/7d607f1b-5786-4de9-9004-ba77076512e0",
+              "disabled": false
+            },
+            {
+              "role": "link",
+              "name": "新建来源",
+              "frameUrl": "http://127.0.0.1:63046/form-post/7d607f1b-5786-4de9-9004-ba77076512e0",
+              "disabled": false
+            },
+            {
+              "role": "textbox",
+              "name": "草稿标题",
+              "frameUrl": "http://127.0.0.1:63046/form-post/7d607f1b-5786-4de9-9004-ba77076512e0",
+              "disabled": false,
+              "textValue": "独立草稿A"
+            },
+            {
+              "role": "textbox",
+              "name": "正文",
+              "frameUrl": "http://127.0.0.1:63046/form-post/7d607f1b-5786-4de9-9004-ba77076512e0",
+              "disabled": false
+            }
+          ],
+          "evidence": [
+            "公告"
+          ],
+          "targetFactId": "cfe76fc2-6f47-4acd-86f6-cdd038c7bc0e",
+          "draftFactId": "111f3036-3d04-4025-bc82-31ccd1bfcef3"
+        },
+        "navigation": {
+          "id": "b7abde97-ac4d-4c9d-b375-7355254ae996",
+          "association": "during-action",
+          "targetId": "59FC7D7871F889447892FB34764A10E3",
+          "sourceGeneration": 1,
+          "generation": 2,
+          "url": "http://127.0.0.1:63046/form-post/7d607f1b-5786-4de9-9004-ba77076512e0",
+          "mainFrame": true,
+          "sameDocument": false,
+          "inputEpoch": 1,
+          "observedAt": 1794026096332
+        },
+        "formNavigationResolution": {
+          "proof": {
+            "taskId": "cf6e759b-5868-4229-b5fd-383176cccc34",
+            "runId": "e34af000-cd1e-49e6-9d00-3be924a614d4",
+            "actionId": "6ac89dca-a046-427b-8978-fc4c48f2828e",
+            "targetId": "59FC7D7871F889447892FB34764A10E3",
+            "generation": 1,
+            "inputEpoch": 1,
+            "reason": "formSubmissionPost",
+            "url": "http://127.0.0.1:63046/form-post/7d607f1b-5786-4de9-9004-ba77076512e0",
+            "requestedAt": 1794026096320
+          },
+          "source": {
+            "url": "http://127.0.0.1:63046/form-post/7d607f1b-5786-4de9-9004-ba77076512e0",
+            "title": "草稿编辑",
+            "fingerprint": "3e90584dbc8cb944a3911519f451e76d1b1bea7e715148ede7a9692105bd044f",
+            "generation": 2,
+            "observedAt": 1794026096699,
+            "truncated": false
+          },
+          "pausedInputEpoch": 3
+        },
+        "id": "6ac89dca-a046-427b-8978-fc4c48f2828e",
+        "runId": "e34af000-cd1e-49e6-9d00-3be924a614d4",
+        "goalVersion": 1,
+        "status": "confirmed",
+        "summary": "创建草稿",
+        "action": {
+          "kind": "click",
+          "target": {
+            "role": "button",
+            "name": "创建草稿",
+            "exact": true
+          }
+        },
+        "effect": "draft",
+        "preconditions": [
+          "公告"
+        ],
+        "source": {
+          "url": "http://127.0.0.1:63046/form-new?item=A",
+          "title": "新建",
+          "fingerprint": "22c9a0394ecaba48b1c8e24f1167175a0f70329efdaa87de31a838aa0b41745a",
+          "generation": 1,
+          "observedAt": 1794026095792,
+          "truncated": false
+        },
+        "observedUrls": [
+          "http://127.0.0.1:63046/form-new?item=A"
+        ],
+        "resultSource": {
+          "url": "http://127.0.0.1:63046/form-post/7d607f1b-5786-4de9-9004-ba77076512e0",
+          "title": "草稿编辑",
+          "fingerprint": "3e90584dbc8cb944a3911519f451e76d1b1bea7e715148ede7a9692105bd044f",
+          "generation": 2,
+          "observedAt": 1794026096673,
+          "truncated": false
+        },
+        "binding": {
+          "targetId": "59FC7D7871F889447892FB34764A10E3",
+          "generation": 1
+        },
+        "evidence": [
+          "http://127.0.0.1:63046/form-post/7d607f1b-5786-4de9-9004-ba77076512e0"
+        ],
+        "returned": false,
+        "dispatchState": "possible"
+      },
+      "fills": [
+        {
+          "kind": "form-filled",
+          "item": "A",
+          "body": "自动续行正文",
+          "at": 1794026097182
+        }
+      ],
+      "resourceClaims": [
+        {
+          "status": "released",
+          "id": "462c4bd2-fc6d-43e2-b04f-597e43f2026f",
+          "runId": "76a0a383-b34d-41b5-94c1-a95b20e78c10",
+          "goalVersion": 1,
+          "origin": "http://127.0.0.1:63046",
+          "targetUrl": null
+        }
+      ]
+    },
+    {
+      "item": "B",
+      "taskId": "64188f2a-ea57-4817-aa55-2a8868ce4ff8",
+      "phase": "paused",
+      "action": {
+        "coordination": {
+          "session": {
+            "id": "helpr-fixture-web",
+            "epoch": "ff7da64a-ca1b-4ee8-a39d-c1e29f79f5e8:0",
+            "origin": "http://127.0.0.1:63046"
+          },
+          "claimId": "ebda414d-6462-4224-a8f5-1292e8939f91"
+        },
+        "observedLinks": [],
+        "targetCreation": {
+          "rule": "same-site-editor-v1",
+          "fields": [
+            {
+              "name": "草稿标题",
+              "value": "独立草稿B"
+            }
+          ],
+          "destination": "公告"
+        },
+        "navigation": {
+          "id": "0a4ad83c-e90d-4d22-b67d-cda57fb64807",
+          "association": "during-action",
+          "targetId": "7D60B70E3CBF9CADFF3BCD4C0A9DFC84",
+          "sourceGeneration": 1,
+          "generation": 2,
+          "url": "http://127.0.0.1:63046/form-post/cb49540b-1392-48d9-a101-0a67e2f300a0",
+          "mainFrame": true,
+          "sameDocument": false,
+          "inputEpoch": 1,
+          "observedAt": 1794026098531
+        },
+        "id": "8977384a-29c7-423a-93dc-c8a1fdd4eeb9",
+        "runId": "5386c1e9-5676-4c84-a0d7-1f025c87dfe0",
+        "goalVersion": 1,
+        "status": "confirmed",
+        "summary": "创建草稿",
+        "action": {
+          "kind": "click",
+          "target": {
+            "role": "button",
+            "name": "创建草稿",
+            "exact": true
+          }
+        },
+        "effect": "draft",
+        "preconditions": [
+          "公告"
+        ],
+        "source": {
+          "url": "http://127.0.0.1:63046/form-new?item=B",
+          "title": "新建",
+          "fingerprint": "ed0bc4442c05b594ed11b5f6b711ead578b4361b5ab929515e88c0ca1ccba329",
+          "generation": 1,
+          "observedAt": 1794026097986,
+          "truncated": false
+        },
+        "observedUrls": [
+          "http://127.0.0.1:63046/form-new?item=B"
+        ],
+        "binding": {
+          "targetId": "7D60B70E3CBF9CADFF3BCD4C0A9DFC84",
+          "generation": 1
+        },
+        "evidence": [
+          "已只读核对创建后的编辑目标和冻结字段"
+        ],
+        "returned": false,
+        "dispatchState": "possible",
+        "discoveredTarget": {
+          "source": {
+            "url": "http://127.0.0.1:63046/form-post/cb49540b-1392-48d9-a101-0a67e2f300a0",
+            "title": "草稿编辑",
+            "fingerprint": "865b195414401591fb7abdf38bc91ef52cb48fc82581a4000fa54aabc71bb321",
+            "generation": 2,
+            "observedAt": 1794026098913,
+            "truncated": false
+          },
+          "binding": {
+            "targetId": "7D60B70E3CBF9CADFF3BCD4C0A9DFC84",
+            "generation": 2
+          },
+          "links": [
+            {
+              "name": "当前草稿",
+              "url": "http://127.0.0.1:63046/form-post/cb49540b-1392-48d9-a101-0a67e2f300a0"
+            },
+            {
+              "name": "新建来源",
+              "url": "http://127.0.0.1:63046/form-new?item=B"
+            }
+          ],
+          "controls": [
+            {
+              "role": "link",
+              "name": "当前草稿",
+              "frameUrl": "http://127.0.0.1:63046/form-post/cb49540b-1392-48d9-a101-0a67e2f300a0",
+              "disabled": false
+            },
+            {
+              "role": "link",
+              "name": "新建来源",
+              "frameUrl": "http://127.0.0.1:63046/form-post/cb49540b-1392-48d9-a101-0a67e2f300a0",
+              "disabled": false
+            },
+            {
+              "role": "textbox",
+              "name": "草稿标题",
+              "frameUrl": "http://127.0.0.1:63046/form-post/cb49540b-1392-48d9-a101-0a67e2f300a0",
+              "disabled": false,
+              "textValue": "独立草稿B"
+            },
+            {
+              "role": "textbox",
+              "name": "正文",
+              "frameUrl": "http://127.0.0.1:63046/form-post/cb49540b-1392-48d9-a101-0a67e2f300a0",
+              "disabled": false
+            }
+          ],
+          "evidence": [
+            "公告"
+          ],
+          "targetFactId": "ceb0c60f-5462-44d8-b26f-45e6552fbb27",
+          "draftFactId": "e006e7f3-d15c-4e24-9b94-82e3beb178fe"
+        },
+        "resultSource": {
+          "url": "http://127.0.0.1:63046/form-post/cb49540b-1392-48d9-a101-0a67e2f300a0",
+          "title": "草稿编辑",
+          "fingerprint": "865b195414401591fb7abdf38bc91ef52cb48fc82581a4000fa54aabc71bb321",
+          "generation": 2,
+          "observedAt": 1794026098913,
+          "truncated": false
+        },
+        "resultLinks": [
+          {
+            "name": "当前草稿",
+            "url": "http://127.0.0.1:63046/form-post/cb49540b-1392-48d9-a101-0a67e2f300a0"
+          },
+          {
+            "name": "新建来源",
+            "url": "http://127.0.0.1:63046/form-new?item=B"
+          }
+        ]
+      },
+      "fills": [],
+      "resourceClaims": [
+        {
+          "status": "held",
+          "id": "ebda414d-6462-4224-a8f5-1292e8939f91",
+          "runId": "5386c1e9-5676-4c84-a0d7-1f025c87dfe0",
+          "goalVersion": 1,
+          "origin": "http://127.0.0.1:63046",
+          "targetUrl": null
+        }
+      ]
+    }
+  ],
+  "pids": [
+    57606,
+    57611,
+    57612,
+    57614,
+    57615,
+    57616,
+    57621,
+    57622,
+    57623,
+    57624,
+    57625,
+    57628,
+    57629,
+    57641,
+    57642,
+    57688,
+    57689,
+    57690,
+    57691,
+    57692,
+    57693,
+    57699,
+    57700,
+    57701,
+    57702,
+    57703
+  ],
+  "groups": [
+    57606,
+    57614,
+    57616,
+    57688,
+    57691,
+    57693
+  ],
+  "remainingPids": [],
+  "remainingGroups": [],
+  "leaseReleased": true,
+  "starts": [
+    {
+      "kind": "startup",
+      "number": 238,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:63046",
+        "persistent": false
+      },
+      "ms": 5023,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    },
+    {
+      "kind": "startup",
+      "number": 239,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:63046",
+        "persistent": false
+      },
+      "ms": 1520,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    }
+  ],
+  "modelPlans": 4,
+  "milliseconds": 18435,
+  "bundleSha256": "1f83bb86aaef7a63ae808444cce9658dd5845e9f6d25bf03d118289c2232bb80",
+  "bundleUnchangedAfterRun": true,
+  "inputChangesAfterBuild": []
+}

@@ -10,6 +10,9 @@ import {
 } from './target-creation';
 import {
   actionNavigationSchema,
+  formNavigationResolutionSchema,
+  directFormButton,
+  sameSiteFormURL,
   linkNavigationResolutionSchema,
   expectedNavigationLink,
 } from './action-navigation';
@@ -137,6 +140,7 @@ export const actionFactSchema = z
     discoveredRecovery: publicationRecoveryCheckpointSchema.optional(),
     navigation: actionNavigationSchema.optional(),
     navigationResolution: linkNavigationResolutionSchema.optional(),
+    formNavigationResolution: formNavigationResolutionSchema.optional(),
     id: z.string().min(1),
     runId: z.string(),
     goalVersion: z.number().int(),
@@ -223,6 +227,38 @@ export const actionFactSchema = z
       a.source.url === p.attachment.targetUrl &&
       d.links.filter((l) => l.url === p.attachment!.targetUrl).length === 1 &&
       d.links.filter((l) => l.url === p.attachment!.url).length === 1
+    );
+  })
+  .refine((a) => {
+    const r = a.formNavigationResolution,
+      n = a.navigation,
+      d = a.discoveredTarget;
+    if (!r) return true;
+    return (
+      !!n &&
+      !!d &&
+      !!a.targetCreation &&
+      !a.navigationResolution &&
+      directFormButton(a.action, a.source) &&
+      sameSiteFormURL(a.source.url, r.proof.url) &&
+      n.mainFrame &&
+      !n.sameDocument &&
+      a.status === 'confirmed' &&
+      r.proof.actionId === a.id &&
+      r.proof.runId === a.runId &&
+      r.proof.targetId === n.targetId &&
+      r.proof.generation === n.sourceGeneration &&
+      r.proof.inputEpoch === n.inputEpoch &&
+      r.pausedInputEpoch === n.inputEpoch + 2 &&
+      r.proof.url === n.url &&
+      r.source.url === n.url &&
+      r.source.generation === n.generation &&
+      !r.source.truncated &&
+      r.source.observedAt >= d.source.observedAt &&
+      Math.abs(r.proof.requestedAt - n.observedAt) <= 16000 &&
+      d.source.url === r.source.url &&
+      d.source.generation === r.source.generation &&
+      d.source.fingerprint === r.source.fingerprint
     );
   })
   .refine((a) => {

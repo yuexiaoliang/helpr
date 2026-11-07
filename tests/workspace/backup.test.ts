@@ -57,7 +57,7 @@ test('记录拥有者创建一致业务备份，排除模型凭据与网站会�
   expect(JSON.parse(bytes)).toMatchObject({
     format: 'helpr-backup',
     version: 1,
-    dataVersion: 28,
+    dataVersion: 29,
     stateModel: 1,
   });
   r.execute({

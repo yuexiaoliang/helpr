@@ -284,3 +284,5 @@ Node-API 8 原生模块经 node-gyp `13.1.0` 构建，固定 arm64／macOS 14 �
 格式27接续26，先备份`workspace-before-management-result-23-*`；冷开消费已保存入口，备份导入保持restoreReview。源码入口`tests/workspace/publication.test.ts`；隔离包入口`pnpm validate:workspace --fixture --candidate=management-result-23 --management-result`。A唯一标题链接、B同名不同地址及冷开均不代答继续。具体边界与有界用量见[本阶段方案](../docs/testing/release-23-management-result-plan.md)，异步附件和真实后台组合仍待完成。
 
 事项23异步附件隔离验证：`pnpm validate:workspace --fixture --candidate=upload-ready-space-23 --upload-ready`。上传返回后只读等待唯一新增附件链接，连续两次稳定观察、下载字节和固定素材核对完成后才继续保存。等待不调用模型或重传；当前窄路径要求原编辑页、完整链接观察、同站公开下载和明确目标，多个新增链接或额外点击关联仍保留未知。检查点及事实引用随格式28保存；旧27迁移前留备份。停止、接管、页面／会话变化使旧等待失效，备份核对不能凭模型确认未知上传。实包自动证据不替代真人、真实后台或完整首版验收。
+
+事项23直接表单导航验证：`pnpm validate:workspace --fixture --candidate=form-navigation-23 --form-navigation`。已冻结完整AX字段的创建动作，实际主文档POST直接返回新编辑页时，先保存目标／草稿，再核对请求、字段、指纹、代次、原生epoch和会话，可靠保存独立表单检查点后自动续做剩余动作。重定向（包括回到原POST地址）仍暂停；无证明、停止、接管、会话变化和保存失败不放行，不重复创建。格式29接续28，旧资料先备份；此分支不支持POST/303自动续行、空白创建或跨页流程复用，不替代真实后台与真人验收。

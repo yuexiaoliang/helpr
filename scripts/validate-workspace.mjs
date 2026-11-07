@@ -1,3 +1,4 @@
+import { verifyFormNavigation } from './form-navigation-validation.mjs';
 import { verifyUploadReady } from './upload-ready-validation.mjs';
 import { verifyCreatedTarget } from './created-target-validation.mjs';
 import { verifyDynamicResult } from './dynamic-result-validation.mjs';
@@ -45,6 +46,7 @@ const { values: options } = parseArgs({
     'management-result': flag,
     'upload-ready': flag,
     'created-target': flag,
+    'form-navigation': flag,
     'created-target-mismatch': flag,
     'cross-site-controls': flag,
     'ambiguous-selection': flag,
@@ -90,6 +92,7 @@ if (args.length === 0) {
   process.exit(0);
 }
 
+if (options['form-navigation']) options['created-target'] = true;
 if (options['created-target-mismatch']) options['created-target'] = true;
 const recoveryPoint = options['publication-recovery'];
 if (recoveryPoint) {
@@ -263,6 +266,7 @@ if (options.material || options.publication) fs.writeFileSync(materialSource, ma
 const website = await fixture({
   asyncUpload: options['upload-ready'],
   createdTarget: options['created-target'],
+  formNavigation: options['form-navigation'],
   dynamicResult: options['dynamic-result'],
   managementResult: options['management-result'],
   navigation: options['action-navigation'],
@@ -918,6 +922,7 @@ async function verifyMaterial(client) {
 async function validate() {
   let client = await launch();
   if (options['upload-ready']) return verifyUploadReady({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
+  if (options['form-navigation']) return verifyFormNavigation({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
   if (options['created-target']) return verifyCreatedTarget({client, website, evidence, command, waitFor, check, launch, remainingOwned,mismatch:options['created-target-mismatch']});
   if (options['dynamic-result']) return verifyDynamicResult({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, management: options['management-result']});
   if (options['link-navigation']) return verifyLinkNavigation({client, website, evidence, command, waitFor, check, launch, remainingOwned});

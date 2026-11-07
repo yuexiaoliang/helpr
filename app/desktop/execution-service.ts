@@ -3,6 +3,7 @@ import { creationFieldsMatch } from '../shared/target-creation';
 import type {
   ActionNavigationEvent,
   LinkNavigationProof,
+  FormNavigationProof,
 } from '../shared/action-navigation';
 import {
   agreementUICommandSchema,
@@ -117,6 +118,7 @@ export type WebActionJob = {
   runId: string;
   actionId: string;
   action: WebAction;
+  targetCreation?: ActionFact['targetCreation'];
   source: PageObservation;
   binding: BoundObservation['binding'];
   signal: AbortSignal;
@@ -178,6 +180,7 @@ export class ExecutionService {
   >();
   private readonly interruptions = new Set<Promise<unknown>>();
   private readonly resultDiscoveries = new Set<string>();
+  private readonly formProofs = new Map<string, FormNavigationProof>();
   private readonly linkProofs = new Map<string, LinkNavigationProof>();
   private readonly navigationRecoveries = new Set<string>();
   private readonly pendingNavigations = new Set<Promise<unknown>>();
@@ -223,12 +226,16 @@ export class ExecutionService {
     } finally {
       this.pendingNavigations.delete(saving);
     }
-    this.tryLinkNavigation(event.taskId);
+    this.tryActionNavigation(event.taskId);
     this.tryDynamicResult(event.taskId);
   }
   acceptLinkNavigation(proof: LinkNavigationProof) {
     this.linkProofs.set(proof.taskId, proof);
-    this.tryLinkNavigation(proof.taskId);
+    this.tryActionNavigation(proof.taskId);
+  }
+  acceptFormNavigation(proof: FormNavigationProof) {
+    this.formProofs.set(proof.taskId, proof);
+    this.tryActionNavigation(proof.taskId, true);
   }
   /** 已有提交只读核对；导航是候选观察的触发，不是成功或恢复输入的许可。 */
   private tryDynamicResult(taskId: string) {
@@ -378,11 +385,13 @@ export class ExecutionService {
       }
     })().finally(() => {
       if (this.reviews.get(taskId) === review) this.reviews.delete(taskId);
+      this.tryActionNavigation(taskId, true);
       this.pump();
     });
   }
-  private tryLinkNavigation(taskId: string) {
-    const proof = this.linkProofs.get(taskId);
+  private tryActionNavigation(taskId: string, form = false) {
+    const proofs = form ? this.formProofs : this.linkProofs;
+    const proof = proofs.get(taskId);
     const action = this.ports
       .current()
       .tasks.find((t) => t.id === taskId)
@@ -390,6 +399,7 @@ export class ExecutionService {
     if (
       !proof ||
       !action?.navigation ||
+      (form && !action.discoveredTarget) ||
       this.blocked.get(taskId)?.reason !== 'page-change' ||
       !this.blocked.get(taskId)?.saved ||
       this.navigationRecoveries.has(taskId) ||
@@ -397,7 +407,7 @@ export class ExecutionService {
       !this.ports.input
     )
       return;
-    this.linkProofs.delete(taskId);
+    proofs.delete(taskId);
     this.navigationRecoveries.add(taskId);
     const event: ActionNavigationEvent = {
       taskId,
@@ -453,6 +463,14 @@ export class ExecutionService {
           proof.inputEpoch !== event.navigation.inputEpoch ||
           proof.generation !== event.navigation.sourceGeneration ||
           proof.targetId !== event.navigation.targetId ||
+          (form &&
+            (!action.targetCreation ||
+              !creationFieldsMatch(
+                action.targetCreation,
+                observed.observation,
+              ) ||
+              observed.observation.fingerprint !==
+                action.discoveredTarget?.source.fingerprint)) ||
           (action.coordination &&
             (!observed.session ||
               !sameSession(action.coordination.session, observed.session) ||
@@ -472,12 +490,13 @@ export class ExecutionService {
           !actionFactSchema.safeParse({
             ...action,
             status: 'confirmed',
-            navigationResolution: resolution,
+            [form ? 'formNavigationResolution' : 'navigationResolution']:
+              resolution,
           }).success
         )
           return;
         const result = await this.record({
-          kind: 'navigation-resolved',
+          kind: form ? 'form-navigation-resolved' : 'navigation-resolved',
           taskId,
           expectedVersion: current.version,
           resolution,
@@ -729,7 +748,7 @@ export class ExecutionService {
     } finally {
       if (this.intents.get(taskId) === sequence)
         this.pendingIntents.delete(taskId);
-      this.tryLinkNavigation(taskId);
+      this.tryActionNavigation(taskId);
       this.tryDynamicResult(taskId);
       this.pump();
     }
@@ -2806,6 +2825,7 @@ export class ExecutionService {
             runId: job.runId,
             actionId,
             action: step.action,
+            targetCreation: step.targetCreation,
             source: dispatchObservation.observation,
             binding: dispatchObservation.binding,
             signal: job.abort.signal,

@@ -1,0 +1,175 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/created-target.test.ts (28 tests | 2 failed) 11005ms
+   × 表单独立证明、目标检查点与自动续行：session-observation 648ms
+   × 表单独立证明、目标检查点与自动续行：session-before-save 633ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/created-target.test.ts > 表单独立证明、目标检查点与自动续行：session-observation
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array [
+      Object {
+        "action": Object {
+          "kind": "fill",
+          "target": Object {
+            "exact": true,
+            "name": "正文",
+            "role": "textbox",
+          },
+          "value": "后续正文",
+        },
+        "actionId": "fe6a46e2-6878-44b8-a59f-49a245b27a2e",
+        "binding": Object {
+          "generation": 2,
+          "targetId": "page",
+        },
+        "qualified": [Function qualified],
+        "runId": "b114d951-0824-430a-9c29-61f7291ea07f",
+        "signal": AbortSignal {
+          Symbol(kEvents): Map {},
+          Symbol(events.maxEventTargetListeners): 0,
+          Symbol(events.maxEventTargetListenersWarned): false,
+          Symbol(kHandlers): Map {},
+          Symbol(kAborted): false,
+          Symbol(kReason): undefined,
+          Symbol(kComposite): false,
+        },
+        "source": Object {
+          "controls": Array [
+            Object {
+              "disabled": false,
+              "frameUrl": "https://example.com/edit/6818cfef-607c-4468-b36c-3c06131b5d79",
+              "name": "标题",
+              "role": "textbox",
+              "textValue": "独立草稿",
+            },
+          ],
+          "fingerprint": "saved",
+          "generation": 2,
+          "links": Array [
+            Object {
+              "name": "编辑此草稿",
+              "url": "https://example.com/edit/6818cfef-607c-4468-b36c-3c06131b5d79",
+            },
+            Object {
+              "name": "新建入口",
+              "url": "https://example.com/new",
+            },
+          ],
+          "observedAt": 10,
+          "text": "标题 独立草稿 公告",
+          "title": "已保存",
+          "truncated": false,
+          "url": "https://example.com/edit/6818cfef-607c-4468-b36c-3c06131b5d79",
+        },
+        "targetCreation": undefined,
+        "taskId": "fd2ed85b-f2eb-42e0-8e38-614ca7829c61",
+      },
+    ]
+
+
+Number of calls: 1
+
+ ❯ tests/workspace/created-target.test.ts:603:27
+    601|     ]);
+    602|   } else {
+    603|     expect(s.perform).not.toHaveBeenCalled();
+       |                           ^
+    604|     expect(s.propose).not.toHaveBeenCalled();
+    605|     expect(s.allow).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/workspace/created-target.test.ts > 表单独立证明、目标检查点与自动续行：session-before-save
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array [
+      Object {
+        "action": Object {
+          "kind": "fill",
+          "target": Object {
+            "exact": true,
+            "name": "正文",
+            "role": "textbox",
+          },
+          "value": "后续正文",
+        },
+        "actionId": "5bbfd1ff-01c7-4303-bf72-bc3c7a6b5d79",
+        "binding": Object {
+          "generation": 2,
+          "targetId": "page",
+        },
+        "qualified": [Function qualified],
+        "runId": "edbdb337-7000-471c-ac63-aefe80d10561",
+        "signal": AbortSignal {
+          Symbol(kEvents): Map {},
+          Symbol(events.maxEventTargetListeners): 0,
+          Symbol(events.maxEventTargetListenersWarned): false,
+          Symbol(kHandlers): Map {},
+          Symbol(kAborted): false,
+          Symbol(kReason): undefined,
+          Symbol(kComposite): false,
+        },
+        "source": Object {
+          "controls": Array [
+            Object {
+              "disabled": false,
+              "frameUrl": "https://example.com/edit/4c42ba97-b189-4d53-8b12-5bffaaabcc6e",
+              "name": "标题",
+              "role": "textbox",
+              "textValue": "独立草稿",
+            },
+          ],
+          "fingerprint": "saved",
+          "generation": 2,
+          "links": Array [
+            Object {
+              "name": "编辑此草稿",
+              "url": "https://example.com/edit/4c42ba97-b189-4d53-8b12-5bffaaabcc6e",
+            },
+            Object {
+              "name": "新建入口",
+              "url": "https://example.com/new",
+            },
+          ],
+          "observedAt": 10,
+          "text": "标题 独立草稿 公告",
+          "title": "已保存",
+          "truncated": false,
+          "url": "https://example.com/edit/4c42ba97-b189-4d53-8b12-5bffaaabcc6e",
+        },
+        "targetCreation": undefined,
+        "taskId": "f03b0e9b-c51c-4fe1-9afb-4c03c5ead8ea",
+      },
+    ]
+
+
+Number of calls: 1
+
+ ❯ tests/workspace/created-target.test.ts:603:27
+    601|     ]);
+    602|   } else {
+    603|     expect(s.perform).not.toHaveBeenCalled();
+       |                           ^
+    604|     expect(s.propose).not.toHaveBeenCalled();
+    605|     expect(s.allow).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 38 passed (40)
+   Start at  12:20:44
+   Duration  14.08s (tests 94%, import 5%, transform 1%)
+

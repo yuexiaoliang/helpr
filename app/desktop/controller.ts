@@ -434,8 +434,10 @@ export async function startController(
       await broker.close(qualification);
     }
   }
-  const linkNavigation = new LinkNavigationWatch(broker, (proof) =>
-    executions.acceptLinkNavigation(proof),
+  const linkNavigation = new LinkNavigationWatch(
+    broker,
+    (proof) => executions.acceptLinkNavigation(proof),
+    (proof) => executions.acceptFormNavigation(proof),
   );
   const webExecutor = new WebExecutor(
     new ExecutionProtocol(broker),

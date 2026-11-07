@@ -480,3 +480,136 @@ test('独立浏览器订阅只接受所属鼠标发送后的主frame anchorClick
     watch.dispose();
   }
 });
+
+test('表单订阅仅接受实际点击后同站主frame POST；拒绝链接、脚本、GET、跨站、片段和截断', async () => {
+  const { LinkNavigationWatch } =
+    await import('../../app/desktop/link-navigation');
+  for (const scenario of [
+    'valid',
+    'no-input',
+    'other-task',
+    'script',
+    'link',
+    'get',
+    'fragment',
+    'truncated',
+    'no-creation',
+    'subframe',
+    'new-tab',
+    'different-url',
+  ] as const) {
+    let inputListener: Parameters<
+      import('../../app/desktop/observation-broker').ObservationBroker['onInputSent']
+    >[0] = () => {};
+    let listener: (event: unknown) => void = () => {};
+    const proofs: unknown[] = [];
+    let closed = 0;
+    const q = {
+      taskId: 'a',
+      targetId: 'page',
+      generation: 3,
+      inputEpoch: 7,
+      token: 'private',
+      revoked: false,
+      sessionId: 'session',
+    };
+    const watch = new LinkNavigationWatch(
+      {
+        client: () => q,
+        observe: () =>
+          Promise.resolve({ frameTree: { frame: { id: 'main' } } }),
+        protocol: () => Promise.resolve({}),
+        close: () => {
+          closed++;
+          return Promise.resolve();
+        },
+        onEvent: (l) => {
+          listener = l;
+          return () => {
+            listener = () => {};
+          };
+        },
+        onInputSent: (l) => {
+          inputListener = l;
+          return () => {};
+        },
+      },
+      () => {
+        throw Error('UNEXPECTED_LINK_PROOF');
+      },
+      (proof) => proofs.push(proof),
+    );
+    await watch.start({
+      taskId: 'a',
+      runId: 'r',
+      actionId: 'act',
+      action: {
+        kind: 'click',
+        target: { role: 'button', name: '创建草稿', exact: true },
+      },
+      targetCreation:
+        scenario === 'no-creation'
+          ? undefined
+          : {
+              rule: 'same-site-editor-v1',
+              fields: [{ name: '标题', value: '草稿' }],
+              destination: '公告',
+            },
+      source: {
+        url: from,
+        title: '',
+        text: '公告',
+        controls: [
+          {
+            role: 'textbox',
+            name: '标题',
+            textValue: '草稿',
+            disabled: false,
+            frameUrl: from,
+          },
+        ],
+        fingerprint: 'one',
+        generation: 3,
+        observedAt: 1,
+        truncated: scenario === 'truncated',
+        links: [{ name: '打开条目', url: to }],
+      },
+      binding: { targetId: 'page', generation: 3 },
+      signal: new AbortController().signal,
+      qualified: () => true,
+    });
+    if (scenario !== 'no-input')
+      inputListener(
+        { ...q, taskId: scenario === 'other-task' ? 'b' : 'a' },
+        'Input.dispatchMouseEvent',
+        { type: 'mouseReleased', button: 'left' },
+      );
+    listener({
+      sessionId: 'session',
+      method: 'Page.frameRequestedNavigation',
+      params: {
+        frameId: scenario === 'subframe' ? 'child' : 'main',
+        reason:
+          scenario === 'script'
+            ? 'scriptInitiated'
+            : scenario === 'link'
+              ? 'anchorClick'
+              : scenario === 'get'
+                ? 'formSubmissionGet'
+                : 'formSubmissionPost',
+        disposition: scenario === 'new-tab' ? 'newTab' : 'currentTab',
+        url:
+          scenario === 'different-url'
+            ? 'https://other.com/editor'
+            : scenario === 'fragment'
+              ? to + '#part'
+              : to,
+      },
+    });
+    expect(proofs).toHaveLength(scenario === 'valid' ? 1 : 0);
+    expect(closed).toBe(
+      ['truncated', 'no-creation'].includes(scenario) ? 0 : 1,
+    );
+    watch.dispose();
+  }
+});

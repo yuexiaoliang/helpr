@@ -6,6 +6,7 @@ import {
 import {
   actionNavigationEventSchema,
   linkNavigationResolutionSchema,
+  formNavigationResolutionSchema,
 } from '../shared/action-navigation';
 import {
   agreementUICommandSchema,
@@ -366,6 +367,12 @@ const commandSchema = z.discriminatedUnion('kind', [
     taskId: z.string(),
     expectedVersion: z.number().int().positive(),
     resolution: linkNavigationResolutionSchema,
+  }),
+  z.strictObject({
+    kind: z.literal('form-navigation-resolved'),
+    taskId: z.string(),
+    expectedVersion: z.number().int().positive(),
+    resolution: formNavigationResolutionSchema,
   }),
   z.strictObject({
     kind: z.literal('reported'),
@@ -1638,7 +1645,11 @@ export class ExecutionRecords {
             return { created: true };
           }
         }
-        if (c.kind === 'navigation-resolved') {
+        if (
+          c.kind === 'navigation-resolved' ||
+          c.kind === 'form-navigation-resolved'
+        ) {
+          const form = c.kind === 'form-navigation-resolved';
           const r = c.resolution;
           const a = e.actions.find((a) => a.id === r.proof.actionId);
           if (
@@ -1651,14 +1662,25 @@ export class ExecutionRecords {
             e.loginOrigin ||
             e.recoveryPending ||
             e.publication ||
-            e.preparation?.length ||
+            (form
+              ? !a?.discoveredTarget ||
+                e.preparation?.length !== 2 ||
+                !e.preparation.every(
+                  (f) =>
+                    f.actionId === a.id &&
+                    [
+                      a.discoveredTarget!.targetFactId,
+                      a.discoveredTarget!.draftFactId,
+                    ].includes(f.id),
+                )
+              : !!e.preparation?.length) ||
             (e.coordination &&
               (e.coordination.status !== 'ready' ||
                 e.coordination.refreshRequired)) ||
             e.observedAnomalies?.some((a) => a.goalVersion === e.goalVersion) ||
             !a ||
             a.goalVersion !== e.goalVersion ||
-            a.status !== 'unknown' ||
+            a.status !== (form ? 'confirmed' : 'unknown') ||
             r.proof.taskId !== task.id ||
             task.url !== r.source.url ||
             task.phase !== 'manual' ||
@@ -1670,8 +1692,12 @@ export class ExecutionRecords {
           )
             return { recovered: false };
           a.status = 'confirmed';
-          a.navigationResolution = r;
-          a.resultSource = r.source;
+          if (c.kind === 'form-navigation-resolved')
+            a.formNavigationResolution = c.resolution;
+          else {
+            a.navigationResolution = c.resolution;
+            a.resultSource = r.source;
+          }
           a.evidence = [r.source.url];
           // schema验证完整链接、原生代次和新页面关联；任何缺失保持事务回滚。
           executionSchema.parse(e);
@@ -1679,7 +1705,9 @@ export class ExecutionRecords {
           e.version++;
           e.runId = null;
           move(e, 'QUEUE');
-          e.summary = '已核对链接到达的新页面，继续剩余工作。';
+          e.summary = form
+            ? '已核对表单到达的新草稿和字段，继续剩余工作。'
+            : '已核对链接到达的新页面，继续剩余工作。';
           this.save(task.id, e);
           return { recovered: true };
         }

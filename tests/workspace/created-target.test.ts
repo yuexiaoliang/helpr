@@ -19,7 +19,7 @@ afterEach(() =>
     .reverse()
     .forEach((f) => f()),
 );
-function fixture() {
+function fixture(direct = false) {
   const folder = mkdtempSync(path.join(tmpdir(), 'helpr-created-target-'));
   cleanups.push(() => rmSync(folder, { recursive: true, force: true }));
   let records = new WorkspaceRecords(folder, 'app/records/migrations');
@@ -43,7 +43,12 @@ function fixture() {
   const execution = () =>
     records.snapshot().tasks.find((t) => t.id === taskId)!.execution!;
   post({ kind: 'intent', requestId: randomUUID(), intent: 'start' });
-  post({ kind: 'claim', runId: 'create' });
+  const session = {
+    id: 'fixture-session',
+    origin: new URL(entry).origin,
+    epoch: randomUUID() + ':0',
+  };
+  post({ kind: 'claim', runId: 'create', ...(direct ? { session } : {}) });
   const source: PageObservation = {
     url: entry,
     title: '新建',
@@ -63,6 +68,8 @@ function fixture() {
     ],
     links: [],
   };
+  if (direct)
+    post({ kind: 'coordination-observed', runId: 'create', session, source });
   const reserve = {
     kind: 'reserve',
     runId: 'create',
@@ -86,7 +93,7 @@ function fixture() {
     ...source,
     url,
     title: '已保存',
-    generation: 3,
+    generation: direct ? 2 : 3,
     observedAt: 10,
     fingerprint: 'saved',
     controls: [{ ...source.controls![0]!, frameUrl: url }],
@@ -105,7 +112,7 @@ function fixture() {
       targetId: 'page',
       sourceGeneration: 1,
       generation: 2,
-      url: entry + '/submit',
+      url: direct ? url : entry + '/submit',
       mainFrame: true,
       sameDocument: false,
       inputEpoch: 4,
@@ -140,11 +147,13 @@ function fixture() {
   const service = (
     options: {
       beforeRecord?: (c: Record<string, unknown>) => void;
+      afterRecord?: (c: Record<string, unknown>) => void;
       observe?: () => PageObservation;
+      changedSession?: boolean;
     } = {},
   ) => {
     let state = records.snapshot(),
-      epoch = 12;
+      epoch = direct ? 5 : 12;
     const prepare = vi.fn(() => Promise.resolve(epoch)),
       allow = vi.fn(() => true),
       perform = vi.fn<(job: WebActionJob) => Promise<void>>(() =>
@@ -162,7 +171,9 @@ function fixture() {
     const instance = new ExecutionService({
       records: (c) => {
         options.beforeRecord?.(c as Record<string, unknown>);
-        return Promise.resolve(records.execution(c));
+        const result = records.execution(c);
+        options.afterRecord?.(c as Record<string, unknown>);
+        return Promise.resolve(result);
       },
       current: () => state,
       publish: (s) => {
@@ -170,10 +181,19 @@ function fixture() {
       },
       observe: () =>
         Promise.resolve({
+          ...(direct
+            ? {
+                session: options.changedSession
+                  ? { ...session, epoch: session.epoch.replace(':0', ':1') }
+                  : session,
+              }
+            : {}),
           observation: options.observe?.() ?? observation,
-          binding: { targetId: 'page', generation: 3 },
+          binding: { targetId: 'page', generation: direct ? 2 : 3 },
         }),
+      ...(direct ? { session: () => Promise.resolve(session) } : {}),
       resultPageReady: () => Promise.resolve(true),
+      navigationReady: () => Promise.resolve(true),
       propose,
       perform,
       revoke: () => {},
@@ -207,6 +227,7 @@ function fixture() {
     folder,
     taskId,
     url,
+    session,
     post,
     execution,
     source,
@@ -484,4 +505,184 @@ test('创建检查点缺失时明确继续仍未知，不让模型消除未知�
   expect(f.execution().phase).toBe('unknown');
   expect(f.execution().actions[0]!.status).toBe('unknown');
   await s.instance.stopAll();
+});
+
+function formProof(f: ReturnType<typeof fixture>) {
+  return {
+    taskId: f.taskId,
+    runId: 'create',
+    actionId: 'create-draft',
+    targetId: 'page',
+    generation: 1,
+    inputEpoch: 4,
+    reason: 'formSubmissionPost' as const,
+    url: f.url,
+    requestedAt: 5,
+  };
+}
+
+test.each([
+  'valid',
+  'no-proof',
+  'wrong-request',
+  'redirect',
+  'input-between',
+  'input-after-save',
+  'stop-before-save',
+  'save-failure',
+  'field-changed',
+  'session-observation',
+  'session-before-save',
+] as const)('表单独立证明、目标检查点与自动续行：%s', async (variant) => {
+  const f = fixture(variant !== 'redirect');
+  f.dispatch();
+  let reads = 0;
+  const s = f.service({
+    changedSession: variant === 'session-observation',
+    observe: () => {
+      reads++;
+      if (variant === 'input-between' && reads === 2) s.nativeChange();
+      return variant === 'field-changed' && reads >= 3
+        ? { ...f.observation, controls: [] }
+        : f.observation;
+    },
+    beforeRecord: (c) => {
+      if (c.kind !== 'form-navigation-resolved') return;
+      if (variant === 'stop-before-save')
+        f.post({ kind: 'intent', requestId: randomUUID(), intent: 'stop' });
+      if (variant === 'save-failure') throw Error('DISK_FAILURE');
+      if (variant === 'session-before-save')
+        f.post({
+          kind: 'session-invalidated',
+          session: { ...f.session, epoch: f.session.epoch.replace(':0', ':1') },
+        });
+    },
+    afterRecord: (c) => {
+      if (
+        c.kind === 'form-navigation-resolved' &&
+        variant === 'input-after-save'
+      )
+        s.nativeChange();
+    },
+  });
+  s.propose.mockImplementationOnce(() =>
+    Promise.resolve({
+      decision: 'act',
+      summary: '补充正文',
+      evidence: ['公告'],
+      previous: null,
+      action: {
+        kind: 'fill',
+        target: { role: 'textbox', name: '正文', exact: true },
+        value: '后续正文',
+      },
+    }),
+  );
+  f.arrive();
+  if (variant !== 'no-proof')
+    s.instance.acceptFormNavigation({
+      ...formProof(f),
+      ...(variant === 'wrong-request' ? { url: f.url + '/other' } : {}),
+    });
+  await s.instance.recordNavigation(f.event);
+  await s.instance.suspend(f.taskId, 'page-change', randomUUID());
+  await s.instance.settled();
+  if (variant === 'valid') {
+    expect(s.perform).toHaveBeenCalledTimes(1);
+    expect(s.perform.mock.calls[0]![0].action).toMatchObject({
+      kind: 'fill',
+      value: '后续正文',
+    });
+    expect(f.execution().actions[0]).toMatchObject({
+      status: 'confirmed',
+      formNavigationResolution: { proof: formProof(f), pausedInputEpoch: 6 },
+    });
+    expect(f.execution().actions.map((a) => a.action.kind)).toEqual([
+      'click',
+      'fill',
+    ]);
+    expect(f.execution().preparation?.map((f) => f.kind)).toEqual([
+      'target',
+      'draft',
+    ]);
+  } else {
+    expect(s.perform).not.toHaveBeenCalled();
+    expect(s.propose).not.toHaveBeenCalled();
+    expect(s.allow).not.toHaveBeenCalled();
+    expect(f.execution().phase).not.toBe('queued');
+  }
+  await s.instance.stopAll();
+});
+
+test('表单检查点拒绝坏epoch、代次、指纹及无已保存目标；28迁移与真实备份不补造许可', async () => {
+  const f = fixture(true);
+  f.dispatch();
+  f.pause();
+  f.freeze();
+  const a = f.execution().actions[0]!;
+  const resolution = {
+    proof: formProof(f),
+    source: a.discoveredTarget!.source,
+    pausedInputEpoch: 6,
+  };
+  expect(
+    actionFactSchema.safeParse({ ...a, formNavigationResolution: resolution })
+      .success,
+  ).toBe(true);
+  for (const change of [
+    { pausedInputEpoch: 7 },
+    { proof: { ...resolution.proof, reason: 'anchorClick' } },
+    { source: { ...resolution.source, generation: 3 } },
+    { source: { ...resolution.source, fingerprint: 'other' } },
+    { proof: { ...resolution.proof, url: f.url + '/other' } },
+  ])
+    expect(
+      actionFactSchema.safeParse({
+        ...a,
+        formNavigationResolution: { ...resolution, ...change },
+      }).success,
+    ).toBe(false);
+  expect(
+    actionFactSchema.safeParse({
+      ...a,
+      discoveredTarget: undefined,
+      formNavigationResolution: resolution,
+    }).success,
+  ).toBe(false);
+  const postResolution = () =>
+    f.post({
+      kind: 'form-navigation-resolved',
+      expectedVersion: f.execution().version,
+      resolution,
+    });
+  expect(postResolution().recovered).toBe(true);
+  const savedActions = f.execution().actions;
+  f.records.close();
+  const db = new Database(path.join(f.folder, 'workspace.sqlite'));
+  db.exec('UPDATE workspace SET schema_version=28');
+  db.close();
+  f.reopen();
+  expect(
+    readdirSync(f.folder).some((n) =>
+      n.startsWith('workspace-before-form-navigation-23-'),
+    ),
+  ).toBe(true);
+  expect(f.execution().actions).toEqual(savedActions);
+  expect(postResolution().recovered).toBe(false);
+  const file = path.join(f.folder, 'form.helpr-backup');
+  const saved = await f.records.backup({
+    kind: 'create',
+    requestId: randomUUID(),
+    file,
+  });
+  const g = fixture();
+  await g.records.backup({
+    kind: 'restore',
+    requestId: randomUUID(),
+    file,
+    checksum: saved.archive.checksum,
+  });
+  expect(
+    g.records.snapshot().tasks.find((t) => t.id === f.taskId)!.execution,
+  ).toMatchObject({ restoreReview: 'required', actions: savedActions });
 });

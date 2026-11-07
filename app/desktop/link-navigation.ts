@@ -1,6 +1,10 @@
+import { creationFieldsMatch } from '../shared/target-creation';
 import { z } from 'zod';
 import {
   expectedNavigationLink,
+  directFormButton,
+  sameSiteFormURL,
+  type FormNavigationProof,
   type LinkNavigationProof,
 } from '../shared/action-navigation';
 import type { WebActionJob } from './execution-service';
@@ -15,6 +19,7 @@ export class LinkNavigationWatch {
       'client' | 'observe' | 'protocol' | 'close' | 'onEvent' | 'onInputSent'
     >,
     private readonly received: (proof: LinkNavigationProof) => void,
+    private readonly receivedForm?: (proof: FormNavigationProof) => void,
   ) {}
   async start(job: WebActionJob) {
     const url = expectedNavigationLink(
@@ -22,7 +27,12 @@ export class LinkNavigationWatch {
       job.source,
       job.source.links,
     );
-    if (!url) return;
+    const form =
+      !!this.receivedForm &&
+      !!job.targetCreation &&
+      directFormButton(job.action, job.source) &&
+      creationFieldsMatch(job.targetCreation, job.source);
+    if (!url && !form) return;
     const q = this.broker.client(job.taskId);
     if (
       q.targetId !== job.binding.targetId ||
@@ -93,22 +103,23 @@ export class LinkNavigationWatch {
         if (
           !released ||
           p.frameId !== frame ||
-          p.reason !== 'anchorClick' ||
+          p.reason !== (form ? 'formSubmissionPost' : 'anchorClick') ||
           p.disposition !== 'currentTab' ||
-          p.url !== url
+          (form ? !sameSiteFormURL(job.source.url, p.url) : p.url !== url)
         )
           return;
-        this.received({
+        const proof = {
           taskId: job.taskId,
           runId: job.runId,
           actionId: job.actionId,
           targetId: q.targetId,
           generation: q.generation,
           inputEpoch: q.inputEpoch,
-          reason: 'anchorClick',
-          url,
+          url: p.url,
           requestedAt: Date.now(),
-        });
+        };
+        if (form) this.receivedForm({ ...proof, reason: 'formSubmissionPost' });
+        else this.received({ ...proof, reason: 'anchorClick' });
       });
       await this.broker.protocol('Page.enable', {}, q.sessionId);
       if (closed || !job.qualified() || job.signal.aborted)
