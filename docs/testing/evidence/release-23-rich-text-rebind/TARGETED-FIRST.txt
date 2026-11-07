@@ -1,0 +1,63 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/workflow-rich-text.test.ts (5 tests | 5 failed) 8458ms
+   × main 从实际动作归纳规则，换素材及冷开新任务只用当前节点并逐次确认 1705ms
+   × about:blank 从实际动作归纳规则，换素材及冷开新任务只用当前节点并逐次确认 1685ms
+   × about:srcdoc 从实际动作归纳规则，换素材及冷开新任务只用当前节点并逐次确认 1659ms
+   × 预览后换节点不重新绑定，确认后不填写或发布 1698ms
+   × 缺证明、歧义、路径、角色、名称、frame或截断观察均不能选择；模型不接受旧节点 1710ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/workflow-rich-text.test.ts > main 从实际动作归纳规则，换素材及冷开新任务只用当前节点并逐次确认
+ FAIL  tests/workspace/workflow-rich-text.test.ts > about:blank 从实际动作归纳规则，换素材及冷开新任务只用当前节点并逐次确认
+ FAIL  tests/workspace/workflow-rich-text.test.ts > about:srcdoc 从实际动作归纳规则，换素材及冷开新任务只用当前节点并逐次确认
+AssertionError: 按已保存的做法核对本次网页。: expected undefined to be 'review' // Object.is equality
+
+- Expected:
+"review"
+
++ Received:
+undefined
+
+ ❯ tests/workspace/workflow-rich-text.test.ts:82:53
+     80|       if (title.startsWith('冷开')) await f.cold();
+     81|       const b = await f.add(title);
+     82|       expect(f.e(b).question?.type, f.e(b).summary).toBe('review');
+       |                                                     ^
+     83|       expect(f.e(b).workflowUses?.[0]?.workflow.version).toBe(
+     84|         w.version === f.e(b).workflowUses?.[0]?.workflow.version
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tests/workspace/workflow-rich-text.test.ts > 预览后换节点不重新绑定，确认后不填写或发布
+TypeError: Cannot read properties of undefined (reading 'fields')
+ ❯ tests/workspace/workflow-rich-text.test.ts:117:25
+    115|   await f.approve(a);
+    116|   const b = await f.add('本次');
+    117|   const before = f.e(b).publication!.fields![1]!.richText!;
+       |                         ^
+    118|   f.nodes.set(f.url(b), before.richTextNodeId + 100);
+    119|   await f.approve(b);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  tests/workspace/workflow-rich-text.test.ts > 缺证明、歧义、路径、角色、名称、frame或截断观察均不能选择；模型不接受旧节点
+TypeError: Cannot read properties of undefined (reading 'fields')
+ ❯ tests/workspace/workflow-rich-text.test.ts:138:22
+    136|       content: use.content,
+    137|       destination: use.destination,
+    138|       fields: f.e(b).publication!.fields,
+       |                      ^
+    139|     }).success,
+    140|   ).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  5 failed | 55 passed (60)
+   Start at  17:00:03
+   Duration  92.44s (tests 98%, import 2%)
+

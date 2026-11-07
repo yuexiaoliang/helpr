@@ -1,3 +1,8 @@
+import {
+  resolveWorkflowFields,
+  validWorkflowApproval,
+} from './workflow-rich-text';
+import type { Publication } from './publication';
 import { richTextControl } from './rich-text';
 import type { TaskExecution, NextStep, WebAction } from './execution';
 import type { PageObservation } from './model';
@@ -7,11 +12,21 @@ export function currentWorkflow(e: TaskExecution) {
   return e.workflowUses?.find((u) => u.goalVersion === e.goalVersion);
 }
 
-export function reboundAction(use: WorkflowUse, index: number): WebAction {
+export function reboundAction(
+  use: WorkflowUse,
+  index: number,
+  fields: Publication['fields'] = use.approved?.fields ?? use.fields,
+): WebAction {
   const step = use.workflow.steps[index];
   if (!step) throw Error('WORKFLOW_NOT_APPLICABLE');
   const action = structuredClone(step.action);
-  if ('richTextNodeId' in action.target) throw Error('WORKFLOW_NOT_APPLICABLE');
+  const node = 'richTextNodeId' in action.target;
+  if (
+    node &&
+    (!step.bindings?.length || !use.workflow.replay?.richTextFields?.length)
+  )
+    throw Error('WORKFLOW_NOT_APPLICABLE');
+  if (!validWorkflowApproval(use)) throw Error('WORKFLOW_NOT_APPLICABLE');
   if (action.target.frameUrl === use.workflow.recovery.targetUrl)
     action.target.frameUrl = use.targetUrl;
   for (const binding of step.bindings) {
@@ -28,22 +43,30 @@ export function reboundAction(use: WorkflowUse, index: number): WebAction {
     ) {
       action.value = binding.fieldId
         ? (() => {
-            const field = (use.approved?.fields ?? use.fields)?.find(
-              (f) => f.id === binding.fieldId,
-            );
+            const field = fields?.find((f) => f.id === binding.fieldId);
             if (
               !field ||
-              !!field.richText ||
               binding.parameter !== 'content' ||
               action.kind !== 'fill'
             )
               throw Error('WORKFLOW_NOT_APPLICABLE');
-            action.target = {
-              role: 'textbox',
-              name: field.name,
-              exact: true,
-              ...(field.frameUrl ? { frameUrl: field.frameUrl } : {}),
-            };
+            const locator = field.richText;
+            if (
+              node !== !!locator ||
+              (node &&
+                !use.workflow.replay?.richTextFields?.some(
+                  (r) => r.fieldId === field.id,
+                ))
+            )
+              throw Error('WORKFLOW_NOT_APPLICABLE');
+            action.target = locator
+              ? structuredClone(locator)
+              : {
+                  role: 'textbox',
+                  name: field.name,
+                  exact: true,
+                  ...(field.frameUrl ? { frameUrl: field.frameUrl } : {}),
+                };
             return field.value;
           })()
         : binding.parameter === 'content'
@@ -51,6 +74,13 @@ export function reboundAction(use: WorkflowUse, index: number): WebAction {
           : use.destination;
     } else throw Error('WORKFLOW_NOT_APPLICABLE');
   }
+  if (
+    node &&
+    !step.bindings.some(
+      (b) => b.fieldId && b.field === 'value' && b.parameter === 'content',
+    )
+  )
+    throw Error('WORKFLOW_NOT_APPLICABLE');
   if (
     (action.kind === 'fill' ||
       action.kind === 'select' ||
@@ -208,12 +238,15 @@ export function replayStep(
   }
   const step = use.workflow.steps[index]!;
   const evidence = requireEvidence(step.before.evidence, observation);
-  const action = reboundAction(use, index);
-  if (observation.controls && !observedControl(action, observation))
-    throw Error('WORKFLOW_CONTROL_CHANGED');
   const needsPublication =
     step.effect === 'publication' ||
     step.bindings.some((b) => ['content', 'destination'].includes(b.parameter));
+  const fields =
+    use.approved?.fields ??
+    (needsPublication ? resolveWorkflowFields(use, observation) : use.fields);
+  const action = reboundAction(use, index, fields);
+  if (observation.controls && !observedControl(action, observation))
+    throw Error('WORKFLOW_CONTROL_CHANGED');
   if (!needsPublication)
     return { ...base, decision: 'act', evidence, effect: step.effect, action };
   const upload = e.preparation?.find(
@@ -224,9 +257,7 @@ export function replayStep(
   );
   if (!upload) throw Error('WORKFLOW_NOT_APPLICABLE');
   const publication = {
-    ...((use.approved?.fields ?? use.fields)
-      ? { fields: use.approved?.fields ?? use.fields }
-      : {}),
+    ...(fields ? { fields } : {}),
     content: e.publication?.content ?? use.content,
     destination: use.destination,
     attachment: {

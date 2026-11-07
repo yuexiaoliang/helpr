@@ -2044,7 +2044,7 @@ test('服务实际review入口传递当前控件与页面绑定', async () => {
   expect(f.execution().publication!.content).toBe('修改后完整正文');
 });
 
-test('格式34备份保留原预览证明、导入待核对；格式33迁移前留副本', async () => {
+test('格式35备份保留原预览证明、导入待核对；格式33迁移前留副本', async () => {
   const f = await fixture({ richTextFrame: 'about:blank' });
   const file = path.join(f.folder, 'rich-text.helpr-backup');
   const before = f.execution().publication;
@@ -2054,7 +2054,7 @@ test('格式34备份保留原预览证明、导入待核对；格式33迁移前�
     file,
   });
   expect(JSON.parse(await readFile(file, 'utf8'))).toMatchObject({
-    dataVersion: 34,
+    dataVersion: 35,
   });
   const folder = await mkdtemp(
     path.join(tmpdir(), 'helpr-rich-review-restore-'),

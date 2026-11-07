@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { webActionSchema } from './web-action';
+import { richTextLocatorSchema, webActionSchema } from './web-action';
 import { pageSourceSchema } from './model';
 import { publicationFieldsSchema } from './publication';
 
@@ -10,13 +10,29 @@ const parameter = z.enum([
   'targetUrl',
   'attachmentUrl',
 ]);
+// 跨次输入只携带语义和新值；节点只能在本次预览观察中取得。
+export const workflowInputFieldsSchema = z
+  .array(
+    z.strictObject({
+      id: z.string().regex(/^[a-z][a-z0-9-]{0,39}$/),
+      name: z.string().trim().min(1).max(500),
+      frameUrl: z.url().optional(),
+      value: z.string().trim().min(1).max(4000),
+    }),
+  )
+  .min(1)
+  .max(12);
+export const workflowRichTextRuleSchema = z.strictObject({
+  fieldId: z.string(),
+  rule: z.literal('observed-structure-v1'),
+  frame: z.enum(['main', 'exact']),
+  frameUrl: z.url(),
+  path: richTextLocatorSchema.shape.path,
+  role: z.string().max(100),
+  name: z.string().max(1000),
+});
 export const workflowChoiceSchema = z.strictObject({
-  fields: publicationFieldsSchema
-    .refine(
-      (fields) => !fields.some((f) => f.richText),
-      'WORKFLOW_NOT_APPLICABLE',
-    )
-    .optional(),
+  fields: workflowInputFieldsSchema.optional(),
   taskId: z.string(),
   version: z.string().uuid(),
   sha256: z.string().regex(/^[a-f0-9]{64}$/),
@@ -101,6 +117,11 @@ export const workflowBodySchema = z.strictObject({
     .strictObject({
       format: z.literal(1),
       target: z.literal('explicit-current-url'),
+      richTextFields: z
+        .array(workflowRichTextRuleSchema)
+        .min(1)
+        .max(12)
+        .optional(),
       attachmentLink: z.string().min(1).max(1000),
       resultLink: z.string().min(1).max(1000),
       publishedEvidence: z.array(z.string()).min(1).max(10),
@@ -125,7 +146,7 @@ export const workflowUseSchema = z.strictObject({
   materialId: z.string().uuid(),
   targetUrl: z.url(),
   content: workflowChoiceSchema.shape.content,
-  fields: publicationFieldsSchema.optional(),
+  fields: workflowInputFieldsSchema.optional(),
   destination: workflowChoiceSchema.shape.destination,
   source: pageSourceSchema,
 });

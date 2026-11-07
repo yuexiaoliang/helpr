@@ -363,8 +363,8 @@ export async function setup(
     } else if (a.kind === 'fill') {
       if (
         separateFields &&
-        'name' in a.target &&
-        a.target.name === '文章正文'
+        ('richTextNodeId' in a.target ||
+          ('name' in a.target && a.target.name === '文章正文'))
       ) {
         p.body = a.value;
         p.bodyTyped = true;

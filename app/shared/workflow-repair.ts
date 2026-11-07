@@ -1,3 +1,5 @@
+import type { PageObservation } from './model';
+import { resolveWorkflowFields } from './workflow-rich-text';
 import type { TaskExecution, WebAction, NextStep } from './execution';
 import { currentWorkflow, reboundAction } from './workflow-replay';
 import type { WorkflowUse } from './workflow';
@@ -31,19 +33,34 @@ export function sameWorkflowOperation(
   );
 }
 
-export function withinWorkflowScope(e: TaskExecution, step: NextStep) {
+export function withinWorkflowScope(
+  e: TaskExecution,
+  step: NextStep,
+  source?: PageObservation,
+) {
   const use = currentWorkflow(e);
   if (!use) return false;
   const p = step.publication;
+  let fields = use.approved?.fields ?? e.publication?.fields ?? use.fields;
+  if (
+    p &&
+    !use.approved &&
+    !e.publication &&
+    use.workflow.replay?.richTextFields
+  ) {
+    if (!source) return false;
+    try {
+      fields = resolveWorkflowFields(use, source);
+    } catch {
+      return false;
+    }
+  }
   if (
     p &&
     (p.content !==
       (use.approved?.content ?? e.publication?.content ?? use.content) ||
       p.destination !== use.destination ||
-      JSON.stringify(p.fields) !==
-        JSON.stringify(
-          use.approved?.fields ?? e.publication?.fields ?? use.fields,
-        ) ||
+      JSON.stringify(p.fields) !== JSON.stringify(fields) ||
       !p.attachment ||
       p.attachment.materialId !== use.materialId ||
       p.attachment.targetUrl !== use.targetUrl ||

@@ -46,11 +46,11 @@ export async function verifyRichTextPublication({ client, website, data, evidenc
     else {
       const download = Buffer.from(await (await fetch(e.publication.attachment.url, { signal: AbortSignal.timeout(5000) })).arrayBuffer()); sample.downloadHex = download.toString('hex');
       sample.publicHtml = await fetch(e.publicationChecks[0].proposal.url, { signal: AbortSignal.timeout(5000) }).then(r => r.text());
-      check(item + ' 网站单次发布、完整字段、字节和不可复用历史', () => {
+      check(item + ' 网站单次发布、完整字段、字节和从实际动作归纳的规则', () => {
         assert.deepEqual(download, bytes); assert.equal(e.publicationChecks.length, 1); assert.equal(e.publicationChecks[0].download.sha256, sample.sha256);
         assert.deepEqual(e.actions.at(-1).fieldResults.map(c => c.textValue), [spec.heading, spec.body]);
         assert.equal(e.actions.filter(a => a.action.kind === 'fill').length, 2); assert.equal(e.actions.at(-1).effect, 'publication');
-        assert.equal(e.materialProcessing[0].status, 'complete'); assert(e.workflowDecisions.some(d => d.status === 'unusable')); assert(e.learnedWorkflows.every(w => !w.replay));
+        assert.equal(e.materialProcessing[0].status, 'complete'); assert(e.workflowDecisions.some(d => d.status === 'adopted')); assert(e.learnedWorkflows.every(w => w.replay?.richTextFields?.length === 1));
         const publications = website.receipts.filter(r => r.kind === 'rt-published' && r.item === item); assert.equal(publications.length, 1); assert.equal(publications[0].body, spec.body); assert.equal(publications[0].heading, spec.heading); assert.equal(publications[0].destination, '通知');
         const inputs = website.receipts.filter(r => r.kind === 'rt-input' && r.item === item); assert.equal(inputs.length, spec.body.split('\n').length * 2 - 1); assert.equal(inputs.at(-1).value, spec.body);
       });

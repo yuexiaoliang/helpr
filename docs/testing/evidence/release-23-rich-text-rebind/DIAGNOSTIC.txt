@@ -1,0 +1,44 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+stdout | tests/workspace/workflow-rich-text.test.ts > main 从实际动作归纳规则，换素材及冷开新任务只用当前节点并逐次确认
+[DEBUG-rebind-record] ask Error: WORKFLOW_SCOPE_CHANGE
+    at apply (/Users/yuexiaoliang/projects/helpr/app/records/execution.ts:2287:19)
+    at sqliteTransaction.<anonymous> (/Users/yuexiaoliang/projects/helpr/app/records/execution.ts:3103:22)
+    at sqliteTransaction (/Users/yuexiaoliang/projects/helpr/node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24)
+    at BetterSQLiteSession.transaction (file:///Users/yuexiaoliang/projects/helpr/node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/drizzle-orm/better-sqlite3/session.js:40:51)
+    at BetterSQLite3Database.transaction (file:///Users/yuexiaoliang/projects/helpr/node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/drizzle-orm/sqlite-core/db.js:301:25)
+    at ExecutionRecords.execute (/Users/yuexiaoliang/projects/helpr/app/records/execution.ts:3102:28)
+    at WorkspaceRecords.execution (/Users/yuexiaoliang/projects/helpr/app/records/workspace.ts:469:33)
+    at Object.records (/Users/yuexiaoliang/projects/helpr/tests/workspace/workflow-fixture.ts:386:30)
+    at ExecutionService.record (/Users/yuexiaoliang/projects/helpr/app/desktop/execution-service.ts:689:36)
+    at ExecutionService.run (/Users/yuexiaoliang/projects/helpr/app/desktop/execution-service.ts:2747:32)
+
+stdout | tests/workspace/workflow-rich-text.test.ts > main 从实际动作归纳规则，换素材及冷开新任务只用当前节点并逐次确认
+[DEBUG-rebind] {"phase":"running","summary":"按已保存的做法核对本次网页。","actions":[{"kind":"upload","status":"confirmed"},{"kind":"click","status":"confirmed"}],"use":true}
+
+ ❯ tests/workspace/workflow-rich-text.test.ts (5 tests | 1 failed | 4 skipped) 1740ms
+   × main 从实际动作归纳规则，换素材及冷开新任务只用当前节点并逐次确认 1739ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/workflow-rich-text.test.ts > main 从实际动作归纳规则，换素材及冷开新任务只用当前节点并逐次确认
+AssertionError: 按已保存的做法核对本次网页。: expected undefined to be 'review' // Object.is equality
+
+- Expected:
+"review"
+
++ Received:
+undefined
+
+ ❯ tests/workspace/workflow-rich-text.test.ts:83:53
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 skipped (5)
+   Start at  17:02:06
+   Duration  2.22s (tests 80%, import 15%, transform 4%)
+

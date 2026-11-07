@@ -310,3 +310,9 @@ Chromium 对空的原生文本框可能省略 AX `value`。观察层仅在同一
 事项23普通无角色/名称编辑器入口：`pnpm validate:workspace --fixture --candidate=rich-text-locator-23 --rich-text-lines=node-success`；`node-inline-success`、`node-replace`和`node-focus`分别验证内联子文档、编辑根替换和焦点转移。DOM父链形成有限结构路径，绑定原backend节点与实际frameUrl，保留网页实际AX角色/名称；完整AX正文与DOM证明仍必需。固定句柄后首输入前另取独立原节点/源值回执，后续逐段核对不变。格式33先备份32，此定位不用于发布字段绑定或跨次学习/修复。详见[方案](../docs/testing/release-23-rich-text-locator-plan.md)。
 
 事项23普通富文本发布字段已完成源码阶段：`publication.fields[].richText`只能复制当前观察locator，name用于用户确认字段含义，frameUrl与locator一致。review保存完整源控件与页面绑定，写入和提交重核同targetId/generation/URL及原节点，提交前逐字核对字段；附件预览必须在原编辑目标。格式34先备份33，改稿不能交换定位，节点字段不形成可复用流程规则。定向入口`pnpm exec vitest run tests/workspace/publication.test.ts`；本阶段签名实包发布组合尚未运行，不沿用104输入测试声明已通过。见[源码报告](../docs/testing/evidence/release-23-rich-text-publication/REPORT.md)及[阶段方案](../docs/testing/release-23-rich-text-publication-plan.md)。
+
+## 普通富文本的跨次重新绑定（23）
+
+已核实的线性附件发布流程可从真实填写源控件形成 `observed-structure-v1`：字段标识、主文档或精确子文档、有限结构路径和实际 AX 角色/名称。历史节点只作审计，模型的复用输入只能给字段语义及本次新值。程序从本次完整观察唯一匹配并取得当前 locator，随后生成本次预览；批准后原节点、target/generation、完整确认正文、每段回执及停止守卫保持，不在节点失效后改绑。`about:blank/srcdoc` 继续依赖已有原生来源及 DOM/AX 证明。结构变化、歧义、缺全文不猜测放行。
+
+格式35接续34并先备份；旧unusable候选不补造规则，备份导入仍须核对。当前仍限 `explicit-current-url` 的同站同入口线性路径，不扩为跨页流程或任意富文本编辑器。源码入口 `pnpm exec vitest run tests/workspace/workflow-rich-text.test.ts`；固定候选入口 `pnpm validate:workspace --fixture --candidate=rich-text-rebind-23 --rich-text-rebind=main`（另有 `blank`、`srcdoc`、`replace`）。阶段证据及未验项见[重新绑定报告](../docs/testing/evidence/release-23-rich-text-rebind/REPORT.md)。

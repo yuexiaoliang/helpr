@@ -2371,7 +2371,10 @@ export class ExecutionService {
           throw error;
         }
         if (!this.live(job)) return;
-        if (repair && !withinWorkflowScope(current, step)) {
+        if (
+          repair &&
+          !withinWorkflowScope(current, step, observed.observation)
+        ) {
           await this.record({
             kind: 'ask',
             workflowScopeChange: true,

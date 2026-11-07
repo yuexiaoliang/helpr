@@ -1,3 +1,7 @@
+import {
+  validWorkflowInputs,
+  resolveWorkflowFields,
+} from '../shared/workflow-rich-text';
 import { richTextControl, verifiedRichText } from '../shared/rich-text';
 import { uploadedLink } from '../shared/upload-readiness';
 import {
@@ -1882,29 +1886,13 @@ export class ExecutionRecords {
           )
             throw Error('WORKFLOW_NOT_APPLICABLE');
           if (
-            !publicationSchema.safeParse({
+            !validWorkflowInputs({
+              workflow,
+              targetUrl: c.source.url,
+              fields: c.choice.fields,
               content: c.choice.content,
               destination: c.choice.destination,
-              fields: c.choice.fields,
-            }).success ||
-            JSON.stringify(
-              c.choice.fields?.map(({ id, name, frameUrl, richText }) => ({
-                id,
-                name,
-                frameUrl,
-                richText,
-              })),
-            ) !==
-              JSON.stringify(
-                workflow.fields?.map(({ id, name, frameUrl }) => ({
-                  id,
-                  name,
-                  frameUrl,
-                  ...(frameUrl === workflow.recovery.targetUrl
-                    ? { frameUrl: c.source.url }
-                    : {}),
-                })),
-              )
+            })
           )
             throw Error('WORKFLOW_NOT_APPLICABLE');
           const use = workflowUseSchema.parse({
@@ -2283,14 +2271,18 @@ export class ExecutionRecords {
           if (
             currentWorkflow(e) &&
             c.publication &&
-            !withinWorkflowScope(e, {
-              decision: 'review',
-              summary: c.text,
-              action: null,
-              evidence: [],
-              previous: null,
-              publication: c.publication,
-            })
+            !withinWorkflowScope(
+              e,
+              {
+                decision: 'review',
+                summary: c.text,
+                action: null,
+                evidence: [],
+                previous: null,
+                publication: c.publication,
+              },
+              c.source,
+            )
           )
             throw Error('WORKFLOW_SCOPE_CHANGE');
           if (
@@ -2349,6 +2341,15 @@ export class ExecutionRecords {
             if (!c.publication) throw Error('INVALID_REQUEST');
             if (e.materials?.some((m) => m.goalVersion === e.goalVersion))
               attachmentBinding(e, c.publication);
+            const workflowUse = currentWorkflow(e);
+            if (workflowUse?.workflow.replay?.richTextFields) {
+              if (
+                !c.source ||
+                JSON.stringify(c.publication.fields) !==
+                  JSON.stringify(resolveWorkflowFields(workflowUse, c.source))
+              )
+                throw Error('WORKFLOW_NOT_APPLICABLE');
+            }
             const nodeFields = c.publication.fields?.some((f) => f.richText);
             if (
               nodeFields &&

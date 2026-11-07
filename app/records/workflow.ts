@@ -1,3 +1,8 @@
+import {
+  workflowRichTextRules,
+  validWorkflowInputs,
+  validWorkflowApproval,
+} from '../shared/workflow-rich-text';
 import { validArticleReferences } from './article';
 import { createHash, randomUUID } from 'node:crypto';
 import type { TaskExecution } from '../shared/execution';
@@ -146,7 +151,6 @@ function replayRules(
     uniqueName(result.proposal.url, last?.resultLinks ?? []);
   // 只归纳已经实际走通且绑定明确的线性路径。旧证据缺字段时不补造。
   if (
-    p.fields?.some((f) => f.richText) ||
     !attachmentLink ||
     !resultLink ||
     p.content === p.destination ||
@@ -158,13 +162,25 @@ function replayRules(
         s.action.kind === 'check' ||
         (s.action.kind === 'select' && !s.selectionResult) ||
         ((s.action.kind === 'fill' || s.action.kind === 'select') &&
-          !publicationFillBinding(p, s.action)) ||
+          !publicationFillBinding(p, s.action, {
+            ...s.source,
+            text: '',
+            controls: s.richTextSource ? [s.richTextSource] : undefined,
+          })) ||
         (s.action.target.frameUrl &&
+          !s.richTextSource &&
           new URL(s.action.target.frameUrl).origin !== p.origin),
     )
   )
     return undefined;
+  let richTextFields;
+  try {
+    richTextFields = workflowRichTextRules(p.fields, actions, a.targetUrl);
+  } catch {
+    return undefined;
+  }
   return {
+    ...(richTextFields ? { richTextFields } : {}),
     format: 1,
     target: 'explicit-current-url',
     attachmentLink,
@@ -261,8 +277,20 @@ export function learnWorkflow(
           bindings:
             a.action.kind === 'upload'
               ? [{ field: 'materialId', parameter: 'materialId' }]
-              : publicationFillBinding(p, a.action)
-                ? [publicationFillBinding(p, a.action)]
+              : publicationFillBinding(p, a.action, {
+                    ...a.source,
+                    text: '',
+                    controls: a.richTextSource ? [a.richTextSource] : undefined,
+                  })
+                ? [
+                    publicationFillBinding(p, a.action, {
+                      ...a.source,
+                      text: '',
+                      controls: a.richTextSource
+                        ? [a.richTextSource]
+                        : undefined,
+                    }),
+                  ]
                 : [],
           before: { source: a.source, evidence: a.preconditions },
           after: { source: a.resultSource, evidence: a.evidence },
@@ -369,46 +397,27 @@ export function validPublicationReferences(
     history = e.publicationHistory?.map((h) => h.check) ?? [],
     workflows = e.learnedWorkflows ?? [];
   for (const use of e.workflowUses ?? []) {
-    if (
-      [use.fields, use.approved?.fields, use.workflow.fields].some((fields) =>
-        fields?.some((f) => f.richText),
-      )
-    )
-      return false;
-    const shape = (fields: typeof use.fields, url: string) =>
-      fields?.map(({ id, name, frameUrl }) => ({
-        id,
-        name,
-        frameUrl: frameUrl ?? url,
-      }));
-    const expected = use.workflow.fields?.map((f) => ({
-      ...f,
-      ...(f.frameUrl === use.workflow.recovery.targetUrl
-        ? { frameUrl: use.targetUrl }
-        : {}),
-    }));
-    if (
-      !publicationSchema.safeParse({
-        content: use.content,
-        destination: use.destination,
-        fields: use.fields,
-      }).success ||
-      JSON.stringify(shape(use.fields, use.targetUrl)) !==
-        JSON.stringify(shape(expected, use.targetUrl)) ||
-      (use.approved &&
-        (!publicationSchema.safeParse({
-          content: use.approved.content,
-          destination: use.destination,
-          fields: use.approved.fields,
-        }).success ||
-          JSON.stringify(shape(use.approved.fields, use.targetUrl)) !==
-            JSON.stringify(shape(use.fields, use.targetUrl))))
-    )
-      return false;
+    if (!validWorkflowInputs(use) || !validWorkflowApproval(use)) return false;
   }
   for (const workflow of workflows) {
-    if (workflow.replay && workflow.fields?.some((f) => f.richText))
-      return false;
+    if (workflow.replay) {
+      try {
+        const rules = workflowRichTextRules(
+          workflow.fields,
+          e.actions.filter((a) =>
+            workflow.steps.some((s) => s.actionId === a.id),
+          ),
+          workflow.recovery.targetUrl,
+        );
+        if (
+          JSON.stringify(rules) !==
+          JSON.stringify(workflow.replay.richTextFields)
+        )
+          return false;
+      } catch {
+        return false;
+      }
+    }
     if (
       !publicationSchema.safeParse({
         content: workflow.parameters.find((p) => p.name === 'content')?.value,

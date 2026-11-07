@@ -7,11 +7,14 @@ export const richPublicationCases = {
   N: { heading: '节点替换反例 N', body: '不应写入替换节点\n第二行不发送', frame: 'main' },
   P: { heading: '页面替换反例 P', body: '不应沿用旧页预览\n第二行不发送', frame: 'about:srcdoc' },
 };
-export function richTextPublicationFixture(receipts) {
+for (const [item, source] of Object.entries({ D: 'A', E: 'B', F: 'C', G: 'A', H: 'B', I: 'C' })) {
+  richPublicationCases[item] = { ...richPublicationCases[source], heading: '本次新素材公告 ' + item, body: item + ' 新正文 <中文> & 第一行\n' + item + ' 第二行结束' };
+}
+export function richTextPublicationFixture(receipts, { rebind = false } = {}) {
   const pages = new Map(); let calls = 0, writes = 0;
   const get = item => { if (!pages.has(item)) pages.set(item, { bytes: null, draft: false, published: false, inputCount: 0 }); return pages.get(item); };
   const child = (item, root = 'div') => {
-    const markup = item === 'C' ? '<p>原有段落</p><p>原有正文</p>' : '';
+    const markup = richPublicationCases[item].frame === 'about:srcdoc' ? '<p>原有段落</p><p>原有正文</p>' : '';
     const attrs = 'contenteditable="true" style="white-space:pre-wrap;min-height:100px;border:1px solid #888"';
     const script = `const install=()=>{document.querySelector('[contenteditable]').oninput=e=>{parent.fetch('/rt-input?item=${item}',{method:'POST',body:JSON.stringify({value:e.target.innerText,html:e.target.innerHTML,inputType:e.inputType})});}};if(document.readyState==='loading')addEventListener('DOMContentLoaded',install,{once:true});else install();`;
     return `<!doctype html><html><head><meta charset="utf-8"><title>正文子文档</title><script>${script}</script></head>${root === 'body' ? `<body ${attrs}>${markup}</body>` : `<body><div ${attrs}>${markup}</div></body>`}</html>`;
@@ -29,7 +32,9 @@ export function richTextPublicationFixture(receipts) {
           const control = plan.controls?.find(c => c.richText?.locator), m = plan.materials?.[0], p = plan.publication;
           const previous = plan.previous ? { id: plan.previous.id, status: 'confirmed', evidence: ['附件编辑'] } : null;
           let step = { decision: 'act', summary: '核对富文本发布', evidence: ['附件编辑'], previous, action: null };
-          if (!m) step = { ...step, decision: 'material', material: { scope: source, rule: 'exact', name: null, extension: null, basis: `使用“${source}”` } };
+          const candidate = rebind ? plan.workflows?.[0] : undefined;
+          if (candidate) step = { ...step, decision: 'reuse', material: { scope: source, rule: 'exact', name: null, extension: null, basis: `使用“${source}”` }, workflow: { taskId: candidate.taskId, version: candidate.version, sha256: candidate.sha256, content, destination, fields: candidate.fields.map(({richText, ...field}) => ({ ...field, value: field.id === 'title' ? content.split('\n\n')[0] : content.split('\n\n')[1], ...(field.frameUrl === candidate.applicability.entryUrl ? { frameUrl: target } : {}) })) } };
+          else if (!m) step = { ...step, decision: 'material', material: { scope: source, rule: 'exact', name: null, extension: null, basis: `使用“${source}”` } };
           else if (!observed.includes('附件已上传')) step = { ...step, effect: 'upload', action: { kind: 'upload', materialId: m.id, target: { fileIndex: 0 } } };
           else {
             step.preparation = [{ kind: 'target', url: target, materialId: null, evidence: ['附件编辑'] }, { kind: 'upload', url: base + '/rt-file?item=' + item, materialId: m.id, evidence: ['附件已上传'] }];
@@ -50,7 +55,7 @@ export function richTextPublicationFixture(receipts) {
               }
             }
           }
-          receipts.push({ kind: 'rt-planning', item, decision: step.decision, action: step.action, control, at: Date.now() });
+          receipts.push({ kind: 'rt-planning', item, decision: step.decision, action: step.action, control, workflows: plan.workflows?.map(w => w.version), at: Date.now() });
           const chunk = (delta, finish_reason) => 'data: ' + JSON.stringify({ choices: [{ index: 0, delta, finish_reason }], ...(finish_reason === 'stop' ? { usage: { prompt_tokens: 100, completion_tokens: 100, total_tokens: 200 } } : {}) }) + '\n\n';
           res.writeHead(200, { 'Content-Type': 'text/event-stream' }); res.end(chunk({ content: JSON.stringify(step) }, null) + chunk({}, 'stop') + 'data: [DONE]\n\n');
         } catch (error) { receipts.push({ kind: 'fixture-error', error: error.message }); res.writeHead(400); res.end(); }
@@ -86,7 +91,7 @@ export function richTextPublicationFixture(receipts) {
       res.setHeader('Content-Type', 'text/html; charset=utf-8'); res.end(`<link rel="canonical" href="/rt-result${query}"><article><h1>${escape(p.heading)}</h1><section>${escape(p.body)}</section><p>${escape(p.destination)}</p><a href="/rt-file${query}">下载附件</a><a href="/rt-edit${query}">编辑原条目</a></article>`); receipts.push({ kind: 'rt-public-read', item, at: Date.now() }); return true;
     }
     if (url.pathname === '/rt-edit') {
-      const inline = spec.frame !== 'main', document = child(item, item === 'C' ? 'body' : 'div');
+      const inline = spec.frame !== 'main', document = child(item, spec.frame === 'about:srcdoc' ? 'body' : 'div');
       const editor = inline ? `<iframe title="正文编辑器" ${spec.frame === 'about:blank' ? 'src="about:blank"' : 'srcdoc="' + escape(document) + '"'} style="width:600px;height:180px"></iframe>` : '<div contenteditable="true" style="white-space:pre-wrap;min-height:100px;border:1px solid #888"></div>';
       const setup = spec.frame === 'about:blank' ? `const child=document.querySelector('iframe').contentDocument;child.documentElement.innerHTML=${JSON.stringify(document).replaceAll('<', '\\u003c')};const script=child.createElement('script');script.textContent=child.querySelector('script').textContent;child.head.append(script);` : '';
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
