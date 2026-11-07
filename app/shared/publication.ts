@@ -92,14 +92,16 @@ export function verifyPublicationFields(
 /** 字段和定位一起确认；相同文字不能因此获得写入另一个字段的权限。 */
 export function publicationFillBinding(p: Publication, action: WebAction) {
   if (action.kind !== 'fill' && action.kind !== 'select') return undefined;
+  const target = action.target;
+  if ('richTextNodeId' in target) return undefined;
   if (action.kind === 'fill' && p.fields) {
     const field = p.fields.find(
       (f) =>
         f.value === action.value &&
-        f.name === action.target.name &&
-        action.target.role === 'textbox' &&
-        action.target.exact &&
-        !action.target.within &&
+        f.name === target.name &&
+        target.role === 'textbox' &&
+        target.exact &&
+        !target.within &&
         (f.frameUrl ?? p.attachment?.targetUrl) ===
           (action.target.frameUrl ?? p.attachment?.targetUrl),
     );

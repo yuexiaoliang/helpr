@@ -46,3 +46,11 @@ test('执行前观察遇代次失效时记录并重取两份连续稳定样本�
 test('执行前准备不吞掉其它观察错误',async()=>{
  const ready=richTextReadiness({request:async()=>{throw Error('CONTROL_DISCONNECTED');}},'task',{readiness:[]});await assert.rejects(ready(),/CONTROL_DISCONNECTED/);
 });
+test('无名称夹具不注入角色或名称，虚构规划原样消费观察定位',async()=>{
+ const site=await fixture({richLines:true,richUnnamed:true});
+ try{
+  const html=await fetch(site.base+'/rich-edit?item=C').then(r=>r.text());assert(!html.includes('role="textbox"'));assert(!html.includes('aria-label="正文"'));assert(html.includes('<p>原有段落</p><p>原有正文</p>'));
+  const locator={richTextNodeId:43,path:'html:nth-child(1) > body:nth-child(2) > div:nth-child(2)',frameUrl:site.base+'/rich-edit?item=C'};
+  const response=await fetch(site.base+'/v1/chat/completions',{method:'POST',body:JSON.stringify({messages:[{content:JSON.stringify({controls:[{role:'generic',name:'',frameUrl:locator.frameUrl,richText:{locator},textValue:''}]})}]})});assert.equal(response.status,200);const first=JSON.parse((await response.text()).split('\n')[0].slice(6));assert.deepEqual(JSON.parse(first.choices[0].delta.content).action.target,locator);
+ }finally{await site.close();}
+});

@@ -5,8 +5,8 @@ export async function verifyRichTextLines({client,website,data,evidence,command,
  const detail=evidence.richTextLines={profile:data,realModelCalls:0,remoteWrites:0,mode,cases:[]};
  const state=await client.request({kind:'snapshot'});
  await client.request(command('model-save',{protocol:'chat-completions',expectedVersion:state.modelSettings?.version??0,endpoint:website.base+'/v1',model:'fixture',apiKey:'local-fixture-not-a-secret'}));
- const frame=/^(frame|inline)-/.test(mode), success=['success','frame-success','inline-success'].includes(mode);
- const items=success?(frame?['E','C']:['E','A','C']):[{rewrite:'B',focus:'F',stop:'S','frame-focus':'F','frame-replace':'R','inline-focus':'F','inline-replace':'R'}[mode]];
+ const frame=/^(frame|inline|node-inline)-/.test(mode), success=['success','frame-success','inline-success','node-success','node-inline-success'].includes(mode);
+ const items=success?(frame?['E','C']:['E','A','C']):[{rewrite:'B',focus:'F',stop:'S','frame-focus':'F','frame-replace':'R','inline-focus':'F','inline-replace':'R','node-replace':'R','node-focus':'F'}[mode]];
  for(const item of items) {
    const expected=richLineValues[item],entry=website.base+'/rich-edit?item='+item;
    const taskId=(await client.request(command('create',{goal:`在 ${entry} 将正文整体替换为以下纯文本：${expected}`}))).taskId;
@@ -35,8 +35,8 @@ export async function verifyRichTextLines({client,website,data,evidence,command,
      } else {
        assert.equal(a.status,'unknown');assert.equal(a.richTextResult,undefined);
        if(mode==='rewrite'){assert.equal(input.length,1);assert.equal(input[0].actual,'网站改写正文');}
-       if(mode==='focus'||mode==='frame-focus'||mode==='inline-focus'){assert.equal(input.length,1);assert.equal(input[0].actual,expected.split('\n')[0]);assert.equal(input[0].active,frame?'外层字段':'其它字段');}
-       if(mode==='frame-replace'||mode==='inline-replace'){assert.equal(input.length,1);assert.equal(input[0].actual,expected.split('\n')[0]);}
+       if(mode==='focus'||mode==='frame-focus'||mode==='inline-focus'||mode==='node-focus'){assert.equal(input.length,1);assert.equal(input[0].actual,expected.split('\n')[0]);assert.equal(input[0].active,frame?'外层字段':'其它字段');}
+       if(mode==='frame-replace'||mode==='inline-replace'||mode==='node-replace'){assert.equal(input.length,1);assert.equal(input[0].actual,expected.split('\n')[0]);}
        if(mode==='stop'){assert.equal(e.intent,'stopped');assert.equal(input.length,sample.receiptsAtStop);assert.notEqual(input.at(-1).actual,expected);}
      }
    });

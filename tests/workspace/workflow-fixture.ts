@@ -361,7 +361,11 @@ export async function setup(
       expect(result).toBeTruthy();
       p.uploaded = true;
     } else if (a.kind === 'fill') {
-      if (separateFields && a.target.name === '文章正文') {
+      if (
+        separateFields &&
+        'name' in a.target &&
+        a.target.name === '文章正文'
+      ) {
         p.body = a.value;
         p.bodyTyped = true;
       } else {

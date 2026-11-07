@@ -11,6 +11,7 @@ export function reboundAction(use: WorkflowUse, index: number): WebAction {
   const step = use.workflow.steps[index];
   if (!step) throw Error('WORKFLOW_NOT_APPLICABLE');
   const action = structuredClone(step.action);
+  if ('richTextNodeId' in action.target) throw Error('WORKFLOW_NOT_APPLICABLE');
   if (action.target.frameUrl === use.workflow.recovery.targetUrl)
     action.target.frameUrl = use.targetUrl;
   for (const binding of step.bindings) {
@@ -66,11 +67,13 @@ export function observedControl(action: WebAction, source: PageObservation) {
     );
   if (!source.controls) return false;
   try {
-    richTextControl(action, source);
+    const rich = richTextControl(action, source);
+    if ('richTextNodeId' in action.target) return !!rich;
   } catch {
     return false;
   }
   const target = action.target;
+  if ('richTextNodeId' in target) return false;
   const matches = source.controls.filter(
     (c) =>
       c.role === target.role &&

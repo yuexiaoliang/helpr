@@ -1,0 +1,368 @@
+{
+  "checkedAt": "2026-11-07T08:12:55.188834+00:00",
+  "build": 104,
+  "sourceCommit": "c6f6519794a6ac5477d4c45c621498e07d7d4fa7",
+  "sourceDirty": true,
+  "rawRun": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/run-1794039159853",
+  "profile": "/private/tmp/helpr-workspace-validation-501/run-d1w6dS",
+  "dataFormat": 33,
+  "mode": "node-inline-success",
+  "quickCheck": "ok",
+  "sqliteSha256": "7c8fa3562964f57f0a78b9b4b694b473799c93488f0596aa1b8103b7bebe87ce",
+  "cases": [
+    {
+      "item": "E",
+      "taskId": "59193074-bb56-4c3a-b58b-e2bbbc37cd26",
+      "phase": "complete",
+      "action": {
+        "coordination": {
+          "session": {
+            "id": "helpr-fixture-web",
+            "epoch": "70cd2f3b-7f38-4cbc-b7e4-5acfa1443fdf:0",
+            "origin": "http://127.0.0.1:49154"
+          },
+          "claimId": "dfeb2bd3-1804-4a1a-8c01-0e49110e73ac"
+        },
+        "observedLinks": [],
+        "resultLinks": [],
+        "richTextSource": {
+          "role": "generic",
+          "name": "",
+          "frameUrl": "about:blank",
+          "disabled": false,
+          "textValue": "",
+          "readOnly": false,
+          "richText": {
+            "rule": "contenteditable-ax-v1",
+            "backendNodeId": 24,
+            "valueSource": "empty-dom",
+            "locator": {
+              "richTextNodeId": 24,
+              "path": "html:nth-child(1) > body:nth-child(2) > div:nth-child(1)",
+              "frameUrl": "about:blank"
+            }
+          }
+        },
+        "richTextResult": {
+          "role": "generic",
+          "name": "",
+          "frameUrl": "about:blank",
+          "disabled": false,
+          "textValue": "第一行：中文 <标题> & 正文\n第二行：保留换行与标点。",
+          "readOnly": false,
+          "richText": {
+            "rule": "contenteditable-ax-v1",
+            "backendNodeId": 24,
+            "valueSource": "ax",
+            "locator": {
+              "richTextNodeId": 24,
+              "path": "html:nth-child(1) > body:nth-child(2) > div:nth-child(1)",
+              "frameUrl": "about:blank"
+            }
+          }
+        },
+        "id": "1b4e6828-eab4-4645-a682-6ee197bdebe6",
+        "runId": "62984ba9-38f6-4aec-acbe-79265e241620",
+        "goalVersion": 1,
+        "status": "confirmed",
+        "summary": "填写纯文本正文",
+        "action": {
+          "kind": "fill",
+          "target": {
+            "richTextNodeId": 24,
+            "path": "html:nth-child(1) > body:nth-child(2) > div:nth-child(1)",
+            "frameUrl": "about:blank"
+          },
+          "value": "第一行：中文 <标题> & 正文\n第二行：保留换行与标点。"
+        },
+        "effect": "interaction",
+        "preconditions": [
+          "正文"
+        ],
+        "source": {
+          "url": "http://127.0.0.1:49154/rich-edit?item=E",
+          "title": "内联子frame编辑",
+          "fingerprint": "ef61206c1983582928809a5175331664bce2208802036f31aee785928ce7f9f9",
+          "generation": 2,
+          "observedAt": 1794039162773,
+          "truncated": false
+        },
+        "observedUrls": [
+          "http://127.0.0.1:49154/rich-edit?item=E"
+        ],
+        "resultSource": {
+          "url": "http://127.0.0.1:49154/rich-edit?item=E",
+          "title": "内联子frame编辑",
+          "fingerprint": "d7803b6b5026de780305c7f24373d6b1e2cf1ab80669a754553e36c0d4edf8f6",
+          "generation": 2,
+          "observedAt": 1794039163335,
+          "truncated": false
+        },
+        "binding": {
+          "targetId": "990695817D837FD5747E8A4F5C66A648",
+          "generation": 2
+        },
+        "evidence": [
+          "正文"
+        ],
+        "returned": true,
+        "dispatchState": "possible"
+      },
+      "receipts": [
+        {
+          "kind": "rich-input",
+          "item": "E",
+          "sent": "第一行：中文 <标题> & 正文",
+          "actual": "第一行：中文 <标题> & 正文",
+          "html": "第一行：中文 &lt;标题&gt; &amp; 正文",
+          "inputType": "insertText",
+          "active": "正文",
+          "at": 1794039163281
+        },
+        {
+          "kind": "rich-input",
+          "item": "E",
+          "sent": "第一行：中文 <标题> & 正文\n\n",
+          "actual": "第一行：中文 <标题> & 正文\n\n",
+          "html": "第一行：中文 &lt;标题&gt; &amp; 正文\n\n",
+          "inputType": "insertLineBreak",
+          "active": "正文",
+          "at": 1794039163296
+        },
+        {
+          "kind": "rich-input",
+          "item": "E",
+          "sent": "第一行：中文 <标题> & 正文\n第二行：保留换行与标点。",
+          "actual": "第一行：中文 <标题> & 正文\n第二行：保留换行与标点。",
+          "html": "第一行：中文 &lt;标题&gt; &amp; 正文\n第二行：保留换行与标点。",
+          "inputType": "insertText",
+          "active": "正文",
+          "at": 1794039163303
+        }
+      ]
+    },
+    {
+      "item": "C",
+      "taskId": "be501c8d-5d2c-472b-89a7-7abcc7dfb954",
+      "phase": "complete",
+      "action": {
+        "coordination": {
+          "session": {
+            "id": "helpr-fixture-web",
+            "epoch": "70cd2f3b-7f38-4cbc-b7e4-5acfa1443fdf:0",
+            "origin": "http://127.0.0.1:49154"
+          },
+          "claimId": "526b5c51-5254-4ee9-b97a-027bc7fcbd30"
+        },
+        "observedLinks": [],
+        "resultLinks": [],
+        "richTextSource": {
+          "role": "generic",
+          "name": "",
+          "frameUrl": "about:srcdoc",
+          "disabled": false,
+          "textValue": "原有段落\n\n原有正文",
+          "readOnly": false,
+          "richText": {
+            "rule": "contenteditable-ax-v1",
+            "backendNodeId": 21,
+            "valueSource": "ax",
+            "locator": {
+              "richTextNodeId": 21,
+              "path": "html:nth-child(1) > body:nth-child(2)",
+              "frameUrl": "about:srcdoc"
+            }
+          }
+        },
+        "richTextResult": {
+          "role": "generic",
+          "name": "",
+          "frameUrl": "about:srcdoc",
+          "disabled": false,
+          "textValue": "已有段落替换\n第二行 <中文> & 文本\n第三行结束",
+          "readOnly": false,
+          "richText": {
+            "rule": "contenteditable-ax-v1",
+            "backendNodeId": 21,
+            "valueSource": "ax",
+            "locator": {
+              "richTextNodeId": 21,
+              "path": "html:nth-child(1) > body:nth-child(2)",
+              "frameUrl": "about:srcdoc"
+            }
+          }
+        },
+        "id": "c1e4bc53-e227-4c65-bbf0-b5e2407e4e69",
+        "runId": "7e1f9018-1cff-4d7c-9d5d-7ec8428e5e64",
+        "goalVersion": 1,
+        "status": "confirmed",
+        "summary": "填写纯文本正文",
+        "action": {
+          "kind": "fill",
+          "target": {
+            "richTextNodeId": 21,
+            "path": "html:nth-child(1) > body:nth-child(2)",
+            "frameUrl": "about:srcdoc"
+          },
+          "value": "已有段落替换\n第二行 <中文> & 文本\n第三行结束"
+        },
+        "effect": "interaction",
+        "preconditions": [
+          "正文"
+        ],
+        "source": {
+          "url": "http://127.0.0.1:49154/rich-edit?item=C",
+          "title": "内联子frame编辑",
+          "fingerprint": "55b62c2ce823a8b909f347c97fb0ba70e393822f394903ede98f8026d1ccb7d8",
+          "generation": 2,
+          "observedAt": 1794039164679,
+          "truncated": false
+        },
+        "observedUrls": [
+          "http://127.0.0.1:49154/rich-edit?item=C"
+        ],
+        "resultSource": {
+          "url": "http://127.0.0.1:49154/rich-edit?item=C",
+          "title": "内联子frame编辑",
+          "fingerprint": "b43e987572add8d3c20d805dd44e678efad1086eb0dbd137437d9a206e329772",
+          "generation": 2,
+          "observedAt": 1794039165229,
+          "truncated": false
+        },
+        "binding": {
+          "targetId": "8848278A95C565E64F5392E8E9187EED",
+          "generation": 2
+        },
+        "evidence": [
+          "正文"
+        ],
+        "returned": true,
+        "dispatchState": "possible"
+      },
+      "receipts": [
+        {
+          "kind": "rich-input",
+          "item": "C",
+          "sent": "已有段落替换",
+          "actual": "已有段落替换",
+          "html": "<p>已有段落替换</p>",
+          "inputType": "insertText",
+          "active": "正文",
+          "at": 1794039165151
+        },
+        {
+          "kind": "rich-input",
+          "item": "C",
+          "sent": "已有段落替换\n\n",
+          "actual": "已有段落替换\n\n",
+          "html": "<p>已有段落替换\n\n</p>",
+          "inputType": "insertLineBreak",
+          "active": "正文",
+          "at": 1794039165163
+        },
+        {
+          "kind": "rich-input",
+          "item": "C",
+          "sent": "已有段落替换\n第二行 <中文> & 文本",
+          "actual": "已有段落替换\n第二行 <中文> & 文本",
+          "html": "<p>已有段落替换\n第二行 &lt;中文&gt; &amp; 文本</p>",
+          "inputType": "insertText",
+          "active": "正文",
+          "at": 1794039165171
+        },
+        {
+          "kind": "rich-input",
+          "item": "C",
+          "sent": "已有段落替换\n第二行 <中文> & 文本\n\n",
+          "actual": "已有段落替换\n第二行 <中文> & 文本\n\n",
+          "html": "<p>已有段落替换\n第二行 &lt;中文&gt; &amp; 文本\n\n</p>",
+          "inputType": "insertLineBreak",
+          "active": "正文",
+          "at": 1794039165185
+        },
+        {
+          "kind": "rich-input",
+          "item": "C",
+          "sent": "已有段落替换\n第二行 <中文> & 文本\n第三行结束",
+          "actual": "已有段落替换\n第二行 <中文> & 文本\n第三行结束",
+          "html": "<p>已有段落替换\n第二行 &lt;中文&gt; &amp; 文本\n第三行结束</p>",
+          "inputType": "insertText",
+          "active": "正文",
+          "at": 1794039165193
+        }
+      ]
+    }
+  ],
+  "pids": [
+    20114,
+    20116,
+    20117,
+    20118,
+    20119,
+    20120,
+    20125,
+    20126,
+    20127,
+    20128,
+    20129,
+    20131,
+    20132,
+    20141,
+    20142,
+    20156,
+    20157,
+    20158,
+    20159,
+    20160,
+    20161,
+    20166,
+    20167,
+    20168,
+    20169,
+    20170
+  ],
+  "groups": [
+    20114,
+    20118,
+    20120,
+    20156,
+    20159,
+    20161
+  ],
+  "remainingPids": [],
+  "remainingGroups": [],
+  "leaseReleased": true,
+  "starts": [
+    {
+      "kind": "startup",
+      "number": 284,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:49154",
+        "persistent": false
+      },
+      "ms": 1914,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    },
+    {
+      "kind": "startup",
+      "number": 285,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:49154",
+        "persistent": false
+      },
+      "ms": 2555,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    }
+  ],
+  "modelPlans": 4,
+  "inputs": 8,
+  "milliseconds": 9556
+}

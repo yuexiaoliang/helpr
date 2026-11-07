@@ -8,7 +8,7 @@ import type {
 import type { ExecutionProtocol } from '../../app/desktop/execution-protocol';
 const mocks = vi.hoisted(() => ({ fork: vi.fn() }));
 vi.mock('electron', () => ({ utilityProcess: { fork: mocks.fork } }));
-function fixture(subframe: boolean | string = false) {
+function fixture(subframe: boolean | string = false, structural = false) {
   const worker = Object.assign(new EventEmitter(), {
     postMessage: vi.fn(),
     kill: vi.fn(),
@@ -41,6 +41,15 @@ function fixture(subframe: boolean | string = false) {
             rule: 'contenteditable-ax-v1',
             backendNodeId: 11,
             valueSource: 'ax',
+            ...(structural
+              ? {
+                  locator: {
+                    richTextNodeId: 11,
+                    path: 'html:nth-child(1) > body:nth-child(2) > div:nth-child(1)',
+                    frameUrl: 'https://example.test/',
+                  },
+                }
+              : {}),
           },
         },
       ],
@@ -56,19 +65,25 @@ function fixture(subframe: boolean | string = false) {
     source: observed('旧正文').observation,
     action: {
       kind: 'fill',
-      target: {
-        role: 'textbox',
-        name: '正文',
-        exact: true,
-        ...(subframe
-          ? {
-              frameUrl:
-                typeof subframe === 'string'
-                  ? subframe
-                  : 'https://example.test/body',
-            }
-          : {}),
-      },
+      target: structural
+        ? {
+            richTextNodeId: 11,
+            path: 'html:nth-child(1) > body:nth-child(2) > div:nth-child(1)',
+            frameUrl: 'https://example.test/',
+          }
+        : {
+            role: 'textbox',
+            name: '正文',
+            exact: true,
+            ...(subframe
+              ? {
+                  frameUrl:
+                    typeof subframe === 'string'
+                      ? subframe
+                      : 'https://example.test/body',
+                }
+              : {}),
+          },
       value: '甲\n乙',
     },
     signal: abort.signal,
@@ -171,5 +186,42 @@ test.each(['stop', 'takeover'])(
     release(f.observed('甲'));
     expect(await f.outcome).toBe('unknown');
     expect(f.worker.postMessage).not.toHaveBeenCalled();
+  },
+);
+
+test.each(['success', 'node', 'early-input', 'source-value', 'stop'])(
+  '结构定位的输入前回执：%s',
+  async (mode) => {
+    const f = fixture(false, true);
+    await ready(f);
+    if (mode === 'stop') f.revoke();
+    const original = f.observed(
+      mode === 'source-value' ? '不同源正文' : '旧正文',
+    );
+    if (mode === 'node')
+      original.observation.controls![0]!.richText!.backendNodeId++;
+    f.observe.mockResolvedValue(original);
+    f.worker.emit('message', {
+      richTextCheck: {
+        id: 1,
+        expected: mode === 'early-input' ? '甲' : '旧正文',
+      },
+    });
+    if (mode !== 'success') {
+      expect(await f.outcome).toBe('unknown');
+      expect(f.worker.postMessage).not.toHaveBeenCalled();
+      return;
+    }
+    await expect.poll(() => f.worker.postMessage.mock.calls.length).toBe(1);
+    for (const [id, expected] of [
+      [2, '甲'],
+      [3, '甲\n乙'],
+    ] as const) {
+      f.observe.mockResolvedValue(f.observed(expected));
+      f.worker.emit('message', { richTextCheck: { id, expected } });
+      await expect.poll(() => f.worker.postMessage.mock.calls.length).toBe(id);
+    }
+    f.worker.emit('message', { done: true });
+    expect(await f.outcome).toBe('done');
   },
 );

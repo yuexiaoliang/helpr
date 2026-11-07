@@ -143,6 +143,7 @@ test.each([
   if (variant === 'duplicate')
     source.controls!.push({ ...source.controls![0]! });
   if (variant === 'subframe') a.target.frameUrl = 'https://example.com/frame';
+  if ('richTextNodeId' in a.target) throw Error('ROLE_FIXTURE_REQUIRED');
   if (variant === 'within')
     a.target.within = { role: 'row', name: '行', exact: true };
   if (variant === 'inexact') a.target.exact = false;
@@ -485,3 +486,60 @@ test.each(['about:blank', 'about:srcdoc'])(
     expect(actionFactSchema.safeParse(saved).success).toBe(true);
   },
 );
+
+test('结构定位随格式33保存、冷开和备份；32迁移先留副本', async () => {
+  const f = recordsFixture();
+  const source = f.reserve.source,
+    control = source.controls![0]!;
+  const locator = {
+    richTextNodeId: control.richText!.backendNodeId,
+    path: 'html:nth-child(1) > body:nth-child(2) > div:nth-child(1)',
+    frameUrl: url,
+  };
+  control.role = 'generic';
+  control.name = '';
+  control.richText!.locator = locator;
+  const proposal = { kind: 'fill' as const, target: locator, value: '新正文' };
+  f.post({ ...f.reserve, action: proposal });
+  f.post({ kind: 'dispatch', runId: 'rich', id: 'fill' });
+  const result = structuredClone(source);
+  result.controls![0]!.textValue = proposal.value;
+  result.controls![0]!.richText!.valueSource = 'ax';
+  f.post({
+    kind: 'resolve',
+    runId: 'rich',
+    id: 'fill',
+    source: result,
+    binding: f.binding,
+    evidence: ['正文'],
+  });
+  expect(f.cold().actions[0]!.action).toEqual(proposal);
+  const backup = path.join(f.dir, 'locator.helpr-backup');
+  const saved = await f
+    .records()
+    .backup({ kind: 'create', requestId: randomUUID(), file: backup });
+  const g = recordsFixture();
+  await g.records().backup({
+    kind: 'restore',
+    requestId: randomUUID(),
+    file: backup,
+    checksum: saved.archive.checksum,
+  });
+  expect(
+    g
+      .records()
+      .snapshot()
+      .tasks.find((t) => t.id === f.taskId)!.execution,
+  ).toMatchObject({ restoreReview: 'required', actions: f.read().actions });
+  // 使用另一份旧角色记录模拟32输入，不能把33新定位冒充旧数据。
+  const old = recordsFixture();
+  const db = new Database(path.join(old.dir, 'workspace.sqlite'));
+  db.prepare('UPDATE workspace SET schema_version=32').run();
+  db.close();
+  old.cold();
+  expect(
+    readdirSync(old.dir).some((n) =>
+      n.startsWith('workspace-before-rich-text-locator-23-'),
+    ),
+  ).toBe(true);
+});

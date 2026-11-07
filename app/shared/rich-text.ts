@@ -2,7 +2,7 @@ import type { PageObservation } from './model';
 import type { WebAction } from './web-action';
 import { isInlineFrameURL } from './url-policy';
 
-/** 富文本仅支持显式命名且已有 DOM 证明的同站 textbox，纯文本整体替换；不承诺保留格式。 */
+/** 富文本仅支持已有 DOM/AX 证明的普通 contenteditable，纯文本整体替换；不承诺保留格式。 */
 export function richTextControl(
   action: WebAction,
   source: PageObservation,
@@ -13,21 +13,29 @@ export function richTextControl(
     return undefined;
   }
   const { target } = action;
+  const structural = 'richTextNodeId' in target;
   const matches =
     source.controls?.filter(
       (c) =>
-        c.role === target.role &&
-        c.name === target.name &&
+        (structural
+          ? c.richText?.backendNodeId === target.richTextNodeId &&
+            c.richText.locator?.richTextNodeId === target.richTextNodeId &&
+            c.richText.locator.path === target.path &&
+            c.richText.locator.frameUrl === target.frameUrl
+          : c.role === target.role && c.name === target.name) &&
         c.frameUrl === (target.frameUrl ?? source.url),
     ) ?? [];
-  if (!required && !matches.some((c) => c.richText || c.richTextUnavailable))
+  if (
+    !required &&
+    !structural &&
+    !matches.some((c) => c.richText || c.richTextUnavailable)
+  )
     return undefined;
   const control = matches[0];
   if (
     source.truncated ||
-    target.role !== 'textbox' ||
-    !target.exact ||
-    target.within ||
+    (!structural &&
+      (target.role !== 'textbox' || !target.exact || target.within)) ||
     (target.frameUrl &&
       !isInlineFrameURL(target.frameUrl) &&
       new URL(target.frameUrl).origin !== new URL(source.url).origin) ||
@@ -62,7 +70,8 @@ export function validRichTextFact(a: {
   richTextResult?: NonNullable<PageObservation['controls']>[number];
   resultSource?: Omit<PageObservation, 'text'>;
 }) {
-  if (!a.richTextSource) return !a.richTextResult;
+  if (!a.richTextSource)
+    return !a.richTextResult && !('richTextNodeId' in a.action.target);
   try {
     richTextControl(
       a.action,

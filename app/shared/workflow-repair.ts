@@ -22,6 +22,7 @@ export function sameWorkflowOperation(
     target: null,
   });
   return (
+    !('richTextNodeId' in action.target) &&
     effect === use.workflow.steps[index]?.effect &&
     JSON.stringify(withoutTarget(action)) ===
       JSON.stringify(withoutTarget(expected)) &&

@@ -8,6 +8,13 @@ const snapshotSchema = z.object({
       nodes: z.object({
         backendNodeId: z.array(z.number().int()),
         parentIndex: z.array(z.number().int()),
+        nodeType: z.array(z.number().int()).optional(),
+        shadowRootType: z
+          .object({
+            index: z.array(z.number().int()),
+            value: z.array(z.number().int()),
+          })
+          .optional(),
         nodeName: z.array(z.number().int()),
         nodeValue: z.array(z.number().int()),
         attributes: z.array(z.array(z.number().int())),
@@ -23,7 +30,7 @@ const snapshotSchema = z.object({
 export function richTextObservation(snapshot: unknown, url: string) {
   const result = new Map<
     number,
-    { empty: boolean; text: string; supported: boolean }
+    { empty: boolean; text: string; supported: boolean; path?: string }
   >();
   const parsed = snapshotSchema.safeParse(snapshot);
   if (!parsed.success) return result;
@@ -94,7 +101,16 @@ export function richTextObservation(snapshot: unknown, url: string) {
       ancestor >= 0;
       ancestor = n.parentIndex[ancestor]!
     ) {
-      if (attributes[ancestor]?.has('contenteditable')) valid = false;
+      const attrs = attributes[ancestor];
+      if (
+        !attrs ||
+        attrs.has('contenteditable') ||
+        attrs.has('hidden') ||
+        attrs.get('aria-hidden') === 'true' ||
+        attrs.get('aria-disabled') === 'true' ||
+        attrs.get('aria-readonly') === 'true'
+      )
+        valid = false;
     }
     const visit = (index: number) => {
       const attrs = attributes[index],
@@ -137,7 +153,39 @@ export function richTextObservation(snapshot: unknown, url: string) {
       while (children[index]!.length === 1) index = children[index]![0]!;
       if (children[index]!.length !== 0) valid = false;
     }
-    result.set(id, { empty, text, supported: valid });
+    // 只沿真实元素父链形成位置；shadow/document-fragment不转换成普通CSS路径。
+    const parts: string[] = [];
+    for (let index = root; index > 0; index = n.parentIndex[index]!) {
+      const name = strings[n.nodeName[index]!] ?? '';
+      if (
+        n.nodeType?.length !== size ||
+        n.nodeType[index] !== 1 ||
+        n.shadowRootType?.index.includes(index) ||
+        !/^[A-Z][A-Z0-9-]*$/.test(name) ||
+        parts.length >= 33
+      ) {
+        parts.length = 0;
+        break;
+      }
+      const siblings = children[n.parentIndex[index]!]!.filter(
+        (i) => n.nodeType![i] === 1,
+      );
+      parts.unshift(
+        name.toLowerCase() +
+          ':nth-child(' +
+          (siblings.indexOf(index) + 1) +
+          ')',
+      );
+    }
+    const path = parts.join(' > ');
+    result.set(id, {
+      empty,
+      text,
+      supported: valid,
+      ...(path.startsWith('html:nth-child(1) > ') && path.length <= 2000
+        ? { path }
+        : {}),
+    });
   }
   return result;
 }

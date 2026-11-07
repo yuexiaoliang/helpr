@@ -195,3 +195,34 @@ test('子文档仍保留activeElement但实际焦点已在外层时不继续输�
     focus.mockRestore();
   }
 });
+
+test.each(['reject', 'replace', 'success'])(
+  '首个输入前固定句柄并等待原节点核对：%s',
+  async (mode) => {
+    const f = fixture();
+    let checks = 0;
+    const result = fillRichText(
+      f.page,
+      f.locator,
+      '新正文',
+      (expected) => {
+        checks++;
+        if (checks === 1) {
+          expect(expected).toBe('');
+          expect(f.writes).toEqual([]);
+          if (mode === 'reject') throw Error('ORIGINAL_NODE_CHANGED');
+          if (mode === 'replace') f.replace();
+        }
+        return Promise.resolve();
+      },
+      '',
+    );
+    if (mode === 'success') {
+      await result;
+      expect(f.writes).toEqual(['fill:新正文']);
+    } else {
+      await expect(result).rejects.toThrow();
+      expect(f.writes).toEqual([]);
+    }
+  },
+);

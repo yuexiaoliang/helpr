@@ -21,6 +21,21 @@ export const elementLocatorSchema = roleLocatorSchema.extend({
   within: roleLocatorSchema.optional(),
   frameUrl: z.url().optional(),
 });
+// 仅由完整DOM快照形成的结构路径；不接受任意CSS、XPath或网页脚本。
+export const richTextLocatorSchema = z.strictObject({
+  richTextNodeId: z.number().int().positive(),
+  path: z
+    .string()
+    .max(2000)
+    .regex(
+      /^html:nth-child\(1\)(?: > [a-z][a-z0-9-]*:nth-child\([1-9][0-9]*\)){1,32}$/,
+    ),
+  frameUrl: z.url(),
+});
+export const fillLocatorSchema = z.union([
+  elementLocatorSchema,
+  richTextLocatorSchema,
+]);
 export const webActionSchema = z.discriminatedUnion('kind', [
   z.strictObject({
     kind: z.literal('upload'),
@@ -33,7 +48,7 @@ export const webActionSchema = z.discriminatedUnion('kind', [
   z.strictObject({ kind: z.literal('click'), target: elementLocatorSchema }),
   z.strictObject({
     kind: z.literal('fill'),
-    target: elementLocatorSchema,
+    target: fillLocatorSchema,
     value: z.string().max(20000),
   }),
   z.strictObject({

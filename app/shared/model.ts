@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { richTextLocatorSchema } from './web-action';
 import { websiteURL } from './url-policy';
 
 export const modelErrorSchema = z.enum([
@@ -72,6 +73,7 @@ export const observedControlSchema = z.strictObject({
       rule: z.literal('contenteditable-ax-v1'),
       backendNodeId: z.number().int().positive(),
       valueSource: z.enum(['ax', 'empty-dom']),
+      locator: richTextLocatorSchema.optional(),
     })
     .optional(),
   emptyValue: z

@@ -7,13 +7,10 @@ import {
 } from 'playwright-core';
 import { z } from 'zod';
 import { createHash } from 'node:crypto';
+import { fillLocatorSchema } from '../shared/web-action';
 import { fillRichText } from './rich-text-input';
 import { materialPayloadSchema } from '../shared/material';
-import {
-  webActionSchema,
-  elementLocatorSchema,
-  actionFailureCodeSchema,
-} from '../shared/execution';
+import { webActionSchema, actionFailureCodeSchema } from '../shared/execution';
 
 const port = process.parentPort;
 if (!port) throw Error('WORKER_CHANNEL_REQUIRED');
@@ -37,9 +34,10 @@ const transport: ConnectOverCDPTransport = {
 };
 function locate(
   page: Page,
-  target: z.infer<typeof elementLocatorSchema>,
+  target: z.infer<typeof fillLocatorSchema>,
 ): Locator {
   const frame = selectFrame(page, target.frameUrl);
+  if ('richTextNodeId' in target) return frame.locator('css=' + target.path);
   const root = target.within
     ? frame.getByRole(target.within.role, {
         name: target.within.name,
@@ -81,6 +79,7 @@ port.on('message', ({ data }: { data: unknown }) => {
       job: webActionSchema,
       payload: materialPayloadSchema.optional(),
       richText: z.boolean().default(false),
+      richTextInitial: z.string().optional(),
     })
     .safeParse(data);
   if (!job.success || started) return;
@@ -129,7 +128,13 @@ port.on('message', ({ data }: { data: unknown }) => {
         if (editable !== job.data.richText)
           throw Error('EXECUTION_CAPABILITY_REVOKED_OR_DENIED');
         if (job.data.richText)
-          await fillRichText(page, target, action.value, checkpoint);
+          await fillRichText(
+            page,
+            target,
+            action.value,
+            checkpoint,
+            job.data.richTextInitial,
+          );
         else await target.fill(action.value, { timeout: 7000 });
       } else if (action.kind === 'check')
         await target.setChecked(action.checked, { timeout: 7000 });

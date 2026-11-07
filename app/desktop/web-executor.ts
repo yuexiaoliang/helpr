@@ -60,6 +60,11 @@ export class WebExecutor {
             lines.slice(0, i + 1).join('\n'),
           )
         : [];
+    const richTextInitial =
+      richText && 'richTextNodeId' in job.action.target
+        ? richSource.textValue
+        : undefined;
+    if (richTextInitial !== undefined) prefixes.unshift(richTextInitial);
     try {
       await this.watchNavigation?.(job);
       await this.actionWindow?.({
@@ -205,7 +210,12 @@ export class WebExecutor {
             finish(Error('RUNTIME_GROUP_UNAVAILABLE'));
             return;
           }
-          worker.postMessage({ job: job.action, payload, richText });
+          worker.postMessage({
+            job: job.action,
+            payload,
+            richText,
+            richTextInitial,
+          });
         });
       });
     } finally {

@@ -89,8 +89,8 @@ export function pageObservation(
         ? rich.get(node.backendDOMNodeId)
         : undefined;
     const isRich =
-      role === 'textbox' &&
-      (richNode ||
+      richNode ||
+      (role === 'textbox' &&
         node.properties?.some(
           (p) => p.name === 'editable' && p.value.value === 'richtext',
         ));
@@ -104,7 +104,7 @@ export function pageObservation(
           : undefined
       : undefined;
     if (
-      [
+      ([
         'button',
         'link',
         'checkbox',
@@ -116,7 +116,8 @@ export function pageObservation(
         'row',
         'tab',
         'switch',
-      ].includes(role) &&
+      ].includes(role) ||
+        isRich) &&
       (!inline || isRich)
     )
       controls.push({
@@ -126,7 +127,7 @@ export function pageObservation(
         disabled: !!node.properties?.some(
           (p) => p.name === 'disabled' && p.value.value === true,
         ),
-        ...(role === 'textbox'
+        ...(role === 'textbox' || isRich
           ? {
               readOnly:
                 node.properties?.some(
@@ -140,6 +141,16 @@ export function pageObservation(
                 richText: {
                   rule: 'contenteditable-ax-v1' as const,
                   backendNodeId: node.backendDOMNodeId!,
+                  ...(richNode?.path &&
+                  (role !== 'textbox' || !name || name.length > 500)
+                    ? {
+                        locator: {
+                          richTextNodeId: node.backendDOMNodeId!,
+                          path: richNode.path,
+                          frameUrl: url,
+                        },
+                      }
+                    : {}),
                   valueSource:
                     typeof node.value?.value === 'string'
                       ? ('ax' as const)
@@ -178,7 +189,9 @@ export function pageObservation(
         '[rich-text] ' +
           JSON.stringify({
             id: node.backendDOMNodeId,
+            role,
             name,
+            path: richNode?.path,
             value: richValue,
             valueSource:
               typeof node.value?.value === 'string' ? 'ax' : 'empty-dom',

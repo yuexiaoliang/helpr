@@ -19,6 +19,7 @@ export async function fillRichText(
   target: Locator,
   value: string,
   checkpoint: (expected: string) => Promise<void>,
+  initial?: string,
 ) {
   const lines = richTextLines(value);
   const element = await target.elementHandle();
@@ -93,6 +94,11 @@ export async function fillRichText(
         throw Error('EXECUTION_CAPABILITY_REVOKED_OR_DENIED');
     };
     await inspect(false);
+    // 先固定句柄，再由控制拥有者重新核对原backend节点及完整源值。
+    if (initial !== undefined) {
+      await checkpoint(initial);
+      await inspect(false);
+    }
     await element.fill(lines[0]!, { timeout: 7000 });
     let expected = lines[0]!;
     await checkpoint(expected);

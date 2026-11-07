@@ -1,0 +1,166 @@
+{
+  "checkedAt": "2026-11-07T08:13:30.053794+00:00",
+  "build": 104,
+  "sourceCommit": "c6f6519794a6ac5477d4c45c621498e07d7d4fa7",
+  "sourceDirty": true,
+  "rawRun": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/run-1794039191012",
+  "profile": "/private/tmp/helpr-workspace-validation-501/run-55pEot",
+  "dataFormat": 33,
+  "mode": "node-focus",
+  "quickCheck": "ok",
+  "sqliteSha256": "16d6a7b4a0719956abe5656cee13a7d5b80618560b067ffdfcbbaee6f14ba136",
+  "cases": [
+    {
+      "item": "F",
+      "taskId": "fc22f0a2-e2a8-4369-8611-0adcf27f87b8",
+      "phase": "paused",
+      "action": {
+        "coordination": {
+          "session": {
+            "id": "helpr-fixture-web",
+            "epoch": "1cc711dd-9d1b-469f-86f2-cb295da8fad2:0",
+            "origin": "http://127.0.0.1:49194"
+          },
+          "claimId": "10d888ba-66eb-4c7c-98a1-b9f10b2f78e0"
+        },
+        "observedLinks": [],
+        "richTextSource": {
+          "role": "generic",
+          "name": "",
+          "frameUrl": "http://127.0.0.1:49194/rich-edit?item=F",
+          "disabled": false,
+          "textValue": "\n",
+          "readOnly": false,
+          "richText": {
+            "rule": "contenteditable-ax-v1",
+            "backendNodeId": 11,
+            "valueSource": "ax",
+            "locator": {
+              "richTextNodeId": 11,
+              "path": "html:nth-child(1) > body:nth-child(2) > div:nth-child(2)",
+              "frameUrl": "http://127.0.0.1:49194/rich-edit?item=F"
+            }
+          }
+        },
+        "id": "9c3bf2cc-a5ff-4bf5-babf-464c7cc6bb37",
+        "runId": "0146381f-31d5-4da3-acb6-12ae802ddbc2",
+        "goalVersion": 1,
+        "status": "unknown",
+        "summary": "填写纯文本正文",
+        "action": {
+          "kind": "fill",
+          "target": {
+            "richTextNodeId": 11,
+            "path": "html:nth-child(1) > body:nth-child(2) > div:nth-child(2)",
+            "frameUrl": "http://127.0.0.1:49194/rich-edit?item=F"
+          },
+          "value": "第一行：中文 <标题> & 正文\n第二行：保留换行与标点。"
+        },
+        "effect": "interaction",
+        "preconditions": [
+          "正文"
+        ],
+        "source": {
+          "url": "http://127.0.0.1:49194/rich-edit?item=F",
+          "title": "富文本核对",
+          "fingerprint": "a68c9c5e382c7c839534dd3630f6e1f70a7cbeba397c79736c021c021c2acc80",
+          "generation": 1,
+          "observedAt": 1794039193516,
+          "truncated": false
+        },
+        "observedUrls": [
+          "http://127.0.0.1:49194/rich-edit?item=F"
+        ],
+        "binding": {
+          "targetId": "54A9555C5E9C068801BB12491B5DFB2E",
+          "generation": 1
+        },
+        "evidence": [],
+        "returned": false,
+        "dispatchState": "possible"
+      },
+      "receipts": [
+        {
+          "kind": "rich-input",
+          "item": "F",
+          "sent": "第一行：中文 <标题> & 正文",
+          "actual": "第一行：中文 <标题> & 正文",
+          "html": "<p>第一行：中文 &lt;标题&gt; &amp; 正文</p>",
+          "inputType": "insertText",
+          "active": "其它字段",
+          "at": 1794039194008
+        }
+      ]
+    }
+  ],
+  "pids": [
+    20298,
+    20299,
+    20300,
+    20301,
+    20302,
+    20303,
+    20308,
+    20309,
+    20310,
+    20311,
+    20312,
+    20314,
+    20315,
+    20328,
+    20329,
+    20330,
+    20331,
+    20332,
+    20333,
+    20338,
+    20339,
+    20340,
+    20341,
+    20342
+  ],
+  "groups": [
+    20298,
+    20301,
+    20303,
+    20328,
+    20331,
+    20333
+  ],
+  "remainingPids": [],
+  "remainingGroups": [],
+  "leaseReleased": true,
+  "starts": [
+    {
+      "kind": "startup",
+      "number": 288,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:49194",
+        "persistent": false
+      },
+      "ms": 1739,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    },
+    {
+      "kind": "startup",
+      "number": 289,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:49194",
+        "persistent": false
+      },
+      "ms": 1823,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    }
+  ],
+  "modelPlans": 1,
+  "inputs": 1,
+  "milliseconds": 7855
+}

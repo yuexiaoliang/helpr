@@ -1,0 +1,37 @@
+$ pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:workspace && pnpm test:validation && pnpm check:legacy
+$ tsc --noEmit
+$ eslint app tests/workspace electron.vite.config.ts drizzle.config.ts vitest.config.ts
+$ prettier --check app tests/workspace *.ts *.json *.mjs pnpm-workspace.yaml
+Checking formatting...
+All matched files use Prettier code style!
+$ vitest run
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/rich-text.test.ts (30 tests | 1 failed) 2296ms
+   × 结构定位随格式33保存、冷开和备份；32迁移先留副本 519ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/rich-text.test.ts > 结构定位随格式33保存、冷开和备份；32迁移先留副本
+Error: DATA_VERSION_UNSUPPORTED
+ ❯ new WorkspaceRecords app/records/workspace.ts:341:15
+    339|         version !== CURRENT_DATA_FORMAT
+    340|       )
+    341|         throw new Error('DATA_VERSION_UNSUPPORTED');
+       |               ^
+    342|       if (version !== CURRENT_DATA_FORMAT)
+    343|         this.db
+ ❯ Object.cold tests/workspace/rich-text.test.ts:192:15
+ ❯ tests/workspace/rich-text.test.ts:539:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 47 passed (48)
+      Tests  1 failed | 573 passed (574)
+   Start at  15:57:57
+   Duration  267.07s (tests 94%, import 5%, environment 1%)
+
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.
