@@ -1,0 +1,35 @@
+diff --git a/tests/workspace/publication.test.ts b/tests/workspace/publication.test.ts
+index fed18a0..b686b75 100644
+--- a/tests/workspace/publication.test.ts
++++ b/tests/workspace/publication.test.ts
+@@ -312,6 +312,7 @@ async function fixture({
+   const service = (
+     options: {
+       beforeRecord?: (c: unknown) => Promise<void>;
++      session?: boolean;
+       propose?: (normal: NextStep) => NextStep;
+     } = {},
+   ) => {
+@@ -321,6 +322,7 @@ async function fixture({
+         await options.beforeRecord?.(c);
+         return records.execution(c);
+       },
++      ...(options.session ? { session: () => Promise.resolve({ id: 'fixture-session', epoch: 'fixture:0', origin: base }) } : {}),
+       material: (c) => records.material(c),
+       current: () => state,
+       publish: (next) => {
+@@ -2118,3 +2120,14 @@ test('节点字段预览只能绑定附件的原编辑目标，不能借同站
+     }),
+   ).toThrow('EXECUTION_EVIDENCE_MISSING');
+ });
++
++
++test('富文本发布经真实会话协调在批准后继续规划和派发', async () => {
++  const f = await fixture({ richTextFrame: 'main' });
++  const service = f.service({ session: true });
++  await service.reply({kind:'participation-decision',taskId:f.taskId,questionId:f.questionId,operation:'approve'});
++  await service.settled();
++  expect(f.execution().summary).not.toContain('执行暂时无法继续');
++  expect(f.sends()).toBe(1);
++  expect(f.execution().phase).toBe('complete');
++});

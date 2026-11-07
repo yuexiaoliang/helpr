@@ -1,0 +1,27 @@
+✔ 发布预览复制实际观察locator，完整字段和显式内联frame不造假名称 (26.766ms)
+✔ 独立网站保留精确实际收件、附件字节、公开结果并拒绝重复发布 (14.155125ms)
+✔ 节点和页面替换只在明确准备后发生且只触发一次 (13.211792ms)
+✖ 实际预览以paused等待参与，先识别review且其它暂停仍报错 (0.177958ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 3
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 108.562583
+
+✖ failing tests:
+
+test at scripts/rich-text-publication-fixture.test.mjs:45:1
+✖ 实际预览以paused等待参与，先识别review且其它暂停仍报错 (0.177958ms)
+  Error: REVIEW_INTERRUPTED:请确认本次发布的目标和内容。
+      at publicationReview (file:///Users/yuexiaoliang/projects/helpr/scripts/rich-text-publication-validation.mjs:69:36)
+      at TestContext.<anonymous> (file:///Users/yuexiaoliang/projects/helpr/scripts/rich-text-publication-fixture.test.mjs:47:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7)

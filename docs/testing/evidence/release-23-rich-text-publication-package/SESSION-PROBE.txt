@@ -1,0 +1,33 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/publication.test.ts (60 tests | 1 failed | 59 skipped) 318ms
+   × 富文本发布经真实会话协调在批准后继续规划和派发 317ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/publication.test.ts > 富文本发布经真实会话协调在批准后继续规划和派发
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/workspace/publication.test.ts:2131:21
+    2129|   await service.settled();
+    2130|   expect(f.execution().summary).not.toContain('执行暂时无法继续');
+    2131|   expect(f.sends()).toBe(1);
+       |                     ^
+    2132|   expect(f.execution().phase).toBe('complete');
+    2133| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 59 skipped (60)
+   Start at  16:44:40
+   Duration  868ms (import 45%, tests 40%, transform 15%)
+

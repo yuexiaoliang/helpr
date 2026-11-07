@@ -1,3 +1,4 @@
+import {richTextPublicationFixture} from './rich-text-publication-fixture.mjs';
 import {richTextLinesFixture} from './rich-text-lines-fixture.mjs';
 import {richTextFixture} from './rich-text-fixture.mjs';
 import {blankCreationFixture} from './blank-creation-fixture.mjs';
@@ -11,9 +12,9 @@ import { materialFixture } from './material-fixture.mjs';
 import { workflowFixture } from './workflow-fixture.mjs';
 import { coordinationFixture } from './coordination-fixture.mjs';
 
-export async function fixture({ richUnnamed = false, richInline = false, richFrame = false, richLines = false, richParagraph = false, richText = false, blankCreation = false, formChain = false, formNavigation = false, asyncUpload = false, createdTarget = false, managementResult = false, dynamicResult = false, linkNavigation = false, navigation = false, participation = false, review = false, material, workflow = false, repair = false, article = false, agreements = false, schedules = false, crossSite = false, separateFields = false, coordination = false } = {}) {
+export async function fixture({ richPublication = false, richUnnamed = false, richInline = false, richFrame = false, richLines = false, richParagraph = false, richText = false, blankCreation = false, formChain = false, formNavigation = false, asyncUpload = false, createdTarget = false, managementResult = false, dynamicResult = false, linkNavigation = false, navigation = false, participation = false, review = false, material, workflow = false, repair = false, article = false, agreements = false, schedules = false, crossSite = false, separateFields = false, coordination = false } = {}) {
   const receipts = [];
-  const handleNavigation = richLines ? richTextLinesFixture(receipts,{frame:richFrame,inline:richInline,unnamed:richUnnamed}) : richText ? richTextFixture(receipts, {paragraph:richParagraph}) : blankCreation ? blankCreationFixture(receipts) : formNavigation ? formNavigationFixture(receipts, {chain:formChain}) : createdTarget ? createdTargetFixture(receipts) : linkNavigation ? linkNavigationFixture(receipts) : navigation ? navigationFixture(receipts) : null;
+  const handleNavigation = richPublication ? richTextPublicationFixture(receipts) : richLines ? richTextLinesFixture(receipts,{frame:richFrame,inline:richInline,unnamed:richUnnamed}) : richText ? richTextFixture(receipts, {paragraph:richParagraph}) : blankCreation ? blankCreationFixture(receipts) : formNavigation ? formNavigationFixture(receipts, {chain:formChain}) : createdTarget ? createdTargetFixture(receipts) : linkNavigation ? linkNavigationFixture(receipts) : navigation ? navigationFixture(receipts) : null;
   const handleMaterial = material ? materialFixture(material, receipts) : null;
   const handleWorkflow = workflow ? workflowFixture(receipts, {repair, article, agreements, schedules, crossSite, separateFields, dynamicResult, managementResult, asyncUpload}) : null;
   const coordinated = coordination ? coordinationFixture(receipts) : null;

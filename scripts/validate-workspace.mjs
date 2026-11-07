@@ -1,3 +1,4 @@
+import {verifyRichTextPublication} from './rich-text-publication-validation.mjs';
 import {verifyRichTextLines} from './rich-text-lines-validation.mjs';
 import { verifyFormNavigation } from './form-navigation-validation.mjs';
 import { verifyUploadReady } from './upload-ready-validation.mjs';
@@ -52,6 +53,7 @@ const { values: options } = parseArgs({
     'blank-creation': flag,
     'rich-text': flag,
     'rich-text-lines': {type:'string'},
+    'rich-text-publication': {type:'string'},
     'rich-text-paragraph': flag,
     'created-target-mismatch': flag,
     'cross-site-controls': flag,
@@ -98,6 +100,10 @@ if (args.length === 0) {
   process.exit(0);
 }
 
+if (options['rich-text-publication']) {
+  assert(['main','inline','node-replace','page-replace'].includes(options['rich-text-publication']), 'INVALID_RICH_PUBLICATION_CASE');
+  assert(options.fixture && !options['system-storage'] && !options.interactive && !options.fault, 'RICH_PUBLICATION_FIXTURE_REQUIRED');
+}
 if (options['rich-text-lines'] && !['success','rewrite','focus','stop','frame-success','frame-replace','frame-focus','inline-success','inline-replace','inline-focus','node-success','node-inline-success','node-replace','node-focus'].includes(options['rich-text-lines'])) throw Error('INVALID_RICH_TEXT_CASE');
 if (options['rich-text'] || options['rich-text-paragraph']) options['rich-text-lines'] ??= 'success';
 if (options['blank-creation']) options['form-chain'] = true;
@@ -279,6 +285,7 @@ const website = await fixture({
   formNavigation: options['form-navigation'],
   formChain: options['form-chain'],
   blankCreation: options['blank-creation'],
+  richPublication: !!options['rich-text-publication'],
   richLines: !!options['rich-text-lines'],
   richFrame: /^(frame|inline|node-inline)-/.test(options['rich-text-lines'] ?? ''),
   richUnnamed: options['rich-text-lines']?.startsWith('node-'),
@@ -345,7 +352,7 @@ const deadline = setTimeout(
     ? 60000
     : options.interactive || systemStorage
       ? 30 * 60 * 1000
-      : (options.coordination || options['workflow-repair'] || options.agreements || options.schedules || options['cross-site-controls'] || options['history-cleanup']) ? 5 * 60000 : (options['workflow-reuse'] || options['form-chain'] || options['rich-text'] || options['rich-text-lines']) ? 3 * 60000 : 2 * 60000,
+      : (options.coordination || options['workflow-repair'] || options.agreements || options.schedules || options['cross-site-controls'] || options['history-cleanup']) ? 5 * 60000 : (options['workflow-reuse'] || options['form-chain'] || options['rich-text'] || options['rich-text-lines'] || options['rich-text-publication']) ? 3 * 60000 : 2 * 60000,
 );
 function check(name, test) {
   test();
@@ -940,6 +947,7 @@ async function verifyMaterial(client) {
 async function validate() {
   let client = await launch();
   if (options['upload-ready']) return verifyUploadReady({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
+  if (options['rich-text-publication']) return verifyRichTextPublication({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, mode:options['rich-text-publication']});
   if (options['rich-text-lines']) return verifyRichTextLines({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, mode:options['rich-text-lines']});
   if (options['form-navigation']) return verifyFormNavigation({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, chain:options['form-chain'], blank:options['blank-creation']});
   if (options['created-target']) return verifyCreatedTarget({client, website, evidence, command, waitFor, check, launch, remainingOwned,mismatch:options['created-target-mismatch']});

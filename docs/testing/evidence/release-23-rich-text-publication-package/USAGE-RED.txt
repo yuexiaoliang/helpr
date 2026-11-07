@@ -1,0 +1,39 @@
+✔ 发布预览复制实际观察locator，完整字段和显式内联frame不造假名称 (25.916625ms)
+✔ 独立网站保留精确实际收件、附件字节、公开结果并拒绝重复发布 (13.56475ms)
+✔ 节点和页面替换只在明确准备后发生且只触发一次 (13.060709ms)
+✔ 实际预览以paused等待参与，先识别review且其它暂停仍报错 (0.316875ms)
+✖ 虚构模型显式返回用量，不能累计未知预留到第五次规划预算耗尽 (2.264875ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 4
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 110.182292
+
+✖ failing tests:
+
+test at scripts/rich-text-publication-fixture.test.mjs:51:1
+✖ 虚构模型显式返回用量，不能累计未知预留到第五次规划预算耗尽 (2.264875ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + undefined
+  - {
+  -   completion_tokens: 100,
+  -   prompt_tokens: 100,
+  -   total_tokens: 200
+  - }
+  
+      at TestContext.<anonymous> (file:///Users/yuexiaoliang/projects/helpr/scripts/rich-text-publication-fixture.test.mjs:56:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { prompt_tokens: 100, completion_tokens: 100, total_tokens: 200 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
