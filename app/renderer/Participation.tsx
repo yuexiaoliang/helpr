@@ -24,6 +24,23 @@ export function ParticipationForm({
   const draft = question ? view.replyDrafts[question.id] : undefined;
   const answer = draft ?? '';
   const editing = question?.type === 'review' && draft !== undefined;
+  const fieldValues: string[] = (() => {
+    if (!preview?.fields) return [];
+    if (draft !== undefined) {
+      try {
+        const values: unknown = JSON.parse(draft);
+        if (
+          Array.isArray(values) &&
+          values.length === preview.fields.length &&
+          values.every((v) => typeof v === 'string')
+        )
+          return values;
+      } catch {
+        /* 原草稿不自动映射为多个字段。 */
+      }
+    }
+    return preview.fields.map((f) => f.value);
+  })();
   const setAnswer = (value: string) => {
     if (question) store.saveReplyDraft(task.id, question.id, value);
   };
@@ -93,7 +110,17 @@ export function ParticipationForm({
                   kind: 'participation-decision',
                   ...ids,
                   operation: 'edit',
-                  content: answer,
+                  content: preview?.fields
+                    ? fieldValues.map((v) => v.trim()).join('\n\n')
+                    : answer,
+                  ...(preview?.fields
+                    ? {
+                        fields: preview.fields.map((f, index) => ({
+                          ...f,
+                          value: fieldValues[index]!.trim(),
+                        })),
+                      }
+                    : {}),
                 }
               : {
                   kind: 'participation-decision',
@@ -112,7 +139,16 @@ export function ParticipationForm({
           <strong>
             {preview.origin} · {preview.destination} · 第 {preview.revision} 版
           </strong>
-          <p className={styles.previewContent}>{preview.content}</p>
+          {preview.fields ? (
+            preview.fields.map((field) => (
+              <div key={field.id}>
+                <strong>{field.name}</strong>
+                <p className={styles.previewContent}>{field.value}</p>
+              </div>
+            ))
+          ) : (
+            <p className={styles.previewContent}>{preview.content}</p>
+          )}
           {task.execution && <ArticleSources execution={task.execution} />}
           {preview.attachment && (
             <p>
@@ -142,7 +178,34 @@ export function ParticipationForm({
           )}
         </p>
       )}
-      {(!question.type || editing) && (
+      {editing &&
+        preview?.fields &&
+        preview.fields.map((field, index) => (
+          <label key={field.id}>
+            修改{field.name}
+            <textarea
+              rows={4}
+              maxLength={4000}
+              value={fieldValues[index]}
+              onCompositionStart={() => {
+                composing.current = true;
+              }}
+              onCompositionEnd={() => {
+                composing.current = false;
+              }}
+              onChange={(event) =>
+                setAnswer(
+                  JSON.stringify(
+                    fieldValues.map((value, i) =>
+                      i === index ? event.target.value : value,
+                    ),
+                  ),
+                )
+              }
+            />
+          </label>
+        ))}
+      {(!question.type || (editing && !preview?.fields)) && (
         <label>
           {editing ? '修改本次发布的完整文字' : question.text}
           <textarea
@@ -185,6 +248,9 @@ export function ParticipationForm({
             sending ||
             blocked ||
             ((!question.type || editing) && !answer.trim()) ||
+            (editing &&
+              !!preview?.fields &&
+              fieldValues.some((v) => !v.trim())) ||
             (changingGoal && !goal.trim())
           }
         >
@@ -206,7 +272,11 @@ export function ParticipationForm({
           type="button"
           disabled={sending || blocked}
           onClick={() => {
-            setAnswer(preview?.content ?? '');
+            setAnswer(
+              preview?.fields
+                ? JSON.stringify(preview.fields.map((f) => f.value))
+                : (preview?.content ?? ''),
+            );
           }}
         >
           修改这段文字

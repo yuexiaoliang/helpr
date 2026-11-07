@@ -109,6 +109,7 @@ export const actionFactSchema = z.strictObject({
   observedLinks: z.array(observedLinkSchema).max(300).optional(),
   resultLinks: z.array(observedLinkSchema).max(300).optional(),
   selectionResult: observedControlSchema.optional(),
+  fieldResults: z.array(observedControlSchema).max(12).optional(),
   id: z.string().min(1),
   runId: z.string(),
   goalVersion: z.number().int(),
@@ -213,6 +214,7 @@ export const participationDecisionSchema = z.discriminatedUnion('operation', [
     ...decisionFields,
     operation: z.literal('edit'),
     content: publicationSchema.shape.content,
+    fields: publicationSchema.shape.fields,
   }),
   z.strictObject({ ...decisionFields, operation: z.literal('approve') }),
   z.strictObject({ ...decisionFields, operation: z.literal('login-check') }),
@@ -314,7 +316,7 @@ export const executionSchema = z.strictObject({
     )
     .optional(),
   publication: publicationSchema
-    .extend({
+    .safeExtend({
       agreementVersionId: z.string().uuid().optional(),
       workId: z.string().uuid().optional(),
       revision: z.number().int().positive(),

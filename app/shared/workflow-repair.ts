@@ -39,6 +39,10 @@ export function withinWorkflowScope(e: TaskExecution, step: NextStep) {
     (p.content !==
       (use.approved?.content ?? e.publication?.content ?? use.content) ||
       p.destination !== use.destination ||
+      JSON.stringify(p.fields) !==
+        JSON.stringify(
+          use.approved?.fields ?? e.publication?.fields ?? use.fields,
+        ) ||
       !p.attachment ||
       p.attachment.materialId !== use.materialId ||
       p.attachment.targetUrl !== use.targetUrl ||

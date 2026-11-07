@@ -33,6 +33,7 @@ const { values: options } = parseArgs({
     publication: flag,
     'workflow-reuse': flag,
     'history-cleanup': flag,
+    'publication-fields': flag,
     'cross-site-controls': flag,
     'ambiguous-selection': flag,
     'workflow-repair': flag,
@@ -83,7 +84,7 @@ if (recoveryPoint) {
   options.publication = true;
 }
 assert(!options['ambiguous-selection'] || options['cross-site-controls'], 'CROSS_SITE_CASE_REQUIRED');
-if (options['cross-site-controls'] || options['history-cleanup']) options['workflow-reuse'] = true;
+if (options['cross-site-controls'] || options['history-cleanup'] || options['publication-fields']) options['workflow-reuse'] = true;
 assert(!(options['history-cleanup'] && options['cross-site-controls']), 'CLEANUP_SEPARATE_CASE_REQUIRED');
 const systemStorage = options['system-storage'] === true;
 assert(!options['agreements-navigation-confirm'] || options.agreements, 'AGREEMENTS_CASE_REQUIRED');
@@ -250,6 +251,7 @@ const website = await fixture({
   agreements: options.agreements || options.schedules,
   schedules: options.schedules,
   crossSite: options['cross-site-controls'],
+  separateFields: options['publication-fields'],
   repair: options['workflow-repair'],
   participation: options.participation || options['task-groups'],
   review: options['participation-review'],
@@ -898,7 +900,7 @@ async function validate() {
   if (options.agreements) return verifyAgreements({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, confirmNavigation:options['agreements-navigation-confirm']===true});
   if (options.article) return verifyArticle({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
   if (options['workflow-repair']) return verifyWorkflowRepair({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
-  if (options['workflow-reuse']) return verifyWorkflow({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, crossSite: options['cross-site-controls'], ambiguousSelection: options['ambiguous-selection'], historyCleanup: options['history-cleanup']});
+  if (options['workflow-reuse']) return verifyWorkflow({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, crossSite: options['cross-site-controls'], ambiguousSelection: options['ambiguous-selection'], historyCleanup: options['history-cleanup'], separateFields: options['publication-fields']});
   if (options.publication) return verifyPublication(client);
   if (options.material) return verifyMaterial(client);
   if (options['task-groups']) return verifyTaskGroups(client);

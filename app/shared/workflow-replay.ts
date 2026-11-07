@@ -24,8 +24,26 @@ export function reboundAction(use: WorkflowUse, index: number): WebAction {
       (action.kind === 'fill' || action.kind === 'select') &&
       (binding.parameter === 'content' || binding.parameter === 'destination')
     ) {
-      action.value =
-        binding.parameter === 'content'
+      action.value = binding.fieldId
+        ? (() => {
+            const field = (use.approved?.fields ?? use.fields)?.find(
+              (f) => f.id === binding.fieldId,
+            );
+            if (
+              !field ||
+              binding.parameter !== 'content' ||
+              action.kind !== 'fill'
+            )
+              throw Error('WORKFLOW_NOT_APPLICABLE');
+            action.target = {
+              role: 'textbox',
+              name: field.name,
+              exact: true,
+              ...(field.frameUrl ? { frameUrl: field.frameUrl } : {}),
+            };
+            return field.value;
+          })()
+        : binding.parameter === 'content'
           ? (use.approved?.content ?? use.content)
           : use.destination;
     } else throw Error('WORKFLOW_NOT_APPLICABLE');
@@ -196,6 +214,9 @@ export function replayStep(
   );
   if (!upload) throw Error('WORKFLOW_NOT_APPLICABLE');
   const publication = {
+    ...((use.approved?.fields ?? use.fields)
+      ? { fields: use.approved?.fields ?? use.fields }
+      : {}),
     content: e.publication?.content ?? use.content,
     destination: use.destination,
     attachment: {

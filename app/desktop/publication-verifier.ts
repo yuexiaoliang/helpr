@@ -5,6 +5,7 @@ import { pageSourceSchema, type PageObservation } from '../shared/model';
 import { MATERIAL_LIMIT, type MaterialVersion } from '../shared/material';
 import { websiteURL } from '../shared/url-policy';
 import {
+  publicationParts,
   type Publication,
   type PublicationResultProposal,
   type PublicationCheck,
@@ -233,7 +234,9 @@ async function readPublicResult(
         page.canonical.length === 1 &&
         page.canonical[0] === result.proposal.url;
     }
-    result.checks.content = has(page.text, p.content);
+    result.checks.content = publicationParts(p).every((part) =>
+      has(page.text, part),
+    );
     result.checks.destination = has(page.text, p.destination);
     result.checks.attachment =
       page.links.filter((link) => link === p.attachment!.url).length === 1;

@@ -35,6 +35,9 @@ import {
   downloadCheckSchema,
   publicationCheckSchema,
   samePublication,
+  publicationFillBinding,
+  publicationParts,
+  verifyPublicationFields,
 } from '../shared/publication';
 import { z } from 'zod';
 import { hideTaskTab } from './task-tab';
@@ -921,8 +924,31 @@ export class ExecutionRecords {
         )
           throw Error('PARTICIPATION_EXPIRED');
         if (c.operation === 'edit') {
+          if (
+            JSON.stringify(
+              c.fields?.map(({ id, name, frameUrl }) => ({
+                id,
+                name,
+                frameUrl,
+              })),
+            ) !==
+            JSON.stringify(
+              p.fields?.map(({ id, name, frameUrl }) => ({
+                id,
+                name,
+                frameUrl,
+              })),
+            )
+          )
+            throw Error('PARTICIPATION_EXPIRED');
+          publicationSchema.strip().parse({
+            ...p,
+            content: c.content,
+            fields: c.fields,
+          });
           editArticle(e, c.content);
           p.content = c.content;
+          if (c.fields) p.fields = c.fields;
           e.version++;
           p.revision++;
           p.approvalId = null;
@@ -935,7 +961,12 @@ export class ExecutionRecords {
           delete p.agreementVersionId;
           delete p.workId;
           const use = currentWorkflow(e);
-          if (use) use.approved = { id: q.id, content: p.content };
+          if (use)
+            use.approved = {
+              id: q.id,
+              content: p.content,
+              ...(p.fields ? { fields: p.fields } : {}),
+            };
           delete e.question;
           queueRecovery(e, task.url, '已确认这版内容，先核对网页再继续。');
         }
@@ -1593,6 +1624,31 @@ export class ExecutionRecords {
             !intent.includes(c.choice.destination)
           )
             throw Error('WORKFLOW_NOT_APPLICABLE');
+          if (
+            !publicationSchema.safeParse({
+              content: c.choice.content,
+              destination: c.choice.destination,
+              fields: c.choice.fields,
+            }).success ||
+            JSON.stringify(
+              c.choice.fields?.map(({ id, name, frameUrl }) => ({
+                id,
+                name,
+                frameUrl,
+              })),
+            ) !==
+              JSON.stringify(
+                workflow.fields?.map(({ id, name, frameUrl }) => ({
+                  id,
+                  name,
+                  frameUrl,
+                  ...(frameUrl === workflow.recovery.targetUrl
+                    ? { frameUrl: c.source.url }
+                    : {}),
+                })),
+              )
+          )
+            throw Error('WORKFLOW_NOT_APPLICABLE');
           const use = workflowUseSchema.parse({
             id: randomUUID(),
             goalVersion: e.goalVersion,
@@ -1600,6 +1656,7 @@ export class ExecutionRecords {
             materialId: material[0]!.id,
             targetUrl: c.source.url,
             content: c.choice.content,
+            ...(c.choice.fields ? { fields: c.choice.fields } : {}),
             destination: c.choice.destination,
             source: pageSourceSchema.strip().parse(c.source),
           });
@@ -2055,6 +2112,9 @@ export class ExecutionRecords {
                 use.approved = {
                   id: e.publication.approvalId,
                   content: e.publication.content,
+                  ...(e.publication.fields
+                    ? { fields: e.publication.fields }
+                    : {}),
                 };
               e.summary =
                 '本次素材、目标和内容要求符合已接受的发布约定，继续核对后发布。';
@@ -2295,8 +2355,14 @@ export class ExecutionRecords {
             )
               throw Error('PARTICIPATION_REQUIRED');
             if (
+              p.fields &&
+              c.action.kind === 'fill' &&
+              (c.source.truncated || !observedControl(c.action, c.source))
+            )
+              throw Error('EXECUTION_EVIDENCE_MISSING');
+            if (
               (c.action.kind === 'fill' &&
-                ![p.content, p.destination].includes(c.action.value)) ||
+                !publicationFillBinding(p, c.action)) ||
               (c.action.kind === 'select' &&
                 c.action.value !== p.destination) ||
               c.action.kind === 'check'
@@ -2305,6 +2371,7 @@ export class ExecutionRecords {
           }
           // 首版窄发布只允许一次提交点击，且派发前必须能在所属网页核对去向和全文。
           if (p && c.action.kind === 'click') {
+            verifyPublicationFields(p, c.source);
             verifyCurrentSelections(
               e.actions.filter(
                 (a) =>
@@ -2313,7 +2380,9 @@ export class ExecutionRecords {
               c.source,
             );
             if (
-              !c.source.text.includes(p.content) ||
+              !publicationParts(p).every((part) =>
+                c.source.text.includes(part),
+              ) ||
               !c.source.text.includes(p.destination)
             )
               throw Error('EXECUTION_EVIDENCE_MISSING');
@@ -2355,6 +2424,12 @@ export class ExecutionRecords {
           if (c.evidence && !c.evidence.every((v) => c.source.text.includes(v)))
             throw Error('EXECUTION_EVIDENCE_MISSING');
           e.actions.push({
+            ...(hasMaterial &&
+            effect === 'publication' &&
+            p?.fields &&
+            c.action.kind === 'click'
+              ? { fieldResults: verifyPublicationFields(p, c.source) }
+              : {}),
             ...(e.coordination ? { coordination: acquireResource(e) } : {}),
             ...(c.workflowStep ? { workflowStep: c.workflowStep } : {}),
             observedLinks: c.source.links ?? [],

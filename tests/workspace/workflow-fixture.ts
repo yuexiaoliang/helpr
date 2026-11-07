@@ -18,7 +18,11 @@ afterEach(async () => {
   for (const fn of cleanup.splice(0).reverse()) await fn();
 });
 
-export async function setup(withSession = false, reuseWorkflows = true) {
+export async function setup(
+  withSession = false,
+  reuseWorkflows = true,
+  separateFields = false,
+) {
   const folder = await mkdtemp(path.join(tmpdir(), 'helpr-workflow-'));
   cleanup.push(() => rm(folder, { recursive: true, force: true }));
   type Page = {
@@ -26,6 +30,8 @@ export async function setup(withSession = false, reuseWorkflows = true) {
     file: string;
     bytes: Buffer;
     title: string;
+    body: string;
+    bodyTyped: boolean;
     destination: string;
     uploaded: boolean;
     draft: boolean;
@@ -47,7 +53,7 @@ export async function setup(withSession = false, reuseWorkflows = true) {
     else if (url.pathname === '/result' && p.published) {
       res.setHeader('Content-Type', 'text/html');
       res.end(
-        `<link rel="canonical" href="${url.pathname + url.search}"><h1>${p.title}</h1><p>${p.destination}</p><a href="/file${url.search}">附件</a>`,
+        `<link rel="canonical" href="${url.pathname + url.search}"><h1>${p.title}</h1><p>${p.destination}</p><section>${separateFields ? p.body : ''}</section><a href="/file${url.search}">附件</a>`,
       );
     } else {
       res.writeHead(404);
@@ -113,7 +119,19 @@ export async function setup(withSession = false, reuseWorkflows = true) {
           name: p.labels.title,
           frameUrl: url(id),
           disabled: false,
+          textValue: p.typed ? p.title : '',
         },
+        ...(separateFields
+          ? [
+              {
+                role: 'textbox',
+                name: '文章正文',
+                frameUrl: url(id),
+                disabled: false,
+                textValue: p.bodyTyped ? p.body : '',
+              },
+            ]
+          : []),
         {
           role: 'combobox',
           name: '栏目',
@@ -136,6 +154,7 @@ export async function setup(withSession = false, reuseWorkflows = true) {
           : '等待素材',
         p.draft ? '草稿已保存' : '',
         p.typed ? '标题已填写\n' + p.title : '',
+        p.bodyTyped ? '正文已填写\n' + p.body : '',
         p.selected ? '栏目已填写\n' + p.destination : '',
         p.published ? '已发布' : '尚未发布',
       ].join('\n'),
@@ -165,7 +184,9 @@ export async function setup(withSession = false, reuseWorkflows = true) {
               : p.selected
                 ? '栏目已填写'
                 : p.typed
-                  ? '标题已填写'
+                  ? p.bodyTyped
+                    ? '正文已填写'
+                    : '标题已填写'
                   : p.draft
                     ? '草稿已保存'
                     : '附件已上传',
@@ -189,7 +210,15 @@ export async function setup(withSession = false, reuseWorkflows = true) {
           taskId: candidate.taskId,
           version: candidate.version,
           sha256: candidate.sha256,
-          content: p.title,
+          content: separateFields ? p.title + '\n\n' + p.body : p.title,
+          ...(separateFields
+            ? {
+                fields: [
+                  { id: 'heading', name: p.labels.title, value: p.title },
+                  { id: 'text', name: '文章正文', value: p.body },
+                ],
+              }
+            : {}),
           destination: p.destination,
         },
       });
@@ -231,7 +260,17 @@ export async function setup(withSession = false, reuseWorkflows = true) {
       evidence: ['草稿已保存'],
     });
     const proposed = {
-      content: publication?.content ?? p.title,
+      content:
+        publication?.content ??
+        (separateFields ? p.title + '\n\n' + p.body : p.title),
+      ...(separateFields
+        ? {
+            fields: publication?.fields ?? [
+              { id: 'heading', name: p.labels.title, value: p.title },
+              { id: 'text', name: '文章正文', value: p.body },
+            ],
+          }
+        : {}),
       destination: p.destination,
       attachment: {
         materialId: m.id,
@@ -260,8 +299,18 @@ export async function setup(withSession = false, reuseWorkflows = true) {
         effect: 'interaction',
         action: {
           kind: 'fill',
-          value: proposed.content,
+          value: separateFields ? proposed.fields![0]!.value : proposed.content,
           target: { role: 'textbox', name: p.labels.title, exact: true },
+        },
+      };
+    if (separateFields && !p.bodyTyped)
+      return {
+        ...step,
+        effect: 'interaction',
+        action: {
+          kind: 'fill',
+          value: proposed.fields![1]!.value,
+          target: { role: 'textbox', name: '文章正文', exact: true },
         },
       };
     if (!p.selected)
@@ -312,8 +361,13 @@ export async function setup(withSession = false, reuseWorkflows = true) {
       expect(result).toBeTruthy();
       p.uploaded = true;
     } else if (a.kind === 'fill') {
-      p.title = a.value;
-      p.typed = true;
+      if (separateFields && a.target.name === '文章正文') {
+        p.body = a.value;
+        p.bodyTyped = true;
+      } else {
+        p.title = a.value;
+        p.typed = true;
+      }
     } else if (a.kind === 'select') {
       p.destination = a.value;
       p.selected = true;
@@ -369,6 +423,8 @@ export async function setup(withSession = false, reuseWorkflows = true) {
       file,
       bytes,
       title,
+      body: '这份正文属于' + title,
+      bodyTyped: false,
       destination,
       uploaded: false,
       draft: false,
@@ -383,7 +439,7 @@ export async function setup(withSession = false, reuseWorkflows = true) {
       requestId: randomUUID(),
       taskId: id,
       intent: 'revise',
-      text: `使用“${file}”在 ${url(id)} 发布“${title}”到${destination}`,
+      text: `使用“${file}”在 ${url(id)} 发布“${title}${separateFields ? '\n\n这份正文属于' + title : ''}”到${destination}`,
     });
     await execution.settled();
     return id;

@@ -1,0 +1,49 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/publication-fields.test.ts (5 tests | 1 failed) 4514ms
+   × 字段改稿形成新确认，旧回复失效；禁止顺带改字段映射，旧格式21迁移保留且不补造字段 976ms
+ ❯ tests/workspace/publication-fields-ui.test.tsx (1 test | 1 failed) 105ms
+   × 逐字段预览与改稿保留所属任务和原映射，组字期间不提交，也不自动批准 104ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/publication-fields-ui.test.tsx > 逐字段预览与改稿保留所属任务和原映射，组字期间不提交，也不自动批准
+AssertionError: expected [ Array(3) ] to have a length of +0 but got 3
+
+- Expected
++ Received
+
+- 0
++ 3
+
+ ❯ tests/workspace/publication-fields-ui.test.tsx:87:20
+     85|   fireEvent.change(body, { target: { value: '修改后的正文' } });
+     86|   fireEvent.click(screen.getByRole('button', { name: '查看修改后的预览' }));
+     87|   expect(commands).toHaveLength(0);
+       |                    ^
+     88|   fireEvent.compositionEnd(body);
+     89|   fireEvent.click(screen.getByRole('button', { name: '查看修改后的预览' }));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/workspace/publication-fields.test.ts > 字段改稿形成新确认，旧回复失效；禁止顺带改字段映射，旧格式21迁移保留且不补造字段
+Error: DATA_VERSION_UNSUPPORTED
+ ❯ new WorkspaceRecords app/records/workspace.ts:296:15
+    294|         version !== CURRENT_DATA_FORMAT
+    295|       )
+    296|         throw new Error('DATA_VERSION_UNSUPPORTED');
+       |               ^
+    297|       if (version !== CURRENT_DATA_FORMAT)
+    298|         this.db
+ ❯ Object.cold tests/workspace/workflow-fixture.ts:492:17
+ ❯ tests/workspace/publication-fields.test.ts:153:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 3 passed (5)
+      Tests  2 failed | 35 passed (37)
+   Start at  09:50:56
+   Duration  27.38s (tests 90%, import 7%, environment 2%, transform 1%)
+

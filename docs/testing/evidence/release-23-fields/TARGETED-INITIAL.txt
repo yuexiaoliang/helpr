@@ -1,0 +1,51 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/workflow-reuse.test.ts (12 tests | 1 failed) 11056ms
+   × 复用预览改稿采用本次确认，冷开保留实际绑定，重复结果不新增流程或处理记录 744ms
+ ❯ tests/workspace/publication-fields.test.ts (5 tests | 2 failed) 3221ms
+   × 字段改稿形成新确认，旧回复失效；禁止顺带改字段映射，旧格式21迁移保留且不补造字段 275ms
+   × 旧备份恢复不替换较新字段改稿和停止事实，损坏字段证明冷开拒绝 275ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/publication-fields.test.ts > 字段改稿形成新确认，旧回复失效；禁止顺带改字段映射，旧格式21迁移保留且不补造字段
+ FAIL  tests/workspace/publication-fields.test.ts > 旧备份恢复不替换较新字段改稿和停止事实，损坏字段证明冷开拒绝
+ FAIL  tests/workspace/workflow-reuse.test.ts > 复用预览改稿采用本次确认，冷开保留实际绑定，重复结果不新增流程或处理记录
+ZodError: [
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "revision",
+      "approvalId",
+      "origin"
+    ],
+    "path": [],
+    "message": "Unrecognized keys: \"revision\", \"approvalId\", \"origin\""
+  }
+]
+ ❯ apply app/records/execution.ts:936:29
+    934|           )
+    935|             throw Error('PARTICIPATION_EXPIRED');
+    936|           publicationSchema.parse({
+       |                             ^
+    937|             ...p,
+    938|             content: c.content,
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:2728:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:2727:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:413:33
+ ❯ Object.records tests/workspace/workflow-fixture.ts:382:24
+ ❯ ExecutionService.record app/desktop/execution-service.ts:315:36
+ ❯ ExecutionService.reply app/desktop/execution-service.ts:803:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  3 failed | 42 passed (45)
+   Start at  09:49:43
+   Duration  33.31s (tests 96%, import 4%, transform 1%)
+

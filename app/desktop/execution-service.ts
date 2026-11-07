@@ -13,7 +13,11 @@ import {
   verifyPublication,
   verifyRecoveredPublication,
 } from './publication-verifier';
-import { samePublication, type DownloadCheck } from '../shared/publication';
+import {
+  samePublication,
+  type DownloadCheck,
+  type Publication,
+} from '../shared/publication';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { snapshotSchema, type WorkspaceSnapshot } from '../shared/contracts';
@@ -77,6 +81,7 @@ export type ProposalInput = {
     targetUrl: string;
     materialId: string;
     content: string;
+    fields?: Publication['fields'];
     destination: string;
     operation: { action: WebAction; effect: NextStep['effect'] } | null;
     resultRule: LearnedWorkflow['resultRule'];
@@ -84,7 +89,7 @@ export type ProposalInput = {
   coordination?: TaskExecution['coordination'];
   workflows?: Pick<
     LearnedWorkflow,
-    'taskId' | 'version' | 'sha256' | 'goal' | 'applicability'
+    'taskId' | 'version' | 'sha256' | 'goal' | 'applicability' | 'fields'
   >[];
   taskId: string;
   runId: string;
@@ -1546,12 +1551,13 @@ export class ExecutionService {
                 new URL(observed.observation.url).origin,
           )
           .slice(-10)
-          .map(({ taskId, version, sha256, goal, applicability }) => ({
+          .map(({ taskId, version, sha256, goal, applicability, fields }) => ({
             taskId,
             version,
             sha256,
             goal,
             applicability,
+            ...(fields ? { fields } : {}),
           }));
         let replay: NextStep | undefined;
         const repair = currentRepair(current);
@@ -1664,6 +1670,7 @@ export class ExecutionService {
                               targetUrl: use.targetUrl,
                               materialId: use.materialId,
                               content: use.approved?.content ?? use.content,
+                              fields: use.approved?.fields ?? use.fields,
                               destination: use.destination,
                               operation: (() => {
                                 const index = current.actions.filter(
@@ -2130,6 +2137,7 @@ export class ExecutionService {
                         ? { articleId: preview.articleId }
                         : {}),
                       content: preview.content,
+                      ...(preview.fields ? { fields: preview.fields } : {}),
                       destination: preview.destination,
                       ...(preview.attachment
                         ? { attachment: preview.attachment }

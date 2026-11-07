@@ -88,6 +88,11 @@ export function pageObservation(
         value.length <= 500
           ? { selectedLabel: value }
           : {}),
+        ...(role === 'textbox' &&
+        typeof node.value?.value === 'string' &&
+        value.length <= 4000
+          ? { textValue: value }
+          : {}),
       });
     const flags = (node.properties ?? [])
       .filter((p) =>

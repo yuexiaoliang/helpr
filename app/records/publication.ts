@@ -6,7 +6,11 @@ import type {
   PublicationCheck,
   PublicationRecovery,
 } from '../shared/publication';
-import { samePublication } from '../shared/publication';
+import {
+  samePublication,
+  publicationParts,
+  verifyPublicationFields,
+} from '../shared/publication';
 import { learnWorkflow } from './workflow';
 import { publicationArticle } from './article';
 
@@ -127,11 +131,12 @@ export function submissionReady(
 ) {
   const m = attachmentBinding(e, p),
     a = p.attachment!;
+  verifyPublicationFields(p, source);
   if (!e.publication?.approvalId || !samePublication(e.publication, p))
     throw Error('PARTICIPATION_REQUIRED');
   if (
     source.url !== a.targetUrl ||
-    !source.text.includes(p.content) ||
+    !publicationParts(p).every((part) => source.text.includes(part)) ||
     !source.text.includes(p.destination) ||
     !source.text.split('\n').includes('[link-url] ' + a.url)
   )

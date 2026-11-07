@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { webActionSchema } from './web-action';
 import { pageSourceSchema } from './model';
+import { publicationFieldsSchema } from './publication';
 
 const parameter = z.enum([
   'materialId',
@@ -10,6 +11,7 @@ const parameter = z.enum([
   'attachmentUrl',
 ]);
 export const workflowChoiceSchema = z.strictObject({
+  fields: publicationFieldsSchema.optional(),
   taskId: z.string(),
   version: z.string().uuid(),
   sha256: z.string().regex(/^[a-f0-9]{64}$/),
@@ -17,6 +19,7 @@ export const workflowChoiceSchema = z.strictObject({
   destination: z.string().min(1).max(500),
 });
 export const workflowBodySchema = z.strictObject({
+  fields: publicationFieldsSchema.optional(),
   format: z.literal(1),
   version: z.string().uuid(),
   parentVersion: z.string().uuid().nullable(),
@@ -57,6 +60,7 @@ export const workflowBodySchema = z.strictObject({
             z.strictObject({
               field: z.enum(['materialId', 'value']),
               parameter,
+              fieldId: z.string().optional(),
             }),
           )
           .max(2),
@@ -107,6 +111,7 @@ export const workflowUseSchema = z.strictObject({
     .strictObject({
       id: z.string().uuid(),
       content: workflowChoiceSchema.shape.content,
+      fields: publicationFieldsSchema.optional(),
     })
     .optional(),
   id: z.string().uuid(),
@@ -115,6 +120,7 @@ export const workflowUseSchema = z.strictObject({
   materialId: z.string().uuid(),
   targetUrl: z.url(),
   content: workflowChoiceSchema.shape.content,
+  fields: publicationFieldsSchema.optional(),
   destination: workflowChoiceSchema.shape.destination,
   source: pageSourceSchema,
 });

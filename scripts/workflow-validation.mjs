@@ -3,19 +3,20 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createHash, randomUUID } from 'node:crypto';
 
-export async function verifyWorkflow({ client, website, data, evidence, command, waitFor, check, launch, remainingOwned, crossSite = false, ambiguousSelection = false, historyCleanup = false }) {
+export async function verifyWorkflow({ client, website, data, evidence, command, waitFor, check, launch, remainingOwned, crossSite = false, ambiguousSelection = false, historyCleanup = false, separateFields = false }) {
   const cases = [
     { item: 'A', title: '第一次附件日报', destination: '公告', bytes: Buffer.from([0, 1, 2, 128, 255]) },
     { item: 'B', title: '换输入后的新日报', destination: '通知', bytes: Buffer.from([1, 7, 9, 128, 12, 255]) },
     { item: 'C', title: '冷开后的第三份日报', destination: '公告', bytes: Buffer.from([255, 24, 99, 0, 8]) },
   ];
+  if (separateFields) for (const sample of cases) sample.title += '\n\n这段正文属于' + sample.item;
   if (crossSite) {
     for (const [index, sample] of cases.entries()) sample.bytes = fs.readFileSync(path.join('tests/workspace/fixtures/excel', ['report-a.xlsx','report-b.xlsx','edges-1904.xlsx'][index]));
     const negative = {item:ambiguousSelection?'E':'D',title:'错误选择核对',destination:'通知',bytes:cases[1].bytes,negative:true};
     if(ambiguousSelection)cases.splice(0,cases.length,negative);
     else cases.push(negative);
   }
-  evidence.workflow = { cases: [], cold: null, crossSite, ambiguousSelection, confirmations:'scripted-public-entry', realModelCalls: 0, remoteWrites: 0 };
+  evidence.workflow = { cases: [], cold: null, separateFields, crossSite, ambiguousSelection, confirmations:'scripted-public-entry', realModelCalls: 0, remoteWrites: 0 };
   const configure = async active => {
     const state = await active.request({ kind: 'snapshot' });
     await active.request(command('model-save', { protocol: 'chat-completions', expectedVersion: state.modelSettings?.version ?? 0, endpoint: website.base + '/v1', model: 'fixture', apiKey: 'local-fixture-not-a-secret' }));
@@ -92,7 +93,12 @@ export async function verifyWorkflow({ client, website, data, evidence, command,
     const writes = website.receipts.filter(r => r.item === sample.item && ['upload', 'draft', 'published'].includes(r.kind));
     check(sample.item + ' 独立下载字节、全文栏目、唯一结果及分项模型记录', () => {
       assert.deepEqual(bytes, sample.bytes);
-      assert(html.includes(sample.title) && html.includes(sample.destination));
+      assert((separateFields ? sample.title.split('\n\n').every(part=>html.includes(part)) : html.includes(sample.title)) && html.includes(sample.destination));
+      if (separateFields) {
+        assert.deepEqual(done.publication.fields.map(f=>f.value), sample.title.split('\n\n'));
+        assert.deepEqual(done.actions.at(-1).fieldResults.map(f=>f.textValue), sample.title.split('\n\n'));
+        assert.equal(done.actions.filter(a=>a.action.kind==='fill').length,2);
+      }
       assert.equal(done.publicationChecks[0].download.sha256, sha256);
       assert.deepEqual(writes.map(r => r.kind), ['upload', 'draft', 'published']);
       assert.equal(done.materialProcessing[0].status, 'complete');

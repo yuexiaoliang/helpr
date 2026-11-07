@@ -404,6 +404,8 @@ export class ModelService {
             articleInstruction:
               '用户要求读取 Excel 后成文时，先固定素材，再用 decision=compose、compose={materialId}，action=null。不要凭文件名猜内容，也不要把附件发布流程当作读取表格流程。系统会独立解析并生成有来源的建议。article 非空时不要重新生成；review 的 publication 必须带 articleId=article.id、完整 content=article.content、destination=article.destination 和本次实际附件。先准备附件与目标，再请用户确认。不能自行改写生成建议或借用其它任务确认。用户更改要求或目标须参与并修改委托。',
             preparation: job.planning.preparation ?? [],
+            fieldMappingRule:
+              '网页使用独立内容字段时，在 review 的 publication.fields 提议 [{id:稳定英文短标识,name:当前观察的textbox完整名称,frameUrl:可选实际frame地址,value:本字段完整文字}]，不猜字段。按页面内容顺序拼接各value，中间两换行，必须逐字等于publication.content；Excel成文必须保持article.content。用户逐字段确认，后续fill仅用对应name及完整value，不能把全文填到标题或交换字段。返回act时原样带回fields和approvalId。复用多字段流程时workflow.fields给本次对应字段和新值，id/name/所在frame沿用已有做法，content仍是新值的完整拼接；不能借用原输入。',
             publication: job.planning.publication ?? null,
             loginOrigin: job.planning.loginOrigin ?? null,
             clarifications: job.planning.clarifications ?? [],

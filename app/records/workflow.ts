@@ -7,7 +7,12 @@ import {
   learnedWorkflowSchema,
   type LearnedWorkflow,
 } from '../shared/workflow';
-import { samePublication } from '../shared/publication';
+import {
+  samePublication,
+  publicationFillBinding,
+  verifyPublicationFields,
+  publicationSchema,
+} from '../shared/publication';
 import { reboundAction } from '../shared/workflow-replay';
 import { sameWorkflowOperation } from '../shared/workflow-repair';
 import { workflowCatalog } from '../shared/workflow-catalog';
@@ -151,7 +156,7 @@ function replayRules(
         s.action.kind === 'check' ||
         (s.action.kind === 'select' && !s.selectionResult) ||
         ((s.action.kind === 'fill' || s.action.kind === 'select') &&
-          ![p.content, p.destination].includes(s.action.value)) ||
+          !publicationFillBinding(p, s.action)) ||
         (s.action.target.frameUrl &&
           new URL(s.action.target.frameUrl).origin !== p.origin),
     )
@@ -184,6 +189,7 @@ export function learnWorkflow(
       f.materialId === attachment.materialId,
   )!;
   const body = workflowBodySchema.parse({
+    ...(p.fields ? { fields: p.fields } : {}),
     format: 1,
     version: randomUUID(),
     parentVersion:
@@ -253,17 +259,8 @@ export function learnWorkflow(
           bindings:
             a.action.kind === 'upload'
               ? [{ field: 'materialId', parameter: 'materialId' }]
-              : (a.action.kind === 'fill' || a.action.kind === 'select') &&
-                  [p.content, p.destination].includes(a.action.value)
-                ? [
-                    {
-                      field: 'value',
-                      parameter:
-                        a.action.value === p.content
-                          ? 'content'
-                          : 'destination',
-                    },
-                  ]
+              : publicationFillBinding(p, a.action)
+                ? [publicationFillBinding(p, a.action)]
                 : [],
           before: { source: a.source, evidence: a.preconditions },
           after: { source: a.resultSource, evidence: a.evidence },
@@ -317,6 +314,17 @@ export function validPublicationReferences(
   if (!validCoordinationReferences(e) || !validArticleReferences(e))
     return false;
   for (const a of e.actions) {
+    if (a.submission?.publication.fields) {
+      try {
+        verifyPublicationFields(a.submission.publication, {
+          ...a.source,
+          text: '',
+          controls: a.fieldResults,
+        });
+      } catch {
+        return false;
+      }
+    } else if (a.fieldResults) return false;
     if (!a.selectionResult) continue;
     if (
       a.action.kind !== 'select' ||
@@ -338,6 +346,49 @@ export function validPublicationReferences(
   const checks = e.publicationChecks ?? [],
     history = e.publicationHistory?.map((h) => h.check) ?? [],
     workflows = e.learnedWorkflows ?? [];
+  for (const use of e.workflowUses ?? []) {
+    const shape = (fields: typeof use.fields, url: string) =>
+      fields?.map(({ id, name, frameUrl }) => ({
+        id,
+        name,
+        frameUrl: frameUrl ?? url,
+      }));
+    const expected = use.workflow.fields?.map((f) => ({
+      ...f,
+      ...(f.frameUrl === use.workflow.recovery.targetUrl
+        ? { frameUrl: use.targetUrl }
+        : {}),
+    }));
+    if (
+      !publicationSchema.safeParse({
+        content: use.content,
+        destination: use.destination,
+        fields: use.fields,
+      }).success ||
+      JSON.stringify(shape(use.fields, use.targetUrl)) !==
+        JSON.stringify(shape(expected, use.targetUrl)) ||
+      (use.approved &&
+        (!publicationSchema.safeParse({
+          content: use.approved.content,
+          destination: use.destination,
+          fields: use.approved.fields,
+        }).success ||
+          JSON.stringify(shape(use.approved.fields, use.targetUrl)) !==
+            JSON.stringify(shape(use.fields, use.targetUrl))))
+    )
+      return false;
+  }
+  for (const workflow of workflows) {
+    if (
+      !publicationSchema.safeParse({
+        content: workflow.parameters.find((p) => p.name === 'content')?.value,
+        destination: workflow.parameters.find((p) => p.name === 'destination')
+          ?.value,
+        fields: workflow.fields,
+      }).success
+    )
+      return false;
+  }
   if (
     new Set(e.workflowRepairs?.map((r) => r.id)).size !==
       (e.workflowRepairs?.length ?? 0) ||
