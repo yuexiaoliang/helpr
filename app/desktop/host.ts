@@ -1,3 +1,4 @@
+import { actionNavigationEventSchema } from '../shared/action-navigation';
 import { ActionNavigationWindows } from './action-navigation';
 import {
   app,
@@ -480,7 +481,12 @@ function bindPage(task: Task): void {
       }
     };
     wc.on('will-frame-navigate', (event) => guard(event, event.url));
-    wc.on('will-redirect', (event, url) => guard(event, url));
+    wc.on('will-redirect', (event, url) => {
+      guard(event, url);
+      // 即使重定向最终返回原href，也不能把中途未知去向当作直接链接到达。
+      // 额外撤权使原生epoch不再满足本次链接恢复的两次撤权条件。
+      if (page.view === view && !initialLoad) suspend(task.id, 'page-change');
+    });
     wc.on('will-attach-webview', (event) => event.preventDefault());
     wc.on('render-process-gone', () => {
       if (page.view === view) suspend(task.id, 'page-change');
@@ -992,6 +998,34 @@ async function perform(input: unknown): Promise<unknown> {
           },
     );
     return { file: result.canceled ? null : (result.filePaths[0] ?? null) };
+  }
+  if (command.kind === 'navigation-ready') {
+    const event = actionNavigationEventSchema.parse(
+      z
+        .object({
+          taskId: z.unknown(),
+          runId: z.unknown(),
+          actionId: z.unknown(),
+          navigation: z.unknown(),
+        })
+        .parse(input),
+    );
+    const page = pages.get(event.taskId),
+      wc = page?.view.webContents;
+    nativeBindings();
+    const ticket = inputGate.state(event.taskId);
+    return (
+      !!wc &&
+      !wc.isDestroyed() &&
+      !wc.isLoading() &&
+      nativeAvailable &&
+      ticket.available &&
+      ticket.blocked &&
+      ticket.epoch === event.navigation.inputEpoch + 2 &&
+      wc.getOrCreateDevToolsTargetId() === event.navigation.targetId &&
+      page?.generation === event.navigation.generation &&
+      wc.getURL() === event.navigation.url
+    );
   }
   if (command.kind === 'verify-input') {
     const { taskId } = z.object({ taskId: z.string() }).parse(input);

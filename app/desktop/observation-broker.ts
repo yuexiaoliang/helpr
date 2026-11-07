@@ -46,6 +46,25 @@ export class ObservationBroker {
   private readonly clients = new Set<Qualification>();
   private readonly input: Writable;
   private readonly listeners = new Set<(message: unknown) => void>();
+  private readonly inputListeners = new Set<
+    (
+      client: Qualification,
+      method: string,
+      params: Record<string, unknown>,
+    ) => void
+  >();
+  onInputSent(
+    listener: (
+      client: Qualification,
+      method: string,
+      params: Record<string, unknown>,
+    ) => void,
+  ) {
+    this.inputListeners.add(listener);
+    return () => {
+      this.inputListeners.delete(listener);
+    };
+  }
   private readonly disconnectListeners = new Set<() => void>();
   constructor(
     host: ChildProcess,
@@ -172,7 +191,7 @@ export class ObservationBroker {
         reject(new Error('OBSERVATION_TIMEOUT'));
       }, 8000);
       this.pending.set(id, { resolve, reject, timer });
-      const send = () =>
+      const send = () => {
         this.input.write(
           JSON.stringify({
             id,
@@ -188,6 +207,10 @@ export class ObservationBroker {
             }
           },
         );
+        if (qualification && method.startsWith('Input.'))
+          for (const listener of this.inputListeners)
+            listener(qualification, method, params);
+      };
       try {
         if (qualification && this.inputGate)
           this.inputGate.permit(

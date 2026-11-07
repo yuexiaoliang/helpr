@@ -262,3 +262,11 @@ Node-API 8 原生模块经 node-gyp `13.1.0` 构建，固定 arm64／macOS 14 �
 可靠保存派发后，宿主在单步工作者启动前登记任务、执行、动作、页面target／代次和原生epoch，窗口最多16秒。首个导航只记录`during-action`时间关联；页面变化仍即时撤权并暂停，不代表由动作触发、动作完成或新页面归属。人工输入使epoch变化、窗口过期、页面替换或旧动作结束后不关联。重定向终点不能替代实际观察到的首个导航。
 
 格式23接续22并在迁移前备份；迟到事实可以补入原已派发动作，但不恢复停止、不确认结果、不重发。冷开和备份保留并校验此关联。自动跨页续行、新目标身份和动态结果仍待补齐，不能仅凭这份记录放行。源码专项见`tests/workspace/action-navigation.test.ts`；隔离包用`pnpm validate:workspace --fixture --candidate=<名称> --action-navigation`核对一次POST／303、暂停及冷开不重发，不能抵算真实后台或原生接管验收。
+
+## 已观察链接的新页面核对与自动续行（23阶段）
+
+格式24保存已核对的链接导航检查点。完整观察中的唯一精确主frame同站链接，在所属原生门内发出鼠标释放且Chromium首个请求为`anchorClick/currentTab`时，才进入只读新页面核对。导航开始仍按原规则即时撤权和保存暂停；新页须同target、恰好下一代、精确href、加载完成且观察未截断。只有原生epoch恰好包含宿主及控制侧两次撤权、无停止/接管/额外页面变化，才可靠确认原链接动作并恢复新资格。原始`during-action`事实不升级为许可，浏览器请求不替代页面到达或业务成功。
+
+自动恢复限未绑定发布/准备目标、未进入流程重放的普通链接交互。表单创建、脚本导航、重定向、弹窗、同文档/子frame导航、跨站和含糊链接仍暂停；动态业务目标及异步附件等待另待实现。冷开保留检查点，不重发已确认动作。旧格式23升级前留下`workspace-before-link-navigation-23-*.sqlite`。
+
+源码入口为`tests/workspace/link-navigation.test.ts`。实包入口为`pnpm validate:workspace --fixture --candidate=link-navigation-redirect-guard-23 --link-navigation`，普通本机页面和虚构模型通过受限业务入口运行，不代答“继续”，不抵算真实后台或CUA/真人操作。[本阶段方案](../docs/testing/release-23-link-navigation-plan.md)明确用量和边界。

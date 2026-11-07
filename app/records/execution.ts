@@ -1,4 +1,7 @@
-import { actionNavigationEventSchema } from '../shared/action-navigation';
+import {
+  actionNavigationEventSchema,
+  linkNavigationResolutionSchema,
+} from '../shared/action-navigation';
 import {
   agreementUICommandSchema,
   agreementTermsSchema,
@@ -335,6 +338,12 @@ const commandSchema = z.discriminatedUnion('kind', [
   }),
   z.strictObject({ kind: z.literal('dispatch'), ...work, id: z.string() }),
   actionNavigationEventSchema.extend({ kind: z.literal('action-navigation') }),
+  z.strictObject({
+    kind: z.literal('navigation-resolved'),
+    taskId: z.string(),
+    expectedVersion: z.number().int().positive(),
+    resolution: linkNavigationResolutionSchema,
+  }),
   z.strictObject({
     kind: z.literal('reported'),
     taskId: z.string(),
@@ -1484,6 +1493,51 @@ export class ExecutionRecords {
             this.save(task.id, e);
             return { created: true };
           }
+        }
+        if (c.kind === 'navigation-resolved') {
+          const r = c.resolution;
+          const a = e.actions.find((a) => a.id === r.proof.actionId);
+          if (
+            e.version !== c.expectedVersion ||
+            e.intent !== 'automatic' ||
+            e.pauseReason !== 'page-change' ||
+            e.phase !== 'paused' ||
+            e.question ||
+            e.restoreReview ||
+            e.loginOrigin ||
+            e.recoveryPending ||
+            e.publication ||
+            e.preparation?.length ||
+            (e.coordination &&
+              (e.coordination.status !== 'ready' ||
+                e.coordination.refreshRequired)) ||
+            e.observedAnomalies?.some((a) => a.goalVersion === e.goalVersion) ||
+            !a ||
+            a.goalVersion !== e.goalVersion ||
+            a.status !== 'unknown' ||
+            r.proof.taskId !== task.id ||
+            task.url !== r.source.url ||
+            task.phase !== 'manual' ||
+            e.actions.some(
+              (other) =>
+                other !== a &&
+                ['reserved', 'unknown', 'dispatched'].includes(other.status),
+            )
+          )
+            return { recovered: false };
+          a.status = 'confirmed';
+          a.navigationResolution = r;
+          a.resultSource = r.source;
+          a.evidence = [r.source.url];
+          // schema验证完整链接、原生代次和新页面关联；任何缺失保持事务回滚。
+          executionSchema.parse(e);
+          delete e.pauseReason;
+          e.version++;
+          e.runId = null;
+          move(e, 'QUEUE');
+          e.summary = '已核对链接到达的新页面，继续剩余工作。';
+          this.save(task.id, e);
+          return { recovered: true };
         }
         if (c.kind === 'action-navigation') {
           const a = e.actions.find((a) => a.id === c.actionId);

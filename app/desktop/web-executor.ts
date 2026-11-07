@@ -23,6 +23,7 @@ export class WebExecutor {
     private readonly ownsProcess?: (pid: number | undefined) => boolean,
     private readonly material?: (command: unknown) => Promise<unknown>,
     private readonly actionWindow?: (command: unknown) => Promise<unknown>,
+    private readonly watchNavigation?: (job: WebActionJob) => Promise<void>,
   ) {}
   async perform(job: WebActionJob): Promise<void> {
     if (!job.qualified() || job.signal.aborted)
@@ -50,6 +51,7 @@ export class WebExecutor {
     )
       throw Error('EXECUTION_PAGE_CHANGED');
     try {
+      await this.watchNavigation?.(job);
       await this.actionWindow?.({
         kind: 'action-window-arm',
         taskId: job.taskId,

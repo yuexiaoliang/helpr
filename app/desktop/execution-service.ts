@@ -1,4 +1,7 @@
-import type { ActionNavigationEvent } from '../shared/action-navigation';
+import type {
+  ActionNavigationEvent,
+  LinkNavigationProof,
+} from '../shared/action-navigation';
 import {
   agreementUICommandSchema,
   type AgreementUICommand,
@@ -23,6 +26,7 @@ import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { snapshotSchema, type WorkspaceSnapshot } from '../shared/contracts';
 import {
+  actionFactSchema,
   executionIntentSchema,
   nextStepSchema,
   type ExecutionIntent,
@@ -37,7 +41,7 @@ import {
   type SystemCondition,
   systemConditionLabel,
 } from '../shared/execution';
-import type { PageObservation } from '../shared/model';
+import { pageSourceSchema, type PageObservation } from '../shared/model';
 import { materialFailureMessage } from '../shared/material';
 import {
   currentWorkflow,
@@ -171,6 +175,8 @@ export class ExecutionService {
     { abort: AbortController; work: Promise<void>; epoch?: number }
   >();
   private readonly interruptions = new Set<Promise<unknown>>();
+  private readonly linkProofs = new Map<string, LinkNavigationProof>();
+  private readonly navigationRecoveries = new Set<string>();
   private readonly pendingNavigations = new Set<Promise<unknown>>();
   private readonly sessionUpdates = new Map<string, Promise<unknown>>();
   constructor(
@@ -190,6 +196,7 @@ export class ExecutionService {
       stopModels: (taskId: string) => void;
       beforeRecovery?: () => Promise<void>;
       session?: (taskId: string) => Promise<SessionContext>;
+      navigationReady?: (event: ActionNavigationEvent) => Promise<boolean>;
       refreshPage?: (taskId: string) => Promise<void>;
       initialUpgradeHold?: boolean;
       input?: {
@@ -212,6 +219,131 @@ export class ExecutionService {
     } finally {
       this.pendingNavigations.delete(saving);
     }
+    this.tryLinkNavigation(event.taskId);
+  }
+  acceptLinkNavigation(proof: LinkNavigationProof) {
+    this.linkProofs.set(proof.taskId, proof);
+    this.tryLinkNavigation(proof.taskId);
+  }
+  private tryLinkNavigation(taskId: string) {
+    const proof = this.linkProofs.get(taskId);
+    const action = this.ports
+      .current()
+      .tasks.find((t) => t.id === taskId)
+      ?.execution?.actions.find((a) => a.id === proof?.actionId);
+    if (
+      !proof ||
+      !action?.navigation ||
+      this.blocked.get(taskId)?.reason !== 'page-change' ||
+      !this.blocked.get(taskId)?.saved ||
+      this.navigationRecoveries.has(taskId) ||
+      !this.ports.navigationReady ||
+      !this.ports.input
+    )
+      return;
+    this.linkProofs.delete(taskId);
+    this.navigationRecoveries.add(taskId);
+    const event: ActionNavigationEvent = {
+      taskId,
+      runId: action.runId,
+      actionId: action.id,
+      navigation: action.navigation,
+    };
+    const sequence = this.intents.get(taskId),
+      systemGeneration = this.systemGeneration;
+    // 恰好两次撤权：宿主导航开始、控制侧保存暂停。额外原生/停止/页面事件不能被重新prepare吞掉。
+    const epoch = event.navigation.inputEpoch + 2;
+    const unchanged = () =>
+      this.available &&
+      !this.closing &&
+      this.systemReady() &&
+      this.systemGeneration === systemGeneration &&
+      this.intents.get(taskId) === sequence &&
+      this.ports.input!.epoch(taskId) === epoch &&
+      !this.pendingIntents.has(taskId) &&
+      !this.sessionUpdates.has(taskId);
+    const work = (async () => {
+      try {
+        await this.jobs.get(taskId)?.work;
+        if (!unchanged()) return;
+        const signal = AbortSignal.timeout(6000);
+        let observed: BoundObservation | undefined;
+        for (
+          let attempt = 0;
+          attempt < 20 && !signal.aborted && unchanged();
+          attempt++
+        ) {
+          const ready = await this.abortable(
+            () => this.ports.navigationReady!(event),
+            signal,
+          );
+          if (ready) {
+            observed = await this.abortable(
+              () => this.ports.observe(taskId, signal),
+              signal,
+            );
+            break;
+          }
+          await new Promise<void>((resolve) => setTimeout(resolve, 250));
+        }
+        if (
+          !observed ||
+          !unchanged() ||
+          observed.binding.targetId !== event.navigation.targetId ||
+          observed.binding.generation !== event.navigation.generation ||
+          observed.observation.url !== proof.url ||
+          observed.observation.truncated ||
+          proof.url !== event.navigation.url ||
+          proof.inputEpoch !== event.navigation.inputEpoch ||
+          proof.generation !== event.navigation.sourceGeneration ||
+          proof.targetId !== event.navigation.targetId ||
+          (action.coordination &&
+            (!observed.session ||
+              !sameSession(action.coordination.session, observed.session) ||
+              action.coordination.session.epoch !== observed.session.epoch))
+        )
+          return;
+        const current = this.ports
+          .current()
+          .tasks.find((t) => t.id === taskId)?.execution;
+        if (!current || current.pauseReason !== 'page-change') return;
+        const resolution = {
+          proof,
+          source: pageSourceSchema.strip().parse(observed.observation),
+          pausedInputEpoch: epoch,
+        };
+        if (
+          !actionFactSchema.safeParse({
+            ...action,
+            status: 'confirmed',
+            navigationResolution: resolution,
+          }).success
+        )
+          return;
+        const result = await this.record({
+          kind: 'navigation-resolved',
+          taskId,
+          expectedVersion: current.version,
+          resolution,
+        });
+        if (!result.recovered) return;
+        if (!unchanged() || !this.ports.input!.allow(taskId, epoch)) {
+          // 较新的停止/接管已有自己的记录；否则撤销刚保存的可运行状态。
+          if (this.intents.get(taskId) === sequence)
+            await this.suspend(taskId, 'ownership-unknown', randomUUID());
+          return;
+        }
+        this.blocked.delete(taskId);
+        this.publish();
+      } catch {
+        // 只读观察失败保持暂停；绝不重发旧点击。
+      } finally {
+        this.navigationRecoveries.delete(taskId);
+        this.pump();
+      }
+    })();
+    this.pendingNavigations.add(work);
+    void work.finally(() => this.pendingNavigations.delete(work));
   }
   canExit() {
     return (
@@ -441,6 +573,7 @@ export class ExecutionService {
     } finally {
       if (this.intents.get(taskId) === sequence)
         this.pendingIntents.delete(taskId);
+      this.tryLinkNavigation(taskId);
       this.pump();
     }
   }

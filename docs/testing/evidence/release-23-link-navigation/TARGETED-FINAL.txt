@@ -1,0 +1,14 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+
+ Test Files  1 passed (1)
+      Tests  11 passed (11)
+   Start at  10:34:53
+   Duration  2.39s (tests 81%, import 15%, transform 3%)
+
+$ tsc --noEmit
+$ eslint app tests/workspace electron.vite.config.ts drizzle.config.ts vitest.config.ts
+$ prettier --check app tests/workspace *.ts *.json *.mjs pnpm-workspace.yaml
+Checking formatting...
+All matched files use Prettier code style!

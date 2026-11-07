@@ -1,0 +1,29 @@
+✖ 链接夹具仅提供普通href与页面文本，只有看到到达文本才提议完成 (31.333708ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 106.252125
+
+✖ failing tests:
+
+test at scripts/link-navigation-fixture.test.mjs:4:1
+✖ 链接夹具仅提供普通href与页面文本，只有看到到达文本才提议完成 (31.333708ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert(second.includes('\\"decision\\":\\"complete\\"'))
+  
+      at TestContext.<anonymous> (file:///Users/yuexiaoliang/projects/helpr/scripts/link-navigation-fixture.test.mjs:17:5)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

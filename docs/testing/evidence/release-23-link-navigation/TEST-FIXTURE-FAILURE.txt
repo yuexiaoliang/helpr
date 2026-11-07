@@ -1,0 +1,55 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/link-navigation.test.ts (9 tests | 2 failed) 1707ms
+   × 执行入口只读核对、自动续行与竞争：none 239ms
+   × 执行入口只读核对、自动续行与竞争：stop-before-read 186ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/link-navigation.test.ts > 执行入口只读核对、自动续行与竞争：none
+AssertionError: expected 'paused' to be 'complete' // Object.is equality
+
+Expected: "complete"
+Received: "paused"
+
+ ❯ tests/workspace/link-navigation.test.ts:360:50
+    358|         expect(allowed).toBe(1);
+    359|         expect(plans).toBe(1);
+    360|         expect(state.tasks[0]!.execution!.phase).toBe('complete');
+       |                                                  ^
+    361|         expect(state.tasks[0]!.execution!.actions[0]!.status).toBe('co…
+    362|       } else {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/workspace/link-navigation.test.ts > 执行入口只读核对、自动续行与竞争：stop-before-read
+ZodError: [
+  {
+    "code": "invalid_value",
+    "values": [
+      "execution-intent"
+    ],
+    "path": [
+      "kind"
+    ],
+    "message": "Invalid input: expected \"execution-intent\""
+  }
+]
+ ❯ ExecutionService.intent app/desktop/execution-service.ts:950:43
+    948|     closeAtVersion?: number,
+    949|   ): Promise<WorkspaceSnapshot> {
+    950|     const command = executionIntentSchema.parse(input);
+       |                                           ^
+    951|     const currentTask = this.ports
+    952|       .current()
+ ❯ tests/workspace/link-navigation.test.ts:348:23
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 13 passed (15)
+   Start at  10:28:49
+   Duration  3.62s (tests 70%, import 22%, transform 7%)
+

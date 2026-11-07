@@ -1,0 +1,339 @@
+{
+  "app": "/Users/yuexiaoliang/projects/helpr/dist/candidates/link-navigation-23/mac-arm64/helpr.app",
+  "storage": "fixture",
+  "pendingAcceptance": [
+    "系统钥匙串与跨重启登录",
+    "原生窗口与真人输入"
+  ],
+  "started": "2026-11-07T02:36:47.901Z",
+  "checks": [],
+  "samples": [
+    {
+      "kind": "startup",
+      "number": 223,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:51494",
+        "persistent": false
+      },
+      "ms": 5749,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    }
+  ],
+  "processes": [
+    {
+      "number": 223,
+      "controller": 18044,
+      "seen": {
+        "18044": {
+          "parent": 18029,
+          "group": 18044
+        },
+        "18050": {
+          "parent": 18044,
+          "group": 18016
+        },
+        "18051": {
+          "parent": 18044,
+          "group": 18016
+        },
+        "18053": {
+          "parent": 1,
+          "group": 18053
+        },
+        "18054": {
+          "parent": 18044,
+          "group": 18044
+        },
+        "18055": {
+          "parent": 18053,
+          "group": 18055
+        },
+        "18060": {
+          "parent": 18055,
+          "group": 18055
+        },
+        "18061": {
+          "parent": 18055,
+          "group": 18055
+        },
+        "18062": {
+          "parent": 18055,
+          "group": 18055
+        },
+        "18063": {
+          "parent": 18055,
+          "group": 18055
+        },
+        "18064": {
+          "parent": 18055,
+          "group": 18055
+        },
+        "18067": {
+          "parent": 18055,
+          "group": 18055
+        },
+        "18068": {
+          "parent": 18055,
+          "group": 18055
+        }
+      },
+      "groups": [
+        18044,
+        18053,
+        18055
+      ],
+      "remaining": [],
+      "exit": {
+        "code": 0,
+        "signal": null
+      }
+    }
+  ],
+  "fixture": [
+    {
+      "kind": "link-planning"
+    },
+    {
+      "kind": "link-arrival"
+    },
+    {
+      "kind": "link-planning"
+    }
+  ],
+  "linkNavigation": {
+    "realModelCalls": 0,
+    "remoteWrites": 0,
+    "readiness": [
+      "9853448a3187698db9057fa3461d69b5e2e26e9a35159b0000b11c093e6afd36",
+      "9853448a3187698db9057fa3461d69b5e2e26e9a35159b0000b11c093e6afd36"
+    ],
+    "taskId": "1d4bc9c1-d272-4232-82ce-449fd64a6c87",
+    "latest": {
+      "id": "1d4bc9c1-d272-4232-82ce-449fd64a6c87",
+      "goal": "打开 http://127.0.0.1:51494/link-start 中的条目并核对内容。",
+      "created": 1794019013744,
+      "url": "http://127.0.0.1:51494/link-item/42",
+      "draft": "",
+      "archived": false,
+      "groupId": null,
+      "groupGoal": null,
+      "hidden": false,
+      "minimized": false,
+      "phase": "manual",
+      "execution": {
+        "coordination": {
+          "session": {
+            "id": "helpr-fixture-web",
+            "epoch": "3cd417e4-ebe0-41af-8af5-0b554d01926b:0",
+            "origin": "http://127.0.0.1:51494"
+          },
+          "status": "ready",
+          "source": {
+            "url": "http://127.0.0.1:51494/link-start",
+            "title": "链接清单",
+            "fingerprint": "ec14e4684fa58d3bf9682cb1d0c0f52c42a20b6a6f54767d9a4403a0455718f5",
+            "generation": 1,
+            "observedAt": 1794019014711,
+            "truncated": false
+          }
+        },
+        "resourceClaims": [
+          {
+            "status": "held",
+            "id": "2b1ce64b-5b54-4121-8df4-e921cb456228",
+            "runId": "77111785-2066-41f7-8cdc-a1555d9c9657",
+            "goalVersion": 1,
+            "origin": "http://127.0.0.1:51494",
+            "targetUrl": null
+          }
+        ],
+        "modelVersion": 1,
+        "intent": "automatic",
+        "phase": "paused",
+        "version": 4,
+        "intentId": "86c49170-4bc3-48b1-92ca-e6934b13f0cd",
+        "goalVersion": 1,
+        "goal": "打开 http://127.0.0.1:51494/link-start 中的条目并核对内容。",
+        "runId": null,
+        "resource": null,
+        "summary": "执行暂时无法继续，已暂停后续操作。已有结果与记录保留。",
+        "actions": [
+          {
+            "coordination": {
+              "session": {
+                "id": "helpr-fixture-web",
+                "epoch": "3cd417e4-ebe0-41af-8af5-0b554d01926b:0",
+                "origin": "http://127.0.0.1:51494"
+              },
+              "claimId": "2b1ce64b-5b54-4121-8df4-e921cb456228"
+            },
+            "observedLinks": [
+              {
+                "name": "打开条目",
+                "url": "http://127.0.0.1:51494/link-item/42"
+              }
+            ],
+            "navigation": {
+              "id": "e77d3812-76fa-46cd-8d80-433b8a13e371",
+              "association": "during-action",
+              "targetId": "CAF3B76EFC640539A2E9B5434C5B9E23",
+              "sourceGeneration": 1,
+              "generation": 2,
+              "url": "http://127.0.0.1:51494/link-item/42",
+              "mainFrame": true,
+              "sameDocument": false,
+              "inputEpoch": 1,
+              "observedAt": 1794019015276
+            },
+            "navigationResolution": {
+              "proof": {
+                "taskId": "1d4bc9c1-d272-4232-82ce-449fd64a6c87",
+                "runId": "77111785-2066-41f7-8cdc-a1555d9c9657",
+                "actionId": "63238a97-95e8-41b8-84e3-8cbb1db94b98",
+                "targetId": "CAF3B76EFC640539A2E9B5434C5B9E23",
+                "generation": 1,
+                "inputEpoch": 1,
+                "reason": "anchorClick",
+                "url": "http://127.0.0.1:51494/link-item/42",
+                "requestedAt": 1794019015269
+              },
+              "source": {
+                "url": "http://127.0.0.1:51494/link-item/42",
+                "title": "条目42",
+                "fingerprint": "234ee181c54dc2e006663eb2099dab3e7ebaea1cf5b2424ddea7f73e794f807a",
+                "generation": 2,
+                "observedAt": 1794019015343,
+                "truncated": false
+              },
+              "pausedInputEpoch": 3
+            },
+            "id": "63238a97-95e8-41b8-84e3-8cbb1db94b98",
+            "runId": "77111785-2066-41f7-8cdc-a1555d9c9657",
+            "goalVersion": 1,
+            "status": "confirmed",
+            "summary": "打开条目",
+            "action": {
+              "kind": "click",
+              "target": {
+                "role": "link",
+                "name": "打开条目",
+                "exact": true
+              }
+            },
+            "effect": "interaction",
+            "preconditions": [
+              "打开条目"
+            ],
+            "source": {
+              "url": "http://127.0.0.1:51494/link-start",
+              "title": "链接清单",
+              "fingerprint": "ec14e4684fa58d3bf9682cb1d0c0f52c42a20b6a6f54767d9a4403a0455718f5",
+              "generation": 1,
+              "observedAt": 1794019014711,
+              "truncated": false
+            },
+            "observedUrls": [
+              "http://127.0.0.1:51494/link-start",
+              "http://127.0.0.1:51494/link-item/42"
+            ],
+            "resultSource": {
+              "url": "http://127.0.0.1:51494/link-item/42",
+              "title": "条目42",
+              "fingerprint": "234ee181c54dc2e006663eb2099dab3e7ebaea1cf5b2424ddea7f73e794f807a",
+              "generation": 2,
+              "observedAt": 1794019015343,
+              "truncated": false
+            },
+            "binding": {
+              "targetId": "CAF3B76EFC640539A2E9B5434C5B9E23",
+              "generation": 1
+            },
+            "evidence": [
+              "http://127.0.0.1:51494/link-item/42"
+            ],
+            "returned": false,
+            "dispatchState": "possible"
+          }
+        ]
+      },
+      "error": "",
+      "version": 6,
+      "messages": [
+        {
+          "role": "user",
+          "text": "打开 http://127.0.0.1:51494/link-start 中的条目并核对内容。"
+        },
+        {
+          "role": "system",
+          "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+        },
+        {
+          "role": "user",
+          "text": "开始执行"
+        },
+        {
+          "role": "assistant",
+          "text": "打开条目",
+          "call": {
+            "usageKind": "web-planning",
+            "id": "884d9614-c087-44d3-9633-a449e4761028",
+            "taskId": "1d4bc9c1-d272-4232-82ce-449fd64a6c87",
+            "model": "fixture",
+            "configurationVersion": 1,
+            "phase": "complete",
+            "source": {
+              "url": "http://127.0.0.1:51494/link-start",
+              "title": "链接清单",
+              "fingerprint": "ec14e4684fa58d3bf9682cb1d0c0f52c42a20b6a6f54767d9a4403a0455718f5",
+              "generation": 1,
+              "observedAt": 1794019014711,
+              "truncated": false
+            },
+            "pageChanged": false,
+            "dispatched": true,
+            "reservedTokens": 29956,
+            "inputTokens": null,
+            "outputTokens": null,
+            "totalTokens": null,
+            "error": null
+          }
+        },
+        {
+          "role": "assistant",
+          "text": "打开条目",
+          "call": {
+            "usageKind": "web-planning",
+            "id": "5ca60f9f-6689-4c51-98e2-24ae48da4b91",
+            "taskId": "1d4bc9c1-d272-4232-82ce-449fd64a6c87",
+            "model": "fixture",
+            "configurationVersion": 1,
+            "phase": "complete",
+            "source": {
+              "url": "http://127.0.0.1:51494/link-item/42",
+              "title": "条目42",
+              "fingerprint": "234ee181c54dc2e006663eb2099dab3e7ebaea1cf5b2424ddea7f73e794f807a",
+              "generation": 2,
+              "observedAt": 1794019015388,
+              "truncated": false
+            },
+            "pageChanged": false,
+            "dispatched": true,
+            "reservedTokens": 30715,
+            "inputTokens": null,
+            "outputTokens": null,
+            "totalTokens": null,
+            "error": null
+          }
+        }
+      ]
+    }
+  },
+  "passed": false,
+  "error": "VALIDATION_TIMEOUT",
+  "remaining": [],
+  "ms": 57305
+}

@@ -1,4 +1,8 @@
-import { actionNavigationSchema } from './action-navigation';
+import {
+  actionNavigationSchema,
+  linkNavigationResolutionSchema,
+  expectedNavigationLink,
+} from './action-navigation';
 import { z } from 'zod';
 import { scheduleStateSchema, scheduleTermsSchema } from './schedule';
 import {
@@ -116,6 +120,7 @@ export const actionFactSchema = z
     selectionResult: observedControlSchema.optional(),
     fieldResults: z.array(observedControlSchema).max(12).optional(),
     navigation: actionNavigationSchema.optional(),
+    navigationResolution: linkNavigationResolutionSchema.optional(),
     id: z.string().min(1),
     runId: z.string(),
     goalVersion: z.number().int(),
@@ -161,7 +166,35 @@ export const actionFactSchema = z
         a.status !== 'cancelled' &&
         a.navigation.targetId === a.binding.targetId &&
         a.navigation.sourceGeneration === a.binding.generation),
-  );
+  )
+  .refine((a) => {
+    const r = a.navigationResolution,
+      n = a.navigation;
+    return (
+      !r ||
+      (!!n &&
+        a.status === 'confirmed' &&
+        a.effect === 'interaction' &&
+        !a.submission &&
+        !a.publicationApprovalId &&
+        !a.workflowStep &&
+        n.mainFrame &&
+        !n.sameDocument &&
+        r.proof.actionId === a.id &&
+        r.proof.runId === a.runId &&
+        r.proof.targetId === n.targetId &&
+        r.proof.generation === n.sourceGeneration &&
+        r.proof.inputEpoch === n.inputEpoch &&
+        r.pausedInputEpoch === n.inputEpoch + 2 &&
+        r.proof.url === n.url &&
+        r.source.url === n.url &&
+        r.source.generation === n.generation &&
+        !r.source.truncated &&
+        r.source.observedAt >= n.observedAt &&
+        Math.abs(r.proof.requestedAt - n.observedAt) <= 16000 &&
+        expectedNavigationLink(a.action, a.source, a.observedLinks) === n.url)
+    );
+  });
 export type ActionFact = z.infer<typeof actionFactSchema>;
 export const executionPauseReasonSchema = z.enum([
   'takeover',

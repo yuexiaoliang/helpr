@@ -1,3 +1,4 @@
+import { LinkNavigationWatch } from './link-navigation';
 import { actionNavigationEventSchema } from '../shared/action-navigation';
 import { agreementUICommandSchema } from '../shared/agreement';
 import { scheduleUICommandSchema } from '../shared/schedule';
@@ -433,6 +434,9 @@ export async function startController(
       await broker.close(qualification);
     }
   }
+  const linkNavigation = new LinkNavigationWatch(broker, (proof) =>
+    executions.acceptLinkNavigation(proof),
+  );
   const webExecutor = new WebExecutor(
     new ExecutionProtocol(broker),
     observePage,
@@ -441,6 +445,7 @@ export async function startController(
     (pid) => ownership.owns(pid),
     (command) => recordClient.request({ kind: 'material', command }),
     (command) => hostClient.request(command),
+    (job) => linkNavigation.start(job),
   );
   const saveExecution = (command: unknown) =>
     recordClient.request({ kind: 'execution', command });
@@ -494,6 +499,12 @@ export async function startController(
       sessionContextSchema.parse(
         await hostClient.request({ kind: 'session-context', taskId }),
       ),
+    navigationReady: async (event) =>
+      z
+        .boolean()
+        .parse(
+          await hostClient.request({ kind: 'navigation-ready', ...event }),
+        ),
     refreshPage: async (taskId) => {
       await hostClient.request({ kind: 'coordination-refresh', taskId });
     },
@@ -1227,6 +1238,7 @@ export async function startController(
     versions.dispose();
     models.disable();
     executions.disable();
+    linkNavigation.dispose();
     webExecutor.dispose();
     broker.dispose();
     workers.forEach((worker) => worker.kill());
