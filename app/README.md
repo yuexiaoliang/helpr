@@ -282,3 +282,5 @@ Node-API 8 原生模块经 node-gyp `13.1.0` 构建，固定 arm64／macOS 14 �
 发布后的完整管理页可按已冻结确认内容取得结果入口：链接名称须精确等于确认全文或某个完整字段值，唯一同站URL，管理页同时包含原编辑目标／附件唯一链接、确认全文和栏目。可靠保存入口后只读获取公开页，核对唯一canonical、内容、栏目、附件与字节，并核对公开页唯一原编辑目标链接。不会点击候选、重新发布或取得新页面输入资格；歧义、缺身份、保存失败保持未知。仅有通用“查看”标签或缺全文的缩略列表仍不支持。
 
 格式27接续26，先备份`workspace-before-management-result-23-*`；冷开消费已保存入口，备份导入保持restoreReview。源码入口`tests/workspace/publication.test.ts`；隔离包入口`pnpm validate:workspace --fixture --candidate=management-result-23 --management-result`。A唯一标题链接、B同名不同地址及冷开均不代答继续。具体边界与有界用量见[本阶段方案](../docs/testing/release-23-management-result-plan.md)，异步附件和真实后台组合仍待完成。
+
+事项23异步附件隔离验证：`pnpm validate:workspace --fixture --candidate=upload-ready-space-23 --upload-ready`。上传返回后只读等待唯一新增附件链接，连续两次稳定观察、下载字节和固定素材核对完成后才继续保存。等待不调用模型或重传；当前窄路径要求原编辑页、完整链接观察、同站公开下载和明确目标，多个新增链接或额外点击关联仍保留未知。检查点及事实引用随格式28保存；旧27迁移前留备份。停止、接管、页面／会话变化使旧等待失效，备份核对不能凭模型确认未知上传。实包自动证据不替代真人、真实后台或完整首版验收。

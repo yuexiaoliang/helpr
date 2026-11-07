@@ -9,7 +9,7 @@ import { WorkspaceRecords } from '../../app/records/workspace';
 
 const changed = { draft: '暂存附件', title: '公告全文', publish: '确认送出' };
 
-test('共享会话变化撤销待保存的修复资格，保留原未知上传', async () => {
+test('共享会话变化撤销待保存的修复资格，保留已核对上传但不保存草稿', async () => {
   const f = await setup(true);
   const a = await f.add('基准');
   await f.approve(a);
@@ -24,7 +24,9 @@ test('共享会话变化撤销待保存的修复资格，保留原未知上传',
   const b = await f.add('会话变化', '公告', changed);
   expect(f.page(b).writes).toEqual(['upload']);
   expect(f.e(b).workflowRepairs).toBeUndefined();
-  expect(f.e(b).actions[0]!.status).toBe('unknown');
+  expect(interrupted).toBe(true);
+  expect(f.e(b).actions[0]!.status).toBe('confirmed');
+  expect(f.e(b).actions[0]!.uploadCheck).toBeDefined();
   expect(f.e(b).learnedWorkflows).toBeUndefined();
 });
 

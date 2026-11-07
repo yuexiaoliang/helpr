@@ -113,6 +113,7 @@ async function fixture() {
   const observation = () => ({
     url: a.terms.entryUrl,
     title: '编辑',
+    links: [{ name: '附件已上传', url: 'https://example.com/file' }],
     fingerprint: 'fixture',
     generation: 1,
     observedAt: Date.now(),
@@ -187,6 +188,7 @@ async function fixture() {
       binding: { targetId: id, generation: 1 },
       source: {
         ...observation(),
+        links: [],
         text: `编辑\n[file 0] ${a.terms.entryUrl}`,
       },
       action: { kind: 'upload', materialId: m.id, target: { fileIndex: 0 } },
@@ -215,6 +217,13 @@ async function fixture() {
       kind: 'resolve',
       id: 'upload',
       source: observation(),
+      binding: { targetId: id, generation: 1 },
+      download: {
+        url: 'https://example.com/file',
+        sha256: m.sha256,
+        bytes: m.bytes,
+        checkedAt: Date.now(),
+      },
       evidence: ['附件已上传'],
     });
     const article = get(id).articles![0]!;

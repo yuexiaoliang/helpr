@@ -1,3 +1,4 @@
+import { uploadedLink } from '../shared/upload-readiness';
 import {
   creationFieldsMatch,
   validDiscoveredTarget,
@@ -374,6 +375,7 @@ const commandSchema = z.discriminatedUnion('kind', [
   }),
   z.strictObject({
     kind: z.literal('resolve'),
+    binding: pageBindingSchema.optional(),
     download: downloadCheckSchema.optional(),
     ...work,
     id: z.string(),
@@ -1083,6 +1085,7 @@ export class ExecutionRecords {
         if (
           pending &&
           !pending.targetCreation &&
+          pending.action.kind !== 'upload' &&
           c.step.previous?.id === pending.id &&
           c.step.previous.status === 'confirmed' &&
           c.step.previous.evidence.every((text) => c.source.text.includes(text))
@@ -2554,6 +2557,16 @@ export class ExecutionRecords {
               : p && c.action.kind === 'click'
                 ? 'publication'
                 : 'interaction');
+          // 旧下载检查不是当前页面的附件关联；链接消失或变得歧义时不继续写入。
+          if (
+            e.actions.some(
+              (a) =>
+                a.goalVersion === e.goalVersion &&
+                a.uploadCheck &&
+                uploadedLink(a, c.source)?.url !== a.uploadCheck.download.url,
+            )
+          )
+            throw Error('EXECUTION_RESULT_UNKNOWN');
           if (
             c.targetCreation &&
             (effect !== 'draft' ||
@@ -2750,35 +2763,58 @@ export class ExecutionRecords {
           if (!a) throw new Error('ACTION_NOT_OWNED');
           if (a.submission) throw Error('PUBLICATION_RESULT_REQUIRED');
           if (a.targetCreation) throw Error('EXECUTION_RESULT_UNKNOWN');
-          if (
+          if (a.action.kind === 'upload') {
+            const materialId = a.action.materialId;
+            const material = e.materials?.find(
+              (m) => m.id === materialId && m.goalVersion === a.goalVersion,
+            );
+            const target = e.preparation?.find(
+              (f) => f.kind === 'target' && f.goalVersion === a.goalVersion,
+            );
+            const upload = e.preparation?.find(
+              (f) =>
+                f.kind === 'upload' &&
+                f.actionId === a.id &&
+                f.materialId === materialId,
+            );
+            const link = uploadedLink(a, c.source);
+            if (
+              !material ||
+              !target ||
+              target.url !== c.source.url ||
+              !upload ||
+              !link ||
+              a.navigation ||
+              !c.binding ||
+              c.binding.generation !== c.source.generation ||
+              (a.runId === c.runId &&
+                (c.binding.targetId !== a.binding.targetId ||
+                  c.binding.generation !== a.binding.generation)) ||
+              !c.download ||
+              c.download.url !== link.url ||
+              c.download.url !== upload.url ||
+              c.download.sha256 !== material.sha256 ||
+              c.download.bytes !== material.bytes ||
+              c.download.checkedAt < c.source.observedAt
+            )
+              throw Error('EXECUTION_RESULT_UNKNOWN');
+            a.uploadCheck = {
+              rule: 'unique-new-link-v1',
+              download: c.download,
+              binding: c.binding,
+              targetFactId: target.id,
+              uploadFactId: upload.id,
+            };
+          } else if (
             a.runId !== c.runId &&
             e.materials?.some((m) => m.goalVersion === e.goalVersion)
           ) {
             const target = e.preparation?.find(
               (f) => f.kind === 'target' && f.goalVersion === a.goalVersion,
             );
-            if (!target || target.url !== c.source.url)
-              throw Error('EXECUTION_RESULT_UNKNOWN');
-            if (a.action.kind === 'upload') {
-              const materialId = a.action.materialId;
-              const m = e.materials.find((m) => m.id === materialId);
-              const upload = e.preparation?.find(
-                (f) =>
-                  f.kind === 'upload' &&
-                  f.actionId === a.id &&
-                  f.materialId === materialId,
-              );
-              if (
-                !m ||
-                !upload ||
-                !c.download ||
-                c.download.url !== upload.url ||
-                c.download.sha256 !== m.sha256 ||
-                c.download.bytes !== m.bytes ||
-                c.download.checkedAt < c.source.observedAt
-              )
-                throw Error('EXECUTION_RESULT_UNKNOWN');
-            } else if (
+            if (
+              !target ||
+              target.url !== c.source.url ||
               !e.preparation?.some(
                 (f) =>
                   f.kind === 'draft' &&

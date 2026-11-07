@@ -1,4 +1,9 @@
 import {
+  uploadCheckSchema,
+  validUploadCheck,
+  validUploadReferences,
+} from './upload-readiness';
+import {
   targetCreationSchema,
   discoveredTargetSchema,
   validDiscoveredTarget,
@@ -124,6 +129,7 @@ export const actionFactSchema = z
       .optional(),
     observedLinks: z.array(observedLinkSchema).max(300).optional(),
     resultLinks: z.array(observedLinkSchema).max(300).optional(),
+    uploadCheck: uploadCheckSchema.optional(),
     selectionResult: observedControlSchema.optional(),
     fieldResults: z.array(observedControlSchema).max(12).optional(),
     targetCreation: targetCreationSchema.optional(),
@@ -186,6 +192,7 @@ export const actionFactSchema = z
         !a.publicationApprovalId &&
         !a.workflowStep),
   )
+  .refine((a) => validUploadCheck(a))
   .refine((a) => validDiscoveredTarget(a))
   .refine((a) => {
     const d = a.discoveredRecovery,
@@ -321,144 +328,149 @@ export const participationDecisionSchema = z.discriminatedUnion('operation', [
   z.strictObject({ ...decisionFields, operation: z.literal('login-check') }),
 ]);
 export type ParticipationDecision = z.infer<typeof participationDecisionSchema>;
-export const executionSchema = z.strictObject({
-  historyCleanup: z
-    .strictObject({
-      requestId: z.string().uuid(),
-      token: z.string(),
-      at: z.number().int().nonnegative(),
-    })
-    .optional(),
-  schedule: scheduleStateSchema.optional(),
-  scheduleOrigin: z
-    .strictObject({
-      ownerTaskId: z.string(),
-      roundId: z.string().uuid(),
-      versionId: z.string().uuid(),
-      date: z.string(),
-    })
-    .optional(),
-  agreements: z.array(agreementVersionSchema).max(60).optional(),
-  agreementBinding: agreementBindingSchema.optional(),
-  materialWorks: z.array(materialWorkSchema).max(60).optional(),
-  duplicateWork: z
-    .strictObject({
-      taskId: z.string(),
-      workId: z.string().uuid(),
-      goalVersion: z.number().int().positive(),
-    })
-    .optional(),
-  contentSources: z.array(contentSourceSchema).max(60).optional(),
-  articles: z.array(articleVersionSchema).max(60).optional(),
-  coordination: coordinationSchema.optional(),
-  resourceClaims: z.array(resourceClaimSchema).max(60).optional(),
-  workflowUses: z.array(workflowUseSchema).max(60).optional(),
-  workflowRepairs: z.array(workflowRepairSchema).max(60).optional(),
-  workflowDecisions: z.array(workflowDecisionSchema).max(60).optional(),
-  observedAnomalies: z
-    .array(
-      z.strictObject({
+export const executionSchema = z
+  .strictObject({
+    historyCleanup: z
+      .strictObject({
+        requestId: z.string().uuid(),
+        token: z.string(),
+        at: z.number().int().nonnegative(),
+      })
+      .optional(),
+    schedule: scheduleStateSchema.optional(),
+    scheduleOrigin: z
+      .strictObject({
+        ownerTaskId: z.string(),
+        roundId: z.string().uuid(),
+        versionId: z.string().uuid(),
+        date: z.string(),
+      })
+      .optional(),
+    agreements: z.array(agreementVersionSchema).max(60).optional(),
+    agreementBinding: agreementBindingSchema.optional(),
+    materialWorks: z.array(materialWorkSchema).max(60).optional(),
+    duplicateWork: z
+      .strictObject({
+        taskId: z.string(),
+        workId: z.string().uuid(),
+        goalVersion: z.number().int().positive(),
+      })
+      .optional(),
+    contentSources: z.array(contentSourceSchema).max(60).optional(),
+    articles: z.array(articleVersionSchema).max(60).optional(),
+    coordination: coordinationSchema.optional(),
+    resourceClaims: z.array(resourceClaimSchema).max(60).optional(),
+    workflowUses: z.array(workflowUseSchema).max(60).optional(),
+    workflowRepairs: z.array(workflowRepairSchema).max(60).optional(),
+    workflowDecisions: z.array(workflowDecisionSchema).max(60).optional(),
+    observedAnomalies: z
+      .array(
+        z.strictObject({
+          goalVersion: z.number().int().positive(),
+          source: pageSourceSchema,
+          anomalies: z.array(z.string()).max(20),
+          extraResults: z.array(z.url()).max(50),
+        }),
+      )
+      .optional(),
+    publicationChecks: z.array(publicationCheckSchema).max(60).optional(),
+    publicationHistory: z
+      .array(
+        z.strictObject({
+          check: publicationCheckSchema,
+          reason: z.enum(['stale-worker', 'changed-intent']),
+        }),
+      )
+      .max(60)
+      .optional(),
+    materialProcessing: z
+      .array(
+        z.strictObject({
+          workId: z.string().uuid().optional(),
+          materialId: z.string().uuid(),
+          goalVersion: z.number().int().positive(),
+          targetUrl: z.url(),
+          approvalId: z.string().uuid(),
+          actionId: z.string(),
+          status: z.enum(['pending', 'unknown', 'complete']),
+          resultId: z.string().uuid().nullable(),
+        }),
+      )
+      .optional(),
+    learnedWorkflows: z.array(learnedWorkflowSchema).max(60).optional(),
+    workflowAdoption: z
+      .strictObject({
+        version: z.string().uuid(),
+        sha256: z.string(),
+        expectedParent: z.string().uuid().nullable(),
+      })
+      .optional(),
+    prepared: z
+      .strictObject({
         goalVersion: z.number().int().positive(),
         source: pageSourceSchema,
-        anomalies: z.array(z.string()).max(20),
-        extraResults: z.array(z.url()).max(50),
-      }),
-    )
-    .optional(),
-  publicationChecks: z.array(publicationCheckSchema).max(60).optional(),
-  publicationHistory: z
-    .array(
-      z.strictObject({
-        check: publicationCheckSchema,
-        reason: z.enum(['stale-worker', 'changed-intent']),
-      }),
-    )
-    .max(60)
-    .optional(),
-  materialProcessing: z
-    .array(
-      z.strictObject({
+        evidence: z.array(z.string()).min(1).max(10),
+      })
+      .optional(),
+    materials: z.array(materialVersionSchema).optional(),
+    preparation: z
+      .array(
+        preparationProposalSchema.extend({
+          id: z.string().uuid(),
+          goalVersion: z.number().int().positive(),
+          actionId: z.string().nullable(),
+          source: pageSourceSchema,
+          verification: z.literal('page-observed'),
+        }),
+      )
+      .optional(),
+    publication: publicationSchema
+      .safeExtend({
+        agreementVersionId: z.string().uuid().optional(),
         workId: z.string().uuid().optional(),
-        materialId: z.string().uuid(),
+        revision: z.number().int().positive(),
+        approvalId: z.string().uuid().nullable(),
+        origin: z.string(),
+      })
+      .optional(),
+    loginOrigin: z.string().optional(),
+    question: questionSchema.optional(),
+    answers: z
+      .array(
+        questionSchema.extend({ answer: participationReplySchema.shape.text }),
+      )
+      .optional(),
+    restoreReview: z
+      .enum(['required', 'ready', 'unknown', 'complete'])
+      .optional(),
+    modelVersion: z.literal(1).default(1),
+    recoveryPending: z.boolean().optional(),
+    recoverySource: z
+      .strictObject({
+        url: z.string(),
         goalVersion: z.number().int().positive(),
-        targetUrl: z.url(),
-        approvalId: z.string().uuid(),
-        actionId: z.string(),
-        status: z.enum(['pending', 'unknown', 'complete']),
-        resultId: z.string().uuid().nullable(),
-      }),
-    )
-    .optional(),
-  learnedWorkflows: z.array(learnedWorkflowSchema).max(60).optional(),
-  workflowAdoption: z
-    .strictObject({
-      version: z.string().uuid(),
-      sha256: z.string(),
-      expectedParent: z.string().uuid().nullable(),
-    })
-    .optional(),
-  prepared: z
-    .strictObject({
-      goalVersion: z.number().int().positive(),
-      source: pageSourceSchema,
-      evidence: z.array(z.string()).min(1).max(10),
-    })
-    .optional(),
-  materials: z.array(materialVersionSchema).optional(),
-  preparation: z
-    .array(
-      preparationProposalSchema.extend({
-        id: z.string().uuid(),
+      })
+      .optional(),
+    intent: z.enum(['automatic', 'stopped']),
+    phase: executionPhaseSchema,
+    version: z.number().int().positive(),
+    intentId: z.string().min(1),
+    goalVersion: z.number().int().positive(),
+    goal: z.string(),
+    runId: z.string().nullable(),
+    resource: z.string().nullable(),
+    summary: z.string(),
+    pauseReason: executionPauseReasonSchema.optional(),
+    actions: z.array(actionFactSchema),
+    result: z
+      .strictObject({
         goalVersion: z.number().int().positive(),
-        actionId: z.string().nullable(),
         source: pageSourceSchema,
-        verification: z.literal('page-observed'),
-      }),
-    )
-    .optional(),
-  publication: publicationSchema
-    .safeExtend({
-      agreementVersionId: z.string().uuid().optional(),
-      workId: z.string().uuid().optional(),
-      revision: z.number().int().positive(),
-      approvalId: z.string().uuid().nullable(),
-      origin: z.string(),
-    })
-    .optional(),
-  loginOrigin: z.string().optional(),
-  question: questionSchema.optional(),
-  answers: z
-    .array(
-      questionSchema.extend({ answer: participationReplySchema.shape.text }),
-    )
-    .optional(),
-  restoreReview: z
-    .enum(['required', 'ready', 'unknown', 'complete'])
-    .optional(),
-  modelVersion: z.literal(1).default(1),
-  recoveryPending: z.boolean().optional(),
-  recoverySource: z
-    .strictObject({ url: z.string(), goalVersion: z.number().int().positive() })
-    .optional(),
-  intent: z.enum(['automatic', 'stopped']),
-  phase: executionPhaseSchema,
-  version: z.number().int().positive(),
-  intentId: z.string().min(1),
-  goalVersion: z.number().int().positive(),
-  goal: z.string(),
-  runId: z.string().nullable(),
-  resource: z.string().nullable(),
-  summary: z.string(),
-  pauseReason: executionPauseReasonSchema.optional(),
-  actions: z.array(actionFactSchema),
-  result: z
-    .strictObject({
-      goalVersion: z.number().int().positive(),
-      source: pageSourceSchema,
-      evidence: z.array(z.string()).min(1).max(10),
-    })
-    .optional(),
-});
+        evidence: z.array(z.string()).min(1).max(10),
+      })
+      .optional(),
+  })
+  .refine((e) => validUploadReferences(e));
 export type TaskExecution = z.infer<typeof executionSchema>;
 export const executionIntentSchema = z.strictObject({
   kind: z.literal('execution-intent'),

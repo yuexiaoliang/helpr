@@ -1,0 +1,236 @@
+{
+  "checkedAt": "2026-11-07T04:11:05.414452+00:00",
+  "build": 91,
+  "sourceCommit": "d0bad38ca8c07f1541d0c5e68fa8fab269247a82",
+  "sourceDirty": true,
+  "rawRun": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/run-1794024637864",
+  "profile": "/private/tmp/helpr-workspace-validation-501/run-qvDDWb",
+  "dataFormat": 28,
+  "quickCheck": "ok",
+  "sqliteSha256": "9747d4ae0fca1b3966bf347e9432801049e024038f559338b08dda86286e018a",
+  "cases": [
+    {
+      "item": "A",
+      "taskId": "19e3608d-397f-4aaa-b9a5-4efefee6a240",
+      "phase": "complete",
+      "upload": {
+        "coordination": {
+          "session": {
+            "id": "helpr-fixture-web",
+            "epoch": "7f28ab78-52da-4b37-9431-e3324d220376:0",
+            "origin": "http://127.0.0.1:60698"
+          },
+          "claimId": "37dcf24a-2258-432b-a687-dcb2e89470c6"
+        },
+        "observedLinks": [
+          {
+            "name": "永久链接",
+            "url": "http://127.0.0.1:60698/result?item=A"
+          }
+        ],
+        "resultLinks": [
+          {
+            "name": "永久链接",
+            "url": "http://127.0.0.1:60698/result?item=A"
+          },
+          {
+            "name": "下载附件",
+            "url": "http://127.0.0.1:60698/file?item=A"
+          }
+        ],
+        "uploadCheck": {
+          "rule": "unique-new-link-v1",
+          "download": {
+            "url": "http://127.0.0.1:60698/file?item=A",
+            "sha256": "d8bc113a182506bd26a188894cd8ad6ee83b6500df43ce1179f9f4eea9377daf",
+            "bytes": 23,
+            "checkedAt": 1794024646400
+          },
+          "targetFactId": "d249099e-b9aa-4f13-9622-cf5f1da7ec36",
+          "uploadFactId": "c4f26eac-1730-43e6-abc9-979dbce48712",
+          "binding": {
+            "targetId": "F663A99C86315B4919D7CF64B67B67EC",
+            "generation": 1
+          }
+        },
+        "id": "2d25cfaf-15a7-4418-8e0c-3a12156036f9",
+        "runId": "bed9b461-1c2c-4774-9cfa-2fe4e5a89d8f",
+        "goalVersion": 1,
+        "status": "confirmed",
+        "summary": "核对本次附件",
+        "action": {
+          "kind": "upload",
+          "materialId": "8787e735-b048-466f-aa01-d613b973bb12",
+          "target": {
+            "fileIndex": 0
+          }
+        },
+        "effect": "upload",
+        "preconditions": [
+          "附件编辑"
+        ],
+        "source": {
+          "url": "http://127.0.0.1:60698/edit?item=A",
+          "title": "附件编辑",
+          "fingerprint": "96132821fdb715524a50a29c25dfba32f163d7391224494906997ec828269020",
+          "generation": 1,
+          "observedAt": 1794024643776,
+          "truncated": false
+        },
+        "observedUrls": [
+          "http://127.0.0.1:60698/edit?item=A",
+          "http://127.0.0.1:60698/result?item=A"
+        ],
+        "resultSource": {
+          "url": "http://127.0.0.1:60698/edit?item=A",
+          "title": "附件编辑",
+          "fingerprint": "d6f589edfe010a081016cf521067cfc38ec702d89fdea169851fc0da165086eb",
+          "generation": 1,
+          "observedAt": 1794024646373,
+          "truncated": false
+        },
+        "binding": {
+          "targetId": "F663A99C86315B4919D7CF64B67B67EC",
+          "generation": 1
+        },
+        "evidence": [
+          "下载附件"
+        ],
+        "returned": true,
+        "dispatchState": "possible"
+      },
+      "readyDelayMs": 1807
+    },
+    {
+      "item": "B",
+      "taskId": "d7369478-f8a5-493a-a325-4fd042a8c2e6",
+      "phase": "unknown",
+      "upload": {
+        "coordination": {
+          "session": {
+            "id": "helpr-fixture-web",
+            "epoch": "7f28ab78-52da-4b37-9431-e3324d220376:0",
+            "origin": "http://127.0.0.1:60698"
+          },
+          "claimId": "5b5c1d3b-7622-48ea-aa7d-87f7b832b5ad"
+        },
+        "observedLinks": [
+          {
+            "name": "永久链接",
+            "url": "http://127.0.0.1:60698/result?item=B"
+          }
+        ],
+        "id": "77bd2d49-1a9f-4796-8feb-b278996ded0b",
+        "runId": "928a0cf0-acc2-492e-8c66-1bcbac253c6b",
+        "goalVersion": 1,
+        "status": "unknown",
+        "summary": "核对本次附件",
+        "action": {
+          "kind": "upload",
+          "materialId": "6ebe333b-5cd9-4797-b5c8-21cc2aedb125",
+          "target": {
+            "fileIndex": 0
+          }
+        },
+        "effect": "upload",
+        "preconditions": [
+          "附件编辑"
+        ],
+        "source": {
+          "url": "http://127.0.0.1:60698/edit?item=B",
+          "title": "附件编辑",
+          "fingerprint": "0a898ece42c3c797ec9b61eebefddbf18f45ea4ac21046336d9b4e4afd8ca05a",
+          "generation": 1,
+          "observedAt": 1794024649684,
+          "truncated": false
+        },
+        "observedUrls": [
+          "http://127.0.0.1:60698/edit?item=B",
+          "http://127.0.0.1:60698/result?item=B"
+        ],
+        "binding": {
+          "targetId": "1268E9A9578E8CAE78797248BA74AEA7",
+          "generation": 1
+        },
+        "evidence": [],
+        "returned": true,
+        "dispatchState": "possible"
+      },
+      "readyDelayMs": 1807
+    }
+  ],
+  "pids": [
+    51903,
+    51907,
+    51908,
+    51909,
+    51910,
+    51911,
+    51917,
+    51918,
+    51919,
+    51920,
+    51921,
+    51923,
+    51924,
+    51935,
+    51936,
+    51945,
+    51946,
+    51947,
+    51948,
+    51949,
+    51950,
+    51955,
+    51956,
+    51957,
+    51958,
+    51959
+  ],
+  "groups": [
+    51903,
+    51909,
+    51911,
+    51945,
+    51948,
+    51950
+  ],
+  "remainingPids": [],
+  "remainingGroups": [],
+  "leaseReleased": true,
+  "starts": [
+    {
+      "kind": "startup",
+      "number": 236,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:60698",
+        "persistent": false
+      },
+      "ms": 5014,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    },
+    {
+      "kind": "startup",
+      "number": 237,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:60698",
+        "persistent": false
+      },
+      "ms": 1446,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    }
+  ],
+  "modelPlans": 10,
+  "milliseconds": 20985,
+  "bundleSha256": "00862e5596a809fc06239eeb0c66aa31502985bd9a2380015d2a8c89aacdb1dd",
+  "bundleUnchangedAfterRun": true,
+  "inputChangesAfterBuild": []
+}

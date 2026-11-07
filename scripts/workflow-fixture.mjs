@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 // 本机替代模型从委托提取参数并提议首次动作；复用阶段只回答绑定，不提供网页步骤。
-export function workflowFixture(receipts, { repair = false, article = false, agreements = false, schedules = false, crossSite = false, separateFields = false, dynamicResult = false, managementResult = false } = {}) {
+export function workflowFixture(receipts, { repair = false, article = false, agreements = false, schedules = false, crossSite = false, separateFields = false, dynamicResult = false, managementResult = false, asyncUpload = false } = {}) {
   let calls = 0, writes = 0, newItems = 0;
   const waitingDrafts = new Map();
   const labels = id => crossSite ? {draft: '保存草稿', title: '正文：纯文本', publish: '发布附件'} : !repair || id === 'A' ? {draft: '保存草稿', title: '发布标题', publish: '发布附件'} : id === 'C' ? {draft: '暂存附件', title: '正文内容', publish: '确认送出'} : {draft: '暂存附件', title: '公告全文', publish: '发布附件'};
@@ -67,7 +67,7 @@ export function workflowFixture(receipts, { repair = false, article = false, agr
           const previous = plan.previous ? { id: plan.previous.id, status: 'confirmed', evidence: [observed.includes('已正式发布') ? '已正式发布' : observed.includes('栏目已填写') ? '栏目已填写' : observed.includes('正文已填写') ? '正文已填写' : observed.includes('标题已填写') ? '标题已填写' : observed.includes('草稿已保存') ? '草稿已保存' : observed.includes('附件已上传') ? '附件已上传' : '附件编辑'] } : null;
           let step = { decision: 'act', summary: '核对本次附件', evidence: ['附件编辑'], previous, action: null };
           if (agreements && targetURL.pathname === '/new') step = {...step,evidence:['创建文章'],effect:'draft',action:{kind:'click',target:{role:'button',name:'创建文章'}}};
-          else if (!dynamicResult && !article && plan.workflows?.length) {
+          else if (!dynamicResult && !asyncUpload && !article && plan.workflows?.length) {
             const w = plan.workflows[0];
             step = { ...step, decision: 'reuse', material, workflow: { taskId: w.taskId, version: w.version, sha256: w.sha256, content, destination, ...(fields ? {fields} : {}) } };
           } else if (/正在(上传|保存|发布)附件/.test(observed)) step = { ...step, decision: 'observe', previous: null };
@@ -110,13 +110,15 @@ for(const delay of [1000,3000,6000])setTimeout(()=>fetch('/readiness?'+new URLSe
     const id = url.searchParams.get('item');
     if (!id || !(agreements ? /^W[1-9][0-9]*$/.test(id) : ['A', 'B', 'C', 'D', 'E'].includes(id))) return false;
     const p = get(id), query = '?item=' + id;
+    if (asyncUpload && url.pathname === '/attachment-ready') { p.attachmentReady=true;receipts.push({kind:'attachment-ready',item:id,at:Date.now()});res.end('ok');return true;}
     if (crossSite && url.pathname === '/selection') { receipts.push({kind:'selection',item:id,value:url.searchParams.get('value'),label:url.searchParams.get('label')}); res.end('ok'); return true; }
     if (req.method === 'POST') {
       const chunks = []; req.on('data', b => chunks.push(b)); req.on('end', () => {
         if (++writes > 15) { res.writeHead(429); res.end(); return; }
         const bytes = Buffer.concat(chunks);
-        if (url.pathname === '/upload') { p.bytes = bytes; receipts.push({ kind: 'upload', item: id, bytes: bytes.length }); }
+        if (url.pathname === '/upload') { p.bytes = bytes; receipts.push({ kind: 'upload', item: id, bytes: bytes.length, at:Date.now() }); }
         else if (url.pathname === '/draft') {
+          if(asyncUpload && !p.attachmentReady){receipts.push({kind:'premature-draft',item:id});res.writeHead(409);res.end();return;}
           if (repair && ['B', 'C'].includes(id)) {
             receipts.push({kind:'draft-start', item:id, at:Date.now()});
             const timer = setTimeout(() => { waitingDrafts.delete(id); receipts.push({kind:'draft-timeout', item:id}); res.writeHead(504); res.end(); }, 12000);
@@ -132,7 +134,7 @@ for(const delay of [1000,3000,6000])setTimeout(()=>fetch('/readiness?'+new URLSe
         res.end('ok');
       }); return true;
     }
-    if (url.pathname === '/file') { if (p.bytes) { receipts.push({ kind: 'download', item: id }); res.end(p.bytes); } else { res.writeHead(404); res.end(); } return true; }
+    if (url.pathname === '/file') { if (p.bytes && (!asyncUpload || p.attachmentReady)) { receipts.push({ kind: 'download', item: id, at:Date.now() }); res.end(p.bytes); } else { res.writeHead(404); res.end(); } return true; }
     if (managementResult && url.pathname === '/management') {
       if (!p.published) { res.writeHead(404); res.end(); return true; }
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -148,9 +150,9 @@ for(const delay of [1000,3000,6000])setTimeout(()=>fetch('/readiness?'+new URLSe
     if (url.pathname === '/edit') {
       const names = labels(id);
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.end(`<!doctype html><meta charset="utf-8"><title>附件编辑</title><h1>附件编辑</h1>${repair ? `<a href="/users/fixture">账号 fixture</a><a href="/edit${query}">当前记录</a><p>可编辑此记录</p>` : ''}<p>固定标签：公告</p><label>附件<input type="file"></label><p id="upload">${p.bytes ? `附件已上传 <a href="/file${query}">下载附件</a>` : '等待素材'}</p><button id="draft">${names.draft}</button><p id="drafted">${p.draft ? '草稿已保存' : '尚未保存'}</p>${dynamicResult ? `<form method="post" action="/publish${query}">` : ''}<label>${names.title}${article || crossSite ? '<textarea id="title"></textarea>' : '<input id="title" name="heading">'}</label><output id="preview"></output>${separateFields ? '<label>文章正文<textarea id="body" name="body"></textarea></label><output id="body-preview"></output>' : ''}<label>${crossSite ? '栏目：选择' : '栏目'}<select id="destination" name="destination">${crossSite ? '<option value="17">公告</option><option value="42">通知</option>' + (id === 'E' ? '<option value="99">通知</option>' : '') : '<option>公告</option><option>通知</option>'}</select></label><output id="selected"></output>${dynamicResult ? '' : `<a href="/result${query}">永久链接</a>`}<button id="publish">${names.publish}</button>${dynamicResult ? '</form>' : ''}<p id="result">${p.published ? '已正式发布' : '尚未发布'}</p><script>
+      res.end(`<!doctype html><meta charset="utf-8"><title>附件编辑</title><h1>附件编辑</h1>${repair ? `<a href="/users/fixture">账号 fixture</a><a href="/edit${query}">当前记录</a><p>可编辑此记录</p>` : ''}<p>固定标签：公告</p><label>附件<input type="file"></label><p id="upload">${p.bytes ? `附件已上传 <a href="/file${query}">下载附件</a>${asyncUpload && id==='B' ? `<a href="/other${query}">下载附件</a>` : ''}` : '等待素材'}</p><button id="draft">${names.draft}</button><p id="drafted">${p.draft ? '草稿已保存' : '尚未保存'}</p>${dynamicResult ? `<form method="post" action="/publish${query}">` : ''}<label>${names.title}${article || crossSite ? '<textarea id="title"></textarea>' : '<input id="title" name="heading">'}</label><output id="preview"></output>${separateFields ? '<label>文章正文<textarea id="body" name="body"></textarea></label><output id="body-preview"></output>' : ''}<label>${crossSite ? '栏目：选择' : '栏目'}<select id="destination" name="destination">${crossSite ? '<option value="17">公告</option><option value="42">通知</option>' + (id === 'E' ? '<option value="99">通知</option>' : '') : '<option>公告</option><option>通知</option>'}</select></label><output id="selected"></output>${dynamicResult ? '' : `<a href="/result${query}">永久链接</a>`}<button id="publish">${names.publish}</button>${dynamicResult ? '</form>' : ''}<p id="result">${p.published ? '已正式发布' : '尚未发布'}</p><script>
 const q=${JSON.stringify(query)};
-document.querySelector('[type=file]').onchange=async e=>{document.querySelector('#upload').textContent='正在上传附件';await fetch('/upload'+q,{method:'POST',body:await e.target.files[0].arrayBuffer()});document.querySelector('#upload').innerHTML='附件已上传 <a href="/file'+q+'">下载附件</a>'};
+document.querySelector('[type=file]').onchange=async e=>{document.querySelector('#upload').textContent='正在上传附件';await fetch('/upload'+q,{method:'POST',body:await e.target.files[0].arrayBuffer()});${asyncUpload ? `await new Promise(r=>setTimeout(r,1800));await fetch('/attachment-ready'+q);` : ''}document.querySelector('#upload').innerHTML='附件已上传 <a href="/file'+q+'">下载附件</a>${asyncUpload && id==='B' ? `<a href="/other${query}">下载附件</a>` : ''}' };
 document.querySelector('#draft').onclick=async()=>{document.querySelector('#drafted').textContent='正在保存附件';await fetch('/draft'+q,{method:'POST'});document.querySelector('#drafted').textContent='草稿已保存'};
 document.querySelector('#title').oninput=e=>{document.querySelector('#preview').textContent='标题已填写 '+e.target.value};
 ${separateFields ? `document.querySelector('#body').oninput=e=>{document.querySelector('#body-preview').textContent='正文已填写 '+e.target.value};` : ''}

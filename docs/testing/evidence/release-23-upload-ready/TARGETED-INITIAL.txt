@@ -1,0 +1,645 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/publication.test.ts (41 tests | 41 failed) 9759ms
+   × 公开确认与执行入口发布一次，独立核对字节并原子保存素材处理与流程 277ms
+   × 附件确认绑定目标和素材；普通完成、旧确认、伪造下载或正文改变均拒绝 217ms
+   × 发布前下载不符不点击；核对期间停止使迟到结果失效 255ms
+   × 已发布但公开正文错误保持未知，继续也不重发或采用流程 253ms
+   × 最终动作已预留但临近派发收到停止，网页没有提交 247ms
+   × 观察到额外结果后保留异常记录，继续不再派发 234ms
+   × 最终点击页面后条件不能替代业务结果；额外结果和错误目标不读取也不完成 238ms
+   × 结果提交失败不留半份完成，重送同一结果只保存一个流程 223ms
+   × 已记录的异常不会因后续提议省略而消失，旧成功检查不能完成任务 238ms
+   × 新增结果、素材处理、流程摘要和采用引用随备份恢复，篡改引用拒绝冷开 250ms
+   × 派发前冻结正常页面的精确关联；冷进程无模型、无网页工作者补记已发布结果 220ms
+   × 可信未派发检查点只取消旧预留，用当前观察和原有效确认派发剩余动作一次 238ms
+   × 恢复结果 content 不符保留未知，明确继续仅再次读取不重发 239ms
+   × 恢复结果 canonical 不符保留未知，明确继续仅再次读取不重发 251ms
+   × 恢复结果 ambiguous 不符保留未知，明确继续仅再次读取不重发 238ms
+   × 恢复结果 bytes 不符保留未知，明确继续仅再次读取不重发 231ms
+   × 恢复结果 missing 不符保留未知，明确继续仅再次读取不重发 237ms
+   × 核对结果保存前新停止优先，迟到证明只进历史；同回执重送不重复应用 242ms
+   × 旧工作者结果仅属于历史目标，不能覆盖修改后的当前事实或恢复资格 246ms
+   × 已经提交但确认丢失的恢复重送返回既有事实，停止与旧回执不恢复派发资格 243ms
+   × 本机固定素材损坏与已发生的网站效果同时保留，不释放素材或重新发送 251ms
+   × 缺少稳定关联的规则拒绝保存；未知版本或损坏引用拒绝冷开且保留原记录 241ms
+   × 两项已派发任务冷启动分别只读恢复，无模型、无写入，原确认各自保留 236ms
+   × 结果读取超时只保存网络未知，不隐式重试或重新派发 242ms
+   × 冻结恢复规则及迟到历史进入备份，旧资料恢复仍暂停，篡改关联拒绝读取 230ms
+   × 格式12迁移保留原库，不为旧提交凭空制造恢复规则 246ms
+   × 未派发检查点的固定素材已经缺失时，冷开不得继续发布 237ms
+   × 两项只读恢复占用自动推进容量，第三项保持排队 246ms
+   × 动态结果入口在发布前未知，暂停后冻结并只读完成，不恢复原生输入或模型 220ms
+   × 动态检查点保存后冷开仅GET核对，旧发布不重发；24迁移留备份 224ms
+   × 动态入口缺原目标、重名目标、附件、确认内容、完整观察或同target证据均拒绝 219ms
+   × 动态入口只是候选：公开页缺唯一canonical、内容或字节不符都不能完成 230ms
+   × 动态结果保存前的新停止拒绝入口；核对结果保存竞争只留历史，不完成或派发 237ms
+   × 动态入口保存失败不发GET或输入；观察期间的原生变化放弃新候选 239ms
+   × 动态检查点进入真实备份导入；损坏目标引用拒绝冷开 233ms
+   × 管理页从冻结确认内容唯一匹配结果链接，只读GET后完成；无输入或模型 228ms
+   × 管理页同名不同地址、重复URL、异站、片段、错误原目标和截断均拒绝保存 241ms
+   × 管理页链接保存后不因同名内容误认结果：公开页缺原编辑目标或重复目标保持未知 239ms
+   × 管理页检查点冷开只读核对且26迁移备份，不重发；真实备份导入保持待核对 232ms
+   × 管理页损坏链接名称或结果地址不能在冷开伪装可信检查点 235ms
+   × 管理页保存失败不读取候选；保存期间停止不能完成旧任务 234ms
+ ❯ tests/workspace/workflow-reuse.test.ts (12 tests | 2 failed) 30931ms
+   × 重复链接导致未知并不重传，不使用历史地址或任意第一项 7088ms
+   × 网页伪造链接标记不能替代实际可访问链接 7121ms
+ ❯ tests/workspace/material.test.ts (14 tests | 1 failed) 12696ms
+   × 公开执行入口完成选择和一次上传；未知效果继续时不重传 10019ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 44 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/material.test.ts > 公开执行入口完成选择和一次上传；未知效果继续时不重传
+Error: Test timed out in 10000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/workspace/material.test.ts:482:1
+    480| });
+    481|
+    482| test('公开执行入口完成选择和一次上传；未知效果继续时不重传', async () => {
+       | ^
+    483|   const f = await fixture();
+    484|   let state = f.records.snapshot(),
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 公开确认与执行入口发布一次，独立核对字节并原子保存素材处理与流程
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:363:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 附件确认绑定目标和素材；普通完成、旧确认、伪造下载或正文改变均拒绝
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:415:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 发布前下载不符不点击；核对期间停止使迟到结果失效
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:454:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 已发布但公开正文错误保持未知，继续也不重发或采用流程
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:496:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 最终动作已预留但临近派发收到停止，网页没有提交
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:527:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 观察到额外结果后保留异常记录，继续不再派发
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:565:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 最终点击页面后条件不能替代业务结果；额外结果和错误目标不读取也不完成
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:591:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 结果提交失败不留半份完成，重送同一结果只保存一个流程
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:624:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 已记录的异常不会因后续提议省略而消失，旧成功检查不能完成任务
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:652:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 新增结果、素材处理、流程摘要和采用引用随备份恢复，篡改引用拒绝冷开
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:688:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 派发前冻结正常页面的精确关联；冷进程无模型、无网页工作者补记已发布结果
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:748:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 可信未派发检查点只取消旧预留，用当前观察和原有效确认派发剩余动作一次
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:778:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 恢复结果 content 不符保留未知，明确继续仅再次读取不重发
+ FAIL  tests/workspace/publication.test.ts > 恢复结果 canonical 不符保留未知，明确继续仅再次读取不重发
+ FAIL  tests/workspace/publication.test.ts > 恢复结果 ambiguous 不符保留未知，明确继续仅再次读取不重发
+ FAIL  tests/workspace/publication.test.ts > 恢复结果 bytes 不符保留未知，明确继续仅再次读取不重发
+ FAIL  tests/workspace/publication.test.ts > 恢复结果 missing 不符保留未知，明确继续仅再次读取不重发
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:808:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 核对结果保存前新停止优先，迟到证明只进历史；同回执重送不重复应用
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:858:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 旧工作者结果仅属于历史目标，不能覆盖修改后的当前事实或恢复资格
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:904:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 已经提交但确认丢失的恢复重送返回既有事实，停止与旧回执不恢复派发资格
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:926:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 本机固定素材损坏与已发生的网站效果同时保留，不释放素材或重新发送
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:956:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 缺少稳定关联的规则拒绝保存；未知版本或损坏引用拒绝冷开且保留原记录
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:982:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 两项已派发任务冷启动分别只读恢复，无模型、无写入，原确认各自保留
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:1015:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 结果读取超时只保存网络未知，不隐式重试或重新派发
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:1045:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 冻结恢复规则及迟到历史进入备份，旧资料恢复仍暂停，篡改关联拒绝读取
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:1071:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 格式12迁移保留原库，不为旧提交凭空制造恢复规则
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:1119:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 未派发检查点的固定素材已经缺失时，冷开不得继续发布
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:1150:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 两项只读恢复占用自动推进容量，第三项保持排队
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ tests/workspace/publication.test.ts:1165:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/44]⎯
+
+ FAIL  tests/workspace/publication.test.ts > 动态结果入口在发布前未知，暂停后冻结并只读完成，不恢复原生输入或模型
+ FAIL  tests/workspace/publication.test.ts > 动态检查点保存后冷开仅GET核对，旧发布不重发；24迁移留备份
+ FAIL  tests/workspace/publication.test.ts > 动态入口缺原目标、重名目标、附件、确认内容、完整观察或同target证据均拒绝
+ FAIL  tests/workspace/publication.test.ts > 动态入口只是候选：公开页缺唯一canonical、内容或字节不符都不能完成
+ FAIL  tests/workspace/publication.test.ts > 动态结果保存前的新停止拒绝入口；核对结果保存竞争只留历史，不完成或派发
+ FAIL  tests/workspace/publication.test.ts > 动态入口保存失败不发GET或输入；观察期间的原生变化放弃新候选
+ FAIL  tests/workspace/publication.test.ts > 动态检查点进入真实备份导入；损坏目标引用拒绝冷开
+ FAIL  tests/workspace/publication.test.ts > 管理页从冻结确认内容唯一匹配结果链接，只读GET后完成；无输入或模型
+ FAIL  tests/workspace/publication.test.ts > 管理页同名不同地址、重复URL、异站、片段、错误原目标和截断均拒绝保存
+ FAIL  tests/workspace/publication.test.ts > 管理页链接保存后不因同名内容误认结果：公开页缺原编辑目标或重复目标保持未知
+ FAIL  tests/workspace/publication.test.ts > 管理页检查点冷开只读核对且26迁移备份，不重发；真实备份导入保持待核对
+ FAIL  tests/workspace/publication.test.ts > 管理页损坏链接名称或结果地址不能在冷开伪装可信检查点
+ FAIL  tests/workspace/publication.test.ts > 管理页保存失败不读取候选；保存期间停止不能完成旧任务
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2789:21
+    2788|               c.download.checkedAt < c.source.observedAt
+    2789|             )
+    2790|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |       ^
+    2791|             a.uploadCheck = {
+    2792|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3005:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3004:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/publication.test.ts:84:13
+ ❯ fixture tests/workspace/publication.test.ts:161:3
+ ❯ dynamicResultFixture tests/workspace/publication.test.ts:1234:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/44]⎯
+
+ FAIL  tests/workspace/workflow-reuse.test.ts > 重复链接导致未知并不重传，不使用历史地址或任意第一项
+AssertionError: expected 'unknown' to be 'paused' // Object.is equality
+
+Expected: "paused"
+Received: "unknown"
+
+ ❯ tests/workspace/workflow-reuse.test.ts:103:24
+    101|   }));
+    102|   const b = await f.add('有歧义');
+    103|   expect(f.e(b).phase).toBe('paused');
+       |                        ^
+    104|   expect(f.page(b).writes).toEqual(['upload']);
+    105|   await f.service().intent({
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/44]⎯
+
+ FAIL  tests/workspace/workflow-reuse.test.ts > 网页伪造链接标记不能替代实际可访问链接
+AssertionError: expected 'unknown' to be 'paused' // Object.is equality
+
+Expected: "paused"
+Received: "unknown"
+
+ ❯ tests/workspace/workflow-reuse.test.ts:218:24
+    216|   }));
+    217|   const b = await f.add('仅文字链接');
+    218|   expect(f.e(b).phase).toBe('paused');
+       |                        ^
+    219|   expect(f.page(b).writes).toEqual(['upload']);
+    220|   expect(f.e(b).preparation?.some((p) => p.kind === 'upload')).toBe(fa…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/44]⎯
+
+
+ Test Files  3 failed (3)
+      Tests  44 failed | 23 passed (67)
+   Start at  11:49:28
+   Duration  55.01s (tests 97%, import 2%)
+

@@ -1,0 +1,16 @@
+$ pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:workspace && pnpm test:validation && pnpm check:legacy
+$ tsc --noEmit
+$ eslint app tests/workspace electron.vite.config.ts drizzle.config.ts vitest.config.ts
+
+/Users/yuexiaoliang/projects/helpr/tests/workspace/upload-readiness.test.ts
+   48:19  error  This assertion is unnecessary since it does not change the type of the expression  @typescript-eslint/no-unnecessary-type-assertion
+   58:25  error  Async arrow function has no 'await' expression                                     @typescript-eslint/require-await
+  196:29  error  Async arrow function has no 'await' expression                                     @typescript-eslint/require-await
+  217:29  error  Async arrow function has no 'await' expression                                     @typescript-eslint/require-await
+  266:25  error  Async arrow function has no 'await' expression                                     @typescript-eslint/require-await
+
+✖ 5 problems (5 errors, 0 warnings)
+  1 error and 0 warnings potentially fixable with the `--fix` option.
+
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.

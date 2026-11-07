@@ -157,6 +157,7 @@ async function fixture(name = 'report-a.xlsx', base = 'https://example.com') {
   const observation = (): PageObservation => ({
     url: base + '/edit',
     title: '编辑',
+    links: [{ name: '附件已上传', url: base + '/file' }],
     fingerprint: 'page',
     generation: 1,
     observedAt: Date.now(),
@@ -214,7 +215,11 @@ async function fixture(name = 'report-a.xlsx', base = 'https://example.com') {
       kind: 'reserve',
       id: 'upload',
       summary: '上传附件',
-      source: { ...observation(), text: '编辑\n[file 0] ' + base + '/edit' },
+      source: {
+        ...observation(),
+        links: [],
+        text: '编辑\n[file 0] ' + base + '/edit',
+      },
       binding: { targetId: 'page', generation: 1 },
       action: {
         kind: 'upload',
@@ -251,6 +256,13 @@ async function fixture(name = 'report-a.xlsx', base = 'https://example.com') {
       kind: 'resolve',
       id: 'upload',
       source: observation(),
+      binding: { targetId: 'page', generation: 1 },
+      download: {
+        url: base + '/file',
+        sha256: material.sha256,
+        bytes: material.bytes,
+        checkedAt: Date.now(),
+      },
       evidence: ['附件已上传'],
     });
     const publication: Publication = {

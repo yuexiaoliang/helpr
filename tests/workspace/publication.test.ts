@@ -119,6 +119,7 @@ async function fixture({
   const observe = (): PageObservation => ({
     url: base + '/edit',
     title: '编辑附件',
+    links: [{ name: '附件已上传', url: base + '/file' }],
     text: `编辑附件\n[file 0] ${base}/edit\n本次附件报告\n公告\n附件已上传\n[link-url] ${base}/file\n${published ? '已发布\n[link-url] ' + base + '/result' : '准备发布' + (recovery ? '\n永久链接\n[link-url] ' + base + '/result' : '')}`,
     fingerprint: published ? 'published' : 'draft',
     generation: 1,
@@ -134,7 +135,11 @@ async function fixture({
       materialId: material.id,
       target: { fileIndex: 0 },
     },
-    source: { ...observe(), text: '编辑附件\n[file 0] ' + base + '/edit' },
+    source: {
+      ...observe(),
+      links: [],
+      text: '编辑附件\n[file 0] ' + base + '/edit',
+    },
     evidence: ['编辑附件'],
     binding: { targetId: 'page', generation: 1 },
   });
@@ -162,6 +167,13 @@ async function fixture({
     kind: 'resolve',
     id: 'upload',
     source: observe(),
+    binding: { targetId: 'page', generation: 1 },
+    download: {
+      url: base + '/file',
+      sha256: material.sha256,
+      bytes: material.bytes,
+      checkedAt: Date.now(),
+    },
     evidence: ['附件已上传'],
   });
   const questionId = randomUUID();

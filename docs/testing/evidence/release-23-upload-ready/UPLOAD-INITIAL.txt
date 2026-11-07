@@ -1,0 +1,47 @@
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/upload-readiness.test.ts (12 tests | 1 failed) 13101ms
+   × session使旧等待或迟到保存失效，不提前草稿 864ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/upload-readiness.test.ts > session使旧等待或迟到保存失效，不提前草稿
+AssertionError: expected { rule: 'unique-new-link-v1', …(4) } to be undefined
+
+- Expected:
+undefined
+
++ Received:
+{
+  "binding": {
+    "generation": 1,
+    "targetId": "f48367cf-0c25-44d0-bb4c-ef1f0885c221",
+  },
+  "download": {
+    "bytes": 23,
+    "checkedAt": 1794023571788,
+    "sha256": "64edf139c157e861e560afe85a92c0b08fe6bab0b2931c492e965c220d01fa18",
+    "url": "http://127.0.0.1:58508/file?task=f48367cf-0c25-44d0-bb4c-ef1f0885c221",
+  },
+  "rule": "unique-new-link-v1",
+  "targetFactId": "d7228ca4-dd1b-4b7e-b354-83b97c755f43",
+  "uploadFactId": "c1e1f2e4-63c1-49f6-bf1e-a449e81cc7fb",
+}
+
+ ❯ tests/workspace/upload-readiness.test.ts:197:43
+    195|   expect(interrupted).toBe(true);
+    196|   expect(f.page(id).writes).toEqual(['upload']);
+    197|   expect(f.e(id).actions[0]!.uploadCheck).toBeUndefined();
+       |                                           ^
+    198|   expect(f.e(id).actions[0]!.status).toBe('unknown');
+    199| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 passed (12)
+   Start at  11:52:40
+   Duration  13.65s (tests 96%, import 3%, transform 1%)
+

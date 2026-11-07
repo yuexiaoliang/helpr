@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import { captureReleaseInputs, inventoryDirectory } from '../../../../scripts/release-inputs.mjs';
+const dir = 'docs/testing/evidence/release-23-upload-ready';
+const build = JSON.parse(fs.readFileSync(dir + '/BUILD-91.json'));
+const inputs = captureReleaseInputs();
+const changed = Object.keys({ ...build.source.files, ...inputs.files }).filter(key => build.source.files[key] !== inputs.files[key]);
+assert.deepEqual(changed, []);
+assert.deepEqual(inventoryDirectory(build.app), build.bundle);
+const report = JSON.parse(fs.readFileSync(dir + '/INDEPENDENT.json'));
+Object.assign(report, { bundleSha256: build.bundle.sha256, bundleUnchangedAfterRun: true, inputChangesAfterBuild: changed });
+fs.writeFileSync(dir + '/INDEPENDENT.json', JSON.stringify(report, null, 2) + '\n');

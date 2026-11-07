@@ -559,7 +559,7 @@ test('公开执行入口完成选择和一次上传；未知效果继续时不�
   expect(sent).toBe(1);
   expect(state.tasks[0]!.execution!.phase).toBe('unknown');
   await service.stopAll();
-});
+}, 20000);
 
 test('素材网页观察只提取文件控件和实际链接，不带密码或隐藏值', () => {
   const text = materialObservation({
@@ -615,6 +615,7 @@ test('恢复素材草稿只核对准备事实，模型不能把草稿标成最�
   const source = {
     ...f.observation,
     text: '编辑\n[link-url] https://example.com/files/new\n草稿已保存',
+    links: [{ name: '编辑', url: 'https://example.com/files/new' }],
   };
   post({
     kind: 'preparation-observed',
@@ -635,7 +636,19 @@ test('恢复素材草稿只核对准备事实，模型不能把草稿标成最�
       },
     ],
   });
-  post({ kind: 'resolve', id: 'upload', source, evidence: ['编辑'] });
+  post({
+    kind: 'resolve',
+    id: 'upload',
+    source,
+    evidence: ['编辑'],
+    binding: { targetId: 'owned-page', generation: 1 },
+    download: {
+      url: 'https://example.com/files/new',
+      sha256: material.sha256,
+      bytes: material.bytes,
+      checkedAt: Date.now(),
+    },
+  });
   post({
     kind: 'finish',
     phase: 'paused',
@@ -779,6 +792,7 @@ test.each(['upload', 'draft'] as const)(
       text:
         f.observation.text +
         '\n准备已保存\n[link-url] https://example.com/new-upload',
+      links: [{ name: '准备已保存', url: 'https://example.com/new-upload' }],
     };
     const resolve = {
       kind: 'resolve',
@@ -786,6 +800,7 @@ test.each(['upload', 'draft'] as const)(
       runId: 'new',
       id: 'interrupted',
       source,
+      binding: { targetId: 'owned-page', generation: 1 },
       evidence: ['准备已保存'],
     };
     expect(() => f.records.execution(resolve)).toThrow(

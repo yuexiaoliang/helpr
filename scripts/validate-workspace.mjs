@@ -1,3 +1,4 @@
+import { verifyUploadReady } from './upload-ready-validation.mjs';
 import { verifyCreatedTarget } from './created-target-validation.mjs';
 import { verifyDynamicResult } from './dynamic-result-validation.mjs';
 import { verifyLinkNavigation } from './link-navigation-validation.mjs';
@@ -42,6 +43,7 @@ const { values: options } = parseArgs({
     'link-navigation': flag,
     'dynamic-result': flag,
     'management-result': flag,
+    'upload-ready': flag,
     'created-target': flag,
     'created-target-mismatch': flag,
     'cross-site-controls': flag,
@@ -95,6 +97,7 @@ if (recoveryPoint) {
   options.publication = true;
 }
 assert(!options['ambiguous-selection'] || options['cross-site-controls'], 'CROSS_SITE_CASE_REQUIRED');
+if (options['upload-ready']) options['workflow-reuse'] = true;
 if (options['management-result']) options['dynamic-result'] = true;
 if (options['dynamic-result']) options['publication-fields'] = true;
 if (options['cross-site-controls'] || options['history-cleanup'] || options['publication-fields']) options['workflow-reuse'] = true;
@@ -258,6 +261,7 @@ const materialSource = path.join(data, '原始素材.bin');
 const materialBytes = Buffer.from([0, 1, 99, 128, 255, 2, 3, 4]);
 if (options.material || options.publication) fs.writeFileSync(materialSource, materialBytes);
 const website = await fixture({
+  asyncUpload: options['upload-ready'],
   createdTarget: options['created-target'],
   dynamicResult: options['dynamic-result'],
   managementResult: options['management-result'],
@@ -913,6 +917,7 @@ async function verifyMaterial(client) {
 }
 async function validate() {
   let client = await launch();
+  if (options['upload-ready']) return verifyUploadReady({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
   if (options['created-target']) return verifyCreatedTarget({client, website, evidence, command, waitFor, check, launch, remainingOwned,mismatch:options['created-target-mismatch']});
   if (options['dynamic-result']) return verifyDynamicResult({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, management: options['management-result']});
   if (options['link-navigation']) return verifyLinkNavigation({client, website, evidence, command, waitFor, check, launch, remainingOwned});

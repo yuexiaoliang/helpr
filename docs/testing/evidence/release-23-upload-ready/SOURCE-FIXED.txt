@@ -1,0 +1,168 @@
+$ pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:workspace && pnpm test:validation && pnpm check:legacy
+$ tsc --noEmit
+$ eslint app tests/workspace electron.vite.config.ts drizzle.config.ts vitest.config.ts
+$ prettier --check app tests/workspace *.ts *.json *.mjs pnpm-workspace.yaml
+Checking formatting...
+All matched files use Prettier code style!
+$ vitest run
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/workflow-repair.test.ts (17 tests | 1 failed) 38444ms
+   × 共享会话变化撤销待保存的修复资格，保留原未知上传 1792ms
+ ❯ tests/workspace/agreement.test.ts (17 tests | 10 failed) 7443ms
+   × 符合约定的有来源新文章自动确认，编辑/改目标不继承；网页流程不授予权限 557ms
+   × 同内容改名仍返回已完成 A；不同目标 B 独立领取；明确再发形成新意图 499ms
+   × 同一工作 unknown 状态的重复通知不另发，未核对完成不能再发 550ms
+   × 撤销在预留后使旧派发失效，单次确认与已送出的结果分别处理 540ms
+   × 已送出后撤销，迟到核对只记录原工作完成，不恢复自动执行 463ms
+   × 备份、恢复、冷开保留版本、撤销与最小完成事实，拒绝破坏跨任务归属 512ms
+   × 明确再发使用已保存的固定版本，源文件后来替换不改变这份意图 478ms
+   × 撤销先同步阻断所有关联任务，再等待可靠保存；期间新停止不被迟到回执解除 498ms
+   × 缺素材后补充回复可重新取材，新增要求仍需单次内容确认 556ms
+   × 另发或再发的约定不能自动覆盖已知发布过的同一远程记录 513ms
+ ❯ tests/workspace/article.test.ts (13 tests | 4 failed) 4953ms
+   × 改稿、跨任务、迟到确认与回执丢失；冷开保留有效确认和来源 750ms
+   × 修改目标及新停止使旧预览失效，不能授予其它目标 739ms
+   × 备份恢复保留源表字节、解析、文章父版和未确认状态；损坏引用不能过冷开校验 715ms
+   × 实际公开正文、目标和附件字节分别核对；确认内容被替换不得派发 546ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 15 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/agreement.test.ts > 符合约定的有来源新文章自动确认，编辑/改目标不继承；网页流程不授予权限
+ FAIL  tests/workspace/agreement.test.ts > 同内容改名仍返回已完成 A；不同目标 B 独立领取；明确再发形成新意图
+ FAIL  tests/workspace/agreement.test.ts > 同一工作 unknown 状态的重复通知不另发，未核对完成不能再发
+ FAIL  tests/workspace/agreement.test.ts > 撤销在预留后使旧派发失效，单次确认与已送出的结果分别处理
+ FAIL  tests/workspace/agreement.test.ts > 已送出后撤销，迟到核对只记录原工作完成，不恢复自动执行
+ FAIL  tests/workspace/agreement.test.ts > 备份、恢复、冷开保留版本、撤销与最小完成事实，拒绝破坏跨任务归属
+ FAIL  tests/workspace/agreement.test.ts > 明确再发使用已保存的固定版本，源文件后来替换不改变这份意图
+ FAIL  tests/workspace/agreement.test.ts > 撤销先同步阻断所有关联任务，再等待可靠保存；期间新停止不被迟到回执解除
+ FAIL  tests/workspace/agreement.test.ts > 缺素材后补充回复可重新取材，新增要求仍需单次内容确认
+ FAIL  tests/workspace/agreement.test.ts > 另发或再发的约定不能自动覆盖已知发布过的同一远程记录
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2800:21
+    2798|               c.download.checkedAt < c.source.observedAt
+    2799|             )
+    2800|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |                     ^
+    2801|             a.uploadCheck = {
+    2802|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3016:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3015:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/agreement.test.ts:81:13
+ ❯ Object.review tests/workspace/agreement.test.ts:214:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/15]⎯
+
+ FAIL  tests/workspace/article.test.ts > 改稿、跨任务、迟到确认与回执丢失；冷开保留有效确认和来源
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2800:21
+    2798|               c.download.checkedAt < c.source.observedAt
+    2799|             )
+    2800|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |                     ^
+    2801|             a.uploadCheck = {
+    2802|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3016:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3015:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/article.test.ts:127:13
+ ❯ Object.review tests/workspace/article.test.ts:250:5
+ ❯ tests/workspace/article.test.ts:353:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/15]⎯
+
+ FAIL  tests/workspace/article.test.ts > 修改目标及新停止使旧预览失效，不能授予其它目标
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2800:21
+    2798|               c.download.checkedAt < c.source.observedAt
+    2799|             )
+    2800|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |                     ^
+    2801|             a.uploadCheck = {
+    2802|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3016:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3015:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/article.test.ts:127:13
+ ❯ Object.review tests/workspace/article.test.ts:250:5
+ ❯ tests/workspace/article.test.ts:399:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/15]⎯
+
+ FAIL  tests/workspace/article.test.ts > 备份恢复保留源表字节、解析、文章父版和未确认状态；损坏引用不能过冷开校验
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2800:21
+    2798|               c.download.checkedAt < c.source.observedAt
+    2799|             )
+    2800|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |                     ^
+    2801|             a.uploadCheck = {
+    2802|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3016:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3015:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/article.test.ts:127:13
+ ❯ Object.review tests/workspace/article.test.ts:250:5
+ ❯ tests/workspace/article.test.ts:432:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/15]⎯
+
+ FAIL  tests/workspace/article.test.ts > 实际公开正文、目标和附件字节分别核对；确认内容被替换不得派发
+Error: EXECUTION_RESULT_UNKNOWN
+ ❯ apply app/records/execution.ts:2800:21
+    2798|               c.download.checkedAt < c.source.observedAt
+    2799|             )
+    2800|               throw Error('EXECUTION_RESULT_UNKNOWN');
+       |                     ^
+    2801|             a.uploadCheck = {
+    2802|               rule: 'unique-new-link-v1',
+ ❯ sqliteTransaction.<anonymous> app/records/execution.ts:3016:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ BetterSQLiteSession.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/better-sqlite3/session.ts:81:48
+ ❯ BetterSQLite3Database.transaction node_modules/.pnpm/drizzle-orm@0.45.4_@types+better-sqlite3@9.6.0_better-sqlite3@13.0.3/node_modules/src/sqlite-core/db.ts:593:23
+ ❯ ExecutionRecords.execute app/records/execution.ts:3015:28
+ ❯ WorkspaceRecords.execution app/records/workspace.ts:438:33
+ ❯ post tests/workspace/article.test.ts:127:13
+ ❯ Object.review tests/workspace/article.test.ts:250:5
+ ❯ tests/workspace/article.test.ts:477:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/15]⎯
+
+ FAIL  tests/workspace/workflow-repair.test.ts > 共享会话变化撤销待保存的修复资格，保留原未知上传
+AssertionError: expected 'confirmed' to be 'unknown' // Object.is equality
+
+Expected: "unknown"
+Received: "confirmed"
+
+ ❯ tests/workspace/workflow-repair.test.ts:27:37
+     25|   expect(f.page(b).writes).toEqual(['upload']);
+     26|   expect(f.e(b).workflowRepairs).toBeUndefined();
+     27|   expect(f.e(b).actions[0]!.status).toBe('unknown');
+       |                                     ^
+     28|   expect(f.e(b).learnedWorkflows).toBeUndefined();
+     29| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/15]⎯
+
+
+ Test Files  3 failed | 38 passed (41)
+      Tests  15 failed | 367 passed (382)
+   Start at  11:57:18
+   Duration  254.20s (tests 93%, import 5%, environment 1%)
+
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.

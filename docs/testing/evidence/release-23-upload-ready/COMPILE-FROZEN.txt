@@ -1,0 +1,79 @@
+$ node scripts/build-native.mjs && electron-vite build
+gyp info it worked if it ends with ok
+gyp info using node-gyp@13.1.0
+gyp info using node@24.18.0 | darwin | arm64
+gyp info chdir app/native
+gyp info find Python using Python version 3.9.6 found at "/Library/Developer/CommandLineTools/usr/bin/python3"
+
+gyp info spawn /Library/Developer/CommandLineTools/usr/bin/python3
+gyp info spawn args [
+gyp info spawn args '/Users/yuexiaoliang/projects/helpr/node_modules/.pnpm/node-gyp@13.1.0/node_modules/node-gyp/gyp/gyp_main.py',
+gyp info spawn args 'binding.gyp',
+gyp info spawn args '-f',
+gyp info spawn args 'make',
+gyp info spawn args '-I',
+gyp info spawn args '/Users/yuexiaoliang/projects/helpr/app/native/build/config.gypi',
+gyp info spawn args '-I',
+gyp info spawn args '/Users/yuexiaoliang/projects/helpr/node_modules/.pnpm/node-gyp@13.1.0/node_modules/node-gyp/addon.gypi',
+gyp info spawn args '-I',
+gyp info spawn args '/Users/yuexiaoliang/Library/Caches/node-gyp/24.18.0/include/node/common.gypi',
+gyp info spawn args '-Dlibrary=shared_library',
+gyp info spawn args '-Dvisibility=default',
+gyp info spawn args '-Dnode_root_dir=/Users/yuexiaoliang/Library/Caches/node-gyp/24.18.0',
+gyp info spawn args '-Dnode_gyp_dir=/Users/yuexiaoliang/projects/helpr/node_modules/.pnpm/node-gyp@13.1.0/node_modules/node-gyp',
+gyp info spawn args '-Dnode_lib_file=/Users/yuexiaoliang/Library/Caches/node-gyp/24.18.0/<(target_arch)/node.lib',
+gyp info spawn args '-Dmodule_root_dir=/Users/yuexiaoliang/projects/helpr/app/native',
+gyp info spawn args '-Dnode_engine=v8',
+gyp info spawn args '--depth=.',
+gyp info spawn args '--no-parallel',
+gyp info spawn args '--generator-output',
+gyp info spawn args 'build',
+gyp info spawn args '-Goutput_dir=.'
+gyp info spawn args ]
+gyp info spawn make
+gyp info spawn args [ 'BUILDTYPE=Release', '-C', 'build' ]
+  CXX(target) Release/obj.target/input_bridge/input-bridge.o
+  SOLINK_MODULE(target) Release/input_bridge.node
+gyp info ok 
+vite v7.3.7 building ssr environment for production...
+transforming...
+✓ 75 modules transformed.
+rendering chunks...
+dist/main/observer.cjs         0.90 kB
+dist/main/rpc.cjs              1.47 kB
+dist/main/diagnostics.cjs      3.15 kB
+dist/main/executor.cjs         5.28 kB
+dist/main/local-fixture.cjs    8.62 kB
+dist/main/record-format.cjs   10.61 kB
+dist/main/contracts.cjs       14.01 kB
+dist/main/host.cjs            52.00 kB
+dist/main/execution.cjs       58.81 kB
+dist/main/main.cjs           246.66 kB
+dist/main/records.cjs        248.85 kB
+✓ built in 450ms
+vite v7.3.7 building ssr environment for production...
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+dist/preload/preload.cjs  0.46 kB
+✓ built in 4ms
+vite v7.3.7 building client environment for production...
+transforming...
+node_modules/.pnpm/zod@4.6.7/node_modules/zod/v4/core/util.js (400:0): A comment
+
+"// Wrapped in a `@__PURE__` IIFE: esbuild never tree-shakes a top-level initializer that contains a member access on `Number`, so the bare object literal survived into every bundle."
+
+in "node_modules/.pnpm/zod@4.6.7/node_modules/zod/v4/core/util.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+node_modules/.pnpm/zod@4.6.7/node_modules/zod/v4/core/regexes.js (74:0): A comment
+
+"/** Anchors a pattern source. The interpolation lives here rather than at the call site because
+ * esbuild will not drop a `@__PURE__` call whose own argument interpolates a variable, but it
+ * will drop `anchor(dateSource)`. Keeping it inline pinned `date` into every bundle. */"
+
+in "node_modules/.pnpm/zod@4.6.7/node_modules/zod/v4/core/regexes.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+✓ 1481 modules transformed.
+rendering chunks...
+../../dist/renderer/index.html                     0.67 kB
+../../dist/renderer/assets/index-PROyzgnj.css     13.13 kB
+../../dist/renderer/assets/index-DBxxoHiy.js   1,430.64 kB
+✓ built in 1.52s

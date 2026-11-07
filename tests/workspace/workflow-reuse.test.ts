@@ -100,7 +100,7 @@ test('重复链接导致未知并不重传，不使用历史地址或任意第�
       JSON.stringify({ name: '下载附件', url: f.base + '/other' }),
   }));
   const b = await f.add('有歧义');
-  expect(f.e(b).phase).toBe('paused');
+  expect(f.e(b).phase).toBe('unknown');
   expect(f.page(b).writes).toEqual(['upload']);
   await f.service().intent({
     kind: 'execution-intent',
@@ -111,7 +111,7 @@ test('重复链接导致未知并不重传，不使用历史地址或任意第�
   await f.service().settled();
   expect(f.page(b).writes).toEqual(['upload']);
   expect(f.e(b).materialProcessing ?? []).toHaveLength(0);
-});
+}, 20000);
 
 test('本次参数必须来自本次委托，候选摘要不符不能绑定', async () => {
   const f = await setup();
@@ -215,9 +215,11 @@ test('网页伪造链接标记不能替代实际可访问链接', async () => {
     links: o.links?.filter((l) => l.name !== '下载附件'),
   }));
   const b = await f.add('仅文字链接');
-  expect(f.e(b).phase).toBe('paused');
+  expect(f.e(b).phase).toBe('unknown');
   expect(f.page(b).writes).toEqual(['upload']);
-  expect(f.e(b).preparation?.some((p) => p.kind === 'upload')).toBe(false);
+  expect(f.e(b).preparation?.some((p) => p.kind === 'upload') ?? false).toBe(
+    false,
+  );
 });
 
 test('复用预览改稿采用本次确认，冷开保留实际绑定，重复结果不新增流程或处理记录', async () => {

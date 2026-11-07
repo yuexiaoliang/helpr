@@ -1,3 +1,4 @@
+import { uploadedLink } from '../shared/upload-readiness';
 import { creationFieldsMatch } from '../shared/target-creation';
 import type {
   ActionNavigationEvent,
@@ -1838,6 +1839,184 @@ export class ExecutionService {
       this.publish();
     }
   }
+  private async waitForUpload(
+    job: Job,
+    action: ActionFact,
+    first: BoundObservation,
+  ) {
+    const signal = AbortSignal.any([
+      job.abort.signal,
+      AbortSignal.timeout(10000),
+    ]);
+    const save = (command: unknown) =>
+      this.abortable(() => this.record(command), signal);
+    const initialSession = first.session ? { ...first.session } : undefined;
+    let observed = first;
+    let previous: BoundObservation | undefined;
+    const valid = async (value: BoundObservation) => {
+      const coordination = this.ports
+        .current()
+        .tasks.find((t) => t.id === job.taskId)?.execution?.coordination;
+      if (
+        coordination &&
+        (coordination.status !== 'ready' || coordination.refreshRequired)
+      )
+        throw Error('COORDINATION_STALE');
+      if (!this.live(job) || signal.aborted) throw Error('EXECUTION_STOPPED');
+      if (
+        action.navigation ||
+        value.observation.url !== action.source.url ||
+        value.binding.targetId !== first.binding.targetId ||
+        value.binding.generation !== first.binding.generation ||
+        value.observation.generation !== value.binding.generation ||
+        (action.runId === job.runId &&
+          (value.binding.targetId !== action.binding.targetId ||
+            value.binding.generation !== action.binding.generation))
+      )
+        throw Error('EXECUTION_PAGE_CHANGED');
+      if (initialSession) {
+        const latest = this.ports.session
+          ? await this.abortable(() => this.ports.session!(job.taskId), signal)
+          : value.session;
+        if (
+          !latest ||
+          !value.session ||
+          !sameSession(initialSession, latest) ||
+          latest.epoch !== initialSession.epoch ||
+          !sameSession(initialSession, value.session) ||
+          value.session.epoch !== initialSession.epoch
+        )
+          throw Error('COORDINATION_STALE');
+      }
+      if (!this.live(job) || signal.aborted) throw Error('EXECUTION_STOPPED');
+    };
+    try {
+      for (let attempt = 0; attempt < 24; attempt++) {
+        await valid(observed);
+        const link = uploadedLink(action, observed.observation);
+        const before = previous && uploadedLink(action, previous.observation);
+        if (
+          link &&
+          before?.url === link.url &&
+          before.name === link.name &&
+          previous!.observation.fingerprint === observed.observation.fingerprint
+        ) {
+          const current = this.ports
+            .current()
+            .tasks.find((t) => t.id === job.taskId)!.execution!;
+          const material = current.materials?.find(
+            (m) =>
+              action.action.kind === 'upload' &&
+              m.id === action.action.materialId &&
+              m.goalVersion === current.goalVersion,
+          );
+          if (!material) throw Error('MATERIAL_CORRUPT');
+          // 先保存可恢复的页面关联。下载失败或停止不删除已派发的上传事实。
+          const target = current.preparation?.find(
+            (f) => f.kind === 'target' && f.goalVersion === current.goalVersion,
+          );
+          await save({
+            kind: 'preparation-observed',
+            taskId: job.taskId,
+            runId: job.runId,
+            source: observed.observation,
+            facts: [
+              ...(!target
+                ? [
+                    {
+                      kind: 'target',
+                      url: observed.observation.url,
+                      materialId: null,
+                      evidence: [link.name],
+                    },
+                  ]
+                : []),
+              {
+                kind: 'upload',
+                url: link.url,
+                materialId: material.id,
+                evidence: [link.name],
+              },
+            ],
+          });
+          await valid(observed);
+          const download = await this.abortable(
+            () =>
+              verifyAttachment(
+                {
+                  content: current.goal,
+                  destination: target?.url ?? observed.observation.url,
+                  attachment: {
+                    materialId: material.id,
+                    targetUrl: target?.url ?? observed.observation.url,
+                    url: link.url,
+                  },
+                },
+                material,
+                signal,
+              ),
+            signal,
+          );
+          const fixed = await this.abortable(
+            () =>
+              this.ports.material?.({
+                kind: 'verify',
+                taskId: job.taskId,
+                materialId: material.id,
+                goalVersion: material.goalVersion,
+              }) ?? Promise.resolve({ valid: false }),
+            signal,
+          );
+          if (!z.object({ valid: z.boolean() }).parse(fixed).valid)
+            throw Error('MATERIAL_CORRUPT');
+          const latest = await this.abortable(
+            () => this.ports.observe(job.taskId, signal),
+            signal,
+          );
+          await valid(latest);
+          if (
+            latest.observation.fingerprint !==
+              observed.observation.fingerprint ||
+            uploadedLink(action, latest.observation)?.url !== link.url
+          )
+            throw Error('EXECUTION_RESULT_UNKNOWN');
+          await save({
+            kind: 'resolve',
+            taskId: job.taskId,
+            runId: job.runId,
+            id: action.id,
+            source: observed.observation,
+            binding: observed.binding,
+            evidence: [link.name],
+            download,
+          });
+          return this.live(job);
+        }
+        previous = observed;
+        if (attempt === 23) break;
+        await this.abortable(
+          () => new Promise<void>((resolve) => setTimeout(resolve, 250)),
+          signal,
+        );
+        observed = await this.abortable(
+          () => this.ports.observe(job.taskId, signal),
+          signal,
+        );
+      }
+    } catch (error) {
+      if (!this.live(job)) return false;
+      if (error instanceof Error && error.message === 'MATERIAL_CORRUPT')
+        throw error;
+      // 只读检查失败后不重试下载，不让模型确认未知上传。
+    }
+    if (this.live(job))
+      await this.finish(
+        job,
+        'unknown',
+        '附件已送出，但尚未核对就绪或下载字节；已暂停，不重传，也不保存或发布。明确继续后先核对已有附件。',
+      );
+    return false;
+  }
   private async run(job: Job) {
     try {
       const initial = this.ports
@@ -1920,6 +2099,10 @@ export class ExecutionService {
             '创建已有派发记录，但缺少可靠的新目标检查点；保留未知，不再次创建。',
           );
           return;
+        }
+        if (pending?.action.kind === 'upload') {
+          if (!(await this.waitForUpload(job, pending, observed))) return;
+          continue;
         }
         const use = currentWorkflow(current);
         const workflows = availableWorkflows(this.ports.current().tasks)
@@ -2300,39 +2483,6 @@ export class ExecutionService {
             )
           )
             throw Error('EXECUTION_EVIDENCE_MISSING');
-          let download: DownloadCheck | undefined;
-          if (pending.runId !== job.runId && pending.action.kind === 'upload') {
-            const current = this.ports
-              .current()
-              .tasks.find((t) => t.id === job.taskId)!.execution!;
-            const materialId = pending.action.materialId;
-            const material = current.materials?.find(
-              (m) => m.id === materialId,
-            );
-            const upload = current.preparation?.find(
-              (f) => f.kind === 'upload' && f.actionId === pending.id,
-            );
-            const target = current.preparation?.find(
-              (f) =>
-                f.kind === 'target' && f.goalVersion === current.goalVersion,
-            );
-            if (!material || !upload || !target)
-              throw Error('EXECUTION_RESULT_UNKNOWN');
-            download = await verifyAttachment(
-              {
-                content: current.goal,
-                destination: target.url,
-                attachment: {
-                  materialId,
-                  targetUrl: target.url,
-                  url: upload.url,
-                },
-              },
-              material,
-              job.abort.signal,
-            );
-            if (!this.live(job)) return;
-          }
           await this.record({
             kind: 'resolve',
             taskId: job.taskId,
@@ -2340,7 +2490,6 @@ export class ExecutionService {
             id: pending.id,
             source: observed.observation,
             evidence: step.previous.evidence,
-            ...(download ? { download } : {}),
           });
         }
         if (!this.live(job)) return;
