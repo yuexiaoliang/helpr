@@ -1,0 +1,286 @@
+{
+  "checkedAt": "2026-11-07T03:30:14.692137+00:00",
+  "build": 88,
+  "sourceCommit": "c1724b434782afcb958ca43b148a5895b3b22a41",
+  "sourceDirty": true,
+  "rawRun": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/run-1794022199793",
+  "profile": "/private/tmp/helpr-workspace-validation-501/run-SanIiW",
+  "dataFormat": 26,
+  "quickCheck": "ok",
+  "sqliteSha256": "1525740ad850e0309b4e30ad86a63c80fa752aed39672606fcf98d8708359db9",
+  "cases": [
+    {
+      "item": "A",
+      "taskId": "7d40d8b9-73e8-4d53-a56a-b4b72ac82d35",
+      "phase": "paused",
+      "action": {
+        "coordination": {
+          "session": {
+            "id": "helpr-fixture-web",
+            "epoch": "db5ec957-7a23-44cd-af49-d4bb78476b13:0",
+            "origin": "http://127.0.0.1:56284"
+          },
+          "claimId": "27964642-2c84-47ce-9bde-d72d9f9a44be"
+        },
+        "observedLinks": [],
+        "targetCreation": {
+          "rule": "same-site-editor-v1",
+          "fields": [
+            {
+              "name": "草稿标题",
+              "value": "独立草稿A"
+            }
+          ],
+          "destination": "公告"
+        },
+        "navigation": {
+          "id": "7e69e23a-f9b9-4c37-88c9-89369de52a42",
+          "association": "during-action",
+          "targetId": "05F0BD5FB0563BF0A2B5D0C69E115072",
+          "sourceGeneration": 1,
+          "generation": 2,
+          "url": "http://127.0.0.1:56284/create-draft?item=A",
+          "mainFrame": true,
+          "sameDocument": false,
+          "inputEpoch": 1,
+          "observedAt": 1794022202094
+        },
+        "id": "944d9953-514b-4823-ae53-1d92565c6372",
+        "runId": "aa7ef91e-c227-4729-981c-ea43559b64c7",
+        "goalVersion": 1,
+        "status": "confirmed",
+        "summary": "创建当前草稿",
+        "action": {
+          "kind": "click",
+          "target": {
+            "role": "button",
+            "name": "创建草稿",
+            "exact": true
+          }
+        },
+        "effect": "draft",
+        "preconditions": [
+          "公告"
+        ],
+        "source": {
+          "url": "http://127.0.0.1:56284/new-draft?item=A",
+          "title": "新建草稿",
+          "fingerprint": "405281666dec3510ddf4da885cece95df607c481df4cb7483fd8411ff1112c11",
+          "generation": 1,
+          "observedAt": 1794022201616,
+          "truncated": false
+        },
+        "observedUrls": [
+          "http://127.0.0.1:56284/new-draft?item=A"
+        ],
+        "binding": {
+          "targetId": "05F0BD5FB0563BF0A2B5D0C69E115072",
+          "generation": 1
+        },
+        "evidence": [
+          "已只读核对创建后的编辑目标和冻结字段"
+        ],
+        "returned": false,
+        "dispatchState": "possible",
+        "discoveredTarget": {
+          "source": {
+            "url": "http://127.0.0.1:56284/created/c7947d7e-1571-4fca-a837-2b3001a91896",
+            "title": "已创建草稿",
+            "fingerprint": "d5d489d9bb6fe60286378c6e145497cb67092444230b4320c51e7a724df498b1",
+            "generation": 2,
+            "observedAt": 1794022202463,
+            "truncated": false
+          },
+          "binding": {
+            "targetId": "05F0BD5FB0563BF0A2B5D0C69E115072",
+            "generation": 2
+          },
+          "links": [
+            {
+              "name": "当前草稿",
+              "url": "http://127.0.0.1:56284/created/c7947d7e-1571-4fca-a837-2b3001a91896"
+            },
+            {
+              "name": "新建来源",
+              "url": "http://127.0.0.1:56284/new-draft?item=A"
+            }
+          ],
+          "controls": [
+            {
+              "role": "link",
+              "name": "当前草稿",
+              "frameUrl": "http://127.0.0.1:56284/created/c7947d7e-1571-4fca-a837-2b3001a91896",
+              "disabled": false
+            },
+            {
+              "role": "link",
+              "name": "新建来源",
+              "frameUrl": "http://127.0.0.1:56284/created/c7947d7e-1571-4fca-a837-2b3001a91896",
+              "disabled": false
+            },
+            {
+              "role": "textbox",
+              "name": "草稿标题",
+              "frameUrl": "http://127.0.0.1:56284/created/c7947d7e-1571-4fca-a837-2b3001a91896",
+              "disabled": false,
+              "textValue": "独立草稿A"
+            },
+            {
+              "role": "textbox",
+              "name": "正文",
+              "frameUrl": "http://127.0.0.1:56284/created/c7947d7e-1571-4fca-a837-2b3001a91896",
+              "disabled": false
+            }
+          ],
+          "evidence": [
+            "公告"
+          ],
+          "targetFactId": "d534b011-b235-4348-af40-d3a9d7ea79dd",
+          "draftFactId": "eb783b6c-93bf-4d41-9855-08597a49547b"
+        },
+        "resultSource": {
+          "url": "http://127.0.0.1:56284/created/c7947d7e-1571-4fca-a837-2b3001a91896",
+          "title": "已创建草稿",
+          "fingerprint": "d5d489d9bb6fe60286378c6e145497cb67092444230b4320c51e7a724df498b1",
+          "generation": 2,
+          "observedAt": 1794022202463,
+          "truncated": false
+        },
+        "resultLinks": [
+          {
+            "name": "当前草稿",
+            "url": "http://127.0.0.1:56284/created/c7947d7e-1571-4fca-a837-2b3001a91896"
+          },
+          {
+            "name": "新建来源",
+            "url": "http://127.0.0.1:56284/new-draft?item=A"
+          }
+        ]
+      },
+      "preparation": [
+        {
+          "kind": "target",
+          "id": "d534b011-b235-4348-af40-d3a9d7ea79dd",
+          "url": "http://127.0.0.1:56284/created/c7947d7e-1571-4fca-a837-2b3001a91896",
+          "materialId": null,
+          "goalVersion": 1,
+          "actionId": "944d9953-514b-4823-ae53-1d92565c6372",
+          "source": {
+            "url": "http://127.0.0.1:56284/created/c7947d7e-1571-4fca-a837-2b3001a91896",
+            "title": "已创建草稿",
+            "fingerprint": "d5d489d9bb6fe60286378c6e145497cb67092444230b4320c51e7a724df498b1",
+            "generation": 2,
+            "observedAt": 1794022202463,
+            "truncated": false
+          },
+          "verification": "page-observed",
+          "evidence": [
+            "已只读核对创建后的编辑目标和冻结字段"
+          ]
+        },
+        {
+          "kind": "draft",
+          "id": "eb783b6c-93bf-4d41-9855-08597a49547b",
+          "url": "http://127.0.0.1:56284/created/c7947d7e-1571-4fca-a837-2b3001a91896",
+          "materialId": null,
+          "goalVersion": 1,
+          "actionId": "944d9953-514b-4823-ae53-1d92565c6372",
+          "source": {
+            "url": "http://127.0.0.1:56284/created/c7947d7e-1571-4fca-a837-2b3001a91896",
+            "title": "已创建草稿",
+            "fingerprint": "d5d489d9bb6fe60286378c6e145497cb67092444230b4320c51e7a724df498b1",
+            "generation": 2,
+            "observedAt": 1794022202463,
+            "truncated": false
+          },
+          "verification": "page-observed",
+          "evidence": [
+            "已只读核对创建后的编辑目标和冻结字段"
+          ]
+        }
+      ],
+      "postReceipts": [
+        {
+          "kind": "target-created",
+          "item": "A",
+          "title": "独立草稿A",
+          "route": "/created/c7947d7e-1571-4fca-a837-2b3001a91896",
+          "at": 1794022202097
+        }
+      ]
+    }
+  ],
+  "ownedPids": [
+    37294,
+    37296,
+    37297,
+    37298,
+    37299,
+    37300,
+    37305,
+    37306,
+    37307,
+    37308,
+    37309,
+    37311,
+    37312,
+    37321,
+    37322,
+    37323,
+    37324,
+    37325,
+    37326,
+    37332,
+    37333,
+    37334,
+    37335,
+    37336
+  ],
+  "ownedGroups": [
+    37294,
+    37298,
+    37300,
+    37321,
+    37324,
+    37326
+  ],
+  "remainingPidsAndGroups": [],
+  "leaseReleased": true,
+  "startupSamples": [
+    {
+      "kind": "startup",
+      "number": 230,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:56284",
+        "persistent": false
+      },
+      "ms": 1046,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    },
+    {
+      "kind": "startup",
+      "number": 231,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:56284",
+        "persistent": false
+      },
+      "ms": 1012,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    }
+  ],
+  "used": {
+    "builds": 88,
+    "installs": 19,
+    "starts": 231,
+    "faults": 52,
+    "cleanups": 25
+  }
+}

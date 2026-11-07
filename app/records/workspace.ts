@@ -154,6 +154,7 @@ export class WorkspaceRecords {
           22,
           23,
           24,
+          25,
           CURRENT_DATA_FORMAT,
         ].includes(priorVersion)
       )
@@ -161,45 +162,47 @@ export class WorkspaceRecords {
       if (legacy && priorVersion !== CURRENT_DATA_FORMAT) {
         const backup = path.join(
           folder,
-          (priorVersion === 24
-            ? 'workspace-before-dynamic-result-23-'
-            : priorVersion === 23
-              ? 'workspace-before-link-navigation-23-'
-              : priorVersion === 22
-                ? 'workspace-before-action-navigation-23-'
-                : priorVersion === 21
-                  ? 'workspace-before-publication-fields-23-'
-                  : priorVersion === 20
-                    ? 'workspace-before-cleanup-22-'
-                    : priorVersion === 19
-                      ? 'workspace-before-cross-site-21-'
-                      : priorVersion === 18
-                        ? 'workspace-before-schedules-20-'
-                        : priorVersion === 17
-                          ? 'workspace-before-agreements-19-'
-                          : priorVersion === 16
-                            ? 'workspace-before-excel-article-18-'
-                            : priorVersion === 15
-                              ? 'workspace-before-workflow-repair-17-'
-                              : priorVersion === 14
-                                ? 'workspace-before-coordination-16-'
-                                : priorVersion === 13
-                                  ? 'workspace-before-workflow-reuse-15-'
-                                  : priorVersion === 12
-                                    ? 'workspace-before-publication-recovery-14-'
-                                    : priorVersion === 11
-                                      ? 'workspace-before-publication-13-'
-                                      : priorVersion === 10
-                                        ? 'workspace-before-material-12-'
-                                        : priorVersion === 9
-                                          ? 'workspace-before-task-groups-11-'
-                                          : priorVersion >= 7
-                                            ? 'workspace-before-participation-10-'
-                                            : priorVersion === 6
-                                              ? 'workspace-before-upgrade-09-'
-                                              : priorVersion === 5
-                                                ? 'workspace-before-backup-07-'
-                                                : 'workspace-before-recovery-05-') +
+          (priorVersion === 25
+            ? 'workspace-before-created-target-23-'
+            : priorVersion === 24
+              ? 'workspace-before-dynamic-result-23-'
+              : priorVersion === 23
+                ? 'workspace-before-link-navigation-23-'
+                : priorVersion === 22
+                  ? 'workspace-before-action-navigation-23-'
+                  : priorVersion === 21
+                    ? 'workspace-before-publication-fields-23-'
+                    : priorVersion === 20
+                      ? 'workspace-before-cleanup-22-'
+                      : priorVersion === 19
+                        ? 'workspace-before-cross-site-21-'
+                        : priorVersion === 18
+                          ? 'workspace-before-schedules-20-'
+                          : priorVersion === 17
+                            ? 'workspace-before-agreements-19-'
+                            : priorVersion === 16
+                              ? 'workspace-before-excel-article-18-'
+                              : priorVersion === 15
+                                ? 'workspace-before-workflow-repair-17-'
+                                : priorVersion === 14
+                                  ? 'workspace-before-coordination-16-'
+                                  : priorVersion === 13
+                                    ? 'workspace-before-workflow-reuse-15-'
+                                    : priorVersion === 12
+                                      ? 'workspace-before-publication-recovery-14-'
+                                      : priorVersion === 11
+                                        ? 'workspace-before-publication-13-'
+                                        : priorVersion === 10
+                                          ? 'workspace-before-material-12-'
+                                          : priorVersion === 9
+                                            ? 'workspace-before-task-groups-11-'
+                                            : priorVersion >= 7
+                                              ? 'workspace-before-participation-10-'
+                                              : priorVersion === 6
+                                                ? 'workspace-before-upgrade-09-'
+                                                : priorVersion === 5
+                                                  ? 'workspace-before-backup-07-'
+                                                  : 'workspace-before-recovery-05-') +
             randomUUID() +
             '.sqlite',
         );
@@ -304,6 +307,7 @@ export class WorkspaceRecords {
         version !== 22 &&
         version !== 23 &&
         version !== 24 &&
+        version !== 25 &&
         version !== CURRENT_DATA_FORMAT
       )
         throw new Error('DATA_VERSION_UNSUPPORTED');

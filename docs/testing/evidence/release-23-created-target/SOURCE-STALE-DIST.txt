@@ -1,0 +1,35 @@
+$ pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:workspace && pnpm test:validation && pnpm check:legacy
+$ tsc --noEmit
+$ eslint app tests/workspace electron.vite.config.ts drizzle.config.ts vitest.config.ts
+$ prettier --check app tests/workspace *.ts *.json *.mjs pnpm-workspace.yaml
+Checking formatting...
+All matched files use Prettier code style!
+$ vitest run
+
+ RUN  v5.0.4 /Users/yuexiaoliang/projects/helpr
+
+ ❯ tests/workspace/process.test.ts (11 tests | 1 failed) 9339ms
+   × 清理提交回执丢失后强杀记录进程，冷开保留处理事实并按原请求核对 1090ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/workspace/process.test.ts > 清理提交回执丢失后强杀记录进程，冷开保留处理事实并按原请求核对
+Error: RECORDS_EXITED
+ ❯ ChildProcess.<anonymous> tests/workspace/process.test.ts:55:37
+     53|       if ((input as { ready?: boolean }).ready) resolve();
+     54|     });
+     55|     child.once('exit', () => reject(new Error('RECORDS_EXITED')));
+       |                                     ^
+     56|   });
+     57|   return {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 39 passed (40)
+      Tests  1 failed | 362 passed (363)
+   Start at  11:15:57
+   Duration  186.63s (tests 92%, import 6%, environment 2%)
+
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.

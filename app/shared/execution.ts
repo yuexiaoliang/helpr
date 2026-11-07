@@ -1,4 +1,9 @@
 import {
+  targetCreationSchema,
+  discoveredTargetSchema,
+  validDiscoveredTarget,
+} from './target-creation';
+import {
   actionNavigationSchema,
   linkNavigationResolutionSchema,
   expectedNavigationLink,
@@ -120,6 +125,8 @@ export const actionFactSchema = z
     resultLinks: z.array(observedLinkSchema).max(300).optional(),
     selectionResult: observedControlSchema.optional(),
     fieldResults: z.array(observedControlSchema).max(12).optional(),
+    targetCreation: targetCreationSchema.optional(),
+    discoveredTarget: discoveredTargetSchema.optional(),
     discoveredRecovery: publicationRecoveryCheckpointSchema.optional(),
     navigation: actionNavigationSchema.optional(),
     navigationResolution: linkNavigationResolutionSchema.optional(),
@@ -169,6 +176,16 @@ export const actionFactSchema = z
         a.navigation.targetId === a.binding.targetId &&
         a.navigation.sourceGeneration === a.binding.generation),
   )
+  .refine(
+    (a) =>
+      !a.targetCreation ||
+      (a.effect === 'draft' &&
+        a.action.kind === 'click' &&
+        !a.submission &&
+        !a.publicationApprovalId &&
+        !a.workflowStep),
+  )
+  .refine((a) => validDiscoveredTarget(a))
   .refine((a) => {
     const d = a.discoveredRecovery,
       n = a.navigation,
@@ -466,6 +483,7 @@ export const nextStepSchema = z.strictObject({
   modelCallId: z.string().optional(),
   coordination: coordinationProposalSchema.optional(),
   workflow: workflowChoiceSchema.optional(),
+  targetCreation: targetCreationSchema.optional(),
   recovery: publicationRecoverySchema.optional(),
   effect: actionFactSchema.shape.effect,
   result: publicationResultProposalSchema.optional(),

@@ -1,3 +1,4 @@
+import { creationFieldsMatch } from '../shared/target-creation';
 import type {
   ActionNavigationEvent,
   LinkNavigationProof,
@@ -236,10 +237,11 @@ export class ExecutionService {
     const action = e?.actions.find(
       (a) =>
         a.goalVersion === e.goalVersion &&
-        a.effect === 'publication' &&
-        a.submission &&
-        !a.submission.recovery &&
-        !a.discoveredRecovery &&
+        ((a.effect === 'publication' &&
+          a.submission &&
+          !a.submission.recovery &&
+          !a.discoveredRecovery) ||
+          (a.targetCreation && !a.discoveredTarget)) &&
         a.navigation?.mainFrame &&
         !a.navigation.sameDocument &&
         a.status === 'unknown' &&
@@ -284,9 +286,11 @@ export class ExecutionService {
     review.work = (async () => {
       try {
         await this.jobs.get(taskId)?.work;
+        const discoveryEpoch = this.ports.input?.epoch(taskId);
         let previous: BoundObservation | undefined;
         for (let attempt = 0; attempt < 20 && current(); attempt++) {
-          const epoch = this.ports.input?.epoch(taskId);
+          const epoch = discoveryEpoch;
+          if (this.ports.input?.epoch(taskId) !== epoch) return;
           let observed: BoundObservation;
           try {
             if (
@@ -336,7 +340,9 @@ export class ExecutionService {
               .current()
               .tasks.find((t) => t.id === taskId)!.execution!;
             const saved = await this.record({
-              kind: 'publication-result-entry',
+              kind: action.targetCreation
+                ? 'created-target-observed'
+                : 'publication-result-entry',
               taskId,
               expectedVersion: latest.version,
               actionId: action.id,
@@ -349,6 +355,7 @@ export class ExecutionService {
               this.ports.input?.epoch(taskId) !== epoch
             )
               return;
+            if (action.targetCreation) return;
             const execution = this.ports
               .current()
               .tasks.find((t) => t.id === taskId)!.execution!;
@@ -1874,10 +1881,46 @@ export class ExecutionService {
           .current()
           .tasks.find((t) => t.id === job.taskId)?.execution;
         if (!current) return;
+        const created = current.actions
+          .filter(
+            (a) =>
+              a.goalVersion === current.goalVersion && a.status !== 'cancelled',
+          )
+          .at(-1);
+        if (
+          created?.discoveredTarget &&
+          created.targetCreation &&
+          (observed.observation.url !== created.discoveredTarget.source.url ||
+            !creationFieldsMatch(
+              created.targetCreation,
+              observed.observation,
+            ) ||
+            observed.observation.links?.filter(
+              (l) => l.url === observed.observation.url,
+            ).length !== 1 ||
+            observed.observation.links?.filter(
+              (l) => l.url === created.source.url,
+            ).length !== 1)
+        ) {
+          await this.finish(
+            job,
+            'unknown',
+            '已保存创建目标，但当前字段或身份不符；保留草稿，不重新创建。',
+          );
+          return;
+        }
         const pending =
           current.actions.find((a) =>
             ['reserved', 'dispatched', 'unknown'].includes(a.status),
           ) ?? null;
+        if (pending?.targetCreation && !pending.discoveredTarget) {
+          await this.finish(
+            job,
+            'unknown',
+            '创建已有派发记录，但缺少可靠的新目标检查点；保留未知，不再次创建。',
+          );
+          return;
+        }
         const use = currentWorkflow(current);
         const workflows = availableWorkflows(this.ports.current().tasks)
           .filter(
@@ -2571,6 +2614,7 @@ export class ExecutionService {
               }
             : {}),
           effect: step.effect,
+          targetCreation: step.targetCreation,
           recovery: step.recovery,
           evidence: step.evidence,
           ...(download ? { download } : {}),

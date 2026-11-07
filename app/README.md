@@ -270,3 +270,9 @@ Node-API 8 原生模块经 node-gyp `13.1.0` 构建，固定 arm64／macOS 14 �
 自动恢复限未绑定发布/准备目标、未进入流程重放的普通链接交互。表单创建、脚本导航、重定向、弹窗、同文档/子frame导航、跨站和含糊链接仍暂停；动态业务目标及异步附件等待另待实现。冷开保留检查点，不重发已确认动作。旧格式23升级前留下`workspace-before-link-navigation-23-*.sqlite`。
 
 源码入口为`tests/workspace/link-navigation.test.ts`。实包入口为`pnpm validate:workspace --fixture --candidate=link-navigation-redirect-guard-23 --link-navigation`，普通本机页面和虚构模型通过受限业务入口运行，不代答“继续”，不抵算真实后台或CUA/真人操作。[本阶段方案](../docs/testing/release-23-link-navigation-plan.md)明确用量和边界。
+
+### 创建后的动态目标身份（23阶段）
+
+创建前可冻结 `targetCreation` 的主文档完整文本框值和栏目。表单导航仍撤权并暂停；只读核对新编辑页的同站未知URL、唯一自身／来源链接及冻结字段后，保存 `discoveredTarget` 和目标／草稿事实。冷开不重建；明确继续先核对现场，再执行剩余工作。无检查点的创建不能由模型自报成功解除未知。格式26迁移前备份，导入保留恢复待验。
+
+源码入口 `tests/workspace/created-target.test.ts`；受管隔离包入口 `pnpm validate:workspace --fixture --candidate=created-target-23 --created-target`。两次本机POST／303及冷开不代答继续，不能抵算自动表单续行或真实业务。范围与用量见[本阶段方案](../docs/testing/release-23-created-target-plan.md)。

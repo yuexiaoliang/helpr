@@ -1,0 +1,446 @@
+{
+  "app": "/Users/yuexiaoliang/projects/helpr/dist/candidates/created-target-23/mac-arm64/helpr.app",
+  "storage": "fixture",
+  "pendingAcceptance": [
+    "系统钥匙串与跨重启登录",
+    "原生窗口与真人输入"
+  ],
+  "started": "2026-11-07T03:24:27.113Z",
+  "checks": [
+    {
+      "name": "A 动态草稿身份与只读暂停",
+      "passed": true
+    }
+  ],
+  "samples": [
+    {
+      "kind": "startup",
+      "number": 228,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:55951",
+        "persistent": false
+      },
+      "ms": 4493,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    }
+  ],
+  "processes": [
+    {
+      "number": 228,
+      "controller": 36515,
+      "seen": {
+        "36515": {
+          "parent": 36500,
+          "group": 36515
+        },
+        "36520": {
+          "parent": 36515,
+          "group": 36487
+        },
+        "36521": {
+          "parent": 36515,
+          "group": 36487
+        },
+        "36522": {
+          "parent": 36515,
+          "group": 36522
+        },
+        "36523": {
+          "parent": 36515,
+          "group": 36515
+        },
+        "36524": {
+          "parent": 36522,
+          "group": 36524
+        },
+        "36529": {
+          "parent": 36524,
+          "group": 36524
+        },
+        "36530": {
+          "parent": 36524,
+          "group": 36524
+        },
+        "36531": {
+          "parent": 36524,
+          "group": 36524
+        },
+        "36532": {
+          "parent": 36524,
+          "group": 36524
+        },
+        "36533": {
+          "parent": 36524,
+          "group": 36524
+        },
+        "36535": {
+          "parent": 36524,
+          "group": 36524
+        },
+        "36536": {
+          "parent": 36524,
+          "group": 36524
+        },
+        "36540": {
+          "parent": 36524,
+          "group": 36524
+        },
+        "36541": {
+          "parent": 36524,
+          "group": 36524
+        }
+      },
+      "groups": [
+        36515,
+        36522,
+        36524
+      ],
+      "remaining": [],
+      "exit": {
+        "code": 0,
+        "signal": null
+      }
+    }
+  ],
+  "fixture": [
+    {
+      "kind": "target-planning",
+      "title": "独立草稿A",
+      "at": 1794021872405
+    },
+    {
+      "kind": "target-created",
+      "item": "A",
+      "title": "独立草稿A",
+      "route": "/created/c4cb35b8-189b-4215-b68d-af90e56a8464",
+      "at": 1794021872845
+    },
+    {
+      "kind": "target-planning",
+      "title": "独立草稿B",
+      "at": 1794021873937
+    }
+  ],
+  "createdTarget": {
+    "realModelCalls": 0,
+    "remoteWrites": 0,
+    "scriptedContinuation": false,
+    "cases": [
+      {
+        "item": "A",
+        "taskId": "1b734bf1-a352-45b7-b69c-122becc18efa",
+        "entry": "http://127.0.0.1:55951/new-draft?item=A",
+        "readiness": [
+          "920e2ab96eceb27609430a4fc4835016437a8f6ce72c5c5df74a5c3dae3e12c7",
+          "920e2ab96eceb27609430a4fc4835016437a8f6ce72c5c5df74a5c3dae3e12c7"
+        ],
+        "result": {
+          "id": "1b734bf1-a352-45b7-b69c-122becc18efa",
+          "goal": "在 http://127.0.0.1:55951/new-draft?item=A 创建“独立草稿A”到公告，随后补充正文",
+          "created": 1794021871689,
+          "url": "http://127.0.0.1:55951/created/c4cb35b8-189b-4215-b68d-af90e56a8464",
+          "draft": "",
+          "archived": false,
+          "groupId": null,
+          "groupGoal": null,
+          "hidden": false,
+          "minimized": false,
+          "phase": "manual",
+          "execution": {
+            "coordination": {
+              "session": {
+                "id": "helpr-fixture-web",
+                "epoch": "079b61da-7831-41e1-b20f-9da095dfa248:0",
+                "origin": "http://127.0.0.1:55951"
+              },
+              "status": "ready",
+              "source": {
+                "url": "http://127.0.0.1:55951/new-draft?item=A",
+                "title": "新建草稿",
+                "fingerprint": "f9c50207eff0e70a903ff3f9dea90b211054841940fd5ddd30d62f0ed5151b70",
+                "generation": 1,
+                "observedAt": 1794021872347,
+                "truncated": false
+              }
+            },
+            "resourceClaims": [
+              {
+                "status": "held",
+                "id": "a6ed550b-cc65-4873-bbee-00ae04f3a8ef",
+                "runId": "ac9177bb-3288-4ba0-83ce-624e3c19dfcc",
+                "goalVersion": 1,
+                "origin": "http://127.0.0.1:55951",
+                "targetUrl": null
+              }
+            ],
+            "preparation": [
+              {
+                "kind": "target",
+                "url": "http://127.0.0.1:55951/created/c4cb35b8-189b-4215-b68d-af90e56a8464",
+                "materialId": null,
+                "evidence": [
+                  "已只读核对创建后的编辑目标和冻结字段"
+                ],
+                "id": "a7654fa4-2cde-4ec7-9324-2f2fa9d7540f",
+                "goalVersion": 1,
+                "actionId": "3f14a141-7a00-4624-a296-26f3efe9f25d",
+                "source": {
+                  "url": "http://127.0.0.1:55951/created/c4cb35b8-189b-4215-b68d-af90e56a8464",
+                  "title": "已创建草稿",
+                  "fingerprint": "eabee20314a03d4c8ff29912233711f5115574f636d1664f7a69fc9830048dd0",
+                  "generation": 2,
+                  "observedAt": 1794021873200,
+                  "truncated": false
+                },
+                "verification": "page-observed"
+              },
+              {
+                "kind": "draft",
+                "url": "http://127.0.0.1:55951/created/c4cb35b8-189b-4215-b68d-af90e56a8464",
+                "materialId": null,
+                "evidence": [
+                  "已只读核对创建后的编辑目标和冻结字段"
+                ],
+                "id": "6fcd6d3a-ad95-4656-b7d4-5718fca60487",
+                "goalVersion": 1,
+                "actionId": "3f14a141-7a00-4624-a296-26f3efe9f25d",
+                "source": {
+                  "url": "http://127.0.0.1:55951/created/c4cb35b8-189b-4215-b68d-af90e56a8464",
+                  "title": "已创建草稿",
+                  "fingerprint": "eabee20314a03d4c8ff29912233711f5115574f636d1664f7a69fc9830048dd0",
+                  "generation": 2,
+                  "observedAt": 1794021873200,
+                  "truncated": false
+                },
+                "verification": "page-observed"
+              }
+            ],
+            "modelVersion": 1,
+            "intent": "automatic",
+            "phase": "paused",
+            "version": 4,
+            "intentId": "1b5d5a7c-13cc-4ef0-9929-78d357308614",
+            "goalVersion": 1,
+            "goal": "在 http://127.0.0.1:55951/new-draft?item=A 创建“独立草稿A”到公告，随后补充正文",
+            "runId": null,
+            "resource": null,
+            "summary": "已核对新建草稿并保存目标，未重复创建。页面仍暂停；明确继续后核对现场并续做剩余工作。",
+            "pauseReason": "page-change",
+            "actions": [
+              {
+                "coordination": {
+                  "session": {
+                    "id": "helpr-fixture-web",
+                    "epoch": "079b61da-7831-41e1-b20f-9da095dfa248:0",
+                    "origin": "http://127.0.0.1:55951"
+                  },
+                  "claimId": "a6ed550b-cc65-4873-bbee-00ae04f3a8ef"
+                },
+                "observedLinks": [],
+                "resultLinks": [
+                  {
+                    "name": "当前草稿",
+                    "url": "http://127.0.0.1:55951/created/c4cb35b8-189b-4215-b68d-af90e56a8464"
+                  },
+                  {
+                    "name": "新建来源",
+                    "url": "http://127.0.0.1:55951/new-draft?item=A"
+                  }
+                ],
+                "targetCreation": {
+                  "rule": "same-site-editor-v1",
+                  "fields": [
+                    {
+                      "name": "草稿标题",
+                      "value": "独立草稿A"
+                    }
+                  ],
+                  "destination": "公告"
+                },
+                "discoveredTarget": {
+                  "source": {
+                    "url": "http://127.0.0.1:55951/created/c4cb35b8-189b-4215-b68d-af90e56a8464",
+                    "title": "已创建草稿",
+                    "fingerprint": "eabee20314a03d4c8ff29912233711f5115574f636d1664f7a69fc9830048dd0",
+                    "generation": 2,
+                    "observedAt": 1794021873200,
+                    "truncated": false
+                  },
+                  "binding": {
+                    "targetId": "39B5970FE87E46D762A8AEF9F9EA8402",
+                    "generation": 2
+                  },
+                  "links": [
+                    {
+                      "name": "当前草稿",
+                      "url": "http://127.0.0.1:55951/created/c4cb35b8-189b-4215-b68d-af90e56a8464"
+                    },
+                    {
+                      "name": "新建来源",
+                      "url": "http://127.0.0.1:55951/new-draft?item=A"
+                    }
+                  ],
+                  "controls": [
+                    {
+                      "role": "link",
+                      "name": "当前草稿",
+                      "frameUrl": "http://127.0.0.1:55951/created/c4cb35b8-189b-4215-b68d-af90e56a8464",
+                      "disabled": false
+                    },
+                    {
+                      "role": "link",
+                      "name": "新建来源",
+                      "frameUrl": "http://127.0.0.1:55951/created/c4cb35b8-189b-4215-b68d-af90e56a8464",
+                      "disabled": false
+                    },
+                    {
+                      "role": "textbox",
+                      "name": "草稿标题",
+                      "frameUrl": "http://127.0.0.1:55951/created/c4cb35b8-189b-4215-b68d-af90e56a8464",
+                      "disabled": false,
+                      "textValue": "独立草稿A"
+                    },
+                    {
+                      "role": "textbox",
+                      "name": "正文",
+                      "frameUrl": "http://127.0.0.1:55951/created/c4cb35b8-189b-4215-b68d-af90e56a8464",
+                      "disabled": false
+                    }
+                  ],
+                  "evidence": [
+                    "公告"
+                  ],
+                  "targetFactId": "a7654fa4-2cde-4ec7-9324-2f2fa9d7540f",
+                  "draftFactId": "6fcd6d3a-ad95-4656-b7d4-5718fca60487"
+                },
+                "navigation": {
+                  "id": "b39f8e18-7f64-4df2-b131-10a6014fa238",
+                  "association": "during-action",
+                  "targetId": "39B5970FE87E46D762A8AEF9F9EA8402",
+                  "sourceGeneration": 1,
+                  "generation": 2,
+                  "url": "http://127.0.0.1:55951/create-draft?item=A",
+                  "mainFrame": true,
+                  "sameDocument": false,
+                  "inputEpoch": 1,
+                  "observedAt": 1794021872842
+                },
+                "id": "3f14a141-7a00-4624-a296-26f3efe9f25d",
+                "runId": "ac9177bb-3288-4ba0-83ce-624e3c19dfcc",
+                "goalVersion": 1,
+                "status": "confirmed",
+                "summary": "创建当前草稿",
+                "action": {
+                  "kind": "click",
+                  "target": {
+                    "role": "button",
+                    "name": "创建草稿",
+                    "exact": true
+                  }
+                },
+                "effect": "draft",
+                "preconditions": [
+                  "公告"
+                ],
+                "source": {
+                  "url": "http://127.0.0.1:55951/new-draft?item=A",
+                  "title": "新建草稿",
+                  "fingerprint": "f9c50207eff0e70a903ff3f9dea90b211054841940fd5ddd30d62f0ed5151b70",
+                  "generation": 1,
+                  "observedAt": 1794021872347,
+                  "truncated": false
+                },
+                "observedUrls": [
+                  "http://127.0.0.1:55951/new-draft?item=A"
+                ],
+                "resultSource": {
+                  "url": "http://127.0.0.1:55951/created/c4cb35b8-189b-4215-b68d-af90e56a8464",
+                  "title": "已创建草稿",
+                  "fingerprint": "eabee20314a03d4c8ff29912233711f5115574f636d1664f7a69fc9830048dd0",
+                  "generation": 2,
+                  "observedAt": 1794021873200,
+                  "truncated": false
+                },
+                "binding": {
+                  "targetId": "39B5970FE87E46D762A8AEF9F9EA8402",
+                  "generation": 1
+                },
+                "evidence": [
+                  "已只读核对创建后的编辑目标和冻结字段"
+                ],
+                "returned": false,
+                "dispatchState": "possible"
+              }
+            ]
+          },
+          "executionControl": {
+            "blocked": true,
+            "stopSaved": true,
+            "message": "页面或控制归属已变化，旧操作资格失效。重新识别后仍需明确继续，先核对现有结果。",
+            "reason": "page-change"
+          },
+          "error": "",
+          "version": 5,
+          "messages": [
+            {
+              "role": "user",
+              "text": "在 http://127.0.0.1:55951/new-draft?item=A 创建“独立草稿A”到公告，随后补充正文"
+            },
+            {
+              "role": "system",
+              "text": "目标已保存。先打开网站，可以询问网页内容；在本任务选择“开始执行”后，才会按目标推进网页操作。"
+            },
+            {
+              "role": "user",
+              "text": "开始执行"
+            },
+            {
+              "role": "assistant",
+              "text": "创建当前草稿",
+              "call": {
+                "usageKind": "web-planning",
+                "id": "21ada5c3-fcda-4556-84a3-f1e3b0fecb7d",
+                "taskId": "1b734bf1-a352-45b7-b69c-122becc18efa",
+                "model": "fixture",
+                "configurationVersion": 1,
+                "phase": "complete",
+                "source": {
+                  "url": "http://127.0.0.1:55951/new-draft?item=A",
+                  "title": "新建草稿",
+                  "fingerprint": "f9c50207eff0e70a903ff3f9dea90b211054841940fd5ddd30d62f0ed5151b70",
+                  "generation": 1,
+                  "observedAt": 1794021872347,
+                  "truncated": false
+                },
+                "pageChanged": false,
+                "dispatched": true,
+                "reservedTokens": 31333,
+                "inputTokens": null,
+                "outputTokens": null,
+                "totalTokens": null,
+                "error": null
+              }
+            }
+          ]
+        }
+      },
+      {
+        "item": "B",
+        "taskId": "105cc5cd-41ad-4369-89fe-ab193a457f28",
+        "entry": "http://127.0.0.1:55951/new-draft?item=B",
+        "readiness": [
+          "ae91628cfacf6727857db6861212801b17114a104761a521cd0f584720813d7d",
+          "ae91628cfacf6727857db6861212801b17114a104761a521cd0f584720813d7d"
+        ]
+      }
+    ]
+  },
+  "passed": false,
+  "error": "VALIDATION_TIMEOUT",
+  "remaining": [],
+  "ms": 57295
+}

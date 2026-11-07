@@ -1,4 +1,8 @@
 import {
+  creationFieldsMatch,
+  validDiscoveredTarget,
+} from '../shared/target-creation';
+import {
   actionNavigationEventSchema,
   linkNavigationResolutionSchema,
 } from '../shared/action-navigation';
@@ -233,6 +237,14 @@ const commandSchema = z.discriminatedUnion('kind', [
     extraResults: z.array(z.url()).max(50),
   }),
   z.strictObject({
+    kind: z.literal('created-target-observed'),
+    taskId: z.string(),
+    expectedVersion: z.number().int().positive(),
+    actionId: z.string(),
+    source: observation,
+    binding: pageBindingSchema,
+  }),
+  z.strictObject({
     kind: z.literal('publication-result-entry'),
     taskId: z.string(),
     expectedVersion: z.number().int().positive(),
@@ -335,6 +347,7 @@ const commandSchema = z.discriminatedUnion('kind', [
     effect: nextStepSchema.shape.effect,
     evidence: nextStepSchema.shape.evidence.optional(),
     download: downloadCheckSchema.optional(),
+    targetCreation: nextStepSchema.shape.targetCreation,
     recovery: nextStepSchema.shape.recovery,
     publication: publicationSchema.optional(),
     approvalId: z.string().uuid().optional(),
@@ -1069,6 +1082,7 @@ export class ExecutionRecords {
         );
         if (
           pending &&
+          !pending.targetCreation &&
           c.step.previous?.id === pending.id &&
           c.step.previous.status === 'confirmed' &&
           c.step.previous.evidence.every((text) => c.source.text.includes(text))
@@ -1429,6 +1443,75 @@ export class ExecutionRecords {
           e.intent === 'automatic' &&
           e.runId === c.runId &&
           ['checking', 'running'].includes(e.phase);
+        if (c.kind === 'created-target-observed') {
+          const action = e.actions.find((a) => a.id === c.actionId);
+          if (
+            e.version !== c.expectedVersion ||
+            e.intent !== 'automatic' ||
+            e.phase !== 'paused' ||
+            e.pauseReason !== 'page-change' ||
+            e.question ||
+            e.restoreReview ||
+            e.loginOrigin ||
+            e.publication ||
+            task.url !== c.source.url ||
+            task.phase !== 'manual' ||
+            !action?.targetCreation ||
+            action.discoveredTarget ||
+            action.goalVersion !== e.goalVersion ||
+            action.status !== 'unknown' ||
+            e.preparation?.some(
+              (f) => f.goalVersion === e.goalVersion && f.kind === 'target',
+            ) ||
+            e.observedAnomalies?.some((o) => o.goalVersion === e.goalVersion) ||
+            e.actions.some(
+              (a) =>
+                a !== action &&
+                ['reserved', 'unknown', 'dispatched'].includes(a.status),
+            )
+          )
+            return { created: false };
+          if (!creationFieldsMatch(action.targetCreation, c.source))
+            throw Error('EXECUTION_EVIDENCE_MISSING');
+          const source = pageSourceSchema.strip().parse(c.source);
+          const targetFactId = randomUUID(),
+            draftFactId = randomUUID();
+          action.discoveredTarget = {
+            source,
+            binding: c.binding,
+            links: c.source.links ?? [],
+            controls: c.source.controls ?? [],
+            evidence: [action.targetCreation.destination],
+            targetFactId,
+            draftFactId,
+          };
+          action.status = 'confirmed';
+          action.resultSource = source;
+          action.resultLinks = c.source.links ?? [];
+          action.evidence = ['已只读核对创建后的编辑目标和冻结字段'];
+          if (!validDiscoveredTarget(action))
+            throw Error('PREPARATION_TARGET_CHANGED');
+          executionSchema.parse(e);
+          for (const [kind, id] of [
+            ['target', targetFactId],
+            ['draft', draftFactId],
+          ] as const)
+            (e.preparation ??= []).push({
+              kind,
+              id,
+              url: source.url,
+              materialId: null,
+              goalVersion: e.goalVersion,
+              actionId: action.id,
+              source,
+              verification: 'page-observed',
+              evidence: action.evidence,
+            });
+          e.summary =
+            '已核对新建草稿并保存目标，未重复创建。页面仍暂停；明确继续后核对现场并续做剩余工作。';
+          this.save(task.id, e);
+          return { created: true };
+        }
         if (c.kind === 'publication-result-entry') {
           const action = e.actions.find((a) => a.id === c.actionId);
           if (
@@ -1963,6 +2046,8 @@ export class ExecutionRecords {
             if (new URL(fact.url).origin !== new URL(c.source.url).origin)
               throw Error('PREPARATION_TARGET_CHANGED');
             let action = actions.at(-1);
+            if (action?.targetCreation && !action.discoveredTarget)
+              throw Error('EXECUTION_RESULT_UNKNOWN');
             if (fact.kind === 'target') {
               const explicit = [
                 e.goal,
@@ -2469,6 +2554,18 @@ export class ExecutionRecords {
               : p && c.action.kind === 'click'
                 ? 'publication'
                 : 'interaction');
+          if (
+            c.targetCreation &&
+            (effect !== 'draft' ||
+              c.action.kind !== 'click' ||
+              p ||
+              c.publication ||
+              c.approvalId ||
+              c.workflowStep ||
+              preparationTarget ||
+              !creationFieldsMatch(c.targetCreation, c.source))
+          )
+            throw Error('PREPARATION_TARGET_CHANGED');
           if (hasMaterial && effect === 'publication') {
             if (!p || !c.publication || c.action.kind !== 'click')
               throw Error('PARTICIPATION_REQUIRED');
@@ -2568,6 +2665,7 @@ export class ExecutionRecords {
               : {}),
             ...(e.coordination ? { coordination: acquireResource(e) } : {}),
             ...(c.workflowStep ? { workflowStep: c.workflowStep } : {}),
+            targetCreation: c.targetCreation,
             observedLinks: c.source.links ?? [],
             effect,
             preconditions: c.evidence,
@@ -2651,6 +2749,7 @@ export class ExecutionRecords {
           const a = e.actions.find((a) => a.id === c.id);
           if (!a) throw new Error('ACTION_NOT_OWNED');
           if (a.submission) throw Error('PUBLICATION_RESULT_REQUIRED');
+          if (a.targetCreation) throw Error('EXECUTION_RESULT_UNKNOWN');
           if (
             a.runId !== c.runId &&
             e.materials?.some((m) => m.goalVersion === e.goalVersion)

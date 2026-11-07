@@ -1,0 +1,18 @@
+$ pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:workspace && pnpm test:validation && pnpm check:legacy
+$ tsc --noEmit
+$ eslint app tests/workspace electron.vite.config.ts drizzle.config.ts vitest.config.ts
+
+/Users/yuexiaoliang/projects/helpr/tests/workspace/created-target.test.ts
+  149:36  error  Async arrow function has no 'await' expression            @typescript-eslint/require-await
+  151:30  error  '_job' is defined but never used                          @typescript-eslint/no-unused-vars
+  152:34  error  '_input' is defined but never used                        @typescript-eslint/no-unused-vars
+  152:76  error  Async arrow function has no 'await' expression            @typescript-eslint/require-await
+  160:7   error  Async method 'records' has no 'await' expression          @typescript-eslint/require-await
+  168:7   error  Async method 'observe' has no 'await' expression          @typescript-eslint/require-await
+  172:7   error  Async method 'resultPageReady' has no 'await' expression  @typescript-eslint/require-await
+  435:14  error  Async arrow function has no 'await' expression            @typescript-eslint/require-await
+
+✖ 8 problems (8 errors, 0 warnings)
+
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.

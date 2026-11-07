@@ -489,6 +489,28 @@ export function validPublicationReferences(
     return false;
   if (
     e.actions.some((a) => {
+      const d = a.discoveredTarget;
+      return (
+        d &&
+        (d.targetFactId === d.draftFactId ||
+          !(['target', 'draft'] as const).every((kind) =>
+            e.preparation?.some(
+              (f) =>
+                f.id === (kind === 'target' ? d.targetFactId : d.draftFactId) &&
+                f.kind === kind &&
+                f.actionId === a.id &&
+                f.goalVersion === a.goalVersion &&
+                f.url === d.source.url &&
+                f.materialId === null &&
+                JSON.stringify(f.source) === JSON.stringify(d.source),
+            ),
+          ))
+      );
+    })
+  )
+    return false;
+  if (
+    e.actions.some((a) => {
       const s = a.submission,
         r = a.discoveredRecovery?.recovery ?? s?.recovery;
       if (!r) return false;

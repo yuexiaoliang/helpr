@@ -1,0 +1,169 @@
+{
+  "checkedAt": "2026-11-07T03:30:48.389062+00:00",
+  "build": 88,
+  "sourceCommit": "c1724b434782afcb958ca43b148a5895b3b22a41",
+  "sourceDirty": true,
+  "rawRun": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/run-1794022220014",
+  "profile": "/private/tmp/helpr-workspace-validation-501/run-vAORjx",
+  "dataFormat": 26,
+  "quickCheck": "ok",
+  "sqliteSha256": "911d11a60efed5a883e556bac2e886e20817d5efd12babc40437379ebca65632",
+  "cases": [
+    {
+      "item": "B",
+      "taskId": "e14f9f72-d603-49ee-b2de-4ae5306e3b03",
+      "phase": "paused",
+      "action": {
+        "coordination": {
+          "session": {
+            "id": "helpr-fixture-web",
+            "epoch": "2e562a7d-1881-4512-baaf-cddaff66548b:0",
+            "origin": "http://127.0.0.1:56314"
+          },
+          "claimId": "dc3a6b71-4bdb-47f6-93fb-93267294d140"
+        },
+        "observedLinks": [],
+        "targetCreation": {
+          "rule": "same-site-editor-v1",
+          "fields": [
+            {
+              "name": "草稿标题",
+              "value": "独立草稿B"
+            }
+          ],
+          "destination": "公告"
+        },
+        "navigation": {
+          "id": "d942fff4-f90b-4738-a59e-000e19d6611b",
+          "association": "during-action",
+          "targetId": "DEE45AD94F236CE51744ED7820D7063B",
+          "sourceGeneration": 1,
+          "generation": 2,
+          "url": "http://127.0.0.1:56314/create-draft?item=B",
+          "mainFrame": true,
+          "sameDocument": false,
+          "inputEpoch": 1,
+          "observedAt": 1794022222245
+        },
+        "id": "0ba682fd-a9ba-44f3-8f67-cef098105d50",
+        "runId": "6ee58bc5-31fc-4ba0-b573-5427cbd765f9",
+        "goalVersion": 1,
+        "status": "unknown",
+        "summary": "创建当前草稿",
+        "action": {
+          "kind": "click",
+          "target": {
+            "role": "button",
+            "name": "创建草稿",
+            "exact": true
+          }
+        },
+        "effect": "draft",
+        "preconditions": [
+          "公告"
+        ],
+        "source": {
+          "url": "http://127.0.0.1:56314/new-draft?item=B",
+          "title": "新建草稿",
+          "fingerprint": "3eb83a8fac5dbdd915a664c4a779485befefb04634123e1d397f32eda5a923a0",
+          "generation": 1,
+          "observedAt": 1794022221765,
+          "truncated": false
+        },
+        "observedUrls": [
+          "http://127.0.0.1:56314/new-draft?item=B"
+        ],
+        "binding": {
+          "targetId": "DEE45AD94F236CE51744ED7820D7063B",
+          "generation": 1
+        },
+        "evidence": [],
+        "returned": false,
+        "dispatchState": "possible"
+      },
+      "preparation": null,
+      "postReceipts": [
+        {
+          "kind": "target-created",
+          "item": "B",
+          "title": "独立草稿B",
+          "route": "/created/9b1de93d-6f6f-40eb-959c-8851de825b4f",
+          "at": 1794022222248
+        }
+      ]
+    }
+  ],
+  "ownedPids": [
+    37382,
+    37384,
+    37385,
+    37386,
+    37387,
+    37388,
+    37393,
+    37394,
+    37395,
+    37396,
+    37397,
+    37400,
+    37401,
+    37681,
+    37682,
+    37683,
+    37684,
+    37685,
+    37686,
+    37691,
+    37692,
+    37695,
+    37696,
+    37697
+  ],
+  "ownedGroups": [
+    37382,
+    37386,
+    37388,
+    37681,
+    37684,
+    37686
+  ],
+  "remainingPidsAndGroups": [],
+  "leaseReleased": true,
+  "startupSamples": [
+    {
+      "kind": "startup",
+      "number": 232,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:56314",
+        "persistent": false
+      },
+      "ms": 987,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    },
+    {
+      "kind": "startup",
+      "number": 233,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:56314",
+        "persistent": false
+      },
+      "ms": 958,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    }
+  ],
+  "used": {
+    "builds": 88,
+    "installs": 19,
+    "starts": 233,
+    "faults": 52,
+    "cleanups": 25
+  }
+}
