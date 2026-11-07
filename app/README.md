@@ -302,3 +302,5 @@ Chromium 对空的原生文本框可能省略 AX `value`。观察层仅在同一
 富文本的段落反例另用 `--rich-text-paragraph`：保留 Chromium 将单换行插入为段落双换行的真实样本，必须暂停且冷开不重填。现有 fill 不保证任意段落编辑器保持换行；不放宽全文比较来接受多余空行。
 
 事项23精确换行接续入口：`pnpm validate:workspace --fixture --candidate=rich-text-lf-23 --rich-text-lines=success`；`rewrite`、`focus`、`stop`分别在独立资料核对网站改写、焦点转移和中途停止。旧`--rich-text`/`--rich-text-paragraph`改为success入口别名，旧候选证据保留。支持原观察边界内最多32个非空行、4000字符，首行fill后使用受控软换行和文字输入，逐段DOM/AX精确核对原节点、页面与会话。CR、首尾/连续空行派发前拒绝，不删除正文绕过；最终全文比较不放宽。真人接管、子frame、无名称编辑器仍待验。见[方案](../docs/testing/release-23-rich-text-lines-plan.md)。
+
+事项23受管子frame入口：`pnpm validate:workspace --fixture --candidate=rich-text-frame-23 --rich-text-lines=frame-success`；`frame-replace`和`frame-focus`分别检查首段后的同URL iframe替换与焦点移到外层字段。支持快照中可逐层核对父归属的唯一同站HTTP(S)frame和显式BODY编辑根，保留精确命名AX textbox、完整正文、逐段原节点/会话及最终逐字比较。重复URL、sandbox、隐藏、跨站/快照缺失仍拒绝；无角色/名称、about:blank/srcdoc和复杂编辑器待后续。格式32不变，详见[方案](../docs/testing/release-23-rich-text-frame-plan.md)。

@@ -49,6 +49,8 @@ export async function fillRichText(
             const selection = current.ownerDocument.getSelection();
             if (
               current.ownerDocument.activeElement !== current ||
+              (current.ownerDocument.defaultView?.frameElement &&
+                !current.ownerDocument.hasFocus()) ||
               !selection ||
               !selection.isCollapsed ||
               selection.rangeCount !== 1 ||

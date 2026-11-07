@@ -178,3 +178,20 @@ test('pre-wrap的软换行允许光标后恰好一个占位LF', async () => {
   await fillRichText(f.page, f.locator, '甲\n乙', () => Promise.resolve());
   expect(f.writes).toEqual(['fill:甲', 'text:乙']);
 });
+
+test('子文档仍保留activeElement但实际焦点已在外层时不继续输入', async () => {
+  const f = fixture();
+  const frame = vi
+    .spyOn(window, 'frameElement', 'get')
+    .mockReturnValue(document.createElement('iframe'));
+  const focus = vi.spyOn(document, 'hasFocus').mockReturnValue(false);
+  try {
+    await expect(
+      fillRichText(f.page, f.locator, '首行\n第二行', () => Promise.resolve()),
+    ).rejects.toThrow('EXECUTION_CAPABILITY_REVOKED_OR_DENIED');
+    expect(f.writes).toEqual(['fill:首行']);
+  } finally {
+    frame.mockRestore();
+    focus.mockRestore();
+  }
+});

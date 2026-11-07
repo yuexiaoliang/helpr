@@ -384,7 +384,7 @@ export class ModelService {
             goal: job.planning.goal,
             controls: observation.controls ?? [],
             richTextInstruction:
-              'controls.richText 表示可核对的主文档富文本正文。只能用 fill 和唯一精确 textbox 名称整体替换纯文本，最多4000字符；多行限32个非空行，不支持CR及首尾或连续空行，不得擅自删改正文绕过。不能写HTML或声称保留格式。richTextUnavailable 表示结构或完整值无法核对，不能继续填写。输入后程序独立核对实际全文，模型不能凭成功提示确认。',
+              'controls.richText 表示已核对文档归属和完整值的富文本正文。只能用 fill 和唯一精确 textbox 名称整体替换纯文本；子frame须原样使用控件实际frameUrl，不猜地址。最多4000字符；多行限32个非空行，不支持CR及首尾或连续空行，不得擅自删改正文绕过。不能写HTML或声称保留格式。richTextUnavailable 表示结构或完整值无法核对，不能继续填写。输入后程序独立核对实际全文，模型不能凭成功提示确认。',
             selectionInstruction:
               'select 仅支持唯一、启用的原生单选框，target 使用实际 combobox 完整名称、exact=true 及所属 frameUrl，value 为选项显示标签，不是内部值。controls.selectedLabel 是本次实际选中标签；选项文字存在不代表已经选中。缺少选中状态、标签不符或同名歧义时保持未知，不能据页面提示确认或重选试探。程序在确认动作与最终提交前独立复核。',
             publishingAgreement: job.planning.publishingAgreement ?? null,

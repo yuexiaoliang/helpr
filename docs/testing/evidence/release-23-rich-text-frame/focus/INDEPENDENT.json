@@ -1,0 +1,165 @@
+{
+  "checkedAt": "2026-11-07T07:14:19.729002+00:00",
+  "build": 101,
+  "sourceCommit": "7a1cfe225f0c4234c73634128903a2086c3a7652",
+  "sourceDirty": true,
+  "rawRun": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/run-1794035602393",
+  "profile": "/private/tmp/helpr-workspace-validation-501/run-wC2ZfW",
+  "dataFormat": 32,
+  "mode": "frame-focus",
+  "quickCheck": "ok",
+  "sqliteSha256": "96ba634749a4f9554e4a2490f4d51fe6fd71d5a2f740c6c20dda5f8510f7d7b8",
+  "cases": [
+    {
+      "item": "F",
+      "taskId": "a00f8800-68da-42cc-aee4-13bcd705b8c1",
+      "phase": "paused",
+      "action": {
+        "coordination": {
+          "session": {
+            "id": "helpr-fixture-web",
+            "epoch": "e651b92e-7aa2-4959-b3b2-908105ee72f2:0",
+            "origin": "http://127.0.0.1:59852"
+          },
+          "claimId": "e04cd4e8-883e-4cac-b41e-67c08895b140"
+        },
+        "observedLinks": [],
+        "richTextSource": {
+          "role": "textbox",
+          "name": "正文",
+          "frameUrl": "http://127.0.0.1:59852/rich-frame?item=F",
+          "disabled": false,
+          "textValue": "",
+          "readOnly": false,
+          "richText": {
+            "rule": "contenteditable-ax-v1",
+            "backendNodeId": 22,
+            "valueSource": "empty-dom"
+          }
+        },
+        "id": "2bbf1d6c-3dec-466b-895d-658cbca9177f",
+        "runId": "98272e0a-f6e2-4764-b0de-7f878fa23883",
+        "goalVersion": 1,
+        "status": "unknown",
+        "summary": "填写纯文本正文",
+        "action": {
+          "kind": "fill",
+          "target": {
+            "role": "textbox",
+            "name": "正文",
+            "exact": true,
+            "frameUrl": "http://127.0.0.1:59852/rich-frame?item=F"
+          },
+          "value": "第一行：中文 <标题> & 正文\n第二行：保留换行与标点。"
+        },
+        "effect": "interaction",
+        "preconditions": [
+          "正文"
+        ],
+        "source": {
+          "url": "http://127.0.0.1:59852/rich-edit?item=F",
+          "title": "子frame编辑",
+          "fingerprint": "ea4dc69bc1b07a0e0418f92d9bcbe41d732acaf6b0ea7c94e6d6737672cdf891",
+          "generation": 2,
+          "observedAt": 1794035607744,
+          "truncated": false
+        },
+        "observedUrls": [
+          "http://127.0.0.1:59852/rich-edit?item=F"
+        ],
+        "binding": {
+          "targetId": "83114A9FD11CD676CD0CD4A3FA7BBE15",
+          "generation": 2
+        },
+        "evidence": [],
+        "returned": false,
+        "dispatchState": "possible"
+      },
+      "receipts": [
+        {
+          "kind": "rich-input",
+          "item": "F",
+          "sent": "第一行：中文 <标题> & 正文",
+          "actual": "第一行：中文 <标题> & 正文",
+          "html": "第一行：中文 &lt;标题&gt; &amp; 正文",
+          "inputType": "insertText",
+          "active": "外层字段",
+          "at": 1794035608319
+        }
+      ]
+    }
+  ],
+  "pids": [
+    3652,
+    3653,
+    3654,
+    3655,
+    3656,
+    3657,
+    3662,
+    3663,
+    3664,
+    3665,
+    3666,
+    3668,
+    3669,
+    3686,
+    3687,
+    3688,
+    3689,
+    3690,
+    3691,
+    3696,
+    3697,
+    3698,
+    3699,
+    3700
+  ],
+  "groups": [
+    3652,
+    3655,
+    3657,
+    3686,
+    3689,
+    3691
+  ],
+  "remainingPids": [],
+  "remainingGroups": [],
+  "leaseReleased": true,
+  "starts": [
+    {
+      "kind": "startup",
+      "number": 272,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:59852",
+        "persistent": false
+      },
+      "ms": 3272,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    },
+    {
+      "kind": "startup",
+      "number": 273,
+      "fixtureSession": {
+        "origin": "http://127.0.0.1:59852",
+        "persistent": false
+      },
+      "ms": 3563,
+      "versions": {
+        "electron": "44.7.2",
+        "node": "24.21.0",
+        "chrome": "152.0.7977.149"
+      }
+    }
+  ],
+  "modelPlans": 1,
+  "inputs": 1,
+  "milliseconds": 13019,
+  "bundleSha256": "57b977b1e9ca054fde8b768f7d40d2046878a22de86bf20a02a5f086b73ac207",
+  "bundleUnchangedAfterRun": true,
+  "inputsUnchangedAfterBuild": true
+}

@@ -13,3 +13,13 @@ test('段落原样保留，每个输入事件独立收件并有有限上限',asy
   assert.equal(site.receipts.length,64);assert.equal(site.receipts.at(-1).actual,'行63');
  }finally{await site.close();}
 });
+
+test('frame夹具使用独立同站URL，BODY内无脚本，替换和外层焦点反例保留',async()=>{
+ const site=await fixture({richLines:true,richFrame:true});
+ try{
+  const html=await fetch(site.base+'/rich-edit?item=C').then(r=>r.text());assert(html.includes('<iframe'));assert(html.includes('/rich-frame?item=C'));
+  const child=await fetch(site.base+'/rich-frame?item=C').then(r=>r.text());assert(child.includes('<body role="textbox"'));assert(!child.slice(child.indexOf('<body')).includes('<script'));assert(child.includes('<p>原有段落</p><p>原有正文</p>'));
+  const replace=await fetch(site.base+'/rich-frame?item=R').then(r=>r.text());assert(replace.includes('owner.replaceWith(owner.cloneNode(true))'));
+  const focus=await fetch(site.base+'/rich-frame?item=F').then(r=>r.text());assert(focus.includes("parent.document.querySelector('input').focus()"));
+ }finally{await site.close();}
+});

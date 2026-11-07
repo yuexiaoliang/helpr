@@ -8,7 +8,7 @@ import type {
 import type { ExecutionProtocol } from '../../app/desktop/execution-protocol';
 const mocks = vi.hoisted(() => ({ fork: vi.fn() }));
 vi.mock('electron', () => ({ utilityProcess: { fork: mocks.fork } }));
-function fixture() {
+function fixture(subframe = false) {
   const worker = Object.assign(new EventEmitter(), {
     postMessage: vi.fn(),
     kill: vi.fn(),
@@ -29,7 +29,9 @@ function fixture() {
         {
           role: 'textbox',
           name: '正文',
-          frameUrl: 'https://example.test/',
+          frameUrl: subframe
+            ? 'https://example.test/body'
+            : 'https://example.test/',
           disabled: false,
           readOnly: false,
           textValue,
@@ -52,7 +54,12 @@ function fixture() {
     source: observed('旧正文').observation,
     action: {
       kind: 'fill',
-      target: { role: 'textbox', name: '正文', exact: true },
+      target: {
+        role: 'textbox',
+        name: '正文',
+        exact: true,
+        ...(subframe ? { frameUrl: 'https://example.test/body' } : {}),
+      },
       value: '甲\n乙',
     },
     signal: abort.signal,
@@ -89,18 +96,21 @@ async function ready(f: ReturnType<typeof fixture>) {
     .toBe(true);
   await new Promise((r) => setTimeout(r, 0));
 }
-test('只有同一backend节点的精确前缀允许下一段，全部核对后才接受done', async () => {
-  const f = fixture();
-  await ready(f);
-  f.observe.mockResolvedValue(f.observed('甲'));
-  f.worker.emit('message', { richTextCheck: { id: 1, expected: '甲' } });
-  await expect.poll(() => f.worker.postMessage.mock.calls.length).toBe(1);
-  f.observe.mockResolvedValue(f.observed('甲\n乙'));
-  f.worker.emit('message', { richTextCheck: { id: 2, expected: '甲\n乙' } });
-  await expect.poll(() => f.worker.postMessage.mock.calls.length).toBe(2);
-  f.worker.emit('message', { done: true });
-  expect(await f.outcome).toBe('done');
-});
+test.each([false, true])(
+  '同一backend节点精确前缀逐段核对（子frame=%s）',
+  async (subframe) => {
+    const f = fixture(subframe);
+    await ready(f);
+    f.observe.mockResolvedValue(f.observed('甲'));
+    f.worker.emit('message', { richTextCheck: { id: 1, expected: '甲' } });
+    await expect.poll(() => f.worker.postMessage.mock.calls.length).toBe(1);
+    f.observe.mockResolvedValue(f.observed('甲\n乙'));
+    f.worker.emit('message', { richTextCheck: { id: 2, expected: '甲\n乙' } });
+    await expect.poll(() => f.worker.postMessage.mock.calls.length).toBe(2);
+    f.worker.emit('message', { done: true });
+    expect(await f.outcome).toBe('done');
+  },
+);
 test.each([
   'text',
   'node',
@@ -109,10 +119,12 @@ test.each([
   'duplicate',
   'early-done',
   'session',
+  'frame',
 ])('%s不符拒绝续写', async (mode) => {
   const f = fixture();
   await ready(f);
   const next = f.observed('甲');
+  if (mode === 'frame') next.observation.controls![0]!.frameUrl += 'different';
   if (mode === 'session')
     next.session = {} as NonNullable<BoundObservation['session']>;
   if (mode === 'text') next.observation.controls![0]!.textValue = '甲\n';

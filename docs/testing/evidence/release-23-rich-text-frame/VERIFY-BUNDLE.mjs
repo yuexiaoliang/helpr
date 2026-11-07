@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import { captureReleaseInputs, inventoryDirectory, assertSameInputs } from '../../../../scripts/release-inputs.mjs';
+const dir = 'docs/testing/evidence/release-23-rich-text-frame';
+const build = JSON.parse(fs.readFileSync(dir + '/' + process.argv[2]));
+assertSameInputs(build.source, captureReleaseInputs());
+assert.deepEqual(inventoryDirectory(build.app), build.bundle);
+const target = dir + (process.argv[3] ? '/' + process.argv[3] : '') + '/INDEPENDENT.json';
+const report = JSON.parse(fs.readFileSync(target));
+Object.assign(report, { bundleSha256: build.bundle.sha256, bundleUnchangedAfterRun: true, inputsUnchangedAfterBuild: true });
+fs.writeFileSync(target, JSON.stringify(report, null, 2) + '\n');

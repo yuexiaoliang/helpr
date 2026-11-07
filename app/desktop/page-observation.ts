@@ -29,6 +29,7 @@ export function pageObservation(
   generation: number,
   supplements = '',
   document?: unknown,
+  richDocument: unknown = document,
 ): PageObservation {
   const url = websiteURL(
     z
@@ -37,7 +38,7 @@ export function pageObservation(
   );
   const { nodes } = treeSchema.parse(accessibility);
   const empty = emptyTextObservation(document, url);
-  const rich = richTextObservation(document, url);
+  const rich = richTextObservation(richDocument, url);
   const backendCounts = new Map<number, number>();
   for (const n of nodes)
     if (n.backendDOMNodeId)

@@ -17,7 +17,7 @@ const snapshotSchema = z.object({
   ),
 });
 
-/** DOM 只证明主文档编辑根及空正文；非空正文必须由 Chromium AX 给出完整值。
+/** DOM 只证明已归属文档编辑根及空正文；非空正文必须由 Chromium AX 给出完整值。
  * 不推算段落换行，不执行网页脚本，不把缺失的 AX 值解释为空。
  */
 export function richTextObservation(snapshot: unknown, url: string) {
@@ -60,6 +60,7 @@ export function richTextObservation(snapshot: unknown, url: string) {
   }
   const visible = new Set(doc.layout.nodeIndex);
   const allowed = new Set([
+    'BODY',
     'DIV',
     'P',
     'SPAN',

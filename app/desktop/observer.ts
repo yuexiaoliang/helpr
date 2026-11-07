@@ -17,12 +17,20 @@ port.on('message', ({ data }: { data: unknown }) => {
         taskId: z.string(),
         token: z.string(),
         method: z.string(),
+        frameId: z.string().optional(),
       }),
     })
     .safeParse(data);
   if (!job.success) return;
-  void client
-    .request(job.data.job)
+  void (async () => {
+    if (job.data.job.frameId)
+      await client.request({
+        taskId: job.data.job.taskId,
+        token: job.data.job.token,
+        method: 'Page.getFrameTree',
+      });
+    return client.request(job.data.job);
+  })()
     .then((value) => port.postMessage({ result: value }))
     .catch((error) => port.postMessage({ error: errorCode(error) }));
 });

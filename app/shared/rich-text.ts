@@ -1,7 +1,7 @@
 import type { PageObservation } from './model';
 import type { WebAction } from './web-action';
 
-/** 富文本仅支持显式命名的主文档 textbox，纯文本整体替换；不承诺保留格式。 */
+/** 富文本仅支持显式命名且已有 DOM 证明的同站 textbox，纯文本整体替换；不承诺保留格式。 */
 export function richTextControl(
   action: WebAction,
   source: PageObservation,
@@ -27,7 +27,8 @@ export function richTextControl(
     target.role !== 'textbox' ||
     !target.exact ||
     target.within ||
-    (target.frameUrl && target.frameUrl !== source.url) ||
+    (target.frameUrl &&
+      new URL(target.frameUrl).origin !== new URL(source.url).origin) ||
     matches.length !== 1 ||
     !control?.richText ||
     control.richTextUnavailable ||

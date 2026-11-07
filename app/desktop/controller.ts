@@ -1,3 +1,4 @@
+import { richTextFrameDocument } from './rich-text-frame';
 import { hostFormChainSchema } from '../shared/form-navigation-chain';
 import { LinkNavigationWatch } from './link-navigation';
 import { actionNavigationEventSchema } from '../shared/action-navigation';
@@ -389,6 +390,9 @@ export async function startController(
             { frameTree: { frame: child } },
             ax,
             qualification.generation,
+            '',
+            undefined,
+            richTextFrameDocument(document, frame.frameTree, child.id, ax),
           );
           childObservations.push(observation);
           supplements.push(`[frame] ${child.url}\n` + observation.text);
@@ -396,6 +400,11 @@ export async function startController(
           supplements.push(`[frame-unavailable] ${child.url}`);
         }
       }
+      const frameAfter = await read('Page.getFrameTree');
+      if (
+        JSON.stringify(frame.frameTree) !== JSON.stringify(frameAfter.frameTree)
+      )
+        throw Error('MODEL_PAGE_UNAVAILABLE');
       if (signal.aborted) throw new Error('MODEL_CANCELLED');
       const sessionAfter = sessionContextSchema.parse(
         await hostClient.request({ kind: 'session-context', taskId }),
@@ -1272,6 +1281,7 @@ export async function startController(
     method: string,
     requestedTask?: string,
     token?: string,
+    frameId?: string,
   ): Promise<unknown> {
     const qualification = broker.client(taskId);
     const worker = utilityProcess.fork(
@@ -1327,6 +1337,7 @@ export async function startController(
               taskId: requestedTask ?? taskId,
               token: token ?? qualification.token,
               method,
+              ...(frameId ? { frameId } : {}),
             },
           });
         });
@@ -1503,6 +1514,7 @@ export async function startController(
         method: z.string().default('Page.getFrameTree'),
         requestedTask: z.string().optional(),
         token: z.string().optional(),
+        frameId: z.string().optional(),
       });
       const perform = async () => {
         if (command.success && command.data.kind === 'validation-barrier')
@@ -1533,7 +1545,13 @@ export async function startController(
         }
         if (command.success && command.data.kind === 'observe') {
           const job = task.parse(req.data.command);
-          return observe(job.taskId, job.method, job.requestedTask, job.token);
+          return observe(
+            job.taskId,
+            job.method,
+            job.requestedTask,
+            job.token,
+            job.frameId,
+          );
         }
         if (
           command.success &&

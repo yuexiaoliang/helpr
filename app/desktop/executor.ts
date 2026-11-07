@@ -121,7 +121,7 @@ port.on('message', ({ data }: { data: unknown }) => {
         throw Error('EXECUTION_LOCATOR_MISSING');
       if (action.kind === 'click') await target.click({ timeout: 7000 });
       else if (action.kind === 'fill') {
-        // 实际节点若是富文本，必须已有独立观察；不允许模糊名称或子frame绕过。
+        // 实际节点若是富文本，必须已有独立观察；不允许模糊名称或未核对的frame绕过。
         const editable = await target.evaluate(
           (element) =>
             element instanceof HTMLElement && element.isContentEditable,
