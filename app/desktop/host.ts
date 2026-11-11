@@ -121,7 +121,8 @@ let version: VersionStatus | null = null;
 let versionNotice = false;
 let win: BrowserWindow;
 let overlay: WebContentsView;
-let toast: WebContentsView;
+let toast: WebContentsView | undefined;
+let toastNotice: string | undefined;
 let noticeTimer: ReturnType<typeof setTimeout>;
 const replyDrafts: Record<string, string> = {};
 let inboxWindow: BrowserWindow | undefined;
@@ -248,10 +249,10 @@ function nativeBindings() {
       });
     }
     if (nativeRecoveryPending) {
-      stageNotice();
+      stageNotice(nativeRestoredNotice);
       restoring = true;
     }
-    if (toast.getVisible()) {
+    if (toast?.getVisible()) {
       step = 'TOAST';
       const bounds = toast.getBounds();
       inputGate.bind('ui:toast', bounds, {
@@ -267,7 +268,7 @@ function nativeBindings() {
       broadcast({ notice: nativeRestoredNotice });
     }
   } catch (error) {
-    if (restoring) toast.setVisible(false);
+    if (restoring) dismissToast();
     const code =
       error instanceof Error && /^NATIVE_[A-Z_]+$/.test(error.message)
         ? error.message
@@ -279,26 +280,57 @@ function nativeBindings() {
     nativeRecoveryPending = true;
   }
 }
-function stageNotice(): void {
+function dismissToast(): void {
   clearTimeout(noticeTimer);
-  toast.setVisible(true);
-  const [w = 800] = win.getContentSize();
+  const view = toast;
+  toast = undefined;
+  toastNotice = undefined;
+  if (!view) return;
+  inputGate.unbind('ui:toast');
+  if (!win.isDestroyed()) win.contentView.removeChildView(view);
+  if (!view.webContents.isDestroyed()) view.webContents.close();
+}
+function showToast(preferredWidth: number): void {
+  if (!toast) {
+    // 没有提示时释放独立渲染进程。载入时从宿主读取仍有效的提示。
+    const view = new WebContentsView({
+      webPreferences: {
+        ...prefs,
+        session: session.fromPartition('helpr-ui'),
+        preload,
+      },
+    });
+    view.setBackgroundColor('#00000000');
+    win.contentView.addChildView(view);
+    toast = view;
+    void loadUI(view.webContents, 'toast').catch(() => {
+      if (toast === view) dismissToast();
+    });
+  }
+  const [windowWidth = 800] = win.getContentSize();
+  const width = Math.min(preferredWidth, windowWidth - 16);
   toast.setBounds({
-    x: Math.round((w - 460) / 2),
+    x: Math.round((windowWidth - width) / 2),
     y: 98,
-    width: 460,
+    width,
     height: 74,
   });
-  noticeTimer = setTimeout(() => toast.setVisible(false), 5500);
+  toast.setVisible(true);
+}
+function stageNotice(message: string): void {
+  clearTimeout(noticeTimer);
+  toastNotice = message;
+  showToast(460);
+  noticeTimer = setTimeout(dismissToast, 5500);
 }
 function broadcast(event: WorkspaceEvent): void {
   for (const { contents } of trusted.values())
     if (!contents.isDestroyed()) contents.send('workspace-event', event);
 }
 function emit(event: WorkspaceEvent): void {
-  if (event.notice && toast) {
+  if (event.notice && win && !win.isDestroyed()) {
     versionNotice = false;
-    stageNotice();
+    stageNotice(event.notice);
     nativeBindings();
   }
   broadcast({ ...event, versionNotice });
@@ -319,6 +351,7 @@ function loadUI(
       panel,
       ...(version ? { version } : {}),
       ...(upgrade ? { upgrade } : {}),
+      ...(role === 'toast' && toastNotice ? { notice: toastNotice } : {}),
       versionNotice,
     }),
   );
@@ -562,7 +595,7 @@ function bindPage(task: Task): void {
           win.contentView.addChildView(popup);
           win.contentView.addChildView(chat);
           win.contentView.addChildView(overlay);
-          win.contentView.addChildView(toast);
+          if (toast) win.contentView.addChildView(toast);
           watch(popup);
           popup.webContents.once('destroyed', () => {
             if (page.view !== popup || closing) return;
@@ -633,7 +666,7 @@ function bindPage(task: Task): void {
     win.contentView.addChildView(page.view);
     win.contentView.addChildView(chat);
     win.contentView.addChildView(overlay);
-    win.contentView.addChildView(toast);
+    if (toast) win.contentView.addChildView(toast);
     watch(page.view);
     layout();
   };
@@ -668,7 +701,7 @@ function reconcile(): void {
   // 仅新视图改变层级；普通记录回执不能移除正在接收键盘的原生浮层。
   if (added) {
     win.contentView.addChildView(overlay);
-    win.contentView.addChildView(toast);
+    if (toast) win.contentView.addChildView(toast);
   }
   layout();
   emit({ state });
@@ -1142,7 +1175,7 @@ async function perform(input: unknown): Promise<unknown> {
     return { epoch: ticket.epoch };
   }
   if (command.kind === 'dismiss-notice') {
-    toast.setVisible(false);
+    dismissToast();
     return null;
   }
   if (command.kind === 'hide') {
@@ -1372,7 +1405,7 @@ ipcMain.handle('workspace-request', (event, input: unknown) => {
     command.panel === 'version' &&
     versionNotice
   ) {
-    toast.setVisible(false);
+    dismissToast();
     versionNotice = false;
     broadcast({ versionNotice });
   }
@@ -1425,20 +1458,13 @@ process.on('message', (input: unknown) => {
       return;
     version = versionUpdate.data.version;
     if (!version.noticeVisible && versionNotice) {
-      toast?.setVisible(false);
+      dismissToast();
       versionNotice = false;
     }
-    if (version.noticeVisible && toast && !toast.getVisible()) {
+    if (version.noticeVisible && win && !win.isDestroyed() && !toast) {
       clearTimeout(noticeTimer);
-      const [width = 800] = win.getContentSize();
-      toast.setBounds({
-        x: Math.max(8, Math.round((width - 520) / 2)),
-        y: 98,
-        width: Math.min(520, width - 16),
-        height: 74,
-      });
-      toast.setVisible(true);
       versionNotice = true;
+      showToast(520);
       nativeBindings();
     }
     broadcast({ version, versionNotice });
@@ -1518,6 +1544,7 @@ app.on('before-quit', (event) => {
     if (chat.webContents && !chat.webContents.isDestroyed())
       chat.webContents.close();
   }
+  dismissToast();
   log.close();
 });
 void app
@@ -1616,13 +1643,6 @@ void app
     overlay.setBackgroundColor('#00000000');
     const panelLoaded = loadUI(overlay.webContents, 'panel');
     overlay.setVisible(false);
-    toast = new WebContentsView({
-      webPreferences: { ...prefs, session: local, preload },
-    });
-    toast.setBackgroundColor('#00000000');
-    win.contentView.addChildView(toast);
-    const toastLoaded = loadUI(toast.webContents, 'toast');
-    toast.setVisible(false);
     win.on('resize', layout);
     win.on('show', () => {
       if (!win.isFullScreen()) win.setWindowButtonVisibility(true);
@@ -1687,7 +1707,7 @@ void app
         },
       ]),
     );
-    await Promise.all([chromeLoaded, panelLoaded, toastLoaded, painted]);
+    await Promise.all([chromeLoaded, panelLoaded, painted]);
     win.show();
     try {
       inputGate.install(win.getNativeWindowHandle(), (event) => {
