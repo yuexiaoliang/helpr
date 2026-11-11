@@ -25,6 +25,8 @@ import { verifyWorkflow } from './workflow-validation.mjs';
 import { verifyAgreements } from './agreement-validation.mjs';
 import { verifyArticle } from './article-validation.mjs';
 import { verifyCoordination } from './coordination-validation.mjs';
+import { verifyReleaseP1 } from './release-p1-validation.mjs';
+import { p1Cases } from './release-p1-fixture.mjs';
 
 const args = process.argv.slice(2);
 const flag = { type: 'boolean' };
@@ -48,6 +50,7 @@ const { values: options } = parseArgs({
     'dynamic-result': flag,
     'management-result': flag,
     'summary-result': {type:'string'},
+    'release-p1': { type: 'string' },
     'upload-ready': flag,
     'created-target': flag,
     'form-navigation': flag,
@@ -103,6 +106,10 @@ if (args.length === 0) {
   process.exit(0);
 }
 
+if (options['release-p1']) {
+  assert(Object.hasOwn(p1Cases, options['release-p1']), 'INVALID_P1_CASE');
+  assert(options.fixture && Object.keys(options).every((key) => ['fixture', 'candidate', 'release-p1'].includes(key)), 'P1_REQUIRES_FIXED_FIXTURE');
+}
 if (options['rich-text-rebind']) {
   assert(['main','blank','srcdoc','replace'].includes(options['rich-text-rebind']), 'INVALID_REBIND_CASE');
   assert(options.fixture && !options['system-storage'] && !options.interactive && !options.fault, 'REBIND_FIXTURE_REQUIRED');
@@ -288,6 +295,7 @@ const materialSource = path.join(data, '原始素材.bin');
 const materialBytes = Buffer.from([0, 1, 99, 128, 255, 2, 3, 4]);
 if (options.material || options.publication) fs.writeFileSync(materialSource, materialBytes);
 const website = await fixture({
+  releaseP1: options['release-p1'],
   asyncUpload: options['upload-ready'],
   createdTarget: options['created-target'],
   formNavigation: options['form-navigation'],
@@ -362,7 +370,7 @@ const deadline = setTimeout(
     ? 60000
     : options.interactive || systemStorage
       ? 30 * 60 * 1000
-      : (options.coordination || options['workflow-repair'] || options.agreements || options.schedules || options['cross-site-controls'] || options['history-cleanup']) ? 5 * 60000 : (options['workflow-reuse'] || options['form-chain'] || options['rich-text'] || options['rich-text-lines'] || options['rich-text-publication'] || options['rich-text-rebind']) ? 3 * 60000 : 2 * 60000,
+      : (options['release-p1'] || options.coordination || options['workflow-repair'] || options.agreements || options.schedules || options['cross-site-controls'] || options['history-cleanup']) ? 5 * 60000 : (options['workflow-reuse'] || options['form-chain'] || options['rich-text'] || options['rich-text-lines'] || options['rich-text-publication'] || options['rich-text-rebind']) ? 3 * 60000 : 2 * 60000,
 );
 function check(name, test) {
   test();
@@ -956,6 +964,7 @@ async function verifyMaterial(client) {
 }
 async function validate() {
   let client = await launch();
+  if (options['release-p1']) return verifyReleaseP1({ client, website, data, evidence, command, waitFor, check, launch, remainingOwned, mode: options['release-p1'] });
   if (options['upload-ready']) return verifyUploadReady({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
   if (options['rich-text-rebind']) return verifyRichTextRebind({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, mode:options['rich-text-rebind']});
   if (options['rich-text-publication']) return verifyRichTextPublication({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, mode:options['rich-text-publication']});

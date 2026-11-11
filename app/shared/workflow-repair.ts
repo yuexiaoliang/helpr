@@ -1,7 +1,13 @@
 import type { PageObservation } from './model';
 import { resolveWorkflowFields } from './workflow-rich-text';
 import type { TaskExecution, WebAction, NextStep } from './execution';
-import { currentWorkflow, reboundAction } from './workflow-replay';
+import {
+  currentWorkflow,
+  reboundAction,
+  workflowPage,
+  workflowTargetUrl,
+  workflowNavigationMatches,
+} from './workflow-replay';
 import type { WorkflowUse } from './workflow';
 
 export function currentRepair(e: TaskExecution) {
@@ -17,14 +23,18 @@ export function sameWorkflowOperation(
   index: number,
   action: WebAction,
   effect: NextStep['effect'],
+  sourceUrl?: string,
 ) {
-  const expected = reboundAction(use, index);
+  const expected = reboundAction(use, index, undefined, sourceUrl);
   const withoutTarget = (operation: WebAction) => ({
     ...operation,
     target: null,
   });
+  const rich =
+    'richTextNodeId' in action.target || 'richTextNodeId' in expected.target;
   return (
-    !('richTextNodeId' in action.target) &&
+    (!rich ||
+      JSON.stringify(action.target) === JSON.stringify(expected.target)) &&
     effect === use.workflow.steps[index]?.effect &&
     JSON.stringify(withoutTarget(action)) ===
       JSON.stringify(withoutTarget(expected)) &&
@@ -40,6 +50,7 @@ export function withinWorkflowScope(
 ) {
   const use = currentWorkflow(e);
   if (!use) return false;
+  const targetUrl = workflowTargetUrl(e, use);
   const p = step.publication;
   let fields = use.approved?.fields ?? e.publication?.fields ?? use.fields;
   if (
@@ -50,7 +61,12 @@ export function withinWorkflowScope(
   ) {
     if (!source) return false;
     try {
-      fields = resolveWorkflowFields(use, source);
+      fields = resolveWorkflowFields(
+        use,
+        source,
+        use.workflow.replay.target === 'observed-entry-route' &&
+          !!currentRepair(e),
+      );
     } catch {
       return false;
     }
@@ -63,7 +79,7 @@ export function withinWorkflowScope(
       JSON.stringify(p.fields) !== JSON.stringify(fields) ||
       !p.attachment ||
       p.attachment.materialId !== use.materialId ||
-      p.attachment.targetUrl !== use.targetUrl ||
+      p.attachment.targetUrl !== targetUrl ||
       (e.publication?.attachment &&
         p.attachment.url !== e.publication.attachment.url))
   )
@@ -71,7 +87,7 @@ export function withinWorkflowScope(
   if (
     step.preparation?.some((f) =>
       f.kind === 'target' || f.kind === 'draft'
-        ? f.url !== use.targetUrl
+        ? f.url !== targetUrl
         : f.materialId !== use.materialId,
     )
   )
@@ -82,7 +98,25 @@ export function withinWorkflowScope(
       (a) => a.goalVersion === e.goalVersion && a.status !== 'cancelled',
     ).length;
     try {
-      return sameWorkflowOperation(use, index, step.action, step.effect);
+      return (
+        !!source &&
+        source.url === workflowPage(e, use, index) &&
+        sameWorkflowOperation(
+          use,
+          index,
+          step.action,
+          step.effect,
+          source.url,
+        ) &&
+        workflowNavigationMatches(
+          use,
+          index,
+          source,
+          step.action,
+          targetUrl,
+          step.targetCreation,
+        )
+      );
     } catch {
       return false;
     }

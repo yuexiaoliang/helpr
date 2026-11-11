@@ -9,6 +9,7 @@ import type {
 import {
   samePublication,
   publicationParts,
+  containsPublicText,
   verifyPublicationFields,
   publicationRecoveryCheckpointSchema,
   confirmedResultLinks,
@@ -83,8 +84,10 @@ export function discoverRecovery(
   if (links.length > 1) throw Error('EXECUTION_EVIDENCE_MISSING');
   const link = links[0];
   const complete =
-    publicationParts(p).every((part) => source.text.includes(part)) &&
-    source.text.includes(p.destination) &&
+    publicationParts(p).every((part) =>
+      containsPublicText(source.text, part),
+    ) &&
+    containsPublicText(source.text, p.destination) &&
     source.links?.filter((l) => l.url === a.targetUrl).length === 1 &&
     source.links?.filter((l) => l.url === a.url).length === 1;
   if (!link && !complete) throw Error('EXECUTION_EVIDENCE_MISSING');

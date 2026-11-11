@@ -11,9 +11,11 @@ import { randomUUID } from 'node:crypto';
 import { materialFixture } from './material-fixture.mjs';
 import { workflowFixture } from './workflow-fixture.mjs';
 import { coordinationFixture } from './coordination-fixture.mjs';
+import { releaseP1Fixture } from './release-p1-fixture.mjs';
 
-export async function fixture({ richRebind = false, richPublication = false, richUnnamed = false, richInline = false, richFrame = false, richLines = false, richParagraph = false, richText = false, blankCreation = false, formChain = false, formNavigation = false, asyncUpload = false, createdTarget = false, summaryResult = false, managementResult = false, dynamicResult = false, linkNavigation = false, navigation = false, participation = false, review = false, material, workflow = false, repair = false, article = false, agreements = false, schedules = false, crossSite = false, separateFields = false, coordination = false } = {}) {
+export async function fixture({ releaseP1, richRebind = false, richPublication = false, richUnnamed = false, richInline = false, richFrame = false, richLines = false, richParagraph = false, richText = false, blankCreation = false, formChain = false, formNavigation = false, asyncUpload = false, createdTarget = false, summaryResult = false, managementResult = false, dynamicResult = false, linkNavigation = false, navigation = false, participation = false, review = false, material, workflow = false, repair = false, article = false, agreements = false, schedules = false, crossSite = false, separateFields = false, coordination = false } = {}) {
   const receipts = [];
+  const handleReleaseP1 = releaseP1 ? releaseP1Fixture(receipts, releaseP1) : null;
   const handleNavigation = richPublication ? richTextPublicationFixture(receipts, {rebind:richRebind}) : richLines ? richTextLinesFixture(receipts,{frame:richFrame,inline:richInline,unnamed:richUnnamed}) : richText ? richTextFixture(receipts, {paragraph:richParagraph}) : blankCreation ? blankCreationFixture(receipts) : formNavigation ? formNavigationFixture(receipts, {chain:formChain}) : createdTarget ? createdTargetFixture(receipts) : linkNavigation ? linkNavigationFixture(receipts) : navigation ? navigationFixture(receipts) : null;
   const handleMaterial = material ? materialFixture(material, receipts) : null;
   const handleWorkflow = workflow ? workflowFixture(receipts, {repair, article, agreements, schedules, crossSite, separateFields, dynamicResult, managementResult, summaryResult, asyncUpload}) : null;
@@ -21,6 +23,7 @@ export async function fixture({ richRebind = false, richPublication = false, ric
   const login = 'fixture-' + randomUUID();
   const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://127.0.0.1');
+    if (handleReleaseP1?.(req, res, url)) return;
     if (handleNavigation?.(req, res, url)) return;
     if (coordinated?.handle(req, res, url)) return;
     if (handleWorkflow?.(req, res, url)) return;

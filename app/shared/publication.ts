@@ -85,6 +85,12 @@ export type Publication = z.infer<typeof publicationSchema>;
 export const publicationParts = (p: Publication) =>
   p.fields?.map((f) => f.value) ?? [p.content];
 
+// 渲染和公开 HTML 对空白的表示可能不同；仅用于结果核对。
+export function containsPublicText(text: string, expected: string) {
+  const normalize = (value: string) => value.replace(/\s+/gu, ' ').trim();
+  return normalize(text).includes(normalize(expected));
+}
+
 export function verifyPublicationFields(
   p: Publication,
   source: PageObservation,

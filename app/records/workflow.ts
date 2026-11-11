@@ -5,7 +5,7 @@ import {
 } from '../shared/workflow-rich-text';
 import { validArticleReferences } from './article';
 import { createHash, randomUUID } from 'node:crypto';
-import type { TaskExecution } from '../shared/execution';
+import type { ActionFact, TaskExecution } from '../shared/execution';
 import type { PublicationCheck } from '../shared/publication';
 import {
   workflowBodySchema,
@@ -19,7 +19,12 @@ import {
   publicationSchema,
   publicationRichTextSources,
 } from '../shared/publication';
-import { reboundAction } from '../shared/workflow-replay';
+import {
+  reboundAction,
+  workflowPage,
+  workflowTargetUrl,
+  workflowCreation,
+} from '../shared/workflow-replay';
 import { sameWorkflowOperation } from '../shared/workflow-repair';
 import { workflowCatalog } from '../shared/workflow-catalog';
 import { validCoordinationReferences } from './coordination';
@@ -29,6 +34,18 @@ export const workflowHash = (body: unknown) =>
   createHash('sha256')
     .update(JSON.stringify(workflowBodySchema.strip().parse(body)))
     .digest('hex');
+
+function recordedWorkflowNavigation(
+  a: ActionFact,
+): LearnedWorkflow['steps'][number]['navigation'] {
+  if (a.navigationResolution) return { kind: 'link' };
+  if (
+    a.targetCreation?.rule === 'redirected-blank-editor-v1' &&
+    a.formNavigationResolution &&
+    a.discoveredTarget
+  )
+    return { kind: 'create', creation: a.targetCreation };
+}
 
 /** 与结果及候选同事务执行。冲突只保留候选，不覆盖头部或修改执行中的固定版本。 */
 export function adoptWorkflow(
@@ -145,6 +162,7 @@ function replayRules(
   };
   const upload = actions.find((s) => s.action.kind === 'upload');
   const last = actions.at(-1);
+  const navigated = actions.some((s) => recordedWorkflowNavigation(s));
   const attachmentLink = uniqueName(a.url, upload?.resultLinks ?? []);
   const resultLink =
     uniqueName(result.proposal.url, last?.observedLinks ?? []) ??
@@ -152,13 +170,19 @@ function replayRules(
   // 只归纳已经实际走通且绑定明确的线性路径。旧证据缺字段时不补造。
   if (
     !attachmentLink ||
-    !resultLink ||
+    (!resultLink && !(navigated && last?.discoveredRecovery)) ||
     p.content === p.destination ||
     actions.filter((s) => s.action.kind === 'upload').length !== 1 ||
     last?.effect !== 'publication' ||
     actions.some(
-      (s) =>
-        s.source.url !== a.targetUrl ||
+      (s, index) =>
+        (navigated
+          ? (index > 0 &&
+              actions[index - 1]!.resultSource?.url !== s.source.url) ||
+            (s !== last &&
+              (s.navigation || s.source.url !== s.resultSource?.url) &&
+              !recordedWorkflowNavigation(s))
+          : s.source.url !== a.targetUrl) ||
         s.action.kind === 'check' ||
         (s.action.kind === 'select' && !s.selectionResult) ||
         ((s.action.kind === 'fill' || s.action.kind === 'select') &&
@@ -173,20 +197,36 @@ function replayRules(
     )
   )
     return undefined;
+  if (
+    navigated &&
+    (last.source.url !== a.targetUrl ||
+      (actions[0]?.source.url !== a.targetUrl &&
+        !actions.some(
+          (s) =>
+            recordedWorkflowNavigation(s)?.kind === 'create' &&
+            s.discoveredTarget?.source.url === a.targetUrl,
+        )))
+  )
+    return undefined;
   let richTextFields;
   try {
     richTextFields = workflowRichTextRules(p.fields, actions, a.targetUrl);
   } catch {
     return undefined;
   }
-  return {
+  const recipe = {
     ...(richTextFields ? { richTextFields } : {}),
-    format: 1,
-    target: 'explicit-current-url',
+    format: 1 as const,
     attachmentLink,
-    resultLink,
     publishedEvidence: result.proposal.publishedEvidence,
   };
+  return navigated
+    ? {
+        ...recipe,
+        target: 'observed-entry-route',
+        ...(!last.discoveredRecovery && resultLink ? { resultLink } : {}),
+      }
+    : { ...recipe, target: 'explicit-current-url', resultLink: resultLink! };
 }
 
 /** 仅从已核对的实际动作形成候选，不接受模型脚本、预置网站步骤或扩大的授权。 */
@@ -206,6 +246,7 @@ export function learnWorkflow(
       f.kind === 'upload' &&
       f.materialId === attachment.materialId,
   )!;
+  const replay = replayRules(e, result);
   const body = workflowBodySchema.parse({
     ...(p.fields ? { fields: p.fields } : {}),
     format: 1,
@@ -295,6 +336,9 @@ export function learnWorkflow(
           before: { source: a.source, evidence: a.preconditions },
           after: { source: a.resultSource, evidence: a.evidence },
           returned: a.returned,
+          ...(replay?.target === 'observed-entry-route'
+            ? { navigation: recordedWorkflowNavigation(a) }
+            : {}),
         };
       }),
     resultRule:
@@ -311,7 +355,7 @@ export function learnWorkflow(
       approvalId: p.approvalId,
     },
     authority: 'none',
-    ...(replayRules(e, result) ? { replay: replayRules(e, result) } : {}),
+    ...(replay ? { replay } : {}),
   });
   return learnedWorkflowSchema.parse({ ...body, sha256: workflowHash(body) });
 }
@@ -397,7 +441,20 @@ export function validPublicationReferences(
     history = e.publicationHistory?.map((h) => h.check) ?? [],
     workflows = e.learnedWorkflows ?? [];
   for (const use of e.workflowUses ?? []) {
-    if (!validWorkflowInputs(use) || !validWorkflowApproval(use)) return false;
+    if (
+      !validWorkflowInputs(use) ||
+      !validWorkflowApproval(use) ||
+      (use.approved?.repairId &&
+        !e.workflowRepairs?.some(
+          (r) =>
+            r.id === use.approved!.repairId &&
+            r.useId === use.id &&
+            r.goalVersion === use.goalVersion,
+        )) ||
+      (use.approved?.targetUrl &&
+        use.approved.targetUrl !== workflowTargetUrl(e, use))
+    )
+      return false;
   }
   for (const workflow of workflows) {
     if (workflow.replay) {
@@ -439,7 +496,7 @@ export function validPublicationReferences(
           (u) =>
             u.id === r.useId &&
             u.goalVersion === r.goalVersion &&
-            u.targetUrl === r.source.url &&
+            workflowPage(e, u, r.fromIndex) === r.source.url &&
             r.fromIndex <= u.workflow.steps.length,
         ),
     ) ||
@@ -482,6 +539,12 @@ export function validPublicationReferences(
       );
       if (!use) return true;
       try {
+        if (
+          workflowPage(e, use, a.workflowStep.index) !== a.source.url ||
+          JSON.stringify(workflowCreation(use, a.workflowStep.index)) !==
+            JSON.stringify(a.targetCreation)
+        )
+          return true;
         if (a.workflowStep.repairId)
           return (
             !e.workflowRepairs?.some(
@@ -495,11 +558,14 @@ export function validPublicationReferences(
               a.workflowStep.index,
               a.action,
               a.effect,
+              a.source.url,
             )
           );
         return (
           JSON.stringify(a.action) !==
-          JSON.stringify(reboundAction(use, a.workflowStep.index))
+          JSON.stringify(
+            reboundAction(use, a.workflowStep.index, undefined, a.source.url),
+          )
         );
       } catch {
         return true;
@@ -634,7 +700,14 @@ export function validPublicationReferences(
               (a) =>
                 a.id === s.actionId &&
                 a.status === 'confirmed' &&
-                JSON.stringify(a.action) === JSON.stringify(s.action),
+                JSON.stringify(a.action) === JSON.stringify(s.action) &&
+                (w.replay?.target !== 'observed-entry-route' ||
+                  (JSON.stringify(s.navigation) ===
+                    JSON.stringify(recordedWorkflowNavigation(a)) &&
+                    JSON.stringify(s.before.source) ===
+                      JSON.stringify(a.source) &&
+                    JSON.stringify(s.after.source) ===
+                      JSON.stringify(a.resultSource))),
             ),
         )
       );

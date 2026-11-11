@@ -6,7 +6,10 @@ import {
   type PageObservation,
 } from './model';
 import { websiteURL } from './url-policy';
-import { actionNavigationSchema } from './action-navigation';
+import {
+  actionNavigationSchema,
+  formNavigationResolutionSchema,
+} from './action-navigation';
 
 // 创建前冻结已经填写的主文档字段；不包含结果地址或网站专用规则。
 const filledCreationSchema = z.strictObject({
@@ -22,18 +25,8 @@ const filledCreationSchema = z.strictObject({
     .max(12),
   destination: z.string().trim().min(1).max(600),
 });
-// 空白字段自身不是身份。只接受页面已提供的唯一只读文本框标识，
-// 保留旧规则的非空限制，模型不能通过空数组获得创建许可。
-const blankCreationSchema = z.strictObject({
-  rule: z.literal('readonly-identity-editor-v1'),
-  identity: z.strictObject({
-    name: z.string().trim().min(1).max(500),
-    value: z
-      .string()
-      .min(1)
-      .max(2000)
-      .refine((v) => v.trim().length > 0),
-  }),
+// 空白字段自身不是身份。两种空白创建分别依赖只读身份或已核对的重定向。
+const blankEditorSchema = z.strictObject({
   fields: z
     .array(
       z.strictObject({
@@ -47,7 +40,22 @@ const blankCreationSchema = z.strictObject({
 });
 export const targetCreationSchema = z.discriminatedUnion('rule', [
   filledCreationSchema,
-  blankCreationSchema,
+  z.strictObject({
+    rule: z.literal('readonly-identity-editor-v1'),
+    identity: z.strictObject({
+      name: z.string().trim().min(1).max(500),
+      value: z
+        .string()
+        .min(1)
+        .max(2000)
+        .refine((v) => v.trim().length > 0),
+    }),
+    ...blankEditorSchema.shape,
+  }),
+  z.strictObject({
+    rule: z.literal('redirected-blank-editor-v1'),
+    ...blankEditorSchema.shape,
+  }),
 ]);
 export const discoveredTargetSchema = z.strictObject({
   source: pageSourceSchema,
@@ -65,19 +73,27 @@ export function creationFieldsMatch(
   creation: z.infer<typeof targetCreationSchema>,
   source: PageObservation,
 ) {
-  if (creation.rule === 'readonly-identity-editor-v1') {
+  if (creation.rule !== 'same-site-editor-v1') {
     const controls = source.controls ?? [];
-    const identity = controls.filter((c) => c.name === creation.identity.name);
     if (
-      identity.length !== 1 ||
-      identity[0]!.role !== 'textbox' ||
-      identity[0]!.frameUrl !== source.url ||
-      identity[0]!.disabled ||
-      identity[0]!.readOnly !== true ||
-      identity[0]!.textValue !== creation.identity.value ||
-      creation.fields.some((f) => f.name === creation.identity.name)
+      creation.rule === 'redirected-blank-editor-v1' &&
+      controls.some((c) => c.richText && c.textValue !== '')
     )
       return false;
+    if (creation.rule === 'readonly-identity-editor-v1') {
+      const { identity } = creation;
+      const matches = controls.filter((c) => c.name === identity.name);
+      if (
+        matches.length !== 1 ||
+        matches[0]!.role !== 'textbox' ||
+        matches[0]!.frameUrl !== source.url ||
+        matches[0]!.disabled ||
+        matches[0]!.readOnly !== true ||
+        matches[0]!.textValue !== identity.value ||
+        creation.fields.some((f) => f.name === identity.name)
+      )
+        return false;
+    }
     const editable = controls.filter(
       (c) =>
         c.role === 'textbox' &&
@@ -118,6 +134,7 @@ export function validDiscoveredTarget(a: {
   discoveredTarget?: z.infer<typeof discoveredTargetSchema>;
   targetCreation?: z.infer<typeof targetCreationSchema>;
   navigation?: z.infer<typeof actionNavigationSchema>;
+  formNavigationResolution?: z.infer<typeof formNavigationResolutionSchema>;
   effect?: string;
   action: { kind: string };
   submission?: unknown;
@@ -143,7 +160,9 @@ export function validDiscoveredTarget(a: {
       a.action.kind === 'click' &&
       !a.submission &&
       !a.publicationApprovalId &&
-      !a.workflowStep &&
+      (!a.workflowStep || c.rule === 'redirected-blank-editor-v1') &&
+      (c.rule !== 'redirected-blank-editor-v1' ||
+        !!a.formNavigationResolution?.proof.chain) &&
       a.dispatchState === 'possible' &&
       a.status === 'confirmed' &&
       n.mainFrame &&

@@ -165,6 +165,7 @@ export class WorkspaceRecords {
           33,
           34,
           35,
+          36,
           CURRENT_DATA_FORMAT,
         ].includes(priorVersion)
       )
@@ -172,8 +173,10 @@ export class WorkspaceRecords {
       if (legacy && priorVersion !== CURRENT_DATA_FORMAT) {
         const backup = path.join(
           folder,
-          (priorVersion === 35
-            ? 'workspace-before-summary-result-23-'
+          (priorVersion === 35 || priorVersion === 36
+            ? priorVersion === 35
+              ? 'workspace-before-summary-result-23-'
+              : 'workspace-before-cross-page-workflows-'
             : priorVersion === 34
               ? 'workspace-before-rich-text-rebind-23-'
               : priorVersion === 33

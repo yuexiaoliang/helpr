@@ -35,10 +35,12 @@ async function fixture({
   recovery = false,
   store,
   richTextFrame,
+  content = '本次附件报告',
 }: {
   recovery?: boolean;
   store?: WorkspaceRecords;
   richTextFrame?: string;
+  content?: string;
 } = {}) {
   const folder = await mkdtemp(path.join(tmpdir(), 'helpr-publication-'));
   cleanups.push(() => rm(folder, { recursive: true, force: true }));
@@ -120,7 +122,7 @@ async function fixture({
     records.snapshot().tasks.find((t) => t.id === taskId)!.execution!;
   const material = execution().materials![0]!;
   const publication: Publication = {
-    content: '本次附件报告',
+    content,
     destination: '公告',
     attachment: {
       materialId: material.id,
@@ -166,7 +168,7 @@ async function fixture({
     url: base + '/edit',
     title: '编辑附件',
     links: [{ name: '附件已上传', url: base + '/file' }],
-    text: `编辑附件\n[file 0] ${base}/edit\n本次附件报告\n公告\n附件已上传\n[link-url] ${base}/file\n${published ? '已发布\n[link-url] ' + base + '/result' : '准备发布' + (recovery ? '\n永久链接\n[link-url] ' + base + '/result' : '')}`,
+    text: `编辑附件\n[file 0] ${base}/edit\n${content}\n公告\n附件已上传\n[link-url] ${base}/file\n${published ? '已发布\n[link-url] ' + base + '/result' : '准备发布' + (recovery ? '\n永久链接\n[link-url] ' + base + '/result' : '')}`,
     fingerprint: published ? 'published' : 'draft',
     generation: 1,
     observedAt: Date.now(),
@@ -1290,8 +1292,8 @@ test('两项只读恢复占用自动推进容量，第三项保持排队', async
   }
 });
 
-async function dynamicResultFixture(management = false) {
-  const f = await fixture();
+async function dynamicResultFixture(management = false, content?: string) {
+  const f = await fixture({ content });
   await f.dispatched();
   f.setHtml(
     '<link rel="canonical" href="/result"><article>本次附件报告 公告 <a href="/file">下载</a></article>',
@@ -1451,6 +1453,26 @@ test('动态结果入口在发布前未知，暂停后冻结并只读完成，�
   for (const spy of [s.allow, s.prepare, s.propose, s.perform])
     expect(spy).not.toHaveBeenCalled();
   await s.instance.stopAll();
+});
+
+test('直接到达的公开页折叠空白，仍能冻结同一正文并只读核对', async () => {
+  const f = await dynamicResultFixture(false, '第一行\n第二行');
+  f.observation.text = '第一行 第二行 公告 已发布';
+  f.setHtml(
+    '<link rel="canonical" href="/result"><article>第一行\r\n第二行 公告 <a href="/file">下载</a></article>',
+  );
+  const s = f.dynamicService();
+  f.arrive();
+  await s.instance.recordNavigation(f.event);
+  await s.instance.suspend(f.taskId, 'page-change', randomUUID());
+  await s.instance.settled();
+  try {
+    expect(f.execution().phase).toBe('complete');
+    expect(f.execution().publicationChecks?.[0]?.checks.content).toBe(true);
+    expect(s.perform).not.toHaveBeenCalled();
+  } finally {
+    await s.instance.stopAll();
+  }
 });
 
 test('动态检查点保存后冷开仅GET核对，旧发布不重发；24迁移留备份', async () => {
@@ -2052,7 +2074,7 @@ test('当前格式备份保留原预览证明、导入待核对；格式33迁移
     file,
   });
   expect(JSON.parse(await readFile(file, 'utf8'))).toMatchObject({
-    dataVersion: 36,
+    dataVersion: 37,
   });
   const folder = await mkdtemp(
     path.join(tmpdir(), 'helpr-rich-review-restore-'),

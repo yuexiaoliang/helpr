@@ -11,7 +11,7 @@ import {
   type WebActionJob,
 } from '../../app/desktop/execution-service';
 import { actionFactSchema, type NextStep } from '../../app/shared/execution';
-import type { PageObservation } from '../../app/shared/model';
+import { pageSourceSchema, type PageObservation } from '../../app/shared/model';
 
 const cleanups: (() => void)[] = [];
 afterEach(() =>
@@ -20,7 +20,7 @@ afterEach(() =>
     .reverse()
     .forEach((f) => f()),
 );
-function fixture(direct = false, blank = false) {
+function fixture(direct = false, blank: boolean | 'redirected' = false) {
   const folder = mkdtempSync(path.join(tmpdir(), 'helpr-created-target-'));
   cleanups.push(() => rmSync(folder, { recursive: true, force: true }));
   let records = new WorkspaceRecords(folder, 'app/records/migrations');
@@ -72,14 +72,18 @@ function fixture(direct = false, blank = false) {
   if (blank) {
     source.controls![0]!.textValue = '';
     source.controls![0]!.readOnly = false;
-    source.controls!.push({
-      role: 'textbox',
-      name: '创建编号',
-      textValue: 'request-' + randomUUID(),
-      readOnly: true,
-      disabled: false,
-      frameUrl: entry,
-    });
+    source.controls!.push(
+      blank === 'redirected'
+        ? { role: 'button', name: '保存草稿', disabled: false, frameUrl: entry }
+        : {
+            role: 'textbox',
+            name: '创建编号',
+            textValue: 'request-' + randomUUID(),
+            readOnly: true,
+            disabled: false,
+            frameUrl: entry,
+          },
+    );
   }
   if (direct)
     post({ kind: 'coordination-observed', runId: 'create', session, source });
@@ -96,21 +100,28 @@ function fixture(direct = false, blank = false) {
     source,
     binding: { targetId: 'page', generation: 1 },
     evidence: ['公告'],
-    targetCreation: blank
-      ? {
-          rule: 'readonly-identity-editor-v1',
-          identity: {
-            name: '创建编号',
-            value: source.controls![1]!.textValue!,
-          },
-          fields: [{ name: '标题', value: '' }],
-          destination: '公告',
-        }
-      : {
-          rule: 'same-site-editor-v1',
-          fields: [{ name: '标题', value: '独立草稿' }],
-          destination: '公告',
-        },
+    targetCreation:
+      blank === 'redirected'
+        ? {
+            rule: 'redirected-blank-editor-v1',
+            fields: [{ name: '标题', value: '' }],
+            destination: '公告',
+          }
+        : blank
+          ? {
+              rule: 'readonly-identity-editor-v1',
+              identity: {
+                name: '创建编号',
+                value: source.controls![1]!.textValue!,
+              },
+              fields: [{ name: '标题', value: '' }],
+              destination: '公告',
+            }
+          : {
+              rule: 'same-site-editor-v1',
+              fields: [{ name: '标题', value: '独立草稿' }],
+              destination: '公告',
+            },
   };
   const observation: PageObservation = {
     ...source,
@@ -135,7 +146,7 @@ function fixture(direct = false, blank = false) {
       targetId: 'page',
       sourceGeneration: 1,
       generation: 2,
-      url: direct ? url : entry + '/submit',
+      url: blank === 'redirected' ? entry : direct ? url : entry + '/submit',
       mainFrame: true,
       sameDocument: false,
       inputEpoch: 4,
@@ -315,6 +326,90 @@ test('动态草稿只读核对后保存目标和草稿事实，仍暂停且不�
   for (const spy of [s.prepare, s.allow, s.propose, s.perform])
     expect(spy).not.toHaveBeenCalled();
   await s.instance.stopAll();
+});
+
+test('空白创建须在同一事务核对实际重定向、原生撤权和新草稿身份', () => {
+  const f = fixture(true, 'redirected');
+  f.dispatch();
+  f.pause();
+  expect(f.freeze()).toMatchObject({ created: false });
+  const source = pageSourceSchema.strip().parse(f.observation);
+  const command = {
+    kind: 'form-navigation-resolved',
+    expectedVersion: f.execution().version,
+    observation: f.observation,
+    resolution: {
+      source,
+      pausedInputEpoch: 7,
+      proof: {
+        taskId: f.taskId,
+        actionId: f.event.actionId,
+        runId: f.event.runId,
+        targetId: 'page',
+        generation: 1,
+        inputEpoch: 4,
+        reason: 'formSubmissionPost',
+        url: f.source.url,
+        requestedAt: 5,
+        chain: {
+          requestId: 'request',
+          loaderId: 'loader',
+          frameId: 'frame',
+          sessionId: 'session',
+          status: 200,
+          finalUrl: f.url,
+          requests: [
+            { url: f.source.url, method: 'POST' },
+            { url: f.url, method: 'GET', redirectStatus: 303 },
+          ],
+        },
+      },
+      chain: {
+        host: {
+          navigationId: f.event.navigation.id,
+          targetId: 'page',
+          generation: 2,
+          events: [
+            {
+              kind: 'start',
+              requestId: 'initial',
+              url: f.source.url,
+              before: 4,
+              after: 5,
+            },
+            {
+              kind: 'redirect',
+              requestId: 'redirect',
+              url: f.url,
+              before: 6,
+              after: 7,
+            },
+          ],
+        },
+        control: [{ requestId: 'initial', before: 5, after: 6 }],
+      },
+    },
+  };
+  const wrongTarget = structuredClone(command);
+  wrongTarget.observation.links![1]!.url = f.source.url + '/other';
+  expect(() => f.post(wrongTarget)).toThrow('PREPARATION_TARGET_CHANGED');
+  const missingEpoch = structuredClone(command);
+  missingEpoch.resolution.chain.host.events[1]!.before = 5;
+  expect(() => f.post(missingEpoch)).toThrow();
+  expect(f.execution().actions[0]).toMatchObject({ status: 'unknown' });
+  expect(f.execution().preparation).toBeUndefined();
+  expect(f.post(command)).toMatchObject({ recovered: true });
+  expect(f.execution().phase).toBe('queued');
+  expect(f.execution().actions[0]).toMatchObject({
+    status: 'confirmed',
+    discoveredTarget: { source: { url: f.url } },
+  });
+  f.reopen();
+  expect(f.execution().actions).toHaveLength(1);
+  expect(f.execution().preparation?.map((fact) => fact.url)).toEqual([
+    f.url,
+    f.url,
+  ]);
 });
 
 test.each([

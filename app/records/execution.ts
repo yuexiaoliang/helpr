@@ -3,13 +3,19 @@ import {
   resolveWorkflowFields,
 } from '../shared/workflow-rich-text';
 import { richTextControl, verifiedRichText } from '../shared/rich-text';
-import { uploadedLink } from '../shared/upload-readiness';
+import {
+  attachmentDeparture,
+  attachmentOnEditor,
+  attachmentStillPresent,
+  uploadedLink,
+} from '../shared/upload-readiness';
 import {
   creationFieldsMatch,
   validDiscoveredTarget,
 } from '../shared/target-creation';
 import {
   actionNavigationEventSchema,
+  directFormButton,
   linkNavigationResolutionSchema,
   formNavigationResolutionSchema,
 } from '../shared/action-navigation';
@@ -76,12 +82,14 @@ import {
   executionPauseReasonSchema,
   pauseDescription,
   type TaskExecution,
+  type ActionFact,
 } from '../shared/execution';
 import * as schema from './schema';
 import {
   pageSourceSchema,
   observedLinkSchema,
   observedControlSchema,
+  type PageObservation,
 } from '../shared/model';
 import {
   materialVersionSchema,
@@ -95,6 +103,9 @@ import {
   reboundAction,
   observedControl,
   replayStep,
+  workflowNavigationMatches,
+  workflowPage,
+  workflowTargetUrl,
 } from '../shared/workflow-replay';
 import {
   currentRepair,
@@ -381,6 +392,7 @@ const commandSchema = z.discriminatedUnion('kind', [
     taskId: z.string(),
     expectedVersion: z.number().int().positive(),
     resolution: formNavigationResolutionSchema,
+    observation: observation.optional(),
   }),
   z.strictObject({
     kind: z.literal('reported'),
@@ -459,6 +471,62 @@ export function pauseForBackup(e: TaskExecution): TaskExecution {
   return next;
 }
 /** 唯一记录拥有者中计算纯转换；提交不执行网页或模型。 */
+function saveCreatedTarget(
+  e: TaskExecution,
+  action: ActionFact,
+  observation: PageObservation,
+  binding: ActionFact['binding'],
+) {
+  const creation = action.targetCreation!;
+  if (!creationFieldsMatch(creation, observation))
+    throw Error('EXECUTION_EVIDENCE_MISSING');
+  const source = pageSourceSchema.strip().parse(observation);
+  if (
+    creation.rule === 'redirected-blank-editor-v1' &&
+    e.actions.some(
+      (prior) =>
+        prior !== action &&
+        prior.goalVersion === action.goalVersion &&
+        prior.status === 'confirmed' &&
+        (prior.source.url === source.url ||
+          prior.resultSource?.url === source.url ||
+          prior.observedLinks?.some((l) => l.url === source.url)),
+    )
+  )
+    throw Error('PREPARATION_TARGET_CHANGED');
+  const targetFactId = randomUUID(),
+    draftFactId = randomUUID();
+  action.discoveredTarget = {
+    source,
+    binding,
+    links: observation.links ?? [],
+    controls: observation.controls ?? [],
+    evidence: [creation.destination],
+    targetFactId,
+    draftFactId,
+  };
+  action.status = 'confirmed';
+  action.resultSource = source;
+  action.resultLinks = observation.links ?? [];
+  action.evidence = ['已只读核对创建后的编辑目标和冻结字段'];
+  if (!validDiscoveredTarget(action)) throw Error('PREPARATION_TARGET_CHANGED');
+  for (const [kind, id] of [
+    ['target', targetFactId],
+    ['draft', draftFactId],
+  ] as const)
+    (e.preparation ??= []).push({
+      kind,
+      id,
+      url: source.url,
+      materialId: null,
+      goalVersion: e.goalVersion,
+      actionId: action.id,
+      source,
+      verification: 'page-observed',
+      evidence: action.evidence,
+    });
+}
+
 export class ExecutionRecords {
   // 同一控制者/记录进程生命周期的消息次序；不作为跨重启的业务事实。
   private readonly controlSequences = new Map<string, number>();
@@ -1018,6 +1086,12 @@ export class ExecutionRecords {
               id: q.id,
               content: p.content,
               ...(p.fields ? { fields: p.fields } : {}),
+              ...(use.workflow.replay?.target === 'observed-entry-route'
+                ? {
+                    targetUrl: p.attachment!.targetUrl,
+                    repairId: currentRepair(e)?.id,
+                  }
+                : {}),
             };
           delete e.question;
           queueRecovery(e, task.url, '已确认这版内容，先核对网页再继续。');
@@ -1478,6 +1552,7 @@ export class ExecutionRecords {
             task.url !== c.source.url ||
             task.phase !== 'manual' ||
             !action?.targetCreation ||
+            action.targetCreation.rule === 'redirected-blank-editor-v1' ||
             action.discoveredTarget ||
             action.goalVersion !== e.goalVersion ||
             action.status !== 'unknown' ||
@@ -1492,42 +1567,8 @@ export class ExecutionRecords {
             )
           )
             return { created: false };
-          if (!creationFieldsMatch(action.targetCreation, c.source))
-            throw Error('EXECUTION_EVIDENCE_MISSING');
-          const source = pageSourceSchema.strip().parse(c.source);
-          const targetFactId = randomUUID(),
-            draftFactId = randomUUID();
-          action.discoveredTarget = {
-            source,
-            binding: c.binding,
-            links: c.source.links ?? [],
-            controls: c.source.controls ?? [],
-            evidence: [action.targetCreation.destination],
-            targetFactId,
-            draftFactId,
-          };
-          action.status = 'confirmed';
-          action.resultSource = source;
-          action.resultLinks = c.source.links ?? [];
-          action.evidence = ['已只读核对创建后的编辑目标和冻结字段'];
-          if (!validDiscoveredTarget(action))
-            throw Error('PREPARATION_TARGET_CHANGED');
+          saveCreatedTarget(e, action, c.source, c.binding);
           executionSchema.parse(e);
-          for (const [kind, id] of [
-            ['target', targetFactId],
-            ['draft', draftFactId],
-          ] as const)
-            (e.preparation ??= []).push({
-              kind,
-              id,
-              url: source.url,
-              materialId: null,
-              goalVersion: e.goalVersion,
-              actionId: action.id,
-              source,
-              verification: 'page-observed',
-              evidence: action.evidence,
-            });
           e.summary =
             '已核对新建草稿并保存目标，未重复创建。页面仍暂停；明确继续后核对现场并续做剩余工作。';
           this.save(task.id, e);
@@ -1663,6 +1704,28 @@ export class ExecutionRecords {
           const form = c.kind === 'form-navigation-resolved';
           const r = c.resolution;
           const a = e.actions.find((a) => a.id === r.proof.actionId);
+          const use = currentWorkflow(e);
+          const blank =
+            a?.targetCreation?.rule === 'redirected-blank-editor-v1';
+          const facts =
+            e.preparation?.filter((f) => f.goalVersion === e.goalVersion) ?? [];
+          const target = facts.find((f) => f.kind === 'target');
+          const preparationMatches = form
+            ? blank
+              ? !facts.length
+              : !!a?.discoveredTarget &&
+                facts.length === 2 &&
+                facts.every(
+                  (f) =>
+                    f.actionId === a.id &&
+                    [
+                      a.discoveredTarget!.targetFactId,
+                      a.discoveredTarget!.draftFactId,
+                    ].includes(f.id),
+                )
+            : !facts.length ||
+              (!!target &&
+                (a?.source.url === target.url || r.source.url === target.url));
           if (
             e.version !== c.expectedVersion ||
             e.intent !== 'automatic' ||
@@ -1673,25 +1736,17 @@ export class ExecutionRecords {
             e.loginOrigin ||
             e.recoveryPending ||
             e.publication ||
-            (form
-              ? !a?.discoveredTarget ||
-                e.preparation?.length !== 2 ||
-                !e.preparation.every(
-                  (f) =>
-                    f.actionId === a.id &&
-                    [
-                      a.discoveredTarget!.targetFactId,
-                      a.discoveredTarget!.draftFactId,
-                    ].includes(f.id),
-                )
-              : !!e.preparation?.length) ||
+            !preparationMatches ||
             (e.coordination &&
               (e.coordination.status !== 'ready' ||
                 e.coordination.refreshRequired)) ||
             e.observedAnomalies?.some((a) => a.goalVersion === e.goalVersion) ||
             !a ||
+            (a.workflowStep &&
+              use?.workflow.steps[a.workflowStep.index]?.navigation?.kind !==
+                (form ? 'create' : 'link')) ||
             a.goalVersion !== e.goalVersion ||
-            a.status !== (form ? 'confirmed' : 'unknown') ||
+            a.status !== (form && !blank ? 'confirmed' : 'unknown') ||
             r.proof.taskId !== task.id ||
             task.url !== r.source.url ||
             task.phase !== 'manual' ||
@@ -1703,9 +1758,22 @@ export class ExecutionRecords {
           )
             return { recovered: false };
           a.status = 'confirmed';
-          if (c.kind === 'form-navigation-resolved')
+          if (c.kind === 'form-navigation-resolved') {
             a.formNavigationResolution = c.resolution;
-          else {
+            if (blank) {
+              if (
+                !c.observation ||
+                JSON.stringify(
+                  pageSourceSchema.strip().parse(c.observation),
+                ) !== JSON.stringify(r.source)
+              )
+                throw Error('EXECUTION_EVIDENCE_MISSING');
+              saveCreatedTarget(e, a, c.observation, {
+                targetId: r.proof.targetId,
+                generation: r.source.generation,
+              });
+            }
+          } else {
             a.navigationResolution = c.resolution;
             a.resultSource = r.source;
           }
@@ -1791,7 +1859,6 @@ export class ExecutionRecords {
             !use ||
             use.id !== c.useId ||
             c.source.truncated ||
-            c.source.url !== use.targetUrl ||
             c.source.url !== task.url ||
             e.loginOrigin ||
             e.observedAnomalies?.some((a) => a.goalVersion === e.goalVersion) ||
@@ -2051,7 +2118,7 @@ export class ExecutionRecords {
             c.facts.some((f) =>
               f.kind === 'upload'
                 ? f.materialId !== use.materialId
-                : f.url !== use.targetUrl,
+                : f.url !== workflowTargetUrl(e, use),
             )
           )
             throw Error('WORKFLOW_SCOPE_CHANGE');
@@ -2339,14 +2406,24 @@ export class ExecutionRecords {
           }
           if (c.type === 'review') {
             if (!c.publication) throw Error('INVALID_REQUEST');
-            if (e.materials?.some((m) => m.goalVersion === e.goalVersion))
+            if (e.materials?.some((m) => m.goalVersion === e.goalVersion)) {
               attachmentBinding(e, c.publication);
+              if (!attachmentOnEditor(e, c.publication.attachment!, c.source))
+                throw Error('EXECUTION_RESULT_UNKNOWN');
+            }
             const workflowUse = currentWorkflow(e);
             if (workflowUse?.workflow.replay?.richTextFields) {
               if (
                 !c.source ||
                 JSON.stringify(c.publication.fields) !==
-                  JSON.stringify(resolveWorkflowFields(workflowUse, c.source))
+                  JSON.stringify(
+                    resolveWorkflowFields(
+                      workflowUse,
+                      c.source,
+                      workflowUse.workflow.replay.target ===
+                        'observed-entry-route' && !!currentRepair(e),
+                    ),
+                  )
               )
                 throw Error('WORKFLOW_NOT_APPLICABLE');
             }
@@ -2395,6 +2472,12 @@ export class ExecutionRecords {
                   content: e.publication.content,
                   ...(e.publication.fields
                     ? { fields: e.publication.fields }
+                    : {}),
+                  ...(use.workflow.replay?.target === 'observed-entry-route'
+                    ? {
+                        targetUrl: e.publication.attachment!.targetUrl,
+                        repairId: currentRepair(e)?.id,
+                      }
                     : {}),
                 };
               e.summary =
@@ -2518,12 +2601,26 @@ export class ExecutionRecords {
               !step ||
               c.workflowStep?.useId !== use.id ||
               c.workflowStep.index !== index ||
-              c.source.url !== use.targetUrl ||
+              c.source.url !== workflowPage(e, use, index) ||
               c.source.truncated ||
               c.effect !== step.effect ||
+              !workflowNavigationMatches(
+                use,
+                index,
+                c.source,
+                c.action,
+                workflowTargetUrl(e, use),
+                c.targetCreation,
+              ) ||
               (repair
                 ? c.workflowStep.repairId !== repair.id ||
-                  !sameWorkflowOperation(use, index, c.action, c.effect) ||
+                  !sameWorkflowOperation(
+                    use,
+                    index,
+                    c.action,
+                    c.effect,
+                    c.source.url,
+                  ) ||
                   !observedControl(c.action, c.source) ||
                   !c.evidence?.length
                 : c.workflowStep.repairId ||
@@ -2531,7 +2628,9 @@ export class ExecutionRecords {
                     c.source.text.includes(s),
                   ) ||
                   JSON.stringify(c.action) !==
-                    JSON.stringify(reboundAction(use, index)) ||
+                    JSON.stringify(
+                      reboundAction(use, index, undefined, c.source.url),
+                    ) ||
                   (c.source.controls && !observedControl(c.action, c.source)))
             )
               throw Error('WORKFLOW_NOT_APPLICABLE');
@@ -2604,6 +2703,17 @@ export class ExecutionRecords {
               new URL(preparationTarget.url).origin
           )
             throw Error('PREPARATION_TARGET_CHANGED');
+          if (
+            preparationTarget &&
+            preparationTarget.url !== c.source.url &&
+            !attachmentDeparture(
+              e.actions,
+              e.goalVersion,
+              preparationTarget.url,
+              c.source,
+            )
+          )
+            throw Error('PREPARATION_TARGET_CHANGED');
           const p = e.publication;
           const hasMaterial = e.materials?.some(
             (m) => m.goalVersion === e.goalVersion,
@@ -2620,8 +2730,7 @@ export class ExecutionRecords {
             e.actions.some(
               (a) =>
                 a.goalVersion === e.goalVersion &&
-                a.uploadCheck &&
-                uploadedLink(a, c.source)?.url !== a.uploadCheck.download.url,
+                !attachmentStillPresent(e, a, c.source),
             )
           )
             throw Error('EXECUTION_RESULT_UNKNOWN');
@@ -2632,8 +2741,12 @@ export class ExecutionRecords {
               p ||
               c.publication ||
               c.approvalId ||
-              c.workflowStep ||
+              (c.workflowStep &&
+                c.targetCreation.rule !== 'redirected-blank-editor-v1') ||
               preparationTarget ||
+              (c.targetCreation.rule === 'redirected-blank-editor-v1' &&
+                (!directFormButton(c.action, c.source) ||
+                  !observedControl(c.action, c.source))) ||
               !creationFieldsMatch(c.targetCreation, c.source))
           )
             throw Error('PREPARATION_TARGET_CHANGED');
@@ -2750,7 +2863,8 @@ export class ExecutionRecords {
             ...(e.coordination ? { coordination: acquireResource(e) } : {}),
             ...(c.workflowStep ? { workflowStep: c.workflowStep } : {}),
             targetCreation: c.targetCreation,
-            ...(c.targetCreation?.rule === 'readonly-identity-editor-v1'
+            ...(c.targetCreation &&
+            c.targetCreation.rule !== 'same-site-editor-v1'
               ? { creationSourceControls: c.source.controls }
               : {}),
             observedLinks: c.source.links ?? [],
@@ -2852,10 +2966,27 @@ export class ExecutionRecords {
                 f.materialId === materialId,
             );
             const link = uploadedLink(a, c.source);
+            const departure =
+              target &&
+              attachmentDeparture(
+                e.actions.slice(0, e.actions.indexOf(a)),
+                a.goalVersion,
+                target.url,
+                { ...a.source, links: a.observedLinks },
+              );
             if (
               !material ||
               !target ||
-              target.url !== c.source.url ||
+              (target.url !== c.source.url &&
+                (!departure ||
+                  !link ||
+                  !attachmentDeparture(
+                    e.actions.slice(0, e.actions.indexOf(a)),
+                    a.goalVersion,
+                    target.url,
+                    c.source,
+                  ) ||
+                  departure.observedLinks?.some((l) => l.url === link.url))) ||
               !upload ||
               !link ||
               a.navigation ||
@@ -2878,6 +3009,7 @@ export class ExecutionRecords {
               binding: c.binding,
               targetFactId: target.id,
               uploadFactId: upload.id,
+              ...(departure ? { departureActionId: departure.id } : {}),
             };
           } else if (
             a.runId !== c.runId &&

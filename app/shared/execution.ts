@@ -200,11 +200,13 @@ export const actionFactSchema = z
         a.action.kind === 'click' &&
         !a.submission &&
         !a.publicationApprovalId &&
-        !a.workflowStep),
+        (!a.workflowStep ||
+          a.targetCreation.rule === 'redirected-blank-editor-v1')),
   )
   .refine(
     (a) =>
-      a.targetCreation?.rule !== 'readonly-identity-editor-v1' ||
+      !a.targetCreation ||
+      a.targetCreation.rule === 'same-site-editor-v1' ||
       creationFieldsMatch(a.targetCreation, {
         ...a.source,
         text: a.targetCreation.destination,
@@ -256,8 +258,9 @@ export const actionFactSchema = z
       !!n &&
       !!d &&
       !!a.targetCreation &&
-      (a.targetCreation.rule !== 'readonly-identity-editor-v1' ||
-        !!r.proof.chain) &&
+      (a.targetCreation.rule === 'same-site-editor-v1' || !!r.proof.chain) &&
+      (a.targetCreation.rule !== 'redirected-blank-editor-v1' ||
+        (r.proof.chain!.requests.length > 1 && r.source.url !== r.proof.url)) &&
       !a.navigationResolution &&
       directFormButton(a.action, a.source) &&
       sameSiteFormURL(a.source.url, r.proof.url, !!r.proof.chain) &&
@@ -295,7 +298,6 @@ export const actionFactSchema = z
         a.effect === 'interaction' &&
         !a.submission &&
         !a.publicationApprovalId &&
-        !a.workflowStep &&
         n.mainFrame &&
         !n.sameDocument &&
         r.proof.actionId === a.id &&
@@ -308,6 +310,8 @@ export const actionFactSchema = z
         r.source.url === n.url &&
         r.source.generation === n.generation &&
         !r.source.truncated &&
+        (!a.workflowStep ||
+          JSON.stringify(a.resultSource) === JSON.stringify(r.source)) &&
         r.source.observedAt >= n.observedAt &&
         Math.abs(r.proof.requestedAt - n.observedAt) <= 16000 &&
         expectedNavigationLink(a.action, a.source, a.observedLinks) === n.url)

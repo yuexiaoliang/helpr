@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { richTextLocatorSchema, webActionSchema } from './web-action';
 import { pageSourceSchema } from './model';
 import { publicationFieldsSchema } from './publication';
+import { targetCreationSchema } from './target-creation';
 
 const parameter = z.enum([
   'materialId',
@@ -39,6 +40,21 @@ export const workflowChoiceSchema = z.strictObject({
   content: z.string().min(1).max(20000),
   destination: z.string().min(1).max(500),
 });
+const replaySchema = z.strictObject({
+  format: z.literal(1),
+  target: z.literal('explicit-current-url'),
+  richTextFields: z.array(workflowRichTextRuleSchema).min(1).max(12).optional(),
+  attachmentLink: z.string().min(1).max(1000),
+  resultLink: z.string().min(1).max(1000),
+  publishedEvidence: z.array(z.string()).min(1).max(10),
+});
+const stepNavigationSchema = z.discriminatedUnion('kind', [
+  z.strictObject({ kind: z.literal('link') }),
+  z.strictObject({
+    kind: z.literal('create'),
+    creation: targetCreationSchema,
+  }),
+]);
 export const workflowBodySchema = z.strictObject({
   fields: publicationFieldsSchema.optional(),
   format: z.literal(1),
@@ -94,6 +110,7 @@ export const workflowBodySchema = z.strictObject({
           evidence: z.array(z.string()).min(1).max(10),
         }),
         returned: z.boolean(),
+        navigation: stepNavigationSchema.optional(),
       }),
     )
     .min(1)
@@ -114,18 +131,13 @@ export const workflowBodySchema = z.strictObject({
   }),
   authority: z.literal('none'),
   replay: z
-    .strictObject({
-      format: z.literal(1),
-      target: z.literal('explicit-current-url'),
-      richTextFields: z
-        .array(workflowRichTextRuleSchema)
-        .min(1)
-        .max(12)
-        .optional(),
-      attachmentLink: z.string().min(1).max(1000),
-      resultLink: z.string().min(1).max(1000),
-      publishedEvidence: z.array(z.string()).min(1).max(10),
-    })
+    .discriminatedUnion('target', [
+      replaySchema,
+      replaySchema.extend({
+        target: z.literal('observed-entry-route'),
+        resultLink: replaySchema.shape.resultLink.optional(),
+      }),
+    ])
     .optional(),
 });
 export const learnedWorkflowSchema = workflowBodySchema.extend({
@@ -138,6 +150,8 @@ export const workflowUseSchema = z.strictObject({
       id: z.string().uuid(),
       content: workflowChoiceSchema.shape.content,
       fields: publicationFieldsSchema.optional(),
+      targetUrl: z.url().optional(),
+      repairId: z.string().uuid().optional(),
     })
     .optional(),
   id: z.string().uuid(),

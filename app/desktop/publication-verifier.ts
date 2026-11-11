@@ -6,6 +6,7 @@ import { MATERIAL_LIMIT, type MaterialVersion } from '../shared/material';
 import { websiteURL } from '../shared/url-policy';
 import {
   publicationParts,
+  containsPublicText,
   validRecoveryEntry,
   type Publication,
   type PublicationResultProposal,
@@ -15,9 +16,6 @@ import {
 
 const digest = (bytes: Uint8Array) =>
   createHash('sha256').update(bytes).digest('hex');
-const normalize = (s: string) => s.replace(/\s+/gu, ' ').trim();
-const has = (text: string, value: string) =>
-  normalize(text).includes(normalize(value));
 const linkObserved = (source: PageObservation, url: string) =>
   source.url === url || source.text.split('\n').includes('[link-url] ' + url);
 export type VerificationInput = {
@@ -252,9 +250,9 @@ async function readPublicResult(
       if (!result.checks.target) return result;
     }
     result.checks.content = publicationParts(p).every((part) =>
-      has(page.text, part),
+      containsPublicText(page.text, part),
     );
-    result.checks.destination = has(page.text, p.destination);
+    result.checks.destination = containsPublicText(page.text, p.destination);
     result.checks.attachment =
       page.links.filter((link) => link === p.attachment!.url).length === 1;
     if (

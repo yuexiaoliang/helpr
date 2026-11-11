@@ -318,3 +318,9 @@ Chromium 对空的原生文本框可能省略 AX `value`。观察层仅在同一
 格式35接续34并先备份；旧unusable候选不补造规则，备份导入仍须核对。当前仍限 `explicit-current-url` 的同站同入口线性路径，不扩为跨页流程或任意富文本编辑器。源码入口 `pnpm exec vitest run tests/workspace/workflow-rich-text.test.ts`；固定候选入口 `pnpm validate:workspace --fixture --candidate=rich-text-rebind-23 --rich-text-rebind=main`（另有 `blank`、`srcdoc`、`replace`）。阶段证据及未验项见[重新绑定报告](../docs/testing/evidence/release-23-rich-text-rebind/REPORT.md)。
 
 事项23缩略管理页入口：`pnpm validate:workspace --fixture --candidate=summary-result-23 --summary-result=links`（另有`target`、`content`独立反例组）。管理页可仅呈现唯一精确确认字段名称的同站结果链接，格式36保存`confirmed-content-candidate-v1`；旧完整页规则保留，35迁移先备份。两次稳定完整观察及原生/会话/停止/保存守卫不变，只读核对唯一候选，不点击或枚举。最终公开页仍需唯一canonical、全部确认内容、栏目、原编辑目标唯一链接及附件字节，任何错配保持未知且不重发。通用“查看”但缺内容关联、缺原目标反向链接或非公开结果仍不支持。源码入口为`tests/workspace/publication.test.ts`，范围及实包用量见[阶段方案](../docs/testing/release-23-summary-result-plan.md)。
+
+## 完整跨页业务链路（23 P1）
+
+格式 37 保存空白表单的实际创建证明、独立附件页与编辑目标的关联，以及从实际结果学得的跨页流程。复用按本次已核对的入口、素材、确认内容和新编辑目标执行。空白创建结果、返回目标或附件关联不明时暂停，保留原派发记录。
+
+固定签名候选可用 `pnpm validate:workspace --fixture --candidate=<名称> --release-p1=business` 验证五类业务。反例、页面变化修复和定时发布使用同一入口，各轮独立资料。验证样本与限制见 [P1 整链报告](../docs/testing/evidence/release-23-p1/REPORT.md)。

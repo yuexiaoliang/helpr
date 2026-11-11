@@ -1,0 +1,1439 @@
+{
+  "candidate": {
+    "name": "release-p1-public-result",
+    "build": 109,
+    "version": "0.2.2",
+    "dataFormat": 37,
+    "manifest": ".local/workspace-validation/build-109.json",
+    "sourceSha256": "1e616889239b95b1f2f7bae229daa94777cad3855bb41f9d7cae9d4c21c3b29d",
+    "bundleSha256": "e0f59f048e8f1c70c8a0e052315069188089af1932d9120c9dbdea580ae3c159",
+    "changedInputs": [
+      "app/shared/workflow-replay.ts",
+      "scripts/release-p1-validation.mjs"
+    ],
+    "compiledJavaScriptUnchanged": true,
+    "missingRootLicense": [
+      "@ai-sdk/provider-utils@5.0.60",
+      "client-only@0.0.1",
+      "drizzle-orm@0.45.4",
+      "saxes@6.0.0"
+    ],
+    "releaseAccepted": false
+  },
+  "sourceCheck": {
+    "log": ".local/workspace-validation/p1-source-final.log",
+    "sha256": "58379b4807735431c8db863a6b0d139a0208f89a6684be9a5cfbe253a853e13e",
+    "workspace": 613,
+    "validation": 41,
+    "legacy": 25
+  },
+  "runs": [
+    {
+      "name": "business-108",
+      "build": 108,
+      "raw": ".local/workspace-validation/run-1794389360604/result.json",
+      "sha256": "b945c3d218abaf26215f3ed05cea195e91eccce7f81679bf2ec6b0d555d6e926",
+      "passed": false,
+      "error": "VALIDATION_TIMEOUT",
+      "elapsedMs": 47993,
+      "launches": [
+        326
+      ],
+      "startup": [
+        {
+          "number": 326,
+          "ms": 5664
+        }
+      ],
+      "checks": 0,
+      "effects": {
+        "model": 8,
+        "created": 1,
+        "upload": 1,
+        "linked": 1,
+        "published": 0
+      },
+      "cases": [
+        {
+          "item": "F",
+          "taskId": "8293f0f0-6656-4847-95f9-8122a091f4a4",
+          "state": "paused",
+          "sha256": "e8eb5ccc328958f1efae1bb97474c22b5e5d7dfe2b4b44a475cf8a57e6a0b9dc",
+          "modelDecisions": [
+            "material",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "review"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "business-108-retry",
+      "build": 108,
+      "raw": ".local/workspace-validation/run-1794389622784/result.json",
+      "sha256": "3226923e2c2ca01ec18678cd8708a025a83ca552626d51ae5fa6c0411d9b52d1",
+      "passed": false,
+      "error": "VALIDATION_TIMEOUT",
+      "elapsedMs": 80762,
+      "launches": [
+        327,
+        328
+      ],
+      "startup": [
+        {
+          "number": 327,
+          "ms": 1834
+        },
+        {
+          "number": 328,
+          "ms": 1058
+        }
+      ],
+      "checks": 10,
+      "effects": {
+        "model": 32,
+        "created": 5,
+        "upload": 4,
+        "linked": 4,
+        "published": 4
+      },
+      "cases": [
+        {
+          "item": "F",
+          "taskId": "b1a6d0b7-7a2c-4653-9fc7-bea3f18732f5",
+          "state": "complete",
+          "approval": "ecb2f18a-3be4-486c-8960-7da826b4d653",
+          "sha256": "e8eb5ccc328958f1efae1bb97474c22b5e5d7dfe2b4b44a475cf8a57e6a0b9dc",
+          "result": {
+            "target": "http://127.0.0.1:56028/p1/post/a6ec26f4-34a8-4852-b59b-7b12202c39d0/edit",
+            "attachment": "http://127.0.0.1:56028/p1/file/6605e7ed-16b7-4c5a-a4d0-44ff5b1c1cf5",
+            "result": "http://127.0.0.1:56028/p1/result/a6ec26f4-34a8-4852-b59b-7b12202c39d0",
+            "parsed": {
+              "titles": [
+                "发布样本 F"
+              ],
+              "paragraphs": [
+                "固定素材 F 的第一行\n核对第二行 F",
+                "通知"
+              ],
+              "links": [
+                "http://127.0.0.1:56028/p1/file/6605e7ed-16b7-4c5a-a4d0-44ff5b1c1cf5",
+                "http://127.0.0.1:56028/p1/post/a6ec26f4-34a8-4852-b59b-7b12202c39d0/edit"
+              ],
+              "canonical": [
+                "http://127.0.0.1:56028/p1/result/a6ec26f4-34a8-4852-b59b-7b12202c39d0"
+              ]
+            },
+            "bytes": 15949,
+            "sha256": "e8eb5ccc328958f1efae1bb97474c22b5e5d7dfe2b4b44a475cf8a57e6a0b9dc"
+          },
+          "workflow": "37e0400f-6acc-482a-81cc-2262453d066b",
+          "modelDecisions": [
+            "material",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "review",
+            "act",
+            "act",
+            "act",
+            "act"
+          ]
+        },
+        {
+          "item": "R",
+          "taskId": "eaf30f14-cb46-4de3-850b-5a5d71d4cad0",
+          "state": "complete",
+          "approval": "fe985257-f973-4851-a7c4-532f7da2c365",
+          "sha256": "82cf95fae6f3b2a76f2396666cee18534670d3c92f3bf3daa04694117bd22753",
+          "result": {
+            "target": "http://127.0.0.1:56028/p1/post/f2bc36d1-39c1-4ec7-9e11-fd8496610e14/edit",
+            "attachment": "http://127.0.0.1:56028/p1/file/2709b5af-8a8b-446f-bf7c-68206e8f2f24",
+            "result": "http://127.0.0.1:56028/p1/result/f2bc36d1-39c1-4ec7-9e11-fd8496610e14",
+            "parsed": {
+              "titles": [
+                "发布样本 R"
+              ],
+              "paragraphs": [
+                "固定素材 R 的第一行\n核对第二行 R",
+                "简报"
+              ],
+              "links": [
+                "http://127.0.0.1:56028/p1/file/2709b5af-8a8b-446f-bf7c-68206e8f2f24",
+                "http://127.0.0.1:56028/p1/post/f2bc36d1-39c1-4ec7-9e11-fd8496610e14/edit"
+              ],
+              "canonical": [
+                "http://127.0.0.1:56028/p1/result/f2bc36d1-39c1-4ec7-9e11-fd8496610e14"
+              ]
+            },
+            "bytes": 15949,
+            "sha256": "82cf95fae6f3b2a76f2396666cee18534670d3c92f3bf3daa04694117bd22753"
+          },
+          "workflow": "9aa30c98-7fcb-4d38-8341-d43ccf858bd7",
+          "reused": "37e0400f-6acc-482a-81cc-2262453d066b",
+          "modelDecisions": [
+            "reuse"
+          ]
+        },
+        {
+          "item": "C",
+          "taskId": "e0501c71-27ba-4200-ad65-fb67dc1a8ae5",
+          "state": "complete",
+          "approval": "1f7cf072-8e89-4c31-803f-d09245a854e9",
+          "sha256": "1de41911caade8e374a110ad89da51ff8a494eb0da7fb962bcebca84e8d4c4c7",
+          "result": {
+            "target": "http://127.0.0.1:56028/p1/post/d800ac4c-6a46-4a63-ade8-fef808d365df/edit",
+            "attachment": "http://127.0.0.1:56028/p1/file/84da969d-f199-40c6-aa52-46d521effeed",
+            "result": "http://127.0.0.1:56028/p1/result/d800ac4c-6a46-4a63-ade8-fef808d365df",
+            "parsed": {
+              "titles": [
+                "发布样本 C"
+              ],
+              "paragraphs": [
+                "固定素材 C 的第一行\n核对第二行 C",
+                "通知"
+              ],
+              "links": [
+                "http://127.0.0.1:56028/p1/file/84da969d-f199-40c6-aa52-46d521effeed",
+                "http://127.0.0.1:56028/p1/post/d800ac4c-6a46-4a63-ade8-fef808d365df/edit"
+              ],
+              "canonical": [
+                "http://127.0.0.1:56028/p1/result/d800ac4c-6a46-4a63-ade8-fef808d365df"
+              ]
+            },
+            "bytes": 15949,
+            "sha256": "1de41911caade8e374a110ad89da51ff8a494eb0da7fb962bcebca84e8d4c4c7"
+          },
+          "workflow": "5ac4e463-d400-462f-b6c8-5ffdabfde179",
+          "reused": "9aa30c98-7fcb-4d38-8341-d43ccf858bd7",
+          "modelDecisions": [
+            "reuse"
+          ]
+        },
+        {
+          "item": "A",
+          "taskId": "d4a09049-5e01-453c-bcfb-80c5227d3692",
+          "state": "complete",
+          "approval": "8539c077-b889-48e1-a773-e20d74d5a9da",
+          "sha256": "045442c30e267c2e72cea14b50362d02b1bf785ad867362f25954cd8b7dcfe14",
+          "result": {
+            "target": "http://127.0.0.1:56028/p1/post/92b30207-c139-47c9-8476-56052949b2b8/edit",
+            "attachment": "http://127.0.0.1:56028/p1/file/138e0bea-608d-4290-86fd-2a3ef575fabe",
+            "result": "http://127.0.0.1:56028/p1/result/92b30207-c139-47c9-8476-56052949b2b8",
+            "parsed": {
+              "titles": [
+                "完成件数：68。"
+              ],
+              "paragraphs": [
+                "合计金额：195。",
+                "通知"
+              ],
+              "links": [
+                "http://127.0.0.1:56028/p1/file/138e0bea-608d-4290-86fd-2a3ef575fabe",
+                "http://127.0.0.1:56028/p1/post/92b30207-c139-47c9-8476-56052949b2b8/edit"
+              ],
+              "canonical": [
+                "http://127.0.0.1:56028/p1/result/92b30207-c139-47c9-8476-56052949b2b8"
+              ]
+            },
+            "bytes": 15949,
+            "sha256": "045442c30e267c2e72cea14b50362d02b1bf785ad867362f25954cd8b7dcfe14"
+          },
+          "workflow": "8c223a00-dc7c-49e9-a71d-0d87e7c596ab",
+          "modelDecisions": [
+            "material",
+            "compose",
+            "review",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "review",
+            "act",
+            "act",
+            "act",
+            "act"
+          ]
+        },
+        {
+          "item": "D",
+          "taskId": "e498d761-b98e-4f50-8924-6e80e5a2bd96",
+          "state": "paused",
+          "sha256": "37e9c6c7e2d68a9781801b57f4fe39d366ed559a6ebffc0a1ba2df82d2eb6392",
+          "modelDecisions": [
+            "material",
+            "act",
+            "act",
+            "act"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "business-108-final",
+      "build": 108,
+      "raw": ".local/workspace-validation/run-1794389751354/result.json",
+      "sha256": "4e23bdd476b3efbe91034491466d7d13a442ba6f2a7ab15e4dcd39a502a908b6",
+      "passed": false,
+      "error": "VALIDATION_TIMEOUT",
+      "elapsedMs": 83945,
+      "launches": [
+        329,
+        330
+      ],
+      "startup": [
+        {
+          "number": 329,
+          "ms": 1366
+        },
+        {
+          "number": 330,
+          "ms": 1033
+        }
+      ],
+      "checks": 11,
+      "effects": {
+        "model": 38,
+        "created": 5,
+        "upload": 5,
+        "linked": 4,
+        "published": 5
+      },
+      "cases": [
+        {
+          "item": "F",
+          "taskId": "7b91f194-a73e-48d0-b7ac-09db90614e2a",
+          "state": "complete",
+          "approval": "9ab6d424-938e-4741-9401-c56a4d9a3db4",
+          "sha256": "e8eb5ccc328958f1efae1bb97474c22b5e5d7dfe2b4b44a475cf8a57e6a0b9dc",
+          "result": {
+            "target": "http://127.0.0.1:56227/p1/post/3dc7b7d5-9e2d-4e60-b2f3-4032934384dc/edit",
+            "attachment": "http://127.0.0.1:56227/p1/file/12979649-4280-4507-af46-482c9650f93b",
+            "result": "http://127.0.0.1:56227/p1/result/3dc7b7d5-9e2d-4e60-b2f3-4032934384dc",
+            "parsed": {
+              "titles": [
+                "发布样本 F"
+              ],
+              "paragraphs": [
+                "固定素材 F 的第一行\n核对第二行 F",
+                "通知"
+              ],
+              "links": [
+                "http://127.0.0.1:56227/p1/file/12979649-4280-4507-af46-482c9650f93b",
+                "http://127.0.0.1:56227/p1/post/3dc7b7d5-9e2d-4e60-b2f3-4032934384dc/edit"
+              ],
+              "canonical": [
+                "http://127.0.0.1:56227/p1/result/3dc7b7d5-9e2d-4e60-b2f3-4032934384dc"
+              ]
+            },
+            "bytes": 15949,
+            "sha256": "e8eb5ccc328958f1efae1bb97474c22b5e5d7dfe2b4b44a475cf8a57e6a0b9dc"
+          },
+          "workflow": "c503c86e-0f4a-416a-92eb-43fd30f5767c",
+          "modelDecisions": [
+            "material",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "review",
+            "act",
+            "act",
+            "act",
+            "act"
+          ]
+        },
+        {
+          "item": "R",
+          "taskId": "5b3d93e9-a4a9-43db-91e1-2a0fbee22250",
+          "state": "complete",
+          "approval": "8ea36064-4f77-4667-8258-50ebc1330e84",
+          "sha256": "82cf95fae6f3b2a76f2396666cee18534670d3c92f3bf3daa04694117bd22753",
+          "result": {
+            "target": "http://127.0.0.1:56227/p1/post/a4c56e6b-af5b-4c47-8611-57f236b4a7a0/edit",
+            "attachment": "http://127.0.0.1:56227/p1/file/4dbe0dd9-9063-416b-8f71-ec27794b9733",
+            "result": "http://127.0.0.1:56227/p1/result/a4c56e6b-af5b-4c47-8611-57f236b4a7a0",
+            "parsed": {
+              "titles": [
+                "发布样本 R"
+              ],
+              "paragraphs": [
+                "固定素材 R 的第一行\n核对第二行 R",
+                "简报"
+              ],
+              "links": [
+                "http://127.0.0.1:56227/p1/file/4dbe0dd9-9063-416b-8f71-ec27794b9733",
+                "http://127.0.0.1:56227/p1/post/a4c56e6b-af5b-4c47-8611-57f236b4a7a0/edit"
+              ],
+              "canonical": [
+                "http://127.0.0.1:56227/p1/result/a4c56e6b-af5b-4c47-8611-57f236b4a7a0"
+              ]
+            },
+            "bytes": 15949,
+            "sha256": "82cf95fae6f3b2a76f2396666cee18534670d3c92f3bf3daa04694117bd22753"
+          },
+          "workflow": "075b09f9-ba24-4b37-9ea6-0f31ca725192",
+          "reused": "c503c86e-0f4a-416a-92eb-43fd30f5767c",
+          "modelDecisions": [
+            "reuse"
+          ]
+        },
+        {
+          "item": "C",
+          "taskId": "20eabbb8-6040-4561-a459-2aa75e7f0802",
+          "state": "complete",
+          "approval": "f96b2a67-cf02-42d5-969e-176e037ef27d",
+          "sha256": "1de41911caade8e374a110ad89da51ff8a494eb0da7fb962bcebca84e8d4c4c7",
+          "result": {
+            "target": "http://127.0.0.1:56227/p1/post/7d865276-531c-4882-9bff-e70c6126053c/edit",
+            "attachment": "http://127.0.0.1:56227/p1/file/24842b72-4c51-47a8-8ae0-e2a841c187ef",
+            "result": "http://127.0.0.1:56227/p1/result/7d865276-531c-4882-9bff-e70c6126053c",
+            "parsed": {
+              "titles": [
+                "发布样本 C"
+              ],
+              "paragraphs": [
+                "固定素材 C 的第一行\n核对第二行 C",
+                "通知"
+              ],
+              "links": [
+                "http://127.0.0.1:56227/p1/file/24842b72-4c51-47a8-8ae0-e2a841c187ef",
+                "http://127.0.0.1:56227/p1/post/7d865276-531c-4882-9bff-e70c6126053c/edit"
+              ],
+              "canonical": [
+                "http://127.0.0.1:56227/p1/result/7d865276-531c-4882-9bff-e70c6126053c"
+              ]
+            },
+            "bytes": 15949,
+            "sha256": "1de41911caade8e374a110ad89da51ff8a494eb0da7fb962bcebca84e8d4c4c7"
+          },
+          "workflow": "949a22f2-536a-4f8b-97e6-9b593dd04c63",
+          "reused": "075b09f9-ba24-4b37-9ea6-0f31ca725192",
+          "modelDecisions": [
+            "reuse"
+          ]
+        },
+        {
+          "item": "A",
+          "taskId": "f387ca4e-b010-4be5-8f82-4f4e57b7df48",
+          "state": "complete",
+          "approval": "1fe27fae-374b-413d-bce5-5ab4571e5aae",
+          "sha256": "045442c30e267c2e72cea14b50362d02b1bf785ad867362f25954cd8b7dcfe14",
+          "result": {
+            "target": "http://127.0.0.1:56227/p1/post/ac98f5a1-33be-49bb-bc4a-6d9f3c956b92/edit",
+            "attachment": "http://127.0.0.1:56227/p1/file/2365b7b2-665c-4f10-9145-68a6b9b6f8c8",
+            "result": "http://127.0.0.1:56227/p1/result/ac98f5a1-33be-49bb-bc4a-6d9f3c956b92",
+            "parsed": {
+              "titles": [
+                "完成件数：68。"
+              ],
+              "paragraphs": [
+                "合计金额：195。",
+                "通知"
+              ],
+              "links": [
+                "http://127.0.0.1:56227/p1/file/2365b7b2-665c-4f10-9145-68a6b9b6f8c8",
+                "http://127.0.0.1:56227/p1/post/ac98f5a1-33be-49bb-bc4a-6d9f3c956b92/edit"
+              ],
+              "canonical": [
+                "http://127.0.0.1:56227/p1/result/ac98f5a1-33be-49bb-bc4a-6d9f3c956b92"
+              ]
+            },
+            "bytes": 15949,
+            "sha256": "045442c30e267c2e72cea14b50362d02b1bf785ad867362f25954cd8b7dcfe14"
+          },
+          "workflow": "0f894784-60a4-4415-95bb-4645c713334b",
+          "modelDecisions": [
+            "material",
+            "compose",
+            "review",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "review",
+            "act",
+            "act",
+            "act",
+            "act"
+          ]
+        },
+        {
+          "item": "D",
+          "taskId": "d77907ce-37a7-41b9-b643-3de993544eeb",
+          "state": "paused",
+          "approval": "ab124002-f449-4686-b707-aa8dade69735",
+          "sha256": "37e9c6c7e2d68a9781801b57f4fe39d366ed559a6ebffc0a1ba2df82d2eb6392",
+          "modelDecisions": [
+            "material",
+            "act",
+            "act",
+            "act",
+            "act",
+            "review",
+            "act",
+            "act",
+            "act",
+            "act"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "business-109",
+      "build": 109,
+      "raw": ".local/workspace-validation/run-1794390185072/result.json",
+      "sha256": "486aa1403225372986f359052f1390846398001b67968dbbb45f75ae2e77d0bc",
+      "passed": false,
+      "error": "APPLICATION_NOT_READY",
+      "elapsedMs": 73627,
+      "launches": [
+        331,
+        332,
+        333
+      ],
+      "startup": [
+        {
+          "number": 331,
+          "ms": 5867
+        },
+        {
+          "number": 332,
+          "ms": 1023
+        }
+      ],
+      "checks": 12,
+      "effects": {
+        "model": 38,
+        "created": 5,
+        "upload": 5,
+        "linked": 4,
+        "published": 5
+      },
+      "cases": [
+        {
+          "item": "F",
+          "taskId": "3c7b4ec5-33b0-407a-906d-2c34238c6746",
+          "state": "complete",
+          "approval": "2df5df86-ea5c-484b-a91c-f901f25db106",
+          "sha256": "e8eb5ccc328958f1efae1bb97474c22b5e5d7dfe2b4b44a475cf8a57e6a0b9dc",
+          "result": {
+            "target": "http://127.0.0.1:56672/p1/post/ab9f46c0-ba06-4944-9b39-eacc9e198b4d/edit",
+            "attachment": "http://127.0.0.1:56672/p1/file/a77cbb22-a27f-4a1d-bcf4-35fe7409d2cd",
+            "result": "http://127.0.0.1:56672/p1/result/ab9f46c0-ba06-4944-9b39-eacc9e198b4d",
+            "parsed": {
+              "titles": [
+                "发布样本 F"
+              ],
+              "paragraphs": [
+                "固定素材 F 的第一行\n核对第二行 F",
+                "通知"
+              ],
+              "links": [
+                "http://127.0.0.1:56672/p1/file/a77cbb22-a27f-4a1d-bcf4-35fe7409d2cd",
+                "http://127.0.0.1:56672/p1/post/ab9f46c0-ba06-4944-9b39-eacc9e198b4d/edit"
+              ],
+              "canonical": [
+                "http://127.0.0.1:56672/p1/result/ab9f46c0-ba06-4944-9b39-eacc9e198b4d"
+              ]
+            },
+            "bytes": 15949,
+            "sha256": "e8eb5ccc328958f1efae1bb97474c22b5e5d7dfe2b4b44a475cf8a57e6a0b9dc"
+          },
+          "workflow": "d3990926-a198-4af3-ab93-7287c11c0a0c",
+          "modelDecisions": [
+            "material",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "review",
+            "act",
+            "act",
+            "act",
+            "act"
+          ]
+        },
+        {
+          "item": "R",
+          "taskId": "add7dea2-f298-439b-9bd3-0c24b859f970",
+          "state": "complete",
+          "approval": "012b9c0e-e0c5-4962-adf6-e793441586f1",
+          "sha256": "82cf95fae6f3b2a76f2396666cee18534670d3c92f3bf3daa04694117bd22753",
+          "result": {
+            "target": "http://127.0.0.1:56672/p1/post/d32250a2-2b30-4607-a9cc-1d24e6fcbb30/edit",
+            "attachment": "http://127.0.0.1:56672/p1/file/f178e48d-7124-4b1a-92a2-4b001bb4bf4b",
+            "result": "http://127.0.0.1:56672/p1/result/d32250a2-2b30-4607-a9cc-1d24e6fcbb30",
+            "parsed": {
+              "titles": [
+                "发布样本 R"
+              ],
+              "paragraphs": [
+                "固定素材 R 的第一行\n核对第二行 R",
+                "简报"
+              ],
+              "links": [
+                "http://127.0.0.1:56672/p1/file/f178e48d-7124-4b1a-92a2-4b001bb4bf4b",
+                "http://127.0.0.1:56672/p1/post/d32250a2-2b30-4607-a9cc-1d24e6fcbb30/edit"
+              ],
+              "canonical": [
+                "http://127.0.0.1:56672/p1/result/d32250a2-2b30-4607-a9cc-1d24e6fcbb30"
+              ]
+            },
+            "bytes": 15949,
+            "sha256": "82cf95fae6f3b2a76f2396666cee18534670d3c92f3bf3daa04694117bd22753"
+          },
+          "workflow": "95ddfea4-2a68-4910-811b-15b6497a66aa",
+          "reused": "d3990926-a198-4af3-ab93-7287c11c0a0c",
+          "modelDecisions": [
+            "reuse"
+          ]
+        },
+        {
+          "item": "C",
+          "taskId": "b7a7bd16-df18-4165-8b57-e43f91f0b3cb",
+          "state": "complete",
+          "approval": "1b2eda09-4206-4b79-a792-e7502e92e08c",
+          "sha256": "1de41911caade8e374a110ad89da51ff8a494eb0da7fb962bcebca84e8d4c4c7",
+          "result": {
+            "target": "http://127.0.0.1:56672/p1/post/ab7d18cf-1e8d-4672-906a-7fa1acbc3b79/edit",
+            "attachment": "http://127.0.0.1:56672/p1/file/4044739a-0421-46a7-b2b3-1e9cd2f6b798",
+            "result": "http://127.0.0.1:56672/p1/result/ab7d18cf-1e8d-4672-906a-7fa1acbc3b79",
+            "parsed": {
+              "titles": [
+                "发布样本 C"
+              ],
+              "paragraphs": [
+                "固定素材 C 的第一行\n核对第二行 C",
+                "通知"
+              ],
+              "links": [
+                "http://127.0.0.1:56672/p1/file/4044739a-0421-46a7-b2b3-1e9cd2f6b798",
+                "http://127.0.0.1:56672/p1/post/ab7d18cf-1e8d-4672-906a-7fa1acbc3b79/edit"
+              ],
+              "canonical": [
+                "http://127.0.0.1:56672/p1/result/ab7d18cf-1e8d-4672-906a-7fa1acbc3b79"
+              ]
+            },
+            "bytes": 15949,
+            "sha256": "1de41911caade8e374a110ad89da51ff8a494eb0da7fb962bcebca84e8d4c4c7"
+          },
+          "workflow": "5c3b4801-42cc-4266-abaa-cf26c8427c83",
+          "reused": "95ddfea4-2a68-4910-811b-15b6497a66aa",
+          "modelDecisions": [
+            "reuse"
+          ]
+        },
+        {
+          "item": "A",
+          "taskId": "de6d10f1-411e-4567-9bc5-dd295f9553f6",
+          "state": "complete",
+          "approval": "ed8ddaf1-a286-4761-bc3e-3b428f08fd79",
+          "sha256": "045442c30e267c2e72cea14b50362d02b1bf785ad867362f25954cd8b7dcfe14",
+          "result": {
+            "target": "http://127.0.0.1:56672/p1/post/3e3eba83-0c48-4b6a-82d6-40a44d1b96ef/edit",
+            "attachment": "http://127.0.0.1:56672/p1/file/0413e149-531d-42f5-b917-7245dbb927ba",
+            "result": "http://127.0.0.1:56672/p1/result/3e3eba83-0c48-4b6a-82d6-40a44d1b96ef",
+            "parsed": {
+              "titles": [
+                "完成件数：68。"
+              ],
+              "paragraphs": [
+                "合计金额：195。",
+                "通知"
+              ],
+              "links": [
+                "http://127.0.0.1:56672/p1/file/0413e149-531d-42f5-b917-7245dbb927ba",
+                "http://127.0.0.1:56672/p1/post/3e3eba83-0c48-4b6a-82d6-40a44d1b96ef/edit"
+              ],
+              "canonical": [
+                "http://127.0.0.1:56672/p1/result/3e3eba83-0c48-4b6a-82d6-40a44d1b96ef"
+              ]
+            },
+            "bytes": 15949,
+            "sha256": "045442c30e267c2e72cea14b50362d02b1bf785ad867362f25954cd8b7dcfe14"
+          },
+          "workflow": "f685b9e8-fcd9-49bc-901e-184d6f43741c",
+          "modelDecisions": [
+            "material",
+            "compose",
+            "review",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "review",
+            "act",
+            "act",
+            "act",
+            "act"
+          ]
+        },
+        {
+          "item": "D",
+          "taskId": "4ceeb493-3c66-42d4-b670-ef1b58b55f15",
+          "state": "complete",
+          "approval": "9aa5ca4f-1b0d-43fa-8940-b8986106820d",
+          "sha256": "37e9c6c7e2d68a9781801b57f4fe39d366ed559a6ebffc0a1ba2df82d2eb6392",
+          "result": {
+            "target": "http://127.0.0.1:56672/p1/node/8ef34073-28a4-4f7c-9199-c1bd1579d019/edit",
+            "attachment": "http://127.0.0.1:56672/p1/file/ade5c3f8-82c7-4693-a6e1-4b717aa2f88f",
+            "result": "http://127.0.0.1:56672/p1/result/8ef34073-28a4-4f7c-9199-c1bd1579d019",
+            "parsed": {
+              "titles": [
+                "发布样本 D"
+              ],
+              "paragraphs": [
+                "固定素材 D 的第一行\n核对第二行 D",
+                "公告"
+              ],
+              "links": [
+                "http://127.0.0.1:56672/p1/file/ade5c3f8-82c7-4693-a6e1-4b717aa2f88f",
+                "http://127.0.0.1:56672/p1/node/8ef34073-28a4-4f7c-9199-c1bd1579d019/edit"
+              ],
+              "canonical": [
+                "http://127.0.0.1:56672/p1/result/8ef34073-28a4-4f7c-9199-c1bd1579d019"
+              ]
+            },
+            "bytes": 15949,
+            "sha256": "37e9c6c7e2d68a9781801b57f4fe39d366ed559a6ebffc0a1ba2df82d2eb6392"
+          },
+          "workflow": "858658e6-afff-4c0f-ba44-d6685892419c",
+          "modelDecisions": [
+            "material",
+            "act",
+            "act",
+            "act",
+            "act",
+            "review",
+            "act",
+            "act",
+            "act",
+            "act"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "repair-109",
+      "build": 109,
+      "raw": ".local/workspace-validation/run-1794390332675/result.json",
+      "sha256": "17146d429ab37951de007184b7c879ca38f958161f1083eea076d3811ed00589",
+      "passed": true,
+      "error": null,
+      "elapsedMs": 31233,
+      "launches": [
+        334,
+        335
+      ],
+      "startup": [
+        {
+          "number": 334,
+          "ms": 2031
+        },
+        {
+          "number": 335,
+          "ms": 1104
+        }
+      ],
+      "checks": 10,
+      "dataFormat": 37,
+      "effects": {
+        "model": 19,
+        "created": 3,
+        "upload": 3,
+        "linked": 3,
+        "published": 3
+      },
+      "cases": [
+        {
+          "item": "F",
+          "taskId": "4f024bfe-cca7-4184-8099-2dfebf2bd534",
+          "state": "complete",
+          "approval": "aebbcfaf-7876-4bf8-8569-53b176698f66",
+          "sha256": "e8eb5ccc328958f1efae1bb97474c22b5e5d7dfe2b4b44a475cf8a57e6a0b9dc",
+          "result": {
+            "target": "http://127.0.0.1:57183/p1/post/04fe352b-b323-4151-925a-0b340ec9d07c/edit",
+            "attachment": "http://127.0.0.1:57183/p1/file/acb465e6-1164-4295-baa4-d15909ce8439",
+            "result": "http://127.0.0.1:57183/p1/result/04fe352b-b323-4151-925a-0b340ec9d07c",
+            "parsed": {
+              "titles": [
+                "发布样本 F"
+              ],
+              "paragraphs": [
+                "固定素材 F 的第一行\n核对第二行 F",
+                "通知"
+              ],
+              "links": [
+                "http://127.0.0.1:57183/p1/file/acb465e6-1164-4295-baa4-d15909ce8439",
+                "http://127.0.0.1:57183/p1/post/04fe352b-b323-4151-925a-0b340ec9d07c/edit"
+              ],
+              "canonical": [
+                "http://127.0.0.1:57183/p1/result/04fe352b-b323-4151-925a-0b340ec9d07c"
+              ]
+            },
+            "bytes": 15949,
+            "sha256": "e8eb5ccc328958f1efae1bb97474c22b5e5d7dfe2b4b44a475cf8a57e6a0b9dc"
+          },
+          "workflow": "0725dee5-b243-46db-be6a-6fb89022ea7a",
+          "modelDecisions": [
+            "material",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "review",
+            "act",
+            "act",
+            "act",
+            "act"
+          ]
+        },
+        {
+          "item": "P",
+          "taskId": "e39bdc0e-0baf-4c09-bcca-4e6c43def746",
+          "state": "complete",
+          "approval": "3d36beb6-2fad-4652-9123-b261562787f2",
+          "sha256": "33dd96913854007d3acff49123739a65c638e2d75b01c0dcd408246c628da7c2",
+          "result": {
+            "target": "http://127.0.0.1:57183/p1/post/8e5f21aa-8fe3-4b2e-859d-05ddb754b4b4/edit",
+            "attachment": "http://127.0.0.1:57183/p1/file/508b184d-52c0-4012-8ca2-c414691dae67",
+            "result": "http://127.0.0.1:57183/p1/result/8e5f21aa-8fe3-4b2e-859d-05ddb754b4b4",
+            "parsed": {
+              "titles": [
+                "发布样本 P"
+              ],
+              "paragraphs": [
+                "固定素材 P 的第一行\n核对第二行 P",
+                "通知"
+              ],
+              "links": [
+                "http://127.0.0.1:57183/p1/file/508b184d-52c0-4012-8ca2-c414691dae67",
+                "http://127.0.0.1:57183/p1/post/8e5f21aa-8fe3-4b2e-859d-05ddb754b4b4/edit"
+              ],
+              "canonical": [
+                "http://127.0.0.1:57183/p1/result/8e5f21aa-8fe3-4b2e-859d-05ddb754b4b4"
+              ]
+            },
+            "bytes": 15949,
+            "sha256": "33dd96913854007d3acff49123739a65c638e2d75b01c0dcd408246c628da7c2"
+          },
+          "workflow": "d83be1ae-a277-4471-981f-42ae56b32978",
+          "reused": "0725dee5-b243-46db-be6a-6fb89022ea7a",
+          "repair": "5535643d-86ea-4f7a-97c8-6f11acbc8fa3",
+          "modelDecisions": [
+            "reuse",
+            "review",
+            "act",
+            "act",
+            "act",
+            "act"
+          ]
+        },
+        {
+          "item": "R",
+          "taskId": "f7dd1e75-b9fa-414f-b539-217389cf7699",
+          "state": "complete",
+          "approval": "160859a8-b935-4231-a17e-4d3eb72932ba",
+          "sha256": "82cf95fae6f3b2a76f2396666cee18534670d3c92f3bf3daa04694117bd22753",
+          "result": {
+            "target": "http://127.0.0.1:57183/p1/post/e03a2401-7e8a-441c-81e2-c7144f513d03/edit",
+            "attachment": "http://127.0.0.1:57183/p1/file/68e252d8-c258-43e2-aa68-2f96b8c20528",
+            "result": "http://127.0.0.1:57183/p1/result/e03a2401-7e8a-441c-81e2-c7144f513d03",
+            "parsed": {
+              "titles": [
+                "发布样本 R"
+              ],
+              "paragraphs": [
+                "固定素材 R 的第一行\n核对第二行 R",
+                "简报"
+              ],
+              "links": [
+                "http://127.0.0.1:57183/p1/file/68e252d8-c258-43e2-aa68-2f96b8c20528",
+                "http://127.0.0.1:57183/p1/post/e03a2401-7e8a-441c-81e2-c7144f513d03/edit"
+              ],
+              "canonical": [
+                "http://127.0.0.1:57183/p1/result/e03a2401-7e8a-441c-81e2-c7144f513d03"
+              ]
+            },
+            "bytes": 15949,
+            "sha256": "82cf95fae6f3b2a76f2396666cee18534670d3c92f3bf3daa04694117bd22753"
+          },
+          "workflow": "81059bd8-055a-4a95-9dda-8e046df6d8cb",
+          "reused": "d83be1ae-a277-4471-981f-42ae56b32978",
+          "modelDecisions": [
+            "reuse"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "automation-109",
+      "build": 109,
+      "raw": ".local/workspace-validation/run-1794390375733/result.json",
+      "sha256": "7ca63c67e52c625f19a24f141c68b6ccbe6eb34dfc752b4bcd4d08896d29ea53",
+      "passed": true,
+      "error": null,
+      "elapsedMs": 24514,
+      "launches": [
+        336,
+        337
+      ],
+      "startup": [
+        {
+          "number": 336,
+          "ms": 966
+        },
+        {
+          "number": 337,
+          "ms": 1040
+        }
+      ],
+      "checks": 3,
+      "dataFormat": 37,
+      "effects": {
+        "model": 16,
+        "created": 1,
+        "upload": 1,
+        "linked": 1,
+        "published": 1
+      },
+      "cases": [
+        {
+          "item": "W",
+          "taskId": "fee7c561-c731-4c7d-851f-bcd3cf9c4b90",
+          "state": "complete",
+          "sha256": "806505314471a8e5eea1273ffa33502c69d3ed29f80d9e02e8852199d1993188",
+          "result": {
+            "target": "http://127.0.0.1:57301/p1/post/309410cd-0121-4b2c-9b72-b87f81b096f0/edit",
+            "attachment": "http://127.0.0.1:57301/p1/file/409bf4e7-80f9-464c-a2af-6a4cbe5cc248",
+            "result": "http://127.0.0.1:57301/p1/result/309410cd-0121-4b2c-9b72-b87f81b096f0",
+            "parsed": {
+              "titles": [
+                "完成件数：90。"
+              ],
+              "paragraphs": [
+                "合计金额：261。",
+                "通知"
+              ],
+              "links": [
+                "http://127.0.0.1:57301/p1/file/409bf4e7-80f9-464c-a2af-6a4cbe5cc248",
+                "http://127.0.0.1:57301/p1/post/309410cd-0121-4b2c-9b72-b87f81b096f0/edit"
+              ],
+              "canonical": [
+                "http://127.0.0.1:57301/p1/result/309410cd-0121-4b2c-9b72-b87f81b096f0"
+              ]
+            },
+            "bytes": 15949,
+            "sha256": "806505314471a8e5eea1273ffa33502c69d3ed29f80d9e02e8852199d1993188"
+          },
+          "workflow": "8f5cd4b5-b554-4183-b463-5e444b4b18e2",
+          "modelDecisions": [
+            "review",
+            "review",
+            "compose",
+            "review",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "observe",
+            "act",
+            "review",
+            "act",
+            "act",
+            "act",
+            "act"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong-target-109",
+      "build": 109,
+      "raw": ".local/workspace-validation/run-1794390450863/result.json",
+      "sha256": "d0bcb8aec2321fbde7e160e8a9fa1ad37c389a8b51b4f1d5827bfa7e30ac1d93",
+      "passed": true,
+      "error": null,
+      "elapsedMs": 12168,
+      "launches": [
+        338,
+        339
+      ],
+      "startup": [
+        {
+          "number": 338,
+          "ms": 989
+        },
+        {
+          "number": 339,
+          "ms": 990
+        }
+      ],
+      "checks": 3,
+      "dataFormat": 37,
+      "effects": {
+        "model": 3,
+        "created": 1,
+        "upload": 0,
+        "linked": 0,
+        "published": 0
+      },
+      "cases": [
+        {
+          "item": "I",
+          "taskId": "9ad174b4-f051-4604-a0f8-b2e216ad88c3",
+          "state": "paused",
+          "sha256": "934702b8522800f8f4f7963b86ccd5d32640df7dce453152dcd902aa18c9b239",
+          "modelDecisions": [
+            "material",
+            "act",
+            "act"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "unknown-result-109",
+      "build": 109,
+      "raw": ".local/workspace-validation/run-1794390463924/result.json",
+      "sha256": "dcac7caaed4a6cc2db217447077b7c1206740aaf219d2628bad3853d17fe9d47",
+      "passed": true,
+      "error": null,
+      "elapsedMs": 12351,
+      "launches": [
+        340,
+        341
+      ],
+      "startup": [
+        {
+          "number": 340,
+          "ms": 952
+        },
+        {
+          "number": 341,
+          "ms": 1297
+        }
+      ],
+      "checks": 4,
+      "dataFormat": 37,
+      "effects": {
+        "model": 12,
+        "created": 1,
+        "upload": 1,
+        "linked": 1,
+        "published": 1
+      },
+      "cases": [
+        {
+          "item": "U",
+          "taskId": "75ae7d1a-c3a4-44ba-bbcc-32b4a2496f78",
+          "state": "paused",
+          "approval": "8c27ae9e-5398-4104-a941-9677aeb1b02b",
+          "sha256": "42d99b16d1e226392bc20b817764172780cf64c8cd098430aa2c5dc479fa3902",
+          "modelDecisions": [
+            "material",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "review",
+            "act",
+            "act",
+            "act",
+            "act"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "changed-node-109",
+      "build": 109,
+      "raw": ".local/workspace-validation/run-1794390477897/result.json",
+      "sha256": "514dc03bdad55b3b5515670bf708f6fb5c9721516e6507963a952a17644032ab",
+      "passed": true,
+      "error": null,
+      "elapsedMs": 10883,
+      "launches": [
+        342,
+        343
+      ],
+      "startup": [
+        {
+          "number": 342,
+          "ms": 1258
+        },
+        {
+          "number": 343,
+          "ms": 1113
+        }
+      ],
+      "checks": 4,
+      "dataFormat": 37,
+      "effects": {
+        "model": 9,
+        "created": 1,
+        "upload": 1,
+        "linked": 1,
+        "published": 0
+      },
+      "cases": [
+        {
+          "item": "N",
+          "taskId": "8e2f044a-2895-4d97-8d99-4221d85a3ca5",
+          "state": "paused",
+          "approval": "735fa3c5-27c2-416e-aab3-40a9f67ed88f",
+          "sha256": "8f2b691be0dfeb509328ea47daf9908180890cf1969e873325f1500d44d78d24",
+          "modelDecisions": [
+            "material",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "review",
+            "act"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "stop-after-upload-109",
+      "build": 109,
+      "raw": ".local/workspace-validation/run-1794390489950/result.json",
+      "sha256": "138149b4d71c6d9b07c017cd4a55053ded202136e52c280f960b72007932647a",
+      "passed": true,
+      "error": null,
+      "elapsedMs": 9674,
+      "launches": [
+        344,
+        345
+      ],
+      "startup": [
+        {
+          "number": 344,
+          "ms": 975
+        },
+        {
+          "number": 345,
+          "ms": 984
+        }
+      ],
+      "checks": 3,
+      "dataFormat": 37,
+      "effects": {
+        "model": 5,
+        "created": 1,
+        "upload": 1,
+        "linked": 0,
+        "published": 0
+      },
+      "cases": [
+        {
+          "item": "S",
+          "taskId": "9b493b47-acb9-406f-8e30-279b62bc3651",
+          "state": "stopped",
+          "sha256": "e5f8448e5ec9dea3a1a722b9dc42678782d81c2b37f5333943e5d972b0a02436",
+          "modelDecisions": [
+            "material",
+            "act",
+            "act",
+            "act",
+            "act"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "business-109-cold",
+      "build": 109,
+      "raw": ".local/workspace-validation/run-1794390613983/result.json",
+      "sha256": "5cb7add0c62bf59f74d30f10fc0d3356ea9239b68dfd139353323a87a5147822",
+      "passed": true,
+      "error": null,
+      "elapsedMs": 52805,
+      "launches": [
+        346,
+        347,
+        348
+      ],
+      "startup": [
+        {
+          "number": 346,
+          "ms": 1845
+        },
+        {
+          "number": 347,
+          "ms": 1056
+        },
+        {
+          "number": 348,
+          "ms": 1142
+        }
+      ],
+      "checks": 18,
+      "dataFormat": 37,
+      "effects": {
+        "model": 38,
+        "created": 5,
+        "upload": 5,
+        "linked": 4,
+        "published": 5
+      },
+      "cases": [
+        {
+          "item": "F",
+          "taskId": "618a7ef3-5d49-484c-915d-6b19462b0228",
+          "state": "complete",
+          "approval": "ea64956b-401d-4c63-9627-017a568609a9",
+          "sha256": "e8eb5ccc328958f1efae1bb97474c22b5e5d7dfe2b4b44a475cf8a57e6a0b9dc",
+          "result": {
+            "target": "http://127.0.0.1:58010/p1/post/fd25e01a-dff1-4a92-8218-909924771425/edit",
+            "attachment": "http://127.0.0.1:58010/p1/file/3688e0da-07ec-4bf3-acd9-b032593871ab",
+            "result": "http://127.0.0.1:58010/p1/result/fd25e01a-dff1-4a92-8218-909924771425",
+            "parsed": {
+              "titles": [
+                "发布样本 F"
+              ],
+              "paragraphs": [
+                "固定素材 F 的第一行\n核对第二行 F",
+                "通知"
+              ],
+              "links": [
+                "http://127.0.0.1:58010/p1/file/3688e0da-07ec-4bf3-acd9-b032593871ab",
+                "http://127.0.0.1:58010/p1/post/fd25e01a-dff1-4a92-8218-909924771425/edit"
+              ],
+              "canonical": [
+                "http://127.0.0.1:58010/p1/result/fd25e01a-dff1-4a92-8218-909924771425"
+              ]
+            },
+            "bytes": 15949,
+            "sha256": "e8eb5ccc328958f1efae1bb97474c22b5e5d7dfe2b4b44a475cf8a57e6a0b9dc"
+          },
+          "workflow": "34ca359d-9094-4221-b1c0-5a0ece93a06d",
+          "modelDecisions": [
+            "material",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "review",
+            "act",
+            "act",
+            "act",
+            "act"
+          ]
+        },
+        {
+          "item": "R",
+          "taskId": "09e99f26-bced-40d3-957c-a37c93dc1248",
+          "state": "complete",
+          "approval": "053a9198-2c0b-4655-b711-beb29b6aa1b9",
+          "sha256": "82cf95fae6f3b2a76f2396666cee18534670d3c92f3bf3daa04694117bd22753",
+          "result": {
+            "target": "http://127.0.0.1:58010/p1/post/b448e963-e46e-4867-971a-24058209579c/edit",
+            "attachment": "http://127.0.0.1:58010/p1/file/da93c48a-cf39-4e5e-bc91-4221b57c4246",
+            "result": "http://127.0.0.1:58010/p1/result/b448e963-e46e-4867-971a-24058209579c",
+            "parsed": {
+              "titles": [
+                "发布样本 R"
+              ],
+              "paragraphs": [
+                "固定素材 R 的第一行\n核对第二行 R",
+                "简报"
+              ],
+              "links": [
+                "http://127.0.0.1:58010/p1/file/da93c48a-cf39-4e5e-bc91-4221b57c4246",
+                "http://127.0.0.1:58010/p1/post/b448e963-e46e-4867-971a-24058209579c/edit"
+              ],
+              "canonical": [
+                "http://127.0.0.1:58010/p1/result/b448e963-e46e-4867-971a-24058209579c"
+              ]
+            },
+            "bytes": 15949,
+            "sha256": "82cf95fae6f3b2a76f2396666cee18534670d3c92f3bf3daa04694117bd22753"
+          },
+          "workflow": "2f3b87e4-cb47-4b10-98a4-430f9cd96f25",
+          "reused": "34ca359d-9094-4221-b1c0-5a0ece93a06d",
+          "modelDecisions": [
+            "reuse"
+          ]
+        },
+        {
+          "item": "C",
+          "taskId": "14dd064c-24e4-4e75-b2ea-4e2cb8185d0a",
+          "state": "complete",
+          "approval": "0ea4abd9-b0a5-4683-8c52-ac0fc3f961f7",
+          "sha256": "1de41911caade8e374a110ad89da51ff8a494eb0da7fb962bcebca84e8d4c4c7",
+          "result": {
+            "target": "http://127.0.0.1:58010/p1/post/3c1e5015-049d-4bbf-ae2c-e2093a4f089f/edit",
+            "attachment": "http://127.0.0.1:58010/p1/file/49e366bf-a2c9-40a1-a659-4bcd6a9b7e8a",
+            "result": "http://127.0.0.1:58010/p1/result/3c1e5015-049d-4bbf-ae2c-e2093a4f089f",
+            "parsed": {
+              "titles": [
+                "发布样本 C"
+              ],
+              "paragraphs": [
+                "固定素材 C 的第一行\n核对第二行 C",
+                "通知"
+              ],
+              "links": [
+                "http://127.0.0.1:58010/p1/file/49e366bf-a2c9-40a1-a659-4bcd6a9b7e8a",
+                "http://127.0.0.1:58010/p1/post/3c1e5015-049d-4bbf-ae2c-e2093a4f089f/edit"
+              ],
+              "canonical": [
+                "http://127.0.0.1:58010/p1/result/3c1e5015-049d-4bbf-ae2c-e2093a4f089f"
+              ]
+            },
+            "bytes": 15949,
+            "sha256": "1de41911caade8e374a110ad89da51ff8a494eb0da7fb962bcebca84e8d4c4c7"
+          },
+          "workflow": "ad3351c0-66cd-4d39-a368-7ac63be7219c",
+          "reused": "2f3b87e4-cb47-4b10-98a4-430f9cd96f25",
+          "modelDecisions": [
+            "reuse"
+          ]
+        },
+        {
+          "item": "A",
+          "taskId": "aa8038fb-3c8d-4d6c-98e4-e46ca8212ce2",
+          "state": "complete",
+          "approval": "cfb7c8c1-1081-42c7-b298-059c5011aa60",
+          "sha256": "045442c30e267c2e72cea14b50362d02b1bf785ad867362f25954cd8b7dcfe14",
+          "result": {
+            "target": "http://127.0.0.1:58010/p1/post/8469640b-7e91-4986-ac77-80880ee98762/edit",
+            "attachment": "http://127.0.0.1:58010/p1/file/cf8f8af1-e8c5-4b8e-bd95-f2df3769406f",
+            "result": "http://127.0.0.1:58010/p1/result/8469640b-7e91-4986-ac77-80880ee98762",
+            "parsed": {
+              "titles": [
+                "完成件数：68。"
+              ],
+              "paragraphs": [
+                "合计金额：195。",
+                "通知"
+              ],
+              "links": [
+                "http://127.0.0.1:58010/p1/file/cf8f8af1-e8c5-4b8e-bd95-f2df3769406f",
+                "http://127.0.0.1:58010/p1/post/8469640b-7e91-4986-ac77-80880ee98762/edit"
+              ],
+              "canonical": [
+                "http://127.0.0.1:58010/p1/result/8469640b-7e91-4986-ac77-80880ee98762"
+              ]
+            },
+            "bytes": 15949,
+            "sha256": "045442c30e267c2e72cea14b50362d02b1bf785ad867362f25954cd8b7dcfe14"
+          },
+          "workflow": "20b567b9-ec3f-479a-b43e-0ffa5cd8f94b",
+          "modelDecisions": [
+            "material",
+            "compose",
+            "review",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "act",
+            "review",
+            "act",
+            "act",
+            "act",
+            "act"
+          ]
+        },
+        {
+          "item": "D",
+          "taskId": "47238089-cf2a-424d-b71f-352fd5326249",
+          "state": "complete",
+          "approval": "216947cc-5675-4238-af2c-3c73019b9907",
+          "sha256": "37e9c6c7e2d68a9781801b57f4fe39d366ed559a6ebffc0a1ba2df82d2eb6392",
+          "result": {
+            "target": "http://127.0.0.1:58010/p1/node/9afcf55f-8d75-4d13-9a03-95bb15077316/edit",
+            "attachment": "http://127.0.0.1:58010/p1/file/81b19bd3-14fb-43a0-8f9f-e0cf8b78eae4",
+            "result": "http://127.0.0.1:58010/p1/result/9afcf55f-8d75-4d13-9a03-95bb15077316",
+            "parsed": {
+              "titles": [
+                "发布样本 D"
+              ],
+              "paragraphs": [
+                "固定素材 D 的第一行\n核对第二行 D",
+                "公告"
+              ],
+              "links": [
+                "http://127.0.0.1:58010/p1/file/81b19bd3-14fb-43a0-8f9f-e0cf8b78eae4",
+                "http://127.0.0.1:58010/p1/node/9afcf55f-8d75-4d13-9a03-95bb15077316/edit"
+              ],
+              "canonical": [
+                "http://127.0.0.1:58010/p1/result/9afcf55f-8d75-4d13-9a03-95bb15077316"
+              ]
+            },
+            "bytes": 15949,
+            "sha256": "37e9c6c7e2d68a9781801b57f4fe39d366ed559a6ebffc0a1ba2df82d2eb6392"
+          },
+          "workflow": "b0f3a127-ebec-447a-93e3-ff96d65d0d32",
+          "modelDecisions": [
+            "material",
+            "act",
+            "act",
+            "act",
+            "act",
+            "review",
+            "act",
+            "act",
+            "act",
+            "act"
+          ]
+        }
+      ]
+    }
+  ],
+  "budget": {
+    "before": {
+      "builds": 107,
+      "installs": 19,
+      "starts": 325,
+      "faults": 52,
+      "cleanups": 25
+    },
+    "after": {
+      "builds": 109,
+      "installs": 19,
+      "starts": 348,
+      "faults": 52,
+      "cleanups": 25
+    },
+    "realModelCalls": 0,
+    "remoteWrites": 0
+  },
+  "os": {
+    "verifiedPids": 367,
+    "verifiedGroups": 69,
+    "remaining": 0
+  }
+}

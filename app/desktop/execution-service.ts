@@ -55,7 +55,9 @@ import {
   currentWorkflow,
   replayStep,
   reboundAction,
+  workflowTargetUrl,
 } from '../shared/workflow-replay';
+import { resolveWorkflowFields } from '../shared/workflow-rich-text';
 import { currentRepair, withinWorkflowScope } from '../shared/workflow-repair';
 import { availableWorkflows } from '../shared/workflow-catalog';
 import {
@@ -100,10 +102,13 @@ export type ProposalInput = {
     resultRule: LearnedWorkflow['resultRule'];
   };
   coordination?: TaskExecution['coordination'];
-  workflows?: Pick<
+  workflows?: (Pick<
     LearnedWorkflow,
     'taskId' | 'version' | 'sha256' | 'goal' | 'applicability' | 'fields'
-  >[];
+  > & {
+    targetMode: NonNullable<LearnedWorkflow['replay']>['target'];
+    previousEditorUrl: string;
+  })[];
   taskId: string;
   runId: string;
   goal: string;
@@ -276,7 +281,9 @@ export class ExecutionService {
           a.submission &&
           !a.submission.recovery &&
           !a.discoveredRecovery) ||
-          (a.targetCreation && !a.discoveredTarget)) &&
+          (a.targetCreation &&
+            a.targetCreation.rule !== 'redirected-blank-editor-v1' &&
+            !a.discoveredTarget)) &&
         a.navigation?.mainFrame &&
         !a.navigation.sameDocument &&
         a.status === 'unknown' &&
@@ -424,10 +431,11 @@ export class ExecutionService {
       .current()
       .tasks.find((t) => t.id === taskId)
       ?.execution?.actions.find((a) => a.id === proof?.actionId);
+    const blank = action?.targetCreation?.rule === 'redirected-blank-editor-v1';
     if (
       !proof ||
       !action?.navigation ||
-      (form && !action.discoveredTarget) ||
+      (form && !blank && !action.discoveredTarget) ||
       this.blocked.get(taskId)?.reason !== 'page-change' ||
       !this.blocked.get(taskId)?.saved ||
       this.navigationRecoveries.has(taskId) ||
@@ -463,6 +471,8 @@ export class ExecutionService {
     const work = (async () => {
       try {
         await this.jobs.get(taskId)?.work;
+        if (blank && (!requestChain || requestChain.requests.length < 2))
+          return;
         if (requestChain) {
           const host = await this.ports.formChainReady?.(
             proof as FormNavigationProof,
@@ -485,6 +495,7 @@ export class ExecutionService {
         if (!unchanged()) return;
         const signal = AbortSignal.timeout(6000);
         let observed: BoundObservation | undefined;
+        let previous: BoundObservation | undefined;
         for (
           let attempt = 0;
           attempt < 20 && !signal.aborted && unchanged();
@@ -498,11 +509,22 @@ export class ExecutionService {
             signal,
           );
           if (ready) {
-            observed = await this.abortable(
+            const next = await this.abortable(
               () => this.ports.observe(taskId, signal),
               signal,
             );
-            break;
+            if (
+              !blank ||
+              (previous?.observation.fingerprint ===
+                next.observation.fingerprint &&
+                previous.observation.url === next.observation.url &&
+                previous.binding.targetId === next.binding.targetId &&
+                previous.binding.generation === next.binding.generation)
+            ) {
+              observed = next;
+              break;
+            }
+            previous = next;
           }
           await new Promise<void>((resolve) => setTimeout(resolve, 250));
         }
@@ -523,8 +545,9 @@ export class ExecutionService {
                 action.targetCreation,
                 observed.observation,
               ) ||
-              observed.observation.fingerprint !==
-                action.discoveredTarget?.source.fingerprint)) ||
+              (!blank &&
+                observed.observation.fingerprint !==
+                  action.discoveredTarget?.source.fingerprint))) ||
           (action.coordination &&
             (!observed.session ||
               !sameSession(action.coordination.session, observed.session) ||
@@ -542,9 +565,11 @@ export class ExecutionService {
           ...(chain ? { chain } : {}),
         };
         if (
+          !blank &&
           !actionFactSchema.safeParse({
             ...action,
             status: 'confirmed',
+            ...(!form ? { resultSource: resolution.source } : {}),
             [form ? 'formNavigationResolution' : 'navigationResolution']:
               resolution,
           }).success
@@ -555,6 +580,7 @@ export class ExecutionService {
           taskId,
           expectedVersion: current.version,
           resolution,
+          ...(blank ? { observation: observed.observation } : {}),
         });
         if (!result.recovered) return;
         if (!unchanged() || !this.ports.input!.allow(taskId, epoch)) {
@@ -2203,16 +2229,47 @@ export class ExecutionService {
                 new URL(observed.observation.url).origin,
           )
           .slice(-10)
-          .map(({ taskId, version, sha256, goal, applicability, fields }) => ({
-            taskId,
-            version,
-            sha256,
-            goal,
-            applicability,
-            ...(fields ? { fields } : {}),
-          }));
+          .map(
+            ({
+              taskId,
+              version,
+              sha256,
+              goal,
+              applicability,
+              fields,
+              replay,
+              recovery,
+            }) => ({
+              taskId,
+              version,
+              sha256,
+              goal,
+              applicability,
+              targetMode: replay!.target,
+              previousEditorUrl: recovery.targetUrl,
+              ...(fields ? { fields } : {}),
+            }),
+          );
         let replay: NextStep | undefined;
         const repair = currentRepair(current);
+        let repairFields = use?.approved?.fields ?? use?.fields;
+        if (
+          use &&
+          repair &&
+          !use.approved &&
+          use.workflow.replay?.target === 'observed-entry-route' &&
+          workflowTargetUrl(current, use) === observed.observation.url
+        ) {
+          try {
+            repairFields = resolveWorkflowFields(
+              use,
+              observed.observation,
+              true,
+            );
+          } catch {
+            // 不能唯一定位时仍允许说明当前阻碍，记录层不会接受未经核对的替换节点。
+          }
+        }
         const replaying = use && !current.loginOrigin && !repair;
         if (replaying) {
           const deadline = Date.now() + 8000;
@@ -2319,10 +2376,12 @@ export class ExecutionService {
                                   a.goalVersion === current.goalVersion &&
                                   a.status !== 'cancelled',
                               ).length,
-                              targetUrl: use.targetUrl,
+                              targetUrl:
+                                workflowTargetUrl(current, use) ??
+                                use.targetUrl,
                               materialId: use.materialId,
                               content: use.approved?.content ?? use.content,
-                              fields: use.approved?.fields ?? use.fields,
+                              fields: repairFields,
                               destination: use.destination,
                               operation: (() => {
                                 const index = current.actions.filter(
@@ -2330,12 +2389,21 @@ export class ExecutionService {
                                     a.goalVersion === current.goalVersion &&
                                     a.status !== 'cancelled',
                                 ).length;
-                                return index < use.workflow.steps.length
-                                  ? {
-                                      action: reboundAction(use, index),
-                                      effect: use.workflow.steps[index]!.effect,
-                                    }
-                                  : null;
+                                const savedStep = use.workflow.steps[index];
+                                if (!savedStep) return null;
+                                try {
+                                  return {
+                                    action: reboundAction(
+                                      use,
+                                      index,
+                                      repairFields,
+                                      observed.observation.url,
+                                    ),
+                                    effect: savedStep.effect,
+                                  };
+                                } catch {
+                                  return null;
+                                }
                               })(),
                               resultRule: use.workflow.resultRule,
                             },

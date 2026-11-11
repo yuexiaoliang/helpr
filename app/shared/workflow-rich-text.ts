@@ -109,10 +109,13 @@ export function validWorkflowInputs(
 export function resolveWorkflowFields(
   use: WorkflowUse,
   source: PageObservation,
+  repairing = false,
 ): Publication['fields'] {
   if (
     !validWorkflowInputs(use) ||
-    source.url !== use.targetUrl ||
+    (use.workflow.replay?.target === 'observed-entry-route'
+      ? new URL(source.url).origin !== use.workflow.applicability.origin
+      : source.url !== use.targetUrl) ||
     source.truncated
   )
     throw Error('WORKFLOW_CONTROL_CHANGED');
@@ -120,19 +123,29 @@ export function resolveWorkflowFields(
     const rule = use.workflow.replay?.richTextFields?.find(
       (r) => r.fieldId === field.id,
     );
-    if (!rule) return field;
+    if (!rule)
+      return field.frameUrl === use.targetUrl
+        ? { ...field, frameUrl: source.url }
+        : field;
     const frameUrl = rule.frame === 'main' ? source.url : rule.frameUrl;
-    const matches = source.controls?.filter(
-      (c) => c.frameUrl === frameUrl && c.richText?.locator?.path === rule.path,
+    const eligible = source.controls?.filter(
+      (c) =>
+        c.frameUrl === frameUrl &&
+        c.role === rule.role &&
+        c.name === rule.name &&
+        !c.disabled &&
+        c.richText?.locator,
     );
-    const control = matches?.[0];
-    if (
-      matches?.length !== 1 ||
-      !control?.richText?.locator ||
-      control.role !== rule.role ||
-      control.name !== rule.name
-    )
-      throw Error('WORKFLOW_CONTROL_CHANGED');
+    const matchingPath = eligible?.filter(
+      (c) => c.richText!.locator!.path === rule.path,
+    );
+    const control =
+      matchingPath?.length === 1
+        ? matchingPath[0]
+        : repairing && eligible?.length === 1
+          ? eligible[0]
+          : undefined;
+    if (!control?.richText?.locator) throw Error('WORKFLOW_CONTROL_CHANGED');
     try {
       richTextControl(
         { kind: 'fill', target: control.richText.locator, value: field.value },
@@ -153,11 +166,19 @@ export function resolveWorkflowFields(
 
 export function validWorkflowApproval(use: WorkflowUse) {
   if (!use.approved) return true;
+  const navigated = use.workflow.replay?.target === 'observed-entry-route';
+  const targetUrl = use.approved.targetUrl ?? use.targetUrl;
+  if (
+    navigated !== !!use.approved.targetUrl ||
+    (!navigated && use.approved.repairId) ||
+    new URL(targetUrl).origin !== use.workflow.applicability.origin
+  )
+    return false;
   if (
     JSON.stringify(
-      workflowFieldShape(use.approved.fields, use.targetUrl, use.targetUrl),
+      workflowFieldShape(use.approved.fields, targetUrl, targetUrl),
     ) !==
-    JSON.stringify(workflowFieldShape(use.fields, use.targetUrl, use.targetUrl))
+    JSON.stringify(workflowFieldShape(use.fields, use.targetUrl, targetUrl))
   )
     return false;
   if (
@@ -167,9 +188,9 @@ export function validWorkflowApproval(use: WorkflowUse) {
       );
       return rule
         ? !f.richText ||
-            f.richText.path !== rule.path ||
+            (!use.approved!.repairId && f.richText.path !== rule.path) ||
             f.richText.frameUrl !==
-              (rule.frame === 'main' ? use.targetUrl : rule.frameUrl)
+              (rule.frame === 'main' ? targetUrl : rule.frameUrl)
         : !!f.richText;
     })
   )
