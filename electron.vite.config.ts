@@ -17,7 +17,7 @@ const rendererDependencies: Plugin = {
       for (const [id, module] of Object.entries(entry.modules)) {
         if (!module.renderedLength) continue;
         // Vite 的 CommonJS 虚拟模块也保留原始路径。
-        const file = id.replace(/^\0/, '').split('?')[0];
+        const file = id.replace(/^\0/, '').replace(/\?.*$/, '');
         const directory = /^(.*\/node_modules\/(?:@[^/]+\/)?[^/]+)\//.exec(
           file,
         )?.[1];
