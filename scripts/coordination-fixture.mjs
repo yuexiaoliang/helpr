@@ -2,6 +2,7 @@
 export function coordinationFixture(receipts) {
   const records = new Map(), waiting = new Set();
   let account = 'alice', planningWait = false, holdWrites = false, calls = 0, writes = 0;
+  let participationItem;
   const record = id => {
     if (!records.has(id)) records.set(id, { value: '', revision: 0 });
     return records.get(id);
@@ -10,6 +11,7 @@ export function coordinationFixture(receipts) {
   const control = change => {
     if ('account' in change) account = change.account;
     if ('planningWait' in change) planningWait = change.planningWait;
+    if ('participationItem' in change) participationItem = change.participationItem;
     if ('holdWrites' in change) {
       holdWrites = change.holdWrites;
       if (!holdWrites) { for (const release of waiting) release(); waiting.clear(); }
@@ -33,6 +35,8 @@ export function coordinationFixture(receipts) {
           else {
             step.coordination = { account: { name: '账号 ' + identity, url: base + '/users/' + identity }, target: { name: '当前记录', url: target }, permissionEvidence: ['可编辑此记录'] };
             if (plan.loginOrigin) step.decision = 'authenticated';
+            else if (item === participationItem && !plan.clarifications?.length)
+              step = { ...step, decision: 'ask', summary: '请确认是否更新本条记录。' };
             else if (planningWait || observed.includes('正在保存')) step = { ...step, decision: 'observe', previous: null };
             else if (observed.includes('已保存 ' + value)) step.decision = 'complete';
             else if (!observed.includes('输入内容 ' + value)) step.action = { kind: 'fill', target: { role: 'textbox', name: '记录内容' }, value };

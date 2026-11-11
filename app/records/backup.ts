@@ -213,9 +213,20 @@ export class BackupRecords {
         ),
       })
     ).archive;
+    // 本机同身份的任务按当前事实保留。只预写新导入任务仍引用的副本，
+    // 免得较旧备份将已清理或已不再引用的素材重新写回。
+    const existingIds = new Set(this.snapshot().tasks.map((task) => task.id));
+    const importedDigests = new Set(
+      incoming.payload.tasks
+        .filter((task) => !existingIds.has(task.id))
+        .flatMap((task) => task.execution?.materials ?? [])
+        .filter((material) => material.discardedAt === undefined)
+        .map((material) => material.sha256),
+    );
     const materials = new MaterialFiles(this.folder);
     for (const file of incoming.payload.materials ?? [])
-      await materials.put(Buffer.from(file.base64, 'base64'), file.sha256);
+      if (importedDigests.has(file.sha256))
+        await materials.put(Buffer.from(file.base64, 'base64'), file.sha256);
     // 短事务中按当前事实合并。文件写入等待期间的新停止／目标变化仍以本机当前记录为准。
     this.db.transaction(
       () => {

@@ -146,10 +146,12 @@ test('备份与恢复在文件等待期间保护清理，旧备份不能覆盖�
   const r = f.records(),
     c = command(r, a),
     file = path.join(f.folder, 'old.helpr-backup');
+  const fixed = path.join(f.folder, 'materials', f.e(a).materials![0]!.sha256);
   const backup = r.backup({ kind: 'create', requestId: randomUUID(), file });
   expect(() => r.cleanup(c)).toThrow('CLEANUP_BUSY');
   const { archive } = await backup;
   r.cleanup(command(r, a));
+  expect(fs.existsSync(fixed)).toBe(false);
   const work = r.backup({
     kind: 'restore',
     requestId: randomUUID(),
@@ -160,6 +162,7 @@ test('备份与恢复在文件等待期间保护清理，旧备份不能覆盖�
   await work;
   expect(r.snapshot().tasks[0]!.execution!.historyCleanup).toBeDefined();
   expect(r.snapshot().tasks[0]!.execution!.phase).toBe('complete');
+  expect(fs.existsSync(fixed)).toBe(false);
   expect(() =>
     r.execution({
       kind: 'intent',
@@ -282,6 +285,42 @@ async function fixedTask(records: WorkspaceRecords, source: string) {
   });
   return { taskId, runId };
 }
+
+test('导入新任务所需的共享副本保留，原任务仍保持清理状态', async () => {
+  const current = await setup();
+  const id = await current.add('保留新导入的素材引用');
+  await current.approve(id);
+  const records = current.records();
+  const material = current.e(id).materials![0]!;
+  records.cleanup(command(records, id));
+  const fixed = path.join(current.folder, 'materials', material.sha256);
+  expect(fs.existsSync(fixed)).toBe(false);
+
+  const incoming = await setup();
+  const { taskId } = await fixedTask(incoming.records(), current.page(id).file);
+  const file = path.join(incoming.folder, 'shared.helpr-backup');
+  const { archive } = await incoming.records().backup({
+    kind: 'create',
+    requestId: randomUUID(),
+    file,
+  });
+  await records.backup({
+    kind: 'restore',
+    requestId: randomUUID(),
+    file,
+    checksum: archive.checksum,
+  });
+
+  const tasks = records.snapshot().tasks;
+  expect(
+    tasks.find((task) => task.id === id)?.execution?.historyCleanup,
+  ).toBeDefined();
+  expect(tasks.find((task) => task.id === taskId)?.execution).toMatchObject({
+    restoreReview: 'required',
+    materials: [{ sha256: material.sha256 }],
+  });
+  expect(await readFile(fixed)).toEqual(current.page(id).bytes);
+});
 
 test('同内容共享副本需所有引用均可清理；未完成引用一直保护，不按文件名删除', async () => {
   const f = await setup(false, false),

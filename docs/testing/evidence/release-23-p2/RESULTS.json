@@ -1,0 +1,2346 @@
+{
+  "candidates": [
+    {
+      "build": 109,
+      "candidate": "release-p1-public-result",
+      "version": "0.2.2",
+      "dataFormat": 37,
+      "stateModel": 1,
+      "source": "1e616889239b95b1f2f7bae229daa94777cad3855bb41f9d7cae9d4c21c3b29d",
+      "bundle": "e0f59f048e8f1c70c8a0e052315069188089af1932d9120c9dbdea580ae3c159",
+      "archive": "1244f231ba6980dc7361938ca896431e5c98a58b9b8bfcf2b5f2321c52106976",
+      "manifest": {
+        "file": ".local/workspace-validation/build-109.json",
+        "sha256": "f955d229f515f824a631596fc85fa2b359d8625adb27cc76f3cb0989e215de59"
+      }
+    },
+    {
+      "build": 110,
+      "candidate": "release-p2-backup-restore",
+      "version": "0.2.2",
+      "dataFormat": 37,
+      "stateModel": 1,
+      "source": "37b8372aa248f3299f2a296b2ac0fcbc53d6799b66ecd2d15a59ce084341ab3b",
+      "bundle": "ddd54a365a12e87f5d1eeea50605d70a304ab1e488fad043ffe488c0232d4563",
+      "archive": "d05c7f144539cec51b7f2ae85b21e011d0dce3cc0dbb4b5668f0b9f9d936c258",
+      "manifest": {
+        "file": ".local/workspace-validation/build-110.json",
+        "sha256": "2cc1b31462a7df281214662394cdb67fa267b3755d92af6c91ea82b2cef104b8"
+      }
+    }
+  ],
+  "runs": [
+    {
+      "case": "coordination-109",
+      "candidate": "release-p1-public-result",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        349,
+        350
+      ],
+      "startupMs": [
+        1880,
+        1145
+      ],
+      "checks": [
+        "两个不同稳定目标实际重叠写入，各自记录同一账号和独立目标",
+        "同一目标不重叠，等待者重新读取后询问取舍，未覆盖前项结果",
+        "同一登录障碍只有一个入口；切换账号不会执行原任务，已停止任务保持停止",
+        "正常退出并清空旧进程后，冷开重新取得当前会话和目标，原停止保持"
+      ],
+      "evidence": ".local/workspace-validation/run-1794391043583/result.json",
+      "sha256": "281767591b547cdcddc08938d6c7abb8a796a4235561b379c5b72ab1d0fa2114",
+      "os": {
+        "pids": 48,
+        "groups": 6,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {},
+      "build": 109,
+      "receipts": {
+        "environment": 8,
+        "page": 18,
+        "planning": 31,
+        "write-end": 6,
+        "write-start": 6
+      },
+      "elapsedMs": 19123
+    },
+    {
+      "case": "task-groups-109",
+      "candidate": "release-p1-public-result",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        351,
+        352
+      ],
+      "startupMs": [
+        951,
+        961
+      ],
+      "checks": [
+        "同一句委托产生两个独立任务",
+        "收起后 B 仍可编辑，A 的页面和待办保留",
+        "收起前后仍是同一个网页文档",
+        "冷重开仍可回看同组的两份历史，草稿、停止和已核对结果保留",
+        "查看并继续已完成任务仍沿用同一结果"
+      ],
+      "evidence": ".local/workspace-validation/run-1794391147735/result.json",
+      "sha256": "37f24dc6f0025455f74d26ff73c36f0486a28fc2eb97ed20ee9f63fada9e740a",
+      "os": {
+        "pids": 30,
+        "groups": 6,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 2,
+        "sha256": "740e3c88881845a050f8f4cb83241b44a5231098ed854f3d67083533ca075180",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 2,
+            "tokens": null,
+            "unknownReservation": 75226
+          }
+        ],
+        "executionPhases": {
+          "complete": 1,
+          "stopped": 1
+        }
+      },
+      "build": 109,
+      "receipts": {
+        "page": 4,
+        "planning": 2,
+        "probe": 2
+      },
+      "elapsedMs": 4201
+    },
+    {
+      "case": "participation-109",
+      "candidate": "release-p1-public-result",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        353
+      ],
+      "startupMs": [
+        1160
+      ],
+      "checks": [
+        "两个真实页面都到达独立网站，网页没有 Node 或宿主对话桥",
+        "B 保持选中，A 仅收一份回复并依据网页证据完成"
+      ],
+      "evidence": ".local/workspace-validation/run-1794391232030/result.json",
+      "sha256": "d9306942e529352b283a0876aab2c1d63c4a0ad3d7941dee7136e6f6c9165a87",
+      "os": {
+        "pids": 15,
+        "groups": 3,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 1,
+        "sha256": "3360fd4b80c4d2b5e1cfe36750954c57c312fbc78402766b71f35a452bb91fa7",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 2,
+            "tokens": null,
+            "unknownReservation": 75358
+          }
+        ],
+        "executionPhases": {
+          "complete": 1
+        }
+      },
+      "build": 109,
+      "receipts": {
+        "page": 2,
+        "planning": 2,
+        "probe": 2
+      },
+      "elapsedMs": 2312
+    },
+    {
+      "case": "participation-review-109",
+      "candidate": "release-p1-public-result",
+      "passed": false,
+      "error": "网站账号、目标或权限依据已变化，已暂停并保留原现场。请先保存需要保留的网页文字，刷新并核对原账号与目标后明确继续。",
+      "quitError": null,
+      "starts": [
+        354
+      ],
+      "startupMs": [
+        952
+      ],
+      "checks": [
+        "两个真实页面都到达独立网站，网页没有 Node 或宿主对话桥",
+        "菜单栏待办窗口已打开，原窗口仍收起，B 仍选中",
+        "登录页核对失败时继续等待，网站还没有发布"
+      ],
+      "evidence": ".local/workspace-validation/run-1794391234811/result.json",
+      "sha256": "96f42d7253f4ffe0c4188bdc2d4c67c85adce00983ffbfb9eb83e8d21fc483e4",
+      "os": {
+        "pids": 16,
+        "groups": 3,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 1,
+        "sha256": "256e77ace0fc61f6aaf9c581bf504fab567f445bc00e5dc8828712fe784afc88",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 4,
+            "tokens": null,
+            "unknownReservation": 153358
+          }
+        ],
+        "executionPhases": {
+          "paused": 1
+        }
+      },
+      "build": 109,
+      "receipts": {
+        "login": 1,
+        "page": 4,
+        "planning": 4,
+        "probe": 4
+      },
+      "elapsedMs": 3102
+    },
+    {
+      "case": "repair-109",
+      "candidate": "release-p1-public-result",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        355,
+        356
+      ],
+      "startupMs": [
+        923,
+        1046
+      ],
+      "checks": [
+        "A 独立下载、全文栏目和唯一网站结果",
+        "双真实页面从同一父版本修复，草稿写入实际重叠且确认独立",
+        "B 独立下载、全文栏目和唯一网站结果",
+        "C 独立下载、全文栏目和唯一网站结果",
+        "先完成版本采用，过期候选完整保留且不覆盖在途固定版",
+        "D 独立下载、全文栏目和唯一网站结果",
+        "完整退出后采用修复版，新输入无需网页修复模型"
+      ],
+      "evidence": ".local/workspace-validation/run-1794391238299/result.json",
+      "sha256": "27ccde3fb9e53470f9b8ca87d152a54f09437cf1b1d3fc5a6eed3f54c4d9eecc",
+      "os": {
+        "pids": 36,
+        "groups": 6,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 4,
+        "sha256": "63757236ad31dd15cad3027e72724fd59c9b332c1dc541ed091f76920fefc546",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 24,
+            "tokens": 4800,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "complete": 4
+        },
+        "verifiedResults": [
+          {
+            "id": "10d83256-aa49-44ee-8b96-538bc71964e8",
+            "sha256": "19efaf763da95b16c096e884eb9a1a40c811dd18163446e9069eda42f20fba5b",
+            "workflowDecision": "adopted",
+            "cleaned": false
+          },
+          {
+            "id": "311bbfff-a762-4aec-a238-0a5c0a26a0e0",
+            "sha256": "d37c9c82e311a02974246724c66786a4abe2829c03ae383211fa164786217340",
+            "workflowDecision": "adopted",
+            "cleaned": false
+          },
+          {
+            "id": "85977e3a-52ef-4481-ad2c-044772c05b38",
+            "sha256": "96688ab4a16b644cb5f1b1f864c27410c7e264a1993432a6941e479d0fe90e8c",
+            "workflowDecision": "conflict",
+            "cleaned": false
+          },
+          {
+            "id": "65b15477-6990-4f4d-8437-4805940bb08d",
+            "sha256": "4b7a8374723b3d8b37bd8536366e5710e5c79d3978bf409c70b420c06943ab11",
+            "workflowDecision": "adopted",
+            "cleaned": false
+          }
+        ]
+      },
+      "build": 109,
+      "receipts": {
+        "download": 16,
+        "draft": 4,
+        "draft-start": 2,
+        "page": 7,
+        "planning": 24,
+        "public-read": 8,
+        "published": 4,
+        "upload": 4
+      },
+      "elapsedMs": 19836
+    },
+    {
+      "case": "cleanup-109",
+      "candidate": "release-p1-public-result",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        357,
+        358,
+        359
+      ],
+      "startupMs": [
+        1074,
+        1177,
+        1058
+      ],
+      "checks": [
+        "A 本次素材、目标和确认独立，批准前没有发布",
+        "A 独立下载字节、全文栏目、唯一结果及分项模型记录",
+        "B 本次素材、目标和确认独立，批准前没有发布",
+        "B 独立下载字节、全文栏目、唯一结果及分项模型记录",
+        "C 本次素材、目标和确认独立，批准前没有发布",
+        "C 独立下载字节、全文栏目、唯一结果及分项模型记录",
+        "被其它流程引用的历史保持保护",
+        "主动预览列出副本及释放大小",
+        "清理后原素材、服务器结果与关键证明保留",
+        "清理标记冷开保留且未增加发布"
+      ],
+      "evidence": ".local/workspace-validation/run-1794391258531/result.json",
+      "sha256": "bf871e9a6ebd3f51bd42fa5b0b6a424e35165d15a64033601aa56cb31f2cb1cc",
+      "os": {
+        "pids": 49,
+        "groups": 9,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 3,
+        "sha256": "c48b2d222334fbe73bf9e815f1fa373fcb804839b4e05474a2fda8ee24459638",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 10,
+            "tokens": 2000,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "complete": 3
+        },
+        "verifiedResults": [
+          {
+            "id": "b3a05989-53a6-4faa-a866-aef496418d26",
+            "sha256": "1300a159a1d403d33dace7fc88e47a4a35ae004d9598430472a128ac5e59576d",
+            "workflowDecision": "adopted",
+            "cleaned": false
+          },
+          {
+            "id": "29a1930d-63df-463c-9be2-3e8976db95a2",
+            "sha256": "e54ea53845a2ecaa5aed360a3b775355ef3733303b90fa67d1ec4842b6e6f0cf",
+            "workflowDecision": "adopted",
+            "cleaned": false
+          },
+          {
+            "id": "aa784d7b-e524-4a08-b18a-7a146b728454",
+            "sha256": "75077f71363312a9e61e78629c3c9f0aff584cc0655e72d7743565ef1d06bb69",
+            "workflowDecision": "adopted",
+            "cleaned": true
+          }
+        ]
+      },
+      "build": 109,
+      "receipts": {
+        "download": 12,
+        "draft": 3,
+        "page": 8,
+        "planning": 10,
+        "public-read": 6,
+        "published": 3,
+        "upload": 3
+      },
+      "elapsedMs": 16067
+    },
+    {
+      "case": "selection-109",
+      "candidate": "release-p1-public-result",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        360,
+        361
+      ],
+      "startupMs": [
+        945,
+        974
+      ],
+      "checks": [
+        "A 本次素材、目标和确认独立，批准前没有发布",
+        "A 独立下载字节、全文栏目、唯一结果及分项模型记录",
+        "A 显示标签与内部值分开，结果保存实际选中证明",
+        "B 本次素材、目标和确认独立，批准前没有发布",
+        "B 独立下载字节、全文栏目、唯一结果及分项模型记录",
+        "B 显示标签与内部值分开，结果保存实际选中证明",
+        "C 本次素材、目标和确认独立，批准前没有发布",
+        "C 独立下载字节、全文栏目、唯一结果及分项模型记录",
+        "C 显示标签与内部值分开，结果保存实际选中证明",
+        "D 本次素材、目标和确认独立，批准前没有发布",
+        "D 选择不符或重复标签时不发布、不重复选择"
+      ],
+      "evidence": ".local/workspace-validation/run-1794391275004/result.json",
+      "sha256": "0363b39609f7f22663c01766969ba96982a54225ad0e7c74fc8601099243c6ce",
+      "os": {
+        "pids": 34,
+        "groups": 6,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 4,
+        "sha256": "7c71b95c5c29a204d96e7337ab1c88f537342533b90caab0d63f4886b0b4aec6",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 11,
+            "tokens": 2200,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "complete": 3,
+          "paused": 1
+        },
+        "verifiedResults": [
+          {
+            "id": "0e4cefc2-a058-4753-a5cc-430c4a6bf9cc",
+            "sha256": "eea601acdb8408d902b378a13fb95e57fed287483554600274a56c2d9cae33b8",
+            "workflowDecision": "adopted",
+            "cleaned": false
+          },
+          {
+            "id": "807a1a23-cdce-43f5-9edc-4528e002593a",
+            "sha256": "dc3e3f563aee297fc40e128434ddc3a2e98818cac08529ea3df93f25b6737d88",
+            "workflowDecision": "adopted",
+            "cleaned": false
+          },
+          {
+            "id": "f105eb28-6456-4aff-aeb3-689711ee0c4d",
+            "sha256": "ee40ac508fe9f460883e6f3bf8604e4fa5e09a9122ecc43a4dddf1b08afeee2e",
+            "workflowDecision": "adopted",
+            "cleaned": false
+          }
+        ]
+      },
+      "build": 109,
+      "receipts": {
+        "download": 13,
+        "draft": 4,
+        "page": 6,
+        "planning": 11,
+        "public-read": 6,
+        "published": 3,
+        "selection": 4,
+        "upload": 4
+      },
+      "elapsedMs": 17583
+    },
+    {
+      "case": "ambiguous-selection-109",
+      "candidate": "release-p1-public-result",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        362
+      ],
+      "startupMs": [
+        935
+      ],
+      "checks": [
+        "E 本次素材、目标和确认独立，批准前没有发布",
+        "E 选择不符或重复标签时不发布、不重复选择"
+      ],
+      "evidence": ".local/workspace-validation/run-1794391292975/result.json",
+      "sha256": "e363d182669a5cff5e6488a08f8a9d4e8a99027e9b904d6d6f001ad317f56190",
+      "os": {
+        "pids": 13,
+        "groups": 3,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 1,
+        "sha256": "84d5b52cf7745671c0b89a87cd0e884193a711a68f8998f78dbc06f5c6dcabaf",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 6,
+            "tokens": 1200,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "paused": 1
+        }
+      },
+      "build": 109,
+      "receipts": {
+        "download": 1,
+        "draft": 1,
+        "page": 1,
+        "planning": 6,
+        "upload": 1
+      },
+      "elapsedMs": 4814
+    },
+    {
+      "case": "reserved-109",
+      "candidate": "release-p1-public-result",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        363,
+        364
+      ],
+      "startupMs": [
+        952,
+        1079
+      ],
+      "checks": [
+        "本次确认绑定固定素材、目标、附件及发布全文，批准前没有发布",
+        "独立网站确认准确中断位置与实际写入次数",
+        "独立站点和下载核对一次发布、原始字节及公开栏目内容",
+        "恢复后只完成原目标，另一任务的停止保持且没有重复上传或发布"
+      ],
+      "evidence": ".local/workspace-validation/run-1794391298142/result.json",
+      "sha256": "fe0f5d49695014bbe3cd1a5c2848492349e46e207aaf51edc47708ca1e22ce8b",
+      "os": {
+        "pids": 30,
+        "groups": 6,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 2,
+        "sha256": "4b68d497e67cdb2a2868779e96ed244e8621a94004d9ea4caadbc7c44c6141fb",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 9,
+            "tokens": 1800,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "complete": 1,
+          "stopped": 1
+        }
+      },
+      "build": 109,
+      "receipts": {
+        "download": 5,
+        "draft": 1,
+        "page": 4,
+        "planning": 9,
+        "public-read": 2,
+        "published": 1,
+        "upload": 1
+      },
+      "elapsedMs": 8630
+    },
+    {
+      "case": "result-109",
+      "candidate": "release-p1-public-result",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        365,
+        366
+      ],
+      "startupMs": [
+        914,
+        1203
+      ],
+      "checks": [
+        "本次确认绑定固定素材、目标、附件及发布全文，批准前没有发布",
+        "独立网站确认准确中断位置与实际写入次数",
+        "独立站点和下载核对一次发布、原始字节及公开栏目内容",
+        "恢复后只完成原目标，另一任务的停止保持且没有重复上传或发布"
+      ],
+      "evidence": ".local/workspace-validation/run-1794391307129/result.json",
+      "sha256": "be4342b7e4abb9b2862b482cce19fc2620fff7cb7a29a0260c7e38e4426ba1db",
+      "os": {
+        "pids": 30,
+        "groups": 6,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 2,
+        "sha256": "3c6e28130a7653a19f4ac6230ee25bc373a2cc6a76939ec2c34f9fa7c729b818",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 7,
+            "tokens": 1400,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "complete": 1,
+          "stopped": 1
+        }
+      },
+      "build": 109,
+      "receipts": {
+        "download": 5,
+        "draft": 1,
+        "page": 4,
+        "planning": 7,
+        "public-read": 3,
+        "published": 1,
+        "upload": 1
+      },
+      "elapsedMs": 7010
+    },
+    {
+      "case": "committed-109",
+      "candidate": "release-p1-public-result",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        367,
+        368
+      ],
+      "startupMs": [
+        1013,
+        1014
+      ],
+      "checks": [
+        "本次确认绑定固定素材、目标、附件及发布全文，批准前没有发布",
+        "独立网站确认准确中断位置与实际写入次数",
+        "独立站点和下载核对一次发布、原始字节及公开栏目内容",
+        "恢复后只完成原目标，另一任务的停止保持且没有重复上传或发布"
+      ],
+      "evidence": ".local/workspace-validation/run-1794391314514/result.json",
+      "sha256": "d2e1e8969b0e5d928a7bf8a8549cfec2edd2ddc34cc883197adcaf68ab820fce",
+      "os": {
+        "pids": 26,
+        "groups": 6,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 2,
+        "sha256": "2a4638b73e64f3d88c3e866576355056a48d0a020e78d8717d78762ee2a86c81",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 7,
+            "tokens": 1400,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "complete": 1,
+          "stopped": 1
+        }
+      },
+      "build": 109,
+      "receipts": {
+        "download": 4,
+        "draft": 1,
+        "page": 4,
+        "planning": 7,
+        "public-read": 2,
+        "published": 1,
+        "upload": 1
+      },
+      "elapsedMs": 6803
+    },
+    {
+      "case": "agreements-109",
+      "candidate": "release-p1-public-result",
+      "passed": false,
+      "error": "页面或控制归属已变化，旧操作资格失效。重新识别后仍需明确继续，先核对现有结果。",
+      "quitError": null,
+      "starts": [
+        369
+      ],
+      "startupMs": [
+        1012
+      ],
+      "checks": [],
+      "evidence": ".local/workspace-validation/run-1794391321713/result.json",
+      "sha256": "91411ddac0aa01a77a5fbeb93c1f6b48403a6476fc57e779b90c1eb77ef4b515",
+      "os": {
+        "pids": 15,
+        "groups": 3,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 2,
+        "sha256": "fd8cdfd92eacafec9333f6bb4877d2b73f725046f14fc8ccb3028b79467c6083",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 2,
+            "tokens": 400,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "paused": 1,
+          "stopped": 1
+        }
+      },
+      "build": 109,
+      "receipts": {
+        "agreement-model": 1,
+        "created": 1,
+        "draft": 1,
+        "page": 1,
+        "planning": 1,
+        "readiness": 1
+      },
+      "elapsedMs": 2665
+    },
+    {
+      "case": "navigation-109",
+      "candidate": "release-p1-public-result",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        370,
+        371
+      ],
+      "startupMs": [
+        1055,
+        1105
+      ],
+      "checks": [
+        "实际POST与303导航仅产生一个条目，记录首个导航且保持暂停和未知",
+        "正常退出和冷开保留导航事实，未代答继续、未重建条目"
+      ],
+      "evidence": ".local/workspace-validation/run-1794391324743/result.json",
+      "sha256": "67ec8fbf468ae1eddcc532b08786d881cfa6f94bfb527b4c770a59e19aae27fe",
+      "os": {
+        "pids": 24,
+        "groups": 6,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 1,
+        "sha256": "12220988a2418d385d9d3206c4a0650dc0333376af680041eda39b2a32d00f6d",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 1,
+            "tokens": null,
+            "unknownReservation": 36141
+          }
+        ],
+        "executionPhases": {
+          "paused": 1
+        }
+      },
+      "build": 109,
+      "receipts": {
+        "navigation-created": 1,
+        "navigation-planning": 1,
+        "navigation-result-read": 2
+      },
+      "elapsedMs": 4294
+    },
+    {
+      "case": "controls-109",
+      "candidate": "release-p1-public-result",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        372,
+        373
+      ],
+      "startupMs": [
+        1139,
+        1369
+      ],
+      "checks": [
+        "两个真实页面都到达独立网站，网页没有 Node 或宿主对话桥",
+        "实际顶栏与网页的原生准备允许开始意图通过",
+        "受管工作者仅取得自己的页面",
+        "TASK_NOT_OWNED",
+        "OBSERVATION_NOT_AUTHORIZED",
+        "OBSERVATION_CAPABILITY_DENIED",
+        "OBSERVATION_CAPABILITY_DENIED",
+        "B 的对话指令只记录在 B",
+        "私有 pipe 开启且没有调试端口",
+        "独立客户端检查自有进程没有 TCP 控制监听",
+        "正常退出后独立核对所有已见自有进程结束",
+        "冷重开保留两项身份、独立对话、草稿与当前标签",
+        "冷重开后本机网站确认临时登录已释放"
+      ],
+      "evidence": ".local/workspace-validation/run-1794391329420/result.json",
+      "sha256": "23a73dd4848882ee32c2e64546e105d21d8a4d97a9434eb60c0bdc6aa20004eb",
+      "os": {
+        "pids": 30,
+        "groups": 6,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 2,
+        "sha256": "b4ad88f53571ce2407412dd450659c6312afbb4e76aa5d244621838a7316a13b",
+        "modelCalls": [],
+        "executionPhases": {
+          "stopped": 2
+        }
+      },
+      "build": 109,
+      "receipts": {
+        "login": 1,
+        "page": 6,
+        "probe": 6
+      },
+      "elapsedMs": 5363
+    },
+    {
+      "case": "capacity-109",
+      "candidate": "release-p1-public-result",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        374
+      ],
+      "startupMs": [
+        1815
+      ],
+      "checks": [
+        "两项网站写入尚未返回，第三项排队且未调用模型或写入",
+        "窗口收起时 A 停止，B 完成，C 保留参与请求",
+        "各目标写入一次，迟到效果保留而 A 仍停止，隐藏窗口中的回复只影响 C"
+      ],
+      "evidence": ".local/workspace-validation/run-1794391521842/result.json",
+      "sha256": "b8b261521b52b3f0b0d57fb4133e24b23d26ab0bc19c3fe85db008be63c4f9bb",
+      "os": {
+        "pids": 17,
+        "groups": 3,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 3,
+        "sha256": "1e019c7fb2474b58a744f3bf16d8dcddb1c40848029bde769083e3973ae70bda",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "cancelled",
+            "calls": 1,
+            "tokens": null,
+            "unknownReservation": 39741
+          },
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 11,
+            "tokens": 2200,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "complete": 2,
+          "stopped": 1
+        },
+        "overlapOutcome": [
+          "stopped",
+          "complete",
+          "complete"
+        ]
+      },
+      "build": 109,
+      "receipts": {
+        "environment": 3,
+        "page": 3,
+        "planning": 12,
+        "write-end": 3,
+        "write-start": 3
+      },
+      "elapsedMs": 7421
+    },
+    {
+      "case": "workflows-109",
+      "candidate": "release-p1-public-result",
+      "passed": false,
+      "error": "The expression evaluated to a falsy value:\n\n  assert(right.calls.every(c => c.usageKind === 'web-planning'))\n",
+      "quitError": null,
+      "starts": [
+        375
+      ],
+      "startupMs": [
+        945
+      ],
+      "checks": [
+        "A 独立下载、全文栏目和唯一网站结果",
+        "双复用固定同一父版本，实际草稿请求交叠",
+        "B 独立下载、全文栏目和唯一网站结果",
+        "C 独立下载、全文栏目和唯一网站结果",
+        "复用仅绑定本次输入，首次探索独立观察和派发",
+        "探索和复用实际交叠，分别保存待确认内容",
+        "D 独立下载、全文栏目和唯一网站结果",
+        "E 独立下载、全文栏目和唯一网站结果"
+      ],
+      "evidence": ".local/workspace-validation/run-1794391529665/result.json",
+      "sha256": "d54e8f71c9e292dad86c01b27b70fd388632edbb14faa80155d6ef71e19d387a",
+      "os": {
+        "pids": 21,
+        "groups": 3,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 5,
+        "sha256": "945fd741187b311521c0b33a9ce2c524361a40f990d7d69eeb0a6a9393a0f800",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 22,
+            "tokens": 4400,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "complete": 5
+        }
+      },
+      "build": 109,
+      "receipts": {
+        "download": 20,
+        "draft": 5,
+        "draft-start": 4,
+        "page": 5,
+        "planning": 22,
+        "public-read": 10,
+        "published": 5,
+        "upload": 5
+      },
+      "elapsedMs": 23642
+    },
+    {
+      "case": "participation-review-revised-109",
+      "candidate": "release-p1-public-result",
+      "passed": false,
+      "error": "执行暂时无法继续，已暂停后续操作。已有结果与记录保留。",
+      "quitError": null,
+      "starts": [
+        376
+      ],
+      "startupMs": [
+        959
+      ],
+      "checks": [
+        "两个真实页面都到达独立网站，网页没有 Node 或宿主对话桥",
+        "菜单栏待办窗口已打开，原窗口仍收起，B 仍选中",
+        "登录页核对失败时继续等待，网站还没有发布"
+      ],
+      "evidence": ".local/workspace-validation/run-1794391553703/result.json",
+      "sha256": "6b0d5e54412b1f9b1ce12e2757f10ecdd625f0d2cc7fe262eac42b1706aa775e",
+      "os": {
+        "pids": 16,
+        "groups": 3,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 1,
+        "sha256": "fbd3cf735492c307d8e9f16f02d9408bc580c3b4559a60c6a0f85d8a1f7e690f",
+        "modelCalls": [
+          {
+            "dispatched": 0,
+            "phase": "error",
+            "calls": 1,
+            "tokens": null,
+            "unknownReservation": 0
+          },
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 5,
+            "tokens": null,
+            "unknownReservation": 193918
+          }
+        ],
+        "executionPhases": {
+          "paused": 1
+        }
+      },
+      "build": 109,
+      "receipts": {
+        "login": 1,
+        "page": 4,
+        "planning": 5,
+        "probe": 4
+      },
+      "elapsedMs": 3577
+    },
+    {
+      "case": "agreements-explicit-109",
+      "candidate": "release-p1-public-result",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        377,
+        378
+      ],
+      "startupMs": [
+        947,
+        1180
+      ],
+      "checks": [
+        "明确接受后按约定批准内容，发布并独立核对全文与附件",
+        "同内容改名命中原完成工作，未上传或重复发布",
+        "同名新字节按约定另发；明确再发仍采用原固定素材",
+        "修改栏目先撤旧版并重新接受；新目标独立完成，撤销后不再放行",
+        "冷开保留约定撤销、工作身份及完成事实，不重复发布"
+      ],
+      "evidence": ".local/workspace-validation/run-1794391557632/result.json",
+      "sha256": "cafaebd98deb1e2b5388a78add7a8c13719f8bf1e4f6eacb1bcca730265d0a45",
+      "os": {
+        "pids": 46,
+        "groups": 6,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 6,
+        "sha256": "d988391c8f68f835412c3efbd1fff4fb39bc58b88939a8fcd981d70859741bc0",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 39,
+            "tokens": 7800,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "complete": 4,
+          "paused": 1,
+          "stopped": 1
+        }
+      },
+      "build": 109,
+      "receipts": {
+        "agreement-model": 2,
+        "content-model": 4,
+        "created": 4,
+        "download": 16,
+        "draft": 4,
+        "page": 8,
+        "planning": 33,
+        "public-read": 8,
+        "published": 4,
+        "readiness": 8,
+        "upload": 4
+      },
+      "elapsedMs": 29089
+    },
+    {
+      "case": "workflows-final-109",
+      "candidate": "release-p1-public-result",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        379
+      ],
+      "startupMs": [
+        2090
+      ],
+      "checks": [
+        "A 独立下载、全文栏目和唯一网站结果",
+        "双复用固定同一父版本，实际草稿请求交叠",
+        "B 独立下载、全文栏目和唯一网站结果",
+        "C 独立下载、全文栏目和唯一网站结果",
+        "复用仅绑定本次输入，首次探索独立观察和派发",
+        "探索和复用实际交叠，分别保存待确认内容",
+        "D 独立下载、全文栏目和唯一网站结果",
+        "E 独立下载、全文栏目和唯一网站结果",
+        "复用仅绑定本次输入，首次探索独立观察和派发"
+      ],
+      "evidence": ".local/workspace-validation/run-1794391751844/result.json",
+      "sha256": "7bc9ac090b2cfa7b44f6c5a2c4c2b0bed428cd31267fab6a2ea0e58522d97d5a",
+      "os": {
+        "pids": 21,
+        "groups": 3,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 5,
+        "sha256": "fafce50eebbb37fce48b16d23b13a8d4940ef4fc2ef813154f1d97f3a9c9a647",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 22,
+            "tokens": 4400,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "complete": 5
+        },
+        "verifiedResults": [
+          {
+            "id": "a647cfd4-deeb-484f-b3c0-93e25f6fa0d3",
+            "sha256": "19efaf763da95b16c096e884eb9a1a40c811dd18163446e9069eda42f20fba5b",
+            "workflowDecision": "adopted",
+            "cleaned": false
+          },
+          {
+            "id": "0065c0aa-756b-42d7-90f9-697afe15b1a2",
+            "sha256": "d37c9c82e311a02974246724c66786a4abe2829c03ae383211fa164786217340",
+            "workflowDecision": "adopted",
+            "cleaned": false
+          },
+          {
+            "id": "85a5f08d-a647-4e9d-aa72-1ce12a9c94b3",
+            "sha256": "96688ab4a16b644cb5f1b1f864c27410c7e264a1993432a6941e479d0fe90e8c",
+            "workflowDecision": "conflict",
+            "cleaned": false
+          },
+          {
+            "id": "1e57dfb0-d7b9-4040-a234-1862f75e9741",
+            "sha256": "4b7a8374723b3d8b37bd8536366e5710e5c79d3978bf409c70b420c06943ab11",
+            "workflowDecision": "adopted",
+            "cleaned": false
+          },
+          {
+            "id": "c17bdd43-f772-4e9c-a1a4-53d5480a1abf",
+            "sha256": "cfb68131ab388d0e8e76b0ab8d2147d2af15eb67a2d5115eb013ac2c12345d8b",
+            "workflowDecision": "adopted",
+            "cleaned": false
+          }
+        ]
+      },
+      "build": 109,
+      "receipts": {
+        "download": 20,
+        "draft": 5,
+        "draft-start": 4,
+        "page": 5,
+        "planning": 22,
+        "public-read": 10,
+        "published": 5,
+        "upload": 5
+      },
+      "elapsedMs": 25411
+    },
+    {
+      "case": "participation-review-final-109",
+      "candidate": "release-p1-public-result",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        380
+      ],
+      "startupMs": [
+        993
+      ],
+      "checks": [
+        "两个真实页面都到达独立网站，网页没有 Node 或宿主对话桥",
+        "菜单栏待办窗口已打开，原窗口仍收起，B 仍选中",
+        "登录页核对失败时继续等待，网站还没有发布",
+        "网站只收到 A 已确认的改稿一次"
+      ],
+      "evidence": ".local/workspace-validation/run-1794391777671/result.json",
+      "sha256": "54265ebeb8883eb1fa1c2daae46151dd92fdaf0ef02928aa8a6de6eb231822ac",
+      "os": {
+        "pids": 16,
+        "groups": 3,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 1,
+        "sha256": "42a5464f4e293107c94e5267227b4223dc69616e0c99459c267c0dab80029969",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 7,
+            "tokens": 1400,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "complete": 1
+        }
+      },
+      "build": 109,
+      "receipts": {
+        "login": 1,
+        "page": 4,
+        "planning": 7,
+        "probe": 4,
+        "published": 1
+      },
+      "elapsedMs": 4168
+    },
+    {
+      "case": "schedules-109",
+      "candidate": "release-p1-public-result",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        381,
+        382
+      ],
+      "startupMs": [
+        3157,
+        1409
+      ],
+      "checks": [
+        "到点后台创建真实网页并在导航归属变化处暂停，未代答继续",
+        "下一轮同内容改名仍指向原停止工作，不另开任务",
+        "新合格素材在独立任务推进，旧停止意图和当前查看页保持",
+        "冷开保留已取消计划、三轮归属及停止意图，无重复网页效果"
+      ],
+      "evidence": ".local/workspace-validation/run-1794391847253/result.json",
+      "sha256": "d5db3a3264c15a64ed7194217e3cca7a6b0f492a82fdbe9c873631ee966a958a",
+      "os": {
+        "pids": 34,
+        "groups": 6,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 3,
+        "sha256": "7524f66005ae674df403324c17e0feba0d068b529ea67e6e32bcea03e3b52ef7",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 4,
+            "tokens": 800,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "stopped": 3
+        }
+      },
+      "build": 109,
+      "receipts": {
+        "agreement-model": 1,
+        "created": 1,
+        "draft": 1,
+        "page": 2,
+        "planning": 2,
+        "readiness": 5,
+        "schedule-model": 1
+      },
+      "elapsedMs": 135772
+    },
+    {
+      "case": "records-109",
+      "candidate": "release-p1-public-result",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        383,
+        384
+      ],
+      "startupMs": [
+        1946,
+        1435
+      ],
+      "checks": [
+        "A 独立下载、全文栏目和唯一网站结果",
+        "已经独立核对 A 发布，B 和 C 实际交叠后分别等待本次确认",
+        "SQLite 写入实际等待期间停止先撤销原生资格，旧回调零派发",
+        "关键保存失败阻断另一项在途发布，保留原资料、确认和已停止任务",
+        "恢复可写后需明确检查，原保存请求可继续，旧发布未恢复派发",
+        "冷开后原发布、较新停止及记录故障暂停仍可核对"
+      ],
+      "evidence": ".local/workspace-validation/run-1794392041344/result.json",
+      "sha256": "48643e323095a7b5163c19ecd6280653789c119b96bbdb68625514b7f92bc5f7",
+      "os": {
+        "pids": 34,
+        "groups": 6,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 3,
+        "sha256": "61b2257b345c20dc46a8f874cb5d9a040b4107df1b9bdf41e2843ae5c7a66b0a",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 10,
+            "tokens": 2000,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "complete": 1,
+          "paused": 1,
+          "stopped": 1
+        },
+        "verifiedResults": [
+          {
+            "id": "307ba8ce-63ea-435a-a25f-a2fbed009f88",
+            "sha256": "19efaf763da95b16c096e884eb9a1a40c811dd18163446e9069eda42f20fba5b",
+            "workflowDecision": "adopted",
+            "cleaned": false
+          }
+        ],
+        "slowStorage": {
+          "beforeCommit": {
+            "original": {
+              "epoch": 1,
+              "available": true,
+              "blocked": false
+            },
+            "current": {
+              "epoch": 2,
+              "available": true,
+              "blocked": true
+            },
+            "sent": 0
+          },
+          "failure": {
+            "code": "STORAGE_UNAVAILABLE",
+            "denial": {
+              "original": {
+                "epoch": 1,
+                "available": true,
+                "blocked": false
+              },
+              "current": {
+                "epoch": 2,
+                "available": true,
+                "blocked": true
+              },
+              "sent": 0
+            }
+          },
+          "reader": {
+            "events": [
+              {
+                "stage": "reader-held",
+                "at": 1794392053477.419
+              },
+              {
+                "stage": "writer-waiting",
+                "at": 1794392053572.701,
+                "independentReaderBusy": true,
+                "journalBytes": 37448
+              },
+              {
+                "stage": "reader-released",
+                "at": 1794392053642.907
+              }
+            ],
+            "pid": 94523,
+            "exit": [
+              0,
+              null
+            ]
+          }
+        }
+      },
+      "build": 109,
+      "receipts": {
+        "download": 8,
+        "draft": 3,
+        "draft-start": 2,
+        "page": 6,
+        "planning": 10,
+        "public-read": 2,
+        "published": 1,
+        "upload": 3
+      },
+      "elapsedMs": 14910
+    },
+    {
+      "case": "missed-109",
+      "candidate": "release-p1-public-result",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        385,
+        386,
+        387
+      ],
+      "startupMs": [
+        2660,
+        1765,
+        1710
+      ],
+      "checks": [
+        "应用退出期间错过一次计划，冷开只生成待决轮次",
+        "明确跳过后同一轮次结案，未产生新任务或写入",
+        "W 最终冷开保留任务事实和意图",
+        "退出后独立核对 SQLite 和每项任务的动作归属"
+      ],
+      "evidence": ".local/workspace-validation/run-1794392193841/result.json",
+      "sha256": "a4a5c6d3021f7291c639b96f68e75b6064be65c8cdfa67350839e69525a3fcc2",
+      "os": {
+        "pids": 39,
+        "groups": 9,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 1,
+        "sha256": "27ced4c5c4c8c9d9ba62f4010b25ba18195709646eff85f16d48f6cbe4c8ecb0",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 2,
+            "tokens": 400,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "stopped": 1
+        },
+        "schedules": [
+          [
+            [
+              "skipped",
+              []
+            ]
+          ]
+        ]
+      },
+      "build": 109,
+      "receipts": {
+        "p1-model": 2
+      },
+      "elapsedMs": 21638
+    },
+    {
+      "case": "automation-109",
+      "candidate": "release-p1-public-result",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        388,
+        389
+      ],
+      "startupMs": [
+        1678,
+        3382
+      ],
+      "checks": [
+        "定时后台任务沿跨页链路按发布约定完成并保留当前查看页",
+        "W 最终冷开保留任务事实和意图",
+        "退出后独立核对 SQLite 和每项任务的动作归属"
+      ],
+      "evidence": ".local/workspace-validation/run-1794392215945/result.json",
+      "sha256": "1d67c61c7c29be9d0ecb461a4621ddff31b258cc064ffa48a2a625c72f06262c",
+      "os": {
+        "pids": 30,
+        "groups": 6,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 2,
+        "sha256": "f393e4d69b6150384ef22d4e660ccec5ef34a796bf669fea0bf9703d82ede7ae",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 16,
+            "tokens": 3200,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "complete": 1,
+          "stopped": 1
+        },
+        "schedules": [
+          [
+            [
+              "claimed",
+              [
+                "0c01ca8c-c9c2-4ff0-bb12-781fb70f23b5"
+              ]
+            ]
+          ]
+        ]
+      },
+      "build": 109,
+      "receipts": {
+        "p1-created": 1,
+        "p1-download": 4,
+        "p1-linked": 1,
+        "p1-model": 16,
+        "p1-public-read": 2,
+        "p1-published": 1,
+        "p1-upload": 1
+      },
+      "elapsedMs": 27477
+    },
+    {
+      "case": "unknown-continue-109",
+      "candidate": "release-p1-public-result",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        390,
+        391
+      ],
+      "startupMs": [
+        1126,
+        1120
+      ],
+      "checks": [
+        "U 按任务预览全部字段、栏目和固定附件",
+        "公开正文错配保持待核对且没有第二次提交",
+        "未知结果明确停止后继续，先核对现场并且不重发",
+        "U 最终冷开保留任务事实和意图",
+        "退出后独立核对 SQLite 和每项任务的动作归属"
+      ],
+      "evidence": ".local/workspace-validation/run-1794392243824/result.json",
+      "sha256": "659711c899b99a79b577932fb68e1577b23b8bd71f4a2a91f30ab76e3af66b62",
+      "os": {
+        "pids": 26,
+        "groups": 6,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 1,
+        "sha256": "d8ce5382d54124975121b214a8183e730d4ddc5dc2c9c8596666527ba9c8ca68",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 12,
+            "tokens": 2400,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "unknown": 1
+        },
+        "schedules": []
+      },
+      "build": 109,
+      "receipts": {
+        "p1-created": 1,
+        "p1-download": 2,
+        "p1-linked": 1,
+        "p1-model": 12,
+        "p1-public-read": 2,
+        "p1-published": 1,
+        "p1-upload": 1
+      },
+      "elapsedMs": 12117
+    },
+    {
+      "case": "repair-110",
+      "candidate": "release-p2-backup-restore",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        392,
+        393
+      ],
+      "startupMs": [
+        4655,
+        1663
+      ],
+      "checks": [
+        "A 独立下载、全文栏目和唯一网站结果",
+        "双真实页面从同一父版本修复，草稿写入实际重叠且确认独立",
+        "B 独立下载、全文栏目和唯一网站结果",
+        "C 独立下载、全文栏目和唯一网站结果",
+        "先完成版本采用，过期候选完整保留且不覆盖在途固定版",
+        "D 独立下载、全文栏目和唯一网站结果",
+        "完整退出后采用修复版，新输入无需网页修复模型"
+      ],
+      "evidence": ".local/workspace-validation/run-1794393124010/result.json",
+      "sha256": "50f17d92e1ab06e6c55f1627895285306cef718e667018d24825a82a98d4f19a",
+      "os": {
+        "pids": 36,
+        "groups": 6,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 4,
+        "sha256": "568a1163fa38a0ef09d4f7f62dcc2da0a060867c008a0011c9430baa715e47bd",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 28,
+            "tokens": 5600,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "complete": 4
+        },
+        "verifiedResults": [
+          {
+            "id": "ef8f2438-d2b0-4300-8c93-5e03baf7f35e",
+            "sha256": "19efaf763da95b16c096e884eb9a1a40c811dd18163446e9069eda42f20fba5b",
+            "workflowDecision": "adopted",
+            "cleaned": false
+          },
+          {
+            "id": "62748e05-fa29-401a-a53b-378d1c989e39",
+            "sha256": "d37c9c82e311a02974246724c66786a4abe2829c03ae383211fa164786217340",
+            "workflowDecision": "adopted",
+            "cleaned": false
+          },
+          {
+            "id": "7f41e51b-d22c-415b-8d24-a9e9b9f8cdcf",
+            "sha256": "96688ab4a16b644cb5f1b1f864c27410c7e264a1993432a6941e479d0fe90e8c",
+            "workflowDecision": "conflict",
+            "cleaned": false
+          },
+          {
+            "id": "96bbc638-18ee-44f6-bcb1-9fb2001a46cf",
+            "sha256": "4b7a8374723b3d8b37bd8536366e5710e5c79d3978bf409c70b420c06943ab11",
+            "workflowDecision": "adopted",
+            "cleaned": false
+          }
+        ]
+      },
+      "build": 110,
+      "receipts": {
+        "download": 16,
+        "draft": 4,
+        "draft-start": 2,
+        "page": 7,
+        "planning": 28,
+        "public-read": 8,
+        "published": 4,
+        "upload": 4
+      },
+      "elapsedMs": 25726
+    },
+    {
+      "case": "automation-110",
+      "candidate": "release-p2-backup-restore",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        394,
+        395
+      ],
+      "startupMs": [
+        1051,
+        1113
+      ],
+      "checks": [
+        "定时后台任务沿跨页链路按发布约定完成并保留当前查看页",
+        "W 最终冷开保留任务事实和意图",
+        "退出后独立核对 SQLite 和每项任务的动作归属"
+      ],
+      "evidence": ".local/workspace-validation/run-1794393150162/result.json",
+      "sha256": "eb88e6c8c3453d6ec87ff8fe9ca917888e0c74aa8b0f7a0ab9b0238e32de910d",
+      "os": {
+        "pids": 30,
+        "groups": 6,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 2,
+        "sha256": "5d9d8fd075a1e37f19f3edda88288df27610ab3953a1bdea6b719ae01b302d05",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 16,
+            "tokens": 3200,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "complete": 1,
+          "stopped": 1
+        },
+        "schedules": [
+          [
+            [
+              "claimed",
+              [
+                "202a0f79-8606-4084-9482-e69ed5cf92d8"
+              ]
+            ]
+          ]
+        ]
+      },
+      "build": 110,
+      "receipts": {
+        "p1-created": 1,
+        "p1-download": 4,
+        "p1-linked": 1,
+        "p1-model": 16,
+        "p1-public-read": 2,
+        "p1-published": 1,
+        "p1-upload": 1
+      },
+      "elapsedMs": 24104
+    },
+    {
+      "case": "cleanup-110",
+      "candidate": "release-p2-backup-restore",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        396,
+        397,
+        398
+      ],
+      "startupMs": [
+        1051,
+        1086,
+        1215
+      ],
+      "checks": [
+        "A 本次素材、目标和确认独立，批准前没有发布",
+        "A 独立下载字节、全文栏目、唯一结果及分项模型记录",
+        "B 本次素材、目标和确认独立，批准前没有发布",
+        "B 独立下载字节、全文栏目、唯一结果及分项模型记录",
+        "C 本次素材、目标和确认独立，批准前没有发布",
+        "C 独立下载字节、全文栏目、唯一结果及分项模型记录",
+        "被其它流程引用的历史保持保护",
+        "主动预览列出副本及释放大小",
+        "清理后原素材、服务器结果与关键证明保留",
+        "清理标记冷开保留且未增加发布"
+      ],
+      "evidence": ".local/workspace-validation/run-1794393174694/result.json",
+      "sha256": "f9a4d90e41202ed3159851901160d1d65d7d05d5ef9e7bb7ea8aa4bb34722f1a",
+      "os": {
+        "pids": 49,
+        "groups": 9,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 3,
+        "sha256": "7999032e87a29104a84babbffa2959fd5a881ddeb8a7e65ff9970d6a8a983f63",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 10,
+            "tokens": 2000,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "complete": 3
+        },
+        "verifiedResults": [
+          {
+            "id": "9120abf4-375d-4ee0-8418-9a359b0bc3c7",
+            "sha256": "1300a159a1d403d33dace7fc88e47a4a35ae004d9598430472a128ac5e59576d",
+            "workflowDecision": "adopted",
+            "cleaned": false
+          },
+          {
+            "id": "e844826f-1705-4d09-b212-b69a6f2d278d",
+            "sha256": "e54ea53845a2ecaa5aed360a3b775355ef3733303b90fa67d1ec4842b6e6f0cf",
+            "workflowDecision": "adopted",
+            "cleaned": false
+          },
+          {
+            "id": "bf12b74b-a1a9-4023-95e3-6e7cbb27764b",
+            "sha256": "75077f71363312a9e61e78629c3c9f0aff584cc0655e72d7743565ef1d06bb69",
+            "workflowDecision": "adopted",
+            "cleaned": true
+          }
+        ]
+      },
+      "build": 110,
+      "receipts": {
+        "download": 12,
+        "draft": 3,
+        "page": 8,
+        "planning": 10,
+        "public-read": 6,
+        "published": 3,
+        "upload": 3
+      },
+      "elapsedMs": 16541
+    },
+    {
+      "case": "late-intent-110",
+      "candidate": "release-p2-backup-restore",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        399
+      ],
+      "startupMs": [
+        1056
+      ],
+      "checks": [
+        "记录已接受旧继续，控制者回执仍在等待且网站未收到 A 的操作",
+        "较新停止胜过迟到继续回执，A 零写入，B 一次成功"
+      ],
+      "evidence": ".local/workspace-validation/run-1794393191677/result.json",
+      "sha256": "5f7e6f2e0a9fd919f48b1323f0b48d7a396ab4145d5d1e2d5c21e11df17542d4",
+      "os": {
+        "pids": 15,
+        "groups": 3,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 2,
+        "sha256": "da5f8a09a4555a3f701b56fd82c1ea88d7192392efc69fdb571d0c0e314c6bb2",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 4,
+            "tokens": 800,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "complete": 1,
+          "stopped": 1
+        },
+        "lateIntent": {
+          "old": 3,
+          "latest": 4,
+          "a": "stopped",
+          "b": "complete"
+        }
+      },
+      "build": 110,
+      "receipts": {
+        "environment": 2,
+        "page": 2,
+        "planning": 4,
+        "write-end": 1,
+        "write-start": 1
+      },
+      "elapsedMs": 4250
+    },
+    {
+      "case": "capacity-110",
+      "candidate": "release-p2-backup-restore",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        400
+      ],
+      "startupMs": [
+        1087
+      ],
+      "checks": [
+        "两项网站写入尚未返回，第三项排队且未调用模型或写入",
+        "窗口收起时 A 停止，B 完成，C 保留参与请求",
+        "各目标写入一次，迟到效果保留而 A 仍停止，隐藏窗口中的回复只影响 C"
+      ],
+      "evidence": ".local/workspace-validation/run-1794393196327/result.json",
+      "sha256": "24187f9aec15ee5d196c12c3c546375f4bb53888642ca95c0683f882d019f380",
+      "os": {
+        "pids": 17,
+        "groups": 3,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 3,
+        "sha256": "081a4864fbc125d35f56ea9303e8b604746f705573e0702104aaf20c6552d98b",
+        "modelCalls": [
+          {
+            "dispatched": 0,
+            "phase": "cancelled",
+            "calls": 1,
+            "tokens": null,
+            "unknownReservation": 0
+          },
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 11,
+            "tokens": 2200,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "complete": 2,
+          "stopped": 1
+        },
+        "overlapOutcome": [
+          "stopped",
+          "complete",
+          "complete"
+        ]
+      },
+      "build": 110,
+      "receipts": {
+        "environment": 3,
+        "page": 3,
+        "planning": 11,
+        "write-end": 3,
+        "write-start": 3
+      },
+      "elapsedMs": 8632
+    },
+    {
+      "case": "workflows-110",
+      "candidate": "release-p2-backup-restore",
+      "passed": true,
+      "error": null,
+      "quitError": null,
+      "starts": [
+        401
+      ],
+      "startupMs": [
+        1100
+      ],
+      "checks": [
+        "A 独立下载、全文栏目和唯一网站结果",
+        "双复用固定同一父版本，实际草稿请求交叠",
+        "B 独立下载、全文栏目和唯一网站结果",
+        "C 独立下载、全文栏目和唯一网站结果",
+        "复用仅绑定本次输入，首次探索独立观察和派发",
+        "探索和复用实际交叠，分别保存待确认内容",
+        "D 独立下载、全文栏目和唯一网站结果",
+        "E 独立下载、全文栏目和唯一网站结果",
+        "复用仅绑定本次输入，首次探索独立观察和派发"
+      ],
+      "evidence": ".local/workspace-validation/run-1794393205402/result.json",
+      "sha256": "20e51e9d9e0b35ac3eb7e3c04e9ad3594b3a68c826ff2a1705c84f847f77366e",
+      "os": {
+        "pids": 21,
+        "groups": 3,
+        "remaining": [],
+        "leaseReleased": true
+      },
+      "db": {
+        "quickCheck": "ok",
+        "executions": 5,
+        "sha256": "13bacaf8ee84bb75de24a3be31d83f468bcc8643f61ded41d4a6f506e33c7bae",
+        "modelCalls": [
+          {
+            "dispatched": 1,
+            "phase": "complete",
+            "calls": 22,
+            "tokens": 4400,
+            "unknownReservation": 0
+          }
+        ],
+        "executionPhases": {
+          "complete": 5
+        },
+        "verifiedResults": [
+          {
+            "id": "ca1a42b6-b8b3-43e3-bf64-70d1158a1b4b",
+            "sha256": "19efaf763da95b16c096e884eb9a1a40c811dd18163446e9069eda42f20fba5b",
+            "workflowDecision": "adopted",
+            "cleaned": false
+          },
+          {
+            "id": "453f7786-fa1a-4758-acdb-359406e01edd",
+            "sha256": "d37c9c82e311a02974246724c66786a4abe2829c03ae383211fa164786217340",
+            "workflowDecision": "adopted",
+            "cleaned": false
+          },
+          {
+            "id": "d76870fb-a6e8-47b6-a6f8-20d4d338dd90",
+            "sha256": "96688ab4a16b644cb5f1b1f864c27410c7e264a1993432a6941e479d0fe90e8c",
+            "workflowDecision": "conflict",
+            "cleaned": false
+          },
+          {
+            "id": "1cd14ca6-2f21-44df-8528-8815a3c19778",
+            "sha256": "4b7a8374723b3d8b37bd8536366e5710e5c79d3978bf409c70b420c06943ab11",
+            "workflowDecision": "adopted",
+            "cleaned": false
+          },
+          {
+            "id": "bca73df9-8330-4ec2-b99f-9bbfbcd3c731",
+            "sha256": "cfb68131ab388d0e8e76b0ab8d2147d2af15eb67a2d5115eb013ac2c12345d8b",
+            "workflowDecision": "adopted",
+            "cleaned": false
+          }
+        ]
+      },
+      "build": 110,
+      "receipts": {
+        "download": 20,
+        "draft": 5,
+        "draft-start": 4,
+        "page": 5,
+        "planning": 22,
+        "public-read": 10,
+        "published": 5,
+        "upload": 5
+      },
+      "elapsedMs": 24212
+    }
+  ],
+  "backupProofs": [
+    {
+      "file": ".local/workspace-validation/p2-backup-catalog-lDhw9c/result.json",
+      "sha256": "29317d8d23f9dd964e0cdfbca2a16fe4fb330b7edc200a6bd54bb0b3e36c2bdc",
+      "build": 109,
+      "passed": false,
+      "error": "Command failed: /usr/bin/plutil -convert json -o - -\n",
+      "volume": {
+        "image": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/p2-backup-catalog-lDhw9c/capacity.dmg",
+        "mount": "/private/tmp/helpr-workspace-validation-501/backup07-volume-2Xx2Bt",
+        "attached": false,
+        "filled": false,
+        "released": false,
+        "detached": false,
+        "error": "Command failed: /usr/bin/plutil -convert json -o - -\n",
+        "cleanupError": "Command failed: /usr/bin/plutil -convert json -o - -\n"
+      },
+      "checks": [],
+      "processes": [],
+      "remaining": []
+    },
+    {
+      "file": ".local/workspace-validation/p2-backup-catalog-ZWHQAo/result.json",
+      "sha256": "f67263620e2d868924c8b84f0be191f7c5843b2ef653bea735c718cfd79388af",
+      "build": 109,
+      "passed": false,
+      "error": "The expression evaluated to a falsy value:\n\n  assert(!fs.existsSync(fixed))\n",
+      "volume": {
+        "image": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/p2-backup-catalog-ZWHQAo/capacity.dmg",
+        "mount": "/private/tmp/helpr-workspace-validation-501/backup07-volume-QzHOEK",
+        "attached": true,
+        "filled": true,
+        "released": true,
+        "detached": true,
+        "device": "/dev/disk6s1",
+        "volumeBytes": 16736256,
+        "written": 16347136,
+        "remainingBytes": 0,
+        "freeBytes": 16347136,
+        "reclaimed": true
+      },
+      "checks": [
+        "隔离卷实际 ENOSPC，备份失败保留完整计划和已有结果",
+        "旧备份恢复与记录冷开保持较新的停止及约定撤销"
+      ],
+      "processes": [
+        {
+          "pid": 96257,
+          "dir": "/private/tmp/helpr-workspace-validation-501/backup-catalog-nTwgRp",
+          "exit": {
+            "code": 0,
+            "signal": null
+          }
+        },
+        {
+          "pid": 96260,
+          "dir": "/private/tmp/helpr-workspace-validation-501/backup-catalog-nTwgRp",
+          "exit": {
+            "code": 0,
+            "signal": null
+          }
+        },
+        {
+          "pid": 96261,
+          "dir": "/private/tmp/helpr-workspace-validation-501/backup-catalog-VTore6",
+          "exit": {
+            "code": null,
+            "signal": "SIGTERM"
+          }
+        }
+      ],
+      "remaining": [],
+      "archives": [
+        {
+          "name": "scheduled",
+          "original": {
+            "id": "a5b8b7c6-f3b7-4834-9a24-7c4b5b407615",
+            "created": 1794392475084,
+            "file": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/p2-backup-catalog-ZWHQAo/helpr-a5b8b7c6-f3b7-4834-9a24-7c4b5b407615.helpr-backup",
+            "checksum": "4c47d1e399c9c15cb4544b61114aec393e2275e1bfa2919358e3d0bef33a0f82",
+            "tasks": 2
+          },
+          "originalFileHash": "0f08b81796a106c482952ea2f31f42c66ce5b51c259424ff5cd9ad790b4759d8",
+          "safety": {
+            "id": "safety:c5d8dc11-18bc-461e-bdd9-aa3a107fa739",
+            "created": 1794392475259,
+            "file": "/private/tmp/helpr-workspace-validation-501/backup-catalog-nTwgRp/backups/before-restore-8d56b0efaddcb64e6773cd97106d70bffaeffc3630a2f3892dd0af9970473410.helpr-backup",
+            "checksum": "edf1bbac08fd94c90ff300beca732d4cd00d70ff2d9f971ace0b2d97ac5334db",
+            "tasks": 2
+          }
+        }
+      ]
+    },
+    {
+      "file": ".local/workspace-validation/p2-backup-catalog-OdONc6/result.json",
+      "sha256": "cfebecc91a16573b13452b662bb7d15cf15f36d15df24bb0aff8e792e507458e",
+      "build": 110,
+      "passed": true,
+      "error": null,
+      "volume": {
+        "image": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/p2-backup-catalog-OdONc6/capacity.dmg",
+        "mount": "/private/tmp/helpr-workspace-validation-501/backup07-volume-yAY7jA",
+        "attached": true,
+        "filled": true,
+        "released": true,
+        "detached": true,
+        "device": "/dev/disk6s1",
+        "volumeBytes": 16736256,
+        "written": 16347136,
+        "remainingBytes": 0,
+        "freeBytes": 16347136,
+        "reclaimed": true
+      },
+      "checks": [
+        "隔离卷实际 ENOSPC，备份失败保留完整计划和已有结果",
+        "旧备份恢复与记录冷开保持较新的停止及约定撤销",
+        "清理后新备份保留事实并省略已删除副本",
+        "旧备份恢复与记录冷开保持较新的清理及已完成事实"
+      ],
+      "processes": [
+        {
+          "pid": 687,
+          "dir": "/private/tmp/helpr-workspace-validation-501/backup-catalog-WM1Qc9",
+          "exit": {
+            "code": 0,
+            "signal": null
+          }
+        },
+        {
+          "pid": 690,
+          "dir": "/private/tmp/helpr-workspace-validation-501/backup-catalog-WM1Qc9",
+          "exit": {
+            "code": 0,
+            "signal": null
+          }
+        },
+        {
+          "pid": 691,
+          "dir": "/private/tmp/helpr-workspace-validation-501/backup-catalog-rTqRAQ",
+          "exit": {
+            "code": 0,
+            "signal": null
+          }
+        },
+        {
+          "pid": 692,
+          "dir": "/private/tmp/helpr-workspace-validation-501/backup-catalog-rTqRAQ",
+          "exit": {
+            "code": 0,
+            "signal": null
+          }
+        }
+      ],
+      "remaining": [],
+      "archives": [
+        {
+          "name": "scheduled",
+          "original": {
+            "id": "e007694e-2d03-4090-a93d-d671f298dd20",
+            "created": 1794393246374,
+            "file": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/p2-backup-catalog-OdONc6/helpr-e007694e-2d03-4090-a93d-d671f298dd20.helpr-backup",
+            "checksum": "0cd9445eb75b9983206797fad162cdea3a915e598df4c6b460aa3447ca2e4f6f",
+            "tasks": 2
+          },
+          "originalFileHash": "8e740e45cd459bba29ca9a02f59736079b6894cff32d5add95fdd0fa638bc9ea",
+          "safety": {
+            "id": "safety:034700b2-5437-4fc5-bccb-9316a6c18767",
+            "created": 1794393246548,
+            "file": "/private/tmp/helpr-workspace-validation-501/backup-catalog-WM1Qc9/backups/before-restore-b8f7c00d43516cc0800673c8fd9148493e61d3c5494d62bfc432fd21b06e995b.helpr-backup",
+            "checksum": "be4397d4815f5834a81a7dd3af4531892bce9d0dfef40720b5db393b160f2b83",
+            "tasks": 2
+          }
+        },
+        {
+          "name": "cleanup",
+          "original": {
+            "id": "d3e7a39f-9465-4901-9e84-830234dc4e45",
+            "created": 1794393247287,
+            "file": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/p2-backup-catalog-OdONc6/helpr-d3e7a39f-9465-4901-9e84-830234dc4e45.helpr-backup",
+            "checksum": "d04bf97cdbd2f5d026c5742787e0f949fc7c767cf3eac8f9edd97bc9b753729a",
+            "tasks": 4
+          },
+          "originalFileHash": "9613c75df96fd23db3b63708f541614607f9e558a00992b4ba943ec871304e25",
+          "safety": {
+            "id": "safety:2d0cf973-0db6-4114-a133-3b505bbac477",
+            "created": 1794393247479,
+            "file": "/private/tmp/helpr-workspace-validation-501/backup-catalog-rTqRAQ/backups/before-restore-58c6d4c003f93e87089fbd4fc2afa25b34df563bea53678272adcb96255618da.helpr-backup",
+            "checksum": "1ab7e32871eee903c1194fa0d6a3b3ae7e4c66d072230dc3948db8a7f33612d9",
+            "tasks": 4
+          },
+          "afterCleanup": {
+            "id": "e82d5515-0950-4603-bb54-c002f8bf1438",
+            "created": 1794393247590,
+            "file": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/p2-backup-catalog-OdONc6/helpr-e82d5515-0950-4603-bb54-c002f8bf1438.helpr-backup",
+            "checksum": "39186f3245c2acb03a99b3951381206128893344861be12676c4b1cde0758cb6",
+            "tasks": 4
+          }
+        }
+      ]
+    }
+  ],
+  "failedMountCleanup": {
+    "file": ".local/workspace-validation/p2-backup-catalog-lDhw9c/cleanup-after-failure.json",
+    "sha256": "2793221690563fc5c55fb8d32a6c959642c7d61b71397974d61598bc8f90bccd"
+  },
+  "sourceChecks": {
+    "full": {
+      "file": ".local/workspace-validation/p2-source-final.log",
+      "sha256": "dec48bf4abbc6836be98a2e8679fe7058e3b8cfb1c8d9353fde3ff83121c21e4"
+    },
+    "workspace": 614,
+    "validation": 41,
+    "legacy": 25,
+    "red": {
+      "file": ".local/workspace-validation/p2-cleanup-restore-red.log",
+      "sha256": "050428f894e3238bbdc599dfb17f13f22be7e5025c020210bd9656636ac2d92b"
+    },
+    "targeted": {
+      "file": ".local/workspace-validation/p2-cleanup-restore-green.log",
+      "sha256": "3a04080f65eec406df3e06e382a1d49654893308abae84ac2c03c3834d88ae44"
+    }
+  },
+  "preflight": {
+    "file": ".local/workspace-validation/p2-artifact-110/PREFLIGHT.json",
+    "sha256": "21ca92f62764a5e41d094f506076acf15a24cacae0d4af49c4658ce61e7bf492",
+    "missingRootLicense": [
+      "@ai-sdk/provider-utils@5.0.60",
+      "client-only@0.0.1",
+      "drizzle-orm@0.45.4",
+      "saxes@6.0.0"
+    ]
+  },
+  "cleanup": {
+    "pids": 873,
+    "groups": 159,
+    "remaining": [],
+    "leaseReleased": true
+  },
+  "desktop": {
+    "inventory": "timeout",
+    "timeoutMs": 10000,
+    "reset": true,
+    "newTabs": 0,
+    "oldTabClosureVerified": false
+  },
+  "counts": {
+    "prior": {
+      "builds": 109,
+      "installs": 19,
+      "starts": 348,
+      "faults": 52,
+      "cleanups": 25
+    },
+    "cumulative": {
+      "builds": 110,
+      "installs": 19,
+      "starts": 401,
+      "faults": 60,
+      "cleanups": 26
+    },
+    "realModelCalls": 0,
+    "remoteWrites": 0,
+    "p4Consumed": 0
+  }
+}

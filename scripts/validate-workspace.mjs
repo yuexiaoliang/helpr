@@ -70,6 +70,7 @@ const { values: options } = parseArgs({
     schedules: flag,
     'agreements-navigation-confirm': flag,
     coordination: flag,
+    parallel: { type: 'string' },
     'publication-recovery': { type: 'string' },
     interactive: flag,
     fault: flag,
@@ -109,6 +110,12 @@ if (args.length === 0) {
 if (options['release-p1']) {
   assert(Object.hasOwn(p1Cases, options['release-p1']), 'INVALID_P1_CASE');
   assert(options.fixture && Object.keys(options).every((key) => ['fixture', 'candidate', 'release-p1'].includes(key)), 'P1_REQUIRES_FIXED_FIXTURE');
+}
+if (options.parallel) {
+  assert(['capacity', 'workflows', 'records', 'late-intent'].includes(options.parallel), 'INVALID_PARALLEL_CASE');
+  assert(options.fixture && Object.keys(options).every(key => ['fixture', 'candidate', 'parallel'].includes(key)), 'PARALLEL_REQUIRES_FIXED_FIXTURE');
+  if (['capacity', 'late-intent'].includes(options.parallel)) options.coordination = true;
+  else options['workflow-repair'] = true;
 }
 if (options['rich-text-rebind']) {
   assert(['main','blank','srcdoc','replace'].includes(options['rich-text-rebind']), 'INVALID_REBIND_CASE');
@@ -322,6 +329,7 @@ const website = await fixture({
   crossSite: options['cross-site-controls'],
   separateFields: options['publication-fields'],
   repair: options['workflow-repair'],
+  parallel: ['workflows', 'records'].includes(options.parallel),
   participation: options.participation || options['task-groups'],
   review: options['participation-review'],
   material: (options.material || options.publication) ? { source: materialSource, publication: options.publication, recovery: Boolean(recoveryPoint) } : undefined,
@@ -346,6 +354,7 @@ let processRecord;
 let timedOut = false;
 const evidence = {
   app: appPath,
+  profile: data,
   storage: systemStorage ? 'system' : 'fixture',
   pendingAcceptance: ['系统钥匙串与跨重启登录', '原生窗口与真人输入'],
   started: new Date().toISOString(),
@@ -974,11 +983,11 @@ async function validate() {
   if (options['dynamic-result']) return verifyDynamicResult({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, management: options['management-result'], summary: options['summary-result']});
   if (options['link-navigation']) return verifyLinkNavigation({client, website, evidence, command, waitFor, check, launch, remainingOwned});
   if (options['action-navigation']) return verifyNavigation({client, website, evidence, command, waitFor, check, launch, remainingOwned});
-  if (options.coordination) return verifyCoordination({client, website, evidence, command, waitFor, check, launch, remainingOwned});
+  if (options.coordination) return verifyCoordination({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, capacity: options.parallel === 'capacity', lateIntent: options.parallel === 'late-intent'});
   if (options.schedules) return verifySchedules({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
   if (options.agreements) return verifyAgreements({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, confirmNavigation:options['agreements-navigation-confirm']===true});
   if (options.article) return verifyArticle({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
-  if (options['workflow-repair']) return verifyWorkflowRepair({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
+  if (options['workflow-repair']) return verifyWorkflowRepair({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, parallel: options.parallel});
   if (options['workflow-reuse']) return verifyWorkflow({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, crossSite: options['cross-site-controls'], ambiguousSelection: options['ambiguous-selection'], historyCleanup: options['history-cleanup'], separateFields: options['publication-fields']});
   if (options.publication) return verifyPublication(client);
   if (options.material) return verifyMaterial(client);

@@ -258,16 +258,21 @@ export async function verifyReleaseP1({
     await active.request(
       command('agreement-accept', { taskId: owner, versionId }),
     );
-    const startAt = new Date(Date.now() + 7000).toISOString();
+    const missed = mode === 'automation-missed';
+    const startAt = new Date(Date.now() + (missed ? 10000 : 7000)).toISOString();
+    const timing = missed
+      ? '只执行一次，错过先问我，容许延迟0秒'
+      : '每隔60秒，错过补最近一次';
     await active.request(
       command('message', {
         taskId: owner,
-        text: `定时计划：从 ${startAt} 起，每隔60秒，时区 Asia/Shanghai，错过补最近一次，夏令时重复或不存在先问我。`,
+        text: `定时计划：从 ${startAt} 起，${timing}，时区 Asia/Shanghai，夏令时重复或不存在先问我。`,
       }),
     );
     await active.request(
       command('message', { taskId: owner, text: '接受定时计划' }),
     );
+    if (missed) return { owner, versionId, startAt };
     const child = await waitFor(
       async () => (await history(owner)).schedule.rounds[0]?.links[0]?.taskId,
       20000,
@@ -284,6 +289,43 @@ export async function verifyReleaseP1({
     report.cases.push(sample);
     if (item === 'W') {
       const plan = await schedule(sample);
+      if (mode === 'automation-missed') {
+        sample.taskId = plan.owner;
+        const accepted = (await history(plan.owner)).schedule;
+        assert.equal(accepted.rounds.length, 0);
+        assert.equal(accepted.versions.at(-1).terms.missed, 'ask');
+        await active.quit();
+        assert.deepEqual(remainingOwned(), []);
+        assert(Date.now() < Date.parse(plan.startAt));
+        await waitFor(() => Date.now() >= Date.parse(plan.startAt) + 1100, 15000);
+        assert.equal(fixtureWrites(website).length, 0);
+        active = await launch();
+        const pending = await waitFor(async () => {
+          const round = (await history(plan.owner)).schedule.rounds[0];
+          return round?.status === 'waiting' && round;
+        }, 15000);
+        const before = await snapshot(active);
+        check('应用退出期间错过一次计划，冷开只生成待决轮次', () => {
+          assert.equal(pending.occurrence.dueAt, Date.parse(plan.startAt));
+          assert.deepEqual(pending.links, []);
+          assert.equal(before.tasks.length, 1);
+          assert.equal(fixtureWrites(website).length, 0);
+        });
+        await active.request(command('schedule-decide', {
+          taskId: plan.owner,
+          roundId: pending.id,
+          decision: 'skip',
+        }));
+        sample.final = await history(plan.owner);
+        report.schedule = { accepted, pending, final: sample.final.schedule };
+        check('明确跳过后同一轮次结案，未产生新任务或写入', () => {
+          assert.equal(report.schedule.final.rounds.length, 1);
+          assert.equal(report.schedule.final.rounds[0].id, pending.id);
+          assert.equal(report.schedule.final.rounds[0].status, 'skipped');
+          assert.equal(fixtureWrites(website).length, 0);
+        });
+        continue;
+      }
       sample.taskId = plan.child;
       sample.final = await stateUntil(sample, (e) => e.phase === 'complete');
       sample.independent = await independentResult(
@@ -463,6 +505,18 @@ export async function verifyReleaseP1({
           1,
         );
         assert.equal(sample.final.publicationChecks[0].checks.content, false);
+      });
+      await active.request(command('execution-intent', { taskId: sample.taskId, intent: 'stop' }));
+      const stopped = await stateUntil(sample, e => e.intent === 'stopped');
+      await active.request(command('execution-intent', { taskId: sample.taskId, intent: 'continue' }));
+      sample.final = await stateUntil(
+        sample,
+        e => e.version > stopped.version && ['paused', 'unknown'].includes(e.phase),
+      );
+      check('未知结果明确停止后继续，先核对现场并且不重发', () => {
+        assert.equal(sample.final.actions.filter(a => a.effect === 'publication').length, 1);
+        assert.equal(fixtureWrites(website, item).filter(r => r.kind === 'p1-published').length, 1);
+        assert(!sample.final.publicationChecks.some(c => c.status === 'verified'));
       });
       continue;
     }

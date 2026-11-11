@@ -13,12 +13,12 @@ import { workflowFixture } from './workflow-fixture.mjs';
 import { coordinationFixture } from './coordination-fixture.mjs';
 import { releaseP1Fixture } from './release-p1-fixture.mjs';
 
-export async function fixture({ releaseP1, richRebind = false, richPublication = false, richUnnamed = false, richInline = false, richFrame = false, richLines = false, richParagraph = false, richText = false, blankCreation = false, formChain = false, formNavigation = false, asyncUpload = false, createdTarget = false, summaryResult = false, managementResult = false, dynamicResult = false, linkNavigation = false, navigation = false, participation = false, review = false, material, workflow = false, repair = false, article = false, agreements = false, schedules = false, crossSite = false, separateFields = false, coordination = false } = {}) {
+export async function fixture({ releaseP1, richRebind = false, richPublication = false, richUnnamed = false, richInline = false, richFrame = false, richLines = false, richParagraph = false, richText = false, blankCreation = false, formChain = false, formNavigation = false, asyncUpload = false, createdTarget = false, summaryResult = false, managementResult = false, dynamicResult = false, linkNavigation = false, navigation = false, participation = false, review = false, material, workflow = false, repair = false, parallel = false, article = false, agreements = false, schedules = false, crossSite = false, separateFields = false, coordination = false } = {}) {
   const receipts = [];
   const handleReleaseP1 = releaseP1 ? releaseP1Fixture(receipts, releaseP1) : null;
   const handleNavigation = richPublication ? richTextPublicationFixture(receipts, {rebind:richRebind}) : richLines ? richTextLinesFixture(receipts,{frame:richFrame,inline:richInline,unnamed:richUnnamed}) : richText ? richTextFixture(receipts, {paragraph:richParagraph}) : blankCreation ? blankCreationFixture(receipts) : formNavigation ? formNavigationFixture(receipts, {chain:formChain}) : createdTarget ? createdTargetFixture(receipts) : linkNavigation ? linkNavigationFixture(receipts) : navigation ? navigationFixture(receipts) : null;
   const handleMaterial = material ? materialFixture(material, receipts) : null;
-  const handleWorkflow = workflow ? workflowFixture(receipts, {repair, article, agreements, schedules, crossSite, separateFields, dynamicResult, managementResult, summaryResult, asyncUpload}) : null;
+  const handleWorkflow = workflow ? workflowFixture(receipts, {repair: repair && !parallel, parallel, article, agreements, schedules, crossSite, separateFields, dynamicResult, managementResult, summaryResult, asyncUpload}) : null;
   const coordinated = coordination ? coordinationFixture(receipts) : null;
   const login = 'fixture-' + randomUUID();
   const server = http.createServer((req, res) => {
@@ -56,9 +56,8 @@ export async function fixture({ releaseP1, richRebind = false, richPublication =
           };
           if (review) {
             const p = plan.publication;
-            const signedIn = receipts.some(
-              (r) => r.kind === 'page' && r.task === 'A' && r.authenticated,
-            );
+            const observed = payload.messages.at(-2).content;
+            const signedIn = observed.includes('虚构会话仍有效');
             const published = receipts.find((r) => r.kind === 'published');
             const title = '团队简报';
             const next = !p?.approvalId
@@ -119,19 +118,28 @@ export async function fixture({ releaseP1, richRebind = false, richPublication =
               };
               proposal.approvalId = p.approvalId;
             }
+            if (signedIn) {
+              const base = `http://${req.headers.host}`;
+              proposal.coordination = {
+                account: { name: '账号 fixture', url: base + '/users/fixture' },
+                target: { name: '当前简报', url: base + '/page?task=A' },
+                permissionEvidence: ['可发布到内部公告'],
+              };
+            }
           }
           receipts.push({ kind: 'planning', decision: proposal.decision });
           res.writeHead(200, { 'Content-Type': 'text/event-stream' });
-          const chunk = (delta, finish_reason) =>
+          const chunk = (delta, finish_reason, usage) =>
             'data: ' +
             JSON.stringify({
               id: 'participation',
               choices: [{ index: 0, delta, finish_reason }],
+              usage,
             }) +
             '\n\n';
           res.end(
             chunk({ content: JSON.stringify(proposal) }, null) +
-              chunk({}, 'stop') +
+              chunk({}, 'stop', { prompt_tokens: 100, completion_tokens: 100, total_tokens: 200 }) +
               'data: [DONE]\n\n',
           );
         } catch {
@@ -189,7 +197,7 @@ export async function fixture({ releaseP1, richRebind = false, richPublication =
       receipts.push({ kind: 'page', task, authenticated });
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.end(
-        `<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>任务 ${task} 的网站</title><style>body{font:16px -apple-system;background:${task === 'A' ? '#f5f8fc' : '#f5faf6'};color:#244135;padding:40px}h1{font-size:28px}input,textarea{padding:12px;border:1px solid #c6d8cc;border-radius:8px;font:inherit}textarea{display:block;width:440px;height:160px;margin-top:18px}a{display:inline-block;padding:12px;background:#1b7956;color:white;border-radius:8px}p{line-height:1.9}</style><h1>任务 ${task} 网站</h1><p>这是本机虚构网站，用于检查真实页面、会话和输入隔离。</p><p id="session">${authenticated ? '虚构会话仍有效' : '尚未登录虚构账号'}</p><a href="/login?task=${task}">登录虚构账号</a><p><label>网页输入 <input aria-label="网页输入" placeholder="仅属于任务 ${task}"></label></p>${review ? '<p>发布栏目：内部公告</p><output></output><button>发布简报</button><script>const box=document.querySelector("input"),out=document.querySelector("output");box.oninput=()=>out.textContent="预览："+box.value;document.querySelector("button").onclick=async()=>{const r=await fetch("/publish"+location.search,{method:"POST",body:box.value});if(r.ok)out.textContent="已发布到内部公告"};</script>' : ''}<textarea aria-label="网站草稿" placeholder="网站未保存的编辑"></textarea><script>fetch('/probe?task=${task}',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({node:typeof process,require:typeof require,bridge:typeof window.workspace})})</script></html>`,
+        `<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>任务 ${task} 的网站</title><style>body{font:16px -apple-system;background:${task === 'A' ? '#f5f8fc' : '#f5faf6'};color:#244135;padding:40px}h1{font-size:28px}input,textarea{padding:12px;border:1px solid #c6d8cc;border-radius:8px;font:inherit}textarea{display:block;width:440px;height:160px;margin-top:18px}a{display:inline-block;padding:12px;background:#1b7956;color:white;border-radius:8px}p{line-height:1.9}</style><h1>任务 ${task} 网站</h1><p>这是本机虚构网站，用于检查真实页面、会话和输入隔离。</p><p id="session">${authenticated ? '虚构会话仍有效' : '尚未登录虚构账号'}</p><a href="/login?task=${task}">登录虚构账号</a>${review && authenticated ? `<a href="/users/fixture">账号 fixture</a><a href="/page?task=${task}">当前简报</a><p>可发布到内部公告</p>` : ''}<p><label>网页输入 <input aria-label="网页输入" placeholder="仅属于任务 ${task}"></label></p>${review ? '<p>发布栏目：内部公告</p><output></output><button>发布简报</button><script>const box=document.querySelector("input"),out=document.querySelector("output");box.oninput=()=>out.textContent="预览："+box.value;document.querySelector("button").onclick=async()=>{const r=await fetch("/publish"+location.search,{method:"POST",body:box.value});if(r.ok)out.textContent="已发布到内部公告"};</script>' : ''}<textarea aria-label="网站草稿" placeholder="网站未保存的编辑"></textarea><script>fetch('/probe?task=${task}',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({node:typeof process,require:typeof require,bridge:typeof window.workspace})})</script></html>`,
       );
       return;
     }

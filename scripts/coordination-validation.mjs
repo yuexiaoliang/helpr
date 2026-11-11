@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
+import { DatabaseSync } from 'node:sqlite';
+import path from 'node:path';
+import { spend } from './workspace-budget.mjs';
 
-export async function verifyCoordination({ client, website, evidence, command, waitFor, check, launch, remainingOwned }) {
+export async function verifyCoordination({ client, website, data, evidence, command, waitFor, check, launch, remainingOwned, capacity = false, lateIntent = false }) {
   const detail = evidence.coordination = { cases: [], realModelCalls: 0, remoteWrites: 0 };
   let active = client;
   const state = () => active.request({ kind: 'snapshot' });
@@ -49,10 +52,98 @@ export async function verifyCoordination({ client, website, evidence, command, w
   const read = item => fetch(website.base + '/record?item=' + item, { signal: AbortSignal.timeout(5000) }).then(r => r.json());
   await configure();
   const a = await add('A', '第一项内容'), b = await add('B', '第二项内容');
+  if (lateIntent) {
+    const point = 'records-after';
+    const control = (action) => active.request({ kind: 'validation-barrier', control: { action, point, taskId: a } });
+    await stop(a);
+    website.control({ holdWrites: true });
+    await start(b);
+    await waitFor(() => website.receipts.some(r => r.kind === 'write-start' && r.item === 'B'), 20000);
+    await control('arm');
+    spend('faults');
+    const continuing = active.request(command('execution-intent', { taskId: a, intent: 'continue' }));
+    void continuing.catch(() => {});
+    const blockedReply = await waitFor(async () => {
+      const status = await active.request({ kind: 'validation-barrier', control: { action: 'status' } });
+      return status.waits.some(w => w.key === point + ':' + a && w.reached) && status;
+    }, 5000);
+    const db = new DatabaseSync(path.join(data, 'workspace.sqlite'), { readOnly: true });
+    let saved;
+    try {
+      saved = JSON.parse(db.prepare('SELECT body FROM task_executions WHERE task_id = ?').get(a).body);
+    } finally {
+      db.close();
+    }
+    check('记录已接受旧继续，控制者回执仍在等待且网站未收到 A 的操作', () => {
+      assert.equal(saved.intent, 'automatic');
+      assert(!website.receipts.some(r => r.kind === 'write-start' && r.item === 'A'));
+    });
+    await stop(a);
+    await control('release');
+    await continuing;
+    website.control({ holdWrites: false });
+    await done(b);
+    const final = await state();
+    const results = await Promise.all(['A', 'B'].map(read));
+    check('较新停止胜过迟到继续回执，A 零写入，B 一次成功', () => {
+      const stopped = final.tasks.find(t => t.id === a).execution;
+      assert.equal(stopped.intent, 'stopped');
+      assert(stopped.version > saved.version);
+      assert.deepEqual(results, [{ value: '', revision: 0 }, { value: '第二项内容', revision: 1 }]);
+      assert.equal(website.receipts.filter(r => r.kind === 'write-start').length, 1);
+    });
+    evidence.lateIntent = { taskIds: [a, b], blockedReply, saved, final, results };
+    await active.quit();
+    return;
+  }
+  const queuedId = capacity ? await add('C', '第三项内容') : null;
+  if (capacity) website.control({ participationItem: 'C' });
   website.control({ holdWrites: true });
   await start(a); await start(b);
   await waitFor(() => website.receipts.filter(r => r.kind === 'write-start').length === 2, 30000);
   const overlapping = await state();
+  if (queuedId) {
+    const report = evidence.capacity = { taskIds: [a, b, queuedId], overlapping };
+    await start(queuedId);
+    report.queued = await waitFor(async () => {
+      const task = await get(queuedId);
+      return task.execution?.phase === 'queued' && task;
+    }, 15000);
+    check('两项网站写入尚未返回，第三项排队且未调用模型或写入', () => {
+      assert.equal(website.receipts.filter(r => r.kind === 'write-start').length, 2);
+      assert.equal(website.receipts.filter(r => r.kind === 'write-end').length, 0);
+      assert(!website.receipts.some(r => r.kind === 'planning' && r.item === 'C'));
+    });
+    await active.request({ kind: 'hide' });
+    assert.equal((await active.request({ kind: 'inspect' })).window.visible, false);
+    await stop(a);
+    const question = await waitFor(async () => (await get(queuedId)).execution?.question, 15000);
+    assert.equal(question.type, undefined);
+    assert.equal((await get(a)).execution.intent, 'stopped');
+    assert.equal((await get(b)).execution.intent, 'automatic');
+    website.control({ holdWrites: false });
+    await done(b);
+    report.whileWaiting = await state();
+    report.hidden = await active.request({ kind: 'inspect' });
+    check('窗口收起时 A 停止，B 完成，C 保留参与请求', () => {
+      assert.equal(report.whileWaiting.tasks.find(t => t.id === queuedId).execution.question.id, question.id);
+      assert.equal(report.whileWaiting.tasks.find(t => t.id === a).execution.intent, 'stopped');
+      assert.equal(report.hidden.window.visible, false);
+    });
+    await active.request({ kind: 'participation-reply', taskId: queuedId, questionId: question.id, text: '确认更新本项记录。' });
+    await done(queuedId);
+    report.final = await state();
+    report.website = await Promise.all(['A', 'B', 'C'].map(read));
+    check('各目标写入一次，迟到效果保留而 A 仍停止，隐藏窗口中的回复只影响 C', () => {
+      assert.deepEqual(report.website, ['第一项内容', '第二项内容', '第三项内容'].map(value => ({ value, revision: 1 })));
+      assert.equal(report.final.tasks.find(t => t.id === a).execution.phase, 'stopped');
+      assert.equal(report.final.tasks.find(t => t.id === b).execution.phase, 'complete');
+      assert.equal(report.final.tasks.find(t => t.id === queuedId).execution.phase, 'complete');
+      assert.equal(website.receipts.filter(r => r.kind === 'write-start').length, 3);
+    });
+    await active.quit();
+    return;
+  }
   website.control({ holdWrites: false });
   const first = await done(a), second = await done(b);
   check('两个不同稳定目标实际重叠写入，各自记录同一账号和独立目标', () => {

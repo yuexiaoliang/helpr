@@ -41,6 +41,7 @@ export const p1Cases = {
   'stop-after-upload': ['S'],
   repair: ['F', 'P', 'R'],
   automation: ['W'],
+  'automation-missed': ['W'],
 };
 
 function articlePlan(source, destination) {
@@ -357,7 +358,7 @@ export function releaseP1Fixture(receipts, mode) {
         const item = entry ? new URL(entry).searchParams.get('item') : 'W';
         if (!allowed.includes(item)) throw Error('P1_SAMPLE_LIMIT');
         let step;
-        if (mode === 'automation' && requested) {
+        if (mode.startsWith('automation') && requested) {
           const review = {
             decision: 'review',
             summary: '核对定时发布要求',
@@ -366,17 +367,18 @@ export function releaseP1Fixture(receipts, mode) {
           };
           if (plan.request.now) {
             const startAt = /\d{4}-\d{2}-\d{2}T[0-9:.]+Z/.exec(requested)?.[0];
+            const missed = mode === 'automation-missed';
             step = {
               ...review,
               evidence: ['User request'],
               schedule: {
                 zone: 'Asia/Shanghai',
                 startAt,
-                cadence: { kind: 'interval', seconds: 60 },
+                cadence: missed ? { kind: 'once' } : { kind: 'interval', seconds: 60 },
                 overlap: 'ask',
                 gap: 'ask',
-                missed: 'latest',
-                graceSeconds: 60,
+                missed: missed ? 'ask' : 'latest',
+                graceSeconds: missed ? 0 : 60,
                 periodKey: 'date',
               },
             };
