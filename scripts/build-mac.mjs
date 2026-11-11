@@ -45,12 +45,13 @@ const manifest = {
 };
 try {
   const notices = path.resolve(`dist/release-notices-${manifest.build}`);
-  manifest.dependencies = prepareReleaseNotices(notices);
-  fs.writeFileSync(path.join(notices, 'SOURCE.json'), JSON.stringify(source, null, 2) + '\n');
   execFileSync(process.execPath, ['scripts/build-native.mjs'], { stdio: 'inherit' });
   execFileSync('./node_modules/.bin/electron-vite', ['build'], {
     stdio: 'inherit',
   });
+  const renderer = JSON.parse(fs.readFileSync('dist/renderer/dependency-inputs.json', 'utf8'));
+  manifest.dependencies = prepareReleaseNotices(notices, renderer);
+  fs.writeFileSync(path.join(notices, 'SOURCE.json'), JSON.stringify(source, null, 2) + '\n');
   await build({
     targets: Platform.MAC.createTarget(['dir'], Arch.arm64),
     config: {

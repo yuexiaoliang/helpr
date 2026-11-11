@@ -41,21 +41,23 @@ try {
   const dependencies = JSON.parse(fs.readFileSync(dependenciesFile));
   assert.deepEqual(dependencies, build.dependencies);
   assert.equal(dependencies.lockSha256, source.files['pnpm-lock.yaml']);
+  const require = createRequire(import.meta.url);
+  const asar = createRequire(require.resolve('electron-builder'))('@electron/asar');
+  const archive = path.join(resources, 'app.asar');
+  const files = asar.listPackage(archive).map((f) => f.slice(1));
+  const readJSON = (file) => JSON.parse(asar.extractFile(archive, file));
   if (dependencies.schema >= 2) {
     const expected = path.join(output, 'notices');
-    prepareReleaseNotices(expected);
+    const renderer = dependencies.schema >= 3 ? readJSON('dist/renderer/dependency-inputs.json') : undefined;
+    prepareReleaseNotices(expected, renderer);
     assert.deepEqual(
       inventoryDirectory(path.join(resources, 'release')).files.filter((file) => file.path !== 'SOURCE.json'),
       inventoryDirectory(expected).files,
       'PACKAGED_RELEASE_NOTICES_CHANGED',
     );
     report.packagedNoticesVerified = true;
+    if (renderer) report.rendererPackages = dependencies.rendererPackages;
   }
-  const require = createRequire(import.meta.url);
-  const asar = createRequire(require.resolve('electron-builder'))('@electron/asar');
-  const archive = path.join(resources, 'app.asar');
-  const files = asar.listPackage(archive).map((f) => f.slice(1));
-  const readJSON = (file) => JSON.parse(asar.extractFile(archive, file));
   const pkg = readJSON('package.json');
   assert.equal(pkg.version, source.version);
   assert.equal(pkg.helprBuild, build.build);
@@ -72,7 +74,10 @@ try {
     assert.equal(item.version, installed.version);
     if (!version.startsWith('https:')) assert.equal(item.version, version);
   }
-  report.sourceOnlyPackages = dependencies.packages.filter((p) => !report.packages.some((i) => i.name === p.name && i.version === p.version)).map((p) => `${p.name}@${p.version}`);
+  report.sourceOnlyPackages = dependencies.packages
+    .filter(p => !report.packages.some(i => i.name === p.name && i.version === p.version))
+    .map(p => `${p.name}@${p.version}`)
+    .filter(key => !dependencies.rendererPackages?.includes(key));
   report.nativeComponents = bundle.files.filter((f) => /\.node$|\/process-path$|\/watch-owner$|input-bridge.build.json$/.test(f.path));
   const migrations = inventoryDirectory(path.join(resources, 'migrations'));
   assert.deepEqual(migrations, inventoryDirectory(path.resolve('app/records/migrations')), 'PACKAGED_MIGRATIONS_CHANGED');

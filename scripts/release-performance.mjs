@@ -19,6 +19,7 @@ export async function measureCompletedWorkspace({ active, cases, evidence, out, 
   const initialModels = modelCalls().length;
   const initialEffects = effects().length;
   report.preparation = { modelCalls: initialModels, siteEffects: initialEffects };
+  report.firstReadyMs = evidence.samples.find(sample => sample.kind === 'startup').ms;
   report.coldReadyMs = evidence.samples.at(-1).ms;
   report.phase = 'settled';
   const nativeTargets = path.join(out, 'native-targets.json');
@@ -55,5 +56,8 @@ export async function measureCompletedWorkspace({ active, cases, evidence, out, 
     assert(report.settled.maxSampleGapMs < 4500, 'RSS_SAMPLE_GAP');
     assert(report.settled.peakMiB <= 2048, 'RSS_PEAK_LIMIT');
     assert(report.settled.tailRangeMiB <= 256, 'RSS_TAIL_RANGE_LIMIT');
+  });
+  check('本轮首次启动含系统签名评估在 5000ms 内就绪', () => {
+    assert(report.firstReadyMs <= 5000, 'FIRST_READY_LIMIT');
   });
 }

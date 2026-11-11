@@ -21,18 +21,29 @@ export function collectPackageNotices(directory) {
   return texts.sort((a, b) => a.path.localeCompare(b.path, 'en'));
 }
 
-export function prepareReleaseNotices(output, root = process.cwd()) {
+export function prepareReleaseNotices(output, rendererDirectories, root = process.cwd()) {
   const listings = JSON.parse(execFileSync('pnpm', ['licenses', 'list', '--prod', '--json'], {
     cwd: root, encoding: 'utf8', timeout: 30000, maxBuffer: 8 * 1024 * 1024,
   }));
   const lockfile = fs.readFileSync(path.join(root, 'pnpm-lock.yaml'), 'utf8');
   const sourceDir = path.join(root, 'scripts/release-licenses');
   const sources = JSON.parse(fs.readFileSync(path.join(sourceDir, 'sources.json')));
+  const dependencyRoot = fs.realpathSync(path.join(root, 'node_modules'));
+  const rendererPaths = rendererDirectories === undefined ? [] : rendererDirectories;
+  if (!Array.isArray(rendererPaths)) throw Error('INVALID_RENDERER_DEPENDENCIES');
+  const renderer = new Set(rendererPaths.map(relative => {
+    const directory = fs.realpathSync(path.resolve(root, relative));
+    if (!directory.startsWith(dependencyRoot + path.sep)) throw Error('INVALID_RENDERER_DEPENDENCY_PATH');
+    return directory;
+  }));
+  const production = Object.values(listings).flat().flatMap(entry => entry.paths.map(directory => fs.realpathSync(directory)));
+  const rendererPackages = new Set();
   const packages = new Map();
-  for (const entry of Object.values(listings).flat()) for (const directory of entry.paths) {
+  for (const directory of new Set([...production, ...renderer])) {
     const pkg = JSON.parse(fs.readFileSync(path.join(directory, 'package.json')));
     const texts = collectPackageNotices(directory);
     const key = `${pkg.name}@${pkg.version}`;
+    if (renderer.has(directory)) rendererPackages.add(key);
     const origin = sources[key];
     if (origin) {
       const resolution = `\n    resolution: {integrity: ${origin.integrity}}\n`;
@@ -62,11 +73,14 @@ export function prepareReleaseNotices(output, root = process.cwd()) {
   const extras = ['node_modules/electron/dist/LICENSE', 'node_modules/electron/dist/LICENSES.chromium.html', 'app/renderer/assets/PHOSPHOR-LICENSE.txt'];
   const materials = extras.map((file) => ({ path: file, sha256: fileHash(path.join(root, file)) }));
   const manifest = {
-    schema: 2, lockSha256: sha256(lockfile),
+    schema: rendererDirectories === undefined ? 2 : 3, lockSha256: sha256(lockfile),
     electron: JSON.parse(fs.readFileSync(path.join(root, 'node_modules/electron/package.json'))).version,
     packages: ordered.map(({ notices, ...p }) => ({ ...p, notices: notices.map(({ text: _text, ...n }) => n) })),
+    ...(rendererDirectories !== undefined && { rendererPackages: [...rendererPackages].sort() }),
     materials, missingRootLicense: ordered.filter((p) => !p.rootLicensePresent).map((p) => `${p.name}@${p.version}`),
-    scope: 'Installed production dependency declarations, exact upstream notices and separately identified standard license terms.',
+    scope: rendererDirectories === undefined
+      ? 'Installed production dependency declarations, exact upstream notices and separately identified standard license terms.'
+      : 'Production dependency tree and modules emitted into the renderer, with exact upstream notices and separately identified standard license terms.',
   };
   fs.mkdirSync(output, { recursive: true });
   fs.writeFileSync(path.join(output, 'DEPENDENCIES.json'), JSON.stringify(manifest, null, 2) + '\n');
