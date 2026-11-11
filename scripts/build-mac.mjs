@@ -66,6 +66,9 @@ try {
         'dist/preload/**',
         'dist/renderer/**',
         'package.json',
+        // SQLite 在此交付目标只加载 Darwin arm64 预构建模块。
+        '!**/node_modules/better-sqlite3/{binding.gyp,deps,src}{,/**}',
+        '!**/node_modules/better-sqlite3/prebuilds/{darwin-x64,linux-*,linuxmusl-*,win32-*}.node',
       ],
       extraResources: [
         { from: 'app/records/migrations', to: 'migrations' },

@@ -12,7 +12,12 @@ export function packageWorkspaceHost(appPath) {
   const readInfo = file => JSON.parse(execFileSync('/usr/bin/plutil', ['-convert', 'json', '-o', '-', file], { encoding: 'utf8' }));
   const writeInfo = (file, info) => execFileSync('/usr/bin/plutil', ['-convert', 'xml1', '-o', file, '-'], { input: JSON.stringify(info) });
   try {
-    fs.cpSync(appPath, staged, { recursive: true, verbatimSymlinks: true, mode: fs.constants.COPYFILE_FICLONE });
+    // 完整交付声明随外层发布包保存，内部宿主只复制启动所需布局。
+    const releaseNotices = path.join(appPath, 'Contents/Resources/release');
+    fs.cpSync(appPath, staged, {
+      recursive: true, verbatimSymlinks: true, mode: fs.constants.COPYFILE_FICLONE,
+      filter: file => file !== releaseNotices,
+    });
     const contents = path.join(staged, 'Contents');
     fs.renameSync(path.join(contents, 'MacOS/helpr'), path.join(contents, 'MacOS/helpr Workspace Helper'));
     const infoFile = path.join(contents, 'Info.plist');
