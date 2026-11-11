@@ -12,7 +12,8 @@ export function captureReleaseInputs(root = process.cwd()) {
     cwd: root, encoding: 'utf8', timeout: 5000, maxBuffer: 8 * 1024 * 1024,
   }).trim();
   const names = git(['ls-files', '-z', '--cached', '--others', '--exclude-standard', '--',
-    'app', 'scripts', 'tests/workspace', 'package.json', 'pnpm-lock.yaml',
+    'app', 'scripts', 'tests/workspace', 'tests/fixtures', 'package.json', 'pnpm-lock.yaml',
+    'development-signing.json',
     'pnpm-workspace.yaml', '.node-version', '*.config.*', 'tsconfig.json',
   ]).split('\0').filter(Boolean);
   const files = Object.fromEntries([...new Set(names)].sort().map((name) => {

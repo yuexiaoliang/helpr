@@ -297,9 +297,12 @@ export async function startController(
   });
   const workers = new Set<ReturnType<typeof utilityProcess.fork>>();
   const trayUpdates: { refresh?: () => void } = {};
+  let hostReady = false;
   const publish = () => {
     trayUpdates.refresh?.();
-    if (host.connected) host.send({ state: executions.decorate(state) });
+    // 让宿主先完成主窗口绘制，再根据最新资料恢复各任务网页和对话。
+    if (hostReady && host.connected)
+      host.send({ state: executions.decorate(state) });
   };
   let recordsAvailable = true;
   let storageUnavailable = false;
@@ -1526,7 +1529,8 @@ export async function startController(
           .optional(),
       })
       .safeParse(input);
-    if (!ready.success) return;
+    if (!ready.success || hostReady) return;
+    hostReady = true;
     versions.start();
     publish();
     log.event('ready');

@@ -35,6 +35,7 @@ const controls = (drupal, changed) => ({
 
 export const p1Cases = {
   business: ['F', 'R', 'C', 'A', 'D'],
+  performance: ['F', 'R'],
   'wrong-target': ['I'],
   'unknown-result': ['U'],
   'changed-node': ['N'],

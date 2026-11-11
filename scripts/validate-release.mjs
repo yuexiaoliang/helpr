@@ -4,6 +4,7 @@ import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 import { captureReleaseInputs, assertSameInputs, inventoryDirectory, fileHash } from './release-inputs.mjs';
+import { prepareReleaseNotices } from './release-notices.mjs';
 
 // 只读核对固定构建；不会启动应用、安装、读取用户配置或联系模型／业务网站。
 const args = process.argv.slice(2);
@@ -40,6 +41,16 @@ try {
   const dependencies = JSON.parse(fs.readFileSync(dependenciesFile));
   assert.deepEqual(dependencies, build.dependencies);
   assert.equal(dependencies.lockSha256, source.files['pnpm-lock.yaml']);
+  if (dependencies.schema >= 2) {
+    const expected = path.join(output, 'notices');
+    prepareReleaseNotices(expected);
+    assert.deepEqual(
+      inventoryDirectory(path.join(resources, 'release')).files.filter((file) => file.path !== 'SOURCE.json'),
+      inventoryDirectory(expected).files,
+      'PACKAGED_RELEASE_NOTICES_CHANGED',
+    );
+    report.packagedNoticesVerified = true;
+  }
   const require = createRequire(import.meta.url);
   const asar = createRequire(require.resolve('electron-builder'))('@electron/asar');
   const archive = path.join(resources, 'app.asar');

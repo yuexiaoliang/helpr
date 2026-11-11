@@ -1,0 +1,226 @@
+{
+  "schema": 1,
+  "batch": "release-23-real-business-v1",
+  "sourceData": "synthetic",
+  "account": "helpr_tester",
+  "model": {
+    "provider": "DeepSeek",
+    "model": "deepseek-flash",
+    "protocol": "chat-completions",
+    "sdkRetries": 0,
+    "outputTokens": 2048,
+    "configuration": "沿用本机受保护配置，执行前确认非秘密配置与实际记录，账本不保存密钥。"
+  },
+  "limits": {
+    "requests": 120,
+    "reservedTokens": 1200000,
+    "outputTokensPerRequest": 2048,
+    "attachments": 10,
+    "newContents": 10,
+    "publishes": 10,
+    "minutes": 90
+  },
+  "initialUse": {
+    "requests": 0,
+    "reservedTokens": 0,
+    "attachments": 0,
+    "newContents": 0,
+    "publishes": 0
+  },
+  "sites": {
+    "wordpress": {
+      "entry": "http://home.ts-ali.internal:38080/wp-admin/edit.php",
+      "category": "Excel 验证",
+      "categoryUrl": "http://home.ts-ali.internal:38080/?cat=2"
+    },
+    "drupal": {
+      "entry": "http://home.ts-ali.internal:38081/admin/content",
+      "contentType": "日报",
+      "category": "Excel 验证"
+    }
+  },
+  "inputs": [
+    {
+      "id": "R23-FIRST-A",
+      "profile": "A",
+      "website": "wordpress",
+      "title": "R23-FIRST-A 北岸仓日报",
+      "filename": "R23-FIRST-A.xlsx",
+      "bytes": 16405,
+      "sha256": "c107b87880cf008de72b15c2986e40ce730a5fa173bc521c8946652a66437e76",
+      "workflowSource": null,
+      "coldOpen": false,
+      "goal": "从 http://home.ts-ali.internal:38080/wp-admin/edit.php 开始，在“Excel 验证”分类新建文章。标题为“R23-FIRST-A 北岸仓日报”。正文使用“北岸仓 2026-10-11 的日报见原始 Excel 附件。此数据为虚构验收样本。”把原始 Excel 作为可下载附件。先显示本次标题、正文、栏目、附件预览，确认后发布一次。",
+      "expected": {
+        "category": "Excel 验证",
+        "attachmentFilename": "R23-FIRST-A.xlsx",
+        "body": "北岸仓 2026-10-11 的日报见原始 Excel 附件。此数据为虚构验收样本。"
+      }
+    },
+    {
+      "id": "R23-FIRST-B",
+      "profile": "B",
+      "website": "wordpress",
+      "title": "R23-FIRST-B 南桥仓日报",
+      "filename": "R23-FIRST-B.xlsx",
+      "bytes": 16405,
+      "sha256": "165433b3901eb1005e2c6c878c7aee3eec44ce3dd66ba7a2c4cbc2012b4f084b",
+      "workflowSource": null,
+      "coldOpen": false,
+      "goal": "从 http://home.ts-ali.internal:38080/wp-admin/edit.php 开始，在“Excel 验证”分类新建文章。标题为“R23-FIRST-B 南桥仓日报”。正文使用“南桥仓 2026-10-12 的日报见原始 Excel 附件。此数据为虚构验收样本。”把原始 Excel 作为可下载附件。先显示本次标题、正文、栏目、附件预览，确认后发布一次。",
+      "expected": {
+        "category": "Excel 验证",
+        "attachmentFilename": "R23-FIRST-B.xlsx",
+        "body": "南桥仓 2026-10-12 的日报见原始 Excel 附件。此数据为虚构验收样本。"
+      }
+    },
+    {
+      "id": "R23-REUSE-A",
+      "profile": "A",
+      "website": "wordpress",
+      "title": "R23-REUSE-A 西浦仓日报",
+      "filename": "R23-REUSE-A.xlsx",
+      "bytes": 16405,
+      "sha256": "0712b35ddf9c6652b9e310f1dffefe382a9a9370db0210ef3894038d01513dcb",
+      "workflowSource": "R23-FIRST-A",
+      "coldOpen": false,
+      "goal": "从 http://home.ts-ali.internal:38080/wp-admin/edit.php 开始，在“Excel 验证”分类新建文章。标题为“R23-REUSE-A 西浦仓日报”。正文使用“西浦仓 2026-10-13 的日报见原始 Excel 附件。此数据为虚构验收样本。”把原始 Excel 作为可下载附件。先显示本次标题、正文、栏目、附件预览，确认后发布一次。",
+      "expected": {
+        "category": "Excel 验证",
+        "attachmentFilename": "R23-REUSE-A.xlsx",
+        "body": "西浦仓 2026-10-13 的日报见原始 Excel 附件。此数据为虚构验收样本。"
+      }
+    },
+    {
+      "id": "R23-REUSE-B",
+      "profile": "B",
+      "website": "wordpress",
+      "title": "R23-REUSE-B 东岭仓日报",
+      "filename": "R23-REUSE-B.xlsx",
+      "bytes": 16405,
+      "sha256": "cb3ba208dce536e417a4defd52500d92ece3c5607aa92a239d92e9a780cb5f7c",
+      "workflowSource": "R23-FIRST-B",
+      "coldOpen": false,
+      "goal": "从 http://home.ts-ali.internal:38080/wp-admin/edit.php 开始，在“Excel 验证”分类新建文章。标题为“R23-REUSE-B 东岭仓日报”。正文使用“东岭仓 2026-10-14 的日报见原始 Excel 附件。此数据为虚构验收样本。”把原始 Excel 作为可下载附件。先显示本次标题、正文、栏目、附件预览，确认后发布一次。",
+      "expected": {
+        "category": "Excel 验证",
+        "attachmentFilename": "R23-REUSE-B.xlsx",
+        "body": "东岭仓 2026-10-14 的日报见原始 Excel 附件。此数据为虚构验收样本。"
+      }
+    },
+    {
+      "id": "R23-COLD-A",
+      "profile": "A",
+      "website": "wordpress",
+      "title": "R23-COLD-A 湖西站日报",
+      "filename": "R23-COLD-A.xlsx",
+      "bytes": 16404,
+      "sha256": "85da516197c7485a01354c8df09cc5f6bb21407373958a37fdaab7103cd0dbd3",
+      "workflowSource": "R23-FIRST-A",
+      "coldOpen": true,
+      "goal": "从 http://home.ts-ali.internal:38080/wp-admin/edit.php 开始，在“Excel 验证”分类新建文章。标题为“R23-COLD-A 湖西站日报”。正文使用“湖西站 2026-10-15 的日报见原始 Excel 附件。此数据为虚构验收样本。”把原始 Excel 作为可下载附件。先显示本次标题、正文、栏目、附件预览，确认后发布一次。",
+      "expected": {
+        "category": "Excel 验证",
+        "attachmentFilename": "R23-COLD-A.xlsx",
+        "body": "湖西站 2026-10-15 的日报见原始 Excel 附件。此数据为虚构验收样本。"
+      }
+    },
+    {
+      "id": "R23-COLD-B",
+      "profile": "B",
+      "website": "wordpress",
+      "title": "R23-COLD-B 江东站日报",
+      "filename": "R23-COLD-B.xlsx",
+      "bytes": 16405,
+      "sha256": "09e2a93e57aa8ff6355c4d72b85e01873b2678b8136a1bf81d6c8d76a1eea3ec",
+      "workflowSource": "R23-FIRST-B",
+      "coldOpen": true,
+      "goal": "从 http://home.ts-ali.internal:38080/wp-admin/edit.php 开始，在“Excel 验证”分类新建文章。标题为“R23-COLD-B 江东站日报”。正文使用“江东站 2026-10-16 的日报见原始 Excel 附件。此数据为虚构验收样本。”把原始 Excel 作为可下载附件。先显示本次标题、正文、栏目、附件预览，确认后发布一次。",
+      "expected": {
+        "category": "Excel 验证",
+        "attachmentFilename": "R23-COLD-B.xlsx",
+        "body": "江东站 2026-10-16 的日报见原始 Excel 附件。此数据为虚构验收样本。"
+      }
+    },
+    {
+      "id": "R23-ARTICLE-A",
+      "profile": "A",
+      "website": "wordpress",
+      "title": "R23-ARTICLE-A 河湾站日报",
+      "filename": "R23-ARTICLE-A.xlsx",
+      "bytes": 16408,
+      "sha256": "23c0dcdbc6f483b3a4da96df597e6da2d4484e2840e32b335dd144ffa0a91332",
+      "workflowSource": "实际匹配的本批 WordPress 流程或重新观察",
+      "coldOpen": false,
+      "goal": "从 http://home.ts-ali.internal:38080/wp-admin/edit.php 开始，在“Excel 验证”分类新建文章。标题为“R23-ARTICLE-A 河湾站日报”。读取 Excel 的“虚构日报”工作表。写成简短日报，保留站点、日期、已完成件数、待处理件数和已核对份数，逐项引用对应单元格，不补写表中没有的数字。把原始 Excel 作为可下载附件。先显示本次标题、正文、栏目、附件预览，确认后发布一次。",
+      "expected": {
+        "category": "Excel 验证",
+        "attachmentFilename": "R23-ARTICLE-A.xlsx",
+        "cells": {
+          "B2": "河湾站",
+          "B3": "2026-10-17",
+          "B4": 34,
+          "B5": 4,
+          "B6": 11
+        }
+      }
+    },
+    {
+      "id": "R23-ARTICLE-B",
+      "profile": "B",
+      "website": "wordpress",
+      "title": "R23-ARTICLE-B 港口站日报",
+      "filename": "R23-ARTICLE-B.xlsx",
+      "bytes": 16408,
+      "sha256": "7ee43a85dfaeb322a20dd0568521a4426f12801e5e310b136a3c494540af77ec",
+      "workflowSource": "实际匹配的本批 WordPress 流程或重新观察",
+      "coldOpen": false,
+      "goal": "从 http://home.ts-ali.internal:38080/wp-admin/edit.php 开始，在“Excel 验证”分类新建文章。标题为“R23-ARTICLE-B 港口站日报”。读取 Excel 的“虚构日报”工作表。写成简短日报，保留站点、日期、已完成件数、待处理件数和已核对份数，逐项引用对应单元格，不补写表中没有的数字。把原始 Excel 作为可下载附件。先显示本次标题、正文、栏目、附件预览，确认后发布一次。",
+      "expected": {
+        "category": "Excel 验证",
+        "attachmentFilename": "R23-ARTICLE-B.xlsx",
+        "cells": {
+          "B2": "港口站",
+          "B3": "2026-10-18",
+          "B4": 29,
+          "B5": 8,
+          "B6": 12
+        }
+      }
+    },
+    {
+      "id": "R23-DRUPAL-A",
+      "profile": "A",
+      "website": "drupal",
+      "title": "R23-DRUPAL-A 山前站日报",
+      "filename": "R23-DRUPAL-A.xlsx",
+      "bytes": 16407,
+      "sha256": "ae5ba887fc1e41d963dc3d9de75eb90a82d0bc6569d7524d76fc7a33c6fcdfba",
+      "workflowSource": null,
+      "coldOpen": false,
+      "goal": "从 http://home.ts-ali.internal:38081/admin/content 开始，在“Excel 验证”栏目新建日报。标题为“R23-DRUPAL-A 山前站日报”。正文使用“山前站 2026-10-19 的日报见原始 Excel 附件。此数据为虚构验收样本。”把原始 Excel 作为可下载附件。先显示本次标题、正文、栏目、附件预览，确认后发布一次。",
+      "expected": {
+        "category": "Excel 验证",
+        "attachmentFilename": "R23-DRUPAL-A.xlsx",
+        "body": "山前站 2026-10-19 的日报见原始 Excel 附件。此数据为虚构验收样本。"
+      }
+    },
+    {
+      "id": "R23-DRUPAL-B",
+      "profile": "B",
+      "website": "drupal",
+      "title": "R23-DRUPAL-B 松林站日报",
+      "filename": "R23-DRUPAL-B.xlsx",
+      "bytes": 16407,
+      "sha256": "2c9ad8332d4968bb2e77fe619d0177bbce36958b95bd573acaa728bca8ad2186",
+      "workflowSource": null,
+      "coldOpen": false,
+      "goal": "从 http://home.ts-ali.internal:38081/admin/content 开始，在“Excel 验证”栏目新建日报。标题为“R23-DRUPAL-B 松林站日报”。正文使用“松林站 2026-10-20 的日报见原始 Excel 附件。此数据为虚构验收样本。”把原始 Excel 作为可下载附件。先显示本次标题、正文、栏目、附件预览，确认后发布一次。",
+      "expected": {
+        "category": "Excel 验证",
+        "attachmentFilename": "R23-DRUPAL-B.xlsx",
+        "body": "松林站 2026-10-20 的日报见原始 Excel 附件。此数据为虚构验收样本。"
+      }
+    }
+  ]
+}

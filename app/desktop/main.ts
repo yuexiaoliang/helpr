@@ -2,7 +2,6 @@ import { app, dialog } from 'electron';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { spawn } from 'node:child_process';
-import { startController } from './controller';
 import { resolveStartup, debuggingSwitches, runtimeImages } from './startup';
 import {
   startupFailureCodeSchema,
@@ -93,8 +92,10 @@ try {
       app.on('window-all-closed', () => {});
       void app
         .whenReady()
-        .then(() => {
+        .then(async () => {
           startupStage = 'controller-init';
+          // 网页宿主和 Dock 重开只需要入口校验，不加载模型和执行控制模块。
+          const { startController } = await import('./controller');
           return startController(root, validation, fixtureOrigin);
         })
         .catch((error: unknown) => {

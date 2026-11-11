@@ -134,6 +134,7 @@ export async function verifyReleaseP1({
   launch,
   remainingOwned,
   mode,
+  measure,
 }) {
   const report = (evidence.releaseP1 = {
     mode,
@@ -554,7 +555,16 @@ export async function verifyReleaseP1({
       if (item === 'P') assert.equal(e.workflowRepairs.length, 1);
     });
   }
+  if (measure) {
+    for (const sample of report.cases) {
+      await active.request(command('navigate', {
+        taskId: sample.taskId, url: sample.independent.result,
+      }));
+      await ready(sample.taskId);
+    }
+  }
   await reopen('最终冷开', report.cases);
+  if (measure) await measure(active, report.cases);
   await active.quit();
   assert.deepEqual(remainingOwned(), []);
   const db = new DatabaseSync(path.join(data, 'workspace.sqlite'), {

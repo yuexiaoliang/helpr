@@ -27,6 +27,7 @@ import { verifyArticle } from './article-validation.mjs';
 import { verifyCoordination } from './coordination-validation.mjs';
 import { verifyReleaseP1 } from './release-p1-validation.mjs';
 import { p1Cases } from './release-p1-fixture.mjs';
+import { measureCompletedWorkspace } from './release-performance.mjs';
 
 const args = process.argv.slice(2);
 const flag = { type: 'boolean' };
@@ -107,9 +108,10 @@ if (args.length === 0) {
   process.exit(0);
 }
 
+const releasePerformance = options['release-p1'] === 'performance';
 if (options['release-p1']) {
   assert(Object.hasOwn(p1Cases, options['release-p1']), 'INVALID_P1_CASE');
-  assert(options.fixture && Object.keys(options).every((key) => ['fixture', 'candidate', 'release-p1'].includes(key)), 'P1_REQUIRES_FIXED_FIXTURE');
+  assert(options.fixture && Object.keys(options).every((key) => ['fixture', 'candidate', 'release-p1'].includes(key) || (releasePerformance && key === 'install')), 'P1_REQUIRES_FIXED_FIXTURE');
 }
 if (options.parallel) {
   assert(['capacity', 'workflows', 'records', 'late-intent'].includes(options.parallel), 'INVALID_PARALLEL_CASE');
@@ -363,6 +365,7 @@ const evidence = {
   processes: [],
   fixture: website.receipts,
 };
+if (releasePerformance) evidence.performance = { phase: 'preparation', rss: [] };
 const interrupt = () => {
   evidence.interrupted = true;
   timedOut = true;
@@ -377,7 +380,9 @@ const deadline = setTimeout(
   },
   inputPreparation
     ? 60000
-    : options.interactive || systemStorage
+    : releasePerformance
+      ? 9 * 60000
+      : options.interactive || systemStorage
       ? 30 * 60 * 1000
       : (options['release-p1'] || options.coordination || options['workflow-repair'] || options.agreements || options.schedules || options['cross-site-controls'] || options['history-cleanup']) ? 5 * 60000 : (options['workflow-reuse'] || options['form-chain'] || options['rich-text'] || options['rich-text-lines'] || options['rich-text-publication'] || options['rich-text-rebind']) ? 3 * 60000 : 2 * 60000,
 );
@@ -396,9 +401,9 @@ async function waitFor(fn, timeout = 10000, cleanup = false) {
   }
   throw Error('VALIDATION_TIMEOUT');
 }
-function remainingOwned() {
+function ownedProcesses() {
   if (!processRecord) return [];
-  const rows = execFileSync('/bin/ps', ['-axo', 'pid=,ppid=,pgid='], {
+  const rows = execFileSync('/bin/ps', ['-axo', 'pid=,ppid=,pgid=,rss='], {
     encoding: 'utf8',
     timeout: 5000,
   })
@@ -424,8 +429,25 @@ function remainingOwned() {
   lastPids = [...owned];
   processRecord.groups = [...ownedGroups];
   processRecord.remaining = live.map(([pid]) => pid);
-  return processRecord.remaining;
+  return live.map(([pid, parent, group, rssKiB]) => ({ pid, parent, group, rssKiB }));
 }
+function remainingOwned() {
+  return ownedProcesses().map(({ pid }) => pid);
+}
+const rssTimer = releasePerformance ? setInterval(() => {
+  if (!app?.connected) return;
+  try {
+    const at = Date.now();
+    const processes = ownedProcesses();
+    evidence.performance.rss.push({
+      at, start: processRecord.number, phase: evidence.performance.phase, processes,
+      rssKiB: processes.reduce((sum, p) => sum + p.rssKiB, 0),
+    });
+  } catch (error) {
+    evidence.performance.collectorError = error.message;
+    timedOut = true;
+  }
+}, 3000) : undefined;
 function alive(pid) {
   try {
     process.kill(pid, 0);
@@ -438,7 +460,8 @@ async function launch({ holdRecovery = false } = {}) {
   if (timedOut) throw Error('VALIDATION_TIME_LIMIT');
   assert.equal(remainingOwned().length, 0, 'PREVIOUS_PROCESSES_REMAIN');
   const number = spend('starts').used.starts;
-  const start = Date.now();
+  const start = performance.now();
+  const spawnedAt = Date.now();
   const env = Object.fromEntries(
     ['HOME', 'PATH', 'TMPDIR', 'LANG']
       .filter((key) => process.env[key])
@@ -465,6 +488,7 @@ async function launch({ holdRecovery = false } = {}) {
   const run = {
     number,
     controller: child.pid,
+    startup: { spawnedAt },
     seen: {},
     groups: [],
     remaining: [],
@@ -496,10 +520,13 @@ async function launch({ holdRecovery = false } = {}) {
         run.quitError = message.error;
       }
       if (message.launching) {
+        run.startup.hostLaunchMs = Math.round(performance.now() - start);
         for (const pid of [message.launcherPid, message.hostPid])
           if (Number.isSafeInteger(pid) && pid > 1) lastPids.push(pid);
       }
+      if (message.startupFailure) run.startup.failure = message.startupFailure;
       if (message.ready) {
+        run.startup.readyMs = Math.round(performance.now() - start);
         ready = message;
         clearTimeout(timer);
         resolve();
@@ -536,7 +563,7 @@ async function launch({ holdRecovery = false } = {}) {
     kind: 'startup',
     number,
     fixtureSession: ready.fixtureSession,
-    ms: Date.now() - start,
+    ms: run.startup.readyMs,
     versions: ready.versions,
   });
   lastPids.push(ready.hostPid, ready.recordsPid);
@@ -973,7 +1000,13 @@ async function verifyMaterial(client) {
 }
 async function validate() {
   let client = await launch();
-  if (options['release-p1']) return verifyReleaseP1({ client, website, data, evidence, command, waitFor, check, launch, remainingOwned, mode: options['release-p1'] });
+  if (options['release-p1']) return verifyReleaseP1({
+    client, website, data, evidence, command, waitFor, check, launch, remainingOwned,
+    mode: options['release-p1'],
+    measure: releasePerformance ? (active, cases) => measureCompletedWorkspace({
+      active, cases, evidence, out, waitFor, check,
+    }) : undefined,
+  });
   if (options['upload-ready']) return verifyUploadReady({client, website, data, evidence, command, waitFor, check, launch, remainingOwned});
   if (options['rich-text-rebind']) return verifyRichTextRebind({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, mode:options['rich-text-rebind']});
   if (options['rich-text-publication']) return verifyRichTextPublication({client, website, data, evidence, command, waitFor, check, launch, remainingOwned, mode:options['rich-text-publication']});
@@ -1322,6 +1355,7 @@ try {
   process.exitCode = 1;
   console.error('验证停止：' + error.message);
 } finally {
+  clearInterval(rssTimer);
   if (app?.connected) {
     try {
       remainingOwned();
