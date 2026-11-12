@@ -3,7 +3,7 @@
   "candidate": 118,
   "predecessor": 117,
   "sourceCommit": "d496073a39b0820bcf92abd59d71a24d1adfe2b4",
-  "status": "native-pending",
+  "status": "refrozen",
   "artifact": {
     "path": "/Users/yuexiaoliang/projects/helpr/dist/candidates/release-p4-draft-recovery-0-2-3/mac-arm64/helpr.app",
     "sha256": "66a09417f750776595bf896e799ab42d3ec30be250fabeeb1c6622d7217395f7",
@@ -17,7 +17,7 @@
     }
   },
   "p3Acceptance": {
-    "passed": false,
+    "passed": true,
     "firstReadyMs": 4996,
     "coldReadyMs": 1018,
     "settled": {
@@ -34,10 +34,18 @@
       "siteEffects": 0
     },
     "native": {
-      "status": "pending",
-      "reason": "Computer Use desktop control unavailable",
-      "observed": 0,
-      "required": 6
+      "evidence": {
+        "path": ".local/workspace-validation/p4-recovery/native-passed.json",
+        "sha256": "20e1fe2c45fc87e9df987720a06779315dc00ae8ea3676b928049a6470096c33"
+      },
+      "durationsMs": [
+        574,
+        467,
+        456,
+        464,
+        469,
+        468
+      ]
     }
   },
   "firstLaunchRounds": [
@@ -261,15 +269,15 @@
     }
   },
   "cleanup": {
-    "pids": 237,
-    "groups": 42,
+    "pids": 251,
+    "groups": 45,
     "allCleared": true,
     "leaseReleased": true
   },
   "cumulative": {
     "builds": 118,
     "installs": 29,
-    "starts": 558,
+    "starts": 559,
     "faults": 74,
     "cleanups": 26
   }

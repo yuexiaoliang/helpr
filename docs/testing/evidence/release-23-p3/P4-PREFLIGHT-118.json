@@ -1,0 +1,86 @@
+{
+  "phase": "P4",
+  "candidate": 118,
+  "bundleSha256": "66a09417f750776595bf896e799ab42d3ec30be250fabeeb1c6622d7217395f7",
+  "batch": "release-23-real-business-v1",
+  "sample": "R23-FIRST-A",
+  "draftId": 162,
+  "start": 560,
+  "status": "waiting-for-keychain-authorization",
+  "observation": {
+    "attempts": [
+      {
+        "method": "Page.getFrameTree",
+        "error": "OBSERVATION_TIMEOUT"
+      },
+      {
+        "method": "Page.getFrameTree",
+        "error": "OBSERVATION_TIMEOUT"
+      },
+      {
+        "method": "Page.getFrameTree",
+        "error": "OBSERVATION_TIMEOUT"
+      }
+    ],
+    "modelRequests": 0,
+    "websiteWrites": 0
+  },
+  "keychain": {
+    "hostPid": 79669,
+    "promptRequestedAt": "2026-11-12T18:31:15.431+08:00",
+    "evidence": {
+      "path": ".local/workspace-validation/release-23-real-business-v1/login-A-M8EvRJ/keychain-os.log",
+      "sha256": "0ef6e3015b5de2f3d5b8ad861218b629e12742a7c1a5e337350c541dc2707d16"
+    }
+  },
+  "website": {
+    "draftStatus": "auto-draft",
+    "draftAuthorVerified": true,
+    "independentRowsUnchanged": true,
+    "before": {
+      "path": ".local/workspace-validation/release-23-real-business-v1/login-A-M8EvRJ/wordpress-before.json",
+      "sha256": "e48d39327bb4370357985faf747c260b1196a056e8b4e1f6f050f4403a41aabe"
+    }
+  },
+  "usage": {
+    "verifiedSamples": 0,
+    "consumed": {
+      "requests": 8,
+      "reservedTokens": 775163,
+      "attachments": 0,
+      "newContents": 2,
+      "publishes": 0
+    },
+    "ledger": {
+      "path": ".local/workspace-validation/release-23-real-business-v1/ledger.json",
+      "sha256": "25809b5dae013d1b221e1f78f862f90d5bc2bd741801ab45b121198102610a42"
+    }
+  },
+  "cleanup": {
+    "pids": [
+      79664,
+      79667,
+      79669,
+      79668,
+      79665,
+      79666,
+      79675,
+      79676,
+      79677,
+      79678,
+      79680,
+      79681
+    ],
+    "groups": [
+      79664,
+      79667,
+      79669
+    ],
+    "remaining": [],
+    "leaseReleased": true
+  },
+  "run": {
+    "path": ".local/workspace-validation/release-23-real-business-v1/login-A-M8EvRJ/result.json",
+    "sha256": "b9f2ddbef4192ab950a94efe7b0aff2699e3d69db9a6cbacde126f648aef065d"
+  }
+}
