@@ -87,6 +87,7 @@ import {
 import * as schema from './schema';
 import {
   pageSourceSchema,
+  PAGE_OBSERVATION_TEXT_LIMIT,
   observedLinkSchema,
   observedControlSchema,
   type PageObservation,
@@ -191,7 +192,7 @@ function move(e: TaskExecution, event: PhaseEvent) {
   e.phase = executionPhaseSchema.parse(next.value);
 }
 const observation = pageSourceSchema.extend({
-  text: z.string().max(30000),
+  text: z.string().max(PAGE_OBSERVATION_TEXT_LIMIT),
   links: z.array(observedLinkSchema).max(300).optional(),
   controls: z.array(observedControlSchema).max(500).optional(),
 });

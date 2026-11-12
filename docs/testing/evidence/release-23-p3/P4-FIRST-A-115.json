@@ -1,0 +1,165 @@
+{
+  "phase": "P4",
+  "status": "stopped-before-website-action",
+  "sample": "R23-FIRST-A",
+  "batch": "release-23-real-business-v1",
+  "candidate": 115,
+  "bundleSha256": "536533574127c50c3c2cc7f350040b0b35ee19db33af2bd31e73ebca5ee1a28e",
+  "start": 507,
+  "taskId": "196e9095-1ef5-4b2d-8d34-9ea541b01e44",
+  "workbookSha256": "c107b87880cf008de72b15c2986e40ce730a5fa173bc521c8946652a66437e76",
+  "startedAt": "2026-11-12T06:55:53.626Z",
+  "deadline": "2026-11-12T08:25:53.626Z",
+  "account": "helpr_tester",
+  "model": "deepseek-flash",
+  "dispatched": [
+    {
+      "id": "625ed9cc-86b9-430e-a184-063649c9494a",
+      "phase": "complete",
+      "error": null,
+      "reserved_tokens": 109500,
+      "input_tokens": 27158,
+      "output_tokens": 1159,
+      "total_tokens": 28317
+    },
+    {
+      "id": "141f7981-5763-45c6-934b-5fb115a50f49",
+      "phase": "complete",
+      "error": null,
+      "reserved_tokens": 110339,
+      "input_tokens": 27416,
+      "output_tokens": 563,
+      "total_tokens": 27979
+    }
+  ],
+  "consumed": {
+    "requests": 2,
+    "reservedTokens": 219839,
+    "attachments": 0,
+    "newContents": 0,
+    "publishes": 0
+  },
+  "providerTotalTokens": 56296,
+  "verifiedSamples": 0,
+  "modelPageSources": [
+    {
+      "url": "http://home.ts-ali.internal:38080/wp-admin/edit.php",
+      "title": "Posts ‹ helpr 验证后台（仅测试） — WordPress",
+      "fingerprint": "08014ffc7394bb45d331ba1032b80ada2b07587ba908794240d499017531680a",
+      "generation": 3,
+      "observedAt": 1794466553854,
+      "truncated": true
+    },
+    {
+      "url": "http://home.ts-ali.internal:38080/wp-admin/edit.php",
+      "title": "Posts ‹ helpr 验证后台（仅测试） — WordPress",
+      "fingerprint": "08014ffc7394bb45d331ba1032b80ada2b07587ba908794240d499017531680a",
+      "generation": 3,
+      "observedAt": 1794466563166,
+      "truncated": true
+    }
+  ],
+  "materialRecorded": true,
+  "browserActions": 0,
+  "observedPause": "网站账号、目标或权限依据已变化，已暂停并保留原现场。请先保存需要保留的网页文字，刷新并核对原账号与目标后明确继续。",
+  "websiteComparison": {
+    "independentReadOnly": true,
+    "samePostsAndAttachments": true,
+    "before": {
+      "path": ".local/workspace-validation/release-23-real-business-v1/login-A-IGgyNG/wordpress-before.json",
+      "sha256": "a468870d08e5b792df33120acd48bb36296a6532dffd997bc9cb77a58d8d26f2"
+    },
+    "after": {
+      "path": ".local/workspace-validation/release-23-real-business-v1/login-A-IGgyNG/wordpress-after.json",
+      "sha256": "a468870d08e5b792df33120acd48bb36296a6532dffd997bc9cb77a58d8d26f2"
+    }
+  },
+  "diagnosis": {
+    "runtimeTextCharacters": 64846,
+    "repeatedTextRemovedCharacters": 47882,
+    "links": 149,
+    "controls": 242,
+    "truncatedAt": 30000,
+    "reproducedError": "COORDINATION_STALE",
+    "sourceFixReadOnly": {
+      "evidenceCharacters": 80000,
+      "modelCharacters": 30000,
+      "measuredCharacters": 64846,
+      "truncated": false
+    },
+    "diagnostics": [
+      {
+        "start": 508,
+        "finding": "验证观察资格在恢复期间变化，已关闭",
+        "error": "OBSERVATION_NOT_AUTHORIZED",
+        "evidence": {
+          "path": ".local/workspace-validation/release-23-real-business-v1/login-A-WU1N4k/result.json",
+          "sha256": "164b02b36c878a71fd6fa1e6efcb3304fe2fb3f4403335da3372681e4250b13b"
+        }
+      },
+      {
+        "start": 509,
+        "finding": "固定候选文章列表只读观察确认文字达到原 30000 字符上限",
+        "evidence": {
+          "path": ".local/workspace-validation/release-23-real-business-v1/login-A-EQ9xWp/result.json",
+          "sha256": "a79d748fcb5c9c74df9210d4410fa7cca8107edff55b73776e4f3d4fbc59cc98"
+        }
+      },
+      {
+        "start": 510,
+        "finding": "去除重复文字的试验仍超限",
+        "evidence": {
+          "path": ".local/workspace-validation/release-23-real-business-v1/login-A-EdzETR/result.json",
+          "sha256": "028a7b83d56db3513eb738e6ac9f55eb251710c4181c4e5b27eddad1c9a67ec5"
+        }
+      },
+      {
+        "start": 511,
+        "finding": "验证观察资格在恢复期间变化，已关闭",
+        "error": "OBSERVATION_NOT_AUTHORIZED",
+        "evidence": {
+          "path": ".local/workspace-validation/release-23-real-business-v1/login-A-B1IUwj/result.json",
+          "sha256": "d602f4b9fc944ef67338809f1eddeb5cafad9c9e98a7ee77dc8051464fdf60c5"
+        }
+      },
+      {
+        "start": 512,
+        "finding": "同一捕获中计得原始 64846 字符和去重后 47882 字符",
+        "evidence": {
+          "path": ".local/workspace-validation/release-23-real-business-v1/login-A-0Eh4Bf/result.json",
+          "sha256": "550fcfb3c955b3427039558f9ee7a73d0955288207ac12ffe882b38f603f644b"
+        }
+      },
+      {
+        "start": 513,
+        "finding": "只读取候选 115 真实网页，用修复源码独立形成完整观察",
+        "evidence": {
+          "path": ".local/workspace-validation/release-23-real-business-v1/login-A-Ynq4j5/result.json",
+          "sha256": "ad1908191e3e7295686f0d23b74009bf0fde43aba679cdd5e6ee09d6d8851b97"
+        }
+      }
+    ],
+    "sourceRegression": {
+      "path": ".local/workspace-validation/release-23-real-business-v1/p4-observation-regression.log",
+      "sha256": "c4c5aa7c68153653ee4411672a6dafedfefdbc1dc94f991787bab841bb554731"
+    },
+    "fullSourceCheck": {
+      "passed": true,
+      "workspaceFiles": 50,
+      "workspaceTests": 615,
+      "evidence": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/p4-observation-full-check.log",
+        "sha256": "8d4cc016adab639db4e9b5b3e319bb8f718cfbeaea0d70b41d23a646156f2cce"
+      }
+    }
+  },
+  "cleanup": {
+    "stopRequested": true,
+    "appAndGroupsCleared": true,
+    "leaseReleased": true
+  },
+  "run": {
+    "path": ".local/workspace-validation/release-23-real-business-v1/login-A-IGgyNG/result.json",
+    "sha256": "f5119a27eabf958768bde54258e588d0ee1a607934701f27859dba7a3f8d393b"
+  }
+}

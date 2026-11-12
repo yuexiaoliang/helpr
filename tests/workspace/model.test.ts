@@ -130,7 +130,7 @@ async function backend(
     release: () => held.splice(0).forEach((finish) => finish()),
   };
 }
-function fixture() {
+function fixture(observedText = '营收：34.8 万元；状态：草稿') {
   const folder = mkdtempSync(path.join(tmpdir(), 'helpr-model-'));
   folders.push(folder);
   const records = new WorkspaceRecords(folder, 'app/records/migrations');
@@ -161,7 +161,7 @@ function fixture() {
       generation: 1,
       observedAt: Date.now(),
       truncated: false,
-      text: '营收：34.8 万元；状态：草稿',
+      text: observedText,
     });
   const service = new ModelService({
     records: (input) => Promise.resolve(records.model(input)),
@@ -192,9 +192,11 @@ function fixture() {
   };
 }
 
-test('配置后从所属任务提问，真实请求只含该任务观察，回复与用量可靠保留', async () => {
+test('所属任务提问按模型上限发送网页观察，回复、截断和用量可靠保留', async () => {
   const server = await backend(),
-    f = fixture();
+    f = fixture(
+      '营收：34.8 万元；状态：草稿\n' + 'x'.repeat(30000) + '\n本机观察结尾',
+    );
   try {
     const a = f.create('A');
     await f.service.configure({
@@ -220,9 +222,12 @@ test('配置后从所属任务提问，真实请求只含该任务观察，回�
       inputTokens: 80,
       outputTokens: 15,
       totalTokens: 95,
+      source: { truncated: true },
     });
     expect(server.received).toHaveLength(1);
     expect(server.received[0]?.body).toContain('营收：34.8 万元');
+    expect(server.received[0]?.body).toContain('本次观察已截断');
+    expect(server.received[0]?.body).not.toContain('本机观察结尾');
     expect(server.received[0]?.authorization).toBe('Bearer test-secret-only');
     expect(JSON.stringify(f.get())).not.toContain('test-secret-only');
     f.records.close();

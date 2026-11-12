@@ -18,6 +18,7 @@ import {
   modelCallSchema,
   pageSourceSchema,
   MODEL_LIMITS,
+  MODEL_PAGE_TEXT_LIMIT,
   type PageObservation,
 } from '../shared/model';
 import {
@@ -350,6 +351,9 @@ export class ModelService {
         .current()
         .tasks.find((task) => task.id === job.taskId);
       if (!task) throw new Error('MODEL_PAGE_UNAVAILABLE');
+      const pageText = observation.text.slice(0, MODEL_PAGE_TEXT_LIMIT);
+      const pageTruncated =
+        observation.truncated || pageText.length < observation.text.length;
       const messages: ModelMessage[] = task.messages
         .filter(
           (message) =>
@@ -363,7 +367,7 @@ export class ModelService {
         }));
       messages.push({
         role: 'user',
-        content: `当前任务：${task.goal}\n页面观察（${new Date(observation.observedAt).toISOString()}）：\n${observation.url}\n${observation.title}\n${observation.text}\n${observation.truncated ? '本次观察已截断，不能推断不可见部分。' : ''}\n请回答本次问题：${job.text}`,
+        content: `当前任务：${task.goal}\n页面观察（${new Date(observation.observedAt).toISOString()}）：\n${observation.url}\n${observation.title}\n${pageText}\n${pageTruncated ? '本次观察已截断，不能推断不可见部分。' : ''}\n请回答本次问题：${job.text}`,
       });
       if (job.planning) {
         const fact = (a: ProposalInput['history'][number]) => ({
@@ -462,7 +466,9 @@ export class ModelService {
           }),
         });
       }
-      const source = pageSourceSchema.strip().parse(observation);
+      const source = pageSourceSchema
+        .strip()
+        .parse({ ...observation, truncated: pageTruncated });
       // 输入按 UTF-8 字节保守预留，并加上本次允许的最大输出；原始 usage 不完整时保留该预留。
       const reservedTokens =
         Buffer.byteLength(JSON.stringify(messages), 'utf8') +

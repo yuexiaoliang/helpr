@@ -7,6 +7,7 @@ import Database from 'better-sqlite3';
 import { WorkspaceRecords } from '../../app/records/workspace';
 import { ExecutionService } from '../../app/desktop/execution-service';
 import { WebsiteSessions } from '../../app/desktop/website-sessions';
+import { pageObservation } from '../../app/desktop/page-observation';
 import { StorageMonitor } from '../../app/desktop/storage-monitor';
 import type { PageObservation } from '../../app/shared/model';
 import type {
@@ -412,6 +413,56 @@ test('已派发未知效果保留目标占用；同站未知身份保守等待�
   });
   expect(f.reserve(c).result.created).toBe(false);
   expect(['dispatched', 'unknown']).toContain(f.get(a).actions[0]?.status);
+});
+
+test('长列表保留账号和目标核对所需的证据，超出本机观察上限仍停止', () => {
+  const f = setup();
+  const id = f.add('1');
+  const fixture = f.source(id);
+  const observe = (length: number) => {
+    const nodes = [
+      {
+        nodeId: 'list',
+        role: { value: 'StaticText' },
+        name: { value: '表'.repeat(length) },
+      },
+      ...fixture.links!.map(({ name, url }, index) => ({
+        nodeId: String(index),
+        role: { value: 'link' },
+        name: { value: name },
+        properties: [{ name: 'url', value: { value: url } }],
+      })),
+      {
+        nodeId: 'permission',
+        role: { value: 'StaticText' },
+        name: { value: '可编辑此记录' },
+      },
+    ];
+    return pageObservation(
+      { frameTree: { frame: { url: fixture.url } } },
+      { nodes },
+      1,
+    );
+  };
+  const record = (source: PageObservation) =>
+    f.command({
+      kind: 'coordination-observed',
+      taskId: id,
+      runId: f.get(id).runId,
+      session: f.session(id),
+      source,
+      proposal: f.proof(fixture),
+    });
+  expect(f.claim(id).claimed).toBe(true);
+  const observed = observe(30000);
+  expect(() => record(observed)).not.toThrow();
+  expect(observed.truncated).toBe(false);
+  expect(observed.text.indexOf('可编辑此记录')).toBeGreaterThan(30000);
+  expect(f.get(id).coordination).toMatchObject({ status: 'ready' });
+
+  const oversized = observe(80000);
+  expect(oversized.truncated).toBe(true);
+  expect(() => record(oversized)).toThrow('COORDINATION_STALE');
 });
 
 test('资源和会话关系进入备份、迁移与冷开引用检查；恢复仍暂停', async () => {

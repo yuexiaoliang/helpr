@@ -3,7 +3,10 @@ import { emptyTextObservation } from './empty-text-observation';
 import { z } from 'zod';
 import { createHash } from 'node:crypto';
 import { isInlineFrameURL, websiteURL } from '../shared/url-policy';
-import type { PageObservation } from '../shared/model';
+import {
+  PAGE_OBSERVATION_TEXT_LIMIT,
+  type PageObservation,
+} from '../shared/model';
 
 const axValue = z.object({ value: z.unknown().optional() });
 const treeSchema = z.object({
@@ -22,6 +25,7 @@ const treeSchema = z.object({
     }),
   ),
 });
+
 /** 只使用所属页面的受控观察。排除受保护输入及其子节点，不运行网站脚本。 */
 export function pageObservation(
   frame: unknown,
@@ -234,7 +238,7 @@ export function pageObservation(
     }
   }
   const full = lines.join('\n') + (supplements ? '\n' + supplements : ''),
-    text = full.slice(0, 30000);
+    text = full.slice(0, PAGE_OBSERVATION_TEXT_LIMIT);
   return {
     url,
     title,

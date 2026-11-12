@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { PAGE_OBSERVATION_TEXT_LIMIT } from '../shared/model';
 
 const snapshotSchema = z.object({
   strings: z.array(z.string()),
@@ -42,5 +43,8 @@ export function materialObservation(snapshot: unknown): string {
       }
     }
   }
-  return [...new Set(lines)].join('\n').slice(0, 10000);
+  // 多保留一个字符，让合并后的页面观察能标记超限。
+  return [...new Set(lines)]
+    .join('\n')
+    .slice(0, PAGE_OBSERVATION_TEXT_LIMIT + 1);
 }

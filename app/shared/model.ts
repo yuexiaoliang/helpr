@@ -55,6 +55,9 @@ export const pageSourceSchema = z.strictObject({
   truncated: z.boolean(),
 });
 export type PageSource = z.infer<typeof pageSourceSchema>;
+// 网页动作核对保留较完整的本机证据，模型消息有独立的文字上限。
+export const PAGE_OBSERVATION_TEXT_LIMIT = 80000;
+export const MODEL_PAGE_TEXT_LIMIT = 30000;
 export const observedLinkSchema = z.strictObject({
   name: z.string().min(1).max(1000),
   url: z.url().max(4096),
