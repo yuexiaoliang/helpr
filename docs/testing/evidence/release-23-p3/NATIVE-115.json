@@ -1,0 +1,991 @@
+{
+  "candidate": 115,
+  "bundleSha256": "536533574127c50c3c2cc7f350040b0b35ee19db33af2bd31e73ebca5ee1a28e",
+  "p3Passed": false,
+  "nativeSwitchesPassed": true,
+  "native": {
+    "measuredAt": "2026-11-12T03:17:44.661000+00:00",
+    "build": 115,
+    "start": 489,
+    "app": "/Users/yuexiaoliang/projects/helpr/dist/candidates/release-p3-0-2-3-verified-inputs/mac-arm64/helpr.app",
+    "controllerPid": 96953,
+    "hostPid": 96959,
+    "hostParentPid": 96957,
+    "hostGroup": 96959,
+    "availability": {
+      "finderDesktopRead": true,
+      "liveHostWindowRead": true,
+      "observation": "应用窗口、地址栏、两个完成态任务标签、实际网页标题与相应对话均可读。"
+    },
+    "method": "Codex Computer Use 原生点击至新完整 AX 树读回，逐次核对实际网页地址、标题、对话归属和两项完成态。包括桌面工具开销。",
+    "limitMs": 2000,
+    "attempts": 6,
+    "maxMs": 774,
+    "passed": true,
+    "preflight": {
+      "originalFieldMatch": "INITIAL_AX_MISMATCH",
+      "nativeClicksBeforeFix": 0,
+      "correction": "读取实际字段后按 Value 取地址，识别地址占位提示和标题级别后缀。"
+    },
+    "initial": {
+      "task": "0746a4e2-85b0-4623-99d8-fcfbae2abc39",
+      "label": "发布样本 R",
+      "url": "http://127.0.0.1:58689/p1/result/fc3b6e8c-2deb-419d-bc1d-f35893863e4b"
+    },
+    "targets": [
+      {
+        "label": "发布样本 F",
+        "url": "http://127.0.0.1:58689/p1/result/bf078069-1843-4dd2-a171-1dcbbe633448",
+        "id": "c0ee4556-2b87-43e4-8c00-82dc0d9b232f"
+      },
+      {
+        "label": "发布样本 R",
+        "url": "http://127.0.0.1:58689/p1/result/fc3b6e8c-2deb-419d-bc1d-f35893863e4b",
+        "id": "0746a4e2-85b0-4623-99d8-fcfbae2abc39"
+      }
+    ],
+    "switches": [
+      {
+        "number": 1,
+        "target": "发布样本 F",
+        "elementFromPreviousAX": 8,
+        "startedAt": 1794453464661,
+        "endedAt": 1794453465289,
+        "durationMs": 628,
+        "window": "Window: \"helpr\", App: helpr.",
+        "addressAX": "28 text field (settable) Description: 网站地址, Value: http://127.0.0.1:58689/p1/result/bf078069-1843-4dd2-a171-1dcbbe633448, Placeholder: 输入网站地址",
+        "webAX": "32 HTML content 127.0.0.1:58689/p1/result/bf078069-1843-4dd2-a171-1dcbbe633448",
+        "headingAX": "34 heading 发布样本 F, Value: 1",
+        "chatAX": "39 HTML content helpr, URL: helpr://workspace/index.html?surface=chat&taskId=c0ee4556-2b87-43e4-8c00-82dc0d9b232f",
+        "completedAX": "48 text 已完成 已从可靠保存的位置核对发布结果和附件，无需再次提交。",
+        "activeTasksAX": "25 text 2",
+        "completedTabs": [
+          "发布样本 F",
+          "发布样本 R"
+        ]
+      },
+      {
+        "number": 2,
+        "target": "发布样本 R",
+        "elementFromPreviousAX": 13,
+        "startedAt": 1794453465480,
+        "endedAt": 1794453466254,
+        "durationMs": 774,
+        "window": "Window: \"helpr\", App: helpr.",
+        "addressAX": "28 text field (settable) Description: 网站地址, Value: http://127.0.0.1:58689/p1/result/fc3b6e8c-2deb-419d-bc1d-f35893863e4b, Placeholder: 输入网站地址",
+        "webAX": "99 HTML content 127.0.0.1:58689/p1/result/fc3b6e8c-2deb-419d-bc1d-f35893863e4b",
+        "headingAX": "101 heading 发布样本 R, Value: 1",
+        "chatAX": "106 HTML content helpr, URL: helpr://workspace/index.html?surface=chat&taskId=0746a4e2-85b0-4623-99d8-fcfbae2abc39",
+        "completedAX": "48 text 已完成 已从可靠保存的位置核对发布结果和附件，无需再次提交。",
+        "activeTasksAX": "25 text 2",
+        "completedTabs": [
+          "发布样本 F",
+          "发布样本 R"
+        ]
+      },
+      {
+        "number": 3,
+        "target": "发布样本 F",
+        "elementFromPreviousAX": 8,
+        "startedAt": 1794453466254,
+        "endedAt": 1794453467005,
+        "durationMs": 751,
+        "window": "Window: \"helpr\", App: helpr.",
+        "addressAX": "28 text field (settable) Description: 网站地址, Value: http://127.0.0.1:58689/p1/result/bf078069-1843-4dd2-a171-1dcbbe633448, Placeholder: 输入网站地址",
+        "webAX": "32 HTML content 127.0.0.1:58689/p1/result/bf078069-1843-4dd2-a171-1dcbbe633448",
+        "headingAX": "34 heading 发布样本 F, Value: 1",
+        "chatAX": "39 HTML content helpr, URL: helpr://workspace/index.html?surface=chat&taskId=c0ee4556-2b87-43e4-8c00-82dc0d9b232f",
+        "completedAX": "48 text 已完成 已从可靠保存的位置核对发布结果和附件，无需再次提交。",
+        "activeTasksAX": "25 text 2",
+        "completedTabs": [
+          "发布样本 F",
+          "发布样本 R"
+        ]
+      },
+      {
+        "number": 4,
+        "target": "发布样本 R",
+        "elementFromPreviousAX": 13,
+        "startedAt": 1794453467006,
+        "endedAt": 1794453467758,
+        "durationMs": 752,
+        "window": "Window: \"helpr\", App: helpr.",
+        "addressAX": "28 text field (settable) Description: 网站地址, Value: http://127.0.0.1:58689/p1/result/fc3b6e8c-2deb-419d-bc1d-f35893863e4b, Placeholder: 输入网站地址",
+        "webAX": "99 HTML content 127.0.0.1:58689/p1/result/fc3b6e8c-2deb-419d-bc1d-f35893863e4b",
+        "headingAX": "101 heading 发布样本 R, Value: 1",
+        "chatAX": "106 HTML content helpr, URL: helpr://workspace/index.html?surface=chat&taskId=0746a4e2-85b0-4623-99d8-fcfbae2abc39",
+        "completedAX": "48 text 已完成 已从可靠保存的位置核对发布结果和附件，无需再次提交。",
+        "activeTasksAX": "25 text 2",
+        "completedTabs": [
+          "发布样本 F",
+          "发布样本 R"
+        ]
+      },
+      {
+        "number": 5,
+        "target": "发布样本 F",
+        "elementFromPreviousAX": 8,
+        "startedAt": 1794453467758,
+        "endedAt": 1794453468494,
+        "durationMs": 736,
+        "window": "Window: \"helpr\", App: helpr.",
+        "addressAX": "28 text field (settable) Description: 网站地址, Value: http://127.0.0.1:58689/p1/result/bf078069-1843-4dd2-a171-1dcbbe633448, Placeholder: 输入网站地址",
+        "webAX": "32 HTML content 127.0.0.1:58689/p1/result/bf078069-1843-4dd2-a171-1dcbbe633448",
+        "headingAX": "34 heading 发布样本 F, Value: 1",
+        "chatAX": "39 HTML content helpr, URL: helpr://workspace/index.html?surface=chat&taskId=c0ee4556-2b87-43e4-8c00-82dc0d9b232f",
+        "completedAX": "48 text 已完成 已从可靠保存的位置核对发布结果和附件，无需再次提交。",
+        "activeTasksAX": "25 text 2",
+        "completedTabs": [
+          "发布样本 F",
+          "发布样本 R"
+        ]
+      },
+      {
+        "number": 6,
+        "target": "发布样本 R",
+        "elementFromPreviousAX": 13,
+        "startedAt": 1794453468494,
+        "endedAt": 1794453469239,
+        "durationMs": 745,
+        "window": "Window: \"helpr\", App: helpr.",
+        "addressAX": "28 text field (settable) Description: 网站地址, Value: http://127.0.0.1:58689/p1/result/fc3b6e8c-2deb-419d-bc1d-f35893863e4b, Placeholder: 输入网站地址",
+        "webAX": "99 HTML content 127.0.0.1:58689/p1/result/fc3b6e8c-2deb-419d-bc1d-f35893863e4b",
+        "headingAX": "101 heading 发布样本 R, Value: 1",
+        "chatAX": "106 HTML content helpr, URL: helpr://workspace/index.html?surface=chat&taskId=0746a4e2-85b0-4623-99d8-fcfbae2abc39",
+        "completedAX": "48 text 已完成 已从可靠保存的位置核对发布结果和附件，无需再次提交。",
+        "activeTasksAX": "25 text 2",
+        "completedTabs": [
+          "发布样本 F",
+          "发布样本 R"
+        ]
+      }
+    ],
+    "screenshots": {
+      "retainedIn": "2026-11-12 此聊天桌面工具结果",
+      "F": {
+        "bytes": 291080,
+        "sha256": "c53c73a0c03cfe029fe40ee99fea973ee6af9ebf58fb931651edabd096871589"
+      },
+      "R": {
+        "bytes": 234725,
+        "sha256": "adc6d0e3695f395e536b0412fc8238681d6f8f61b6817d60d493d999e4c952d9"
+      }
+    },
+    "targetProof": {
+      "path": ".local/workspace-validation/run-1794453335603/native-targets.json",
+      "sha256": "7dd076096750cd383eb59d2ae0791034bb894932da5ee6110b541814a59466c2"
+    }
+  },
+  "nativeEvidence": {
+    "path": ".local/workspace-validation/p3-native-2026-11-12/NATIVE-CUA.json",
+    "sha256": "86acaaf2a00b813cdc0a12a865e7af90fe179f0990139e17cf21f8fcf8d053d0"
+  },
+  "performance": {
+    "evidence": {
+      "path": ".local/workspace-validation/run-1794453335603/result.json",
+      "sha256": "a43a12846d8b3280f679c03669e4a9edc356283823cff231cb730aaa5219a756"
+    },
+    "executionLog": {
+      "path": ".local/workspace-validation/p3-native-2026-11-12/performance.log",
+      "sha256": "270b414d6491afeb0d879ac85b8f85b5f86e8416e43b466226ea7d791140062c"
+    },
+    "exitCode": 1,
+    "error": "COLD_READY_LIMIT",
+    "startup": {
+      "488": {
+        "spawnedAt": 1794453335621,
+        "hostLaunchMs": 918,
+        "readyMs": 1394
+      },
+      "489": {
+        "spawnedAt": 1794453356162,
+        "hostLaunchMs": 1015,
+        "readyMs": 5247
+      }
+    },
+    "limits": {
+      "firstReadyMs": 5000,
+      "coldReadyMs": 5000,
+      "peakMiB": 2048,
+      "settledMs": 300000,
+      "tailRangeMiB": 256
+    },
+    "thresholdFailures": [
+      "COLD_READY_LIMIT",
+      "RSS_TAIL_RANGE_LIMIT"
+    ],
+    "preparation": {
+      "modelCalls": 13,
+      "siteEffects": 8
+    },
+    "settled": {
+      "from": 1794453365624,
+      "to": 1794453665741,
+      "spanMs": 300117,
+      "samples": 101,
+      "maxSampleGapMs": 3008,
+      "tailFrom": 1794453485741,
+      "tailSamples": 60,
+      "tailRangeMiB": 801.953125,
+      "peakMiB": 1714.21875,
+      "modelCalls": 0,
+      "siteEffects": 0
+    },
+    "rssColumns": [
+      "at",
+      "start",
+      "phase",
+      "rssKiB"
+    ],
+    "rssSeries": [
+      [
+        1794453338612,
+        488,
+        "preparation",
+        1203744
+      ],
+      [
+        1794453341613,
+        488,
+        "preparation",
+        1364384
+      ],
+      [
+        1794453344614,
+        488,
+        "preparation",
+        1469200
+      ],
+      [
+        1794453347615,
+        488,
+        "preparation",
+        1695536
+      ],
+      [
+        1794453350616,
+        488,
+        "preparation",
+        1755360
+      ],
+      [
+        1794453353617,
+        488,
+        "preparation",
+        1683184
+      ],
+      [
+        1794453356621,
+        489,
+        "preparation",
+        152976
+      ],
+      [
+        1794453359622,
+        489,
+        "preparation",
+        810672
+      ],
+      [
+        1794453362623,
+        489,
+        "preparation",
+        1545936
+      ],
+      [
+        1794453365624,
+        489,
+        "settled",
+        1401392
+      ],
+      [
+        1794453368625,
+        489,
+        "settled",
+        1291376
+      ],
+      [
+        1794453371627,
+        489,
+        "settled",
+        1291136
+      ],
+      [
+        1794453374627,
+        489,
+        "settled",
+        1293904
+      ],
+      [
+        1794453377627,
+        489,
+        "settled",
+        1237216
+      ],
+      [
+        1794453380628,
+        489,
+        "settled",
+        1105792
+      ],
+      [
+        1794453383628,
+        489,
+        "settled",
+        1035344
+      ],
+      [
+        1794453386630,
+        489,
+        "settled",
+        1016928
+      ],
+      [
+        1794453389630,
+        489,
+        "settled",
+        1097728
+      ],
+      [
+        1794453392631,
+        489,
+        "settled",
+        1137888
+      ],
+      [
+        1794453395630,
+        489,
+        "settled",
+        1120352
+      ],
+      [
+        1794453398632,
+        489,
+        "settled",
+        1114400
+      ],
+      [
+        1794453401633,
+        489,
+        "settled",
+        1090624
+      ],
+      [
+        1794453404634,
+        489,
+        "settled",
+        1083504
+      ],
+      [
+        1794453407635,
+        489,
+        "settled",
+        1086000
+      ],
+      [
+        1794453410636,
+        489,
+        "settled",
+        1032416
+      ],
+      [
+        1794453413637,
+        489,
+        "settled",
+        1032752
+      ],
+      [
+        1794453416638,
+        489,
+        "settled",
+        1039184
+      ],
+      [
+        1794453419640,
+        489,
+        "settled",
+        1062720
+      ],
+      [
+        1794453422643,
+        489,
+        "settled",
+        1076384
+      ],
+      [
+        1794453425645,
+        489,
+        "settled",
+        1078912
+      ],
+      [
+        1794453428648,
+        489,
+        "settled",
+        1088176
+      ],
+      [
+        1794453431650,
+        489,
+        "settled",
+        1088496
+      ],
+      [
+        1794453434652,
+        489,
+        "settled",
+        1089024
+      ],
+      [
+        1794453437653,
+        489,
+        "settled",
+        1089184
+      ],
+      [
+        1794453440653,
+        489,
+        "settled",
+        1090528
+      ],
+      [
+        1794453443655,
+        489,
+        "settled",
+        1090624
+      ],
+      [
+        1794453446657,
+        489,
+        "settled",
+        1090592
+      ],
+      [
+        1794453449658,
+        489,
+        "settled",
+        1063920
+      ],
+      [
+        1794453452660,
+        489,
+        "settled",
+        1049920
+      ],
+      [
+        1794453455661,
+        489,
+        "settled",
+        1051680
+      ],
+      [
+        1794453458663,
+        489,
+        "settled",
+        1031536
+      ],
+      [
+        1794453461664,
+        489,
+        "settled",
+        1033152
+      ],
+      [
+        1794453464665,
+        489,
+        "settled",
+        1033504
+      ],
+      [
+        1794453467666,
+        489,
+        "settled",
+        1237152
+      ],
+      [
+        1794453470667,
+        489,
+        "settled",
+        1247872
+      ],
+      [
+        1794453473668,
+        489,
+        "settled",
+        1248768
+      ],
+      [
+        1794453476670,
+        489,
+        "settled",
+        1249168
+      ],
+      [
+        1794453479671,
+        489,
+        "settled",
+        1249392
+      ],
+      [
+        1794453482672,
+        489,
+        "settled",
+        1249456
+      ],
+      [
+        1794453485674,
+        489,
+        "settled",
+        1249472
+      ],
+      [
+        1794453488675,
+        489,
+        "settled",
+        1224880
+      ],
+      [
+        1794453491676,
+        489,
+        "settled",
+        1177984
+      ],
+      [
+        1794453494677,
+        489,
+        "settled",
+        1178064
+      ],
+      [
+        1794453497677,
+        489,
+        "settled",
+        1175312
+      ],
+      [
+        1794453500678,
+        489,
+        "settled",
+        1176592
+      ],
+      [
+        1794453503680,
+        489,
+        "settled",
+        1177680
+      ],
+      [
+        1794453506680,
+        489,
+        "settled",
+        1177760
+      ],
+      [
+        1794453509681,
+        489,
+        "settled",
+        1177024
+      ],
+      [
+        1794453512682,
+        489,
+        "settled",
+        996352
+      ],
+      [
+        1794453515683,
+        489,
+        "settled",
+        970656
+      ],
+      [
+        1794453518684,
+        489,
+        "settled",
+        965920
+      ],
+      [
+        1794453521684,
+        489,
+        "settled",
+        975632
+      ],
+      [
+        1794453524685,
+        489,
+        "settled",
+        975568
+      ],
+      [
+        1794453527693,
+        489,
+        "settled",
+        919008
+      ],
+      [
+        1794453530696,
+        489,
+        "settled",
+        429120
+      ],
+      [
+        1794453533698,
+        489,
+        "settled",
+        439120
+      ],
+      [
+        1794453536698,
+        489,
+        "settled",
+        408224
+      ],
+      [
+        1794453539700,
+        489,
+        "settled",
+        408624
+      ],
+      [
+        1794453542700,
+        489,
+        "settled",
+        412608
+      ],
+      [
+        1794453545701,
+        489,
+        "settled",
+        420864
+      ],
+      [
+        1794453548703,
+        489,
+        "settled",
+        421744
+      ],
+      [
+        1794453551703,
+        489,
+        "settled",
+        422512
+      ],
+      [
+        1794453554704,
+        489,
+        "settled",
+        424736
+      ],
+      [
+        1794453557706,
+        489,
+        "settled",
+        426848
+      ],
+      [
+        1794453560707,
+        489,
+        "settled",
+        403680
+      ],
+      [
+        1794453563708,
+        489,
+        "settled",
+        410704
+      ],
+      [
+        1794453566709,
+        489,
+        "settled",
+        412112
+      ],
+      [
+        1794453569710,
+        489,
+        "settled",
+        414304
+      ],
+      [
+        1794453572711,
+        489,
+        "settled",
+        406816
+      ],
+      [
+        1794453575717,
+        489,
+        "settled",
+        409136
+      ],
+      [
+        1794453578717,
+        489,
+        "settled",
+        411456
+      ],
+      [
+        1794453581718,
+        489,
+        "settled",
+        414400
+      ],
+      [
+        1794453584719,
+        489,
+        "settled",
+        414464
+      ],
+      [
+        1794453587719,
+        489,
+        "settled",
+        414464
+      ],
+      [
+        1794453590719,
+        489,
+        "settled",
+        418976
+      ],
+      [
+        1794453593720,
+        489,
+        "settled",
+        423168
+      ],
+      [
+        1794453596721,
+        489,
+        "settled",
+        423216
+      ],
+      [
+        1794453599723,
+        489,
+        "settled",
+        425424
+      ],
+      [
+        1794453602723,
+        489,
+        "settled",
+        426080
+      ],
+      [
+        1794453605724,
+        489,
+        "settled",
+        430896
+      ],
+      [
+        1794453608726,
+        489,
+        "settled",
+        431392
+      ],
+      [
+        1794453611726,
+        489,
+        "settled",
+        436240
+      ],
+      [
+        1794453614727,
+        489,
+        "settled",
+        438464
+      ],
+      [
+        1794453617728,
+        489,
+        "settled",
+        442832
+      ],
+      [
+        1794453620729,
+        489,
+        "settled",
+        442832
+      ],
+      [
+        1794453623731,
+        489,
+        "settled",
+        442896
+      ],
+      [
+        1794453626732,
+        489,
+        "settled",
+        442912
+      ],
+      [
+        1794453629731,
+        489,
+        "settled",
+        442928
+      ],
+      [
+        1794453632732,
+        489,
+        "settled",
+        442944
+      ],
+      [
+        1794453635733,
+        489,
+        "settled",
+        442944
+      ],
+      [
+        1794453638733,
+        489,
+        "settled",
+        442960
+      ],
+      [
+        1794453641734,
+        489,
+        "settled",
+        442960
+      ],
+      [
+        1794453644734,
+        489,
+        "settled",
+        442960
+      ],
+      [
+        1794453647736,
+        489,
+        "settled",
+        442976
+      ],
+      [
+        1794453650737,
+        489,
+        "settled",
+        442976
+      ],
+      [
+        1794453653738,
+        489,
+        "settled",
+        443104
+      ],
+      [
+        1794453656738,
+        489,
+        "settled",
+        443280
+      ],
+      [
+        1794453659738,
+        489,
+        "settled",
+        443984
+      ],
+      [
+        1794453662739,
+        489,
+        "settled",
+        443984
+      ],
+      [
+        1794453665741,
+        489,
+        "settled",
+        443984
+      ]
+    ]
+  },
+  "diagnostics": {
+    "coldReadyEvents": {
+      "records": {
+        "pid": 96958,
+        "at": 1794453357125,
+        "msAfterColdSpawn": 963
+      },
+      "host": {
+        "pid": 96959,
+        "at": 1794453361399,
+        "msAfterColdSpawn": 5237
+      },
+      "controller": {
+        "pid": 96953,
+        "at": 1794453361408,
+        "msAfterColdSpawn": 5246
+      }
+    },
+    "hostLaunchReceiptToApplicationReadyMs": 4232,
+    "gatekeeperObservations": {
+      "matchingEvents": 0,
+      "evidence": {
+        "path": ".local/workspace-validation/p3-native-2026-11-12/start489-os.log",
+        "sha256": "9f56fca152030dba9e8ee76dee4fc8967ab667507b5878f0f9ab819d55b6b9a6"
+      }
+    },
+    "tailExtremes": {
+      "max": {
+        "at": 1794453488675,
+        "rssKiB": 1224880
+      },
+      "min": {
+        "at": 1794453560707,
+        "rssKiB": 403680
+      }
+    },
+    "largestTailDrop": {
+      "from": 1794453527693,
+      "to": 1794453530696,
+      "rssKiBBefore": 919008,
+      "rssKiBAfter": 429120,
+      "pidsUnchanged": true,
+      "rssDeltaKiB": {
+        "96953": -7264,
+        "96954": -2768,
+        "96955": -2544,
+        "96957": -16,
+        "96958": -5776,
+        "96959": -75312,
+        "96964": -30640,
+        "96965": -21936,
+        "96966": -59712,
+        "96967": -58064,
+        "96981": -60224,
+        "96982": -59936,
+        "96984": -52912,
+        "96985": -52784
+      }
+    },
+    "rootCauseConfirmed": false
+  },
+  "cleanup": {
+    "independentReport": {
+      "path": ".local/workspace-validation/p3-native-2026-11-12/CLEANUP.json",
+      "sha256": "72f99b78b97958099f3477a3aab7fad55b691b950230417bc16edd521bd4bdee"
+    },
+    "evidence": ".local/workspace-validation/run-1794453335603/result.json",
+    "sha256": "a43a12846d8b3280f679c03669e4a9edc356283823cff231cb730aaa5219a756",
+    "pids": 33,
+    "groups": 6,
+    "remaining": [],
+    "leaseReleased": true
+  },
+  "cumulative": {
+    "builds": 115,
+    "installs": 24,
+    "starts": 489,
+    "faults": 74,
+    "cleanups": 26
+  },
+  "p4": {
+    "inputsVerified": 10,
+    "requests": 0,
+    "reservedTokens": 0,
+    "attachments": 0,
+    "newContents": 0,
+    "publishes": 0
+  }
+}
