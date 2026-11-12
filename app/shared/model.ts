@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { richTextLocatorSchema } from './web-action';
+import { landmarkLocatorSchema, richTextLocatorSchema } from './web-action';
 import { websiteURL } from './url-policy';
 
 export const modelErrorSchema = z.enum([
@@ -61,7 +61,9 @@ export const MODEL_PAGE_TEXT_LIMIT = 30000;
 export const observedLinkSchema = z.strictObject({
   name: z.string().min(1).max(1000),
   url: z.url().max(4096),
+  landmarks: z.array(landmarkLocatorSchema).min(1).max(8).optional(),
 });
+export type ObservedLink = z.infer<typeof observedLinkSchema>;
 export const observedControlSchema = z.strictObject({
   role: z.string().max(100),
   name: z.string().max(1000),

@@ -7,7 +7,7 @@ import {
 } from 'playwright-core';
 import { z } from 'zod';
 import { createHash } from 'node:crypto';
-import { fillLocatorSchema } from '../shared/web-action';
+import { actionLandmark, fillLocatorSchema } from '../shared/web-action';
 import { fillRichText } from './rich-text-input';
 import { materialPayloadSchema } from '../shared/material';
 import { webActionSchema, actionFailureCodeSchema } from '../shared/execution';
@@ -32,10 +32,10 @@ const transport: ConnectOverCDPTransport = {
   onmessage: undefined,
   onclose: undefined,
 };
-function locate(
+async function locate(
   page: Page,
   target: z.infer<typeof fillLocatorSchema>,
-): Locator {
+): Promise<Locator> {
   const frame = selectFrame(page, target.frameUrl);
   if ('richTextNodeId' in target) return frame.locator('css=' + target.path);
   const root = target.within
@@ -43,8 +43,14 @@ function locate(
         name: target.within.name,
         exact: target.within.exact,
       })
-    : frame;
-  return root.getByRole(target.role, {
+    : undefined;
+  if (
+    root &&
+    (target.within?.role === 'main' || target.within?.role === 'navigation') &&
+    (await root.count()) !== 1
+  )
+    throw Error('EXECUTION_LOCATOR_MISSING');
+  return (root ?? frame).getByRole(target.role, {
     name: target.name,
     exact: target.exact,
   });
@@ -80,6 +86,7 @@ port.on('message', ({ data }: { data: unknown }) => {
       payload: materialPayloadSchema.optional(),
       richText: z.boolean().default(false),
       richTextInitial: z.string().optional(),
+      landmarkHref: z.url().optional(),
     })
     .safeParse(data);
   if (!job.success || started) return;
@@ -115,8 +122,18 @@ port.on('message', ({ data }: { data: unknown }) => {
         port.postMessage({ done: true });
         return;
       }
-      const target = locate(page, action.target);
+      const target = await locate(page, action.target);
       if ((await target.count()) !== 1)
+        throw Error('EXECUTION_LOCATOR_MISSING');
+      if (
+        actionLandmark(action) &&
+        (!job.data.landmarkHref ||
+          !(await target.evaluate(
+            (element, href) =>
+              element instanceof HTMLAnchorElement && element.href === href,
+            job.data.landmarkHref,
+          )))
+      )
         throw Error('EXECUTION_LOCATOR_MISSING');
       if (action.kind === 'click') await target.click({ timeout: 7000 });
       else if (action.kind === 'fill') {

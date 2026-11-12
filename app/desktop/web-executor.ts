@@ -7,6 +7,8 @@ import type { WebActionJob, BoundObservation } from './execution-service';
 import { ExecutionProtocol, type ProtocolClient } from './execution-protocol';
 import { actionFailureCodeSchema } from '../shared/execution';
 import { materialPayloadSchema } from '../shared/material';
+import { expectedNavigationLink } from '../shared/action-navigation';
+import { actionLandmark } from '../shared/web-action';
 
 /** 每次启动的工作者只持有一个动作；取消撤销通道并结束工作者，不关闭用户网页。 */
 export class WebExecutor {
@@ -50,6 +52,20 @@ export class WebExecutor {
       current.binding.targetId !== job.binding.targetId ||
       current.binding.generation !== job.binding.generation ||
       current.observation.fingerprint !== job.source.fingerprint
+    )
+      throw Error('EXECUTION_PAGE_CHANGED');
+    const landmark = actionLandmark(job.action);
+    const landmarkHref = landmark
+      ? expectedNavigationLink(job.action, job.source, job.source.links)
+      : undefined;
+    if (
+      landmark &&
+      (!landmarkHref ||
+        expectedNavigationLink(
+          job.action,
+          current.observation,
+          current.observation.links,
+        ) !== landmarkHref)
     )
       throw Error('EXECUTION_PAGE_CHANGED');
     const richSource = richTextControl(job.action, current.observation);
@@ -215,6 +231,7 @@ export class WebExecutor {
             payload,
             richText,
             richTextInitial,
+            landmarkHref,
           });
         });
       });

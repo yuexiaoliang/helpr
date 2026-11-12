@@ -2074,7 +2074,7 @@ test('当前格式备份保留原预览证明、导入待核对；格式33迁移
     file,
   });
   expect(JSON.parse(await readFile(file, 'utf8'))).toMatchObject({
-    dataVersion: 37,
+    dataVersion: 38,
   });
   const folder = await mkdtemp(
     path.join(tmpdir(), 'helpr-rich-review-restore-'),

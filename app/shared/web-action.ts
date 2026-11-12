@@ -17,8 +17,14 @@ export const roleLocatorSchema = z.strictObject({
   name: z.string().min(1).max(500),
   exact: z.boolean().default(true),
 });
+export const landmarkLocatorSchema = z.strictObject({
+  role: z.enum(['main', 'navigation']),
+  name: z.string().max(500),
+  exact: z.literal(true).default(true),
+});
+export type LandmarkLocator = z.infer<typeof landmarkLocatorSchema>;
 export const elementLocatorSchema = roleLocatorSchema.extend({
-  within: roleLocatorSchema.optional(),
+  within: z.union([roleLocatorSchema, landmarkLocatorSchema]).optional(),
   frameUrl: z.url().optional(),
 });
 // 仅由完整DOM快照形成的结构路径；不接受任意CSS、XPath或网页脚本。
@@ -63,3 +69,9 @@ export const webActionSchema = z.discriminatedUnion('kind', [
   }),
 ]);
 export type WebAction = z.infer<typeof webActionSchema>;
+
+export function actionLandmark(action: WebAction): LandmarkLocator | undefined {
+  if (action.kind === 'upload' || 'richTextNodeId' in action.target) return;
+  const within = action.target.within;
+  if (within?.role === 'main' || within?.role === 'navigation') return within;
+}

@@ -7,6 +7,7 @@ import {
   PAGE_OBSERVATION_TEXT_LIMIT,
   type PageObservation,
 } from '../shared/model';
+import type { LandmarkLocator } from '../shared/web-action';
 
 const axValue = z.object({ value: z.unknown().optional() });
 const treeSchema = z.object({
@@ -25,6 +26,47 @@ const treeSchema = z.object({
     }),
   ),
 });
+
+function linkLandmarks(
+  nodes: z.infer<typeof treeSchema>['nodes'],
+  excluded: ReadonlySet<string>,
+) {
+  const parents = new Map<string, string | null>();
+  const landmarks = new Map<string, LandmarkLocator>();
+  const counts = new Map<string, number>();
+  const key = ({ role, name }: LandmarkLocator) => JSON.stringify([role, name]);
+  for (const node of nodes) {
+    for (const child of node.childIds ?? [])
+      parents.set(child, parents.has(child) ? null : node.nodeId);
+    const role = node.role?.value;
+    if (
+      node.ignored ||
+      excluded.has(node.nodeId) ||
+      (role !== 'main' && role !== 'navigation')
+    )
+      continue;
+    const name = node.name?.value ?? '';
+    if (typeof name !== 'string' || name.length > 500) continue;
+    const scope: LandmarkLocator = { role, name, exact: true };
+    landmarks.set(node.nodeId, scope);
+    counts.set(key(scope), (counts.get(key(scope)) ?? 0) + 1);
+  }
+  return (nodeId: string) => {
+    const scopes: LandmarkLocator[] = [];
+    const seen = new Set([nodeId]);
+    for (
+      let parent = parents.get(nodeId);
+      parent !== undefined;
+      parent = parents.get(parent)
+    ) {
+      if (parent === null || seen.has(parent)) return;
+      seen.add(parent);
+      const scope = landmarks.get(parent);
+      if (scope && counts.get(key(scope)) === 1) scopes.push(scope);
+    }
+    return scopes.length > 0 && scopes.length <= 8 ? scopes : undefined;
+  };
+}
 
 /** 只使用所属页面的受控观察。排除受保护输入及其子节点，不运行网站脚本。 */
 export function pageObservation(
@@ -73,6 +115,7 @@ export function pageObservation(
       }
   };
   [...excluded].forEach(excludeChildren);
+  const enclosingLandmarks = linkLandmarks(nodes, excluded);
   const rootName = nodes.find((node) => node.role?.value === 'RootWebArea')
     ?.name?.value;
   const title = typeof rootName === 'string' ? rootName.slice(0, 1000) : '';
@@ -227,7 +270,12 @@ export function pageObservation(
     if (!inline && role === 'link' && name && typeof link === 'string') {
       try {
         const href = websiteURL(link);
-        links.push({ name: name.slice(0, 1000), url: href });
+        const landmarks = enclosingLandmarks(node.nodeId);
+        links.push({
+          name: name.slice(0, 1000),
+          url: href,
+          ...(landmarks ? { landmarks } : {}),
+        });
         lines.push(
           '[observed-link] ' +
             JSON.stringify({ name: name.slice(0, 1000), url: href }),
@@ -253,6 +301,7 @@ export function pageObservation(
       controls.length > 500,
     fingerprint: createHash('sha256')
       .update(url + '\n' + full)
+      .update(JSON.stringify(links.filter((link) => link.landmarks)))
       .digest('hex'),
   };
 }

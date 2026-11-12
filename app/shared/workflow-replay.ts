@@ -8,6 +8,7 @@ import type { TaskExecution, NextStep, WebAction } from './execution';
 import type { PageObservation } from './model';
 import { type WorkflowUse } from './workflow';
 import { expectedNavigationLink } from './action-navigation';
+import { actionLandmark } from './web-action';
 import { creationFieldsMatch } from './target-creation';
 
 export function currentWorkflow(e: TaskExecution) {
@@ -204,6 +205,8 @@ export function observedControl(action: WebAction, source: PageObservation) {
     return source.text.includes(
       `[file ${action.target.fileIndex}] ${action.target.frameUrl ?? source.url}`,
     );
+  if (actionLandmark(action))
+    return !!expectedNavigationLink(action, source, source.links);
   if (!source.controls) return false;
   try {
     const rich = richTextControl(action, source);
@@ -219,7 +222,7 @@ export function observedControl(action: WebAction, source: PageObservation) {
       c.name === target.name &&
       c.frameUrl === (target.frameUrl ?? source.url),
   );
-  // 层级关系尚未进入观察协议，同名控件不能凭模型声明 within 消歧。
+  // 普通控件仍按完整观察的精确名称核对。
   return target.exact && matches.length === 1 && !matches[0]!.disabled;
 }
 

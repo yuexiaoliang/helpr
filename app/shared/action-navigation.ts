@@ -4,7 +4,8 @@ import {
 } from './form-navigation-chain';
 import { z } from 'zod';
 import { pageSourceSchema } from './model';
-import type { WebAction } from './web-action';
+import { actionLandmark, type WebAction } from './web-action';
+import type { ObservedLink } from './model';
 
 // 时间相关的审计事实，不能用作动作已成功、目标归属或自动恢复的证明。
 export const actionNavigationSchema = z
@@ -93,18 +94,27 @@ export function sameSiteFormURL(from: string, to: string, allowSame = false) {
 export function expectedNavigationLink(
   action: WebAction,
   source: { url: string; truncated: boolean },
-  links: readonly { name: string; url: string }[] = [],
+  links: readonly ObservedLink[] = [],
 ): string | undefined {
   if (
     source.truncated ||
     action.kind !== 'click' ||
     action.target.role !== 'link' ||
     !action.target.exact ||
-    action.target.within ||
     (action.target.frameUrl && action.target.frameUrl !== source.url)
   )
     return;
-  const matches = links.filter((l) => l.name === action.target.name);
+  const landmark = actionLandmark(action);
+  if (action.target.within && !landmark) return;
+  const matches = links.filter(
+    (link) =>
+      link.name === action.target.name &&
+      (!landmark ||
+        link.landmarks?.some(
+          (scope) =>
+            scope.role === landmark.role && scope.name === landmark.name,
+        )),
+  );
   if (matches.length !== 1) return;
   try {
     const url = new URL(matches[0]!.url),

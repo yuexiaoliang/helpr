@@ -16,9 +16,11 @@ import {
 import {
   actionNavigationEventSchema,
   directFormButton,
+  expectedNavigationLink,
   linkNavigationResolutionSchema,
   formNavigationResolutionSchema,
 } from '../shared/action-navigation';
+import { actionLandmark } from '../shared/web-action';
 import {
   agreementUICommandSchema,
   agreementTermsSchema,
@@ -2726,6 +2728,13 @@ export class ExecutionRecords {
               : p && c.action.kind === 'click'
                 ? 'publication'
                 : 'interaction');
+          if (
+            actionLandmark(c.action) &&
+            (effect !== 'interaction' ||
+              c.targetCreation ||
+              !expectedNavigationLink(c.action, c.source, c.source.links))
+          )
+            throw Error('EXECUTION_LOCATOR_UNVERIFIED');
           // 旧下载检查不是当前页面的附件关联；链接消失或变得歧义时不继续写入。
           if (
             e.actions.some(

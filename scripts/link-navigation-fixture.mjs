@@ -9,10 +9,16 @@ export function linkNavigationFixture(receipts) {
         const input = JSON.parse(body);
         const observed = input.messages.at(-2).content;
         const arrived = observed.includes('LINK-ARRIVED-42');
-        receipts.push({ kind: 'link-planning', arrived });
+        const role = observed.includes('重定向清单') ? 'navigation' : 'main';
+        const { scopedLinks = [] } = JSON.parse(input.messages.at(-1).content);
+        const within = scopedLinks
+          .filter(link => link.name === '打开条目')
+          .flatMap(link => link.landmarks)
+          .find(scope => scope.role === role);
+        receipts.push({ kind: 'link-planning', arrived, region: within?.role });
         const proposal = arrived
           ? { decision: 'complete', summary: '已核对条目', evidence: ['LINK-ARRIVED-42'], previous: null, action: null }
-          : { decision: 'act', summary: '打开条目', evidence: ['打开条目'], previous: null, effect: 'interaction', action: { kind: 'click', target: { role: 'link', name: '打开条目' } } };
+          : { decision: 'act', summary: '打开条目', evidence: ['打开条目'], previous: null, effect: 'interaction', action: { kind: 'click', target: { role: 'link', name: '打开条目', ...(within ? { within } : {}) } } };
         const chunk = (delta, finish_reason) => 'data: ' + JSON.stringify({ id: 'link', choices: [{ index: 0, delta, finish_reason }] }) + '\n\n';
         res.writeHead(200, { 'Content-Type': 'text/event-stream' });
         res.end(chunk({ content: JSON.stringify(proposal) }, null) + chunk({}, 'stop') + 'data: [DONE]\n\n');
@@ -21,7 +27,7 @@ export function linkNavigationFixture(receipts) {
     }
     if (url.pathname === '/link-redirect-start') {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.end('<!doctype html><meta charset="utf-8"><title>重定向清单</title><a href="/link-roundtrip">打开条目</a>');
+      res.end('<!doctype html><meta charset="utf-8"><title>重定向清单</title><main><a href="/link-wrong-region">打开条目</a></main><nav aria-label="侧栏"><a href="/link-roundtrip">打开条目</a></nav>');
       return true;
     }
     if (url.pathname === '/link-roundtrip' && redirectHits++ === 0) {
@@ -39,7 +45,12 @@ export function linkNavigationFixture(receipts) {
     }
     if (url.pathname === '/link-start') {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.end('<!doctype html><meta charset="utf-8"><title>链接清单</title><a href="/link-item/42">打开条目</a>');
+      res.end('<!doctype html><meta charset="utf-8"><title>链接清单</title><nav aria-label="侧栏"><a href="/link-wrong-region">打开条目</a></nav><main><a href="/link-item/42">打开条目</a></main>');
+      return true;
+    }
+    if (url.pathname === '/link-wrong-region') {
+      receipts.push({ kind: 'link-wrong-region' });
+      res.writeHead(400).end('WRONG-REGION');
       return true;
     }
     if (url.pathname === '/link-item/42') {

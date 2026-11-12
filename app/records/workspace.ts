@@ -166,6 +166,7 @@ export class WorkspaceRecords {
           34,
           35,
           36,
+          37,
           CURRENT_DATA_FORMAT,
         ].includes(priorVersion)
       )
@@ -173,10 +174,12 @@ export class WorkspaceRecords {
       if (legacy && priorVersion !== CURRENT_DATA_FORMAT) {
         const backup = path.join(
           folder,
-          (priorVersion === 35 || priorVersion === 36
-            ? priorVersion === 35
-              ? 'workspace-before-summary-result-23-'
-              : 'workspace-before-cross-page-workflows-'
+          (priorVersion >= 35
+            ? priorVersion === 37
+              ? 'workspace-before-landmark-links-23-'
+              : priorVersion === 36
+                ? 'workspace-before-cross-page-workflows-'
+                : 'workspace-before-summary-result-23-'
             : priorVersion === 34
               ? 'workspace-before-rich-text-rebind-23-'
               : priorVersion === 33
@@ -356,6 +359,7 @@ export class WorkspaceRecords {
         version !== 33 &&
         version !== 34 &&
         version !== 35 &&
+        version !== 37 &&
         version !== CURRENT_DATA_FORMAT
       )
         throw new Error('DATA_VERSION_UNSUPPORTED');

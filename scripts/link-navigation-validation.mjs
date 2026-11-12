@@ -27,6 +27,8 @@ export async function verifyLinkNavigation({ client, website, evidence, command,
     assert.equal(a.navigation.association, 'during-action');
     assert.equal(a.navigation.url, website.base + '/link-item/42');
     assert.equal(a.navigationResolution.proof.reason, 'anchorClick');
+    assert.deepEqual(a.action.target.within, { role: 'main', name: '', exact: true });
+    assert.equal(website.receipts.filter(r => r.kind === 'link-wrong-region').length, 0);
     assert.equal(a.navigationResolution.pausedInputEpoch, a.navigation.inputEpoch + 2);
     assert.equal(a.resultSource.generation, a.binding.generation + 1);
     assert.equal(a.resultSource.url, a.navigation.url);
@@ -55,6 +57,8 @@ export async function verifyLinkNavigation({ client, website, evidence, command,
   check('连续重定向回原href仍保持未知与暂停，不借最终URL相同自动放行', () => {
     assert.equal(redirected.execution.pauseReason, 'page-change');
     const a = redirected.execution.actions[0];
+    assert.deepEqual(a.action.target.within, { role: 'navigation', name: '侧栏', exact: true });
+    assert.equal(website.receipts.filter(r => r.kind === 'link-wrong-region').length, 0);
     assert.equal(a.navigation.url, website.base + '/link-roundtrip');
     assert.equal(a.status, 'unknown'); assert.equal(a.navigationResolution, undefined);
     assert.equal(website.receipts.filter(r => r.kind === 'link-redirect').length, 2);

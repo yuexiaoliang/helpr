@@ -9,6 +9,8 @@ import { ActionNavigationWindows } from '../../app/desktop/action-navigation';
 import { actionFactSchema } from '../../app/shared/execution';
 import { expectedNavigationLink } from '../../app/shared/action-navigation';
 import type { PageObservation } from '../../app/shared/model';
+import { pageObservation } from '../../app/desktop/page-observation';
+import { webActionSchema } from '../../app/shared/web-action';
 
 const folders: string[] = [];
 afterEach(() =>
@@ -161,6 +163,68 @@ test('只有唯一精确同站主frame链接成为预期导航，拒绝跨站/�
     expect(expectedNavigationLink(link, source, list)).toBeUndefined();
   expect(
     expectedNavigationLink(link, { ...source, truncated: true }, links),
+  ).toBeUndefined();
+});
+
+test('按网页区域分别定位主内容和侧栏的同名链接', () => {
+  const name = link.target.name;
+  const sidebarUrl = 'https://example.com/item/side';
+  const anchor = (nodeId: string, href: string) => ({
+    nodeId,
+    role: { value: 'link' },
+    name: { value: name },
+    properties: [{ name: 'url', value: { value: href } }],
+  });
+  const observe = (secondMain = false) =>
+    pageObservation(
+      { frameTree: { frame: { url: from } } },
+      {
+        nodes: [
+          {
+            nodeId: 'root',
+            role: { value: 'RootWebArea' },
+            childIds: ['main', 'menu'],
+          },
+          {
+            nodeId: 'main',
+            role: { value: 'main' },
+            childIds: secondMain ? ['a', 'c'] : ['a'],
+          },
+          {
+            nodeId: 'menu',
+            role: { value: 'navigation' },
+            name: { value: '侧栏' },
+            childIds: ['b'],
+          },
+          anchor('a', to),
+          anchor('b', sidebarUrl),
+          ...(secondMain ? [anchor('c', to)] : []),
+        ],
+      },
+      3,
+    );
+  const inMain = webActionSchema.parse({
+    ...link,
+    target: { ...link.target, within: { role: 'main', name: '', exact: true } },
+  });
+  const inSidebar = webActionSchema.parse({
+    ...link,
+    target: {
+      ...link.target,
+      within: { role: 'navigation', name: '侧栏', exact: true },
+    },
+  });
+  const observed = observe();
+  expect(expectedNavigationLink(inMain, observed, observed.links)).toBe(to);
+  expect(expectedNavigationLink(inSidebar, observed, observed.links)).toBe(
+    sidebarUrl,
+  );
+  expect(
+    expectedNavigationLink(link, observed, observed.links),
+  ).toBeUndefined();
+  const ambiguous = observe(true);
+  expect(
+    expectedNavigationLink(inMain, ambiguous, ambiguous.links),
   ).toBeUndefined();
 });
 

@@ -459,9 +459,12 @@ export async function startController(
       const controls = [observation, ...childObservations].flatMap(
         (o) => o.controls ?? [],
       );
-      const links = [observation, ...childObservations].flatMap(
-        (o) => o.links ?? [],
-      );
+      const links = [
+        ...(observation.links ?? []),
+        ...childObservations.flatMap((child) =>
+          (child.links ?? []).map(({ name, url }) => ({ name, url })),
+        ),
+      ];
       observation.controls = controls.slice(0, 500);
       observation.links = links.slice(0, 300);
       observation.truncated ||=
