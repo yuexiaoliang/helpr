@@ -1,0 +1,276 @@
+{
+  "phase": "P3",
+  "candidate": 118,
+  "predecessor": 117,
+  "sourceCommit": "d496073a39b0820bcf92abd59d71a24d1adfe2b4",
+  "status": "native-pending",
+  "artifact": {
+    "path": "/Users/yuexiaoliang/projects/helpr/dist/candidates/release-p4-draft-recovery-0-2-3/mac-arm64/helpr.app",
+    "sha256": "66a09417f750776595bf896e799ab42d3ec30be250fabeeb1c6622d7217395f7",
+    "manifest": {
+      "path": ".local/workspace-validation/build-118.json",
+      "sha256": "ea13cd25e058bd0958318862aac262a5914eb8abb2f7b8b5ca3b717cb25b72e6"
+    },
+    "preflight": {
+      "path": ".local/workspace-validation/p4-recovery/preflight/PREFLIGHT.json",
+      "sha256": "7e0880e3f184a8f96c82a1405e4cc85d9e1119254a55ec9b0cc207329a7c894d"
+    }
+  },
+  "p3Acceptance": {
+    "passed": false,
+    "firstReadyMs": 4996,
+    "coldReadyMs": 1018,
+    "settled": {
+      "from": 1794477859435,
+      "to": 1794478159518,
+      "spanMs": 300083,
+      "samples": 101,
+      "maxSampleGapMs": 3002,
+      "tailFrom": 1794477979518,
+      "tailSamples": 60,
+      "tailRangeMiB": 212.171875,
+      "peakMiB": 1761.921875,
+      "modelCalls": 0,
+      "siteEffects": 0
+    },
+    "native": {
+      "status": "pending",
+      "reason": "Computer Use desktop control unavailable",
+      "observed": 0,
+      "required": 6
+    }
+  },
+  "firstLaunchRounds": [
+    {
+      "start": 545,
+      "readyMs": 6503,
+      "assessmentMs": 5208,
+      "evidence": {
+        "path": ".local/workspace-validation/run-1794477273417/result.json",
+        "sha256": "2393b589081c17bff55a872433bb3e82f8a29d7dde3c9700ae8c6c5cc37307dd"
+      },
+      "os": {
+        "path": ".local/workspace-validation/p4-recovery/start545-assessment.log",
+        "sha256": "ec7abdc0ec5b58af1abba8bf611d73c91769c2b0a7715be05c15d309d0ba952d"
+      }
+    },
+    {
+      "start": 546,
+      "readyMs": 4996,
+      "assessmentMs": 3933,
+      "evidence": {
+        "path": ".local/workspace-validation/run-1794477349640/result.json",
+        "sha256": "29420bf98d2dcf885d22ac7acf9f87ec4d5a3edb79a0455dba270dc1787d0af9"
+      },
+      "os": {
+        "path": ".local/workspace-validation/p4-recovery/start546-assessment.log",
+        "sha256": "3cb9c1d141cde641df9d06738e928eb720d04a47e07b6839f4835a710b098522"
+      }
+    }
+  ],
+  "recovery": {
+    "evidence": {
+      "path": ".local/workspace-validation/run-1794477273417/result.json",
+      "sha256": "2393b589081c17bff55a872433bb3e82f8a29d7dde3c9700ae8c6c5cc37307dd"
+    },
+    "confirmedOriginalAction": true,
+    "draftCreated": 1,
+    "categoryChecked": 1,
+    "realRequests": 0,
+    "remoteWrites": 0,
+    "requestReservations": [
+      30861,
+      31485,
+      32561,
+      32340
+    ],
+    "fixture": {
+      "path": ".local/workspace-validation/p4-recovery/draft-resume-fixture.mjs",
+      "sha256": "a0ac5f36146291ae7c86e549679881f6063443598a7b927137eafb552b310edb"
+    }
+  },
+  "planningComparison": {
+    "candidate": 118,
+    "basis": "Previous measured reservation with equal observation, controls, history and unchanged prompt fields; includes one additional saved target fact.",
+    "previousReservation": 53514,
+    "comparableFieldsBytes": {
+      "previous": 28469,
+      "compact": 19763
+    },
+    "sameObservationReservation": 44808,
+    "taskRemaining": 47410,
+    "sameObservationHeadroom": 2602,
+    "actualCandidateRequestMeasured": false,
+    "newRealRequests": 0,
+    "evidence": {
+      "path": ".local/workspace-validation/p4-recovery/planning-comparison.json",
+      "sha256": "d12882df174b7e30ab793e998d8936d25762a89e6f5e918ba0882e80a3507899"
+    },
+    "method": {
+      "path": ".local/workspace-validation/p4-recovery/compare-planning.ts",
+      "sha256": "6d7e4fe3bf7a642b041837874e5a7412ddb2145948063c8d18b4f843fb0dc0af"
+    }
+  },
+  "sameNamedLinks": {
+    "path": ".local/workspace-validation/run-1794477349640/result.json",
+    "sha256": "29420bf98d2dcf885d22ac7acf9f87ec4d5a3edb79a0455dba270dc1787d0af9"
+  },
+  "fixtureBusiness": {
+    "cases": 5,
+    "evidence": {
+      "path": ".local/workspace-validation/run-1794477390885/result.json",
+      "sha256": "39ae4634044b373c6e1895f1f3d702ba1c080f5a6f7ccb20b81260f0f9128f58"
+    },
+    "reservations": {
+      "path": ".local/workspace-validation/p4-recovery/business-reservations.json",
+      "sha256": "9a6c0aee85142040ee7d6a769aef818acf93e16a1f89849b148ef7fbf8cc6c9a"
+    }
+  },
+  "coordination": {
+    "checks": 4,
+    "evidence": {
+      "path": ".local/workspace-validation/run-1794478323664/result.json",
+      "sha256": "7b5f3815e3c01953fd0810ca75fc15ab1e14b62cb19919843ec63f0f686e536e"
+    }
+  },
+  "workflowRepair": {
+    "checks": 7,
+    "evidence": {
+      "path": ".local/workspace-validation/run-1794478360001/result.json",
+      "sha256": "f19084dfcdadfceb6533c78816f2f1a7df6f8a6023233b791829e4e959e5f9aa"
+    }
+  },
+  "performanceRounds": [
+    {
+      "starts": [
+        551,
+        552
+      ],
+      "passed": false,
+      "error": "RSS_TAIL_RANGE_LIMIT",
+      "settled": {
+        "from": 1794477482514,
+        "to": 1794477782598,
+        "spanMs": 300084,
+        "samples": 101,
+        "maxSampleGapMs": 3004,
+        "tailFrom": 1794477602598,
+        "tailSamples": 60,
+        "tailRangeMiB": 281.859375,
+        "peakMiB": 1762.046875,
+        "modelCalls": 0,
+        "siteEffects": 0
+      },
+      "evidence": {
+        "path": ".local/workspace-validation/run-1794477461503/result.json",
+        "sha256": "c7bd8cc2c75ad3552dd50ae92c8bb1a00373ef7b96cf34b1459c25d45224cd59"
+      }
+    },
+    {
+      "starts": [
+        553,
+        554
+      ],
+      "passed": true,
+      "error": null,
+      "settled": {
+        "from": 1794477859435,
+        "to": 1794478159518,
+        "spanMs": 300083,
+        "samples": 101,
+        "maxSampleGapMs": 3002,
+        "tailFrom": 1794477979518,
+        "tailSamples": 60,
+        "tailRangeMiB": 212.171875,
+        "peakMiB": 1761.921875,
+        "modelCalls": 0,
+        "siteEffects": 0
+      },
+      "evidence": {
+        "path": ".local/workspace-validation/run-1794477835396/result.json",
+        "sha256": "bb01838bdf918f5ca68389d9dda3f9f6101b625f2226cf4aa5a690beac4b3d3f"
+      }
+    }
+  ],
+  "supplementalMemory": {
+    "evidence": {
+      "path": ".local/workspace-validation/p4-recovery/memory-repeat.jsonl",
+      "sha256": "a401add0356b0135b2361a0060433d9845d88036d6ae18e5d26a01ac9a2a2ddc"
+    },
+    "matchedSamples": 60,
+    "residentRangeMiB": 212.171875,
+    "footprintRangeMiB": 0.796875
+  },
+  "source": {
+    "workspace": 617,
+    "validator": 41,
+    "legacy": 25,
+    "checks": {
+      "path": ".local/workspace-validation/p4-recovery/source-check.log",
+      "sha256": "c87b355956555a32e76e2c126c11370eb9501c5caed80affd564fa3bea9b8e32"
+    },
+    "red": {
+      "path": ".local/workspace-validation/p4-landmarks/draft-recovery-model-red.log",
+      "sha256": "10eb03608f4038258369ffc87334535972ffd1cae58c7091b37e5f4672b77423"
+    },
+    "green": {
+      "path": ".local/workspace-validation/p4-landmarks/draft-recovery-model-final.log",
+      "sha256": "5d197a55c437d67d4f556c30c12308a688cb1606b0dce90896bcd9f2a5c1dc55"
+    }
+  },
+  "p4Inputs": {
+    "file": "tests/fixtures/release-23-real-business-v1/INPUTS.json",
+    "sha256": "ac799053df77edb174b1a1ae94280cef5262179817c81fa42a20dd6208add947",
+    "count": 10,
+    "model": {
+      "provider": "DeepSeek",
+      "model": "deepseek-flash",
+      "protocol": "chat-completions",
+      "sdkRetries": 0,
+      "outputTokens": 2048,
+      "configuration": "沿用本机受保护配置，执行前确认非秘密配置与实际记录，账本不保存密钥。"
+    },
+    "limits": {
+      "requests": 120,
+      "reservedTokens": 1200000,
+      "outputTokensPerRequest": 2048,
+      "attachments": 10,
+      "newContents": 10,
+      "publishes": 10,
+      "minutes": 90
+    },
+    "consumed": {
+      "requests": 8,
+      "reservedTokens": 775163,
+      "attachments": 0,
+      "newContents": 2,
+      "publishes": 0
+    }
+  },
+  "p4Batch": {
+    "status": "stopped",
+    "nextSample": "R23-FIRST-A",
+    "draftId": 162,
+    "verifiedSamples": 0,
+    "extraModelRequests": 0,
+    "extraSiteWrites": 0,
+    "remainingReservedTokens": 424837,
+    "ledgerAtCheck": {
+      "path": ".local/workspace-validation/release-23-real-business-v1/ledger.json",
+      "sha256": "25809b5dae013d1b221e1f78f862f90d5bc2bd741801ab45b121198102610a42"
+    }
+  },
+  "cleanup": {
+    "pids": 237,
+    "groups": 42,
+    "allCleared": true,
+    "leaseReleased": true
+  },
+  "cumulative": {
+    "builds": 118,
+    "installs": 29,
+    "starts": 558,
+    "faults": 74,
+    "cleanups": 26
+  }
+}
