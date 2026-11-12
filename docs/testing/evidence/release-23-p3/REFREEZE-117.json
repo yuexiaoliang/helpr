@@ -1,0 +1,214 @@
+{
+  "phase": "P3",
+  "candidate": 117,
+  "predecessor": 116,
+  "sourceCommit": "48fc9d98d01d379dd16887b5f1c3c7264baf280a",
+  "status": "refrozen",
+  "artifact": {
+    "path": "/Users/yuexiaoliang/projects/helpr/dist/candidates/release-p4-landmark-links-0-2-3/mac-arm64/helpr.app",
+    "sha256": "606308f491b22ea93be6ec7f42f4739fb9e827e86783ea28be6e0b512e50d036",
+    "manifest": {
+      "path": ".local/workspace-validation/build-117.json",
+      "sha256": "4e31df6e35fc23235fd639389c0495034fdfb60222dd06419e3804294051c9af"
+    },
+    "preflight": {
+      "path": ".local/workspace-validation/p4-landmarks/preflight/PREFLIGHT.json",
+      "sha256": "5c4a8c35722487d68451f9e13dd8ed40bf7df71c687ab5197060fc7192290b56"
+    }
+  },
+  "p3Acceptance": {
+    "passed": true,
+    "limits": {
+      "firstMs": 5000,
+      "coldMs": 5000,
+      "nativeMs": 2000,
+      "peakMiB": 2048,
+      "tailRangeMiB": 256
+    },
+    "firstReadyMs": 3459,
+    "coldReadyMs": 921,
+    "settled": {
+      "from": 1794471762954,
+      "to": 1794472063038,
+      "spanMs": 300084,
+      "samples": 101,
+      "maxSampleGapMs": 3009,
+      "tailFrom": 1794471883038,
+      "tailSamples": 60,
+      "tailRangeMiB": 99.875,
+      "peakMiB": 1914.5625,
+      "modelCalls": 0,
+      "siteEffects": 0
+    },
+    "native": {
+      "durationsMs": [
+        549,
+        492,
+        516,
+        495,
+        489,
+        508
+      ],
+      "evidence": {
+        "path": ".local/workspace-validation/p4-landmarks/native-passed.json",
+        "sha256": "e1f74a5c750a793f72ffa52b72f8e15e3d2d550fc0fbbb6ec89b33bb6adf0b1f"
+      }
+    }
+  },
+  "scopedLinks": {
+    "main": "confirmed",
+    "navigation": "exact click, redirect left unknown",
+    "evidence": {
+      "path": ".local/workspace-validation/run-1794471177181/result.json",
+      "sha256": "a44764c961d60919af8e09bd781ef4a55125cf3884e28698894877a88c979d7a"
+    }
+  },
+  "firstLaunchRounds": [
+    {
+      "start": 527,
+      "readyMs": 5621,
+      "evidence": {
+        "path": ".local/workspace-validation/run-1794471177181/result.json",
+        "sha256": "a44764c961d60919af8e09bd781ef4a55125cf3884e28698894877a88c979d7a"
+      },
+      "os": {
+        "path": ".local/workspace-validation/p4-landmarks/start527-os.log",
+        "sha256": "83c49307776e7c39c6ea06afa780c01eeac6c39e7ff5773eb0bede3ed4ecc67a"
+      }
+    },
+    {
+      "start": 534,
+      "readyMs": 3459,
+      "evidence": {
+        "path": ".local/workspace-validation/run-1794471599976/result.json",
+        "sha256": "7c55478971954cef96779ba5524944873b7e7e41b22a9257d37676aaad916528"
+      },
+      "os": {
+        "path": ".local/workspace-validation/p4-landmarks/fresh-start-os.log",
+        "sha256": "28d7bd77718dbcccb13b309eaa93d1e5a142dac6ccd66de0b7a4d2714dbb84f3"
+      }
+    }
+  ],
+  "fixtureBusiness": {
+    "cases": 5,
+    "evidence": {
+      "path": ".local/workspace-validation/run-1794471193758/result.json",
+      "sha256": "f2abc631c34edae046225af2bcee56eeaa8dd9650534a7fe1d958d84c26fa280"
+    }
+  },
+  "performanceRounds": [
+    {
+      "start": 532,
+      "error": "RSS_PEAK_LIMIT",
+      "settled": {
+        "from": 1794471268085,
+        "to": 1794471568150,
+        "spanMs": 300065,
+        "samples": 101,
+        "maxSampleGapMs": 3002,
+        "tailFrom": 1794471388150,
+        "tailSamples": 60,
+        "tailRangeMiB": 137.78125,
+        "peakMiB": 2077.296875,
+        "modelCalls": 0,
+        "siteEffects": 0
+      },
+      "evidence": {
+        "path": ".local/workspace-validation/run-1794471247076/result.json",
+        "sha256": "85a63c3ada215153098afa87fdc762d14b6eb3a9509bee3b1b87fecba21ed1da"
+      }
+    },
+    {
+      "start": 537,
+      "settled": {
+        "from": 1794471762954,
+        "to": 1794472063038,
+        "spanMs": 300084,
+        "samples": 101,
+        "maxSampleGapMs": 3009,
+        "tailFrom": 1794471883038,
+        "tailSamples": 60,
+        "tailRangeMiB": 99.875,
+        "peakMiB": 1914.5625,
+        "modelCalls": 0,
+        "siteEffects": 0
+      },
+      "evidence": {
+        "path": ".local/workspace-validation/run-1794471741943/result.json",
+        "sha256": "1fda478654ef7e9cd4b50bddc21b773044d08cee84f22eb643f33256c4da3f26"
+      }
+    }
+  ],
+  "memory": {
+    "samples": 59,
+    "physicalFootprintRangeMiB": 2.296875,
+    "evidence": {
+      "path": ".local/workspace-validation/p4-landmarks/memory-repeat.jsonl",
+      "sha256": "f5d4607f555745067a6005f6c157279a43822052f9f11946f689556864834750"
+    }
+  },
+  "sourceChecks": {
+    "original": {
+      "path": ".local/workspace-validation/p4-landmarks/source-check.log",
+      "sha256": "a1bf8447e1c39e6daa968f9a3f82a934bc4d33f7822194c7e6bce35a64e7a7e6"
+    },
+    "rebuilt": {
+      "path": ".local/workspace-validation/p4-landmarks/source-check-rebuilt.log",
+      "sha256": "4b29d91b88ce57f44efd6742b6af623d9c8098faae4c44e208a5a0eb8fd2b1c6"
+    },
+    "regressionBefore": {
+      "path": ".local/workspace-validation/p4-refreeze/landmark-red.log",
+      "sha256": "94400cb5074fe2206577e5c21f11f03edcdcff29ab9e364e4ec1ab5fe4d12565"
+    },
+    "regressionAfter": {
+      "path": ".local/workspace-validation/p4-refreeze/landmark-green.log",
+      "sha256": "5bfeded5b9d4f0ba09e85e7ecf1b03acdc35053332b335542ee257e0015617e5"
+    },
+    "workspacePassed": 616,
+    "validationPassed": 41,
+    "legacyPassed": 25
+  },
+  "p4Inputs": {
+    "file": "tests/fixtures/release-23-real-business-v1/INPUTS.json",
+    "sha256": "ac799053df77edb174b1a1ae94280cef5262179817c81fa42a20dd6208add947",
+    "count": 10,
+    "model": {
+      "provider": "DeepSeek",
+      "model": "deepseek-flash",
+      "protocol": "chat-completions",
+      "sdkRetries": 0,
+      "outputTokens": 2048,
+      "configuration": "沿用本机受保护配置，执行前确认非秘密配置与实际记录，账本不保存密钥。"
+    },
+    "limits": {
+      "requests": 120,
+      "reservedTokens": 1200000,
+      "outputTokensPerRequest": 2048,
+      "attachments": 10,
+      "newContents": 10,
+      "publishes": 10,
+      "minutes": 90
+    },
+    "consumed": {
+      "requests": 3,
+      "reservedTokens": 330516,
+      "attachments": 0,
+      "newContents": 1,
+      "publishes": 0
+    }
+  },
+  "p4Batch": {
+    "startedAt": 1794466553626,
+    "deadline": 1794471953626,
+    "status": "stopped",
+    "providerTotalTokens": 84169,
+    "verifiedSamples": 0,
+    "nextSample": "R23-FIRST-A"
+  },
+  "cleanup": {
+    "pids": 178,
+    "groups": 36,
+    "allCleared": true,
+    "leaseReleased": true
+  }
+}
