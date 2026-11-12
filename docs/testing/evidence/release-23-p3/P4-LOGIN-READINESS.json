@@ -1,0 +1,102 @@
+{
+  "phase": "P4",
+  "batch": "release-23-real-business-v1",
+  "candidate": 115,
+  "bundleSha256": "536533574127c50c3c2cc7f350040b0b35ee19db33af2bd31e73ebca5ee1a28e",
+  "inputsSha256": "ac799053df77edb174b1a1ae94280cef5262179817c81fa42a20dd6208add947",
+  "inputsVerified": 10,
+  "businessStarted": false,
+  "status": "awaiting-test-account-password",
+  "confirmedLogins": 0,
+  "consumed": {
+    "requests": 0,
+    "reservedTokens": 0,
+    "attachments": 0,
+    "newContents": 0,
+    "publishes": 0
+  },
+  "loginChecks": [
+    {
+      "site": "WordPress",
+      "port": 38080,
+      "httpStatus": 200
+    },
+    {
+      "site": "Drupal",
+      "port": 38081,
+      "httpStatus": 200
+    }
+  ],
+  "preparation": [
+    {
+      "start": 494,
+      "readyMs": 3668,
+      "issue": "INVALID_REQUEST",
+      "reason": "snapshot 命令附带多余 requestId",
+      "tasksCreated": 0,
+      "evidence": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-Cokp93/result.json",
+        "sha256": "2eb2a52844b61d01da41a6bde95d3e790e06e368b26bd6e83112391c42166b4b"
+      },
+      "cleanup": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-Cokp93/RECOVERED.json",
+        "sha256": "80c96f4003184228ac87b3ab04193f4cb59002e58d37d6b8a73961facb089cf9"
+      }
+    },
+    {
+      "start": 495,
+      "readyMs": 961,
+      "issue": "REQUEST_TIMEOUT",
+      "reason": "打开 WordPress 时 macOS 向候选 115 的网页宿主显示钥匙串提示",
+      "modelConfigured": false,
+      "evidence": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-ObWJh9/result.json",
+        "sha256": "faef18c1bc7522658f252701e3583246e1254a88a230b924a73d929cccd453c6"
+      },
+      "systemEvent": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-ObWJh9/os-log.txt",
+        "sha256": "9397d30bc13706a8566c2b0c649a0b6900dc74808b1e1c401055592a06781891"
+      }
+    },
+    {
+      "start": 496,
+      "readyMs": 1045,
+      "observed": "已读取 WordPress 真实登录页，钥匙串提示已处理",
+      "evidence": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-uWGXL6/CUA-LOGIN-PAGE.json",
+        "sha256": "726febb68f09b63e0579150cff8f49976e93509d8f89250549ec6924b13e70e4"
+      }
+    }
+  ],
+  "currentProfile": {
+    "label": "A",
+    "loginTask": "P4 WordPress 登录",
+    "awaitingUser": true,
+    "modelConfigured": false,
+    "windowClosed": true,
+    "loginConfirmed": false
+  },
+  "cleanup": {
+    "normalExit": true,
+    "appAndGroupsCleared": true,
+    "leaseReleased": true,
+    "lastSession": {
+      "path": ".local/workspace-validation/release-23-real-business-v1/login-A-uWGXL6/result.json",
+      "sha256": "bf2e510b91954513d0a3f38ece6e55ece868c8b79ad8984060cc262f6e69d5cb"
+    }
+  },
+  "cumulative": {
+    "builds": 115,
+    "installs": 24,
+    "starts": 496,
+    "faults": 74,
+    "cleanups": 26
+  },
+  "credentialLookup": {
+    "account": "helpr_tester",
+    "site": "WordPress",
+    "store": "/home/yuexiaoliang/services/helpr-validation-wordpress/.env",
+    "result": "ssh-connect-timeout",
+    "credentialObtained": false
+  }
+}
