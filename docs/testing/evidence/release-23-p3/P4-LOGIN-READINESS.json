@@ -6,8 +6,8 @@
   "inputsSha256": "ac799053df77edb174b1a1ae94280cef5262179817c81fa42a20dd6208add947",
   "inputsVerified": 10,
   "businessStarted": false,
-  "status": "wordpress-ready",
-  "confirmedLogins": 2,
+  "status": "both-sites-ready",
+  "confirmedLogins": 4,
   "consumed": {
     "requests": 0,
     "reservedTokens": 0,
@@ -114,6 +114,38 @@
         "path": ".local/workspace-validation/release-23-real-business-v1/login-B-Hm1k4X/CUA-COLD-LOGIN.json",
         "sha256": "288e40524c260d5d0a78eee49c4bf3214761efae8eea410d07fd8df8bffcb701"
       }
+    },
+    {
+      "start": 503,
+      "observed": "A 由代理登录 Drupal 并核对测试作者、内容列表",
+      "evidence": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-Y0HfKN/CUA-DRUPAL-LOGIN.json",
+        "sha256": "b3bd8200729af0d4a672561b7623b58c0469f418a8b8bcef79a10b12231c0f5f"
+      }
+    },
+    {
+      "start": 504,
+      "observed": "B 由代理登录 Drupal 并核对测试作者、内容列表",
+      "evidence": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-oFOQ1g/CUA-DRUPAL-LOGIN.json",
+        "sha256": "6e18ace729b5eec905c3bec248aa01f3882c9b5658a8f4982ce55b874fb8740e"
+      }
+    },
+    {
+      "start": 505,
+      "observed": "A 冷开后在实际窗口核对 Drupal 内容列表和 WordPress 文章列表",
+      "evidence": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-cMWX7I/CUA-DRUPAL-COLD-LOGIN.json",
+        "sha256": "c2f1ed7eaf42f9b29a4ff0cfcce67cf6de7a02761b9da0c2dd7d2ca44f56ca73"
+      }
+    },
+    {
+      "start": 506,
+      "observed": "B 冷开后在实际窗口核对 Drupal 内容列表和 WordPress 文章列表",
+      "evidence": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-vqzBCP/CUA-DRUPAL-COLD-LOGIN.json",
+        "sha256": "627a87e7eb8b1327491bd9d24e683e092b4a4917c3c39cf0a1c002e103d9cfad"
+      }
     }
   ],
   "currentProfile": null,
@@ -122,14 +154,14 @@
     "appAndGroupsCleared": true,
     "leaseReleased": true,
     "lastSession": {
-      "path": ".local/workspace-validation/release-23-real-business-v1/login-B-Hm1k4X/result.json",
-      "sha256": "5562abfb2c7665a25e92bcbbb492d999d95a0d84f64b2ac17c5b763cf74d3bd5"
+      "path": ".local/workspace-validation/release-23-real-business-v1/login-B-vqzBCP/result.json",
+      "sha256": "8c477e2f9616e799e78f2376cf87e4eaecdbea124c7bc40086d7f2a25032b30a"
     }
   },
   "cumulative": {
     "builds": 115,
     "installs": 24,
-    "starts": 502,
+    "starts": 506,
     "faults": 74,
     "cleanups": 26
   },
@@ -155,8 +187,14 @@
       "modelRequests": 0,
       "normalExit": true,
       "lastSession": {
-        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-HTWvtR/result.json",
-        "sha256": "b9bc1eca53c0d4ebfd8832dce3b2c2bc3ce0de980fab8c8bc5d37e288cf840e3"
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-cMWX7I/result.json",
+        "sha256": "5bd52e79d709d5c81a7b751d1411998eabd07476d7b698ac3c9105ad7784dbe7"
+      },
+      "drupalLoginConfirmed": true,
+      "drupalColdReopenObserved": true,
+      "drupalSessionCookieMetadata": {
+        "count": 1,
+        "persistentCount": 1
       }
     },
     "B": {
@@ -172,8 +210,14 @@
       "modelRequests": 0,
       "normalExit": true,
       "lastSession": {
-        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-Hm1k4X/result.json",
-        "sha256": "5562abfb2c7665a25e92bcbbb492d999d95a0d84f64b2ac17c5b763cf74d3bd5"
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-vqzBCP/result.json",
+        "sha256": "8c477e2f9616e799e78f2376cf87e4eaecdbea124c7bc40086d7f2a25032b30a"
+      },
+      "drupalLoginConfirmed": true,
+      "drupalColdReopenObserved": true,
+      "drupalSessionCookieMetadata": {
+        "count": 1,
+        "persistentCount": 1
       }
     }
   },
@@ -194,6 +238,22 @@
             "sha256": "407f94584cc3050e58f0ef2e2019c5e8c1acba55d9680f623692c5d5f55c9ade"
           }
         }
+      },
+      "drupal": {
+        "verified": true,
+        "start": 503,
+        "evidence": {
+          "path": ".local/workspace-validation/release-23-real-business-v1/login-A-Y0HfKN/CUA-DRUPAL-LOGIN.json",
+          "sha256": "b3bd8200729af0d4a672561b7623b58c0469f418a8b8bcef79a10b12231c0f5f"
+        },
+        "coldReopen": {
+          "verified": true,
+          "start": 505,
+          "evidence": {
+            "path": ".local/workspace-validation/release-23-real-business-v1/login-A-cMWX7I/CUA-DRUPAL-COLD-LOGIN.json",
+            "sha256": "c2f1ed7eaf42f9b29a4ff0cfcce67cf6de7a02761b9da0c2dd7d2ca44f56ca73"
+          }
+        }
       }
     },
     "B": {
@@ -210,6 +270,22 @@
           "evidence": {
             "path": ".local/workspace-validation/release-23-real-business-v1/login-B-Hm1k4X/CUA-COLD-LOGIN.json",
             "sha256": "288e40524c260d5d0a78eee49c4bf3214761efae8eea410d07fd8df8bffcb701"
+          }
+        }
+      },
+      "drupal": {
+        "verified": true,
+        "start": 504,
+        "evidence": {
+          "path": ".local/workspace-validation/release-23-real-business-v1/login-B-oFOQ1g/CUA-DRUPAL-LOGIN.json",
+          "sha256": "6e18ace729b5eec905c3bec248aa01f3882c9b5658a8f4982ce55b874fb8740e"
+        },
+        "coldReopen": {
+          "verified": true,
+          "start": 506,
+          "evidence": {
+            "path": ".local/workspace-validation/release-23-real-business-v1/login-B-vqzBCP/CUA-DRUPAL-COLD-LOGIN.json",
+            "sha256": "627a87e7eb8b1327491bd9d24e683e092b4a4917c3c39cf0a1c002e103d9cfad"
           }
         }
       }
@@ -247,5 +323,10 @@
     "testData": "isolated-local-fixture-copy",
     "appliedToRealProfiles": false,
     "stopAndCancellationCountsPreserved": true
+  },
+  "drupalCredentialLookup": {
+    "account": "helpr_tester",
+    "result": "existing-test-credential-used-in-actual-application",
+    "userDelegatedLogin": true
   }
 }
