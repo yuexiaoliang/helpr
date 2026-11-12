@@ -6,8 +6,8 @@
   "inputsSha256": "ac799053df77edb174b1a1ae94280cef5262179817c81fa42a20dd6208add947",
   "inputsVerified": 10,
   "businessStarted": false,
-  "status": "awaiting-test-account-password",
-  "confirmedLogins": 0,
+  "status": "wordpress-ready",
+  "confirmedLogins": 2,
   "consumed": {
     "requests": 0,
     "reservedTokens": 0,
@@ -66,29 +66,70 @@
         "path": ".local/workspace-validation/release-23-real-business-v1/login-A-uWGXL6/CUA-LOGIN-PAGE.json",
         "sha256": "726febb68f09b63e0579150cff8f49976e93509d8f89250549ec6924b13e70e4"
       }
+    },
+    {
+      "start": 497,
+      "observed": "A 本人登录，资料页确认测试作者，文章列表核对通过",
+      "evidence": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-VMBpHF/CUA-LOGIN-CONFIRMED.json",
+        "sha256": "ff6530e6aecd3b2bd1502bc7fa3f99e445848491274dce48571e321e19970f77"
+      }
+    },
+    {
+      "start": 498,
+      "issue": "旧实验和应用的协议字段名称不同，保存前已停止，修正后复验",
+      "evidence": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-p3GrXI/result.json",
+        "sha256": "c4e64117c6c8a691ee14e7e3db6de5c005f3359bb99790ab412a64398d50fe97"
+      }
+    },
+    {
+      "start": 499,
+      "observed": "A 保存受保护配置，重开后 WordPress 会话有效",
+      "evidence": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-HTWvtR/CUA-CONFIGURATION-AND-LOGIN.json",
+        "sha256": "407f94584cc3050e58f0ef2e2019c5e8c1acba55d9680f623692c5d5f55c9ade"
+      }
+    },
+    {
+      "start": 500,
+      "observed": "B 本人登录并核对文章列表，退出后 WordPress 会话未持久化",
+      "evidence": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-8bwkuv/CUA-CONFIGURATION-AND-LOGIN.json",
+        "sha256": "36bd276b9b33cc5416cc43fe473ae0f7b820460c7d17d9b90b44fee682c787df"
+      }
+    },
+    {
+      "start": 501,
+      "observed": "B 冷开回到登录页。本人勾选 Remember Me 后重新登录，退出前核对持久会话",
+      "evidence": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-AIcngl/CUA-REMEMBERED-LOGIN.json",
+        "sha256": "0c2574cc3e396a44d4b4e80f5e57cd24995c7023f239e729b5dbe43b595682a0"
+      }
+    },
+    {
+      "start": 502,
+      "observed": "B 冷重开后直接进入已登录的文章列表",
+      "evidence": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-Hm1k4X/CUA-COLD-LOGIN.json",
+        "sha256": "288e40524c260d5d0a78eee49c4bf3214761efae8eea410d07fd8df8bffcb701"
+      }
     }
   ],
-  "currentProfile": {
-    "label": "A",
-    "loginTask": "P4 WordPress 登录",
-    "awaitingUser": true,
-    "modelConfigured": false,
-    "windowClosed": true,
-    "loginConfirmed": false
-  },
+  "currentProfile": null,
   "cleanup": {
     "normalExit": true,
     "appAndGroupsCleared": true,
     "leaseReleased": true,
     "lastSession": {
-      "path": ".local/workspace-validation/release-23-real-business-v1/login-A-uWGXL6/result.json",
-      "sha256": "bf2e510b91954513d0a3f38ece6e55ece868c8b79ad8984060cc262f6e69d5cb"
+      "path": ".local/workspace-validation/release-23-real-business-v1/login-B-Hm1k4X/result.json",
+      "sha256": "5562abfb2c7665a25e92bcbbb492d999d95a0d84f64b2ac17c5b763cf74d3bd5"
     }
   },
   "cumulative": {
     "builds": 115,
     "installs": 24,
-    "starts": 496,
+    "starts": 502,
     "faults": 74,
     "cleanups": 26
   },
@@ -97,6 +138,114 @@
     "site": "WordPress",
     "store": "/home/yuexiaoliang/services/helpr-validation-wordpress/.env",
     "result": "ssh-connect-timeout",
-    "credentialObtained": false
+    "credentialObtained": false,
+    "userRecoveredWordPressCredential": true
+  },
+  "profiles": {
+    "A": {
+      "modelConfigured": true,
+      "model": "deepseek-flash",
+      "protectedCredentialStored": true,
+      "wordpressLoginConfirmed": true,
+      "wordpressSessionCookieMetadata": {
+        "count": 3,
+        "persistentCount": 3
+      },
+      "wordpressColdReopenObserved": true,
+      "modelRequests": 0,
+      "normalExit": true,
+      "lastSession": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-HTWvtR/result.json",
+        "sha256": "b9bc1eca53c0d4ebfd8832dce3b2c2bc3ce0de980fab8c8bc5d37e288cf840e3"
+      }
+    },
+    "B": {
+      "modelConfigured": true,
+      "model": "deepseek-flash",
+      "protectedCredentialStored": true,
+      "wordpressLoginConfirmed": true,
+      "wordpressSessionCookieMetadata": {
+        "count": 3,
+        "persistentCount": 3
+      },
+      "wordpressColdReopenObserved": true,
+      "modelRequests": 0,
+      "normalExit": true,
+      "lastSession": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-Hm1k4X/result.json",
+        "sha256": "5562abfb2c7665a25e92bcbbb492d999d95a0d84f64b2ac17c5b763cf74d3bd5"
+      }
+    }
+  },
+  "logins": {
+    "A": {
+      "wordpress": {
+        "verified": true,
+        "start": 497,
+        "evidence": {
+          "path": ".local/workspace-validation/release-23-real-business-v1/login-A-VMBpHF/CUA-LOGIN-CONFIRMED.json",
+          "sha256": "ff6530e6aecd3b2bd1502bc7fa3f99e445848491274dce48571e321e19970f77"
+        },
+        "coldReopen": {
+          "verified": true,
+          "start": 499,
+          "evidence": {
+            "path": ".local/workspace-validation/release-23-real-business-v1/login-A-HTWvtR/CUA-CONFIGURATION-AND-LOGIN.json",
+            "sha256": "407f94584cc3050e58f0ef2e2019c5e8c1acba55d9680f623692c5d5f55c9ade"
+          }
+        }
+      }
+    },
+    "B": {
+      "wordpress": {
+        "verified": true,
+        "start": 500,
+        "evidence": {
+          "path": ".local/workspace-validation/release-23-real-business-v1/login-B-8bwkuv/CUA-CONFIGURATION-AND-LOGIN.json",
+          "sha256": "36bd276b9b33cc5416cc43fe473ae0f7b820460c7d17d9b90b44fee682c787df"
+        },
+        "coldReopen": {
+          "verified": true,
+          "start": 502,
+          "evidence": {
+            "path": ".local/workspace-validation/release-23-real-business-v1/login-B-Hm1k4X/CUA-COLD-LOGIN.json",
+            "sha256": "288e40524c260d5d0a78eee49c4bf3214761efae8eea410d07fd8df8bffcb701"
+          }
+        }
+      }
+    }
+  },
+  "models": {
+    "A": {
+      "configured": true,
+      "model": "deepseek-flash",
+      "evidence": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-HTWvtR/CUA-CONFIGURATION-AND-LOGIN.json",
+        "sha256": "407f94584cc3050e58f0ef2e2019c5e8c1acba55d9680f623692c5d5f55c9ade"
+      }
+    },
+    "B": {
+      "configured": true,
+      "model": "deepseek-flash",
+      "evidence": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-8bwkuv/CUA-CONFIGURATION-AND-LOGIN.json",
+        "sha256": "36bd276b9b33cc5416cc43fe473ae0f7b820460c7d17d9b90b44fee682c787df"
+      }
+    }
+  },
+  "meteringPreflight": {
+    "sourceTests": 85,
+    "testFiles": 3,
+    "sourceEvidence": {
+      "path": ".local/workspace-validation/release-23-real-business-v1/p4-meter-source-check.log",
+      "sha256": "455f3fa92b22b887c8ee88141aaaf1d425aba43c7898a238e41952a7934a3933"
+    },
+    "dispatchBeforeSendProof": {
+      "path": ".local/workspace-validation/release-23-real-business-v1/P4-DISPATCH-BUDGET-PROOF.json",
+      "sha256": "0864c8ce56ab550db5dad1635522de7910f03fcef02639358b6af0fb64a1c76d"
+    },
+    "testData": "isolated-local-fixture-copy",
+    "appliedToRealProfiles": false,
+    "stopAndCancellationCountsPreserved": true
   }
 }
