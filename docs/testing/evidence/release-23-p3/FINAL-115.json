@@ -1,0 +1,920 @@
+{
+  "phase": "P3",
+  "stageAccepted": true,
+  "candidate": 115,
+  "bundleSha256": "536533574127c50c3c2cc7f350040b0b35ee19db33af2bd31e73ebca5ee1a28e",
+  "acceptedAC": [
+    12
+  ],
+  "finalOverallAcceptance": {
+    "passed": 1,
+    "total": 15
+  },
+  "cleanInstallAndPackage": {
+    "evidence": {
+      "path": ".local/workspace-validation/p3-resume/artifact-115/PREFLIGHT.json",
+      "sha256": "0cd1d3c2a2ae6b8c76ed48f1eeee0f74581afc2fd97e386cc143b85e8fc57abf"
+    },
+    "formalInstallFirstReadyMs": 4312,
+    "repeatPreflight": {
+      "path": ".local/workspace-validation/p3-perf-2026-11-12/final-preflight/PREFLIGHT.json",
+      "sha256": "b710430e1dfaec53b6e9ee7a663b7a75407aa8de9d452ab42bce5aeb13b91d62"
+    }
+  },
+  "previousValidation": {
+    "path": "docs/testing/evidence/release-23-p3/RESULTS-115.json",
+    "sha256": "780995e87789d5dcf122ec60db316bb9d3a93f3851ed0a0032dc40a656c7c5e0"
+  },
+  "native": {
+    "evidence": {
+      "path": "docs/testing/evidence/release-23-p3/NATIVE-115.json",
+      "sha256": "d2d10aaabeb15dfb9ebd31d8186e309f0e62d2797f0f8d885cd35bf9758e18f4"
+    },
+    "start": 489,
+    "passed": true,
+    "durationsMs": [
+      628,
+      774,
+      751,
+      752,
+      736,
+      745
+    ]
+  },
+  "earlierCounterexample": {
+    "evidence": {
+      "path": "docs/testing/evidence/release-23-p3/NATIVE-115.json",
+      "sha256": "d2d10aaabeb15dfb9ebd31d8186e309f0e62d2797f0f8d885cd35bf9758e18f4"
+    },
+    "coldReadyMs": 5247,
+    "tailRangeMiB": 801.953125,
+    "coldRootCauseEstablished": false,
+    "rssRootCauseEstablished": false
+  },
+  "method": {
+    "baselineNative": {
+      "path": "docs/testing/evidence/lifecycle-06/PERFORMANCE-NATIVE-CHECK.json",
+      "sha256": "64093e5b623b12f920e49ac560bb8a9ccf4a961c4aa8e456df5d7719a81e1291"
+    },
+    "baselineSteady": {
+      "path": "docs/testing/evidence/lifecycle-06/PERFORMANCE-STEADY-CHECK.json",
+      "sha256": "610fa7aa426666adeef1eae59be9875f1cdfa6be634b54cf3ef2acb1c1d1cea4"
+    },
+    "baselineLastClickAt": 1792477530826,
+    "baselineSteadyFrom": 1792477553571,
+    "earlierNativeDuringSteady": true,
+    "acceptanceRoundNativeDuringSteady": false,
+    "plan": {
+      "path": ".local/workspace-validation/p3-perf-2026-11-12/RUN-PLAN.md",
+      "sha256": "8e34b7974448c4958fa08c24edf427d06bfdc12eeeb4c56206b67ce16f4297db"
+    }
+  },
+  "staticPerformance": {
+    "evidence": {
+      "path": ".local/workspace-validation/run-1794454214441/result.json",
+      "sha256": "a8d9c9e7608a98b8f5c51cbf540dfd1d5243d430ad2f72317c2f095e5fe3af14"
+    },
+    "log": {
+      "path": ".local/workspace-validation/p3-perf-2026-11-12/performance.log",
+      "sha256": "afc1734236b15e0d64d979466ca7194f20f324318f7bcafb62ef9ba6b99d9e6a"
+    },
+    "startupProcessObserver": {
+      "path": ".local/workspace-validation/p3-perf-2026-11-12/startup-processes.jsonl",
+      "sha256": "f3641cdef8e75bca41c03146bc1c62ad22f893260fa3f791c07e8db410e38254"
+    },
+    "passed": true,
+    "starts": [
+      {
+        "number": 490,
+        "spawnedAt": 1794454214459,
+        "hostLaunchMs": 712,
+        "readyMs": 1091
+      },
+      {
+        "number": 491,
+        "spawnedAt": 1794454233516,
+        "hostLaunchMs": 688,
+        "readyMs": 910
+      }
+    ],
+    "settled": {
+      "from": 1794454235452,
+      "to": 1794454535548,
+      "spanMs": 300096,
+      "samples": 101,
+      "maxSampleGapMs": 3009,
+      "tailFrom": 1794454355548,
+      "tailSamples": 60,
+      "tailRangeMiB": 177.796875,
+      "peakMiB": 1853.171875,
+      "modelCalls": 0,
+      "siteEffects": 0
+    },
+    "preparation": {
+      "modelCalls": 13,
+      "siteEffects": 8
+    },
+    "externalSecurityEvents": [
+      {
+        "path": ".local/workspace-validation/p3-perf-2026-11-12/start490-os.log",
+        "sha256": "9f56fca152030dba9e8ee76dee4fc8967ab667507b5878f0f9ab819d55b6b9a6"
+      },
+      {
+        "path": ".local/workspace-validation/p3-perf-2026-11-12/start491-os.log",
+        "sha256": "9f56fca152030dba9e8ee76dee4fc8967ab667507b5878f0f9ab819d55b6b9a6"
+      }
+    ],
+    "rssColumns": [
+      "at",
+      "start",
+      "phase",
+      "rssKiB"
+    ],
+    "rssSeries": [
+      [
+        1794454217451,
+        490,
+        "preparation",
+        1220112
+      ],
+      [
+        1794454220451,
+        490,
+        "preparation",
+        1411168
+      ],
+      [
+        1794454223451,
+        490,
+        "preparation",
+        1295440
+      ],
+      [
+        1794454226452,
+        490,
+        "preparation",
+        1606720
+      ],
+      [
+        1794454229452,
+        490,
+        "preparation",
+        1710960
+      ],
+      [
+        1794454232453,
+        490,
+        "preparation",
+        1897648
+      ],
+      [
+        1794454235452,
+        491,
+        "settled",
+        1739376
+      ],
+      [
+        1794454238454,
+        491,
+        "settled",
+        1734288
+      ],
+      [
+        1794454241454,
+        491,
+        "settled",
+        1602752
+      ],
+      [
+        1794454244454,
+        491,
+        "settled",
+        1602800
+      ],
+      [
+        1794454247455,
+        491,
+        "settled",
+        1602784
+      ],
+      [
+        1794454250456,
+        491,
+        "settled",
+        1602784
+      ],
+      [
+        1794454253457,
+        491,
+        "settled",
+        1602640
+      ],
+      [
+        1794454256459,
+        491,
+        "settled",
+        1602656
+      ],
+      [
+        1794454259459,
+        491,
+        "settled",
+        1602672
+      ],
+      [
+        1794454262460,
+        491,
+        "settled",
+        1602656
+      ],
+      [
+        1794454265460,
+        491,
+        "settled",
+        1490416
+      ],
+      [
+        1794454268462,
+        491,
+        "settled",
+        1488592
+      ],
+      [
+        1794454271462,
+        491,
+        "settled",
+        1488640
+      ],
+      [
+        1794454274463,
+        491,
+        "settled",
+        1487440
+      ],
+      [
+        1794454277464,
+        491,
+        "settled",
+        1487472
+      ],
+      [
+        1794454280464,
+        491,
+        "settled",
+        1487424
+      ],
+      [
+        1794454283464,
+        491,
+        "settled",
+        1487376
+      ],
+      [
+        1794454286464,
+        491,
+        "settled",
+        1487376
+      ],
+      [
+        1794454289465,
+        491,
+        "settled",
+        1487392
+      ],
+      [
+        1794454292466,
+        491,
+        "settled",
+        1371792
+      ],
+      [
+        1794454295467,
+        491,
+        "settled",
+        1349984
+      ],
+      [
+        1794454298468,
+        491,
+        "settled",
+        1350048
+      ],
+      [
+        1794454301469,
+        491,
+        "settled",
+        1350048
+      ],
+      [
+        1794454304470,
+        491,
+        "settled",
+        1350064
+      ],
+      [
+        1794454307470,
+        491,
+        "settled",
+        1350048
+      ],
+      [
+        1794454310471,
+        491,
+        "settled",
+        1350064
+      ],
+      [
+        1794454313471,
+        491,
+        "settled",
+        1350096
+      ],
+      [
+        1794454316471,
+        491,
+        "settled",
+        1350032
+      ],
+      [
+        1794454319472,
+        491,
+        "settled",
+        1152752
+      ],
+      [
+        1794454322474,
+        491,
+        "settled",
+        1136288
+      ],
+      [
+        1794454325474,
+        491,
+        "settled",
+        1137808
+      ],
+      [
+        1794454328475,
+        491,
+        "settled",
+        1139664
+      ],
+      [
+        1794454331476,
+        491,
+        "settled",
+        1139680
+      ],
+      [
+        1794454334477,
+        491,
+        "settled",
+        1140928
+      ],
+      [
+        1794454337478,
+        491,
+        "settled",
+        1141024
+      ],
+      [
+        1794454340479,
+        491,
+        "settled",
+        1141024
+      ],
+      [
+        1794454343480,
+        491,
+        "settled",
+        1141040
+      ],
+      [
+        1794454346482,
+        491,
+        "settled",
+        1141040
+      ],
+      [
+        1794454349483,
+        491,
+        "settled",
+        1142720
+      ],
+      [
+        1794454352483,
+        491,
+        "settled",
+        1142800
+      ],
+      [
+        1794454355483,
+        491,
+        "settled",
+        1143872
+      ],
+      [
+        1794454358485,
+        491,
+        "settled",
+        1144080
+      ],
+      [
+        1794454361486,
+        491,
+        "settled",
+        1144080
+      ],
+      [
+        1794454364486,
+        491,
+        "settled",
+        1144144
+      ],
+      [
+        1794454367487,
+        491,
+        "settled",
+        1144112
+      ],
+      [
+        1794454370488,
+        491,
+        "settled",
+        1144176
+      ],
+      [
+        1794454373489,
+        491,
+        "settled",
+        1144176
+      ],
+      [
+        1794454376490,
+        491,
+        "settled",
+        1144192
+      ],
+      [
+        1794454379491,
+        491,
+        "settled",
+        1144192
+      ],
+      [
+        1794454382492,
+        491,
+        "settled",
+        1143952
+      ],
+      [
+        1794454385493,
+        491,
+        "settled",
+        1143664
+      ],
+      [
+        1794454388494,
+        491,
+        "settled",
+        1036672
+      ],
+      [
+        1794454391494,
+        491,
+        "settled",
+        1027472
+      ],
+      [
+        1794454394494,
+        491,
+        "settled",
+        992864
+      ],
+      [
+        1794454397495,
+        491,
+        "settled",
+        982720
+      ],
+      [
+        1794454400496,
+        491,
+        "settled",
+        982912
+      ],
+      [
+        1794454403496,
+        491,
+        "settled",
+        982912
+      ],
+      [
+        1794454406497,
+        491,
+        "settled",
+        983152
+      ],
+      [
+        1794454409499,
+        491,
+        "settled",
+        984736
+      ],
+      [
+        1794454412498,
+        491,
+        "settled",
+        984768
+      ],
+      [
+        1794454415500,
+        491,
+        "settled",
+        984816
+      ],
+      [
+        1794454418502,
+        491,
+        "settled",
+        987952
+      ],
+      [
+        1794454421502,
+        491,
+        "settled",
+        986464
+      ],
+      [
+        1794454424504,
+        491,
+        "settled",
+        990128
+      ],
+      [
+        1794454427504,
+        491,
+        "settled",
+        982032
+      ],
+      [
+        1794454430505,
+        491,
+        "settled",
+        981536
+      ],
+      [
+        1794454433505,
+        491,
+        "settled",
+        981536
+      ],
+      [
+        1794454436506,
+        491,
+        "settled",
+        981568
+      ],
+      [
+        1794454439506,
+        491,
+        "settled",
+        974848
+      ],
+      [
+        1794454442507,
+        491,
+        "settled",
+        974432
+      ],
+      [
+        1794454445508,
+        491,
+        "settled",
+        974448
+      ],
+      [
+        1794454448509,
+        491,
+        "settled",
+        969376
+      ],
+      [
+        1794454451510,
+        491,
+        "settled",
+        981536
+      ],
+      [
+        1794454454511,
+        491,
+        "settled",
+        981456
+      ],
+      [
+        1794454457512,
+        491,
+        "settled",
+        981584
+      ],
+      [
+        1794454460513,
+        491,
+        "settled",
+        980512
+      ],
+      [
+        1794454463518,
+        491,
+        "settled",
+        980416
+      ],
+      [
+        1794454466519,
+        491,
+        "settled",
+        980096
+      ],
+      [
+        1794454469528,
+        491,
+        "settled",
+        980096
+      ],
+      [
+        1794454472529,
+        491,
+        "settled",
+        968592
+      ],
+      [
+        1794454475530,
+        491,
+        "settled",
+        962128
+      ],
+      [
+        1794454478531,
+        491,
+        "settled",
+        969264
+      ],
+      [
+        1794454481532,
+        491,
+        "settled",
+        969696
+      ],
+      [
+        1794454484533,
+        491,
+        "settled",
+        970032
+      ],
+      [
+        1794454487534,
+        491,
+        "settled",
+        977408
+      ],
+      [
+        1794454490535,
+        491,
+        "settled",
+        980064
+      ],
+      [
+        1794454493536,
+        491,
+        "settled",
+        980624
+      ],
+      [
+        1794454496537,
+        491,
+        "settled",
+        980640
+      ],
+      [
+        1794454499537,
+        491,
+        "settled",
+        980560
+      ],
+      [
+        1794454502538,
+        491,
+        "settled",
+        980576
+      ],
+      [
+        1794454505537,
+        491,
+        "settled",
+        978688
+      ],
+      [
+        1794454508539,
+        491,
+        "settled",
+        978816
+      ],
+      [
+        1794454511539,
+        491,
+        "settled",
+        978656
+      ],
+      [
+        1794454514540,
+        491,
+        "settled",
+        978672
+      ],
+      [
+        1794454517540,
+        491,
+        "settled",
+        979408
+      ],
+      [
+        1794454520544,
+        491,
+        "settled",
+        979200
+      ],
+      [
+        1794454523546,
+        491,
+        "settled",
+        979216
+      ],
+      [
+        1794454526546,
+        491,
+        "settled",
+        979216
+      ],
+      [
+        1794454529546,
+        491,
+        "settled",
+        979232
+      ],
+      [
+        1794454532547,
+        491,
+        "settled",
+        967360
+      ],
+      [
+        1794454535548,
+        491,
+        "settled",
+        970112
+      ]
+    ],
+    "limits": {
+      "firstReadyMs": 5000,
+      "coldReadyMs": 5000,
+      "peakMiB": 2048,
+      "settledMs": 300000,
+      "tailRangeMiB": 256
+    },
+    "cleanup": {
+      "independentProof": {
+        "path": ".local/workspace-validation/p3-perf-2026-11-12/CLEANUP.json",
+        "sha256": "e54d31cfc52a3bfa627a6f0d06728cae37604bbea21f93c538f855d95bbcd523"
+      },
+      "evidence": ".local/workspace-validation/run-1794454214441/result.json",
+      "sha256": "a8d9c9e7608a98b8f5c51cbf540dfd1d5243d430ad2f72317c2f095e5fe3af14",
+      "pids": 31,
+      "groups": 6,
+      "remaining": [],
+      "leaseReleased": true
+    }
+  },
+  "supplementalMemory": {
+    "system": {
+      "evidence": {
+        "path": ".local/workspace-validation/p3-perf-2026-11-12/vm.jsonl",
+        "sha256": "82493183fa114ddee8e5c17db12bb8dff152055f550da6e349a23288a58f60d4"
+      },
+      "sampleCount": 138,
+      "pageBytes": 16384,
+      "nearestTailStartSample": 1794454354643,
+      "nearestTailEndSample": 1794454535158,
+      "globalDeltaMiB": {
+        "Compressions": 6214.53125,
+        "Decompressions": 4817.8125,
+        "Pageins": 706.15625,
+        "Pageouts": 18.671875,
+        "Swapins": 80.1875,
+        "Swapouts": 0.0
+      }
+    },
+    "processFootprint": {
+      "evidence": {
+        "path": ".local/workspace-validation/p3-perf-2026-11-12/footprint.jsonl",
+        "sha256": "7d9334d29b791983239b35b8586e19d09a9fbdfedae3115c5841b8f1b7460713"
+      },
+      "tailSamples": 50,
+      "first": 1794454384237,
+      "last": 1794454532958,
+      "rssRangeMiB": 177.359375,
+      "physFootprintRangeMiB": 1.109375
+    }
+  },
+  "coldDataReplay": {
+    "evidence": {
+      "path": ".local/workspace-validation/p3-perf-2026-11-12/REPLAY.json",
+      "sha256": "145e748c1500ca78a083455095db8a0771f7b142ba2d01b41b5601febbb597ef"
+    },
+    "readOnlyLoopback": true,
+    "cases": [
+      {
+        "label": "prior-over-limit",
+        "input": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/run-1794453335603/result.json",
+        "inputSha256": "a43a12846d8b3280f679c03669e4a9edc356283823cff231cb730aaa5219a756",
+        "sourceHash": "d6ea6a8a89496f870df54cbba5276b19c936cca6eb18e14d8e30be8ff8272498",
+        "effects": [],
+        "owned": [
+          3346,
+          3349,
+          3351,
+          3350,
+          3347,
+          3348,
+          3357,
+          3358,
+          3359,
+          3360
+        ],
+        "groups": [
+          3346,
+          3349,
+          3351
+        ],
+        "start": 492,
+        "hostLaunchMs": 868,
+        "readyMs": 1578,
+        "completedTasks": 2,
+        "normalExit": true,
+        "remaining": [],
+        "sourceUnchanged": true
+      },
+      {
+        "label": "quiet-control",
+        "input": "/Users/yuexiaoliang/projects/helpr/.local/workspace-validation/run-1794454214441/result.json",
+        "inputSha256": "a8d9c9e7608a98b8f5c51cbf540dfd1d5243d430ad2f72317c2f095e5fe3af14",
+        "sourceHash": "eec2c4e2d2d13c9868f9d24404f42f1cc388c13ad783f475f84cc1bddb406608",
+        "effects": [],
+        "owned": [
+          3373,
+          3376,
+          3378,
+          3377,
+          3374,
+          3375,
+          3384,
+          3385,
+          3386,
+          3387
+        ],
+        "groups": [
+          3373,
+          3376,
+          3378
+        ],
+        "start": 493,
+        "hostLaunchMs": 636,
+        "readyMs": 913,
+        "completedTasks": 2,
+        "normalExit": true,
+        "remaining": [],
+        "sourceUnchanged": true
+      }
+    ],
+    "leaseReleased": true
+  },
+  "counts": {
+    "builds": 115,
+    "installs": 24,
+    "starts": 493,
+    "faults": 74,
+    "cleanups": 26
+  },
+  "p4": {
+    "batch": "release-23-real-business-v1",
+    "verifiedInputs": 10,
+    "actualLoginsConfirmed": false,
+    "started": false,
+    "consumed": {
+      "requests": 0,
+      "reservedTokens": 0,
+      "attachments": 0,
+      "newContents": 0,
+      "publishes": 0
+    }
+  }
+}
