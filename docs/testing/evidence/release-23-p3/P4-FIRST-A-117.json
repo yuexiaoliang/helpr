@@ -1,0 +1,139 @@
+{
+  "phase": "P4",
+  "candidate": 117,
+  "bundleSha256": "606308f491b22ea93be6ec7f42f4739fb9e827e86783ea28be6e0b512e50d036",
+  "batch": "release-23-real-business-v1",
+  "sample": "R23-FIRST-A",
+  "taskId": "bca1db0c-6801-4bda-9f53-3d2e918cea5e",
+  "start": 540,
+  "status": "stopped-with-auto-draft",
+  "error": "P4_CASE_PAUSED",
+  "verifiedSamples": 0,
+  "authorization": {
+    "originalStartedAt": 1794466553626,
+    "recordedAt": "2026-11-12T09:02:02.703Z",
+    "userInstruction": "没必要吧，你就直接做吧，为什么要限制呢？",
+    "originalDeadline": 1794471953626,
+    "originalTimeLimitMinutes": 90,
+    "batchTimeLimitMinutes": null,
+    "retainedLimits": {
+      "requests": 120,
+      "reservedTokens": 1200000,
+      "outputTokensPerRequest": 2048,
+      "attachments": 10,
+      "newContents": 10,
+      "publishes": 10
+    },
+    "guardCheck": {
+      "path": ".local/workspace-validation/p4-landmarks/no-batch-time-limit-test.json",
+      "sha256": "ea7e9adeea67944deccd380f21bcd0f259f0ffd898af1044ce25d1c9574709f4"
+    }
+  },
+  "readiness": {
+    "page": "Posts",
+    "matchingTesterMenu": true,
+    "createAccess": true,
+    "checkedRegions": {
+      "main": {
+        "role": "main",
+        "name": "",
+        "exact": true
+      },
+      "sidebar": {
+        "role": "navigation",
+        "name": "Main menu",
+        "exact": true
+      }
+    },
+    "bothDestinations": [
+      "/wp-admin/post-new.php",
+      "/wp-admin/post-new.php"
+    ]
+  },
+  "action": {
+    "id": "db53b0c7-32a7-44a4-ac09-88be4fb6ffff",
+    "role": "link",
+    "name": "Add Post",
+    "within": {
+      "role": "main",
+      "name": "",
+      "exact": true
+    },
+    "destination": "http://home.ts-ali.internal:38080/wp-admin/post-new.php",
+    "status": "unknown",
+    "dispatchState": "possible",
+    "confirmedNavigation": false
+  },
+  "siteComparison": {
+    "actualNewContents": 1,
+    "draftId": 162,
+    "draftStatus": "auto-draft",
+    "matchingAuthor": true,
+    "actualAttachments": 0,
+    "actualPublishes": 0,
+    "changedExistingRows": 0,
+    "before": {
+      "path": ".local/workspace-validation/release-23-real-business-v1/login-A-kQGTWT/wordpress-before.json",
+      "sha256": "a468870d08e5b792df33120acd48bb36296a6532dffd997bc9cb77a58d8d26f2"
+    },
+    "after": {
+      "path": ".local/workspace-validation/release-23-real-business-v1/login-A-kQGTWT/wordpress-after.json",
+      "sha256": "e48d39327bb4370357985faf747c260b1196a056e8b4e1f6f050f4403a41aabe"
+    },
+    "accessLog": {
+      "path": ".local/workspace-validation/p4-landmarks/wordpress-access-540.json",
+      "sha256": "c1bef1b0061fc4514e3cbc2b7a68647d06314169fd068e444924a1a82dfafe98"
+    },
+    "entryCreatesAutoDraft": {
+      "path": ".local/workspace-validation/p4-landmarks/wordpress-post-new-handler-540.json",
+      "sha256": "50d3e84807bc5d364be06aa3e73f1e995f60a6106d9025a389639ff2b74d0e0a"
+    }
+  },
+  "diagnosis": {
+    "sessionEpochBefore": 0,
+    "sessionEpochAfter": 2,
+    "persistentCookieComparison": {
+      "path": ".local/workspace-validation/p4-landmarks/cookie-classes-540.json",
+      "sha256": "9c24bd0ae231ff1b5c7ad0c87802159ea2d2699bd887a8a6205a659412fa5285"
+    },
+    "editorStorageWrites": {
+      "path": ".local/workspace-validation/p4-landmarks/storage-classes-540.json",
+      "sha256": "e40ffd0dc1f339264239754d2392dbdffa6b72d6deb8e1ae4ce1cd8145f35d9b"
+    },
+    "fixture": {
+      "start": 541,
+      "evidence": {
+        "path": ".local/workspace-validation/run-1794474674471/result.json",
+        "sha256": "afc297c7766318eddd2b8c3a597071c887c40f9ef8460e1a372d5589cf44d67f"
+      },
+      "runner": {
+        "path": ".local/workspace-validation/p4-landmarks/replay-editor-storage.mjs",
+        "sha256": "88d55b4f32d1e3189ec8b466d59c1c7244f8c0e0fc0693ed5d8a445e9b1ff67b"
+      }
+    }
+  },
+  "useThisAttempt": {
+    "requests": 3,
+    "reservedTokens": 337758,
+    "providerTotalTokens": 85223
+  },
+  "cumulative": {
+    "requests": 6,
+    "reservedTokens": 668274,
+    "attachments": 0,
+    "newContents": 2,
+    "publishes": 0,
+    "providerTotalTokens": 169392
+  },
+  "cleanup": {
+    "stopRequested": true,
+    "allCleared": true,
+    "pids": 28,
+    "groups": 6,
+    "leaseReleased": true
+  },
+  "run": {
+    "path": ".local/workspace-validation/release-23-real-business-v1/login-A-kQGTWT/result.json",
+    "sha256": "ca463d1a1fd92da1254b91463c2086bb16faddce16906732ee86d4720aa07b5d"
+  }
+}
