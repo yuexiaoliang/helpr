@@ -9,6 +9,7 @@ import {
   ModelService,
   type CredentialProtection,
 } from '../../app/desktop/model-service';
+import type { ActionFact } from '../../app/shared/execution';
 import type { PageObservation } from '../../app/shared/model';
 
 const folders: string[] = [],
@@ -717,6 +718,149 @@ test('执行提议仍经过实际SDK计数入口，界面只展示摘要，不�
     expect(server.received).toHaveLength(1);
     expect(f.get().tasks[0]?.messages.at(-1)?.text).toBe('核对草稿内容。');
     expect(JSON.stringify(f.get())).not.toContain('"decision"');
+  } finally {
+    await f.service.stopAll();
+    f.records.close();
+  }
+});
+
+test('恢复已有草稿的模型请求明确区分编辑目标与草稿事实，预留低于续跑余额', async () => {
+  const editor = 'https://example.com/report',
+    help = { name: '编辑说明', url: 'https://example.com/help' };
+  const f = fixture(
+    '[observed-link] ' +
+      JSON.stringify(help) +
+      '\n状态：草稿\n' +
+      '页面可见文本和当前已观察的草稿信息。\n'.repeat(110),
+  );
+  const server = await backend('planning');
+  try {
+    const taskId = f.create('原草稿');
+    await f.service.configure({
+      kind: 'model-save',
+      requestId: 'draft-settings',
+      expectedVersion: 0,
+      protocol: 'chat-completions',
+      endpoint: server.endpoint,
+      model: 'test-chat',
+      apiKey: 'test-secret-only',
+    });
+    const observation = {
+      ...(await f.observe(taskId)),
+      links: [help],
+      controls: [
+        { role: 'link', name: help.name, frameUrl: editor, disabled: false },
+        { role: 'checkbox', name: '日报', frameUrl: editor, disabled: false },
+        ...Array.from({ length: 33 }, (_, index) => ({
+          role: 'button',
+          name: `编辑器操作 ${index + 1}`,
+          frameUrl: editor,
+          disabled: false,
+        })),
+      ],
+    };
+    const source = {
+      url: 'https://example.com/list',
+      title: '列表',
+      fingerprint: 'source',
+      generation: 1,
+      observedAt: 1,
+      truncated: false,
+    };
+    const pending: ActionFact = {
+      id: 'pending',
+      runId: 'old-run',
+      goalVersion: 1,
+      status: 'unknown',
+      summary: '打开编辑页',
+      action: {
+        kind: 'click',
+        target: { role: 'link', name: '新建', exact: true },
+      },
+      source,
+      binding: { targetId: 'old-page', generation: 1 },
+      evidence: [],
+      returned: false,
+      dispatchState: 'possible',
+      navigation: {
+        id: 'a8a750fb-c6bd-4c1d-9a9f-0bfbcab0cc69',
+        association: 'during-action',
+        targetId: 'old-page',
+        sourceGeneration: 1,
+        generation: 2,
+        url: 'https://example.com/create',
+        mainFrame: true,
+        sameDocument: false,
+        inputEpoch: 1,
+        observedAt: 2,
+      },
+    };
+    await f.service.propose({
+      taskId,
+      runId: 'continued-run',
+      goal: '从已有草稿继续原附件任务',
+      observation,
+      pending,
+      history: [pending],
+      materials: [
+        {
+          id: 'f62c92d9-9735-45fa-aa06-34613ba26178',
+          goalVersion: 1,
+          name: '日报.xlsx',
+          source: '/tmp/日报.xlsx',
+          sha256: 'a'.repeat(64),
+          bytes: 1024,
+          selectedAt: 1,
+          selection: {
+            rule: 'exact',
+            scope: '/tmp/日报.xlsx',
+            name: null,
+            extension: null,
+            basis: '使用原素材',
+          },
+        },
+      ],
+      preparation: [
+        {
+          id: '45091067-897b-4f3a-8286-f96932203217',
+          kind: 'target',
+          goalVersion: 1,
+          url: editor,
+          materialId: null,
+          actionId: pending.id,
+          evidence: ['状态：草稿'],
+          source: {
+            url: editor,
+            title: observation.title,
+            fingerprint: observation.fingerprint,
+            generation: observation.generation,
+            observedAt: observation.observedAt,
+            truncated: false,
+          },
+          verification: 'page-observed',
+        },
+      ],
+      signal: new AbortController().signal,
+    });
+    expect(server.received).toHaveLength(1);
+    const body = JSON.parse(server.received[0]!.body) as {
+      messages: { content: string }[];
+    };
+    const request = JSON.parse(body.messages.at(-1)!.content) as {
+      draftRecoveryInstruction?: string;
+      targetCreationInstruction?: string;
+      schema: { properties: Record<string, unknown> };
+      controls: PageObservation['controls'];
+    };
+    expect(request.draftRecoveryInstruction).toContain('previous');
+    expect(request.draftRecoveryInstruction).toContain('draft');
+    expect(request.schema.properties.preparation).toBeDefined();
+    expect(request.schema.properties.schedule).toBeUndefined();
+    expect(request.targetCreationInstruction).toBeUndefined();
+    expect(request.controls).toEqual(observation.controls.slice(1));
+    expect(body.messages.at(-2)!.content).toContain(help.url);
+    const reserved = f.get().tasks[0]?.messages.at(-1)?.call?.reservedTokens;
+    expect(reserved).toBeLessThan(47_410);
   } finally {
     await f.service.stopAll();
     f.records.close();
