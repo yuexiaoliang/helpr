@@ -1,0 +1,144 @@
+{
+  "phase": "P4",
+  "candidate": 117,
+  "bundleSha256": "606308f491b22ea93be6ec7f42f4739fb9e827e86783ea28be6e0b512e50d036",
+  "batch": "release-23-real-business-v1",
+  "sample": "R23-FIRST-A",
+  "taskId": "bca1db0c-6801-4bda-9f53-3d2e918cea5e",
+  "draftId": 162,
+  "editorUrl": "http://home.ts-ali.internal:38080/wp-admin/post.php?post=162&action=edit",
+  "status": "stopped-on-original-draft",
+  "verifiedSamples": 0,
+  "routePreparation": {
+    "onlyProductNavigateCommand": true,
+    "originalExecutionPreserved": true,
+    "preflight": {
+      "path": ".local/workspace-validation/p4-landmarks/draft-162-readiness.json",
+      "sha256": "b1fd079f55a146020bc54be2620ad75eae8217e3ffbb9874f2e14068954ef8c1"
+    },
+    "recordsProof": {
+      "path": ".local/workspace-validation/p4-landmarks/draft-162-route.json",
+      "sha256": "2d76ffa3221217781ed0f5d4cba125bf7d240574ace28f2b91e8c262afd1a75d"
+    },
+    "dispatchGuard": {
+      "path": ".local/workspace-validation/p4-landmarks/draft-162-guard-check.json",
+      "sha256": "62b751d30efaaa3870f4a7d66ac73a60a428515050e1a6d6d9a6ae49201f2c2b"
+    }
+  },
+  "attempts": [
+    {
+      "start": 542,
+      "error": "P4_CASE_PAUSED",
+      "modelRequests": 1,
+      "evidence": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-h5LjbR/result.json",
+        "sha256": "7378a8bd57ea8d15dc08e4d43743194ac3fcc41c42c25f27619029c028d94597"
+      }
+    },
+    {
+      "start": 543,
+      "error": "OBSERVATION_TIMEOUT",
+      "modelRequests": 0,
+      "evidence": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-nXQTs1/result.json",
+        "sha256": "2a04582de967bf9169801aa63ffc81436502de844030dec5468c35833338fc48"
+      }
+    },
+    {
+      "start": 544,
+      "error": "P4_CASE_PAUSED",
+      "modelRequests": 1,
+      "evidence": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-4Jkr9y/result.json",
+        "sha256": "800b1ffe1fd8adf8be63403a5565a0aea79894d4ebde351c3a595e28683bf489"
+      }
+    }
+  ],
+  "modelRequests": [
+    {
+      "id": "ee69b83b-4797-48e5-b5c3-a37025581b28",
+      "phase": "error",
+      "error": "MODEL_LIMIT",
+      "reservedTokens": 53375,
+      "totalTokens": null
+    },
+    {
+      "id": "f7c4f0d0-115e-400c-8039-56ab856cd722",
+      "phase": "complete",
+      "error": null,
+      "reservedTokens": 53514,
+      "totalTokens": 13992
+    }
+  ],
+  "website": {
+    "draftStatus": "auto-draft",
+    "newEntryRequests": 0,
+    "newContents": 0,
+    "newAttachments": 0,
+    "newPublishes": 0,
+    "postRowsUnchanged": true,
+    "accessLog": [
+      {
+        "path": ".local/workspace-validation/p4-landmarks/draft-162-access-542.json",
+        "sha256": "e45a8d9494e6d41e017b7fe1fb154d02a7dcf38c16036070b96d000bf1bef6f8"
+      },
+      {
+        "path": ".local/workspace-validation/p4-landmarks/draft-162-access-543-544.json",
+        "sha256": "1bab59fdddaa3907acd970a38825f9870bd1a8aa679818d1d77d2bb755eb01aa"
+      }
+    ],
+    "firstAfter": {
+      "path": ".local/workspace-validation/release-23-real-business-v1/login-A-h5LjbR/wordpress-after.json",
+      "sha256": "e48d39327bb4370357985faf747c260b1196a056e8b4e1f6f050f4403a41aabe"
+    },
+    "lastAfter": {
+      "path": ".local/workspace-validation/release-23-real-business-v1/login-A-4Jkr9y/wordpress-after.json",
+      "sha256": "e48d39327bb4370357985faf747c260b1196a056e8b4e1f6f050f4403a41aabe"
+    }
+  },
+  "originalAction": {
+    "id": "db53b0c7-32a7-44a4-ac09-88be4fb6ffff",
+    "status": "unknown",
+    "dispatchState": "possible",
+    "editorTargetRecorded": true,
+    "draftFactRecorded": false
+  },
+  "diagnostic": {
+    "candidate": 117,
+    "sameDraftId": 162,
+    "withoutDraftFact": "EXECUTION_RESULT_UNKNOWN",
+    "withDraftFact": "resolved-in-copy",
+    "taskBudget": {
+      "used": 152590,
+      "perTaskCap": 200000,
+      "remaining": 47410,
+      "lastReservation": 53514,
+      "code": "MODEL_LIMIT",
+      "dispatched": false
+    },
+    "realWorkspaceUnchanged": true,
+    "ledgerUnchanged": true,
+    "noBrowserOrModelStarted": true,
+    "pid": 65021,
+    "processCleared": true,
+    "evidence": {
+      "path": ".local/workspace-validation/p4-landmarks/draft-162-continuation-diagnostic.json",
+      "sha256": "48475c6527f3e6e6d28d7e9a9fd15900edd7760b4b1c774b1d695130f61160aa"
+    }
+  },
+  "cumulative": {
+    "requests": 8,
+    "reservedTokens": 775163,
+    "attachments": 0,
+    "newContents": 2,
+    "publishes": 0,
+    "providerReportedTokens": 183384,
+    "remainingReservedTokens": 424837
+  },
+  "cleanup": {
+    "allCleared": true,
+    "leaseReleased": true,
+    "pids": 43,
+    "groups": 12
+  }
+}
