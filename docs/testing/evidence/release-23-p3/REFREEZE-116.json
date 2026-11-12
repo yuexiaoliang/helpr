@@ -1,0 +1,164 @@
+{
+  "phase": "P3",
+  "candidate": 116,
+  "sourceCommit": "ace7f674bb7ef67a317076556aabc4507a522946",
+  "predecessor": 115,
+  "status": "refrozen",
+  "artifact": {
+    "path": "/Users/yuexiaoliang/projects/helpr/dist/candidates/release-p4-observation-0-2-3/mac-arm64/helpr.app",
+    "sha256": "f278b88d1afc68366b62b3aefa71f65661a5283d7629705bc6bd6bd48409d759",
+    "manifest": {
+      "path": ".local/workspace-validation/build-116.json",
+      "sha256": "8f8cb9a0a4f348984834787be2dc25768110f723a2578740110cda66d16a64fd"
+    },
+    "preflight": {
+      "path": ".local/workspace-validation/p4-refreeze/preflight/PREFLIGHT.json",
+      "sha256": "723450eed0d5748c60fda6ef0b0e09eed23e05d992680a320e9b131382f15477"
+    }
+  },
+  "p3Acceptance": {
+    "passed": true,
+    "limits": {
+      "firstMs": 5000,
+      "coldMs": 5000,
+      "nativeMs": 2000,
+      "peakMiB": 2048,
+      "tailRangeMiB": 256
+    }
+  },
+  "p4Inputs": {
+    "file": "tests/fixtures/release-23-real-business-v1/INPUTS.json",
+    "sha256": "ac799053df77edb174b1a1ae94280cef5262179817c81fa42a20dd6208add947",
+    "count": 10,
+    "model": {
+      "provider": "DeepSeek",
+      "model": "deepseek-flash",
+      "protocol": "chat-completions",
+      "sdkRetries": 0,
+      "outputTokens": 2048,
+      "configuration": "沿用本机受保护配置，执行前确认非秘密配置与实际记录，账本不保存密钥。"
+    },
+    "limits": {
+      "requests": 120,
+      "reservedTokens": 1200000,
+      "outputTokensPerRequest": 2048,
+      "attachments": 10,
+      "newContents": 10,
+      "publishes": 10,
+      "minutes": 90
+    },
+    "consumed": {
+      "requests": 2,
+      "reservedTokens": 219839,
+      "attachments": 0,
+      "newContents": 0,
+      "publishes": 0
+    }
+  },
+  "p4Batch": {
+    "startedAt": 1794466553626,
+    "deadline": 1794471953626,
+    "status": "stopped"
+  },
+  "performanceRounds": [
+    {
+      "starts": [
+        514,
+        515
+      ],
+      "firstReadyMs": 3675,
+      "coldReadyMs": 887,
+      "settled": {
+        "from": 1794468038657,
+        "to": 1794468338733,
+        "spanMs": 300076,
+        "samples": 101,
+        "maxSampleGapMs": 3002,
+        "tailFrom": 1794468158733,
+        "tailSamples": 60,
+        "tailRangeMiB": 340.125,
+        "peakMiB": 1842.125,
+        "modelCalls": 0,
+        "siteEffects": 0
+      },
+      "passed": false,
+      "error": "RSS_TAIL_RANGE_LIMIT",
+      "evidence": {
+        "path": ".local/workspace-validation/run-1794468014645/result.json",
+        "sha256": "f6b3010c46c38d7c30b35aef73c42a81f5373ded50752830d5c6f3f1a7136ecf"
+      }
+    },
+    {
+      "starts": [
+        520,
+        521
+      ],
+      "firstReadyMs": 835,
+      "coldReadyMs": 858,
+      "settled": {
+        "from": 1794468708018,
+        "to": 1794469008142,
+        "spanMs": 300124,
+        "samples": 101,
+        "maxSampleGapMs": 3054,
+        "tailFrom": 1794468828142,
+        "tailSamples": 60,
+        "tailRangeMiB": 46.296875,
+        "peakMiB": 1882.53125,
+        "modelCalls": 0,
+        "siteEffects": 0
+      },
+      "passed": true,
+      "evidence": {
+        "path": ".local/workspace-validation/run-1794468687009/result.json",
+        "sha256": "4d0033639c504b474af90f410fcb8498f6ea56120543e720b69dc4840ef39f20"
+      }
+    }
+  ],
+  "systemMemory": {
+    "samples": 59,
+    "physicalFootprintRangeMiB": 0.953125,
+    "compressionTrafficMiB": 2186.515625,
+    "decompressionTrafficMiB": 1663.828125,
+    "swapInMiB": 2.109375,
+    "swapOutMiB": 0,
+    "evidence": {
+      "path": ".local/workspace-validation/p4-refreeze/memory-repeat.jsonl",
+      "sha256": "48b431b0aff80ecbc6018c6821d87c4425f5f488670c0c8f3f64096eb5dc244a"
+    }
+  },
+  "native": {
+    "passed": true,
+    "attempts": [
+      {
+        "path": ".local/workspace-validation/p4-refreeze/native-516-locked.json",
+        "sha256": "04e91814636857492e8e1294799a65772400628cab6b880af0db17041ffff6a1"
+      },
+      {
+        "path": ".local/workspace-validation/p4-refreeze/native-passed.json",
+        "sha256": "fec556cff959a7ada58ede4b02cef9377b1aeb4e21bcadc0f0f2845d89cc20b6"
+      }
+    ]
+  },
+  "localBusiness": {
+    "passed": true,
+    "cases": 5,
+    "evidence": {
+      "path": ".local/workspace-validation/run-1794468629733/result.json",
+      "sha256": "3ef6337f01b490e90988ac4866d5dead67122c4b569b87f3ffa5944ce1144c5f"
+    }
+  },
+  "sharedSessions": {
+    "passed": true,
+    "evidence": {
+      "path": ".local/workspace-validation/run-1794469099354/result.json",
+      "sha256": "99a3d166a2ae4bfc635dd1314c16e2c28c93d71bfb3d6e73a9ce2a55f67fc818"
+    }
+  },
+  "cleanup": {
+    "pids": 163,
+    "groups": 27,
+    "allCleared": true,
+    "leaseReleased": true
+  }
+}
