@@ -906,15 +906,18 @@ test('恢复原草稿时模型只核对草稿证据，应用绑定原动作且�
     const body = JSON.parse(server.received[0]!.body) as {
       messages: { content: string }[];
     };
-    const request: unknown = JSON.parse(body.messages.at(-1)!.content);
+    const request = JSON.parse(body.messages.at(-1)!.content) as {
+      page: { text: string };
+    };
     expect(request).toMatchObject({
       knownTarget: editor,
       previous: {
         sourceUrl: source.url,
         navigationUrl: pending.navigation!.url,
       },
-      page: { url: editor, text: expect.stringContaining('状态：草稿') },
+      page: { url: editor },
     });
+    expect(request.page.text).toContain('状态：草稿');
     expect(request).not.toHaveProperty('controls');
     expect(step).toMatchObject({
       decision: 'observe',
