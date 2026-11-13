@@ -275,6 +275,43 @@ test('生成的编辑器文档须同时核对页面、原生父框架和实际�
   f.main.nodes.attributes[1] = [];
   expect(f.document()).toBeUndefined();
 });
+
+test('同源生成式编辑区从实际标题和可编辑附件链接读取值', () => {
+  const f = fixture();
+  const url = 'blob:https://example.test/canvas';
+  const href = 'https://example.test/uploads/report.xlsx';
+  f.snapshot.strings[1] = url;
+  f.snapshot.strings.push('src', 'href', href, 'A', 'H1');
+  f.main.nodes.attributes[1] = [11, 1];
+  f.tree.childFrames[0]!.frame.url = url;
+  f.origins.frames[1]!.url = url;
+  f.snapshot.strings.push('HTML', 'DIV', 'false', '报表');
+  const child = Object.assign(f.child.nodes, {
+    nodeName: [4, 16, 17, 15, 7, 14, 7],
+    parentIndex: [-1, 0, 1, 2, 3, 1, 5],
+    backendNodeId: [3, 6, 9, 4, 5, 7, 8],
+    nodeType: [9, 1, 1, 1, 3, 1, 3],
+    nodeValue: [-1, -1, -1, -1, 10, -1, 19],
+    attributes: [[], [], [8, 18], [8, 9], [], [8, 9, 12, 13], []],
+  });
+  f.child.layout.nodeIndex = [1, 2, 3, 4, 5, 6];
+  f.ax.nodes.push({
+    nodeId: 'file',
+    backendDOMNodeId: 7,
+    role: { value: 'textbox' },
+    name: { value: '附件名' },
+    value: { value: '报表' },
+    properties: [{ name: 'editable', value: { value: 'richtext' } }],
+  });
+  const result = f.read();
+  expect(result.controls?.find((c) => c.name === '正文')).toMatchObject({
+    textValue: '旧正文',
+  });
+  expect(result.links).toEqual([{ name: '报表', url: href }]);
+  child.attributes[5] = [8, 9, 12, 13, 20, -1];
+  f.snapshot.strings.push('hidden');
+  expect(f.read().links).toEqual([]);
+});
 test.each([
   'origin-missing',
   'origin-cross-site',

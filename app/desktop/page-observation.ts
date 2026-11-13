@@ -1,5 +1,6 @@
 import { richTextObservation } from './rich-text-observation';
 import { emptyTextObservation } from './empty-text-observation';
+import { editableFrameLinks } from './material-observation';
 import { z } from 'zod';
 import { createHash } from 'node:crypto';
 import {
@@ -98,6 +99,9 @@ export function pageObservation(
   const { nodes } = treeSchema.parse(accessibility);
   const empty = emptyTextObservation(document, url);
   const rich = richTextObservation(richDocument, url);
+  const editableLinks = blob
+    ? editableFrameLinks(richDocument, url)
+    : undefined;
   const backendCounts = new Map<number, number>();
   for (const n of nodes)
     if (n.backendDOMNodeId)
@@ -290,19 +294,28 @@ export function pageObservation(
       : '';
     if (line && line !== lines.at(-1)) lines.push(line);
     const link = node.properties?.find((p) => p.name === 'url')?.value.value;
-    if (!inline && role === 'link' && name && typeof link === 'string') {
+    const editableLink =
+      role === 'textbox' && richValue && richNode?.path && node.backendDOMNodeId
+        ? editableLinks?.get(node.backendDOMNodeId)
+        : undefined;
+    if (
+      !inline &&
+      (editableLink || (role === 'link' && name && typeof link === 'string'))
+    ) {
       try {
-        const href = websiteURL(link);
+        const href = websiteURL(editableLink ?? String(link));
+        const label = (editableLink ? richValue! : name).slice(0, 1000);
         if (blob && new URL(href).origin !== new URL(url).origin) continue;
-        const landmarks = enclosingLandmarks(node.nodeId);
+        const landmarks = editableLink
+          ? undefined
+          : enclosingLandmarks(node.nodeId);
         links.push({
-          name: name.slice(0, 1000),
+          name: label,
           url: href,
           ...(landmarks ? { landmarks } : {}),
         });
         lines.push(
-          '[observed-link] ' +
-            JSON.stringify({ name: name.slice(0, 1000), url: href }),
+          '[observed-link] ' + JSON.stringify({ name: label, url: href }),
         );
       } catch {
         /* 无效链接不能成为复用依据。 */

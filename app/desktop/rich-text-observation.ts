@@ -82,7 +82,8 @@ export function richTextObservation(snapshot: unknown, url: string) {
   ]);
   for (let root = 0; root < size; root++) {
     const a = attributes[root],
-      id = n.backendNodeId[root]!;
+      id = n.backendNodeId[root]!,
+      rootTag = strings[n.nodeName[root]!];
     if (
       !a ||
       !['true', '', 'plaintext-only'].includes(
@@ -104,7 +105,8 @@ export function richTextObservation(snapshot: unknown, url: string) {
       const attrs = attributes[ancestor];
       if (
         !attrs ||
-        attrs.has('contenteditable') ||
+        (attrs.has('contenteditable') &&
+          attrs.get('contenteditable') !== 'false') ||
         attrs.has('hidden') ||
         attrs.get('aria-hidden') === 'true' ||
         attrs.get('aria-disabled') === 'true' ||
@@ -118,7 +120,8 @@ export function richTextObservation(snapshot: unknown, url: string) {
       if (
         !attrs ||
         !name ||
-        !allowed.has(name) ||
+        (!allowed.has(name) &&
+          !(index === root && /^(?:A|H[1-6])$/.test(rootTag ?? ''))) ||
         attrs.has('hidden') ||
         attrs.get('aria-hidden') === 'true' ||
         attrs.get('aria-disabled') === 'true' ||

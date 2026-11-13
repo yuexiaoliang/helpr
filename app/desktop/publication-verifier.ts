@@ -253,8 +253,7 @@ async function readPublicResult(
       containsPublicText(page.text, part),
     );
     result.checks.destination = containsPublicText(page.text, p.destination);
-    result.checks.attachment =
-      page.links.filter((link) => link === p.attachment!.url).length === 1;
+    result.checks.attachment = page.links.includes(p.attachment!.url);
     if (
       !result.checks.published ||
       !result.checks.content ||

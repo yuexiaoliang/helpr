@@ -3,6 +3,7 @@ import {
   PAGE_OBSERVATION_TEXT_LIMIT,
   type PageObservation,
 } from '../shared/model';
+import { websiteURL } from '../shared/url-policy';
 
 const snapshotSchema = z.object({
   strings: z.array(z.string()),
@@ -12,10 +13,47 @@ const snapshotSchema = z.object({
       nodes: z.object({
         nodeName: z.array(z.number()),
         attributes: z.array(z.array(z.number())),
+        backendNodeId: z.array(z.number()).optional(),
       }),
+      layout: z.object({ nodeIndex: z.array(z.number()) }).optional(),
     }),
   ),
 });
+/** 编辑器可把可见链接呈现为文本框，href 仍来自同一节点的 DOM。 */
+export function editableFrameLinks(snapshot: unknown, frameUrl: string) {
+  const { documents, strings } = snapshotSchema.parse(snapshot);
+  const doc = documents.find((item) => strings[item.documentURL] === frameUrl);
+  const result = new Map<number, string>();
+  if (!doc?.layout || !doc.nodes.backendNodeId) return result;
+  const origin = new URL(frameUrl).origin;
+  for (const i of new Set(doc.layout.nodeIndex)) {
+    if (strings[doc.nodes.nodeName[i]!] !== 'A') continue;
+    const id = doc.nodes.backendNodeId[i];
+    const pairs = doc.nodes.attributes[i] ?? [];
+    const attributes = new Map<string, string>();
+    for (let j = 0; j < pairs.length; j += 2)
+      attributes.set(strings[pairs[j]!]!, strings[pairs[j + 1]!] ?? '');
+    const href = attributes.get('href');
+    if (
+      !id ||
+      !href ||
+      attributes.has('hidden') ||
+      attributes.get('aria-hidden') === 'true' ||
+      !['true', '', 'plaintext-only'].includes(
+        attributes.get('contenteditable') ?? 'false',
+      )
+    )
+      continue;
+    try {
+      const url = websiteURL(href);
+      if (new URL(url).origin === origin && !new URL(url).hash)
+        result.set(id, url);
+    } catch {
+      /* 无效地址不进入附件观察。 */
+    }
+  }
+  return result;
+}
 /** DOM 快照仅补充文件控件和实际链接，不读取文字框、密码或隐藏字段的值。 */
 export function materialObservation(
   snapshot: unknown,
