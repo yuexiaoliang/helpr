@@ -1,0 +1,107 @@
+{
+  "phase": "P4",
+  "candidate": 119,
+  "bundleSha256": "e7e9738dd14111cbf7553f694307a7aab292eb5aa3bc74bca203ccc215f77bce",
+  "sample": "R23-FIRST-A",
+  "taskId": "bca1db0c-6801-4bda-9f53-3d2e918cea5e",
+  "draftId": 162,
+  "authorization": {
+    "quota": {
+      "recordedAt": "2026-11-13T07:30:05.371Z",
+      "userInstruction": "不加限制，我只希望赶紧弄完",
+      "requests": null,
+      "reservedTokens": null,
+      "newContentAttempts": null,
+      "previousLedgerSha256": "154433df2decde7f31dc92a4e13819bc7e6f7857edc84a2c113e5b42894a3401"
+    },
+    "sessionPrompts": {
+      "path": ".local/workspace-validation/release-23-real-business-v1/login-A-q2NmEo/keychain-os.log",
+      "sha256": "2a08c58133d242c826b0d068af7a50efec00d650c16a7909c6996a7ac5a33ed5"
+    }
+  },
+  "attempts": [
+    {
+      "start": 571,
+      "error": "P4_CASE_UNKNOWN",
+      "modelConnection": {
+        "startedAt": 1794555637187,
+        "generationRequests": 0,
+        "status": "connected"
+      },
+      "request": {
+        "reservedTokens": 44631,
+        "usage": 10774,
+        "phase": "complete"
+      },
+      "modelSummary": "当前已处于草稿 #162 的编辑页，标题、正文与附件尚未填写；先勾选“Excel 验证”栏目。",
+      "originalActionStatus": "unknown",
+      "attachmentUploads": 0,
+      "publishes": 0,
+      "siteRowsUnchanged": true,
+      "before": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-q2NmEo/wordpress-before.json",
+        "sha256": "4dbef65bc85328d101cdd778124c80ad80295c51556a5bdb6645e747f8244cdc"
+      },
+      "after": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-q2NmEo/wordpress-after.json",
+        "sha256": "4dbef65bc85328d101cdd778124c80ad80295c51556a5bdb6645e747f8244cdc"
+      },
+      "run": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-q2NmEo/result.json",
+        "sha256": "6831aa6225e80461ba31b07368d5685bce023a8e38e0ae2234dd128cd747f385"
+      },
+      "cleanup": {
+        "pids": 14,
+        "groups": 3,
+        "allCleared": true,
+        "leaseReleased": true
+      }
+    },
+    {
+      "start": 572,
+      "error": "OBSERVATION_TIMEOUT",
+      "modelConnection": {
+        "startedAt": 1794555748080,
+        "generationRequests": 0,
+        "status": "connected"
+      },
+      "draftReadAttempts": [
+        {
+          "method": "Page.getFrameTree",
+          "error": "OBSERVATION_TIMEOUT"
+        },
+        {
+          "method": "Page.getFrameTree",
+          "error": "OBSERVATION_TIMEOUT"
+        },
+        {
+          "method": "Page.getFrameTree",
+          "error": "OBSERVATION_TIMEOUT"
+        }
+      ],
+      "requests": 0,
+      "run": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-dHed5j/result.json",
+        "sha256": "5f966135c96a811b7569429bb90479709efb5b3bc83483540d675954b56cabf2"
+      },
+      "cleanup": {
+        "pids": 12,
+        "groups": 3,
+        "allCleared": true,
+        "leaseReleased": true
+      }
+    }
+  ],
+  "verifiedSamples": 0,
+  "consumed": {
+    "requests": 10,
+    "reservedTokens": 864558,
+    "attachments": 0,
+    "newContents": 2,
+    "publishes": 0
+  },
+  "ledger": {
+    "path": ".local/workspace-validation/release-23-real-business-v1/login-A-q2NmEo/ledger-after.json",
+    "sha256": "2cd2585edcf74079fde4cc3644f0f9b880d5127f03b3e5c89c8143044b64dfa7"
+  }
+}
