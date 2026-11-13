@@ -511,6 +511,7 @@ export async function startController(
     recordClient.request({ kind: 'execution', command });
   const executions: ExecutionService = new ExecutionService({
     initialUpgradeHold: true,
+    onFailure: (taskId, code) => log.event('failure', { taskId, code }),
     records: barriers
       ? async (command) => {
           const delayed = z

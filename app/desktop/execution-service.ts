@@ -211,6 +211,7 @@ export class ExecutionService {
         signal: AbortSignal,
       ) => Promise<BoundObservation>;
       propose: (input: ProposalInput) => Promise<NextStep>;
+      onFailure?: (taskId: string, code: string) => void;
       perform: (job: WebActionJob) => Promise<void>;
       material?: (command: unknown) => Promise<unknown>;
       scheduled?: (command: unknown) => Promise<unknown>;
@@ -3022,6 +3023,7 @@ export class ExecutionService {
     } catch (error) {
       if (this.live(job)) {
         const code = error instanceof Error ? error.message : '';
+        this.ports.onFailure?.(job.taskId, code);
         await this.finish(
           job,
           code === 'EXECUTION_PAGE_CHANGED' ? 'unknown' : 'paused',

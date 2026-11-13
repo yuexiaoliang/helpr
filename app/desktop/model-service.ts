@@ -478,6 +478,13 @@ export class ModelService {
               'controls.richText 表示已核对文档归属和完整值的富文本正文。只能用 fill 整体替换纯文本；有richText.locator时可原样复制作为target（含原节点、path、frameUrl），不可猜路径/节点或伪造角色名称；否则须唯一精确textbox名称。定位只适用于当前观察，不能保存为跨次复用规则；子frame须原样使用控件实际frameUrl，不猜地址；about:blank/about:srcdoc仅在controls.richText已有归属证明时可用，不能当作网站导航地址。最多4000字符；多行限32个非空行，不支持CR及首尾或连续空行，不得擅自删改正文绕过。不能写HTML或声称保留格式。richTextUnavailable 表示结构或完整值无法核对，不能继续填写。输入后程序独立核对实际全文，模型不能凭成功提示确认。',
             selectionInstruction:
               'select 仅支持唯一、启用的原生单选框，target 使用实际 combobox 完整名称、exact=true 及所属 frameUrl，value 为选项显示标签，不是内部值。controls.selectedLabel 是本次实际选中标签；选项文字存在不代表已经选中。缺少选中状态、标签不符或同名歧义时保持未知，不能据页面提示确认或重选试探。程序在确认动作与最终提交前独立复核。',
+            ...(job.planning.materials?.length &&
+            !job.planning.preparation?.some((fact) => fact.kind === 'upload')
+              ? {
+                  attachmentPreparation:
+                    '已固定素材但还没有上传证据时，先准备实际的文件控件。页面还没有 [file N] 时，可以用 decision=act、effect=interaction 和当前已观察到的唯一控件，逐步打开添加区块、添加附件或文件选择界面。仅准备控件的动作 action 必须非空，publication 和 approvalId 留空。取得文件控件后按 upload 规则发送固定素材，取得附件实际链接后才提交 review。',
+                }
+              : {}),
             publishingAgreement: job.planning.publishingAgreement ?? null,
             ...(job.planning.publishingAgreement
               ? {
