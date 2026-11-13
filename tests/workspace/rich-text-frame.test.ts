@@ -249,8 +249,8 @@ test('生成的编辑器文档须同时核对页面、原生父框架和实际�
   const origin = 'https://example.test';
   const main = origin + '/edit';
   f.snapshot.strings[1] = url;
-  f.snapshot.strings.push('src');
-  f.main.nodes.attributes[1] = [11, 1];
+  f.snapshot.strings.push('src', 'class', 'sandbox');
+  f.main.nodes.attributes[1] = [11, 1, 12, -1];
   f.tree.childFrames[0]!.frame.url = url;
   f.origins.frames[1]!.url = url;
   f.action.target.frameUrl = url;
@@ -268,6 +268,10 @@ test('生成的编辑器文档须同时核对页面、原生父框架和实际�
     frameUrl: url,
     textValue: '旧正文',
   });
+  f.main.nodes.attributes[1] = [11, 1, 12, -2];
+  expect(f.document()).toBeUndefined();
+  f.main.nodes.attributes[1] = [11, 1, 13, -1];
+  expect(f.document()).toBeUndefined();
   f.main.nodes.attributes[1] = [];
   expect(f.document()).toBeUndefined();
 });

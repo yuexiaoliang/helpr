@@ -179,7 +179,9 @@ export function richTextFrameDocument(
       const attributes = new Map<string, string>();
       for (let i = 0; i < attrs.length; i += 2) {
         const name = strings[attrs[i]!],
-          value = strings[attrs[i + 1]!];
+          valueIndex = attrs[i + 1]!,
+          // DOMSnapshot uses -1 for empty attributes, including class="".
+          value = valueIndex === -1 ? '' : strings[valueIndex];
         if (!name || value === undefined || attributes.has(name))
           return undefined;
         attributes.set(name, value);
