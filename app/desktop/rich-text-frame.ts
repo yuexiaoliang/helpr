@@ -1,5 +1,9 @@
 import { z } from 'zod';
-import { isInlineFrameURL, websiteURL } from '../shared/url-policy';
+import {
+  isBlobFrameURL,
+  isInlineFrameURL,
+  websiteURL,
+} from '../shared/url-policy';
 import { frameOriginMatches } from './frame-origins';
 
 const treeNode = z.object({
@@ -117,6 +121,14 @@ export function richTextFrameDocument(
           ![origin, '://'].includes(current.securityOrigin ?? '')
         )
           return undefined;
+      } else if (isBlobFrameURL(current.url)) {
+        if (
+          !current.parent ||
+          !nativeOrigins ||
+          current.securityOrigin !== origin ||
+          new URL(current.url).origin !== origin
+        )
+          return undefined;
       } else if (new URL(websiteURL(current.url)).origin !== origin)
         return undefined;
     } catch {
@@ -183,6 +195,12 @@ export function richTextFrameDocument(
         )
           return undefined;
       }
+      if (
+        index === owner &&
+        isBlobFrameURL(current.url) &&
+        (attributes.get('src') !== current.url || attributes.has('srcdoc'))
+      )
+        return undefined;
       if (
         attributes.has('hidden') ||
         attributes.has('sandbox') ||

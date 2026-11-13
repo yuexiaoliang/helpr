@@ -32,7 +32,7 @@ import {
   type Task,
 } from '../shared/contracts';
 import { websiteURL } from '../shared/url-policy';
-import { frameOriginsSchema } from './frame-origins';
+import { canLoadBlobChild, frameOriginsSchema } from './frame-origins';
 import { diagnostics } from '../shared/diagnostics';
 import { resolveStartup, debuggingSwitches, runtimeImages } from './startup';
 import { InputGate } from './input-gate';
@@ -530,7 +530,19 @@ function bindPage(task: Task): void {
         });
       }
     };
-    wc.on('will-frame-navigate', (event) => guard(event, event.url));
+    wc.on('will-frame-navigate', (event) => {
+      if (
+        canLoadBlobChild(
+          event.url,
+          event.isMainFrame,
+          wc.getURL(),
+          event.frame?.parent?.origin,
+          event.initiator?.origin,
+        )
+      )
+        return;
+      guard(event, event.url);
+    });
     wc.on('will-redirect', (event, url, _inPlace, main) => {
       guard(event, url);
       if (page.view === view && !initialLoad) {
@@ -1582,7 +1594,12 @@ void app
     });
     if (fixture)
       remote.webRequest.onBeforeRequest((details, callback) => {
-        callback({ cancel: !fixture.allowsRequest(details.url) });
+        callback({
+          cancel: !fixture.allowsRequest(
+            details.url,
+            details.resourceType === 'subFrame',
+          ),
+        });
       });
     local.protocol.handle('helpr', async (request) => {
       const url = new URL(request.url);

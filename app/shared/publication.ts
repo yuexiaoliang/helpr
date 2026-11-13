@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { materialVersionSchema } from './material';
 import { pageSourceSchema, observedLinkSchema } from './model';
-import { websiteURL, isInlineFrameURL } from './url-policy';
+import { websiteURL, isBlobFrameURL, isInlineFrameURL } from './url-policy';
 import { richTextLocatorSchema, type WebAction } from './web-action';
 import { richTextControl } from './rich-text';
 import type { PageObservation } from './model';
@@ -29,7 +29,11 @@ export const publicationFieldsSchema = z
         id: z.string().regex(/^[a-z][a-z0-9-]{0,39}$/),
         name: z.string().trim().min(1).max(500),
         frameUrl: z
-          .union([url, z.enum(['about:blank', 'about:srcdoc'])])
+          .union([
+            url,
+            z.enum(['about:blank', 'about:srcdoc']),
+            z.url().refine(isBlobFrameURL),
+          ])
           .optional(),
         // 有定位证明时name是用户确认的字段语义，不冒充网页AX名称。
         richText: richTextLocatorSchema.optional(),
@@ -39,7 +43,8 @@ export const publicationFieldsSchema = z
         (f) =>
           f.richText
             ? f.frameUrl === f.richText.frameUrl
-            : !f.frameUrl || !isInlineFrameURL(f.frameUrl),
+            : !f.frameUrl ||
+              (!isInlineFrameURL(f.frameUrl) && !isBlobFrameURL(f.frameUrl)),
         'PUBLICATION_FIELD_LOCATOR_MISMATCH',
       ),
   )

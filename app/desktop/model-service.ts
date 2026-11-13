@@ -474,6 +474,14 @@ export class ModelService {
                     '同名链接按 scopedLinks 中实际所属的区域区分。只点击同站链接，将对应 landmarks 中一个区域原样放到 target.within，并设 target.role=link、target.exact=true。main 是主内容，navigation 是导航。委托未指定区域时，优先主内容区内符合目标的唯一链接；仍有歧义则 ask。保留区域的空名称，不猜地址或选择器。',
                 }
               : {}),
+            ...(observation.controls?.some((control) =>
+              control.frameUrl.startsWith('blob:'),
+            )
+              ? {
+                  generatedFrameInstruction:
+                    '已观察到当前网页生成的同源子文档。其富文本字段在 review 和 fill 中逐字复制 richText.locator；上传只使用实际出现的 [file N] 和相同 frameUrl。此地址仅属于当前子文档，不作为导航或公开结果地址。',
+                }
+              : {}),
             richTextInstruction:
               'controls.richText 表示已核对文档归属和完整值的富文本正文。只能用 fill 整体替换纯文本；有richText.locator时可原样复制作为target（含原节点、path、frameUrl），不可猜路径/节点或伪造角色名称；否则须唯一精确textbox名称。定位只适用于当前观察，不能保存为跨次复用规则；子frame须原样使用控件实际frameUrl，不猜地址；about:blank/about:srcdoc仅在controls.richText已有归属证明时可用，不能当作网站导航地址。最多4000字符；多行限32个非空行，不支持CR及首尾或连续空行，不得擅自删改正文绕过。不能写HTML或声称保留格式。richTextUnavailable 表示结构或完整值无法核对，不能继续填写。输入后程序独立核对实际全文，模型不能凭成功提示确认。',
             selectionInstruction:

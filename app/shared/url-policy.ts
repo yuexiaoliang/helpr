@@ -12,6 +12,23 @@ export function isInlineFrameURL(value: string): boolean {
   return value === 'about:blank' || value === 'about:srcdoc';
 }
 
+export function isBlobFrameURL(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return (
+      value.length <= 4096 &&
+      url.protocol === 'blob:' &&
+      !url.search &&
+      !url.hash &&
+      /^https?:\/\//.test(url.origin) &&
+      url.pathname.startsWith(url.origin + '/') &&
+      url.pathname.length > url.origin.length + 1
+    );
+  } catch {
+    return false;
+  }
+}
+
 /** 未接入模型时只采用用户明确提供的合法 URL。 */
 export function explicitWebsite(goal: string): string {
   const match = goal.match(/https?:\/\/[^\s<>"'，。；）)]+/u)?.[0];

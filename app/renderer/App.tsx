@@ -706,7 +706,7 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
                         ? '结果已核对'
                         : a.status === 'cancelled'
                           ? a.dispatchState === 'possible'
-                            ? '已核对当前勾选状态'
+                            ? '已核对当前网页状态'
                             : '派发前已取消'
                           : '结果待核对'}{' '}
                       · {(a.resultSource ?? a.source).title}

@@ -2,6 +2,8 @@ import { expect, test } from 'vitest';
 import { richTextFrameDocument } from '../../app/desktop/rich-text-frame';
 import { pageObservation } from '../../app/desktop/page-observation';
 import { richTextControl } from '../../app/shared/rich-text';
+import { canLoadBlobChild } from '../../app/desktop/frame-origins';
+import { websiteURL } from '../../app/shared/url-policy';
 
 function fixture() {
   const url = 'https://example.test/edit',
@@ -241,6 +243,34 @@ test.each(['about:blank', 'about:srcdoc'] as const)(
     expect(withoutProof).toThrow('URL_DENIED');
   },
 );
+test('生成的编辑器文档须同时核对页面、原生父框架和实际归属', () => {
+  const f = fixture();
+  const url = 'blob:https://example.test/0199a9d4-3235-41f4-a9c2-47e548496aa7';
+  const origin = 'https://example.test';
+  const main = origin + '/edit';
+  f.snapshot.strings[1] = url;
+  f.snapshot.strings.push('src');
+  f.main.nodes.attributes[1] = [11, 1];
+  f.tree.childFrames[0]!.frame.url = url;
+  f.origins.frames[1]!.url = url;
+  f.action.target.frameUrl = url;
+  expect(canLoadBlobChild(url, false, main, origin, origin)).toBe(true);
+  expect(canLoadBlobChild(url, true, main, origin, origin)).toBe(false);
+  expect(canLoadBlobChild(url, false, main, 'https://other.test', origin)).toBe(
+    false,
+  );
+  expect(canLoadBlobChild(url, false, main, origin, 'https://other.test')).toBe(
+    false,
+  );
+  expect(canLoadBlobChild(url, false, main, undefined, origin)).toBe(false);
+  expect(() => websiteURL(url)).toThrow('URL_DENIED');
+  expect(richTextControl(f.action, f.read(), true)).toMatchObject({
+    frameUrl: url,
+    textValue: '旧正文',
+  });
+  f.main.nodes.attributes[1] = [];
+  expect(f.document()).toBeUndefined();
+});
 test.each([
   'origin-missing',
   'origin-cross-site',

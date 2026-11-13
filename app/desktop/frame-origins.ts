@@ -1,4 +1,25 @@
 import { z } from 'zod';
+import { isBlobFrameURL, websiteURL } from '../shared/url-policy';
+
+export function canLoadBlobChild(
+  url: string,
+  main: boolean,
+  pageUrl: string,
+  parentOrigin: string | undefined,
+  initiatorOrigin: string | undefined,
+): boolean {
+  if (main || !isBlobFrameURL(url)) return false;
+  try {
+    const origin = new URL(websiteURL(pageUrl)).origin;
+    return (
+      new URL(url).origin === origin &&
+      parentOrigin === origin &&
+      (initiatorOrigin === undefined || initiatorOrigin === origin)
+    );
+  } catch {
+    return false;
+  }
+}
 
 /** 宿主读取WebFrameMain原生属性；不运行网页脚本、不接受网页上报来源。 */
 export const frameOriginsSchema = z.strictObject({

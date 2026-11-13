@@ -2,7 +2,11 @@ import { richTextObservation } from './rich-text-observation';
 import { emptyTextObservation } from './empty-text-observation';
 import { z } from 'zod';
 import { createHash } from 'node:crypto';
-import { isInlineFrameURL, websiteURL } from '../shared/url-policy';
+import {
+  isBlobFrameURL,
+  isInlineFrameURL,
+  websiteURL,
+} from '../shared/url-policy';
 import {
   PAGE_OBSERVATION_TEXT_LIMIT,
   type PageObservation,
@@ -86,7 +90,11 @@ export function pageObservation(
     document === undefined &&
     richDocument !== undefined &&
     isInlineFrameURL(rawUrl);
-  const url = inline ? rawUrl : websiteURL(rawUrl);
+  const blob =
+    document === undefined &&
+    richDocument !== undefined &&
+    isBlobFrameURL(rawUrl);
+  const url = inline || blob ? rawUrl : websiteURL(rawUrl);
   const { nodes } = treeSchema.parse(accessibility);
   const empty = emptyTextObservation(document, url);
   const rich = richTextObservation(richDocument, url);
@@ -204,7 +212,7 @@ export function pageObservation(
                   rule: 'contenteditable-ax-v1' as const,
                   backendNodeId: node.backendDOMNodeId!,
                   ...(richNode?.path &&
-                  (role !== 'textbox' || !name || name.length > 500)
+                  (blob || role !== 'textbox' || !name || name.length > 500)
                     ? {
                         locator: {
                           richTextNodeId: node.backendDOMNodeId!,
@@ -285,6 +293,7 @@ export function pageObservation(
     if (!inline && role === 'link' && name && typeof link === 'string') {
       try {
         const href = websiteURL(link);
+        if (blob && new URL(href).origin !== new URL(url).origin) continue;
         const landmarks = enclosingLandmarks(node.nodeId);
         links.push({
           name: name.slice(0, 1000),

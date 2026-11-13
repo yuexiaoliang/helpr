@@ -2223,6 +2223,24 @@ export class ExecutionService {
           continue;
         }
         if (
+          pending?.action.kind === 'click' &&
+          pending.action.target.role === 'button' &&
+          pending.preconditions?.includes(
+            `[button] ${pending.action.target.name} (expanded=false)`,
+          )
+        ) {
+          const result = await this.record({
+            kind: 'disclosure-observed',
+            taskId: job.taskId,
+            runId: job.runId,
+            id: pending.id,
+            source: observed.observation,
+            binding: observed.binding,
+          });
+          if (!this.live(job)) return;
+          if (result.resolved === true) continue;
+        }
+        if (
           pending?.action.kind === 'check' &&
           pending.action.target.role === 'checkbox' &&
           pending.action.target.exact &&

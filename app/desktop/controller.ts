@@ -1,6 +1,6 @@
 import { richTextFrameDocument } from './rich-text-frame';
 import { frameOriginsSchema } from './frame-origins';
-import { isInlineFrameURL } from '../shared/url-policy';
+import { isBlobFrameURL, isInlineFrameURL } from '../shared/url-policy';
 import { hostFormChainSchema } from '../shared/form-navigation-chain';
 import { LinkNavigationWatch } from './link-navigation';
 import { actionNavigationEventSchema } from '../shared/action-navigation';
@@ -408,29 +408,34 @@ export async function startController(
         item.childFrames?.forEach((child) => collectFrames(child));
       };
       collectFrames(frame.frameTree, true);
-      const nativeOrigins = childFrames.some((f) => isInlineFrameURL(f.url))
+      const nativeOrigins = childFrames.some(
+        (f) => isInlineFrameURL(f.url) || isBlobFrameURL(f.url),
+      )
         ? await readFrameOrigins(taskId, qualification)
         : undefined;
       for (const child of childFrames.slice(0, 8)) {
         // 无法读取的跨进程 frame 明示缺口；不以维护者脚本补写内容。
         try {
           const ax = await read('Accessibility.getFullAXTree', child.id);
+          const childDocument = richTextFrameDocument(
+            document,
+            frame.frameTree,
+            child.id,
+            ax,
+            nativeOrigins,
+          );
           const observation = pageObservation(
             { frameTree: { frame: child } },
             ax,
             qualification.generation,
             '',
             undefined,
-            richTextFrameDocument(
-              document,
-              frame.frameTree,
-              child.id,
-              ax,
-              nativeOrigins,
-            ),
+            childDocument,
           );
           childObservations.push(observation);
           supplements.push(`[frame] ${child.url}\n` + observation.text);
+          if (childDocument && isBlobFrameURL(child.url))
+            supplements.push(materialObservation(childDocument, child.url));
         } catch {
           supplements.push(`[frame-unavailable] ${child.url}`);
         }

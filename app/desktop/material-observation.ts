@@ -14,12 +14,15 @@ const snapshotSchema = z.object({
   ),
 });
 /** DOM 快照仅补充文件控件和实际链接，不读取文字框、密码或隐藏字段的值。 */
-export function materialObservation(snapshot: unknown): string {
+export function materialObservation(
+  snapshot: unknown,
+  verifiedBlob?: string,
+): string {
   const { documents, strings } = snapshotSchema.parse(snapshot);
   const lines: string[] = [];
   for (const document of documents) {
     const url = strings[document.documentURL];
-    if (!url || !/^https?:\/\//.test(url)) continue;
+    if (!url || (url !== verifiedBlob && !/^https?:\/\//.test(url))) continue;
     let fileIndex = 0;
     for (let i = 0; i < document.nodes.nodeName.length; i++) {
       const name = strings[document.nodes.nodeName[i]!]!.toLowerCase();

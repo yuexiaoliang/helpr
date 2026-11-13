@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { localFixtureOrigin } from './startup';
 import type { CredentialProtection } from './model-service';
+import { isBlobFrameURL } from '../shared/url-policy';
 
 export const FIXTURE_API_KEY = 'local-fixture-not-a-secret';
 /** 仅显式隔离验证使用；不接受真实密钥，不接触系统凭据。 */
@@ -19,12 +20,12 @@ export class LocalFixture implements CredentialProtection {
     if (value !== this.token) throw Error('MODEL_CREDENTIAL_UNAVAILABLE');
     return FIXTURE_API_KEY;
   }
-  allowsRequest(value: string): boolean {
+  allowsRequest(value: string, child = false): boolean {
     if (value === 'about:blank') return true;
     try {
       const url = new URL(value);
       return (
-        url.protocol === 'http:' &&
+        (url.protocol === 'http:' || (child && isBlobFrameURL(value))) &&
         url.origin === this.origin &&
         !url.username &&
         !url.password

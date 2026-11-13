@@ -417,6 +417,13 @@ const commandSchema = z.discriminatedUnion('kind', [
     binding: pageBindingSchema,
   }),
   z.strictObject({
+    kind: z.literal('disclosure-observed'),
+    ...work,
+    id: z.string(),
+    source: observation,
+    binding: pageBindingSchema,
+  }),
+  z.strictObject({
     kind: z.literal('resolve'),
     binding: pageBindingSchema.optional(),
     download: downloadCheckSchema.optional(),
@@ -2685,6 +2692,13 @@ export class ExecutionRecords {
           )
             throw Error('EXECUTION_SELECTION_UNVERIFIED');
           const richTextSource = richTextControl(c.action, c.source);
+          if (
+            c.action.target.frameUrl?.startsWith('blob:') &&
+            c.action.kind !== 'upload' &&
+            !richTextSource &&
+            !observedControl(c.action, c.source)
+          )
+            throw Error('EXECUTION_EVIDENCE_MISSING');
           if (c.action.kind === 'upload') {
             const id = c.action.materialId;
             if (
@@ -2968,6 +2982,85 @@ export class ExecutionRecords {
           e.summary = c.summary;
           this.save(task.id, e);
           return { created: true };
+        }
+        if (c.kind === 'disclosure-observed') {
+          const a = e.actions.find((action) => action.id === c.id);
+          if (
+            !a ||
+            a.action.kind !== 'click' ||
+            a.action.target.role !== 'button' ||
+            !a.action.target.exact ||
+            a.action.target.within ||
+            a.effect !== 'interaction' ||
+            !a.returned ||
+            a.navigation ||
+            a.targetCreation ||
+            a.workflowStep ||
+            a.goalVersion !== e.goalVersion ||
+            a.dispatchState !== 'possible' ||
+            a.status !== 'unknown' ||
+            a.source.truncated ||
+            c.source.truncated ||
+            c.source.url !== task.url ||
+            c.source.url !== a.source.url ||
+            c.binding.generation !== c.source.generation ||
+            c.source.observedAt < a.source.observedAt ||
+            e.question ||
+            e.loginOrigin ||
+            e.publication ||
+            e.coordination?.refreshRequired ||
+            e.coordination?.checkingLogin
+          )
+            return { resolved: false };
+          const { name, frameUrl = a.source.url } = a.action.target;
+          const line = (expanded: boolean) =>
+            `[button] ${name} (expanded=${expanded})`;
+          const after = c.source.text.split('\n');
+          const previous = a.preconditions?.includes(line(false));
+          const current = after.filter(
+            (value) => value === line(true) || value === line(false),
+          );
+          if (
+            !previous ||
+            frameUrl !== c.source.url ||
+            current.length !== 1 ||
+            c.source.controls?.filter(
+              (control) =>
+                control.role === 'button' &&
+                control.frameUrl === frameUrl &&
+                control.name === name,
+            ).length !== 1
+          )
+            return { resolved: false };
+          const reopened =
+            a.binding.targetId !== c.binding.targetId ||
+            a.binding.generation !== c.binding.generation;
+          const sameDraft =
+            e.preparation?.some(
+              (f) =>
+                f.kind === 'target' &&
+                f.goalVersion === e.goalVersion &&
+                f.url === c.source.url,
+            ) &&
+            e.preparation.some(
+              (f) =>
+                f.kind === 'draft' &&
+                f.goalVersion === e.goalVersion &&
+                f.url === c.source.url,
+            );
+          const expanded = current[0] === line(true);
+          if (
+            a.runId === c.runId
+              ? reopened || !expanded
+              : !sameDraft || !reopened
+          )
+            return { resolved: false };
+          a.status = expanded ? 'confirmed' : 'cancelled';
+          a.evidence = [current[0]!];
+          a.resultSource = pageSourceSchema.strip().parse(c.source);
+          a.resultLinks = c.source.links ?? [];
+          this.save(task.id, e);
+          return { resolved: true };
         }
         if (c.kind === 'checkbox-observed') {
           const a = e.actions.find((action) => action.id === c.id);
