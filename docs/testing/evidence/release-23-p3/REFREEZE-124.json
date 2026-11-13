@@ -1,0 +1,137 @@
+{
+  "phase": "P3",
+  "candidate": 124,
+  "predecessor": 123,
+  "sourceCommit": "2a2fdfd003d94e0d40f731d847e1c580823f597b",
+  "status": "refrozen",
+  "artifact": {
+    "path": "/Users/yuexiaoliang/projects/helpr/dist/candidates/release-p4-editor-preferences-0-2-3/mac-arm64/helpr.app",
+    "sha256": "c968624bd7c4bb6b808604bbb1bd251639abc5b466c2ec4ecb14a1d44bb938f5",
+    "manifest": {
+      "path": ".local/workspace-validation/build-124.json",
+      "sha256": "ea0e672564c393b8c11bb94a72a4fe61a48ec2100418c59398efe84765cd64bf"
+    },
+    "preflight": {
+      "path": ".local/workspace-validation/p4-recovery/preflight-124/PREFLIGHT.json",
+      "sha256": "27e91322123cd96d457290b36676b061bd394cec94d44c0f4698c72a4563cec9"
+    }
+  },
+  "p3Acceptance": {
+    "passed": true,
+    "firstReadyMs": 3572,
+    "coldReadyMs": 954,
+    "settled": {
+      "from": 1794561669422,
+      "to": 1794561969508,
+      "spanMs": 300086,
+      "samples": 101,
+      "maxSampleGapMs": 3002,
+      "tailFrom": 1794561789508,
+      "tailSamples": 60,
+      "tailRangeMiB": 213.484375,
+      "peakMiB": 1764.671875,
+      "modelCalls": 0,
+      "siteEffects": 0
+    },
+    "native": {
+      "evidence": {
+        "path": ".local/workspace-validation/p4-recovery/native-124.json",
+        "sha256": "41a957d8a67501a785d21a7538e1b843fa79f865c6c35f3d249d877c0098f049"
+      },
+      "durationsMs": [
+        542,
+        546,
+        531,
+        498,
+        476,
+        460
+      ]
+    }
+  },
+  "performance": {
+    "evidence": {
+      "path": ".local/workspace-validation/run-1794561645392/result.json",
+      "sha256": "568022bdd2e75325a295283d588deeffe73d12f8b9a53fbeb325198eaa7635bb"
+    },
+    "passed": true,
+    "error": null,
+    "firstReadyMs": 3572
+  },
+  "fixtureEditorPreferences": {
+    "uploadConfirmed": true,
+    "blockUsageObserved": true,
+    "evidence": {
+      "path": ".local/workspace-validation/run-1794561978134/result.json",
+      "sha256": "04121c66f445d013598d20a57cb60882df3c988546cf2f940390d031d7c4a2fe"
+    }
+  },
+  "source": {
+    "workspace": 622,
+    "validator": 41,
+    "legacy": 25,
+    "checks": {
+      "path": ".local/workspace-validation/p4-recovery/source-124-full.log",
+      "sha256": "dd70b0b9fc1ae4d5a7100f5f49fd6e1a136da933aeab7f7eb07767a773ab61e9"
+    }
+  },
+  "p4Inputs": {
+    "file": "tests/fixtures/release-23-real-business-v1/INPUTS.json",
+    "sha256": "ac799053df77edb174b1a1ae94280cef5262179817c81fa42a20dd6208add947",
+    "count": 10,
+    "model": {
+      "provider": "DeepSeek",
+      "model": "deepseek-flash",
+      "protocol": "chat-completions",
+      "sdkRetries": 0,
+      "outputTokens": 2048,
+      "configuration": "沿用本机受保护配置，执行前确认非秘密配置与实际记录，账本不保存密钥。"
+    },
+    "limits": {
+      "requests": 120,
+      "reservedTokens": 1200000,
+      "outputTokensPerRequest": 2048,
+      "attachments": 10,
+      "newContents": 10,
+      "publishes": 10,
+      "minutes": 90
+    },
+    "consumed": {
+      "requests": 27,
+      "reservedTokens": 1809268,
+      "attachments": 0,
+      "newContents": 2,
+      "publishes": 0
+    }
+  },
+  "p4Batch": {
+    "status": "stopped",
+    "nextSample": "R23-FIRST-A",
+    "draftId": 162,
+    "verifiedSamples": 0,
+    "batchQuotaUpdate": {
+      "recordedAt": "2026-11-13T07:30:05.371Z",
+      "userInstruction": "不加限制，我只希望赶紧弄完",
+      "requests": null,
+      "reservedTokens": null,
+      "newContentAttempts": null,
+      "previousLedgerSha256": "154433df2decde7f31dc92a4e13819bc7e6f7857edc84a2c113e5b42894a3401"
+    },
+    "ledgerAtCheck": {
+      "path": ".local/workspace-validation/p4-recovery/ledger-at-124.json",
+      "sha256": "3ee1cf7773a59c11dc6ec69d9a712b87e4f0a2c2b26dfa8926ea52f494d45b46"
+    }
+  },
+  "cleanup": {
+    "pids": 44,
+    "groups": 9,
+    "allCleared": true,
+    "leaseReleased": true
+  },
+  "cumulative": {
+    "builds": 124,
+    "installs": 38,
+    "starts": 595,
+    "faults": 74,
+    "cleanups": 26
+  }
+}
