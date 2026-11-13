@@ -94,11 +94,16 @@ export const observedCheckboxSchema = z.strictObject({
   frameUrl: z.url(),
   checked: z.boolean().nullable(),
 });
+export const observedFileInputSchema = z.strictObject({
+  fileIndex: z.number().int().nonnegative().max(100),
+  frameUrl: z.url(),
+});
 export type PageObservation = PageSource & {
   text: string;
   links?: z.infer<typeof observedLinkSchema>[];
   controls?: z.infer<typeof observedControlSchema>[];
   checkboxes?: z.infer<typeof observedCheckboxSchema>[];
+  fileInputs?: z.infer<typeof observedFileInputSchema>[];
 };
 export const modelUsageKindSchema = z.enum([
   'legacy-unspecified',

@@ -21,6 +21,7 @@ import {
   formNavigationResolutionSchema,
 } from '../shared/action-navigation';
 import { actionLandmark } from '../shared/web-action';
+import { isBlobFrameURL } from '../shared/url-policy';
 import {
   agreementUICommandSchema,
   agreementTermsSchema,
@@ -94,6 +95,7 @@ import {
   observedControlSchema,
   type PageObservation,
   observedCheckboxSchema,
+  observedFileInputSchema,
 } from '../shared/model';
 import {
   materialVersionSchema,
@@ -200,6 +202,7 @@ function move(e: TaskExecution, event: PhaseEvent) {
 }
 const observation = pageSourceSchema.extend({
   checkboxes: z.array(observedCheckboxSchema).max(500).optional(),
+  fileInputs: z.array(observedFileInputSchema).max(100).optional(),
   text: z.string().max(PAGE_OBSERVATION_TEXT_LIMIT),
   links: z.array(observedLinkSchema).max(300).optional(),
   controls: z.array(observedControlSchema).max(500).optional(),
@@ -2717,13 +2720,29 @@ export class ExecutionRecords {
             )
               throw Error('MATERIAL_ALREADY_UPLOADED');
             const frame = c.action.target.frameUrl ?? c.source.url;
+            const { fileIndex } = c.action.target;
             if (
-              !c.source.text.includes(
-                `[file ${c.action.target.fileIndex}] ${frame}`,
-              )
+              !(c.source.fileInputs
+                ? c.source.fileInputs.some(
+                    (input) =>
+                      input.frameUrl === frame && input.fileIndex === fileIndex,
+                  )
+                : c.source.text.includes(`[file ${fileIndex}] ${frame}`))
             )
               throw Error('EXECUTION_EVIDENCE_MISSING');
           }
+          if (
+            c.action.kind === 'click' &&
+            c.action.target.role === 'button' &&
+            c.action.target.name === 'Upload' &&
+            c.action.target.frameUrl &&
+            isBlobFrameURL(c.action.target.frameUrl) &&
+            e.materials?.some((m) => m.goalVersion === e.goalVersion) &&
+            c.source.fileInputs?.some(
+              (input) => input.frameUrl === c.action.target.frameUrl,
+            )
+          )
+            throw Error('EXECUTION_FILE_INPUT_AVAILABLE');
           const preparationTarget = e.preparation?.find(
             (f) => f.kind === 'target' && f.goalVersion === e.goalVersion,
           );
@@ -3011,7 +3030,6 @@ export class ExecutionRecords {
           )
             return { resolved: false };
           const { name, frameUrl = a.source.url } = a.action.target;
-          if (frameUrl !== c.source.url) return { resolved: false };
           const reopened =
             a.binding.targetId !== c.binding.targetId ||
             a.binding.generation !== c.binding.generation;
@@ -3028,14 +3046,36 @@ export class ExecutionRecords {
                 f.goalVersion === e.goalVersion &&
                 f.url === c.source.url,
             );
-          if (
+          const previousFile =
+            a.action.target.role === 'button' &&
+            name === 'Upload' &&
+            isBlobFrameURL(frameUrl) &&
+            new URL(frameUrl).origin === new URL(c.source.url).origin &&
+            a.returned &&
+            a.preconditions?.includes('[button] Upload') &&
+            e.actions
+              .slice(0, e.actions.indexOf(a))
+              .some(
+                (previous) =>
+                  previous.goalVersion === a.goalVersion &&
+                  previous.runId === a.runId &&
+                  previous.binding.targetId === a.binding.targetId &&
+                  previous.binding.generation === a.binding.generation &&
+                  previous.status === 'confirmed' &&
+                  previous.action.kind === 'click' &&
+                  previous.action.target.role === 'option' &&
+                  previous.action.target.name === 'File' &&
+                  previous.evidence.includes('Upload'),
+              );
+          const fileInsertion =
             a.action.target.role === 'option' &&
             name === 'File' &&
-            a.preconditions?.includes('[option] File (selected=false)')
-          ) {
+            frameUrl === c.source.url &&
+            a.preconditions?.includes('[option] File (selected=false)');
+          if (fileInsertion || previousFile) {
             const canvas = (c.source.controls ?? []).filter(
               (control) =>
-                control.frameUrl.startsWith('blob:') &&
+                isBlobFrameURL(control.frameUrl) &&
                 new URL(control.frameUrl).origin ===
                   new URL(c.source.url).origin &&
                 control.role === 'button' &&
@@ -3049,14 +3089,11 @@ export class ExecutionRecords {
               !sameDraft
             )
               return { resolved: false };
-            const file = c.source.text
-              .split('\n')
-              .some(
-                (line) =>
-                  /^\[file \d+\] /.test(line) &&
-                  line.split(' ')[2] === control.frameUrl,
-              );
+            const file = c.source.fileInputs?.some(
+              (input) => input.frameUrl === control.frameUrl,
+            );
             if (
+              fileInsertion &&
               file &&
               control.name === 'Upload' &&
               !reopened &&
@@ -3065,10 +3102,11 @@ export class ExecutionRecords {
             )
               a.status = 'confirmed';
             else if (
-              !file &&
+              file === false &&
               control.name === 'Add default block' &&
               a.binding.targetId !== c.binding.targetId &&
               a.runId !== c.runId &&
+              (!previousFile || control.frameUrl !== frameUrl) &&
               !e.actions.some(
                 (other) =>
                   other.action.kind === 'upload' &&
@@ -3083,7 +3121,11 @@ export class ExecutionRecords {
             this.save(task.id, e);
             return { resolved: true };
           }
-          if (a.action.target.role !== 'button' || !a.returned)
+          if (
+            a.action.target.role !== 'button' ||
+            !a.returned ||
+            frameUrl !== c.source.url
+          )
             return { resolved: false };
           const line = (expanded: boolean) =>
             `[button] ${name} (expanded=${expanded})`;

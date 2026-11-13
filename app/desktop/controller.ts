@@ -394,7 +394,12 @@ export async function startController(
       const frame = await read('Page.getFrameTree');
       const tree = await read('Accessibility.getFullAXTree');
       const document = await read('DOMSnapshot.captureSnapshot');
-      const supplements = [materialObservation(document)];
+      const fileInputs: NonNullable<
+        BoundObservation['observation']['fileInputs']
+      > = [];
+      const supplements = [
+        materialObservation(document, undefined, fileInputs),
+      ];
       const childObservations: ReturnType<typeof pageObservation>[] = [];
       const childFrames: { id: string; url: string }[] = [];
       const collectFrames = (value: unknown, root = false) => {
@@ -435,7 +440,9 @@ export async function startController(
           childObservations.push(observation);
           supplements.push(`[frame] ${child.url}\n` + observation.text);
           if (childDocument && isBlobFrameURL(child.url))
-            supplements.push(materialObservation(childDocument, child.url));
+            supplements.push(
+              materialObservation(childDocument, child.url, fileInputs),
+            );
         } catch {
           supplements.push(`[frame-unavailable] ${child.url}`);
         }
@@ -476,10 +483,12 @@ export async function startController(
       ];
       observation.controls = controls.slice(0, 500);
       observation.checkboxes = checkboxes.slice(0, 500);
+      observation.fileInputs = fileInputs.slice(0, 100);
       observation.links = links.slice(0, 300);
       observation.truncated ||=
         controls.length > 500 ||
         checkboxes.length > 500 ||
+        fileInputs.length > 100 ||
         links.length > 300 ||
         childFrames.length > 8 ||
         childObservations.some((o) => o.truncated);

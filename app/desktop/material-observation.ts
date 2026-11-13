@@ -1,5 +1,8 @@
 import { z } from 'zod';
-import { PAGE_OBSERVATION_TEXT_LIMIT } from '../shared/model';
+import {
+  PAGE_OBSERVATION_TEXT_LIMIT,
+  type PageObservation,
+} from '../shared/model';
 
 const snapshotSchema = z.object({
   strings: z.array(z.string()),
@@ -17,6 +20,7 @@ const snapshotSchema = z.object({
 export function materialObservation(
   snapshot: unknown,
   verifiedBlob?: string,
+  inputs?: NonNullable<PageObservation['fileInputs']>,
 ): string {
   const { documents, strings } = snapshotSchema.parse(snapshot);
   const lines: string[] = [];
@@ -31,10 +35,12 @@ export function materialObservation(
         attributes: Record<string, string> = {};
       for (let j = 0; j < raw.length; j += 2)
         attributes[strings[raw[j]!]!] = strings[raw[j + 1]!]!;
-      if (name === 'input' && attributes.type?.toLowerCase() === 'file')
+      if (name === 'input' && attributes.type?.toLowerCase() === 'file') {
+        if (fileIndex <= 100) inputs?.push({ fileIndex, frameUrl: url });
         lines.push(
           `[file ${fileIndex++}] ${url} label=${attributes['aria-label'] ?? ''} accept=${attributes.accept ?? ''}`,
         );
+      }
       if (name === 'a' && attributes.href) {
         try {
           const link = new URL(attributes.href, url);

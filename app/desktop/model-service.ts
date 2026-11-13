@@ -489,8 +489,11 @@ export class ModelService {
             ...(job.planning.materials?.length &&
             !job.planning.preparation?.some((fact) => fact.kind === 'upload')
               ? {
+                  fileInputs: observation.truncated
+                    ? []
+                    : (observation.fileInputs ?? []),
                   attachmentPreparation:
-                    '已固定素材但还没有上传证据时，先准备实际的文件控件。页面还没有 [file N] 时，可以用 decision=act、effect=interaction 和当前已观察到的唯一控件，逐步打开添加区块、添加附件或文件选择界面。仅准备控件的动作 action 必须非空，publication 和 approvalId 留空。取得文件控件后按 upload 规则发送固定素材，取得附件实际链接后才提交 review。',
+                    'fileInputs 是从当前页面的完整观察中读取的文件输入，即使文字观察中没有显示对应行。存在唯一适用的文件输入时，直接用 decision=act、effect=upload、action={kind:"upload",target:该 fileInputs 项,materialId:已固定的本次素材ID}，无需点击打开系统文件选择器。没有文件输入时可逐步打开区块或添加附件界面，使用 decision=act、effect=interaction 和当前唯一控件；publication、approvalId 留空。已核对附件链接后，先准备实际可填的标题、正文字段和栏目，再提交 review。空白区出现添加默认段落的控件时，可用它准备正文编辑位置；此时保持标题和正文内容待确认。',
                 }
               : {}),
             publishingAgreement: job.planning.publishingAgreement ?? null,

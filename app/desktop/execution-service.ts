@@ -2167,6 +2167,7 @@ export class ExecutionService {
           throw Error('MATERIAL_CORRUPT');
       }
       let stalePlans = 0;
+      let filePickerRejected = false;
       for (let index = 0; index < 20; index++) {
         if (!this.live(job)) return;
         let observed = await this.abortable(
@@ -2232,7 +2233,10 @@ export class ExecutionService {
               pending.action.target.name === 'File' &&
               pending.preconditions?.includes(
                 '[option] File (selected=false)',
-              )))
+              )) ||
+            (pending.action.target.role === 'button' &&
+              pending.action.target.name === 'Upload' &&
+              pending.action.target.frameUrl?.startsWith('blob:')))
         ) {
           if (
             current.coordination?.refreshRequired &&
@@ -2505,6 +2509,24 @@ export class ExecutionService {
           throw error;
         }
         if (!this.live(job)) return;
+        if (
+          !filePickerRejected &&
+          !pending &&
+          !current.publication &&
+          step.action?.kind === 'click' &&
+          step.action.target.role === 'button' &&
+          step.action.target.name === 'Upload' &&
+          step.action.target.frameUrl?.startsWith('blob:') &&
+          observed.observation.fileInputs?.some(
+            (input) => input.frameUrl === step.action?.target.frameUrl,
+          ) &&
+          current.materials?.some(
+            (material) => material.goalVersion === current.goalVersion,
+          )
+        ) {
+          filePickerRejected = true;
+          continue;
+        }
         if (
           repair &&
           !withinWorkflowScope(current, step, observed.observation)
