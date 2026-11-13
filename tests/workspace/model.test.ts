@@ -35,6 +35,7 @@ async function backend(
     | 'stream-error'
     | 'rate-limit'
     | 'length'
+    | 'draft-evidence'
     | 'planning' = 'normal',
   redirectTo = '',
 ) {
@@ -89,9 +90,11 @@ async function backend(
                           target: { role: 'button', name: '核对', exact: true },
                         },
                       })
-                    : mode === 'echo'
-                      ? '不应显示 test-secret-only'
-                      : '页面中的营收为 34.8 万元。',
+                    : mode === 'draft-evidence'
+                      ? JSON.stringify({ draftEvidence: '状态：草稿' })
+                      : mode === 'echo'
+                        ? '不应显示 test-secret-only'
+                        : '页面中的营收为 34.8 万元。',
               },
               finish_reason: null,
             },
@@ -781,7 +784,7 @@ test('执行提议仍经过实际SDK计数入口，界面只展示摘要，不�
   }
 });
 
-test('恢复已有草稿的模型请求明确区分编辑目标与草稿事实，预留低于续跑余额', async () => {
+test('恢复原草稿时模型只核对草稿证据，应用绑定原动作且不产生网页操作', async () => {
   const editor = 'https://example.com/report',
     help = { name: '编辑说明', url: 'https://example.com/help' };
   const f = fixture(
@@ -790,7 +793,7 @@ test('恢复已有草稿的模型请求明确区分编辑目标与草稿事实�
       '\n状态：草稿\n' +
       '页面可见文本和当前已观察的草稿信息。\n'.repeat(110),
   );
-  const server = await backend('planning');
+  const server = await backend('draft-evidence');
   try {
     const taskId = f.create('原草稿');
     await f.service.configure({
@@ -852,7 +855,7 @@ test('恢复已有草稿的模型请求明确区分编辑目标与草稿事实�
         observedAt: 2,
       },
     };
-    await f.service.propose({
+    const step = await f.service.propose({
       taskId,
       runId: 'continued-run',
       goal: '从已有草稿继续原附件任务',
@@ -903,21 +906,31 @@ test('恢复已有草稿的模型请求明确区分编辑目标与草稿事实�
     const body = JSON.parse(server.received[0]!.body) as {
       messages: { content: string }[];
     };
-    const request = JSON.parse(body.messages.at(-1)!.content) as {
-      draftRecoveryInstruction?: string;
-      targetCreationInstruction?: string;
-      schema: { properties: Record<string, unknown> };
-      controls: PageObservation['controls'];
-    };
-    expect(request.draftRecoveryInstruction).toContain('previous');
-    expect(request.draftRecoveryInstruction).toContain('draft');
-    expect(request.schema.properties.preparation).toBeDefined();
-    expect(request.schema.properties.schedule).toBeUndefined();
-    expect(request.targetCreationInstruction).toBeUndefined();
-    expect(request.controls).toEqual(observation.controls.slice(1));
-    expect(body.messages.at(-2)!.content).toContain(help.url);
-    const reserved = f.get().tasks[0]?.messages.at(-1)?.call?.reservedTokens;
-    expect(reserved).toBeLessThan(47_410);
+    const request: unknown = JSON.parse(body.messages.at(-1)!.content);
+    expect(request).toMatchObject({
+      knownTarget: editor,
+      previous: {
+        sourceUrl: source.url,
+        navigationUrl: pending.navigation!.url,
+      },
+      page: { url: editor, text: expect.stringContaining('状态：草稿') },
+    });
+    expect(request).not.toHaveProperty('controls');
+    expect(step).toMatchObject({
+      decision: 'observe',
+      action: null,
+      previous: {
+        id: pending.id,
+        status: 'confirmed',
+        evidence: ['状态：草稿'],
+      },
+      preparation: ['target', 'draft'].map((kind) => ({
+        kind,
+        url: editor,
+        materialId: null,
+        evidence: ['状态：草稿'],
+      })),
+    });
   } finally {
     await f.service.stopAll();
     f.records.close();

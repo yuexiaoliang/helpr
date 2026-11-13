@@ -48,6 +48,9 @@ const webProposalSchema = nextStepSchema.omit({
   article: true,
   modelCallId: true,
 });
+const draftRecoveryResponse = z.strictObject({
+  draftEvidence: z.string().min(1).max(2000).nullable(),
+});
 type Job = {
   id: string;
   taskId: string;
@@ -364,6 +367,28 @@ export class ModelService {
       const pageText = observation.text.slice(0, MODEL_PAGE_TEXT_LIMIT);
       const pageTruncated =
         observation.truncated || pageText.length < observation.text.length;
+      const planning = job.planning;
+      const pending = planning?.pending;
+      const recoverDraft =
+        planning &&
+        pending?.status === 'unknown' &&
+        pending.runId !== planning.runId &&
+        pending.action.kind === 'click' &&
+        pending.action.target.role === 'link' &&
+        pending.navigation?.mainFrame &&
+        !pending.navigation.sameDocument &&
+        !pending.submission &&
+        planning.materials?.some(
+          (material) => material.goalVersion === pending.goalVersion,
+        ) &&
+        !planning.preparation?.some(
+          (fact) =>
+            fact.kind === 'draft' &&
+            fact.actionId === pending.id &&
+            fact.url === observation.url,
+        )
+          ? pending
+          : undefined;
       const messages: ModelMessage[] = task.messages
         .filter(
           (message) =>
@@ -379,25 +404,7 @@ export class ModelService {
         role: 'user',
         content: `当前任务：${task.goal}\n页面观察（${new Date(observation.observedAt).toISOString()}）：\n${observation.url}\n${observation.title}\n${pageText}\n${pageTruncated ? '本次观察已截断，不能推断不可见部分。' : ''}\n请回答本次问题：${job.text}`,
       });
-      if (job.planning) {
-        const pending = job.planning.pending;
-        const needsDraftEvidence =
-          pending?.status === 'unknown' &&
-          pending.runId !== job.planning.runId &&
-          pending.action.kind === 'click' &&
-          pending.action.target.role === 'link' &&
-          pending.navigation?.mainFrame &&
-          !pending.navigation.sameDocument &&
-          !pending.submission &&
-          job.planning.materials?.some(
-            (material) => material.goalVersion === pending.goalVersion,
-          ) &&
-          !job.planning.preparation?.some(
-            (fact) =>
-              fact.kind === 'draft' &&
-              fact.actionId === pending.id &&
-              fact.url === observation.url,
-          );
+      if (job.planning && !recoverDraft) {
         const links = observation.truncated ? [] : (observation.links ?? []);
         const linksByName = new Map<string, ObservedLink[]>();
         for (const link of links) {
@@ -515,12 +522,6 @@ export class ModelService {
             publication: job.planning.publication ?? null,
             loginOrigin: job.planning.loginOrigin ?? null,
             clarifications: job.planning.clarifications ?? [],
-            ...(needsDraftEvidence
-              ? {
-                  draftRecoveryInstruction:
-                    '先核对 previous 指向的原操作。当前页面若显示与原操作对应的同一草稿和稳定编辑地址，在 preparation 给出该地址的 draft，materialId 为 null，evidence 逐字引用当前草稿状态。尚无 target 时先在同一数组给出 target，再给 draft。已存在的空白草稿也可以核对，例如编辑页明确显示“自动草稿”。仅看到编辑地址或空表单时，previous.status 仍为 unknown 并 wait。只有核对到草稿才可返回 previous.status=confirmed；证据齐全时可同时提议下一步，系统会先核对原操作。保持已固定素材，不重新创建草稿。',
-                }
-              : {}),
             previous: pending ? fact(pending) : null,
             history: job.planning.history.slice(-10).map(fact),
             schema: z.toJSONSchema(webProposalSchema, { reused: 'ref' }),
@@ -572,6 +573,35 @@ export class ModelService {
           }),
         });
       }
+      if (recoverDraft && planning) {
+        messages.splice(0, messages.length, {
+          role: 'user',
+          content: JSON.stringify({
+            instruction:
+              '只读核对原链接操作是否到达同一份已存在的草稿。只返回 JSON {"draftEvidence":"当前页面正文中逐字可见的草稿状态"}，证据不足时返回 {"draftEvidence":null}。空白的已保存草稿和自动草稿也可核对。仅有编辑地址或空表单时返回 null。不要返回网页操作或其它字段。',
+            goal: planning.goal,
+            requestedContext: task.messages
+              .filter((message) => message.role === 'user' && !message.call)
+              .slice(-3)
+              .map((message) => message.text.slice(0, 1200)),
+            previous: {
+              sourceUrl: recoverDraft.source.url,
+              navigationUrl: recoverDraft.navigation!.url,
+              summary: recoverDraft.summary,
+            },
+            knownTarget: planning.preparation?.find(
+              (fact) =>
+                fact.kind === 'target' &&
+                fact.goalVersion === recoverDraft.goalVersion,
+            )?.url,
+            page: {
+              url: observation.url,
+              title: observation.title,
+              text: pageText,
+            },
+          }),
+        });
+      }
       const source = pageSourceSchema
         .strip()
         .parse({ ...observation, truncated: pageTruncated });
@@ -606,7 +636,41 @@ export class ModelService {
       if (!this.live(job)) throw new Error('MODEL_CANCELLED');
       if (job.planning) {
         try {
-          job.proposal = nextStepSchema.parse(JSON.parse(proposedText));
+          const parsed: unknown = JSON.parse(proposedText);
+          if (recoverDraft) {
+            const { draftEvidence } = draftRecoveryResponse.parse(parsed);
+            const evidence =
+              draftEvidence &&
+              !pageTruncated &&
+              pageText.includes(draftEvidence)
+                ? draftEvidence
+                : null;
+            job.proposal = {
+              decision: evidence ? 'observe' : 'wait',
+              summary: evidence ? '已核对原草稿状态。' : '原草稿状态仍待核对。',
+              action: null,
+              evidence: [evidence ?? (observation.title || observation.url)],
+              previous: evidence
+                ? {
+                    id: recoverDraft.id,
+                    status: 'confirmed',
+                    evidence: [evidence],
+                  }
+                : null,
+              ...(evidence
+                ? {
+                    preparation: (['target', 'draft'] as const).map((kind) => ({
+                      kind,
+                      url: observation.url,
+                      materialId: null,
+                      evidence: [evidence],
+                    })),
+                  }
+                : {}),
+            };
+          } else {
+            job.proposal = nextStepSchema.parse(parsed);
+          }
         } catch {
           throw new Error('MODEL_FORMAT');
         }

@@ -2577,7 +2577,11 @@ export class ExecutionService {
           });
           continue;
         }
-        if (step.decision === 'observe') {
+        const confirmsPending =
+          pending &&
+          step.previous?.id === pending.id &&
+          step.previous.status === 'confirmed';
+        if (step.decision === 'observe' && !confirmsPending) {
           // 仅再取一次受控观察；保留未知派发，不给任何重送资格。
           await this.abortable(
             () => new Promise<void>((resolve) => setTimeout(resolve, 250)),
@@ -2627,10 +2631,7 @@ export class ExecutionService {
           return;
         }
         if (pending) {
-          if (
-            step.previous?.id !== pending.id ||
-            step.previous.status !== 'confirmed'
-          ) {
+          if (!confirmsPending || !step.previous) {
             await this.finish(
               job,
               'unknown',
@@ -2655,6 +2656,7 @@ export class ExecutionService {
           });
         }
         if (!this.live(job)) return;
+        if (step.decision === 'observe') continue;
         if (step.decision === 'material') {
           if (!step.material || !this.ports.material)
             throw Error('MODEL_FORMAT');
