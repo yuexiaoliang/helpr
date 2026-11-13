@@ -690,6 +690,98 @@ test('跨次继续时先核对同一草稿的复选框，再按当前状态执�
   await service.stopAll();
 });
 
+test('同一草稿重新打开后可核对未保存的文件区块插入，保留原派发', async () => {
+  const f = await fixture();
+  const { records, runId, taskId } = f;
+  const source = {
+    ...f.observation,
+    text: '编辑\n[option] File (selected=false)',
+  };
+  const binding = { targetId: 'previous-page', generation: 1 };
+  const id = 'insert-file';
+  records.execution({ kind: 'claim', taskId, runId });
+  records.execution({
+    kind: 'reserve',
+    taskId,
+    runId,
+    id,
+    summary: '打开文件区块',
+    action: {
+      kind: 'click',
+      target: { role: 'option', name: 'File', exact: true },
+    },
+    effect: 'interaction',
+    source,
+    binding,
+    evidence: ['[option] File (selected=false)'],
+  });
+  records.execution({ kind: 'dispatch', taskId, runId, id });
+  records.execution({
+    kind: 'preparation-observed',
+    taskId,
+    runId,
+    source,
+    facts: (['target', 'draft'] as const).map((kind) => ({
+      kind,
+      url: source.url,
+      materialId: null,
+      evidence: ['编辑'],
+    })),
+  });
+  records.execution({
+    kind: 'intent',
+    taskId,
+    requestId: 'close-editor-file',
+    intent: 'stop',
+  });
+  records.execution({
+    kind: 'intent',
+    taskId,
+    requestId: 'reopen-editor-file',
+    intent: 'continue',
+  });
+  const nextRun = 'reopened-editor';
+  records.execution({ kind: 'claim', taskId, runId: nextRun });
+  expect(records.snapshot().tasks[0]!.execution).toMatchObject({
+    runId: nextRun,
+    preparation: [{ kind: 'target' }, { kind: 'draft' }],
+    actions: [
+      { id, status: 'dispatched', returned: false, dispatchState: 'possible' },
+    ],
+  });
+  const command = {
+    kind: 'disclosure-observed' as const,
+    taskId,
+    runId: nextRun,
+    id,
+    binding: { targetId: 'reopened-page', generation: 2 },
+    source: {
+      ...source,
+      text: '编辑\n[button] Add default block',
+      observedAt: 101,
+      generation: 2,
+      controls: [
+        {
+          role: 'button' as const,
+          name: 'Add default block',
+          frameUrl: 'blob:https://example.com/editor-canvas',
+          disabled: false,
+        },
+      ],
+    },
+  };
+  expect(
+    records.execution({
+      ...command,
+      binding: { ...command.binding, targetId: binding.targetId },
+    }),
+  ).toMatchObject({ resolved: false });
+  expect(records.execution(command)).toMatchObject({ resolved: true });
+  expect(records.snapshot().tasks[0]!.execution!.actions).toMatchObject([
+    { id, status: 'cancelled', dispatchState: 'possible', returned: false },
+  ]);
+});
+
 test('素材网页观察只提取文件控件和实际链接，不带密码或隐藏值', () => {
   const text = materialObservation({
     strings: [

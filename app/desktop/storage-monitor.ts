@@ -1,6 +1,69 @@
 import { z } from 'zod';
 import type { ObservationBroker } from './observation-broker';
 
+function onlyBlockUsageChanged(
+  oldValue: string | undefined,
+  newValue: string,
+): boolean {
+  try {
+    const parse = (value: string) => {
+      if (value.length > 20000) throw Error('PREFERENCE_TOO_LARGE');
+      const data = z.record(z.string(), z.unknown()).parse(JSON.parse(value));
+      const editor = z
+        .record(z.string(), z.unknown())
+        .parse(data['core/block-editor']);
+      const preferences = z
+        .record(z.string(), z.unknown())
+        .parse(editor.preferences);
+      const usage = z
+        .record(
+          z.string().regex(/^[a-z0-9-]+\/[a-z0-9-]+$/),
+          z.strictObject({
+            time: z.number().nonnegative(),
+            count: z.number().int().positive(),
+          }),
+        )
+        .parse(preferences.insertUsage);
+      delete preferences.insertUsage;
+      editor.preferences = preferences;
+      data['core/block-editor'] = editor;
+      return { usage, rest: JSON.stringify(data) };
+    };
+    const after = parse(newValue);
+    const before =
+      oldValue === undefined
+        ? {
+            usage: {} as typeof after.usage,
+            rest: '{"core/block-editor":{"preferences":{}}}',
+          }
+        : parse(oldValue);
+    if (before.rest !== after.rest) return false;
+    const changed = Object.keys(after.usage).filter((key) => {
+      const previous = before.usage[key],
+        current = after.usage[key]!;
+      return (
+        !previous ||
+        current.count !== previous.count ||
+        current.time !== previous.time
+      );
+    });
+    if (
+      changed.length !== 1 ||
+      !Object.keys(before.usage).every((key) => Object.hasOwn(after.usage, key))
+    )
+      return false;
+    const key = changed[0]!,
+      previous = before.usage[key],
+      current = after.usage[key]!;
+    return (
+      current.count === (previous?.count ?? 0) + 1 &&
+      current.time >= (previous?.time ?? 0)
+    );
+  } catch {
+    return false;
+  }
+}
+
 /** 控制拥有者独占的只读变化通知。只传播来源，不保存键、值或数据库内容。 */
 export class StorageMonitor {
   private readonly targets = new Map<
@@ -26,6 +89,9 @@ export class StorageMonitor {
           sessionId: z.string(),
           params: z.object({
             origin: z.string().optional(),
+            key: z.string().optional(),
+            oldValue: z.string().optional(),
+            newValue: z.string().optional(),
             storageId: z
               .object({
                 securityOrigin: z.string().optional(),
@@ -45,6 +111,22 @@ export class StorageMonitor {
         method.startsWith('DOMStorage.domStorage') &&
         params.storageId?.isLocalStorage
       ) {
+        // 已核对的 WordPress 区块计数仅用于更新编辑器的区块推荐。
+        if (
+          ((method === 'DOMStorage.domStorageItemUpdated' &&
+            params.oldValue !== undefined) ||
+            method === 'DOMStorage.domStorageItemAdded') &&
+          params.storageId.securityOrigin === owner.origin &&
+          /^WP_DATA_USER_[1-9]\d*$/.test(params.key ?? '') &&
+          params.newValue &&
+          onlyBlockUsageChanged(
+            method === 'DOMStorage.domStorageItemAdded'
+              ? undefined
+              : params.oldValue,
+            params.newValue,
+          )
+        )
+          return;
         // 嵌入网页的共享存储也可能影响所属任务；缺身份不推断无影响。
         this.changed(owner.origin);
         if (

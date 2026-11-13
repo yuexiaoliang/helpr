@@ -2988,17 +2988,15 @@ export class ExecutionRecords {
           if (
             !a ||
             a.action.kind !== 'click' ||
-            a.action.target.role !== 'button' ||
             !a.action.target.exact ||
             a.action.target.within ||
             a.effect !== 'interaction' ||
-            !a.returned ||
             a.navigation ||
             a.targetCreation ||
             a.workflowStep ||
             a.goalVersion !== e.goalVersion ||
             a.dispatchState !== 'possible' ||
-            a.status !== 'unknown' ||
+            !['dispatched', 'unknown'].includes(a.status) ||
             a.source.truncated ||
             c.source.truncated ||
             c.source.url !== task.url ||
@@ -3013,25 +3011,7 @@ export class ExecutionRecords {
           )
             return { resolved: false };
           const { name, frameUrl = a.source.url } = a.action.target;
-          const line = (expanded: boolean) =>
-            `[button] ${name} (expanded=${expanded})`;
-          const after = c.source.text.split('\n');
-          const previous = a.preconditions?.includes(line(false));
-          const current = after.filter(
-            (value) => value === line(true) || value === line(false),
-          );
-          if (
-            !previous ||
-            frameUrl !== c.source.url ||
-            current.length !== 1 ||
-            c.source.controls?.filter(
-              (control) =>
-                control.role === 'button' &&
-                control.frameUrl === frameUrl &&
-                control.name === name,
-            ).length !== 1
-          )
-            return { resolved: false };
+          if (frameUrl !== c.source.url) return { resolved: false };
           const reopened =
             a.binding.targetId !== c.binding.targetId ||
             a.binding.generation !== c.binding.generation;
@@ -3048,6 +3028,81 @@ export class ExecutionRecords {
                 f.goalVersion === e.goalVersion &&
                 f.url === c.source.url,
             );
+          if (
+            a.action.target.role === 'option' &&
+            name === 'File' &&
+            a.preconditions?.includes('[option] File (selected=false)')
+          ) {
+            const canvas = (c.source.controls ?? []).filter(
+              (control) =>
+                control.frameUrl.startsWith('blob:') &&
+                new URL(control.frameUrl).origin ===
+                  new URL(c.source.url).origin &&
+                control.role === 'button' &&
+                ['Add default block', 'Upload'].includes(control.name),
+            );
+            const [control] = canvas;
+            if (
+              canvas.length !== 1 ||
+              !control ||
+              control.disabled ||
+              !sameDraft
+            )
+              return { resolved: false };
+            const file = c.source.text
+              .split('\n')
+              .some(
+                (line) =>
+                  /^\[file \d+\] /.test(line) &&
+                  line.split(' ')[2] === control.frameUrl,
+              );
+            if (
+              file &&
+              control.name === 'Upload' &&
+              !reopened &&
+              a.runId === c.runId &&
+              a.returned
+            )
+              a.status = 'confirmed';
+            else if (
+              !file &&
+              control.name === 'Add default block' &&
+              a.binding.targetId !== c.binding.targetId &&
+              a.runId !== c.runId &&
+              !e.actions.some(
+                (other) =>
+                  other.action.kind === 'upload' &&
+                  other.dispatchState === 'possible',
+              )
+            )
+              a.status = 'cancelled';
+            else return { resolved: false };
+            a.evidence = [control.name];
+            a.resultSource = pageSourceSchema.strip().parse(c.source);
+            a.resultLinks = c.source.links ?? [];
+            this.save(task.id, e);
+            return { resolved: true };
+          }
+          if (a.action.target.role !== 'button' || !a.returned)
+            return { resolved: false };
+          const line = (expanded: boolean) =>
+            `[button] ${name} (expanded=${expanded})`;
+          const after = c.source.text.split('\n');
+          const previous = a.preconditions?.includes(line(false));
+          const current = after.filter(
+            (value) => value === line(true) || value === line(false),
+          );
+          if (
+            !previous ||
+            current.length !== 1 ||
+            c.source.controls?.filter(
+              (control) =>
+                control.role === 'button' &&
+                control.frameUrl === frameUrl &&
+                control.name === name,
+            ).length !== 1
+          )
+            return { resolved: false };
           const expanded = current[0] === line(true);
           if (
             a.runId === c.runId

@@ -721,6 +721,40 @@ test('共享存储监视只接受自有会话通知，只传来源；不向网�
     params: { origin: 'https://example.com', databaseName: 'private' },
   });
   expect(origins).toEqual(['https://example.com', 'https://example.com']);
+  const usage = (count: number) => ({
+    'core/block-editor': {
+      preferences: { insertUsage: { 'core/file': { time: count, count } } },
+    },
+  });
+  const params = {
+    storageId: { securityOrigin: 'https://example.com', isLocalStorage: true },
+    key: 'WP_DATA_USER_2',
+  };
+  notify({
+    method: 'DOMStorage.domStorageItemAdded',
+    sessionId: 'owned',
+    params: { ...params, newValue: JSON.stringify(usage(1)) },
+  });
+  notify({
+    method: 'DOMStorage.domStorageItemUpdated',
+    sessionId: 'owned',
+    params: {
+      ...params,
+      oldValue: JSON.stringify(usage(1)),
+      newValue: JSON.stringify(usage(2)),
+    },
+  });
+  expect(origins).toHaveLength(2);
+  notify({
+    method: 'DOMStorage.domStorageItemUpdated',
+    sessionId: 'owned',
+    params: {
+      ...params,
+      oldValue: JSON.stringify(usage(1)),
+      newValue: JSON.stringify({ ...usage(2), session: 'changed' }),
+    },
+  });
+  expect(origins).toHaveLength(3);
 });
 
 test('未知派发与共享登录障碍同时保留；恢复登录不能授权重发', () => {

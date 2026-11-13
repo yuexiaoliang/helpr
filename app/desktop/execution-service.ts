@@ -2224,11 +2224,33 @@ export class ExecutionService {
         }
         if (
           pending?.action.kind === 'click' &&
-          pending.action.target.role === 'button' &&
-          pending.preconditions?.includes(
-            `[button] ${pending.action.target.name} (expanded=false)`,
-          )
+          ((pending.action.target.role === 'button' &&
+            pending.preconditions?.includes(
+              `[button] ${pending.action.target.name} (expanded=false)`,
+            )) ||
+            (pending.action.target.role === 'option' &&
+              pending.action.target.name === 'File' &&
+              pending.preconditions?.includes(
+                '[option] File (selected=false)',
+              )))
         ) {
+          if (
+            current.coordination?.refreshRequired &&
+            current.coordination.status === 'unverified' &&
+            !current.coordination.source &&
+            !current.loginOrigin &&
+            observed.session
+          ) {
+            await this.record({
+              kind: 'coordination-observed',
+              taskId: job.taskId,
+              runId: job.runId,
+              session: observed.session,
+              source: observed.observation,
+            });
+            if (!this.live(job)) return;
+            continue;
+          }
           const result = await this.record({
             kind: 'disclosure-observed',
             taskId: job.taskId,
