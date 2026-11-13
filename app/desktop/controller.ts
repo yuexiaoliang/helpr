@@ -318,6 +318,7 @@ export async function startController(
   );
   const models: ModelService = new ModelService({
     systemReady: () => executions.systemReady(),
+    onLimit: (taskId, code) => log.event('failure', { taskId, code }),
     records: (command) => recordClient.request({ kind: 'model', command }),
     current: () => state,
     publish: (next) => {

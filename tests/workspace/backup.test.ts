@@ -158,7 +158,7 @@ test('恢复旧备份先保留当前资料，较新的停止和目标保持，�
   });
 });
 
-test('新环境恢复保留模型历史与未知用量预算，原请求不会被当作新请求重发', async () => {
+test('新环境恢复保留未知用量，原请求不重发，新请求可继续派发', async () => {
   const { folder, value: r } = records();
   const a = r.execute({
     kind: 'create',
@@ -221,14 +221,17 @@ test('新环境恢复保留模型历史与未知用量预算，原请求不会�
   expect(fresh.model(begin)).toMatchObject({ created: false });
   configure(fresh);
   fresh.model({ kind: 'begin', id: 'new-call', taskId: a, text: '新的问题' });
-  expect(() =>
+  expect(
     fresh.model({
       kind: 'dispatch',
       id: 'new-call',
       source,
-      reservedTokens: 1,
+      reservedTokens: 200001,
     }),
-  ).toThrow('MODEL_LIMIT');
+  ).toMatchObject({
+    created: true,
+    call: { dispatched: true, reservedTokens: 200001 },
+  });
   expect(readFileSync(file, 'utf8')).not.toContain('protected-private-key');
 });
 

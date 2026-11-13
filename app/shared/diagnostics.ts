@@ -7,6 +7,8 @@ import { actionFailureCodeSchema } from './execution';
 const diagnosticCodes = new Set([
   ...startupFailureCodeSchema.options,
   ...actionFailureCodeSchema.options,
+  'MODEL_RATE_LIMITED',
+  'MODEL_OUTPUT_TRUNCATED',
   'STORAGE_FULL',
   'STORAGE_UNAVAILABLE',
   'SESSION_CHANGE_NOT_SAVED',

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { and, eq, desc, inArray, sql } from 'drizzle-orm';
+import { eq, desc, inArray, sql } from 'drizzle-orm';
 import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
 import { createHash } from 'node:crypto';
 import { createMachine, transition } from 'xstate';
@@ -39,7 +39,7 @@ const commandSchema = z.discriminatedUnion('kind', [
     kind: z.literal('dispatch'),
     id: key,
     source: pageSourceSchema,
-    reservedTokens: z.number().int().min(1).max(MODEL_LIMITS.tokensPerTask),
+    reservedTokens: z.number().int().positive(),
   }),
   z.strictObject({
     kind: z.literal('progress'),
@@ -379,33 +379,6 @@ export class ModelRecords {
           phase: modelCallSchema.shape.phase.parse(next.value),
         };
         if (command.kind === 'dispatch') {
-          const history = [
-            ...this.archived()
-              .map((saved) => saved.call)
-              .filter(
-                (archived) =>
-                  archived.taskId === call.taskId && archived.dispatched,
-              ),
-            ...this.db
-              .select()
-              .from(schema.modelCalls)
-              .where(
-                and(
-                  eq(schema.modelCalls.taskId, call.taskId),
-                  eq(schema.modelCalls.dispatched, true),
-                ),
-              )
-              .all(),
-          ];
-          const consumed = history.reduce(
-            (sum, row) => sum + (row.totalTokens ?? row.reservedTokens),
-            0,
-          );
-          if (
-            history.length >= MODEL_LIMITS.callsPerTask ||
-            consumed + command.reservedTokens > MODEL_LIMITS.tokensPerTask
-          )
-            throw new Error('MODEL_LIMIT');
           Object.assign(update, {
             source: command.source,
             dispatched: true,

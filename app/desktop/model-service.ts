@@ -26,6 +26,7 @@ import {
 import {
   understandPage,
   modelFailure,
+  modelLimitDetail,
   type ModelMessage,
 } from './model-adapter';
 
@@ -76,6 +77,7 @@ export class ModelService {
       ) => Promise<PageObservation>;
       current: () => WorkspaceSnapshot;
       publish: (snapshot: WorkspaceSnapshot) => void;
+      onLimit?: (taskId: string, detail: string) => void;
       systemReady?: () => boolean;
     },
   ) {}
@@ -578,8 +580,6 @@ export class ModelService {
         Buffer.byteLength(JSON.stringify(messages), 'utf8') +
         2048 +
         MODEL_LIMITS.outputTokens;
-      if (reservedTokens > MODEL_LIMITS.tokensPerTask)
-        throw new Error('MODEL_LIMIT');
       const dispatch = await this.record({
         kind: 'dispatch',
         id: job.id,
@@ -644,6 +644,9 @@ export class ModelService {
       });
     } catch (error) {
       const code = modelFailure(error, job.abort.signal);
+      const detail = modelLimitDetail(error);
+      if (code === 'MODEL_LIMIT' && detail)
+        this.ports.onLimit?.(job.taskId, detail);
       job.failure = code;
       if (!job.abort.signal.aborted) job.abort.abort(new Error(code));
       await this.record({

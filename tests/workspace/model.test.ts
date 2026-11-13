@@ -33,6 +33,8 @@ async function backend(
     | 'auth'
     | 'redirect'
     | 'stream-error'
+    | 'rate-limit'
+    | 'length'
     | 'planning' = 'normal',
   redirectTo = '',
 ) {
@@ -51,8 +53,10 @@ async function backend(
         res.end();
         return;
       }
-      if (mode === 'auth') {
-        res.writeHead(401, { 'Content-Type': 'application/json' });
+      if (mode === 'auth' || mode === 'rate-limit') {
+        res.writeHead(mode === 'auth' ? 401 : 429, {
+          'Content-Type': 'application/json',
+        });
         res.end(
           JSON.stringify({
             error: {
@@ -102,7 +106,13 @@ async function backend(
         }
         chunk({
           id: 'test',
-          choices: [{ index: 0, delta: {}, finish_reason: 'stop' }],
+          choices: [
+            {
+              index: 0,
+              delta: {},
+              finish_reason: mode === 'length' ? 'length' : 'stop',
+            },
+          ],
           ...(mode === 'missing'
             ? {}
             : {
@@ -131,7 +141,10 @@ async function backend(
     release: () => held.splice(0).forEach((finish) => finish()),
   };
 }
-function fixture(observedText = '营收：34.8 万元；状态：草稿') {
+function fixture(
+  observedText = '营收：34.8 万元；状态：草稿',
+  onLimit?: (taskId: string, detail: string) => void,
+) {
   const folder = mkdtempSync(path.join(tmpdir(), 'helpr-model-'));
   folders.push(folder);
   const records = new WorkspaceRecords(folder, 'app/records/migrations');
@@ -168,6 +181,7 @@ function fixture(observedText = '营收：34.8 万元；状态：草稿') {
     records: (input) => Promise.resolve(records.model(input)),
     protection,
     observe,
+    onLimit,
     current: () => state,
     publish: (next) => {
       state = next;
@@ -444,7 +458,7 @@ test('凭据暂不可访问时不发送，原密文保留；服务回显密钥�
   }
 });
 
-test('请求上限跨重开保留，超过 20 次不再向服务发送', async () => {
+test('重开后同一任务可继续发送，之前的 20 次请求仍保留', async () => {
   const server = await backend(),
     f = fixture();
   let reopened: WorkspaceRecords | undefined;
@@ -483,20 +497,63 @@ test('请求上限跨重开保留，超过 20 次不再向服务发送', async (
     });
     await service.ask({
       kind: 'message',
-      requestId: 'over-limit',
+      requestId: 'continue-after-reopen',
       taskId: a,
       text: '核对本页',
     });
     await service.settled();
-    expect(server.received).toHaveLength(20);
+    expect(server.received).toHaveLength(21);
+    expect(
+      state.tasks[0]?.messages.filter((message) => message.call),
+    ).toHaveLength(21);
     expect(state.tasks[0]?.messages.at(-1)?.call).toMatchObject({
-      phase: 'error',
-      dispatched: false,
-      error: 'MODEL_LIMIT',
+      phase: 'complete',
+      dispatched: true,
+      totalTokens: 95,
     });
   } finally {
     if (reopened) reopened.close();
     else f.records.close();
+  }
+});
+
+test.each([
+  ['rate-limit', 'MODEL_RATE_LIMITED'],
+  ['length', 'MODEL_OUTPUT_TRUNCATED'],
+] as const)('服务响应 %s 有独立诊断且只派发一次', async (mode, detail) => {
+  const server = await backend(mode);
+  const onLimit = vi.fn();
+  const f = fixture(undefined, onLimit);
+  try {
+    const taskId = f.create('核对模型失败');
+    await f.service.configure({
+      kind: 'model-save',
+      requestId: 'config',
+      expectedVersion: 0,
+      protocol: 'chat-completions',
+      endpoint: server.endpoint,
+      model: 'test-chat',
+      apiKey: 'test-secret-only',
+    });
+    await f.service.ask({
+      kind: 'message',
+      requestId: 'one',
+      taskId,
+      text: '核对页面',
+    });
+    await f.service.settled();
+    expect(server.received).toHaveLength(1);
+    expect(JSON.parse(server.received[0]!.body)).not.toHaveProperty('thinking');
+    expect(f.get().tasks[0]?.messages.at(-1)?.call).toMatchObject({
+      phase: 'error',
+      dispatched: true,
+      error: 'MODEL_LIMIT',
+      totalTokens: null,
+    });
+    expect(onLimit).toHaveBeenCalledExactlyOnceWith(taskId, detail);
+  } finally {
+    await f.service.stopAll();
+    f.records.close();
   }
 });
 

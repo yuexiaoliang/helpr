@@ -68,8 +68,7 @@ const labels: Record<string, string> = {
   MODEL_CAPABILITY: '服务不支持这次请求的接口或能力，请核对服务配置。',
   MODEL_CREDENTIAL_UNAVAILABLE:
     '暂时无法访问受保护凭据。数据仍保留，请处理系统授权后重试；不会降级为明文保存。',
-  MODEL_LIMIT:
-    '请求次数、并发、预留消耗或输出已达上限。已发送的请求保留已有内容，不自动重试。',
+  MODEL_LIMIT: '模型请求已达限制。已有记录保留，请在准备好后继续。',
   MODEL_BUSY: '这项任务正在回复，请等候或先停止本次回复。',
   MODEL_CANCELLED:
     '本次回复已停止，已生成内容保留。已发出的请求实际消耗可能未知。',

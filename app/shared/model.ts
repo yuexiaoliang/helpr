@@ -158,8 +158,6 @@ export const modelUICommandSchema = z.union([
 ]);
 export const MODEL_LIMITS = {
   concurrent: 2,
-  callsPerTask: 20,
-  tokensPerTask: 200000,
   outputTokens: 2048,
   timeoutMs: 60000,
 } as const;
