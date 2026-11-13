@@ -1,0 +1,143 @@
+{
+  "phase": "P3",
+  "candidate": 123,
+  "predecessor": 122,
+  "sourceCommit": "71fb69beb37e46f698d6858211f0d1f204c59da7",
+  "status": "refrozen",
+  "artifact": {
+    "path": "/Users/yuexiaoliang/projects/helpr/dist/candidates/release-p4-editor-frame-0-2-3/mac-arm64/helpr.app",
+    "sha256": "5b73bca0c1bf18408ced12311bad133d8810a757ad7ecea331fb540d369ed871",
+    "manifest": {
+      "path": ".local/workspace-validation/build-123.json",
+      "sha256": "1ada4248889344432b189ea0ab76a9806c608323bccf60490e5fb8c5ad1ca9cb"
+    },
+    "preflight": {
+      "path": ".local/workspace-validation/p4-recovery/preflight-123/PREFLIGHT.json",
+      "sha256": "2ec9b8174641baebd943b59cdabc2ec68743cc4ae4c896ebd207e2f0e8a5ddab"
+    }
+  },
+  "p3Acceptance": {
+    "passed": true,
+    "firstReadyMs": 4836,
+    "coldReadyMs": 1228,
+    "settled": {
+      "from": 1794559990542,
+      "to": 1794560290626,
+      "spanMs": 300084,
+      "samples": 101,
+      "maxSampleGapMs": 3004,
+      "tailFrom": 1794560110626,
+      "tailSamples": 60,
+      "tailRangeMiB": 141.28125,
+      "peakMiB": 1698.875,
+      "modelCalls": 0,
+      "siteEffects": 0
+    },
+    "native": {
+      "evidence": {
+        "path": ".local/workspace-validation/p4-recovery/native-123.json",
+        "sha256": "296564e41b63d86bb2dcb7e214db8e277148519f5d293ba7fece58c070630473"
+      },
+      "durationsMs": [
+        599,
+        479,
+        486,
+        468,
+        468,
+        509
+      ]
+    }
+  },
+  "performance": {
+    "evidence": {
+      "path": ".local/workspace-validation/run-1794559960518/result.json",
+      "sha256": "f39c479997fa5cf1215edb8d5a9493dca6a519a7b712335800a11fcc3d44e659"
+    },
+    "firstReadyMs": 5240,
+    "error": "FIRST_READY_LIMIT",
+    "firstReadyRepeat": {
+      "path": ".local/workspace-validation/run-1794560378632/result.json",
+      "sha256": "ae004776678512dbad48462ee62fb756444efe40eb2d5fd950d159fedd13295f"
+    },
+    "previousRepeat": {
+      "path": ".local/workspace-validation/run-1794560330918/result.json",
+      "sha256": "a8098627eea286415565ee70d0b267cf761911f8d8f6880d784b6afe0891834b"
+    }
+  },
+  "fixtureEditor": {
+    "uploadConfirmed": true,
+    "evidence": {
+      "path": ".local/workspace-validation/run-1794560378632/result.json",
+      "sha256": "ae004776678512dbad48462ee62fb756444efe40eb2d5fd950d159fedd13295f"
+    }
+  },
+  "source": {
+    "workspace": 621,
+    "validator": 41,
+    "legacy": 25,
+    "checks": {
+      "path": ".local/workspace-validation/p4-recovery/source-123-full.log",
+      "sha256": "65beb816f898f7e73ad6355a1325f8d9e1d3b89cea25bcd071da47fc53486b5f"
+    }
+  },
+  "p4Inputs": {
+    "file": "tests/fixtures/release-23-real-business-v1/INPUTS.json",
+    "sha256": "ac799053df77edb174b1a1ae94280cef5262179817c81fa42a20dd6208add947",
+    "count": 10,
+    "model": {
+      "provider": "DeepSeek",
+      "model": "deepseek-flash",
+      "protocol": "chat-completions",
+      "sdkRetries": 0,
+      "outputTokens": 2048,
+      "configuration": "沿用本机受保护配置，执行前确认非秘密配置与实际记录，账本不保存密钥。"
+    },
+    "limits": {
+      "requests": 120,
+      "reservedTokens": 1200000,
+      "outputTokensPerRequest": 2048,
+      "attachments": 10,
+      "newContents": 10,
+      "publishes": 10,
+      "minutes": 90
+    },
+    "consumed": {
+      "requests": 23,
+      "reservedTokens": 1503357,
+      "attachments": 0,
+      "newContents": 2,
+      "publishes": 0
+    }
+  },
+  "p4Batch": {
+    "status": "stopped",
+    "nextSample": "R23-FIRST-A",
+    "draftId": 162,
+    "verifiedSamples": 0,
+    "batchQuotaUpdate": {
+      "recordedAt": "2026-11-13T07:30:05.371Z",
+      "userInstruction": "不加限制，我只希望赶紧弄完",
+      "requests": null,
+      "reservedTokens": null,
+      "newContentAttempts": null,
+      "previousLedgerSha256": "154433df2decde7f31dc92a4e13819bc7e6f7857edc84a2c113e5b42894a3401"
+    },
+    "ledgerAtCheck": {
+      "path": ".local/workspace-validation/p4-recovery/ledger-at-123.json",
+      "sha256": "8cdddd341ff0a35d2069dbc9d6cabcf6537b173f13558f58c328dd8a783b76f8"
+    }
+  },
+  "cleanup": {
+    "pids": 42,
+    "groups": 9,
+    "allCleared": true,
+    "leaseReleased": true
+  },
+  "cumulative": {
+    "builds": 123,
+    "installs": 37,
+    "starts": 591,
+    "faults": 74,
+    "cleanups": 26
+  }
+}
