@@ -460,6 +460,9 @@ export async function startController(
       const controls = [observation, ...childObservations].flatMap(
         (o) => o.controls ?? [],
       );
+      const checkboxes = [observation, ...childObservations].flatMap(
+        (o) => o.checkboxes ?? [],
+      );
       const links = [
         ...(observation.links ?? []),
         ...childObservations.flatMap((child) =>
@@ -467,9 +470,11 @@ export async function startController(
         ),
       ];
       observation.controls = controls.slice(0, 500);
+      observation.checkboxes = checkboxes.slice(0, 500);
       observation.links = links.slice(0, 300);
       observation.truncated ||=
         controls.length > 500 ||
+        checkboxes.length > 500 ||
         links.length > 300 ||
         childFrames.length > 8 ||
         childObservations.some((o) => o.truncated);

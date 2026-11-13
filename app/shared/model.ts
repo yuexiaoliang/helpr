@@ -89,10 +89,16 @@ export const observedControlSchema = z.strictObject({
     })
     .optional(),
 });
+export const observedCheckboxSchema = z.strictObject({
+  name: z.string().max(1000),
+  frameUrl: z.url(),
+  checked: z.boolean().nullable(),
+});
 export type PageObservation = PageSource & {
   text: string;
   links?: z.infer<typeof observedLinkSchema>[];
   controls?: z.infer<typeof observedControlSchema>[];
+  checkboxes?: z.infer<typeof observedCheckboxSchema>[];
 };
 export const modelUsageKindSchema = z.enum([
   'legacy-unspecified',

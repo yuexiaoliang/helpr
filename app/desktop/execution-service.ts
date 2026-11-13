@@ -152,6 +152,7 @@ const receipt = z
     permitted: z.boolean().optional(),
     autoApproved: z.boolean().optional(),
     recovered: z.boolean().optional(),
+    resolved: z.boolean().optional(),
   })
   .passthrough();
 /** 任务意图与派发公开入口。记录进程之外保留即时阻断，所有等待之后重新核对。 */
@@ -2219,6 +2220,30 @@ export class ExecutionService {
         if (pending?.action.kind === 'upload') {
           if (!(await this.waitForUpload(job, pending, observed))) return;
           continue;
+        }
+        if (
+          pending?.action.kind === 'check' &&
+          pending.action.target.role === 'checkbox' &&
+          pending.action.target.exact &&
+          !pending.action.target.within &&
+          observed.observation.checkboxes
+        ) {
+          const result = await this.record({
+            kind: 'checkbox-observed',
+            taskId: job.taskId,
+            runId: job.runId,
+            id: pending.id,
+            source: observed.observation,
+            binding: observed.binding,
+          });
+          if (!this.live(job)) return;
+          if (result.resolved === true) continue;
+          await this.finish(
+            job,
+            'unknown',
+            '尚不能核对网页实际的复选框状态，已暂停后续操作。',
+          );
+          return;
         }
         const use = currentWorkflow(current);
         const workflows = availableWorkflows(this.ports.current().tasks)

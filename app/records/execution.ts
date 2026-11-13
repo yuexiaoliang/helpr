@@ -93,13 +93,18 @@ import {
   observedLinkSchema,
   observedControlSchema,
   type PageObservation,
+  observedCheckboxSchema,
 } from '../shared/model';
 import {
   materialVersionSchema,
   preparationProposalSchema,
 } from '../shared/material';
 import { workflowChoiceSchema, workflowUseSchema } from '../shared/workflow';
-import { selectedControl, verifyCurrentSelections } from '../shared/selection';
+import {
+  observedCheckbox,
+  selectedControl,
+  verifyCurrentSelections,
+} from '../shared/selection';
 import { workflowHash, adoptWorkflow } from './workflow';
 import {
   currentWorkflow,
@@ -194,6 +199,7 @@ function move(e: TaskExecution, event: PhaseEvent) {
   e.phase = executionPhaseSchema.parse(next.value);
 }
 const observation = pageSourceSchema.extend({
+  checkboxes: z.array(observedCheckboxSchema).max(500).optional(),
   text: z.string().max(PAGE_OBSERVATION_TEXT_LIMIT),
   links: z.array(observedLinkSchema).max(300).optional(),
   controls: z.array(observedControlSchema).max(500).optional(),
@@ -402,6 +408,13 @@ const commandSchema = z.discriminatedUnion('kind', [
     taskId: z.string(),
     id: z.string(),
     returned: z.boolean(),
+  }),
+  z.strictObject({
+    kind: z.literal('checkbox-observed'),
+    ...work,
+    id: z.string(),
+    source: observation,
+    binding: pageBindingSchema,
   }),
   z.strictObject({
     kind: z.literal('resolve'),
@@ -2956,11 +2969,73 @@ export class ExecutionRecords {
           this.save(task.id, e);
           return { created: true };
         }
+        if (c.kind === 'checkbox-observed') {
+          const a = e.actions.find((action) => action.id === c.id);
+          if (
+            !a ||
+            a.action.kind !== 'check' ||
+            a.goalVersion !== e.goalVersion ||
+            a.dispatchState !== 'possible' ||
+            !['dispatched', 'unknown'].includes(a.status) ||
+            a.navigation ||
+            a.source.url !== c.source.url ||
+            task.url !== c.source.url ||
+            c.source.observedAt < a.source.observedAt ||
+            c.binding.generation !== c.source.generation ||
+            e.loginOrigin ||
+            e.question ||
+            e.publication ||
+            e.coordination?.refreshRequired ||
+            e.coordination?.checkingLogin
+          )
+            return { resolved: false };
+          const checked = observedCheckbox(a.action, c.source);
+          if (checked === undefined) return { resolved: false };
+          const samePage =
+            a.binding.targetId === c.binding.targetId &&
+            a.binding.generation === c.binding.generation;
+          const sameDraft =
+            e.preparation?.some(
+              (f) =>
+                f.kind === 'target' &&
+                f.goalVersion === a.goalVersion &&
+                f.url === c.source.url,
+            ) &&
+            e.preparation.some(
+              (f) =>
+                f.kind === 'draft' &&
+                f.goalVersion === a.goalVersion &&
+                f.url === c.source.url,
+            );
+          const applied = checked === a.action.checked;
+          if (
+            a.runId === c.runId
+              ? !samePage || !applied
+              : !sameDraft || (!applied && (samePage || !a.returned))
+          )
+            return { resolved: false };
+          a.status = applied ? 'confirmed' : 'cancelled';
+          a.evidence = [
+            a.action.target.name + (checked ? '（已勾选）' : '（未勾选）'),
+          ];
+          a.resultSource = pageSourceSchema.strip().parse(c.source);
+          a.resultLinks = c.source.links ?? [];
+          this.save(task.id, e);
+          return { resolved: true };
+        }
         if (c.kind === 'resolve') {
           const a = e.actions.find((a) => a.id === c.id);
           if (!a) throw new Error('ACTION_NOT_OWNED');
           if (a.submission) throw Error('PUBLICATION_RESULT_REQUIRED');
           if (a.targetCreation) throw Error('EXECUTION_RESULT_UNKNOWN');
+          if (
+            a.action.kind === 'check' &&
+            a.action.target.role === 'checkbox' &&
+            a.action.target.exact &&
+            !a.action.target.within &&
+            c.source.checkboxes
+          )
+            throw Error('EXECUTION_RESULT_UNKNOWN');
           if (a.action.kind === 'upload') {
             const materialId = a.action.materialId;
             const material = e.materials?.find(

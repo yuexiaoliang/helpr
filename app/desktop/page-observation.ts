@@ -122,11 +122,26 @@ export function pageObservation(
   const lines: string[] = [];
   const links: NonNullable<PageObservation['links']> = [];
   const controls: NonNullable<PageObservation['controls']> = [];
+  const checkboxes: NonNullable<PageObservation['checkboxes']> = [];
   for (const node of nodes) {
     if (node.ignored || excluded.has(node.nodeId)) continue;
     const name = typeof node.name?.value === 'string' ? node.name.value : '';
     const value = typeof node.value?.value === 'string' ? node.value.value : '';
     const role = typeof node.role?.value === 'string' ? node.role.value : '';
+    if (!inline && role === 'checkbox') {
+      const value = node.properties?.find((p) => p.name === 'checked')?.value
+        .value;
+      checkboxes.push({
+        name: name.slice(0, 1000),
+        frameUrl: url,
+        checked:
+          value === 'true' || value === true
+            ? true
+            : value === 'false' || value === false
+              ? false
+              : null,
+      });
+    }
     const emptyNode =
       node.backendDOMNodeId && backendCounts.get(node.backendDOMNodeId) === 1
         ? empty.get(node.backendDOMNodeId)
@@ -293,6 +308,7 @@ export function pageObservation(
     text,
     links: links.slice(0, 300),
     controls: controls.slice(0, 500),
+    checkboxes: checkboxes.slice(0, 500),
     generation,
     observedAt: Date.now(),
     truncated:

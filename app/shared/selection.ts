@@ -1,6 +1,25 @@
 import type { PageObservation } from './model';
 import type { WebAction } from './web-action';
 
+export function observedCheckbox(
+  action: Extract<WebAction, { kind: 'check' }>,
+  source: PageObservation,
+) {
+  const { target } = action;
+  if (
+    source.truncated ||
+    !target.exact ||
+    target.within ||
+    target.role !== 'checkbox'
+  )
+    return undefined;
+  const frameUrl = target.frameUrl ?? source.url;
+  const matches = source.checkboxes?.filter(
+    (c) => c.name === target.name && c.frameUrl === frameUrl,
+  );
+  return matches?.length === 1 ? (matches[0]!.checked ?? undefined) : undefined;
+}
+
 /** 选项出现在页面上不等于已选中；只认同一 frame 唯一控件的实际 AX 值。 */
 export function selectedControl(action: WebAction, source: PageObservation) {
   if (action.kind !== 'select') return undefined;

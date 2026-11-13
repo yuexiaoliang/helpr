@@ -561,6 +561,135 @@ test('公开执行入口完成选择和一次上传；未知效果继续时不�
   await service.stopAll();
 }, 20000);
 
+test('跨次继续时先核对同一草稿的复选框，再按当前状态执行', async () => {
+  const f = await fixture();
+  const action: WebAction = {
+    kind: 'check',
+    target: { role: 'checkbox', name: '日报', exact: true },
+    checked: true,
+  };
+  const { taskId, runId } = f;
+  const binding = { targetId: 'owned-page', generation: 1 };
+  f.records.execution({
+    kind: 'intent',
+    taskId,
+    requestId: 'editor-goal',
+    intent: 'revise',
+    text: `准备 ${f.observation.url}`,
+  });
+  f.records.execution({ kind: 'claim', taskId, runId });
+  f.records.execution({
+    kind: 'preparation-observed',
+    taskId,
+    runId,
+    source: f.observation,
+    facts: [
+      {
+        kind: 'target',
+        url: f.observation.url,
+        materialId: null,
+        evidence: ['编辑'],
+      },
+    ],
+  });
+  f.reserve(action, 'original-check');
+  f.records.execution({
+    kind: 'dispatch',
+    taskId,
+    runId,
+    id: 'original-check',
+  });
+  f.records.execution({
+    kind: 'reported',
+    taskId,
+    id: 'original-check',
+    returned: true,
+  });
+  f.records.execution({
+    kind: 'preparation-observed',
+    taskId,
+    runId,
+    source: f.observation,
+    facts: [
+      {
+        kind: 'draft',
+        url: f.observation.url,
+        materialId: null,
+        evidence: ['编辑'],
+      },
+    ],
+  });
+  f.records.execution({
+    kind: 'intent',
+    taskId,
+    requestId: 'close-editor',
+    intent: 'stop',
+  });
+  let state = f.records.snapshot();
+  let checked = false;
+  let sends = 0;
+  const service = new ExecutionService({
+    records: (c) => Promise.resolve(f.records.execution(c)),
+    current: () => state,
+    publish: (value) => {
+      state = value;
+    },
+    observe: () =>
+      Promise.resolve({
+        observation: {
+          ...f.observation,
+          generation: 2,
+          observedAt: 101,
+          checkboxes: [{ name: '日报', frameUrl: f.observation.url, checked }],
+        },
+        binding: { ...binding, generation: 2 },
+      }),
+    propose: (input) => {
+      expect(input.pending).toBeNull();
+      return Promise.resolve({
+        decision: checked ? 'complete' : 'act',
+        summary: '核对栏目',
+        evidence: ['编辑'],
+        previous: null,
+        action: checked ? null : action,
+      });
+    },
+    perform: () => {
+      sends++;
+      checked = true;
+      return Promise.resolve();
+    },
+    revoke: () => {},
+    stopModels: () => {},
+  });
+  await service.intent({
+    kind: 'execution-intent',
+    taskId,
+    requestId: 'continue-editor',
+    intent: 'continue',
+  });
+  await service.settled();
+  expect(sends).toBe(1);
+  const execution = state.tasks[0]!.execution!;
+  expect(execution.phase).toBe('complete');
+  expect(execution.actions).toMatchObject([
+    {
+      id: 'original-check',
+      status: 'cancelled',
+      returned: true,
+      dispatchState: 'possible',
+      evidence: ['日报（未勾选）'],
+    },
+    {
+      status: 'confirmed',
+      returned: true,
+      dispatchState: 'possible',
+      evidence: ['日报（已勾选）'],
+    },
+  ]);
+  await service.stopAll();
+});
+
 test('素材网页观察只提取文件控件和实际链接，不带密码或隐藏值', () => {
   const text = materialObservation({
     strings: [

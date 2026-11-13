@@ -690,7 +690,9 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
                 步 · 共送出{' '}
                 {
                   task.execution.actions.filter(
-                    (a) => !['reserved', 'cancelled'].includes(a.status),
+                    (a) =>
+                      a.dispatchState === 'possible' ||
+                      !['reserved', 'cancelled'].includes(a.status),
                   ).length
                 }{' '}
                 次操作
@@ -703,7 +705,9 @@ function Chat({ task, store }: { task: Task; store: WorkspaceStore }) {
                       {a.status === 'confirmed'
                         ? '结果已核对'
                         : a.status === 'cancelled'
-                          ? '派发前已取消'
+                          ? a.dispatchState === 'possible'
+                            ? '已核对当前勾选状态'
+                            : '派发前已取消'
                           : '结果待核对'}{' '}
                       · {(a.resultSource ?? a.source).title}
                     </small>
