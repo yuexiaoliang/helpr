@@ -1969,6 +1969,30 @@ export class ExecutionService {
     const save = (command: unknown) =>
       this.abortable(() => this.record(command), signal);
     const initialSession = first.session ? { ...first.session } : undefined;
+    const execution = this.ports
+      .current()
+      .tasks.find((task) => task.id === job.taskId)?.execution;
+    const coordination = execution?.coordination;
+    if (
+      initialSession &&
+      action.coordination &&
+      action.runId !== job.runId &&
+      action.source.url === first.observation.url &&
+      sameSession(action.coordination.session, initialSession) &&
+      coordination?.status === 'unverified' &&
+      !coordination.source &&
+      !execution?.loginOrigin
+    ) {
+      // 冷开后的附件核对仍使用原会话范围，并重新核对已有的账号与权限依据。
+      await save({
+        kind: 'coordination-observed',
+        taskId: job.taskId,
+        runId: job.runId,
+        session: initialSession,
+        source: first.observation,
+      });
+      if (!this.live(job)) return false;
+    }
     let observed = first;
     let previous: BoundObservation | undefined;
     const valid = async (value: BoundObservation) => {
