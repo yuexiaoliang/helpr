@@ -3110,11 +3110,18 @@ export class ExecutionRecords {
         }
         if (c.kind === 'disclosure-observed') {
           const a = e.actions.find((action) => action.id === c.id);
+          const region = a && actionRegion(a.action);
+          const scopedPublish =
+            a?.action.kind === 'click' &&
+            a.action.target.role === 'button' &&
+            a.action.target.name === 'Publish' &&
+            region &&
+            region.name !== 'Publish';
           if (
             !a ||
             a.action.kind !== 'click' ||
             !a.action.target.exact ||
-            a.action.target.within ||
+            (a.action.target.within && !scopedPublish) ||
             a.effect !== 'interaction' ||
             a.navigation ||
             a.targetCreation ||
@@ -3240,7 +3247,8 @@ export class ExecutionRecords {
             (control) =>
               control.role === 'button' &&
               control.frameUrl === frameUrl &&
-              control.name === name,
+              control.name === name &&
+              (!region || control.regions?.includes(region.name)),
           );
           if (
             current.length !== 1 ||
@@ -3265,7 +3273,9 @@ export class ExecutionRecords {
                 !control.disabled,
             ).length === 1;
           const sameEditorDisclosure =
-            (name === 'Settings' || pairedPublishClosed) &&
+            (name === 'Settings' ||
+              pairedPublishClosed ||
+              (scopedPublish && previous)) &&
             sameDraft &&
             a.coordination &&
             e.coordination?.status === 'ready' &&
@@ -3274,8 +3284,21 @@ export class ExecutionRecords {
             sameEditorDisclosure &&
             a.runId !== c.runId &&
             a.binding.targetId !== c.binding.targetId;
-          const settingsOpened =
-            name === 'Settings' &&
+          const publishPanelOpen =
+            scopedPublish &&
+            after.some((value) =>
+              value.includes('Are you ready to publish?'),
+            ) &&
+            c.source.controls?.filter(
+              (control) =>
+                control.role === 'button' &&
+                control.frameUrl === frameUrl &&
+                control.name === 'Publish' &&
+                control.regions?.includes('Publish') &&
+                !control.disabled,
+            ).length === 1;
+          const disclosureOpened =
+            (name === 'Settings' || publishPanelOpen) &&
             sameEditorDisclosure &&
             previous &&
             expanded &&
@@ -3283,10 +3306,11 @@ export class ExecutionRecords {
           const usual =
             a.returned &&
             previous &&
+            (!scopedPublish || !expanded || publishPanelOpen) &&
             (a.runId === c.runId
               ? !reopened && expanded
               : sameDraft && reopened);
-          if (!reopenedDisclosure && !settingsOpened && !usual)
+          if (!reopenedDisclosure && !disclosureOpened && !usual)
             return { resolved: false };
           // 重开只提供当前编辑器布局，保留旧交互并按当前状态继续。
           a.status =

@@ -2271,7 +2271,7 @@ export class ExecutionService {
         const editorDisclosure =
           pending?.action.kind === 'click' &&
           pending.action.target.role === 'button' &&
-          ['Settings', 'Open publish panel'].includes(
+          ['Settings', 'Open publish panel', 'Publish'].includes(
             pending.action.target.name,
           );
         if (

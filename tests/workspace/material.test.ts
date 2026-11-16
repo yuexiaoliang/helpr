@@ -858,6 +858,9 @@ test.each([
   'wrong-session',
   'panel-reopened',
   'panel-without-toggle',
+  'scoped-open',
+  'scoped-reopened',
+  'scoped-without-final-button',
 ])('草稿编辑器按当前展开状态核对旧交互：%s', async (mode) => {
   const { records, taskId, runId, observation } = await fixture();
   const session = {
@@ -866,11 +869,19 @@ test.each([
     origin: new URL(observation.url).origin,
   };
   const panel = mode.startsWith('panel-');
+  const scoped = mode.startsWith('scoped-');
+  const opened = [
+    'observed-open',
+    'scoped-open',
+    'scoped-without-final-button',
+  ].includes(mode);
+  const region = 'Editor top bar';
   const button = {
     role: 'button',
-    name: panel ? 'Open publish panel' : 'Settings',
+    name: panel ? 'Open publish panel' : scoped ? 'Publish' : 'Settings',
     frameUrl: observation.url,
     disabled: false,
+    ...(scoped ? { regions: [region] } : {}),
   };
   const closed = `[button] ${button.name} (expanded=false)`;
   const topButton = '[button] Publish (expanded=false)';
@@ -902,20 +913,23 @@ test.each([
         name: button.name,
         exact: true,
         frameUrl: source.url,
+        ...(scoped
+          ? { within: { role: 'region', name: region, exact: true } }
+          : {}),
       },
     },
     source,
     binding,
     evidence: panel
       ? [closed, topButton]
-      : [mode === 'observed-open' ? closed : '编辑'],
+      : [mode === 'observed-open' || scoped ? closed : '编辑'],
   });
   records.execution({ kind: 'dispatch', taskId, runId, id: 'settings' });
   records.execution({
     kind: 'reported',
     taskId,
     id: 'settings',
-    returned: false,
+    returned: scoped,
   });
   records.execution({
     kind: 'preparation-observed',
@@ -950,13 +964,15 @@ test.each([
     ...source,
     generation: 2,
     observedAt: 101,
-    text: `编辑\n[button] ${button.name} (expanded=${mode === 'observed-open'})${mode === 'panel-reopened' ? `\n${topButton}` : ''}`,
+    text: `编辑\n[button] ${button.name} (expanded=${opened})${mode === 'panel-reopened' ? `\n${topButton}` : scoped && opened ? '\nAre you ready to publish?' : ''}`,
     controls:
       mode === 'ambiguous'
         ? [button, button]
         : mode === 'panel-reopened'
           ? [button, { ...button, name: 'Publish' }]
-          : [button],
+          : mode === 'scoped-open'
+            ? [button, { ...button, regions: ['Publish'] }]
+            : [button],
   };
   const nextRun = 'next-settings';
   records.execution({ kind: 'claim', taskId, runId: nextRun, session: next });
@@ -968,9 +984,11 @@ test.each([
     source: after,
   });
   const expected =
-    mode === 'reopened' || mode === 'panel-reopened'
+    mode === 'reopened' ||
+    mode === 'panel-reopened' ||
+    mode === 'scoped-reopened'
       ? 'cancelled'
-      : mode === 'observed-open'
+      : mode === 'observed-open' || mode === 'scoped-open'
         ? 'confirmed'
         : 'unknown';
   expect(
@@ -981,14 +999,14 @@ test.each([
       id: 'settings',
       source: after,
       binding: {
-        targetId: mode === 'observed-open' ? binding.targetId : 'fresh-editor',
+        targetId: opened ? binding.targetId : 'fresh-editor',
         generation: 2,
       },
     }),
   ).toMatchObject({ resolved: expected !== 'unknown' });
   expect(records.snapshot().tasks[0]!.execution!.actions[0]).toMatchObject({
     status: expected,
-    returned: false,
+    returned: scoped,
     dispatchState: 'possible',
   });
 });
