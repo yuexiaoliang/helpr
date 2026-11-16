@@ -1,0 +1,139 @@
+{
+  "phase": "P3",
+  "candidate": 130,
+  "predecessor": 128,
+  "sourceCommit": "912e36d43e39f032e87d4a2e4f3d537a99247787",
+  "status": "refrozen",
+  "artifact": {
+    "path": "/Users/yuexiaoliang/projects/helpr/dist/candidates/release-p4-empty-paragraph-r2-0-2-3/mac-arm64/helpr.app",
+    "sha256": "06675d5a19b0af2f50f3295e963ae471129f8ad5f8eae03c628e68a1839abe29",
+    "manifest": {
+      "path": ".local/workspace-validation/build-130.json",
+      "sha256": "7d720f268f1e95bf1589e7c34939e90085a8297fcd0c52e580253ed7e6cdb181"
+    },
+    "preflight": {
+      "path": ".local/workspace-validation/p4-recovery/preflight-130/PREFLIGHT.json",
+      "sha256": "c410ff7a31f1638fd3479bf8767b1f2ca496228cad52bbe4447b094851989846"
+    }
+  },
+  "p3Acceptance": {
+    "passed": true,
+    "firstReadyMs": 3906,
+    "coldReadyMs": 1022,
+    "settled": {
+      "from": 1794811753827,
+      "to": 1794812053952,
+      "spanMs": 300125,
+      "samples": 101,
+      "maxSampleGapMs": 3047,
+      "tailFrom": 1794811873952,
+      "tailSamples": 60,
+      "tailRangeMiB": 46.984375,
+      "peakMiB": 1741.578125,
+      "modelCalls": 0,
+      "siteEffects": 0
+    },
+    "native": {
+      "evidence": {
+        "path": ".local/workspace-validation/p4-recovery/native-130.json",
+        "sha256": "c4f244d6024297807d9239b37559c258694ae23de9e7b71e0054f69b87bcc02d"
+      },
+      "run": {
+        "path": ".local/workspace-validation/run-1794811726807/result.json",
+        "sha256": "c9e487587e6485d1729da08946c8e256e1c9528340519080d684215dcf499664"
+      },
+      "durationsMs": [
+        675,
+        544,
+        543,
+        538,
+        525,
+        592
+      ]
+    }
+  },
+  "performance": {
+    "evidence": {
+      "path": ".local/workspace-validation/run-1794811726807/result.json",
+      "sha256": "c9e487587e6485d1729da08946c8e256e1c9528340519080d684215dcf499664"
+    },
+    "freshInstall": {
+      "path": ".local/workspace-validation/run-1794811726807/result.json",
+      "sha256": "c9e487587e6485d1729da08946c8e256e1c9528340519080d684215dcf499664"
+    }
+  },
+  "fixture": {
+    "evidence": {
+      "path": ".local/workspace-validation/run-1794811704481/result.json",
+      "sha256": "7cca5912e0bd99bd57f002caaac5b62e46cba69b4e79fe5c6b2d49e3c1095485"
+    },
+    "uploadConfirmedOnColdOpen": true,
+    "verifiedEmptyAndTypedParagraph": true,
+    "earlier129Readback": {
+      "path": ".local/workspace-validation/run-1794811403475/result.json",
+      "sha256": "55e41616a46e92b809844e7a1554ee31dcc3365a68ad18d5366b7b14bf862e7a"
+    }
+  },
+  "source": {
+    "workspace": 630,
+    "validator": 41,
+    "legacy": 25,
+    "checks": {
+      "path": ".local/workspace-validation/p4-recovery/source-130-full.log",
+      "sha256": "ef260bb5912f864deeaa08f982defcc2580616349590c52f5b630e68f5b3eeb8"
+    }
+  },
+  "p4Inputs": {
+    "file": "tests/fixtures/release-23-real-business-v1/INPUTS.json",
+    "sha256": "ac799053df77edb174b1a1ae94280cef5262179817c81fa42a20dd6208add947",
+    "count": 10,
+    "model": {
+      "provider": "DeepSeek",
+      "model": "deepseek-flash",
+      "protocol": "chat-completions",
+      "sdkRetries": 0,
+      "outputTokens": 2048,
+      "configuration": "沿用本机受保护配置，执行前确认非秘密配置与实际记录，账本不保存密钥。"
+    },
+    "limits": {
+      "requests": 120,
+      "reservedTokens": 1200000,
+      "outputTokensPerRequest": 2048,
+      "attachments": 10,
+      "newContents": 10,
+      "publishes": 10,
+      "minutes": 90
+    },
+    "consumed": {
+      "requests": 48,
+      "reservedTokens": 3369296,
+      "attachments": 1,
+      "newContents": 2,
+      "publishes": 0
+    }
+  },
+  "p4Batch": {
+    "status": "stopped",
+    "nextSample": "R23-FIRST-A",
+    "draftId": 162,
+    "verifiedSamples": 0,
+    "ledgerAtGate": {
+      "path": ".local/workspace-validation/p4-recovery/ledger-at-130.json",
+      "sha256": "da29f612046a90ba2ad7b353be3c1ba81d270352cd08d91c6aa4ee0b7ba71c94"
+    }
+  },
+  "cleanup": {
+    "pids": 59,
+    "groups": 12,
+    "allCleared": true,
+    "leaseReleased": true,
+    "reusedProcessNumbers": []
+  },
+  "cumulative": {
+    "builds": 130,
+    "installs": 44,
+    "starts": 643,
+    "faults": 74,
+    "cleanups": 26
+  }
+}
