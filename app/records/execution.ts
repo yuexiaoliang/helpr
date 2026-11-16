@@ -3207,11 +3207,7 @@ export class ExecutionRecords {
             this.save(task.id, e);
             return { resolved: true };
           }
-          if (
-            a.action.target.role !== 'button' ||
-            !a.returned ||
-            frameUrl !== c.source.url
-          )
+          if (a.action.target.role !== 'button' || frameUrl !== c.source.url)
             return { resolved: false };
           const line = (expanded: boolean) =>
             `[button] ${name} (expanded=${expanded})`;
@@ -3220,25 +3216,44 @@ export class ExecutionRecords {
           const current = after.filter(
             (value) => value === line(true) || value === line(false),
           );
+          const controls = c.source.controls?.filter(
+            (control) =>
+              control.role === 'button' &&
+              control.frameUrl === frameUrl &&
+              control.name === name,
+          );
           if (
-            !previous ||
             current.length !== 1 ||
-            c.source.controls?.filter(
-              (control) =>
-                control.role === 'button' &&
-                control.frameUrl === frameUrl &&
-                control.name === name,
-            ).length !== 1
+            controls?.length !== 1 ||
+            controls[0]?.disabled
           )
             return { resolved: false };
           const expanded = current[0] === line(true);
-          if (
-            a.runId === c.runId
-              ? reopened || !expanded
-              : !sameDraft || !reopened
-          )
+          const sameEditorSettings =
+            name === 'Settings' &&
+            sameDraft &&
+            a.coordination &&
+            e.coordination?.status === 'ready' &&
+            sameSession(a.coordination.session, e.coordination.session);
+          const reopenedSettings =
+            sameEditorSettings &&
+            a.runId !== c.runId &&
+            a.binding.targetId !== c.binding.targetId;
+          const settingsOpened =
+            sameEditorSettings &&
+            previous &&
+            expanded &&
+            a.binding.targetId === c.binding.targetId;
+          const usual =
+            a.returned &&
+            previous &&
+            (a.runId === c.runId
+              ? !reopened && expanded
+              : sameDraft && reopened);
+          if (!reopenedSettings && !settingsOpened && !usual)
             return { resolved: false };
-          a.status = expanded ? 'confirmed' : 'cancelled';
+          // 已重开的设置侧栏只提供当前布局。旧点击保持在历史里，由当前状态决定后续。
+          a.status = expanded && !reopenedSettings ? 'confirmed' : 'cancelled';
           a.evidence = [current[0]!];
           a.resultSource = pageSourceSchema.strip().parse(c.source);
           a.resultLinks = c.source.links ?? [];

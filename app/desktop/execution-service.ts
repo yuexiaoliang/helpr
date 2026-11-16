@@ -2267,12 +2267,17 @@ export class ExecutionService {
           if (!this.live(job)) return;
           if (result.resolved === true) continue;
         }
+        const settingsDisclosure =
+          pending?.action.kind === 'click' &&
+          pending.action.target.role === 'button' &&
+          pending.action.target.name === 'Settings';
         if (
           pending?.action.kind === 'click' &&
-          ((pending.action.target.role === 'button' &&
-            pending.preconditions?.includes(
-              `[button] ${pending.action.target.name} (expanded=false)`,
-            )) ||
+          (settingsDisclosure ||
+            (pending.action.target.role === 'button' &&
+              pending.preconditions?.includes(
+                `[button] ${pending.action.target.name} (expanded=false)`,
+              )) ||
             (pending.action.target.role === 'option' &&
               pending.action.target.name === 'File' &&
               pending.preconditions?.includes(
@@ -2283,11 +2288,14 @@ export class ExecutionService {
               pending.action.target.frameUrl?.startsWith('blob:')))
         ) {
           if (
-            current.coordination?.refreshRequired &&
-            current.coordination.status === 'unverified' &&
+            current.coordination?.status === 'unverified' &&
             !current.coordination.source &&
             !current.loginOrigin &&
-            observed.session
+            observed.session &&
+            (current.coordination.refreshRequired ||
+              (settingsDisclosure &&
+                pending.coordination &&
+                sameSession(pending.coordination.session, observed.session)))
           ) {
             await this.record({
               kind: 'coordination-observed',
