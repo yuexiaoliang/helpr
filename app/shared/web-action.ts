@@ -23,8 +23,16 @@ export const landmarkLocatorSchema = z.strictObject({
   exact: z.literal(true).default(true),
 });
 export type LandmarkLocator = z.infer<typeof landmarkLocatorSchema>;
+const regionLocatorSchema = z.strictObject({
+  role: z.literal('region'),
+  name: z.string().min(1).max(500),
+  exact: z.literal(true).default(true),
+});
+export type RegionLocator = z.infer<typeof regionLocatorSchema>;
 export const elementLocatorSchema = roleLocatorSchema.extend({
-  within: z.union([roleLocatorSchema, landmarkLocatorSchema]).optional(),
+  within: z
+    .union([roleLocatorSchema, landmarkLocatorSchema, regionLocatorSchema])
+    .optional(),
   frameUrl: z.url().optional(),
 });
 // 仅由完整DOM快照形成的结构路径；不接受任意CSS、XPath或网页脚本。
@@ -74,4 +82,10 @@ export function actionLandmark(action: WebAction): LandmarkLocator | undefined {
   if (action.kind === 'upload' || 'richTextNodeId' in action.target) return;
   const within = action.target.within;
   if (within?.role === 'main' || within?.role === 'navigation') return within;
+}
+
+export function actionRegion(action: WebAction): RegionLocator | undefined {
+  if (action.kind === 'upload' || 'richTextNodeId' in action.target) return;
+  const within = action.target.within;
+  if (within?.role === 'region') return within;
 }

@@ -20,7 +20,7 @@ import {
   linkNavigationResolutionSchema,
   formNavigationResolutionSchema,
 } from '../shared/action-navigation';
-import { actionLandmark } from '../shared/web-action';
+import { actionLandmark, actionRegion } from '../shared/web-action';
 import { isBlobFrameURL } from '../shared/url-policy';
 import {
   agreementUICommandSchema,
@@ -1486,6 +1486,18 @@ export class ExecutionRecords {
         )
           throw Error('PARTICIPATION_REQUIRED');
         delete e.question;
+        if (
+          c.intent === 'continue' &&
+          e.intent === 'stopped' &&
+          e.publication?.approvalId === null &&
+          !e.actions.some(
+            (a) =>
+              a.goalVersion === e.goalVersion &&
+              a.effect === 'publication' &&
+              a.dispatchState === 'possible',
+          )
+        )
+          delete e.publication;
         if (c.intent === 'start' && e.intent === 'stopped')
           throw new Error('EXECUTION_STOPPED');
         if (c.intent === 'start' && e.pauseReason)
@@ -2793,6 +2805,8 @@ export class ExecutionRecords {
               c.targetCreation ||
               !expectedNavigationLink(c.action, c.source, c.source.links))
           )
+            throw Error('EXECUTION_LOCATOR_UNVERIFIED');
+          if (actionRegion(c.action) && !observedControl(c.action, c.source))
             throw Error('EXECUTION_LOCATOR_UNVERIFIED');
           // 旧下载检查不是当前页面的附件关联；链接消失或变得歧义时不继续写入。
           if (

@@ -46,7 +46,9 @@ async function locate(
     : undefined;
   if (
     root &&
-    (target.within?.role === 'main' || target.within?.role === 'navigation') &&
+    (target.within?.role === 'main' ||
+      target.within?.role === 'navigation' ||
+      target.within?.role === 'region') &&
     (await root.count()) !== 1
   )
     throw Error('EXECUTION_LOCATOR_MISSING');

@@ -421,6 +421,26 @@ async function fixture({
   };
 }
 
+test.each([false, true])(
+  '停止后继续原任务时按确认状态处理旧预览（已确认 %s）',
+  async (approved) => {
+    const f = await fixture();
+    if (approved) f.approve();
+    const original = f.execution();
+    f.post({ kind: 'intent', requestId: randomUUID(), intent: 'stop' });
+    f.post({ kind: 'intent', requestId: randomUUID(), intent: 'continue' });
+    const resumed = f.execution();
+    expect(resumed.phase).toBe('queued');
+    expect(resumed.goalVersion).toBe(original.goalVersion);
+    expect(resumed.actions).toEqual(original.actions);
+    expect(resumed.materials).toEqual(original.materials);
+    expect(resumed.preparation).toEqual(original.preparation);
+    expect(resumed.publication).toEqual(
+      approved ? original.publication : undefined,
+    );
+  },
+);
+
 test('公开确认与执行入口发布一次，独立核对字节并原子保存素材处理与流程', async () => {
   const f = await fixture(),
     service = f.service();

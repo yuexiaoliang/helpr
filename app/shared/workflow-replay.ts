@@ -8,7 +8,7 @@ import type { TaskExecution, NextStep, WebAction } from './execution';
 import type { PageObservation } from './model';
 import { type WorkflowUse } from './workflow';
 import { expectedNavigationLink } from './action-navigation';
-import { actionLandmark } from './web-action';
+import { actionLandmark, actionRegion } from './web-action';
 import { creationFieldsMatch } from './target-creation';
 
 export function currentWorkflow(e: TaskExecution) {
@@ -216,11 +216,18 @@ export function observedControl(action: WebAction, source: PageObservation) {
   }
   const target = action.target;
   if ('richTextNodeId' in target) return false;
+  const region = actionRegion(action);
+  if (
+    region &&
+    (source.truncated || action.kind !== 'click' || target.role !== 'button')
+  )
+    return false;
   const matches = source.controls.filter(
     (c) =>
       c.role === target.role &&
       c.name === target.name &&
-      c.frameUrl === (target.frameUrl ?? source.url),
+      c.frameUrl === (target.frameUrl ?? source.url) &&
+      (!region || c.regions?.includes(region.name)),
   );
   // 普通控件仍按完整观察的精确名称核对。
   return target.exact && matches.length === 1 && !matches[0]!.disabled;

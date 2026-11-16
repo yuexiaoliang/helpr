@@ -11,6 +11,7 @@ import { expectedNavigationLink } from '../../app/shared/action-navigation';
 import type { PageObservation } from '../../app/shared/model';
 import { pageObservation } from '../../app/desktop/page-observation';
 import { webActionSchema } from '../../app/shared/web-action';
+import { observedControl } from '../../app/shared/workflow-replay';
 
 const folders: string[] = [];
 afterEach(() =>
@@ -226,6 +227,43 @@ test('按网页区域分别定位主内容和侧栏的同名链接', () => {
   expect(
     expectedNavigationLink(inMain, ambiguous, ambiguous.links),
   ).toBeUndefined();
+});
+
+test('同名提交按钮须由当前观察核对唯一的命名区域', () => {
+  const region = (id: string, name: string, button: string) => ({
+    nodeId: id,
+    role: { value: 'region' },
+    name: { value: name },
+    childIds: [button],
+  });
+  const button = (id: string) => ({
+    nodeId: id,
+    role: { value: 'button' },
+    name: { value: 'Publish' },
+  });
+  const observe = (duplicateRegion = false) =>
+    pageObservation(
+      { frameTree: { frame: { url: from } } },
+      {
+        nodes: [
+          region('header', duplicateRegion ? 'Publish' : 'Header', 'open'),
+          region('panel', 'Publish', 'submit'),
+          button('open'),
+          button('submit'),
+        ],
+      },
+      3,
+    );
+  const target = { role: 'button', name: 'Publish', exact: true } as const;
+  const scoped = webActionSchema.parse({
+    kind: 'click',
+    target: { ...target, within: { role: 'region', name: 'Publish' } },
+  });
+  const source = observe();
+  expect(observedControl({ kind: 'click', target }, source)).toBe(false);
+  expect(observedControl(scoped, source)).toBe(true);
+  expect(observedControl(scoped, observe(true))).toBe(false);
+  expect(observedControl(scoped, { ...source, truncated: true })).toBe(false);
 });
 
 test('核对新页面后原子保存检查点并排队，冷开保留动作确认、旧动作不可重派发，23迁移先备份', () => {

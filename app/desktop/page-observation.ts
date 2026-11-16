@@ -12,7 +12,7 @@ import {
   PAGE_OBSERVATION_TEXT_LIMIT,
   type PageObservation,
 } from '../shared/model';
-import type { LandmarkLocator } from '../shared/web-action';
+import type { LandmarkLocator, RegionLocator } from '../shared/web-action';
 
 const axValue = z.object({ value: z.unknown().optional() });
 const treeSchema = z.object({
@@ -32,14 +32,15 @@ const treeSchema = z.object({
   ),
 });
 
-function linkLandmarks(
+function enclosingScopes(
   nodes: z.infer<typeof treeSchema>['nodes'],
   excluded: ReadonlySet<string>,
 ) {
   const parents = new Map<string, string | null>();
-  const landmarks = new Map<string, LandmarkLocator>();
+  type Scope = LandmarkLocator | RegionLocator;
+  const landmarks = new Map<string, Scope>();
   const counts = new Map<string, number>();
-  const key = ({ role, name }: LandmarkLocator) => JSON.stringify([role, name]);
+  const key = ({ role, name }: Scope) => JSON.stringify([role, name]);
   for (const node of nodes) {
     for (const child of node.childIds ?? [])
       parents.set(child, parents.has(child) ? null : node.nodeId);
@@ -47,29 +48,34 @@ function linkLandmarks(
     if (
       node.ignored ||
       excluded.has(node.nodeId) ||
-      (role !== 'main' && role !== 'navigation')
+      (role !== 'main' && role !== 'navigation' && role !== 'region')
     )
       continue;
     const name = node.name?.value ?? '';
-    if (typeof name !== 'string' || name.length > 500) continue;
-    const scope: LandmarkLocator = { role, name, exact: true };
+    if (
+      typeof name !== 'string' ||
+      name.length > 500 ||
+      (role === 'region' && !name.trim())
+    )
+      continue;
+    const scope: Scope = { role, name, exact: true };
     landmarks.set(node.nodeId, scope);
     counts.set(key(scope), (counts.get(key(scope)) ?? 0) + 1);
   }
   return (nodeId: string) => {
-    const scopes: LandmarkLocator[] = [];
+    const scopes: Scope[] = [];
     const seen = new Set([nodeId]);
     for (
       let parent = parents.get(nodeId);
       parent !== undefined;
       parent = parents.get(parent)
     ) {
-      if (parent === null || seen.has(parent)) return;
+      if (parent === null || seen.has(parent)) return [];
       seen.add(parent);
       const scope = landmarks.get(parent);
       if (scope && counts.get(key(scope)) === 1) scopes.push(scope);
     }
-    return scopes.length > 0 && scopes.length <= 8 ? scopes : undefined;
+    return scopes;
   };
 }
 
@@ -127,7 +133,7 @@ export function pageObservation(
       }
   };
   [...excluded].forEach(excludeChildren);
-  const enclosingLandmarks = linkLandmarks(nodes, excluded);
+  const scopesFor = enclosingScopes(nodes, excluded);
   const rootName = nodes.find((node) => node.role?.value === 'RootWebArea')
     ?.name?.value;
   const title = typeof rootName === 'string' ? rootName.slice(0, 1000) : '';
@@ -199,6 +205,12 @@ export function pageObservation(
         pathWithPseudo: richNode.pathWithPseudo,
         locator,
       });
+    const regions =
+      role === 'button'
+        ? scopesFor(node.nodeId)
+            .filter((scope) => scope.role === 'region')
+            .map((scope) => scope.name)
+        : [];
     if (
       ([
         'button',
@@ -223,6 +235,7 @@ export function pageObservation(
         disabled: !!node.properties?.some(
           (p) => p.name === 'disabled' && p.value.value === true,
         ),
+        ...(regions.length > 0 && regions.length <= 8 ? { regions } : {}),
         ...(role === 'textbox' || isRich
           ? {
               readOnly:
@@ -320,12 +333,14 @@ export function pageObservation(
         const label = (editableLink ? richValue! : name).slice(0, 1000);
         if (blob && new URL(href).origin !== new URL(url).origin) continue;
         const landmarks = editableLink
-          ? undefined
-          : enclosingLandmarks(node.nodeId);
+          ? []
+          : scopesFor(node.nodeId).filter((scope) => scope.role !== 'region');
         links.push({
           name: label,
           url: href,
-          ...(landmarks ? { landmarks } : {}),
+          ...(landmarks.length > 0 && landmarks.length <= 8
+            ? { landmarks }
+            : {}),
         });
         lines.push(
           '[observed-link] ' + JSON.stringify({ name: label, url: href }),
@@ -337,6 +352,7 @@ export function pageObservation(
   }
   const full = lines.join('\n') + (supplements ? '\n' + supplements : ''),
     text = full.slice(0, PAGE_OBSERVATION_TEXT_LIMIT);
+  const scopedButtons = controls.filter((control) => control.regions);
   return {
     url,
     title,
@@ -356,6 +372,7 @@ export function pageObservation(
     fingerprint: createHash('sha256')
       .update(url + '\n' + full)
       .update(JSON.stringify(links.filter((link) => link.landmarks)))
+      .update(scopedButtons.length ? JSON.stringify(scopedButtons) : '')
       .digest('hex'),
   };
 }
