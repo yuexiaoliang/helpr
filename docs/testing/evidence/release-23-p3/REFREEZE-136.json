@@ -1,0 +1,168 @@
+{
+  "phase": "P3",
+  "candidate": 136,
+  "predecessor": 135,
+  "sourceCommit": "e0e8e57b11e8eb11843aba309abd4c96c058c9a2",
+  "status": "refrozen",
+  "artifact": {
+    "path": "/Users/yuexiaoliang/projects/helpr/dist/candidates/release-p4-continuation-0-2-3/mac-arm64/helpr.app",
+    "sha256": "4993d06120bb4bad0f80c49845e6654082b8dde78966a7d37a6bb8c48d4cb159",
+    "manifest": {
+      "path": ".local/workspace-validation/build-136.json",
+      "sha256": "1469b9f88c24df6b4f62954515cb5d3e011d6ecf46fce75dda704131ba1b8186"
+    },
+    "preflight": {
+      "path": ".local/workspace-validation/p4-recovery/preflight-136/PREFLIGHT.json",
+      "sha256": "ab055e864775b3db3660f3d16d387e0b7892f0d5715d697594948e7a00d7f6a4"
+    }
+  },
+  "p3Acceptance": {
+    "passed": true,
+    "firstReadyMs": 3411,
+    "coldReadyMs": 969,
+    "settled": {
+      "from": 1794820185521,
+      "to": 1794820485607,
+      "spanMs": 300086,
+      "samples": 101,
+      "maxSampleGapMs": 3013,
+      "tailFrom": 1794820305607,
+      "tailSamples": 60,
+      "tailRangeMiB": 174.703125,
+      "peakMiB": 1713.75,
+      "modelCalls": 0,
+      "siteEffects": 0
+    },
+    "native": {
+      "evidence": {
+        "path": ".local/workspace-validation/p4-recovery/native-136.json",
+        "sha256": "ae4b279bd01c9f80560e3455ebd6ca4d236cc33369ecffdaf8b06c3a7d25ab6b"
+      },
+      "run": {
+        "path": ".local/workspace-validation/run-1794819812093/result.json",
+        "sha256": "8dfd79fabdab57e45b76fe63384c992687759f2e3320982441cfaba17433f6dd"
+      },
+      "durationsMs": [
+        580,
+        467,
+        482,
+        476,
+        471,
+        470
+      ],
+      "delayedAttempts": []
+    }
+  },
+  "performance": {
+    "rss": {
+      "path": ".local/workspace-validation/run-1794820155501/result.json",
+      "sha256": "bfe6f07f724ff7127b2056e0178f690df9ab5fd1043134c224300190795a6100"
+    },
+    "freshInstallAndCold": {
+      "path": ".local/workspace-validation/run-1794819812093/result.json",
+      "sha256": "8dfd79fabdab57e45b76fe63384c992687759f2e3320982441cfaba17433f6dd"
+    },
+    "failedRssAttempts": [
+      {
+        "path": ".local/workspace-validation/run-1794819812093/result.json",
+        "sha256": "8dfd79fabdab57e45b76fe63384c992687759f2e3320982441cfaba17433f6dd",
+        "error": "RSS_TAIL_RANGE_LIMIT",
+        "tailRangeMiB": 297.0625
+      }
+    ],
+    "slowColdInRssRunMs": 996
+  },
+  "fixture": {
+    "evidence": {
+      "path": ".local/workspace-validation/run-1794819777624/result.json",
+      "sha256": "2f68681712b58a464a0d9d18382dffea319e2e74a4b41bc6181481d6b04aae28"
+    },
+    "precedingAttempt": {
+      "path": ".local/workspace-validation/run-1794818917901/result.json",
+      "sha256": "cff925eaae617eaba3d66ed766f17dfe3c24431d64c9758f29f5b5f7bbbf2dbc"
+    },
+    "uploadConfirmedOnColdOpen": true,
+    "verifiedEmptyAndTypedParagraph": true,
+    "cssPseudoElementIgnored": true,
+    "settings": {
+      "previous": "34af02bc-14f4-46a5-86a5-a1405d636730",
+      "oldStatus": "cancelled",
+      "newStatus": "confirmed",
+      "toggles": 2
+    },
+    "previewRecovery": {
+      "rejectedDestination": "http://127.0.0.1:50483/link-start（文章栏目：日报）",
+      "approvedDestination": "日报",
+      "singleSubmit": true,
+      "bytesVerified": true,
+      "status": "complete",
+      "continuationDelivered": true
+    },
+    "realFailure": {
+      "path": "docs/testing/evidence/release-23-p3/P4-OPEN-PANEL-135.json",
+      "sha256": "259e814ed56477e924d3e53848115714e44fab5a09c7baf9a18a27710f0dfc7b"
+    }
+  },
+  "source": {
+    "workspace": 645,
+    "validator": 41,
+    "legacy": 25,
+    "checks": {
+      "path": ".local/workspace-validation/p4-recovery/source-136-full.log",
+      "sha256": "0b47529cc0a2571221b30817d885dffd912f483b0147f0b044013949d385554a"
+    }
+  },
+  "p4Inputs": {
+    "file": "tests/fixtures/release-23-real-business-v1/INPUTS.json",
+    "sha256": "ac799053df77edb174b1a1ae94280cef5262179817c81fa42a20dd6208add947",
+    "count": 10,
+    "model": {
+      "provider": "DeepSeek",
+      "model": "deepseek-flash",
+      "protocol": "chat-completions",
+      "sdkRetries": 0,
+      "outputTokens": 2048,
+      "configuration": "沿用本机受保护配置，执行前确认非秘密配置与实际记录，账本不保存密钥。"
+    },
+    "limits": {
+      "requests": 120,
+      "reservedTokens": 1200000,
+      "outputTokensPerRequest": 2048,
+      "attachments": 10,
+      "newContents": 10,
+      "publishes": 10,
+      "minutes": 90
+    },
+    "consumed": {
+      "requests": 65,
+      "reservedTokens": 4545462,
+      "attachments": 1,
+      "newContents": 2,
+      "publishes": 0
+    }
+  },
+  "p4Batch": {
+    "status": "stopped",
+    "nextSample": "R23-FIRST-A",
+    "draftId": 162,
+    "verifiedSamples": 0,
+    "ledgerAtGate": {
+      "path": ".local/workspace-validation/p4-recovery/ledger-at-136.json",
+      "sha256": "9816799db4fc2431380cbbe0dd4ef6bbd99983c422c4c0926251d21cc4bb2788"
+    }
+  },
+  "cleanup": {
+    "pids": 116,
+    "groups": 24,
+    "allCleared": true,
+    "leaseReleased": true,
+    "reusedProcessNumbers": []
+  },
+  "cumulative": {
+    "builds": 136,
+    "installs": 48,
+    "starts": 693,
+    "faults": 74,
+    "cleanups": 26
+  }
+}
