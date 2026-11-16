@@ -1,0 +1,92 @@
+{
+  "candidate": 130,
+  "phase": "P4",
+  "sample": "R23-FIRST-A",
+  "status": "waiting-for-provider-balance",
+  "draftId": 162,
+  "verifiedSamples": 0,
+  "attempts": [
+    {
+      "start": 644,
+      "receipt": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-CEdaq5/result.json",
+        "sha256": "3e41274a74767b76eb7713fdc8ee5d64e5a038a5afb78bceb73d7fd1a8f855e8"
+      },
+      "requestErrors": [
+        "MODEL_CONNECTION"
+      ],
+      "modelPreflight": "connected",
+      "websiteUntouched": true
+    },
+    {
+      "start": 645,
+      "receipt": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-GWp5v6/result.json",
+        "sha256": "d6f3bcd40afd4b5b2ee85b588619a5df078bcec8adf14aa5f43ae5168f346a58"
+      },
+      "requestErrors": [],
+      "modelPreflight": "REQUEST_TIMEOUT"
+    },
+    {
+      "start": 646,
+      "receipt": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-cxdQUu/result.json",
+        "sha256": "0dfd75f86bb2868a54df00e540fd2c830b7132afe1aaa68de2ee5ac0612d19ae"
+      },
+      "requestErrors": [
+        "MODEL_CONNECTION",
+        "MODEL_CONNECTION"
+      ],
+      "modelPreflight": "connected",
+      "websiteUntouched": true
+    }
+  ],
+  "cumulative": {
+    "requests": 51,
+    "reservedTokens": 3569178,
+    "attachments": 1,
+    "newContents": 2,
+    "publishes": 0
+  },
+  "draft": {
+    "status": "draft",
+    "title": "R23-FIRST-A 北岸仓日报",
+    "lastAttachmentCheck": {
+      "id": 163,
+      "bytes": 16405,
+      "sha256": "c107b87880cf008de72b15c2986e40ce730a5fa173bc521c8946652a66437e76"
+    },
+    "pending": [
+      "body",
+      "publication-preview",
+      "publication",
+      "independent-result"
+    ]
+  },
+  "provider": {
+    "name": "DeepSeek",
+    "balance": {
+      "status": "unavailable",
+      "httpStatus": 200,
+      "checkedAt": "2026-11-16T07:01:51.099Z",
+      "readOnly": true,
+      "generationRequests": 0,
+      "evidence": {
+        "path": ".local/workspace-validation/p4-recovery/deepseek-balance-2026-11-16.json",
+        "sha256": "d57e7d3c242c55635d359b9c3d55aa39f959b5eb12a65a17e99c81a80cf9fb47"
+      }
+    }
+  },
+  "cleanup": {
+    "remaining": [],
+    "leaseReleased": true,
+    "duplicateInstall": {
+      "path": ".local/workspace-validation/p4-recovery/removed-copy-run-1794811726807.json",
+      "sha256": "8ca505ea19166bdca86e88345f0045fcdb81601f9b602b59518a29c0ca3cf550"
+    },
+    "supersededCandidates": {
+      "path": ".local/workspace-validation/p4-recovery/superseded-local-candidates-127-129.json",
+      "sha256": "71c8f2641f8486bb1f8614be143f38bdc5986a6650b2b99f416b9babab98672f"
+    }
+  }
+}
