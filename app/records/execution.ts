@@ -1486,13 +1486,14 @@ export class ExecutionRecords {
         )
           throw Error('PARTICIPATION_REQUIRED');
         delete e.question;
+        const goalVersion = e.goalVersion;
         if (
           c.intent === 'continue' &&
           e.intent === 'stopped' &&
           e.publication?.approvalId === null &&
           !e.actions.some(
             (a) =>
-              a.goalVersion === e.goalVersion &&
+              a.goalVersion === goalVersion &&
               a.effect === 'publication' &&
               a.dispatchState === 'possible',
           )
