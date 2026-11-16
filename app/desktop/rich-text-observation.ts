@@ -30,7 +30,13 @@ const snapshotSchema = z.object({
 export function richTextObservation(snapshot: unknown, url: string) {
   const result = new Map<
     number,
-    { empty: boolean; text: string; supported: boolean; path?: string }
+    {
+      empty: boolean;
+      text: string;
+      supported: boolean;
+      path?: string;
+      caretPlaceholder?: true;
+    }
   >();
   const parsed = snapshotSchema.safeParse(snapshot);
   if (!parsed.success) return result;
@@ -94,6 +100,45 @@ export function richTextObservation(snapshot: unknown, url: string) {
       counts.get(id) !== 1
     )
       continue;
+    // 部分编辑器用一个零宽填充字符和 CSS 占位文字表示空段落。
+    // 只接受紧邻填充字符的空装饰节点，仍须由同一 AX 节点核对。
+    const paragraphChildren = children[root]!;
+    const placeholder =
+      rootTag === 'P' && a.get('role') === 'document'
+        ? paragraphChildren.at(-1)
+        : undefined;
+    const padding = paragraphChildren.slice(0, -1);
+    const decoration =
+      placeholder === undefined
+        ? undefined
+        : children[placeholder]!.length === 1
+          ? children[placeholder]![0]
+          : undefined;
+    const placeholderAttrs =
+      placeholder === undefined ? undefined : attributes[placeholder];
+    const style = placeholderAttrs
+      ?.get('style')
+      ?.split(';')
+      .map((rule) => rule.replace(/\s/g, ''));
+    const caretPlaceholder =
+      placeholder !== undefined &&
+      strings[n.nodeName[placeholder]!] === 'SPAN' &&
+      n.nodeValue[placeholder] === -1 &&
+      !!placeholderAttrs?.get('data-rich-text-placeholder') &&
+      style?.includes('pointer-events:none') &&
+      style.includes('user-select:none') &&
+      decoration !== undefined &&
+      strings[n.nodeName[decoration]!] === '::after' &&
+      n.nodeValue[decoration] === -1 &&
+      !children[decoration]!.length &&
+      (padding.length === 1 || padding.length === 2) &&
+      padding.every(
+        (index, position) =>
+          strings[n.nodeName[index]!] === '#text' &&
+          !children[index]!.length &&
+          (strings[n.nodeValue[index]!] ?? '') ===
+            (position === padding.length - 1 ? '\uFEFF' : ''),
+      );
     let valid = true,
       empty = true,
       text = '';
@@ -121,7 +166,8 @@ export function richTextObservation(snapshot: unknown, url: string) {
         !attrs ||
         !name ||
         (!allowed.has(name) &&
-          !(index === root && /^(?:A|H[1-6])$/.test(rootTag ?? ''))) ||
+          !(index === root && /^(?:A|H[1-6])$/.test(rootTag ?? '')) &&
+          !(caretPlaceholder && index === decoration)) ||
         attrs.has('hidden') ||
         attrs.get('aria-hidden') === 'true' ||
         attrs.get('aria-disabled') === 'true' ||
@@ -185,6 +231,7 @@ export function richTextObservation(snapshot: unknown, url: string) {
       empty,
       text,
       supported: valid,
+      ...(caretPlaceholder && { caretPlaceholder: true }),
       ...(path.startsWith('html:nth-child(1) > ') && path.length <= 2000
         ? { path }
         : {}),

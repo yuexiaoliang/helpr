@@ -171,8 +171,12 @@ export function pageObservation(
     const richValue = richNode?.supported
       ? typeof node.value?.value === 'string' &&
         value.length <= 4000 &&
-        value.replaceAll('\n', '') === richNode.text.replaceAll('\n', '')
-        ? value
+        (richNode.caretPlaceholder
+          ? value === richNode.text
+          : value.replaceAll('\n', '') === richNode.text.replaceAll('\n', ''))
+        ? richNode.caretPlaceholder
+          ? ''
+          : value
         : node.value === undefined && richNode.empty
           ? ''
           : undefined

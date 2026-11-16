@@ -451,6 +451,63 @@ test('真实占位BR在AX缺值时仍不能冒充空正文', async () => {
   ).toBeUndefined();
 });
 
+test.each(['empty', 'typed', 'missing-ax', 'mismatched-ax', 'child-text'])(
+  '编辑段落的画布占位文字不成为可写正文：%s',
+  (mode) => {
+    const padding = '\uFEFF';
+    const f = observed(padding);
+    const { strings } = f.dom;
+    const { nodes, layout } = f.dom.documents[0]!;
+    const string = (value: string) => strings.push(value) - 1;
+    strings[2] = 'P';
+    f.ax.nodes[0]!.role.value = 'document';
+    nodes.attributes[1]!.push(string('role'), string('document'));
+    nodes.backendNodeId.push(4, 5, 6);
+    nodes.parentIndex.push(1, 1, 4);
+    nodes.nodeName.push(3, string('SPAN'), string('::after'));
+    nodes.nodeValue.splice(2, 1, -1, 6, -1, -1);
+    nodes.attributes.push(
+      [],
+      [
+        string('data-rich-text-placeholder'),
+        string('Type / to choose a block'),
+        string('style'),
+        string('pointer-events:none;user-select:none;'),
+      ],
+      [],
+    );
+    layout.nodeIndex = [1, 3, 4, 5];
+    if (mode === 'typed') {
+      strings[6] = '已填正文';
+      f.ax.nodes[0]!.value = { value: strings[6] };
+      nodes.backendNodeId.splice(4);
+      nodes.parentIndex.splice(4);
+      nodes.nodeName.splice(4);
+      nodes.nodeValue.splice(4);
+      nodes.attributes.splice(4);
+      layout.nodeIndex = [1, 3];
+    } else if (mode === 'missing-ax') {
+      delete f.ax.nodes[0]!.value;
+    } else if (mode === 'mismatched-ax') {
+      f.ax.nodes[0]!.value = { value: padding + '\n' };
+    } else if (mode === 'child-text') {
+      nodes.nodeName[5] = 3;
+      nodes.nodeValue[5] = string('实际内容');
+    }
+    const paragraph = f.read().controls![0];
+    if (mode === 'empty' || mode === 'typed')
+      expect(paragraph).toMatchObject({
+        role: 'document',
+        textValue: mode === 'empty' ? '' : '已填正文',
+        richText: { valueSource: 'ax' },
+      });
+    else {
+      expect(paragraph).toMatchObject({ richTextUnavailable: true });
+      expect(paragraph?.textValue).toBeUndefined();
+    }
+  },
+);
+
 test.each(['about:blank', 'about:srcdoc'])(
   '内联正文%s可靠保存并冷开，来源变化不确认',
   (frameUrl) => {

@@ -1,0 +1,243 @@
+{
+  "phase": "P3",
+  "candidate": 128,
+  "predecessor": 126,
+  "sourceCommit": "d95f920cf73ad89a5f1b83ce075688ea13718815",
+  "status": "refrozen",
+  "artifact": {
+    "path": "/Users/yuexiaoliang/projects/helpr/dist/candidates/release-p4-attachment-resume-0-2-3/mac-arm64/helpr.app",
+    "sha256": "ed145247b56ac0cb8157476041e7b832179a3d9131b43db96fa820090f46143e",
+    "manifest": {
+      "path": ".local/workspace-validation/build-128.json",
+      "sha256": "4b84f4e44fa859fd0395290e665c804b12d1cb83279b160d4c1fde57498e9bb9"
+    },
+    "preflight": {
+      "path": ".local/workspace-validation/p4-recovery/preflight-128/PREFLIGHT.json",
+      "sha256": "178b53f3b0635498453bee07ba99ce9f0b7b5244e21bf264dd571d771378e751"
+    }
+  },
+  "p3Acceptance": {
+    "passed": true,
+    "firstReadyMs": 4212,
+    "coldReadyMs": 1172,
+    "settled": {
+      "from": 1794810327070,
+      "to": 1794810627147,
+      "spanMs": 300077,
+      "samples": 101,
+      "maxSampleGapMs": 3002,
+      "tailFrom": 1794810447147,
+      "tailSamples": 60,
+      "tailRangeMiB": 2.40625,
+      "peakMiB": 1757.640625,
+      "modelCalls": 0,
+      "siteEffects": 0
+    },
+    "native": {
+      "evidence": {
+        "path": ".local/workspace-validation/p4-recovery/native-128-unlocked.json",
+        "sha256": "fdb91be3b92af060c22814eac2c0446c17114f45d51037eed3c3607da519a217"
+      },
+      "durationsMs": [
+        502,
+        463,
+        467,
+        482,
+        467,
+        475
+      ],
+      "sameBundleRun": {
+        "path": ".local/workspace-validation/run-1794809919430/result.json",
+        "sha256": "2356f451fc90e0fc0f96d713fdfff91caec493c8e5b7df66202f0a78771cba2e"
+      }
+    }
+  },
+  "performance": {
+    "evidence": {
+      "path": ".local/workspace-validation/run-1794810306059/result.json",
+      "sha256": "82d06ba9883a86d88b99a7673eb445aca6587c0ae8f7dfc34f4b3b8d85f4c89d"
+    },
+    "passed": true,
+    "firstReadyMs": 900,
+    "memory": {
+      "path": ".local/workspace-validation/p4-recovery/memory-128-quiet.jsonl",
+      "sha256": "3e6d159e2c7d0e40f121aa13ab7dcb4a0a6f31cec95fa6a43059b484aacdfc57"
+    }
+  },
+  "previousPerformance": [
+    {
+      "evidence": {
+        "path": ".local/workspace-validation/run-1794565285073/result.json",
+        "sha256": "bc2dba3ea3070aebed713f74f9cf52061b6385847488095d6f61e42ed17b4f8d"
+      },
+      "error": "RSS_TAIL_RANGE_LIMIT",
+      "freshCopyFirstReadyMs": 4212,
+      "settled": {
+        "from": 1794565312092,
+        "to": 1794565612175,
+        "spanMs": 300083,
+        "samples": 101,
+        "maxSampleGapMs": 3002,
+        "tailFrom": 1794565432175,
+        "tailSamples": 60,
+        "tailRangeMiB": 305.171875,
+        "peakMiB": 1764.46875,
+        "modelCalls": 0,
+        "siteEffects": 0
+      },
+      "native": {
+        "path": ".local/workspace-validation/p4-recovery/native-128.json",
+        "sha256": "74d63aeb68fc3a8615878dae68878bda2b3868ba5ab5df9797358415f3eab081"
+      },
+      "copyCleanup": {
+        "path": ".local/workspace-validation/p4-recovery/removed-copy-run-1794565285073.json",
+        "sha256": "8e3684f24e5a242b6c9d16f455bce469539ddc0bfe00c99d47a9e5f517208763"
+      }
+    },
+    {
+      "evidence": {
+        "path": ".local/workspace-validation/run-1794565784113/result.json",
+        "sha256": "390345d0817e4a522a966e2b9770c92dc5d493244f2d9e3146d4a8f407827fdc"
+      },
+      "error": "VALIDATION_TIMEOUT",
+      "interruptedBySleep": true
+    },
+    {
+      "evidence": {
+        "path": ".local/workspace-validation/run-1794809919430/result.json",
+        "sha256": "2356f451fc90e0fc0f96d713fdfff91caec493c8e5b7df66202f0a78771cba2e"
+      },
+      "error": "RSS_TAIL_RANGE_LIMIT",
+      "settled": {
+        "from": 1794809943458,
+        "to": 1794810243535,
+        "spanMs": 300077,
+        "samples": 101,
+        "maxSampleGapMs": 3002,
+        "tailFrom": 1794810063535,
+        "tailSamples": 60,
+        "tailRangeMiB": 321.234375,
+        "peakMiB": 1691.515625,
+        "modelCalls": 0,
+        "siteEffects": 0
+      },
+      "memory": {
+        "path": ".local/workspace-validation/p4-recovery/memory-128-unlocked.jsonl",
+        "sha256": "a83e8936e8a17473625956e8a96f823c5e1257f02c5e36356fc292f758aaf62f"
+      }
+    }
+  ],
+  "supersededPerformance": {
+    "candidate": 127,
+    "evidence": {
+      "path": ".local/workspace-validation/run-1794564933420/result.json",
+      "sha256": "08d65c1c09e92dc51bfc7392b144a6d9f16dcaebee2ea55c6336938a8fdae48f"
+    },
+    "error": "RSS_TAIL_RANGE_LIMIT",
+    "native": {
+      "path": ".local/workspace-validation/p4-recovery/native-127.json",
+      "sha256": "42d6183bf076099ed4085a8058600c6b47a643dd0467e7123c51eb25136e4be6"
+    }
+  },
+  "fixtureEditorPreferences": {
+    "editableFileLink": true,
+    "coldUploadResume": true,
+    "uploadConfirmed": true,
+    "blockUsageObserved": true,
+    "evidence": {
+      "path": ".local/workspace-validation/run-1794810246628/result.json",
+      "sha256": "91fa08fa01e070c06500449a25960f1446364e02e05512884de72ef0d2de9d2f"
+    },
+    "earlierFixtureAttempts": [
+      {
+        "path": ".local/workspace-validation/run-1794565617022/result.json",
+        "sha256": "4544940da4d1785e976c88dad8625746d569d36b30f9b75efa15d96e98e1dc3d"
+      },
+      {
+        "path": ".local/workspace-validation/run-1794581598432/result.json",
+        "sha256": "a1195b327aab8dc78ee551dada183a227e94bfda09a17dfafa3ebc4042b81dd2"
+      }
+    ]
+  },
+  "source": {
+    "workspace": 624,
+    "validator": 41,
+    "legacy": 25,
+    "checks": {
+      "path": ".local/workspace-validation/p4-recovery/source-128-full.log",
+      "sha256": "4a21d369d5a404572e785a04942568f5e6a71ccee50aecb91e27f785bef32647"
+    }
+  },
+  "p4Inputs": {
+    "file": "tests/fixtures/release-23-real-business-v1/INPUTS.json",
+    "sha256": "ac799053df77edb174b1a1ae94280cef5262179817c81fa42a20dd6208add947",
+    "count": 10,
+    "model": {
+      "provider": "DeepSeek",
+      "model": "deepseek-flash",
+      "protocol": "chat-completions",
+      "sdkRetries": 0,
+      "outputTokens": 2048,
+      "configuration": "沿用本机受保护配置，执行前确认非秘密配置与实际记录，账本不保存密钥。"
+    },
+    "limits": {
+      "requests": 120,
+      "reservedTokens": 1200000,
+      "outputTokensPerRequest": 2048,
+      "attachments": 10,
+      "newContents": 10,
+      "publishes": 10,
+      "minutes": 90
+    },
+    "consumed": {
+      "requests": 42,
+      "reservedTokens": 2890898,
+      "attachments": 1,
+      "newContents": 2,
+      "publishes": 0
+    }
+  },
+  "p4Batch": {
+    "status": "stopped",
+    "nextSample": "R23-FIRST-A",
+    "draftId": 162,
+    "verifiedSamples": 0,
+    "batchQuotaUpdate": {
+      "recordedAt": "2026-11-13T07:30:05.371Z",
+      "userInstruction": "不加限制，我只希望赶紧弄完",
+      "requests": null,
+      "reservedTokens": null,
+      "newContentAttempts": null,
+      "previousLedgerSha256": "154433df2decde7f31dc92a4e13819bc7e6f7857edc84a2c113e5b42894a3401"
+    },
+    "ledgerAtCheck": {
+      "path": ".local/workspace-validation/p4-recovery/ledger-at-128.json",
+      "sha256": "e93491a4224c13606f97bb7cfa5041e8391443390e85f62b3242320b10ea213d"
+    }
+  },
+  "cleanup": {
+    "pids": 117,
+    "groups": 24,
+    "allCleared": true,
+    "leaseReleased": true,
+    "reusedProcessNumbers": [
+      {
+        "pid": 41744,
+        "group": 41744,
+        "started": 1794800136000
+      },
+      {
+        "pid": 41779,
+        "group": 41779,
+        "started": 1794800152000
+      }
+    ]
+  },
+  "cumulative": {
+    "builds": 128,
+    "installs": 43,
+    "starts": 627,
+    "faults": 74,
+    "cleanups": 26
+  }
+}
