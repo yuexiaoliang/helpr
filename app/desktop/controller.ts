@@ -482,6 +482,15 @@ export async function startController(
         ),
       ];
       observation.controls = controls.slice(0, 500);
+      const richTextPathCorrections = [
+        observation,
+        ...childObservations,
+      ].flatMap((o) => o.richTextPathCorrections ?? []);
+      if (richTextPathCorrections.length)
+        observation.richTextPathCorrections = richTextPathCorrections.slice(
+          0,
+          500,
+        );
       observation.checkboxes = checkboxes.slice(0, 500);
       observation.fileInputs = fileInputs.slice(0, 100);
       observation.links = links.slice(0, 300);

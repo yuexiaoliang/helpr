@@ -10,6 +10,7 @@ import { richTextControl, verifiedRichText } from '../../app/shared/rich-text';
 import { WorkspaceRecords } from '../../app/records/workspace';
 import type { PageObservation } from '../../app/shared/model';
 import type { WebAction } from '../../app/shared/web-action';
+import type { SessionContext } from '../../app/shared/coordination';
 
 const url = 'https://example.com/edit';
 const cleanups: (() => void)[] = [];
@@ -152,7 +153,7 @@ test.each([
     'EXECUTION_RICH_TEXT_UNVERIFIED',
   );
 });
-function recordsFixture() {
+function recordsFixture(session?: SessionContext) {
   const dir = mkdtempSync(path.join(tmpdir(), 'helpr-rich-text-'));
   cleanups.push(() => rmSync(dir, { recursive: true, force: true }));
   let records = new WorkspaceRecords(dir, 'app/records/migrations');
@@ -172,7 +173,7 @@ function recordsFixture() {
   const post = (c: Record<string, unknown>) =>
     records.execution({ taskId, ...c });
   post({ kind: 'intent', requestId: randomUUID(), intent: 'start' });
-  post({ kind: 'claim', runId: 'rich' });
+  post({ kind: 'claim', runId: 'rich', session });
   const source = observed().read(),
     binding = { targetId: 'page', generation: 1 };
   const reserve = {
@@ -232,6 +233,85 @@ test('冻结源控件；模型确认不能绕过实际全文；冷开保留核�
   delete saved.richTextResult;
   expect(actionFactSchema.safeParse(saved).success).toBe(false);
 });
+test.each(['empty', 'written', 'ambiguous', 'returned', 'wrong-session'])(
+  '冷开依据同一草稿的修正路径核对未回读的空正文：%s',
+  (mode) => {
+    const session = {
+      id: 'site',
+      epoch: `${randomUUID()}:0`,
+      origin: new URL(url).origin,
+    };
+    const f = recordsFixture(session);
+    const oldTarget = {
+      richTextNodeId: 2,
+      path: 'html:nth-child(1) > body:nth-child(2) > p:nth-child(2)',
+      frameUrl: `blob:${session.origin}/old`,
+    };
+    const source = observed().read();
+    const oldControl = source.controls![0]!;
+    oldControl.frameUrl = oldTarget.frameUrl;
+    oldControl.richText!.locator = oldTarget;
+    f.post({ kind: 'coordination-observed', runId: 'rich', session, source });
+    f.post({
+      ...f.reserve,
+      action: { ...action, target: oldTarget },
+      source,
+      effect: 'interaction',
+    });
+    f.post({ kind: 'dispatch', runId: 'rich', id: 'fill' });
+    f.post({ kind: 'reported', id: 'fill', returned: mode === 'returned' });
+    f.post({
+      kind: 'preparation-observed',
+      runId: 'rich',
+      source,
+      facts: [
+        { kind: 'target', url, materialId: null, evidence: ['正文'] },
+        { kind: 'draft', url, materialId: null, evidence: ['正文'] },
+      ],
+    });
+    f.post({ kind: 'intent', requestId: randomUUID(), intent: 'stop' });
+    f.cold();
+    f.post({ kind: 'intent', requestId: randomUUID(), intent: 'continue' });
+    const reopened = { ...session, epoch: `${randomUUID()}:0` };
+    f.post({ kind: 'claim', runId: 'reopened', session: reopened });
+    const readback = observed(
+      mode === 'written' ? '已写入的正文' : undefined,
+    ).read();
+    readback.observedAt = source.observedAt + 10;
+    const locator = {
+      richTextNodeId: 5,
+      path: oldTarget.path.replace('p:nth-child(2)', 'p:nth-child(1)'),
+      frameUrl: `blob:${session.origin}/new`,
+    };
+    const empty = readback.controls![0]!;
+    empty.frameUrl = locator.frameUrl;
+    empty.richText!.backendNodeId = locator.richTextNodeId;
+    empty.richText!.locator = locator;
+    readback.richTextPathCorrections = [
+      { pathWithPseudo: oldTarget.path, locator },
+    ];
+    if (mode === 'ambiguous')
+      readback.richTextPathCorrections.push({
+        pathWithPseudo: oldTarget.path,
+        locator: { ...locator, frameUrl: `blob:${session.origin}/other` },
+      });
+    expect(
+      f.post({
+        kind: 'rich-text-path-observed',
+        runId: 'reopened',
+        id: 'fill',
+        source: readback,
+        binding: { ...f.binding, targetId: 'new-page' },
+        session:
+          mode === 'wrong-session' ? { ...reopened, id: 'other' } : reopened,
+      }),
+    ).toMatchObject({ resolved: mode === 'empty' });
+    const saved = f.read().actions[0]!;
+    expect(saved.action.target).toEqual(oldTarget);
+    expect(saved.dispatchState).toBe('possible');
+    expect(saved.status).toBe(mode === 'empty' ? 'cancelled' : 'unknown');
+  },
+);
 test('富文本不完整时不预留，不凭其它页面完成核对', () => {
   const f = recordsFixture(),
     bad = observed('正文');

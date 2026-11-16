@@ -2248,6 +2248,26 @@ export class ExecutionService {
           continue;
         }
         if (
+          pending?.action.kind === 'fill' &&
+          'richTextNodeId' in pending.action.target &&
+          !pending.returned &&
+          pending.runId !== job.runId &&
+          observed.session &&
+          observed.observation.richTextPathCorrections?.length
+        ) {
+          const result = await this.record({
+            kind: 'rich-text-path-observed',
+            taskId: job.taskId,
+            runId: job.runId,
+            id: pending.id,
+            source: observed.observation,
+            binding: observed.binding,
+            session: observed.session,
+          });
+          if (!this.live(job)) return;
+          if (result.resolved === true) continue;
+        }
+        if (
           pending?.action.kind === 'click' &&
           ((pending.action.target.role === 'button' &&
             pending.preconditions?.includes(

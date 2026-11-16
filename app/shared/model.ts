@@ -98,12 +98,17 @@ export const observedFileInputSchema = z.strictObject({
   fileIndex: z.number().int().nonnegative().max(100),
   frameUrl: z.url(),
 });
+export const richTextPathCorrectionSchema = z.strictObject({
+  pathWithPseudo: richTextLocatorSchema.shape.path,
+  locator: richTextLocatorSchema,
+});
 export type PageObservation = PageSource & {
   text: string;
   links?: z.infer<typeof observedLinkSchema>[];
   controls?: z.infer<typeof observedControlSchema>[];
   checkboxes?: z.infer<typeof observedCheckboxSchema>[];
   fileInputs?: z.infer<typeof observedFileInputSchema>[];
+  richTextPathCorrections?: z.infer<typeof richTextPathCorrectionSchema>[];
 };
 export const modelUsageKindSchema = z.enum([
   'legacy-unspecified',

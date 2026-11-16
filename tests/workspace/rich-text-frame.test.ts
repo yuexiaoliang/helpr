@@ -312,6 +312,50 @@ test('同源生成式编辑区从实际标题和可编辑附件链接读取值',
   f.snapshot.strings.push('hidden');
   expect(f.read().links).toEqual([]);
 });
+
+test('画布快照中的 CSS 伪元素不占用正文定位的元素序号', () => {
+  const f = fixture();
+  const url = 'blob:https://example.test/canvas';
+  const strings = f.snapshot.strings;
+  const string = (value: string) => strings.push(value) - 1;
+  strings[1] = url;
+  f.main.nodes.attributes[1] = [string('src'), 1];
+  f.tree.childFrames[0]!.frame.url = url;
+  f.origins.frames[1]!.url = url;
+  const names = [
+    '#document',
+    'HTML',
+    'HEAD',
+    'BODY',
+    'svg',
+    '::after',
+    'DIV',
+    'P',
+    '#text',
+  ];
+  Object.assign(f.child.nodes, {
+    nodeName: names.map(string),
+    parentIndex: [-1, 0, 1, 1, 3, 3, 3, 6, 7],
+    backendNodeId: [3, 6, 7, 8, 9, 10, 11, 4, 5],
+    nodeType: [9, 1, 1, 1, 1, 1, 1, 1, 3],
+    nodeValue: [-1, -1, -1, -1, -1, -1, -1, -1, 10],
+    pseudoType: { index: [5], value: [string('after')] },
+    attributes: [[], [], [], [], [], [], [], [8, 9], []],
+  });
+  f.child.layout.nodeIndex = [1, 3, 4, 5, 6, 7, 8];
+  f.ax.nodes[1]!.role.value = 'document';
+  const read = f.read();
+  expect(
+    read.controls?.find((control) => control.name === '正文'),
+  ).toMatchObject({
+    textValue: '旧正文',
+    richText: {
+      locator: {
+        path: 'html:nth-child(1) > body:nth-child(2) > div:nth-child(2) > p:nth-child(1)',
+      },
+    },
+  });
+});
 test.each([
   'origin-missing',
   'origin-cross-site',

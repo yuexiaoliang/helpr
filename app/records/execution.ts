@@ -96,6 +96,7 @@ import {
   type PageObservation,
   observedCheckboxSchema,
   observedFileInputSchema,
+  richTextPathCorrectionSchema,
 } from '../shared/model';
 import {
   materialVersionSchema,
@@ -206,6 +207,10 @@ const observation = pageSourceSchema.extend({
   text: z.string().max(PAGE_OBSERVATION_TEXT_LIMIT),
   links: z.array(observedLinkSchema).max(300).optional(),
   controls: z.array(observedControlSchema).max(500).optional(),
+  richTextPathCorrections: z
+    .array(richTextPathCorrectionSchema)
+    .max(500)
+    .optional(),
 });
 const work = { taskId: z.string(), runId: z.string() };
 const intentSchema = executionIntentSchema.extend({
@@ -425,6 +430,14 @@ const commandSchema = z.discriminatedUnion('kind', [
     id: z.string(),
     source: observation,
     binding: pageBindingSchema,
+  }),
+  z.strictObject({
+    kind: z.literal('rich-text-path-observed'),
+    ...work,
+    id: z.string(),
+    source: observation,
+    binding: pageBindingSchema,
+    session: sessionContextSchema,
   }),
   z.strictObject({
     kind: z.literal('resolve'),
@@ -3001,6 +3014,79 @@ export class ExecutionRecords {
           e.summary = c.summary;
           this.save(task.id, e);
           return { created: true };
+        }
+        if (c.kind === 'rich-text-path-observed') {
+          const a = e.actions.find((action) => action.id === c.id);
+          if (
+            !a ||
+            a.action.kind !== 'fill' ||
+            !('richTextNodeId' in a.action.target) ||
+            !a.richTextSource?.name ||
+            a.richTextSource.textValue !== '' ||
+            !a.action.value ||
+            a.returned ||
+            a.status !== 'unknown' ||
+            a.dispatchState !== 'possible' ||
+            a.effect !== 'interaction' ||
+            a.navigation ||
+            a.workflowStep ||
+            a.goalVersion !== e.goalVersion ||
+            a.runId === c.runId ||
+            a.binding.targetId === c.binding.targetId ||
+            a.source.truncated ||
+            c.source.truncated ||
+            c.source.url !== task.url ||
+            c.source.url !== a.source.url ||
+            c.source.observedAt <= a.source.observedAt ||
+            c.binding.generation !== c.source.generation ||
+            e.question ||
+            e.loginOrigin ||
+            e.publication ||
+            !a.coordination ||
+            !sameSession(a.coordination.session, c.session) ||
+            !e.coordination ||
+            e.coordination.status === 'login' ||
+            e.coordination.checkingLogin ||
+            (e.coordination.refreshRequired &&
+              e.coordination.source?.generation === c.source.generation) ||
+            !e.preparation?.some(
+              (f) =>
+                f.kind === 'draft' &&
+                f.goalVersion === e.goalVersion &&
+                f.url === c.source.url,
+            )
+          )
+            return { resolved: false };
+          const previous = a.action.target;
+          const corrections = c.source.richTextPathCorrections?.filter(
+            ({ pathWithPseudo, locator }) =>
+              pathWithPseudo === previous.path &&
+              locator.path !== previous.path &&
+              isBlobFrameURL(previous.frameUrl) &&
+              isBlobFrameURL(locator.frameUrl) &&
+              locator.frameUrl !== previous.frameUrl &&
+              new URL(previous.frameUrl).origin === c.session.origin &&
+              new URL(locator.frameUrl).origin === c.session.origin,
+          );
+          if (corrections?.length !== 1) return { resolved: false };
+          const corrected = { ...a.action, target: corrections[0]!.locator };
+          const control = richTextControl(corrected, c.source);
+          if (
+            !control ||
+            control.textValue !== '' ||
+            control.name !== a.richTextSource.name ||
+            control.role !== a.richTextSource.role
+          )
+            return { resolved: false };
+          if (!observeRelation(e, c.session, c.source))
+            return { resolved: false };
+          delete e.coordination.refreshRequired;
+          // 冷开后同一草稿仍为空。旧结构路径因伪元素偏移，保留旧动作并允许重新规划。
+          a.status = 'cancelled';
+          a.evidence = [control.name];
+          a.resultSource = pageSourceSchema.strip().parse(c.source);
+          this.save(task.id, e);
+          return { resolved: true };
         }
         if (c.kind === 'disclosure-observed') {
           const a = e.actions.find((action) => action.id === c.id);

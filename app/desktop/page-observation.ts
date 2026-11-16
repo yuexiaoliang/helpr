@@ -135,6 +135,9 @@ export function pageObservation(
   const links: NonNullable<PageObservation['links']> = [];
   const controls: NonNullable<PageObservation['controls']> = [];
   const checkboxes: NonNullable<PageObservation['checkboxes']> = [];
+  const richTextPathCorrections: NonNullable<
+    PageObservation['richTextPathCorrections']
+  > = [];
   for (const node of nodes) {
     if (node.ignored || excluded.has(node.nodeId)) continue;
     const name = typeof node.name?.value === 'string' ? node.name.value : '';
@@ -181,6 +184,21 @@ export function pageObservation(
           ? ''
           : undefined
       : undefined;
+    const locator =
+      richValue !== undefined &&
+      richNode?.path &&
+      (blob || role !== 'textbox' || !name || name.length > 500)
+        ? {
+            richTextNodeId: node.backendDOMNodeId!,
+            path: richNode.path,
+            frameUrl: url,
+          }
+        : undefined;
+    if (locator && richNode?.pathWithPseudo)
+      richTextPathCorrections.push({
+        pathWithPseudo: richNode.pathWithPseudo,
+        locator,
+      });
     if (
       ([
         'button',
@@ -219,16 +237,7 @@ export function pageObservation(
                 richText: {
                   rule: 'contenteditable-ax-v1' as const,
                   backendNodeId: node.backendDOMNodeId!,
-                  ...(richNode?.path &&
-                  (blob || role !== 'textbox' || !name || name.length > 500)
-                    ? {
-                        locator: {
-                          richTextNodeId: node.backendDOMNodeId!,
-                          path: richNode.path,
-                          frameUrl: url,
-                        },
-                      }
-                    : {}),
+                  ...(locator ? { locator } : {}),
                   valueSource:
                     typeof node.value?.value === 'string'
                       ? ('ax' as const)
@@ -335,6 +344,9 @@ export function pageObservation(
     links: links.slice(0, 300),
     controls: controls.slice(0, 500),
     checkboxes: checkboxes.slice(0, 500),
+    ...(richTextPathCorrections.length && {
+      richTextPathCorrections: richTextPathCorrections.slice(0, 500),
+    }),
     generation,
     observedAt: Date.now(),
     truncated:

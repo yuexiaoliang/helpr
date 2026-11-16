@@ -15,6 +15,7 @@ const snapshotSchema = z.object({
             value: z.array(z.number().int()),
           })
           .optional(),
+        pseudoType: z.object({ index: z.array(z.number().int()) }).optional(),
         nodeName: z.array(z.number().int()),
         nodeValue: z.array(z.number().int()),
         attributes: z.array(z.array(z.number().int())),
@@ -35,6 +36,7 @@ export function richTextObservation(snapshot: unknown, url: string) {
       text: string;
       supported: boolean;
       path?: string;
+      pathWithPseudo?: string;
       caretPlaceholder?: true;
     }
   >();
@@ -72,6 +74,7 @@ export function richTextObservation(snapshot: unknown, url: string) {
     children[parent]!.push(i);
   }
   const visible = new Set(doc.layout.nodeIndex);
+  const pseudo = new Set(n.pseudoType?.index);
   const allowed = new Set([
     'BODY',
     'DIV',
@@ -204,6 +207,7 @@ export function richTextObservation(snapshot: unknown, url: string) {
     }
     // 只沿真实元素父链形成位置；shadow/document-fragment不转换成普通CSS路径。
     const parts: string[] = [];
+    const partsWithPseudo: string[] = [];
     for (let index = root; index > 0; index = n.parentIndex[index]!) {
       const name = strings[n.nodeName[index]!] ?? '';
       if (
@@ -216,17 +220,23 @@ export function richTextObservation(snapshot: unknown, url: string) {
         parts.length = 0;
         break;
       }
-      const siblings = children[n.parentIndex[index]!]!.filter(
+      const snapshotSiblings = children[n.parentIndex[index]!]!.filter(
         (i) => n.nodeType![i] === 1,
       );
-      parts.unshift(
-        name.toLowerCase() +
-          ':nth-child(' +
-          (siblings.indexOf(index) + 1) +
-          ')',
+      const siblings = snapshotSiblings.filter(
+        (i) => !pseudo.has(i) && !strings[n.nodeName[i]!]?.startsWith('::'),
       );
+      if (!siblings.includes(index)) {
+        parts.length = 0;
+        break;
+      }
+      const part = (ordinal: number) =>
+        `${name.toLowerCase()}:nth-child(${ordinal})`;
+      parts.unshift(part(siblings.indexOf(index) + 1));
+      partsWithPseudo.unshift(part(snapshotSiblings.indexOf(index) + 1));
     }
     const path = parts.join(' > ');
+    const pathWithPseudo = partsWithPseudo.join(' > ');
     result.set(id, {
       empty,
       text,
@@ -234,7 +244,12 @@ export function richTextObservation(snapshot: unknown, url: string) {
       ...(hasPlaceholderDecoration &&
         text === '\uFEFF' && { caretPlaceholder: true }),
       ...(path.startsWith('html:nth-child(1) > ') && path.length <= 2000
-        ? { path }
+        ? {
+            path,
+            ...(path !== pathWithPseudo && pathWithPseudo.length <= 2000
+              ? { pathWithPseudo }
+              : {}),
+          }
         : {}),
     });
   }
