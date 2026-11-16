@@ -53,6 +53,7 @@ import { pageSourceSchema, type PageObservation } from '../shared/model';
 import { materialFailureMessage } from '../shared/material';
 import {
   currentWorkflow,
+  observedControl,
   replayStep,
   reboundAction,
   workflowTargetUrl,
@@ -156,6 +157,63 @@ const receipt = z
     resolved: z.boolean().optional(),
   })
   .passthrough();
+
+function approvedPanelSubmission(
+  execution: TaskExecution,
+  source: PageObservation,
+): NextStep | undefined {
+  const publication = execution.publication;
+  const disclosure = execution.actions.at(-1);
+  const prompt = 'Are you ready to publish?';
+  if (
+    !publication?.approvalId ||
+    publication.attachment?.targetUrl !== source.url ||
+    execution.loginOrigin ||
+    disclosure?.goalVersion !== execution.goalVersion ||
+    disclosure.effect !== 'interaction' ||
+    disclosure.status !== 'confirmed' ||
+    disclosure.action.kind !== 'click' ||
+    disclosure.action.target.name !== 'Publish' ||
+    disclosure.action.target.within?.role !== 'region' ||
+    disclosure.action.target.within.name === 'Publish' ||
+    !disclosure.evidence.includes(prompt) ||
+    disclosure.resultSource?.url !== source.url ||
+    !source.text.includes(prompt)
+  )
+    return;
+  const categories = source.checkboxes?.filter(
+    (control) =>
+      control.frameUrl === source.url &&
+      control.name === publication.destination,
+  );
+  const action: WebAction = {
+    kind: 'click',
+    target: {
+      role: 'button',
+      name: 'Publish',
+      exact: true,
+      within: { role: 'region', name: 'Publish', exact: true },
+    },
+  };
+  if (
+    categories?.length !== 1 ||
+    !categories[0]?.checked ||
+    !observedControl(action, source)
+  )
+    return;
+  const { fields, articleId, destination, content, attachment, approvalId } =
+    publication;
+  return {
+    decision: 'act',
+    effect: 'publication',
+    summary: '按已确认的预览提交发布。',
+    evidence: [prompt, destination],
+    previous: null,
+    action,
+    publication: { fields, articleId, destination, content, attachment },
+    approvalId,
+  };
+}
 /** 任务意图与派发公开入口。记录进程之外保留即时阻断，所有等待之后重新核对。 */
 export class ExecutionService {
   private planTick = false;
@@ -2193,6 +2251,7 @@ export class ExecutionService {
       }
       let stalePlans = 0;
       let filePickerRejected = false;
+      const disclosureReads = new Map<string, number>();
       for (let index = 0; index < 20; index++) {
         if (!this.live(job)) return;
         let observed = await this.abortable(
@@ -2320,6 +2379,23 @@ export class ExecutionService {
           });
           if (!this.live(job)) return;
           if (result.resolved === true) continue;
+          if (
+            pending.returned &&
+            pending.action.target.name === 'Publish' &&
+            pending.action.target.within?.role === 'region' &&
+            pending.binding.targetId === observed.binding.targetId &&
+            pending.preconditions?.includes('[button] Publish (expanded=false)')
+          ) {
+            const reads = disclosureReads.get(pending.id) ?? 0;
+            if (reads < 4) {
+              disclosureReads.set(pending.id, reads + 1);
+              await this.abortable(
+                () => new Promise<void>((resolve) => setTimeout(resolve, 250)),
+                job.abort.signal,
+              );
+              continue;
+            }
+          }
         }
         if (
           pending?.action.kind === 'check' &&
@@ -2447,9 +2523,14 @@ export class ExecutionService {
         }
         let step: NextStep;
         try {
+          const preparedStep = replaying
+            ? replay
+            : !pending && !use
+              ? approvedPanelSubmission(current, observed.observation)
+              : undefined;
           step = nextStepSchema.parse(
-            replaying
-              ? replay
+            preparedStep
+              ? preparedStep
               : await this.abortable(
                   () =>
                     this.ports.propose({

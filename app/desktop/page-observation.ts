@@ -211,6 +211,8 @@ export function pageObservation(
             .filter((scope) => scope.role === 'region')
             .map((scope) => scope.name)
         : [];
+    const expanded = node.properties?.find((p) => p.name === 'expanded')?.value
+      .value;
     if (
       ([
         'button',
@@ -236,6 +238,9 @@ export function pageObservation(
           (p) => p.name === 'disabled' && p.value.value === true,
         ),
         ...(regions.length > 0 && regions.length <= 8 ? { regions } : {}),
+        ...(role === 'button' && typeof expanded === 'boolean'
+          ? { expanded }
+          : {}),
         ...(role === 'textbox' || isRich
           ? {
               readOnly:

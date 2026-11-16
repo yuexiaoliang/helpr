@@ -859,6 +859,7 @@ test.each([
   'panel-reopened',
   'panel-without-toggle',
   'scoped-open',
+  'scoped-open-while-disabled',
   'scoped-reopened',
   'scoped-without-final-button',
 ])('草稿编辑器按当前展开状态核对旧交互：%s', async (mode) => {
@@ -873,8 +874,10 @@ test.each([
   const opened = [
     'observed-open',
     'scoped-open',
+    'scoped-open-while-disabled',
     'scoped-without-final-button',
   ].includes(mode);
+  const settling = mode === 'scoped-open-while-disabled';
   const region = 'Editor top bar';
   const button = {
     role: 'button',
@@ -964,15 +967,20 @@ test.each([
     ...source,
     generation: 2,
     observedAt: 101,
-    text: `编辑\n[button] ${button.name} (expanded=${opened})${mode === 'panel-reopened' ? `\n${topButton}` : scoped && opened ? '\nAre you ready to publish?' : ''}`,
+    text: `编辑\n[button] ${button.name} (expanded=${opened}${settling ? ' disabled=true' : ''})${mode === 'panel-reopened' ? `\n${topButton}` : scoped && opened ? '\nAre you ready to publish?' : ''}`,
     controls:
       mode === 'ambiguous'
         ? [button, button]
         : mode === 'panel-reopened'
           ? [button, { ...button, name: 'Publish' }]
-          : mode === 'scoped-open'
-            ? [button, { ...button, regions: ['Publish'] }]
-            : [button],
+          : settling
+            ? [
+                { ...button, expanded: true, disabled: true },
+                { ...button, regions: ['Publish'] },
+              ]
+            : mode === 'scoped-open'
+              ? [button, { ...button, regions: ['Publish'] }]
+              : [button],
   };
   const nextRun = 'next-settings';
   records.execution({ kind: 'claim', taskId, runId: nextRun, session: next });
@@ -988,7 +996,7 @@ test.each([
     mode === 'panel-reopened' ||
     mode === 'scoped-reopened'
       ? 'cancelled'
-      : mode === 'observed-open' || mode === 'scoped-open'
+      : mode === 'observed-open' || mode === 'scoped-open' || settling
         ? 'confirmed'
         : 'unknown';
   expect(

@@ -70,6 +70,7 @@ export const observedControlSchema = z.strictObject({
   frameUrl: z.url(),
   disabled: z.boolean(),
   regions: z.array(z.string().min(1).max(500)).min(1).max(8).optional(),
+  expanded: z.boolean().optional(),
   selectedLabel: z.string().max(500).optional(),
   textValue: z.string().max(4000).optional(),
   readOnly: z.boolean().optional(),

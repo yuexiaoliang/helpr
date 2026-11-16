@@ -3250,13 +3250,19 @@ export class ExecutionRecords {
               control.name === name &&
               (!region || control.regions?.includes(region.name)),
           );
+          if (controls?.length !== 1) return { resolved: false };
+          const control = controls[0]!;
+          const expanded =
+            scopedPublish && control.expanded !== undefined
+              ? control.expanded
+              : current.length === 1
+                ? current[0] === line(true)
+                : undefined;
           if (
-            current.length !== 1 ||
-            controls?.length !== 1 ||
-            controls[0]?.disabled
+            expanded === undefined ||
+            (control.disabled && (!scopedPublish || !expanded))
           )
             return { resolved: false };
-          const expanded = current[0] === line(true);
           const pairedPublishClosed =
             name === 'Open publish panel' &&
             !expanded &&
@@ -3315,7 +3321,9 @@ export class ExecutionRecords {
           // 重开只提供当前编辑器布局，保留旧交互并按当前状态继续。
           a.status =
             expanded && !reopenedDisclosure ? 'confirmed' : 'cancelled';
-          a.evidence = [current[0]!];
+          a.evidence = [current[0] ?? name];
+          if (expanded && publishPanelOpen)
+            a.evidence.push('Are you ready to publish?');
           a.resultSource = pageSourceSchema.strip().parse(c.source);
           a.resultLinks = c.source.links ?? [];
           this.save(task.id, e);
