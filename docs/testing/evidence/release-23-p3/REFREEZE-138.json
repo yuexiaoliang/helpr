@@ -1,0 +1,164 @@
+{
+  "phase": "P3",
+  "candidate": 138,
+  "predecessor": 137,
+  "sourceCommit": "df4ae749b1965ef78b1d7215fa49aee00651397a",
+  "status": "refrozen",
+  "artifact": {
+    "path": "/Users/yuexiaoliang/projects/helpr/dist/candidates/release-p4-settled-publish-0-2-3/mac-arm64/helpr.app",
+    "sha256": "d7c5abb6c656a167b554f6e0dea4e9397c77c5c351f04d7930529988ee6ea781",
+    "manifest": {
+      "path": ".local/workspace-validation/build-138.json",
+      "sha256": "1204452c1326fbaa05e6c51e8b5d27751727ebf0da9ded2d629cf5f3dc752554"
+    },
+    "preflight": {
+      "path": ".local/workspace-validation/p4-recovery/preflight-138/PREFLIGHT.json",
+      "sha256": "6fe538f44d2f1b1ab8c6186bd50cf5fec4086677e6042bdf1ce13ac0ae240fbe"
+    }
+  },
+  "p3Acceptance": {
+    "passed": true,
+    "firstReadyMs": 4522,
+    "coldReadyMs": 1588,
+    "settled": {
+      "from": 1794822632487,
+      "to": 1794822932604,
+      "spanMs": 300117,
+      "samples": 101,
+      "maxSampleGapMs": 3006,
+      "tailFrom": 1794822752604,
+      "tailSamples": 60,
+      "tailRangeMiB": 63.484375,
+      "peakMiB": 1822.5,
+      "modelCalls": 0,
+      "siteEffects": 0
+    },
+    "native": {
+      "evidence": {
+        "path": ".local/workspace-validation/p4-recovery/native-138.json",
+        "sha256": "53181d769347faf79d49c49bd40a9919ca98c22a0ef7910003d854a64bb72dc5"
+      },
+      "run": {
+        "path": ".local/workspace-validation/run-1794822602455/result.json",
+        "sha256": "64ab73d0994c9770ca1bc34f363f06eb3f137697959c34a29fd54b6db57e69a3"
+      },
+      "durationsMs": [
+        830,
+        516,
+        518,
+        528,
+        638,
+        623
+      ],
+      "delayedAttempts": []
+    }
+  },
+  "performance": {
+    "rss": {
+      "path": ".local/workspace-validation/run-1794822602455/result.json",
+      "sha256": "64ab73d0994c9770ca1bc34f363f06eb3f137697959c34a29fd54b6db57e69a3"
+    },
+    "freshInstallAndCold": {
+      "path": ".local/workspace-validation/run-1794822602455/result.json",
+      "sha256": "64ab73d0994c9770ca1bc34f363f06eb3f137697959c34a29fd54b6db57e69a3"
+    },
+    "failedRssAttempts": [],
+    "slowColdInRssRunMs": 1588
+  },
+  "fixture": {
+    "evidence": {
+      "path": ".local/workspace-validation/run-1794822556631/result.json",
+      "sha256": "4a6c3581c60aea868b9de7aa2144daf1ef89cdcc3d1ae9dcaab289ba17d13e03"
+    },
+    "precedingAttempt": {
+      "path": ".local/workspace-validation/run-1794820957703/result.json",
+      "sha256": "473bfc285b827624b6cbc8cc5c99c4726723c271e59bf2276a5730aa6410c549"
+    },
+    "uploadConfirmedOnColdOpen": true,
+    "verifiedEmptyAndTypedParagraph": true,
+    "cssPseudoElementIgnored": true,
+    "settings": {
+      "previous": "44bdcb34-9630-49a7-b72a-b3bb62099d9d",
+      "oldStatus": "cancelled",
+      "newStatus": "confirmed",
+      "toggles": 2
+    },
+    "previewRecovery": {
+      "rejectedDestination": "http://127.0.0.1:56488/link-start（文章栏目：日报）",
+      "approvedDestination": "日报",
+      "singleSubmit": true,
+      "bytesVerified": true,
+      "status": "complete",
+      "continuationDelivered": true,
+      "scopedDisclosures": 2,
+      "settledScopedPanel": true,
+      "approvedWithoutAnotherPlan": true
+    },
+    "realFailure": {
+      "path": "docs/testing/evidence/release-23-p3/P4-REVIEW-137.json",
+      "sha256": "7720ca456cf820910c8cf6f4ebf1e5005020d0fe1fff565d3bcde84373b5c754"
+    }
+  },
+  "source": {
+    "workspace": 649,
+    "validator": 41,
+    "legacy": 25,
+    "checks": {
+      "path": ".local/workspace-validation/p4-recovery/source-138-full.log",
+      "sha256": "e7bd4478ff44a3ce2380d79ea78862c82e5d032b04f5060f4df5bf515079babd"
+    }
+  },
+  "p4Inputs": {
+    "file": "tests/fixtures/release-23-real-business-v1/INPUTS.json",
+    "sha256": "ac799053df77edb174b1a1ae94280cef5262179817c81fa42a20dd6208add947",
+    "count": 10,
+    "model": {
+      "provider": "DeepSeek",
+      "model": "deepseek-flash",
+      "protocol": "chat-completions",
+      "sdkRetries": 0,
+      "outputTokens": 2048,
+      "configuration": "沿用本机受保护配置，执行前确认非秘密配置与实际记录，账本不保存密钥。"
+    },
+    "limits": {
+      "requests": 120,
+      "reservedTokens": 1200000,
+      "outputTokensPerRequest": 2048,
+      "attachments": 10,
+      "newContents": 10,
+      "publishes": 10,
+      "minutes": 90
+    },
+    "consumed": {
+      "requests": 88,
+      "reservedTokens": 6304142,
+      "attachments": 1,
+      "newContents": 2,
+      "publishes": 0
+    }
+  },
+  "p4Batch": {
+    "status": "stopped",
+    "nextSample": "R23-FIRST-A",
+    "draftId": 162,
+    "verifiedSamples": 0,
+    "ledgerAtGate": {
+      "path": ".local/workspace-validation/p4-recovery/ledger-at-138.json",
+      "sha256": "85c94fdd947c496dafbb99187435ce6d2a56999798ab48a29ffda19bfbd28233"
+    }
+  },
+  "cleanup": {
+    "pids": 84,
+    "groups": 18,
+    "allCleared": true,
+    "leaseReleased": true,
+    "reusedProcessNumbers": []
+  },
+  "cumulative": {
+    "builds": 138,
+    "installs": 50,
+    "starts": 711,
+    "faults": 74,
+    "cleanups": 26
+  }
+}
