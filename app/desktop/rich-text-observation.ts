@@ -100,14 +100,14 @@ export function richTextObservation(snapshot: unknown, url: string) {
       counts.get(id) !== 1
     )
       continue;
-    // 部分编辑器用一个零宽填充字符和 CSS 占位文字表示空段落。
-    // 只接受紧邻填充字符的空装饰节点，仍须由同一 AX 节点核对。
+    // 只接受纯文本段落末尾的空 CSS 占位装饰。输入后装饰仍可能存在，
+    // 此时正文仍须完整匹配 AX。只有单个零宽填充字符表示空值。
     const paragraphChildren = children[root]!;
     const placeholder =
       rootTag === 'P' && a.get('role') === 'document'
         ? paragraphChildren.at(-1)
         : undefined;
-    const padding = paragraphChildren.slice(0, -1);
+    const textNodes = paragraphChildren.slice(0, -1);
     const decoration =
       placeholder === undefined
         ? undefined
@@ -120,7 +120,7 @@ export function richTextObservation(snapshot: unknown, url: string) {
       ?.get('style')
       ?.split(';')
       .map((rule) => rule.replace(/\s/g, ''));
-    const caretPlaceholder =
+    const hasPlaceholderDecoration =
       placeholder !== undefined &&
       strings[n.nodeName[placeholder]!] === 'SPAN' &&
       n.nodeValue[placeholder] === -1 &&
@@ -131,13 +131,13 @@ export function richTextObservation(snapshot: unknown, url: string) {
       strings[n.nodeName[decoration]!] === '::after' &&
       n.nodeValue[decoration] === -1 &&
       !children[decoration]!.length &&
-      (padding.length === 1 || padding.length === 2) &&
-      padding.every(
+      (textNodes.length === 1 || textNodes.length === 2) &&
+      textNodes.every(
         (index, position) =>
           strings[n.nodeName[index]!] === '#text' &&
           !children[index]!.length &&
-          (strings[n.nodeValue[index]!] ?? '') ===
-            (position === padding.length - 1 ? '\uFEFF' : ''),
+          (position === textNodes.length - 1 ||
+            (strings[n.nodeValue[index]!] ?? '') === ''),
       );
     let valid = true,
       empty = true,
@@ -167,7 +167,7 @@ export function richTextObservation(snapshot: unknown, url: string) {
         !name ||
         (!allowed.has(name) &&
           !(index === root && /^(?:A|H[1-6])$/.test(rootTag ?? '')) &&
-          !(caretPlaceholder && index === decoration)) ||
+          !(hasPlaceholderDecoration && index === decoration)) ||
         attrs.has('hidden') ||
         attrs.get('aria-hidden') === 'true' ||
         attrs.get('aria-disabled') === 'true' ||
@@ -231,7 +231,8 @@ export function richTextObservation(snapshot: unknown, url: string) {
       empty,
       text,
       supported: valid,
-      ...(caretPlaceholder && { caretPlaceholder: true }),
+      ...(hasPlaceholderDecoration &&
+        text === '\uFEFF' && { caretPlaceholder: true }),
       ...(path.startsWith('html:nth-child(1) > ') && path.length <= 2000
         ? { path }
         : {}),
