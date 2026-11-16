@@ -1,3 +1,4 @@
+import { isDeepStrictEqual } from 'node:util';
 import { z } from 'zod';
 import type { ObservationBroker } from './observation-broker';
 
@@ -64,6 +65,58 @@ function onlyBlockUsageChanged(
   }
 }
 
+const editorPreferencesSchema = z.looseObject({
+  _modified: z.iso.datetime(),
+  core: z
+    .looseObject({
+      isComplementaryAreaVisible: z.boolean().optional(),
+      openPanels: z.array(z.string().regex(/^[a-z0-9_-]{1,100}$/)).optional(),
+    })
+    .optional(),
+});
+
+const initialEditorPreferencesSchema = z.strictObject({
+  core: z.strictObject({}),
+  'core/edit-post': z
+    .strictObject({ welcomeGuide: z.boolean().optional() })
+    .optional(),
+});
+
+function onlyEditorPanelsChanged(
+  oldValue: string | undefined,
+  newValue: string,
+) {
+  try {
+    const parse = (value: string) => {
+      if (value.length > 20000) throw Error('PREFERENCE_TOO_LARGE');
+      const { _modified, core, ...preferences } = editorPreferencesSchema.parse(
+        JSON.parse(value),
+      );
+      const { isComplementaryAreaVisible, openPanels, ...rest } = core ?? {};
+      return {
+        modified: Date.parse(_modified),
+        layout: { isComplementaryAreaVisible, openPanels },
+        preferences: { ...preferences, core: rest },
+      };
+    };
+    const after = parse(newValue);
+    if (oldValue === undefined)
+      return (
+        (after.layout.isComplementaryAreaVisible !== undefined ||
+          after.layout.openPanels !== undefined) &&
+        initialEditorPreferencesSchema.safeParse(after.preferences).success
+      );
+    const before = parse(oldValue);
+    return (
+      after.modified >= before.modified &&
+      !isDeepStrictEqual(before.layout, after.layout) &&
+      isDeepStrictEqual(before.preferences, after.preferences)
+    );
+  } catch {
+    return false;
+  }
+}
+
 /** 控制拥有者独占的只读变化通知。只传播来源，不保存键、值或数据库内容。 */
 export class StorageMonitor {
   private readonly targets = new Map<
@@ -111,22 +164,27 @@ export class StorageMonitor {
         method.startsWith('DOMStorage.domStorage') &&
         params.storageId?.isLocalStorage
       ) {
-        // 已核对的 WordPress 区块计数仅用于更新编辑器的区块推荐。
+        // WordPress 的区块推荐计数及编辑器面板布局只影响界面。
         if (
           ((method === 'DOMStorage.domStorageItemUpdated' &&
             params.oldValue !== undefined) ||
             method === 'DOMStorage.domStorageItemAdded') &&
           params.storageId.securityOrigin === owner.origin &&
-          /^WP_DATA_USER_[1-9]\d*$/.test(params.key ?? '') &&
-          params.newValue &&
-          onlyBlockUsageChanged(
+          params.newValue
+        ) {
+          const before =
             method === 'DOMStorage.domStorageItemAdded'
               ? undefined
-              : params.oldValue,
-            params.newValue,
+              : params.oldValue;
+          const key = params.key ?? '';
+          if (
+            (/^WP_DATA_USER_[1-9]\d*$/.test(key) &&
+              onlyBlockUsageChanged(before, params.newValue)) ||
+            (/^WP_PREFERENCES_USER_[1-9]\d*$/.test(key) &&
+              onlyEditorPanelsChanged(before, params.newValue))
           )
-        )
-          return;
+            return;
+        }
         // 嵌入网页的共享存储也可能影响所属任务；缺身份不推断无影响。
         this.changed(owner.origin);
         if (

@@ -755,6 +755,57 @@ test('共享存储监视只接受自有会话通知，只传来源；不向网�
     },
   });
   expect(origins).toHaveLength(3);
+
+  const sidebar = {
+    core: {
+      isComplementaryAreaVisible: false,
+      openPanels: ['post-status', 'taxonomy-panel-category'],
+    },
+    'core/edit-post': { welcomeGuide: false },
+    _modified: '2026-11-16T07:23:45.000Z',
+  };
+  const opened = {
+    ...sidebar,
+    core: { ...sidebar.core, isComplementaryAreaVisible: true },
+    _modified: '2026-11-16T07:23:46.000Z',
+  };
+  const preferenceParams = { ...params, key: 'WP_PREFERENCES_USER_2' };
+  const storePreference = (
+    before: typeof sidebar | undefined,
+    after: unknown,
+    storageId = preferenceParams.storageId,
+  ) =>
+    notify({
+      method: before
+        ? 'DOMStorage.domStorageItemUpdated'
+        : 'DOMStorage.domStorageItemAdded',
+      sessionId: 'owned',
+      params: {
+        ...preferenceParams,
+        storageId,
+        oldValue: before && JSON.stringify(before),
+        newValue: JSON.stringify(after),
+      },
+    });
+  storePreference(undefined, sidebar);
+  storePreference(sidebar, opened);
+  storePreference(opened, {
+    ...opened,
+    core: { ...opened.core, openPanels: ['post-status'] },
+  });
+  expect(origins).toHaveLength(3);
+  storePreference(sidebar, { ...opened, session: 'changed' });
+  storePreference(undefined, { ...opened, account: 'changed' });
+  storePreference(sidebar, opened, {
+    ...preferenceParams.storageId,
+    securityOrigin: 'https://foreign.example.com',
+  });
+  expect(origins.slice(3)).toEqual([
+    'https://example.com',
+    'https://example.com',
+    'https://example.com',
+    'https://foreign.example.com',
+  ]);
 });
 
 test('未知派发与共享登录障碍同时保留；恢复登录不能授权重发', () => {
