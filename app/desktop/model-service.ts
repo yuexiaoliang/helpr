@@ -546,6 +546,13 @@ export class ModelService {
             publication: job.planning.publication ?? null,
             loginOrigin: job.planning.loginOrigin ?? null,
             clarifications: job.planning.clarifications ?? [],
+            ...(job.planning.continuation
+              ? {
+                  continuation: job.planning.continuation,
+                  continuationInstruction:
+                    'continuation 是用户继续本任务时给出的说明。结合当前页面及同一委托使用，网页权限、目标及发布确认按当前实际证据核对。',
+                }
+              : {}),
             previous: pending ? fact(pending) : null,
             history: job.planning.history.slice(-10).map(fact),
             schema: z.toJSONSchema(webProposalSchema, { reused: 'ref' }),

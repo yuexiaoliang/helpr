@@ -851,138 +851,147 @@ test.each(['file-block', 'file-picker'] as const)(
   },
 );
 
-test.each(['reopened', 'observed-open', 'ambiguous', 'wrong-session'])(
-  '草稿设置侧栏按当前展开状态核对旧交互：%s',
-  async (mode) => {
-    const { records, taskId, runId, observation } = await fixture();
-    const session = {
-      id: 'same-site',
-      epoch: `${randomUUID()}:0`,
-      origin: new URL(observation.url).origin,
-    };
-    const button = {
-      role: 'button',
-      name: 'Settings',
-      frameUrl: observation.url,
-      disabled: false,
-    };
-    const source = {
-      ...observation,
-      text: '编辑\n[button] Settings (expanded=false)',
-      controls: [button],
-    };
-    const binding = { targetId: 'prior-editor', generation: 1 };
-    records.execution({ kind: 'claim', taskId, runId, session });
-    records.execution({
-      kind: 'coordination-observed',
-      taskId,
-      runId,
-      session,
-      source,
-    });
-    records.execution({
-      kind: 'reserve',
-      taskId,
-      runId,
-      id: 'settings',
-      summary: '核对栏目设置',
-      effect: 'interaction',
-      action: {
-        kind: 'click',
-        target: {
-          role: 'button',
-          name: 'Settings',
-          exact: true,
-          frameUrl: source.url,
-        },
+test.each([
+  'reopened',
+  'observed-open',
+  'ambiguous',
+  'wrong-session',
+  'panel-reopened',
+  'panel-without-toggle',
+])('草稿编辑器按当前展开状态核对旧交互：%s', async (mode) => {
+  const { records, taskId, runId, observation } = await fixture();
+  const session = {
+    id: 'same-site',
+    epoch: `${randomUUID()}:0`,
+    origin: new URL(observation.url).origin,
+  };
+  const panel = mode.startsWith('panel-');
+  const button = {
+    role: 'button',
+    name: panel ? 'Open publish panel' : 'Settings',
+    frameUrl: observation.url,
+    disabled: false,
+  };
+  const closed = `[button] ${button.name} (expanded=false)`;
+  const topButton = '[button] Publish (expanded=false)';
+  const source = {
+    ...observation,
+    text: `编辑\n${closed}${panel ? `\n${topButton}` : ''}`,
+    controls: [button],
+  };
+  const binding = { targetId: 'prior-editor', generation: 1 };
+  records.execution({ kind: 'claim', taskId, runId, session });
+  records.execution({
+    kind: 'coordination-observed',
+    taskId,
+    runId,
+    session,
+    source,
+  });
+  records.execution({
+    kind: 'reserve',
+    taskId,
+    runId,
+    id: 'settings',
+    summary: '核对栏目设置',
+    effect: 'interaction',
+    action: {
+      kind: 'click',
+      target: {
+        role: 'button',
+        name: button.name,
+        exact: true,
+        frameUrl: source.url,
       },
-      source,
-      binding,
-      evidence: [
-        mode === 'observed-open'
-          ? '[button] Settings (expanded=false)'
-          : '编辑',
-      ],
-    });
-    records.execution({ kind: 'dispatch', taskId, runId, id: 'settings' });
+    },
+    source,
+    binding,
+    evidence: panel
+      ? [closed, topButton]
+      : [mode === 'observed-open' ? closed : '编辑'],
+  });
+  records.execution({ kind: 'dispatch', taskId, runId, id: 'settings' });
+  records.execution({
+    kind: 'reported',
+    taskId,
+    id: 'settings',
+    returned: false,
+  });
+  records.execution({
+    kind: 'preparation-observed',
+    taskId,
+    runId,
+    source,
+    facts: (['target', 'draft'] as const).map((kind) => ({
+      kind,
+      url: source.url,
+      materialId: null,
+      evidence: ['编辑'],
+    })),
+  });
+  records.execution({
+    kind: 'intent',
+    taskId,
+    requestId: 'stop-settings',
+    intent: 'stop',
+  });
+  records.execution({
+    kind: 'intent',
+    taskId,
+    requestId: 'resume-settings',
+    intent: 'continue',
+  });
+  const next = {
+    ...session,
+    id: mode === 'wrong-session' ? 'other-site-session' : session.id,
+    epoch: `${randomUUID()}:0`,
+  };
+  const after = {
+    ...source,
+    generation: 2,
+    observedAt: 101,
+    text: `编辑\n[button] ${button.name} (expanded=${mode === 'observed-open'})${mode === 'panel-reopened' ? `\n${topButton}` : ''}`,
+    controls:
+      mode === 'ambiguous'
+        ? [button, button]
+        : mode === 'panel-reopened'
+          ? [button, { ...button, name: 'Publish' }]
+          : [button],
+  };
+  const nextRun = 'next-settings';
+  records.execution({ kind: 'claim', taskId, runId: nextRun, session: next });
+  records.execution({
+    kind: 'coordination-observed',
+    taskId,
+    runId: nextRun,
+    session: next,
+    source: after,
+  });
+  const expected =
+    mode === 'reopened' || mode === 'panel-reopened'
+      ? 'cancelled'
+      : mode === 'observed-open'
+        ? 'confirmed'
+        : 'unknown';
+  expect(
     records.execution({
-      kind: 'reported',
-      taskId,
-      id: 'settings',
-      returned: false,
-    });
-    records.execution({
-      kind: 'preparation-observed',
-      taskId,
-      runId,
-      source,
-      facts: (['target', 'draft'] as const).map((kind) => ({
-        kind,
-        url: source.url,
-        materialId: null,
-        evidence: ['编辑'],
-      })),
-    });
-    records.execution({
-      kind: 'intent',
-      taskId,
-      requestId: 'stop-settings',
-      intent: 'stop',
-    });
-    records.execution({
-      kind: 'intent',
-      taskId,
-      requestId: 'resume-settings',
-      intent: 'continue',
-    });
-    const next = {
-      ...session,
-      id: mode === 'wrong-session' ? 'other-site-session' : session.id,
-      epoch: `${randomUUID()}:0`,
-    };
-    const after = {
-      ...source,
-      generation: 2,
-      observedAt: 101,
-      text: `编辑\n[button] Settings (expanded=${mode === 'observed-open'})`,
-      controls: mode === 'ambiguous' ? [button, button] : [button],
-    };
-    const nextRun = 'next-settings';
-    records.execution({ kind: 'claim', taskId, runId: nextRun, session: next });
-    records.execution({
-      kind: 'coordination-observed',
+      kind: 'disclosure-observed',
       taskId,
       runId: nextRun,
-      session: next,
+      id: 'settings',
       source: after,
-    });
-    const expected =
-      mode === 'reopened'
-        ? 'cancelled'
-        : mode === 'observed-open'
-          ? 'confirmed'
-          : 'unknown';
-    expect(
-      records.execution({
-        kind: 'disclosure-observed',
-        taskId,
-        runId: nextRun,
-        id: 'settings',
-        source: after,
-        binding: {
-          targetId:
-            mode === 'observed-open' ? binding.targetId : 'fresh-editor',
-          generation: 2,
-        },
-      }),
-    ).toMatchObject({ resolved: expected !== 'unknown' });
-    expect(records.snapshot().tasks[0]!.execution!.actions[0]).toMatchObject({
-      status: expected,
-      returned: false,
-      dispatchState: 'possible',
-    });
-  },
-);
+      binding: {
+        targetId: mode === 'observed-open' ? binding.targetId : 'fresh-editor',
+        generation: 2,
+      },
+    }),
+  ).toMatchObject({ resolved: expected !== 'unknown' });
+  expect(records.snapshot().tasks[0]!.execution!.actions[0]).toMatchObject({
+    status: expected,
+    returned: false,
+    dispatchState: 'possible',
+  });
+});
 
 test('素材网页观察只提取文件控件和实际链接，不带密码或隐藏值', () => {
   const text = materialObservation({

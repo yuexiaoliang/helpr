@@ -505,6 +505,7 @@ export const executionSchema = z
       })
       .optional(),
     loginOrigin: z.string().optional(),
+    continuation: z.string().trim().min(1).max(20000).optional(),
     question: questionSchema.optional(),
     answers: z
       .array(

@@ -1503,9 +1503,14 @@ export class ExecutionRecords {
           throw new Error('EXECUTION_STOPPED');
         if (c.intent === 'start' && e.pauseReason)
           throw Error('EXECUTION_CONTINUE_REQUIRED');
+        if (c.intent === 'continue' && !c.loginQuestionId) {
+          if (c.text) e.continuation = c.text;
+          else delete e.continuation;
+        }
         if (c.intent === 'revise') {
           delete e.agreementBinding;
           delete e.duplicateWork;
+          delete e.continuation;
           if (!c.text?.trim()) throw new Error('INVALID_REQUEST');
           delete e.publication;
           delete e.loginOrigin;
@@ -3244,18 +3249,34 @@ export class ExecutionRecords {
           )
             return { resolved: false };
           const expanded = current[0] === line(true);
-          const sameEditorSettings =
-            name === 'Settings' &&
+          const pairedPublishClosed =
+            name === 'Open publish panel' &&
+            !expanded &&
+            previous &&
+            a.preconditions?.includes('[button] Publish (expanded=false)') &&
+            after.filter(
+              (value) => value === '[button] Publish (expanded=false)',
+            ).length === 1 &&
+            c.source.controls?.filter(
+              (control) =>
+                control.role === 'button' &&
+                control.frameUrl === frameUrl &&
+                control.name === 'Publish' &&
+                !control.disabled,
+            ).length === 1;
+          const sameEditorDisclosure =
+            (name === 'Settings' || pairedPublishClosed) &&
             sameDraft &&
             a.coordination &&
             e.coordination?.status === 'ready' &&
             sameSession(a.coordination.session, e.coordination.session);
-          const reopenedSettings =
-            sameEditorSettings &&
+          const reopenedDisclosure =
+            sameEditorDisclosure &&
             a.runId !== c.runId &&
             a.binding.targetId !== c.binding.targetId;
           const settingsOpened =
-            sameEditorSettings &&
+            name === 'Settings' &&
+            sameEditorDisclosure &&
             previous &&
             expanded &&
             a.binding.targetId === c.binding.targetId;
@@ -3265,10 +3286,11 @@ export class ExecutionRecords {
             (a.runId === c.runId
               ? !reopened && expanded
               : sameDraft && reopened);
-          if (!reopenedSettings && !settingsOpened && !usual)
+          if (!reopenedDisclosure && !settingsOpened && !usual)
             return { resolved: false };
-          // 已重开的设置侧栏只提供当前布局。旧点击保持在历史里，由当前状态决定后续。
-          a.status = expanded && !reopenedSettings ? 'confirmed' : 'cancelled';
+          // 重开只提供当前编辑器布局，保留旧交互并按当前状态继续。
+          a.status =
+            expanded && !reopenedDisclosure ? 'confirmed' : 'cancelled';
           a.evidence = [current[0]!];
           a.resultSource = pageSourceSchema.strip().parse(c.source);
           a.resultLinks = c.source.links ?? [];

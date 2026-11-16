@@ -117,6 +117,7 @@ export type ProposalInput = {
   publication?: TaskExecution['publication'];
   loginOrigin?: string;
   clarifications?: { question: string; answer: string }[];
+  continuation?: string;
   history: ActionFact[];
   materials?: TaskExecution['materials'];
   preparation?: TaskExecution['preparation'];
@@ -2267,13 +2268,15 @@ export class ExecutionService {
           if (!this.live(job)) return;
           if (result.resolved === true) continue;
         }
-        const settingsDisclosure =
+        const editorDisclosure =
           pending?.action.kind === 'click' &&
           pending.action.target.role === 'button' &&
-          pending.action.target.name === 'Settings';
+          ['Settings', 'Open publish panel'].includes(
+            pending.action.target.name,
+          );
         if (
           pending?.action.kind === 'click' &&
-          (settingsDisclosure ||
+          (editorDisclosure ||
             (pending.action.target.role === 'button' &&
               pending.preconditions?.includes(
                 `[button] ${pending.action.target.name} (expanded=false)`,
@@ -2293,7 +2296,7 @@ export class ExecutionService {
             !current.loginOrigin &&
             observed.session &&
             (current.coordination.refreshRequired ||
-              (settingsDisclosure &&
+              (editorDisclosure &&
                 pending.coordination &&
                 sameSession(pending.coordination.session, observed.session)))
           ) {
@@ -2534,6 +2537,7 @@ export class ExecutionService {
                       clarifications: current.answers
                         ?.filter((a) => a.goalVersion === current.goalVersion)
                         .map((a) => ({ question: a.text, answer: a.answer })),
+                      continuation: current.continuation,
                       signal: job.abort.signal,
                       permit: (send) =>
                         this.ports.input
@@ -3018,6 +3022,17 @@ export class ExecutionService {
           return;
         }
         let dispatchObservation = observed;
+        if (
+          step.action.kind === 'click' &&
+          step.action.target.role === 'button' &&
+          step.action.target.name === 'Open publish panel' &&
+          (step.action.target.frameUrl ?? observed.observation.url) ===
+            observed.observation.url &&
+          observed.observation.text
+            .split('\n')
+            .includes('[button] Publish (expanded=false)')
+        )
+          throw Error('EXECUTION_LOCATOR_UNVERIFIED');
         let download: DownloadCheck | undefined;
         const finalAttachment =
           p?.attachment &&

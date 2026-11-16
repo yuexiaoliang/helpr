@@ -428,13 +428,19 @@ test.each([false, true])(
     if (approved) f.approve();
     const original = f.execution();
     f.post({ kind: 'intent', requestId: randomUUID(), intent: 'stop' });
-    f.post({ kind: 'intent', requestId: randomUUID(), intent: 'continue' });
+    f.post({
+      kind: 'intent',
+      requestId: randomUUID(),
+      intent: 'continue',
+      text: '继续并重新核对实际栏目',
+    });
     const resumed = f.execution();
     expect(resumed.phase).toBe('queued');
     expect(resumed.goalVersion).toBe(original.goalVersion);
     expect(resumed.actions).toEqual(original.actions);
     expect(resumed.materials).toEqual(original.materials);
     expect(resumed.preparation).toEqual(original.preparation);
+    expect(resumed.continuation).toBe('继续并重新核对实际栏目');
     expect(resumed.publication).toEqual(
       approved ? original.publication : undefined,
     );
