@@ -6,6 +6,52 @@ import { richTextLocatorSchema, type WebAction } from './web-action';
 import { richTextControl } from './rich-text';
 import type { PageObservation } from './model';
 
+export const publishPanelPrompt = 'Are you ready to publish?';
+
+export function publishPanelButton(
+  source: PageObservation,
+  toolbarRegion: string,
+): Extract<WebAction, { kind: 'click' }> | undefined {
+  if (source.truncated || !source.text.includes(publishPanelPrompt)) return;
+  const buttons = source.controls?.filter(
+    (control) =>
+      control.role === 'button' &&
+      control.name === 'Publish' &&
+      control.frameUrl === source.url,
+  );
+  if (buttons?.length !== 2) return;
+  const toolbar = buttons.find((button) =>
+    button.regions?.includes(toolbarRegion),
+  );
+  const submit = buttons.find(
+    (button) => !button.regions?.includes(toolbarRegion),
+  );
+  if (
+    !toolbar ||
+    !(
+      toolbar.expanded ??
+      source.text.split('\n').includes('[button] Publish (expanded=true)')
+    ) ||
+    !submit ||
+    submit.disabled ||
+    submit.expanded !== undefined
+  )
+    return;
+  const region = submit.regions?.find(
+    (name) => !toolbar.regions?.includes(name),
+  );
+  if (!region) return;
+  return {
+    kind: 'click',
+    target: {
+      role: 'button',
+      name: 'Publish',
+      exact: true,
+      within: { role: 'region', name: region, exact: true },
+    },
+  };
+}
+
 // 此 schema 也发送给模型，不能包含无法序列化为 JSON Schema 的 transform。
 const url = z
   .url()

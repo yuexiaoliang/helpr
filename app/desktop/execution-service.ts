@@ -29,6 +29,8 @@ import {
   samePublication,
   type DownloadCheck,
   type Publication,
+  publishPanelButton,
+  publishPanelPrompt,
 } from '../shared/publication';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
@@ -53,7 +55,6 @@ import { pageSourceSchema, type PageObservation } from '../shared/model';
 import { materialFailureMessage } from '../shared/material';
 import {
   currentWorkflow,
-  observedControl,
   replayStep,
   reboundAction,
   workflowTargetUrl,
@@ -164,7 +165,6 @@ function approvedPanelSubmission(
 ): NextStep | undefined {
   const publication = execution.publication;
   const disclosure = execution.actions.at(-1);
-  const prompt = 'Are you ready to publish?';
   if (
     !publication?.approvalId ||
     publication.attachment?.targetUrl !== source.url ||
@@ -175,10 +175,8 @@ function approvedPanelSubmission(
     disclosure.action.kind !== 'click' ||
     disclosure.action.target.name !== 'Publish' ||
     disclosure.action.target.within?.role !== 'region' ||
-    disclosure.action.target.within.name === 'Publish' ||
-    !disclosure.evidence.includes(prompt) ||
-    disclosure.resultSource?.url !== source.url ||
-    !source.text.includes(prompt)
+    !disclosure.evidence.includes(publishPanelPrompt) ||
+    disclosure.resultSource?.url !== source.url
   )
     return;
   const categories = source.checkboxes?.filter(
@@ -186,28 +184,18 @@ function approvedPanelSubmission(
       control.frameUrl === source.url &&
       control.name === publication.destination,
   );
-  const action: WebAction = {
-    kind: 'click',
-    target: {
-      role: 'button',
-      name: 'Publish',
-      exact: true,
-      within: { role: 'region', name: 'Publish', exact: true },
-    },
-  };
-  if (
-    categories?.length !== 1 ||
-    !categories[0]?.checked ||
-    !observedControl(action, source)
-  )
-    return;
+  const action = publishPanelButton(
+    source,
+    disclosure.action.target.within.name,
+  );
+  if (categories?.length !== 1 || !categories[0]?.checked || !action) return;
   const { fields, articleId, destination, content, attachment, approvalId } =
     publication;
   return {
     decision: 'act',
     effect: 'publication',
     summary: '按已确认的预览提交发布。',
-    evidence: [prompt, destination],
+    evidence: [publishPanelPrompt, destination],
     previous: null,
     action,
     publication: { fields, articleId, destination, content, attachment },
@@ -807,6 +795,7 @@ export class ExecutionService {
           'COORDINATION_EVIDENCE_MISSING',
           'COORDINATION_TARGET_CHANGED',
           'EXECUTION_EVIDENCE_MISSING',
+          'EXECUTION_LOCATOR_UNVERIFIED',
           'EXECUTION_SELECTION_UNVERIFIED',
           'EXECUTION_RICH_TEXT_UNVERIFIED',
           'BACKUP_REVIEW_REQUIRED',

@@ -64,6 +64,8 @@ import {
   publicationParts,
   verifyPublicationFields,
   publicationRichTextSources,
+  publishPanelButton,
+  publishPanelPrompt,
 } from '../shared/publication';
 import { z } from 'zod';
 import { hideTaskTab } from './task-tab';
@@ -3115,8 +3117,7 @@ export class ExecutionRecords {
             a?.action.kind === 'click' &&
             a.action.target.role === 'button' &&
             a.action.target.name === 'Publish' &&
-            region &&
-            region.name !== 'Publish';
+            region;
           if (
             !a ||
             a.action.kind !== 'click' ||
@@ -3291,18 +3292,7 @@ export class ExecutionRecords {
             a.runId !== c.runId &&
             a.binding.targetId !== c.binding.targetId;
           const publishPanelOpen =
-            scopedPublish &&
-            after.some((value) =>
-              value.includes('Are you ready to publish?'),
-            ) &&
-            c.source.controls?.filter(
-              (control) =>
-                control.role === 'button' &&
-                control.frameUrl === frameUrl &&
-                control.name === 'Publish' &&
-                control.regions?.includes('Publish') &&
-                !control.disabled,
-            ).length === 1;
+            scopedPublish && !!publishPanelButton(c.source, scopedPublish.name);
           const disclosureOpened =
             (name === 'Settings' || publishPanelOpen) &&
             sameEditorDisclosure &&
@@ -3322,8 +3312,7 @@ export class ExecutionRecords {
           a.status =
             expanded && !reopenedDisclosure ? 'confirmed' : 'cancelled';
           a.evidence = [current[0] ?? name];
-          if (expanded && publishPanelOpen)
-            a.evidence.push('Are you ready to publish?');
+          if (expanded && publishPanelOpen) a.evidence.push(publishPanelPrompt);
           a.resultSource = pageSourceSchema.strip().parse(c.source);
           a.resultLinks = c.source.links ?? [];
           this.save(task.id, e);
