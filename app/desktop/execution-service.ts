@@ -2343,6 +2343,7 @@ export class ExecutionService {
             'Publish',
             'Add default block',
             'Block Inserter',
+            'Add block',
           ].includes(pending.action.target.name);
         if (
           pending?.action.kind === 'click' &&
@@ -2394,6 +2395,8 @@ export class ExecutionService {
             pending.returned &&
             pending.binding.targetId === observed.binding.targetId &&
             (pending.action.target.name === 'Add default block' ||
+              (pending.action.target.name === 'Add block' &&
+                pending.action.target.frameUrl?.startsWith('blob:')) ||
               (pending.action.target.name === 'Block Inserter' &&
                 pending.action.target.within?.role === 'region') ||
               (pending.action.target.name === 'Publish' &&

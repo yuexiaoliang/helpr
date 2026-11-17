@@ -3403,7 +3403,15 @@ export class ExecutionRecords {
             this.save(task.id, e);
             return { resolved: true };
           }
-          if (a.action.target.role !== 'button' || frameUrl !== c.source.url)
+          const canvasInserter =
+            a.action.target.role === 'button' &&
+            name === 'Add block' &&
+            isBlobFrameURL(frameUrl) &&
+            new URL(frameUrl).origin === new URL(c.source.url).origin;
+          if (
+            a.action.target.role !== 'button' ||
+            (frameUrl !== c.source.url && !canvasInserter)
+          )
             return { resolved: false };
           const line = (expanded: boolean) =>
             `[button] ${name} (expanded=${expanded})`;
@@ -3415,17 +3423,24 @@ export class ExecutionRecords {
           const current = after.filter(
             (value) => value === line(true) || value === line(false),
           );
+          const freshCanvas = a.binding.targetId !== c.binding.targetId;
           const controls = c.source.controls?.filter(
             (control) =>
               control.role === 'button' &&
-              control.frameUrl === frameUrl &&
+              (canvasInserter && freshCanvas
+                ? isBlobFrameURL(control.frameUrl) &&
+                  control.frameUrl !== frameUrl &&
+                  new URL(control.frameUrl).origin ===
+                    new URL(c.source.url).origin
+                : control.frameUrl === frameUrl) &&
               control.name === name &&
               (!region || control.regions?.includes(region.name)),
           );
           if (controls?.length !== 1) return { resolved: false };
           const control = controls[0]!;
           const expanded =
-            (scopedPublish || scopedInserter) && control.expanded !== undefined
+            (scopedPublish || scopedInserter || canvasInserter) &&
+            control.expanded !== undefined
               ? control.expanded
               : current.length === 1
                 ? current[0] === line(true)
@@ -3453,13 +3468,14 @@ export class ExecutionRecords {
           const sameEditorDisclosure =
             (name === 'Settings' ||
               pairedPublishClosed ||
-              ((scopedPublish || (scopedInserter && a.returned)) &&
+              ((scopedPublish ||
+                ((scopedInserter || canvasInserter) && a.returned)) &&
                 previous)) &&
             sameDraft &&
             a.coordination &&
             e.coordination?.status === 'ready' &&
             sameSession(a.coordination.session, e.coordination.session);
-          if (scopedInserter && !sameEditorDisclosure)
+          if ((scopedInserter || canvasInserter) && !sameEditorDisclosure)
             return { resolved: false };
           const reopenedDisclosure =
             sameEditorDisclosure &&
@@ -3468,7 +3484,10 @@ export class ExecutionRecords {
           const publishPanelOpen =
             scopedPublish && !!publishPanelButton(c.source, scopedPublish.name);
           const disclosureOpened =
-            (name === 'Settings' || publishPanelOpen || scopedInserter) &&
+            (name === 'Settings' ||
+              publishPanelOpen ||
+              scopedInserter ||
+              canvasInserter) &&
             sameEditorDisclosure &&
             previous &&
             expanded &&
