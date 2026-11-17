@@ -3239,6 +3239,63 @@ export class ExecutionRecords {
                 f.goalVersion === e.goalVersion &&
                 f.url === c.source.url,
             );
+          if (
+            a.action.target.role === 'button' &&
+            name === 'Add default block' &&
+            isBlobFrameURL(frameUrl) &&
+            new URL(frameUrl).origin === new URL(c.source.url).origin
+          ) {
+            const freshCanvas =
+              a.runId !== c.runId && a.binding.targetId !== c.binding.targetId;
+            if (
+              !sameDraft ||
+              !a.returned ||
+              !a.preconditions?.some(
+                (value) => value === name || value === `[button] ${name}`,
+              ) ||
+              !a.coordination ||
+              e.coordination?.status !== 'ready' ||
+              !sameSession(a.coordination.session, e.coordination.session) ||
+              (reopened && !freshCanvas)
+            )
+              return { resolved: false };
+            const paragraph =
+              'Empty block; start writing or type forward slash to choose a block';
+            const controls = c.source.controls?.filter(
+              (control) =>
+                isBlobFrameURL(control.frameUrl) &&
+                new URL(control.frameUrl).origin ===
+                  new URL(c.source.url).origin &&
+                ((control.role === 'button' && control.name === name) ||
+                  (control.role === 'document' && control.name === paragraph)),
+            );
+            const control = controls?.[0];
+            if (
+              controls?.length !== 1 ||
+              !control ||
+              control.disabled ||
+              (freshCanvas
+                ? control.frameUrl === frameUrl
+                : control.frameUrl !== frameUrl) ||
+              !c.source.text.includes(control.name)
+            )
+              return { resolved: false };
+            const inserted = control.role === 'document';
+            if (
+              inserted
+                ? !control.richText?.locator ||
+                  control.readOnly !== false ||
+                  control.textValue !== ''
+                : !freshCanvas
+            )
+              return { resolved: false };
+            a.status = inserted ? 'confirmed' : 'cancelled';
+            a.evidence = [control.name];
+            a.resultSource = pageSourceSchema.strip().parse(c.source);
+            a.resultLinks = c.source.links ?? [];
+            this.save(task.id, e);
+            return { resolved: true };
+          }
           const previousFile =
             a.action.target.role === 'button' &&
             name === 'Upload' &&

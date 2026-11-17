@@ -2337,9 +2337,12 @@ export class ExecutionService {
         const editorDisclosure =
           pending?.action.kind === 'click' &&
           pending.action.target.role === 'button' &&
-          ['Settings', 'Open publish panel', 'Publish'].includes(
-            pending.action.target.name,
-          );
+          [
+            'Settings',
+            'Open publish panel',
+            'Publish',
+            'Add default block',
+          ].includes(pending.action.target.name);
         if (
           pending?.action.kind === 'click' &&
           (editorDisclosure ||
@@ -2388,10 +2391,13 @@ export class ExecutionService {
           if (result.resolved === true) continue;
           if (
             pending.returned &&
-            pending.action.target.name === 'Publish' &&
-            pending.action.target.within?.role === 'region' &&
             pending.binding.targetId === observed.binding.targetId &&
-            pending.preconditions?.includes('[button] Publish (expanded=false)')
+            (pending.action.target.name === 'Add default block' ||
+              (pending.action.target.name === 'Publish' &&
+                pending.action.target.within?.role === 'region' &&
+                pending.preconditions?.includes(
+                  '[button] Publish (expanded=false)',
+                )))
           ) {
             const reads = disclosureReads.get(pending.id) ?? 0;
             if (reads < 4) {

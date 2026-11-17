@@ -1027,6 +1027,153 @@ test.each([
   });
 });
 
+test.each([
+  ['current-empty-paragraph', 'confirmed'],
+  ['reopened-placeholder', 'cancelled'],
+  ['ambiguous-paragraph', 'unknown'],
+  ['empty-paragraph-in-other-frame', 'unknown'],
+  ['reopened-other-session', 'unknown'],
+] as const)('草稿空白正文块核对：%s', async (mode, expected) => {
+  const { records, taskId, runId, observation } = await fixture();
+  const session = {
+    id: 'same-editor-session',
+    epoch: `${randomUUID()}:0`,
+    origin: new URL(observation.url).origin,
+  };
+  const binding = { targetId: 'first-editor', generation: 1 };
+  const frameUrl = `blob:${session.origin}/first-canvas`;
+  const button = {
+    name: 'Add default block',
+    role: 'button',
+    frameUrl,
+    disabled: false,
+  };
+  const source = {
+    ...observation,
+    text: '编辑\n[button] Add default block',
+    controls: [button],
+  };
+  const id = 'add-paragraph';
+  records.execution({ kind: 'claim', taskId, runId, session });
+  records.execution({
+    kind: 'coordination-observed',
+    taskId,
+    runId,
+    session,
+    source,
+  });
+  records.execution({
+    kind: 'reserve',
+    taskId,
+    runId,
+    id,
+    source,
+    binding,
+    summary: '打开正文块',
+    effect: 'interaction',
+    action: {
+      kind: 'click',
+      target: { role: 'button', name: button.name, exact: true, frameUrl },
+    },
+    evidence: ['Add default block'],
+  });
+  records.execution({ kind: 'dispatch', taskId, runId, id });
+  records.execution({ kind: 'reported', taskId, id, returned: true });
+  records.execution({
+    kind: 'preparation-observed',
+    taskId,
+    runId,
+    source,
+    facts: (['target', 'draft'] as const).map((kind) => ({
+      kind,
+      url: source.url,
+      materialId: null,
+      evidence: ['编辑'],
+    })),
+  });
+  const reopened = mode.startsWith('reopened');
+  const canvas =
+    reopened || mode === 'empty-paragraph-in-other-frame'
+      ? `blob:${session.origin}/another-canvas`
+      : frameUrl;
+  const paragraph = {
+    name: 'Empty block; start writing or type forward slash to choose a block',
+    role: 'document',
+    frameUrl: canvas,
+    disabled: false,
+    readOnly: false,
+    textValue: '',
+    richText: {
+      rule: 'contenteditable-ax-v1' as const,
+      backendNodeId: 23,
+      valueSource: 'ax' as const,
+      locator: {
+        richTextNodeId: 23,
+        path: 'html:nth-child(1) > body:nth-child(2) > p:nth-child(1)',
+        frameUrl: canvas,
+      },
+    },
+  };
+  const after = {
+    ...source,
+    observedAt: 101,
+    generation: reopened ? 2 : 1,
+    text: reopened ? source.text : `编辑\n[document] ${paragraph.name}`,
+    controls: reopened
+      ? [{ ...button, frameUrl: canvas }]
+      : mode === 'ambiguous-paragraph'
+        ? [paragraph, paragraph]
+        : [paragraph],
+  };
+  const nextRun = reopened ? 'reopened-editor' : runId;
+  if (reopened) {
+    records.execution({
+      kind: 'intent',
+      taskId,
+      requestId: 'stop-block',
+      intent: 'stop',
+    });
+    records.execution({
+      kind: 'intent',
+      taskId,
+      requestId: 'continue-block',
+      intent: 'continue',
+    });
+    const nextSession = {
+      ...session,
+      id:
+        mode === 'reopened-other-session' ? 'other-editor-session' : session.id,
+      epoch: `${randomUUID()}:0`,
+    };
+    records.execution({
+      kind: 'claim',
+      taskId,
+      runId: nextRun,
+      session: nextSession,
+    });
+    records.execution({
+      kind: 'coordination-observed',
+      taskId,
+      runId: nextRun,
+      session: nextSession,
+      source: after,
+    });
+  }
+  expect(
+    records.execution({
+      kind: 'disclosure-observed',
+      taskId,
+      runId: nextRun,
+      id,
+      source: after,
+      binding: reopened ? { targetId: 'fresh-editor', generation: 2 } : binding,
+    }),
+  ).toMatchObject({ resolved: expected !== 'unknown' });
+  expect(records.snapshot().tasks[0]!.execution!.actions).toMatchObject([
+    { id, status: expected, returned: true, dispatchState: 'possible' },
+  ]);
+});
+
 test('素材网页观察只提取文件控件和实际链接，不带密码或隐藏值', () => {
   const text = materialObservation({
     strings: [
