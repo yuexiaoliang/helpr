@@ -4,6 +4,52 @@ import { isBlobFrameURL, isInlineFrameURL } from './url-policy';
 
 type ObservedControl = NonNullable<PageObservation['controls']>[number];
 
+export const defaultParagraphButton = 'Add default block';
+export const emptyParagraphName =
+  'Empty block; start writing or type forward slash to choose a block';
+const filledParagraphName = 'Block: Paragraph';
+
+export function isEmptyParagraph(control: ObservedControl) {
+  return (
+    control.role === 'document' &&
+    control.name === emptyParagraphName &&
+    control.readOnly === false &&
+    control.textValue === '' &&
+    !!control.richText?.locator
+  );
+}
+
+export function sameRichTextReadback(
+  before: ObservedControl,
+  after: ObservedControl,
+) {
+  return (
+    before.role === after.role &&
+    (before.name === after.name ||
+      (isEmptyParagraph(before) && after.name === filledParagraphName))
+  );
+}
+
+export function observedDefaultParagraph(source: PageObservation) {
+  const origin = new URL(source.url).origin;
+  const controls = source.controls?.filter(
+    (control) =>
+      isBlobFrameURL(control.frameUrl) &&
+      new URL(control.frameUrl).origin === origin &&
+      ((control.role === 'button' && control.name === defaultParagraphButton) ||
+        (control.role === 'document' && control.name === emptyParagraphName)),
+  );
+  const control = controls?.[0];
+  if (
+    controls?.length === 1 &&
+    control &&
+    !control.disabled &&
+    source.text.includes(control.name) &&
+    (control.role === 'button' || isEmptyParagraph(control))
+  )
+    return control;
+}
+
 /** 富文本仅支持已有 DOM/AX 证明的普通 contenteditable，纯文本整体替换；不承诺保留格式。 */
 export function richTextControl(
   action: WebAction,
@@ -79,8 +125,7 @@ export function verifiedReopenedRichText(
   const origin = new URL(source.url).origin;
   const matches = source.controls?.filter(
     (control) =>
-      control.role === before.role &&
-      control.name === before.name &&
+      sameRichTextReadback(before, control) &&
       control.richText?.locator?.path === path &&
       isBlobFrameURL(control.frameUrl) &&
       new URL(control.frameUrl).origin === origin,

@@ -3,7 +3,12 @@ import {
   resolveWorkflowFields,
 } from '../shared/workflow-rich-text';
 import {
+  defaultParagraphButton,
+  emptyParagraphName,
+  isEmptyParagraph,
+  observedDefaultParagraph,
   richTextControl,
+  sameRichTextReadback,
   verifiedReopenedRichText,
   verifiedRichText,
 } from '../shared/rich-text';
@@ -3092,25 +3097,67 @@ export class ExecutionRecords {
               ))
           )
             return { resolved: false };
+          const before = a.richTextSource;
           let result;
           try {
             result = sameDocument
               ? verifiedRichText(a.action, c.source)
-              : verifiedReopenedRichText(a.action, a.richTextSource, c.source);
+              : verifiedReopenedRichText(a.action, before, c.source);
           } catch {
-            return { resolved: false };
+            result = undefined;
           }
+          if (result && !sameRichTextReadback(before, result))
+            result = undefined;
+          let reset;
           if (
-            result.name !== a.richTextSource.name ||
-            result.role !== a.richTextSource.role
-          )
-            return { resolved: false };
+            !result &&
+            !e.publication &&
+            a.binding.targetId !== c.binding.targetId &&
+            'richTextNodeId' in a.action.target &&
+            isEmptyParagraph(before) &&
+            e.actions
+              .slice(0, e.actions.indexOf(a))
+              .some(
+                (previous) =>
+                  previous.goalVersion === a.goalVersion &&
+                  previous.runId === a.runId &&
+                  previous.status === 'confirmed' &&
+                  previous.effect === 'interaction' &&
+                  previous.action.kind === 'click' &&
+                  previous.action.target.role === 'button' &&
+                  previous.action.target.name === defaultParagraphButton &&
+                  previous.action.target.frameUrl === before.frameUrl &&
+                  previous.binding.targetId === a.binding.targetId &&
+                  previous.binding.generation === a.binding.generation &&
+                  previous.evidence.includes(emptyParagraphName),
+              )
+          ) {
+            const restored = observedDefaultParagraph(c.source);
+            if (
+              restored &&
+              restored.frameUrl !== before.frameUrl &&
+              (restored.role === 'button' ||
+                restored.richText?.locator?.path === a.action.target.path) &&
+              !c.source.controls?.some(
+                (control) =>
+                  control !== restored &&
+                  control.role === 'document' &&
+                  isBlobFrameURL(control.frameUrl) &&
+                  new URL(control.frameUrl).origin ===
+                    new URL(c.source.url).origin &&
+                  (control.richText || control.richTextUnavailable),
+              )
+            )
+              reset = restored;
+          }
+          const observed = result ?? reset;
+          if (!observed) return { resolved: false };
           if (!observeRelation(e, c.session, c.source))
             return { resolved: false };
           delete e.coordination.refreshRequired;
-          a.status = 'confirmed';
-          a.evidence = [result.name];
-          a.richTextResult = result;
+          a.status = result ? 'confirmed' : 'cancelled';
+          a.evidence = [observed.name];
+          if (result) a.richTextResult = result;
           a.resultSource = pageSourceSchema.strip().parse(c.source);
           a.resultLinks = c.source.links ?? [];
           this.save(task.id, e);
@@ -3241,7 +3288,7 @@ export class ExecutionRecords {
             );
           if (
             a.action.target.role === 'button' &&
-            name === 'Add default block' &&
+            name === defaultParagraphButton &&
             isBlobFrameURL(frameUrl) &&
             new URL(frameUrl).origin === new URL(c.source.url).origin
           ) {
@@ -3259,36 +3306,16 @@ export class ExecutionRecords {
               (reopened && !freshCanvas)
             )
               return { resolved: false };
-            const paragraph =
-              'Empty block; start writing or type forward slash to choose a block';
-            const controls = c.source.controls?.filter(
-              (control) =>
-                isBlobFrameURL(control.frameUrl) &&
-                new URL(control.frameUrl).origin ===
-                  new URL(c.source.url).origin &&
-                ((control.role === 'button' && control.name === name) ||
-                  (control.role === 'document' && control.name === paragraph)),
-            );
-            const control = controls?.[0];
+            const control = observedDefaultParagraph(c.source);
             if (
-              controls?.length !== 1 ||
               !control ||
-              control.disabled ||
               (freshCanvas
                 ? control.frameUrl === frameUrl
-                : control.frameUrl !== frameUrl) ||
-              !c.source.text.includes(control.name)
+                : control.frameUrl !== frameUrl)
             )
               return { resolved: false };
             const inserted = control.role === 'document';
-            if (
-              inserted
-                ? !control.richText?.locator ||
-                  control.readOnly !== false ||
-                  control.textValue !== ''
-                : !freshCanvas
-            )
-              return { resolved: false };
+            if (!inserted && !freshCanvas) return { resolved: false };
             a.status = inserted ? 'confirmed' : 'cancelled';
             a.evidence = [control.name];
             a.resultSource = pageSourceSchema.strip().parse(c.source);

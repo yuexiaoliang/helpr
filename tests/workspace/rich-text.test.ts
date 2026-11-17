@@ -240,6 +240,13 @@ test.each([
   'ambiguous',
   'unnamed',
   'wrong-session',
+  'paragraph-same-document',
+  'paragraph-reopened',
+  'paragraph-wrong-label',
+  'paragraph-reset',
+  'paragraph-empty-restored',
+  'paragraph-reset-with-other-content',
+  'paragraph-reset-without-insertion',
 ])('已返回的富文本动作只按原草稿唯一已写字段读回：%s', (mode) => {
   const session = {
     id: 'site',
@@ -247,14 +254,24 @@ test.each([
     origin: new URL(url).origin,
   };
   const f = recordsFixture(session);
-  const before = observed('原标题').read();
+  const paragraph = mode.startsWith('paragraph-');
+  const defaultBlock = 'Add default block';
+  const emptyName =
+    'Empty block; start writing or type forward slash to choose a block';
+  const reset = mode.includes('reset') || mode === 'paragraph-empty-restored';
+  const before = observed(paragraph ? '' : '原标题').read();
   const oldTarget = {
     richTextNodeId: 2,
-    path: 'html:nth-child(1) > body:nth-child(2) > h1:nth-child(1)',
+    path: `html:nth-child(1) > body:nth-child(2) > ${paragraph ? 'p' : 'h1'}:nth-child(1)`,
     frameUrl: `blob:${session.origin}/old`,
   };
   before.controls![0]!.frameUrl = oldTarget.frameUrl;
   if (mode === 'unnamed') before.controls![0]!.name = '';
+  if (paragraph) {
+    before.controls![0]!.name = emptyName;
+    before.controls![0]!.role = 'document';
+    before.text += '\n' + emptyName;
+  }
   before.controls![0]!.richText!.locator = oldTarget;
   f.post({
     kind: 'coordination-observed',
@@ -262,6 +279,54 @@ test.each([
     session,
     source: before,
   });
+  const placeholder = (frameUrl: string) => ({
+    role: 'button',
+    name: defaultBlock,
+    disabled: false,
+    frameUrl,
+  });
+  const facts = (['target', 'draft'] as const).map((kind) => ({
+    kind,
+    url,
+    materialId: null,
+    evidence: ['正文'],
+  }));
+  if (reset && mode !== 'paragraph-reset-without-insertion') {
+    const button = placeholder(oldTarget.frameUrl);
+    f.post({
+      ...f.reserve,
+      id: 'insert',
+      action: {
+        kind: 'click',
+        target: {
+          role: button.role,
+          name: button.name,
+          frameUrl: button.frameUrl,
+          exact: true,
+        },
+      },
+      source: { ...before, text: '正文\n' + defaultBlock, controls: [button] },
+      evidence: [defaultBlock],
+      effect: 'interaction',
+    });
+    f.post({ kind: 'dispatch', runId: 'rich', id: 'insert' });
+    f.post({ kind: 'reported', id: 'insert', returned: true });
+    f.post({
+      kind: 'preparation-observed',
+      runId: 'rich',
+      source: before,
+      facts,
+    });
+    expect(
+      f.post({
+        kind: 'disclosure-observed',
+        runId: 'rich',
+        id: 'insert',
+        binding: f.binding,
+        source: before,
+      }),
+    ).toMatchObject({ resolved: true });
+  }
   f.post({
     ...f.reserve,
     action: { ...action, target: oldTarget },
@@ -274,12 +339,10 @@ test.each([
     kind: 'preparation-observed',
     runId: 'rich',
     source: before,
-    facts: [
-      { kind: 'target', url, materialId: null, evidence: ['正文'] },
-      { kind: 'draft', url, materialId: null, evidence: ['正文'] },
-    ],
+    facts,
   });
-  const sameDocument = mode === 'same-document';
+  const sameDocument =
+    mode === 'same-document' || mode === 'paragraph-same-document';
   const runId = sameDocument ? 'rich' : 'reopened';
   const currentSession = sameDocument
     ? session
@@ -291,7 +354,11 @@ test.each([
     f.post({ kind: 'claim', runId, session: currentSession });
   }
   const readback = observed(
-    mode === 'wrong-value' ? '网站回填不同标题' : action.value,
+    mode === 'wrong-value' || mode === 'paragraph-reset-with-other-content'
+      ? '网站回填不同内容'
+      : mode === 'paragraph-empty-restored'
+        ? ''
+        : action.value,
   ).read();
   readback.observedAt = before.observedAt + 10;
   const target = sameDocument
@@ -304,10 +371,29 @@ test.each([
   const control = readback.controls![0]!;
   control.frameUrl = target.frameUrl;
   if (mode === 'unnamed') control.name = '';
+  if (paragraph) {
+    control.role = 'document';
+    control.name =
+      mode === 'paragraph-wrong-label'
+        ? '另一个控件'
+        : mode === 'paragraph-empty-restored'
+          ? emptyName
+          : 'Block: Paragraph';
+    readback.text += '\n' + control.name;
+  }
   control.richText!.backendNodeId = target.richTextNodeId;
   control.richText!.locator = target;
   if (mode === 'ambiguous') readback.controls!.push(structuredClone(control));
-  const resolved = sameDocument || mode === 'reopened';
+  if (reset && mode !== 'paragraph-empty-restored') {
+    readback.text += '\n' + defaultBlock;
+    readback.controls = [placeholder(target.frameUrl)];
+    if (mode === 'paragraph-reset-with-other-content')
+      readback.controls.push(control);
+  }
+  const confirmed =
+    sameDocument || mode === 'reopened' || mode === 'paragraph-reopened';
+  const cancelled =
+    mode === 'paragraph-reset' || mode === 'paragraph-empty-restored';
   expect(
     f.post({
       kind: 'rich-text-result-observed',
@@ -322,15 +408,21 @@ test.each([
           ? { ...currentSession, id: 'other' }
           : currentSession,
     }),
-  ).toMatchObject({ resolved });
-  const saved = f.cold().actions[0]!;
-  expect(saved.status).toBe(resolved ? 'confirmed' : 'unknown');
+  ).toMatchObject({ resolved: confirmed || cancelled });
+  const saved = f.cold().actions.find((a) => a.id === 'fill')!;
+  expect(saved.status).toBe(
+    confirmed ? 'confirmed' : cancelled ? 'cancelled' : 'unknown',
+  );
   expect(saved.action.target).toEqual(oldTarget);
-  if (resolved)
+  if (confirmed)
     expect(saved.richTextResult).toMatchObject({
       frameUrl: target.frameUrl,
       textValue: action.value,
     });
+  if (cancelled) {
+    expect(saved.dispatchState).toBe('possible');
+    expect(saved.richTextResult).toBeUndefined();
+  }
 });
 test.each(['empty', 'written', 'ambiguous', 'returned', 'wrong-session'])(
   '冷开依据同一草稿的修正路径核对未回读的空正文：%s',
