@@ -873,6 +873,7 @@ test.each([
   'canvas-wrong-origin',
   'canvas-ambiguous',
   'browse-open',
+  'browse-open-with-role-prefix',
   'browse-reopened',
   'browse-missing-panel',
 ])('草稿编辑器按当前展开状态核对旧交互：%s', async (mode) => {
@@ -899,6 +900,7 @@ test.each([
     'canvas-open',
     'canvas-ambiguous',
     'browse-open',
+    'browse-open-with-role-prefix',
     'browse-missing-panel',
   ].includes(mode);
   const settling = mode === 'scoped-open-while-disabled';
@@ -968,7 +970,12 @@ test.each([
     evidence: panel
       ? [closed, topButton]
       : browse
-        ? [browseAllBlocks, canvasOpen]
+        ? [
+            mode === 'browse-open-with-role-prefix'
+              ? `[button] ${browseAllBlocks}`
+              : browseAllBlocks,
+            canvasOpen,
+          ]
         : [
             inserter
               ? `${button.name} (expanded=false)`
@@ -1027,7 +1034,7 @@ test.each([
   const afterBrowse = [
     { ...button, name: afterName, regions: [region], expanded: opened },
   ];
-  if (mode === 'browse-open')
+  if (mode === 'browse-open' || mode === 'browse-open-with-role-prefix')
     afterBrowse.push({ ...afterBrowse[0]!, name: 'Close Block Inserter' });
   const after = {
     ...source,
@@ -1078,6 +1085,7 @@ test.each([
         mode === 'scoped-inserter-open' ||
         mode === 'canvas-open' ||
         mode === 'browse-open' ||
+        mode === 'browse-open-with-role-prefix' ||
         settling
       ? 'confirmed'
       : 'unknown';

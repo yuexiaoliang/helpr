@@ -3429,8 +3429,11 @@ export class ExecutionRecords {
             `[button] ${observedName} (expanded=${expanded})`;
           const after = c.source.text.split('\n');
           const previous = browseInserter
-            ? a.preconditions?.includes(browseAllBlocks) &&
-              a.preconditions?.includes('[button] Add block (expanded=true)')
+            ? a.preconditions?.some(
+                (value) =>
+                  value === '[button] Add block (expanded=true)' ||
+                  value === 'Add block (expanded=true)',
+              )
             : a.preconditions?.includes(line(false)) ||
               (scopedInserter &&
                 a.preconditions?.includes(`${name} (expanded=false)`));
