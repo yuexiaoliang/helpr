@@ -1,6 +1,8 @@
 import type { PageObservation } from './model';
 import type { WebAction } from './web-action';
-import { isInlineFrameURL } from './url-policy';
+import { isBlobFrameURL, isInlineFrameURL } from './url-policy';
+
+type ObservedControl = NonNullable<PageObservation['controls']>[number];
 
 /** 富文本仅支持已有 DOM/AX 证明的普通 contenteditable，纯文本整体替换；不承诺保留格式。 */
 export function richTextControl(
@@ -61,13 +63,42 @@ export function verifiedRichText(action: WebAction, source: PageObservation) {
   return control;
 }
 
+export function verifiedReopenedRichText(
+  action: WebAction,
+  before: ObservedControl,
+  source: PageObservation,
+) {
+  if (
+    action.kind !== 'fill' ||
+    !('richTextNodeId' in action.target) ||
+    !before.name ||
+    !isBlobFrameURL(action.target.frameUrl)
+  )
+    throw Error('EXECUTION_RICH_TEXT_UNVERIFIED');
+  const path = action.target.path;
+  const origin = new URL(source.url).origin;
+  const matches = source.controls?.filter(
+    (control) =>
+      control.role === before.role &&
+      control.name === before.name &&
+      control.richText?.locator?.path === path &&
+      isBlobFrameURL(control.frameUrl) &&
+      new URL(control.frameUrl).origin === origin,
+  );
+  const target = matches?.[0]?.richText?.locator;
+  if (matches?.length !== 1 || !target)
+    throw Error('EXECUTION_RICH_TEXT_UNVERIFIED');
+  return verifiedRichText({ ...action, target }, source);
+}
+
 export function validRichTextFact(a: {
   action: WebAction;
   source: Omit<PageObservation, 'text'>;
   status: string;
   navigation?: unknown;
-  richTextSource?: NonNullable<PageObservation['controls']>[number];
-  richTextResult?: NonNullable<PageObservation['controls']>[number];
+  returned?: boolean;
+  richTextSource?: ObservedControl;
+  richTextResult?: ObservedControl;
   resultSource?: Omit<PageObservation, 'text'>;
 }) {
   if (!a.richTextSource)
@@ -86,11 +117,19 @@ export function validRichTextFact(a: {
       a.source.url !== a.resultSource.url
     )
       return false;
-    verifiedRichText(a.action, {
+    const result = {
       ...a.resultSource,
       text: '',
       controls: [a.richTextResult],
-    });
+    };
+    if (
+      a.returned &&
+      (a.richTextSource.frameUrl !== a.richTextResult.frameUrl ||
+        a.richTextSource.richText?.backendNodeId !==
+          a.richTextResult.richText?.backendNodeId)
+    )
+      verifiedReopenedRichText(a.action, a.richTextSource, result);
+    else verifiedRichText(a.action, result);
     return true;
   } catch {
     return false;

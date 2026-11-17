@@ -2,7 +2,11 @@ import {
   validWorkflowInputs,
   resolveWorkflowFields,
 } from '../shared/workflow-rich-text';
-import { richTextControl, verifiedRichText } from '../shared/rich-text';
+import {
+  richTextControl,
+  verifiedReopenedRichText,
+  verifiedRichText,
+} from '../shared/rich-text';
 import {
   attachmentDeparture,
   attachmentOnEditor,
@@ -435,6 +439,14 @@ const commandSchema = z.discriminatedUnion('kind', [
   }),
   z.strictObject({
     kind: z.literal('rich-text-path-observed'),
+    ...work,
+    id: z.string(),
+    source: observation,
+    binding: pageBindingSchema,
+    session: sessionContextSchema,
+  }),
+  z.strictObject({
+    kind: z.literal('rich-text-result-observed'),
     ...work,
     id: z.string(),
     source: observation,
@@ -3036,6 +3048,68 @@ export class ExecutionRecords {
           e.summary = c.summary;
           this.save(task.id, e);
           return { created: true };
+        }
+        if (c.kind === 'rich-text-result-observed') {
+          const a = e.actions.find((action) => action.id === c.id);
+          if (
+            a?.action.kind !== 'fill' ||
+            !a.richTextSource ||
+            !a.returned ||
+            a.status !== 'unknown' ||
+            a.dispatchState !== 'possible' ||
+            a.effect !== 'interaction' ||
+            a.navigation ||
+            a.workflowStep ||
+            a.goalVersion !== e.goalVersion ||
+            a.source.truncated ||
+            c.source.truncated ||
+            c.source.url !== task.url ||
+            c.source.url !== a.source.url ||
+            c.source.observedAt < a.source.observedAt ||
+            c.binding.generation !== c.source.generation ||
+            e.question ||
+            e.loginOrigin ||
+            !a.coordination ||
+            !sameSession(a.coordination.session, c.session) ||
+            !e.coordination ||
+            e.coordination.status === 'login' ||
+            e.coordination.checkingLogin ||
+            (e.coordination.refreshRequired &&
+              e.coordination.source?.generation === c.source.generation)
+          )
+            return { resolved: false };
+          const sameDocument =
+            a.binding.targetId === c.binding.targetId &&
+            a.binding.generation === c.binding.generation;
+          if (
+            !sameDocument &&
+            (a.runId === c.runId ||
+              !e.preparation?.some(
+                (f) =>
+                  f.kind === 'draft' &&
+                  f.goalVersion === e.goalVersion &&
+                  f.url === c.source.url,
+              ))
+          )
+            return { resolved: false };
+          let result;
+          try {
+            result = sameDocument
+              ? verifiedRichText(a.action, c.source)
+              : verifiedReopenedRichText(a.action, a.richTextSource, c.source);
+          } catch {
+            return { resolved: false };
+          }
+          if (!observeRelation(e, c.session, c.source))
+            return { resolved: false };
+          delete e.coordination.refreshRequired;
+          a.status = 'confirmed';
+          a.evidence = [result.name || result.textValue!.slice(0, 2000)];
+          a.richTextResult = result;
+          a.resultSource = pageSourceSchema.strip().parse(c.source);
+          a.resultLinks = c.source.links ?? [];
+          this.save(task.id, e);
+          return { resolved: true };
         }
         if (c.kind === 'rich-text-path-observed') {
           const a = e.actions.find((action) => action.id === c.id);

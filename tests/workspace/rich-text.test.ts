@@ -233,6 +233,102 @@ test('冻结源控件；模型确认不能绕过实际全文；冷开保留核�
   delete saved.richTextResult;
   expect(actionFactSchema.safeParse(saved).success).toBe(false);
 });
+test.each([
+  'same-document',
+  'reopened',
+  'wrong-value',
+  'ambiguous',
+  'wrong-session',
+])('已返回的富文本动作只按原草稿唯一已写字段读回：%s', (mode) => {
+  const session = {
+    id: 'site',
+    epoch: `${randomUUID()}:0`,
+    origin: new URL(url).origin,
+  };
+  const f = recordsFixture(session);
+  const before = observed('原标题').read();
+  const oldTarget = {
+    richTextNodeId: 2,
+    path: 'html:nth-child(1) > body:nth-child(2) > h1:nth-child(1)',
+    frameUrl: `blob:${session.origin}/old`,
+  };
+  before.controls![0]!.frameUrl = oldTarget.frameUrl;
+  before.controls![0]!.richText!.locator = oldTarget;
+  f.post({
+    kind: 'coordination-observed',
+    runId: 'rich',
+    session,
+    source: before,
+  });
+  f.post({
+    ...f.reserve,
+    action: { ...action, target: oldTarget },
+    source: before,
+    effect: 'interaction',
+  });
+  f.post({ kind: 'dispatch', runId: 'rich', id: 'fill' });
+  f.post({ kind: 'reported', id: 'fill', returned: true });
+  f.post({
+    kind: 'preparation-observed',
+    runId: 'rich',
+    source: before,
+    facts: [
+      { kind: 'target', url, materialId: null, evidence: ['正文'] },
+      { kind: 'draft', url, materialId: null, evidence: ['正文'] },
+    ],
+  });
+  const sameDocument = mode === 'same-document';
+  const runId = sameDocument ? 'rich' : 'reopened';
+  const currentSession = sameDocument
+    ? session
+    : { ...session, epoch: `${randomUUID()}:0` };
+  if (!sameDocument) {
+    f.post({ kind: 'intent', requestId: randomUUID(), intent: 'stop' });
+    f.cold();
+    f.post({ kind: 'intent', requestId: randomUUID(), intent: 'continue' });
+    f.post({ kind: 'claim', runId, session: currentSession });
+  }
+  const readback = observed(
+    mode === 'wrong-value' ? '网站回填不同标题' : action.value,
+  ).read();
+  readback.observedAt = before.observedAt + 10;
+  const target = sameDocument
+    ? oldTarget
+    : {
+        ...oldTarget,
+        richTextNodeId: 5,
+        frameUrl: `blob:${session.origin}/new`,
+      };
+  const control = readback.controls![0]!;
+  control.frameUrl = target.frameUrl;
+  control.richText!.backendNodeId = target.richTextNodeId;
+  control.richText!.locator = target;
+  if (mode === 'ambiguous') readback.controls!.push(structuredClone(control));
+  const resolved = sameDocument || mode === 'reopened';
+  expect(
+    f.post({
+      kind: 'rich-text-result-observed',
+      runId,
+      id: 'fill',
+      source: readback,
+      binding: sameDocument
+        ? f.binding
+        : { ...f.binding, targetId: 'new-page' },
+      session:
+        mode === 'wrong-session'
+          ? { ...currentSession, id: 'other' }
+          : currentSession,
+    }),
+  ).toMatchObject({ resolved });
+  const saved = f.cold().actions[0]!;
+  expect(saved.status).toBe(resolved ? 'confirmed' : 'unknown');
+  expect(saved.action.target).toEqual(oldTarget);
+  if (resolved)
+    expect(saved.richTextResult).toMatchObject({
+      frameUrl: target.frameUrl,
+      textValue: action.value,
+    });
+});
 test.each(['empty', 'written', 'ambiguous', 'returned', 'wrong-session'])(
   '冷开依据同一草稿的修正路径核对未回读的空正文：%s',
   (mode) => {

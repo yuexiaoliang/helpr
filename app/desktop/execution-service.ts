@@ -2298,6 +2298,24 @@ export class ExecutionService {
         }
         if (
           pending?.action.kind === 'fill' &&
+          pending.richTextSource &&
+          pending.returned &&
+          observed.session
+        ) {
+          const result = await this.record({
+            kind: 'rich-text-result-observed',
+            taskId: job.taskId,
+            runId: job.runId,
+            id: pending.id,
+            source: observed.observation,
+            binding: observed.binding,
+            session: observed.session,
+          });
+          if (!this.live(job)) return;
+          if (result.resolved === true) continue;
+        }
+        if (
+          pending?.action.kind === 'fill' &&
           'richTextNodeId' in pending.action.target &&
           !pending.returned &&
           pending.runId !== job.runId &&
