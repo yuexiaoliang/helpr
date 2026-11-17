@@ -3053,7 +3053,7 @@ export class ExecutionRecords {
           const a = e.actions.find((action) => action.id === c.id);
           if (
             a?.action.kind !== 'fill' ||
-            !a.richTextSource ||
+            !a.richTextSource?.name ||
             !a.returned ||
             a.status !== 'unknown' ||
             a.dispatchState !== 'possible' ||
@@ -3100,11 +3100,16 @@ export class ExecutionRecords {
           } catch {
             return { resolved: false };
           }
+          if (
+            result.name !== a.richTextSource.name ||
+            result.role !== a.richTextSource.role
+          )
+            return { resolved: false };
           if (!observeRelation(e, c.session, c.source))
             return { resolved: false };
           delete e.coordination.refreshRequired;
           a.status = 'confirmed';
-          a.evidence = [result.name || result.textValue!.slice(0, 2000)];
+          a.evidence = [result.name];
           a.richTextResult = result;
           a.resultSource = pageSourceSchema.strip().parse(c.source);
           a.resultLinks = c.source.links ?? [];

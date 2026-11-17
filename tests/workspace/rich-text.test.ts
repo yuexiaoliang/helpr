@@ -238,6 +238,7 @@ test.each([
   'reopened',
   'wrong-value',
   'ambiguous',
+  'unnamed',
   'wrong-session',
 ])('已返回的富文本动作只按原草稿唯一已写字段读回：%s', (mode) => {
   const session = {
@@ -253,6 +254,7 @@ test.each([
     frameUrl: `blob:${session.origin}/old`,
   };
   before.controls![0]!.frameUrl = oldTarget.frameUrl;
+  if (mode === 'unnamed') before.controls![0]!.name = '';
   before.controls![0]!.richText!.locator = oldTarget;
   f.post({
     kind: 'coordination-observed',
@@ -301,6 +303,7 @@ test.each([
       };
   const control = readback.controls![0]!;
   control.frameUrl = target.frameUrl;
+  if (mode === 'unnamed') control.name = '';
   control.richText!.backendNodeId = target.richTextNodeId;
   control.richText!.locator = target;
   if (mode === 'ambiguous') readback.controls!.push(structuredClone(control));

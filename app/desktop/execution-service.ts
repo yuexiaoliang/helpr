@@ -2298,7 +2298,7 @@ export class ExecutionService {
         }
         if (
           pending?.action.kind === 'fill' &&
-          pending.richTextSource &&
+          pending.richTextSource?.name &&
           pending.returned &&
           observed.session
         ) {
