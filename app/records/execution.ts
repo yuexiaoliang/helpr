@@ -29,7 +29,11 @@ import {
   linkNavigationResolutionSchema,
   formNavigationResolutionSchema,
 } from '../shared/action-navigation';
-import { actionLandmark, actionRegion } from '../shared/web-action';
+import {
+  actionLandmark,
+  actionRegion,
+  browseAllBlocks,
+} from '../shared/web-action';
 import { isBlobFrameURL } from '../shared/url-policy';
 import {
   agreementUICommandSchema,
@@ -3408,18 +3412,28 @@ export class ExecutionRecords {
             name === 'Add block' &&
             isBlobFrameURL(frameUrl) &&
             new URL(frameUrl).origin === new URL(c.source.url).origin;
+          const browseInserter =
+            name === browseAllBlocks && frameUrl === c.source.url;
+          const editorInserter =
+            scopedInserter || canvasInserter || browseInserter;
           if (
             a.action.target.role !== 'button' ||
             (frameUrl !== c.source.url && !canvasInserter)
           )
             return { resolved: false };
+          const observedName = browseInserter ? 'Block Inserter' : name;
+          const observedRegion = browseInserter
+            ? 'Editor top bar'
+            : region?.name;
           const line = (expanded: boolean) =>
-            `[button] ${name} (expanded=${expanded})`;
+            `[button] ${observedName} (expanded=${expanded})`;
           const after = c.source.text.split('\n');
-          const previous =
-            a.preconditions?.includes(line(false)) ||
-            (scopedInserter &&
-              a.preconditions?.includes(`${name} (expanded=false)`));
+          const previous = browseInserter
+            ? a.preconditions?.includes(browseAllBlocks) &&
+              a.preconditions?.includes('[button] Add block (expanded=true)')
+            : a.preconditions?.includes(line(false)) ||
+              (scopedInserter &&
+                a.preconditions?.includes(`${name} (expanded=false)`));
           const current = after.filter(
             (value) => value === line(true) || value === line(false),
           );
@@ -3433,21 +3447,29 @@ export class ExecutionRecords {
                   new URL(control.frameUrl).origin ===
                     new URL(c.source.url).origin
                 : control.frameUrl === frameUrl) &&
-              control.name === name &&
-              (!region || control.regions?.includes(region.name)),
+              control.name === observedName &&
+              (!observedRegion || control.regions?.includes(observedRegion)),
           );
           if (controls?.length !== 1) return { resolved: false };
           const control = controls[0]!;
           const expanded =
-            (scopedPublish || scopedInserter || canvasInserter) &&
-            control.expanded !== undefined
+            (scopedPublish || editorInserter) && control.expanded !== undefined
               ? control.expanded
               : current.length === 1
                 ? current[0] === line(true)
                 : undefined;
           if (
             expanded === undefined ||
-            (control.disabled && (!scopedPublish || !expanded))
+            (control.disabled && (!scopedPublish || !expanded)) ||
+            (browseInserter &&
+              expanded &&
+              !c.source.controls?.some(
+                (control) =>
+                  control.role === 'button' &&
+                  control.name === 'Close Block Inserter' &&
+                  control.frameUrl === frameUrl &&
+                  !control.disabled,
+              ))
           )
             return { resolved: false };
           const pairedPublishClosed =
@@ -3468,14 +3490,13 @@ export class ExecutionRecords {
           const sameEditorDisclosure =
             (name === 'Settings' ||
               pairedPublishClosed ||
-              ((scopedPublish ||
-                ((scopedInserter || canvasInserter) && a.returned)) &&
+              ((scopedPublish || (editorInserter && a.returned)) &&
                 previous)) &&
             sameDraft &&
             a.coordination &&
             e.coordination?.status === 'ready' &&
             sameSession(a.coordination.session, e.coordination.session);
-          if ((scopedInserter || canvasInserter) && !sameEditorDisclosure)
+          if (editorInserter && !sameEditorDisclosure)
             return { resolved: false };
           const reopenedDisclosure =
             sameEditorDisclosure &&
@@ -3484,10 +3505,7 @@ export class ExecutionRecords {
           const publishPanelOpen =
             scopedPublish && !!publishPanelButton(c.source, scopedPublish.name);
           const disclosureOpened =
-            (name === 'Settings' ||
-              publishPanelOpen ||
-              scopedInserter ||
-              canvasInserter) &&
+            (name === 'Settings' || publishPanelOpen || editorInserter) &&
             sameEditorDisclosure &&
             previous &&
             expanded &&
@@ -3504,7 +3522,7 @@ export class ExecutionRecords {
           // 重开只提供当前编辑器布局，保留旧交互并按当前状态继续。
           a.status =
             expanded && !reopenedDisclosure ? 'confirmed' : 'cancelled';
-          a.evidence = [current[0] ?? name];
+          a.evidence = [current[0] ?? observedName];
           if (expanded && publishPanelOpen) a.evidence.push(publishPanelPrompt);
           a.resultSource = pageSourceSchema.strip().parse(c.source);
           a.resultLinks = c.source.links ?? [];

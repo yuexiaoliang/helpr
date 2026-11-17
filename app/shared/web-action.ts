@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+export const browseAllBlocks =
+  'Browse all. This will open the main inserter panel in the editor toolbar.';
+
 export const roleLocatorSchema = z.strictObject({
   role: z.enum([
     'button',

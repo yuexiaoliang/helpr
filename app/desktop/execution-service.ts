@@ -2344,6 +2344,7 @@ export class ExecutionService {
             'Add default block',
             'Block Inserter',
             'Add block',
+            browseAllBlocks,
           ].includes(pending.action.target.name);
         if (
           pending?.action.kind === 'click' &&
@@ -2395,6 +2396,7 @@ export class ExecutionService {
             pending.returned &&
             pending.binding.targetId === observed.binding.targetId &&
             (pending.action.target.name === 'Add default block' ||
+              pending.action.target.name === browseAllBlocks ||
               (pending.action.target.name === 'Add block' &&
                 pending.action.target.frameUrl?.startsWith('blob:')) ||
               (pending.action.target.name === 'Block Inserter' &&
@@ -3390,3 +3392,4 @@ export class ExecutionService {
     this.publish();
   }
 }
+import { browseAllBlocks } from '../shared/web-action';

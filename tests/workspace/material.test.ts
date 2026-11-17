@@ -20,6 +20,7 @@ import type { NextStep, WebAction } from '../../app/shared/execution';
 import type { PageObservation } from '../../app/shared/model';
 import { modelConfigurationSchema } from '../../app/shared/model';
 import { websiteURL } from '../../app/shared/url-policy';
+import { browseAllBlocks } from '../../app/shared/web-action';
 
 const folders: string[] = [],
   databases: WorkspaceRecords[] = [];
@@ -871,6 +872,9 @@ test.each([
   'canvas-reopened',
   'canvas-wrong-origin',
   'canvas-ambiguous',
+  'browse-open',
+  'browse-reopened',
+  'browse-missing-panel',
 ])('草稿编辑器按当前展开状态核对旧交互：%s', async (mode) => {
   const { records, taskId, runId, observation } = await fixture();
   const session = {
@@ -882,6 +886,7 @@ test.each([
   const scoped = mode.startsWith('scoped-');
   const inserter = mode.startsWith('scoped-inserter-');
   const canvas = mode.startsWith('canvas-');
+  const browse = mode.startsWith('browse-');
   const opened = [
     'observed-open',
     'scoped-open',
@@ -893,6 +898,8 @@ test.each([
     'scoped-inserter-wrong-session',
     'canvas-open',
     'canvas-ambiguous',
+    'browse-open',
+    'browse-missing-panel',
   ].includes(mode);
   const settling = mode === 'scoped-open-while-disabled';
   const submit = {
@@ -905,24 +912,27 @@ test.each([
   const region = 'Editor top bar';
   const button = {
     role: 'button',
-    name: canvas
-      ? 'Add block'
-      : inserter
-        ? 'Block Inserter'
-        : panel
-          ? 'Open publish panel'
-          : scoped
-            ? 'Publish'
-            : 'Settings',
+    name: browse
+      ? browseAllBlocks
+      : canvas
+        ? 'Add block'
+        : inserter
+          ? 'Block Inserter'
+          : panel
+            ? 'Open publish panel'
+            : scoped
+              ? 'Publish'
+              : 'Settings',
     frameUrl: canvas ? `blob:${session.origin}/prior` : observation.url,
     disabled: false,
     ...(scoped ? { regions: [region] } : {}),
   };
   const closed = `[button] ${button.name} (expanded=false)`;
   const topButton = '[button] Publish (expanded=false)';
+  const canvasOpen = '[button] Add block (expanded=true)';
   const source = {
     ...observation,
-    text: `编辑\n${closed}${panel ? `\n${topButton}` : ''}`,
+    text: `编辑\n${closed}${panel ? `\n${topButton}` : ''}${browse ? `\n${canvasOpen}` : ''}`,
     controls: [button],
   };
   const binding = { targetId: 'prior-editor', generation: 1 };
@@ -957,20 +967,22 @@ test.each([
     binding,
     evidence: panel
       ? [closed, topButton]
-      : [
-          inserter
-            ? `${button.name} (expanded=false)`
-            : mode === 'observed-open' || scoped || canvas
-              ? closed
-              : '编辑',
-        ],
+      : browse
+        ? [browseAllBlocks, canvasOpen]
+        : [
+            inserter
+              ? `${button.name} (expanded=false)`
+              : mode === 'observed-open' || scoped || canvas
+                ? closed
+                : '编辑',
+          ],
   });
   records.execution({ kind: 'dispatch', taskId, runId, id: 'settings' });
   records.execution({
     kind: 'reported',
     taskId,
     id: 'settings',
-    returned: scoped || canvas,
+    returned: scoped || canvas || browse,
   });
   records.execution({
     kind: 'preparation-observed',
@@ -1011,36 +1023,44 @@ test.each([
           ? button.frameUrl
           : `blob:${session.origin}/reopened`,
   };
+  const afterName = browse ? 'Block Inserter' : button.name;
+  const afterBrowse = [
+    { ...button, name: afterName, regions: [region], expanded: opened },
+  ];
+  if (mode === 'browse-open')
+    afterBrowse.push({ ...afterBrowse[0]!, name: 'Close Block Inserter' });
   const after = {
     ...source,
     generation: 2,
     observedAt: 101,
-    text: `编辑\n[button] ${button.name} (expanded=${opened}${settling ? ' disabled=true' : ''})${mode === 'panel-reopened' ? `\n${topButton}` : scoped && opened && !inserter ? '\nAre you ready to publish?' : ''}`,
-    controls: canvas
-      ? mode === 'canvas-ambiguous'
-        ? [canvasButton, canvasButton]
-        : [canvasButton]
-      : inserter
-        ? [
-            {
-              ...button,
-              expanded: opened,
-              ...(mode === 'scoped-inserter-wrong-region'
-                ? { regions: ['另一个区域'] }
-                : {}),
-            },
-          ]
-        : mode === 'ambiguous'
-          ? [button, button]
-          : mode === 'panel-reopened'
-            ? [button, { ...button, name: 'Publish' }]
-            : settling
-              ? [{ ...button, expanded: true, disabled: true }, submit]
-              : mode === 'scoped-open'
-                ? [button, { ...button, regions: ['Publish'] }]
-                : mode === 'scoped-open-with-two-submit-buttons'
-                  ? [button, submit, submit]
-                  : [button],
+    text: `编辑\n[button] ${afterName} (expanded=${opened}${settling ? ' disabled=true' : ''})${mode === 'panel-reopened' ? `\n${topButton}` : scoped && opened && !inserter ? '\nAre you ready to publish?' : ''}`,
+    controls: browse
+      ? afterBrowse
+      : canvas
+        ? mode === 'canvas-ambiguous'
+          ? [canvasButton, canvasButton]
+          : [canvasButton]
+        : inserter
+          ? [
+              {
+                ...button,
+                expanded: opened,
+                ...(mode === 'scoped-inserter-wrong-region'
+                  ? { regions: ['另一个区域'] }
+                  : {}),
+              },
+            ]
+          : mode === 'ambiguous'
+            ? [button, button]
+            : mode === 'panel-reopened'
+              ? [button, { ...button, name: 'Publish' }]
+              : settling
+                ? [{ ...button, expanded: true, disabled: true }, submit]
+                : mode === 'scoped-open'
+                  ? [button, { ...button, regions: ['Publish'] }]
+                  : mode === 'scoped-open-with-two-submit-buttons'
+                    ? [button, submit, submit]
+                    : [button],
   };
   const nextRun = 'next-settings';
   records.execution({ kind: 'claim', taskId, runId: nextRun, session: next });
@@ -1057,6 +1077,7 @@ test.each([
         mode === 'scoped-open' ||
         mode === 'scoped-inserter-open' ||
         mode === 'canvas-open' ||
+        mode === 'browse-open' ||
         settling
       ? 'confirmed'
       : 'unknown';
@@ -1075,7 +1096,7 @@ test.each([
   ).toMatchObject({ resolved: expected !== 'unknown' });
   expect(records.snapshot().tasks[0]!.execution!.actions[0]).toMatchObject({
     status: expected,
-    returned: scoped || canvas,
+    returned: scoped || canvas || browse,
     dispatchState: 'possible',
   });
 });
