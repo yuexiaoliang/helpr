@@ -863,6 +863,10 @@ test.each([
   'scoped-open-with-two-submit-buttons',
   'scoped-reopened',
   'scoped-without-final-button',
+  'scoped-inserter-open',
+  'scoped-inserter-reopened',
+  'scoped-inserter-wrong-region',
+  'scoped-inserter-wrong-session',
 ])('草稿编辑器按当前展开状态核对旧交互：%s', async (mode) => {
   const { records, taskId, runId, observation } = await fixture();
   const session = {
@@ -872,12 +876,16 @@ test.each([
   };
   const panel = mode.startsWith('panel-');
   const scoped = mode.startsWith('scoped-');
+  const inserter = mode.startsWith('scoped-inserter-');
   const opened = [
     'observed-open',
     'scoped-open',
     'scoped-open-while-disabled',
     'scoped-open-with-two-submit-buttons',
     'scoped-without-final-button',
+    'scoped-inserter-open',
+    'scoped-inserter-wrong-region',
+    'scoped-inserter-wrong-session',
   ].includes(mode);
   const settling = mode === 'scoped-open-while-disabled';
   const submit = {
@@ -890,7 +898,13 @@ test.each([
   const region = 'Editor top bar';
   const button = {
     role: 'button',
-    name: panel ? 'Open publish panel' : scoped ? 'Publish' : 'Settings',
+    name: inserter
+      ? 'Block Inserter'
+      : panel
+        ? 'Open publish panel'
+        : scoped
+          ? 'Publish'
+          : 'Settings',
     frameUrl: observation.url,
     disabled: false,
     ...(scoped ? { regions: [region] } : {}),
@@ -934,7 +948,13 @@ test.each([
     binding,
     evidence: panel
       ? [closed, topButton]
-      : [mode === 'observed-open' || scoped ? closed : '编辑'],
+      : [
+          inserter
+            ? `${button.name} (expanded=false)`
+            : mode === 'observed-open' || scoped
+              ? closed
+              : '编辑',
+        ],
   });
   records.execution({ kind: 'dispatch', taskId, runId, id: 'settings' });
   records.execution({
@@ -969,16 +989,25 @@ test.each([
   });
   const next = {
     ...session,
-    id: mode === 'wrong-session' ? 'other-site-session' : session.id,
+    id: mode.endsWith('wrong-session') ? 'other-site-session' : session.id,
     epoch: `${randomUUID()}:0`,
   };
   const after = {
     ...source,
     generation: 2,
     observedAt: 101,
-    text: `编辑\n[button] ${button.name} (expanded=${opened}${settling ? ' disabled=true' : ''})${mode === 'panel-reopened' ? `\n${topButton}` : scoped && opened ? '\nAre you ready to publish?' : ''}`,
-    controls:
-      mode === 'ambiguous'
+    text: `编辑\n[button] ${button.name} (expanded=${opened}${settling ? ' disabled=true' : ''})${mode === 'panel-reopened' ? `\n${topButton}` : scoped && opened && !inserter ? '\nAre you ready to publish?' : ''}`,
+    controls: inserter
+      ? [
+          {
+            ...button,
+            expanded: opened,
+            ...(mode === 'scoped-inserter-wrong-region'
+              ? { regions: ['另一个区域'] }
+              : {}),
+          },
+        ]
+      : mode === 'ambiguous'
         ? [button, button]
         : mode === 'panel-reopened'
           ? [button, { ...button, name: 'Publish' }]
@@ -999,14 +1028,14 @@ test.each([
     session: next,
     source: after,
   });
-  const expected =
-    mode === 'reopened' ||
-    mode === 'panel-reopened' ||
-    mode === 'scoped-reopened'
-      ? 'cancelled'
-      : mode === 'observed-open' || mode === 'scoped-open' || settling
-        ? 'confirmed'
-        : 'unknown';
+  const expected = mode.endsWith('reopened')
+    ? 'cancelled'
+    : mode === 'observed-open' ||
+        mode === 'scoped-open' ||
+        mode === 'scoped-inserter-open' ||
+        settling
+      ? 'confirmed'
+      : 'unknown';
   expect(
     records.execution({
       kind: 'disclosure-observed',

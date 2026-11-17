@@ -3244,11 +3244,16 @@ export class ExecutionRecords {
             a.action.target.role === 'button' &&
             a.action.target.name === 'Publish' &&
             region;
+          const scopedInserter =
+            a?.action.kind === 'click' &&
+            a.action.target.role === 'button' &&
+            a.action.target.name === 'Block Inserter' &&
+            region;
           if (
             !a ||
             a.action.kind !== 'click' ||
             !a.action.target.exact ||
-            (a.action.target.within && !scopedPublish) ||
+            (a.action.target.within && !scopedPublish && !scopedInserter) ||
             a.effect !== 'interaction' ||
             a.navigation ||
             a.targetCreation ||
@@ -3403,7 +3408,10 @@ export class ExecutionRecords {
           const line = (expanded: boolean) =>
             `[button] ${name} (expanded=${expanded})`;
           const after = c.source.text.split('\n');
-          const previous = a.preconditions?.includes(line(false));
+          const previous =
+            a.preconditions?.includes(line(false)) ||
+            (scopedInserter &&
+              a.preconditions?.includes(`${name} (expanded=false)`));
           const current = after.filter(
             (value) => value === line(true) || value === line(false),
           );
@@ -3417,7 +3425,7 @@ export class ExecutionRecords {
           if (controls?.length !== 1) return { resolved: false };
           const control = controls[0]!;
           const expanded =
-            scopedPublish && control.expanded !== undefined
+            (scopedPublish || scopedInserter) && control.expanded !== undefined
               ? control.expanded
               : current.length === 1
                 ? current[0] === line(true)
@@ -3445,11 +3453,14 @@ export class ExecutionRecords {
           const sameEditorDisclosure =
             (name === 'Settings' ||
               pairedPublishClosed ||
-              (scopedPublish && previous)) &&
+              ((scopedPublish || (scopedInserter && a.returned)) &&
+                previous)) &&
             sameDraft &&
             a.coordination &&
             e.coordination?.status === 'ready' &&
             sameSession(a.coordination.session, e.coordination.session);
+          if (scopedInserter && !sameEditorDisclosure)
+            return { resolved: false };
           const reopenedDisclosure =
             sameEditorDisclosure &&
             a.runId !== c.runId &&
@@ -3457,7 +3468,7 @@ export class ExecutionRecords {
           const publishPanelOpen =
             scopedPublish && !!publishPanelButton(c.source, scopedPublish.name);
           const disclosureOpened =
-            (name === 'Settings' || publishPanelOpen) &&
+            (name === 'Settings' || publishPanelOpen || scopedInserter) &&
             sameEditorDisclosure &&
             previous &&
             expanded &&
