@@ -1,0 +1,405 @@
+{
+  "phase": "P4",
+  "candidate": 148,
+  "bundleSha256": "203ad0779206451a7109cd51a05c4723ab1f286f78aa887cae96ba2ff5368ec6",
+  "scope": "先验四份独立样本",
+  "priority": [
+    "R23-ARTICLE-A",
+    "R23-ARTICLE-B",
+    "R23-DRUPAL-A",
+    "R23-DRUPAL-B"
+  ],
+  "deferred": [
+    {
+      "sample": "R23-ARTICLE-A",
+      "priority": 2,
+      "reason": "正文段落派发待核对。原草稿及附件已保存",
+      "receipt": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-WQlOCR/result.json",
+        "sha256": "e545c48d000e44f4f2b702fe47a796d8c65d35c9684f122e5c26e81b614da460"
+      }
+    },
+    {
+      "sample": "R23-ARTICLE-B",
+      "priority": 1,
+      "reason": "先核对同批独立的 Drupal 路径，再回到 WordPress 成文"
+    },
+    {
+      "sample": "R23-DRUPAL-A",
+      "priority": 3,
+      "reason": "测试作者资料页核对通过，内容列表的应用会话核对缺少账号与本页目标的关联",
+      "receipt": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-qVCOkL/result.json",
+        "sha256": "64e5da471fcc3982be80696ba59daece9b2596af40b082913444258727c39c29"
+      }
+    },
+    {
+      "sample": "R23-DRUPAL-B",
+      "priority": 4,
+      "reason": "原附件已上传并留在站点临时文件中，正文富文本完整值核对失败",
+      "receipt": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-pzpG8z/result.json",
+        "sha256": "1f9a9908abc2176c74e15af6e9d9fb7920aeee40a8473b1df0053a19a3ad35e3"
+      }
+    }
+  ],
+  "attempts": [
+    {
+      "sample": "R23-ARTICLE-A",
+      "candidate": 148,
+      "latestStart": 819,
+      "taskId": "9a79f2f9-23f3-42f0-b901-6b2a91a4ec0c",
+      "attemptReceipts": [
+        {
+          "start": 813,
+          "error": "P4_CASE_PAUSED",
+          "receipt": {
+            "path": ".local/workspace-validation/release-23-real-business-v1/login-A-ZtIils/result.json",
+            "sha256": "6b78344f45f8a89b7cbc84f8f36d1c716062512fe0fecc5ba7af6f3444b0d6b1"
+          },
+          "requestCount": 1
+        },
+        {
+          "start": 814,
+          "error": "P4_CASE_PAUSED",
+          "receipt": {
+            "path": ".local/workspace-validation/release-23-real-business-v1/login-A-4LNcuu/result.json",
+            "sha256": "f56d3e9899eeaf24de0b52c03fd89966f4de6830aa4617d9910558d78499105f"
+          },
+          "requestCount": 0
+        },
+        {
+          "start": 815,
+          "error": "Cannot read properties of undefined (reading 'toUpperCase')",
+          "receipt": {
+            "path": ".local/workspace-validation/release-23-real-business-v1/login-A-Qjsisv/result.json",
+            "sha256": "ab3ac8f7c06f8c8ab7fa4366bce7b08b4a7577799716c7b2cf9c73c720471718"
+          },
+          "requestCount": 2
+        },
+        {
+          "start": 816,
+          "error": "P4_CASE_PAUSED",
+          "receipt": {
+            "path": ".local/workspace-validation/release-23-real-business-v1/login-A-UgbPnM/result.json",
+            "sha256": "93c47f2d9bab42f60b66468ce8143ff2130402977c57763b4a17c5f8f864292d"
+          },
+          "requestCount": 2
+        },
+        {
+          "start": 817,
+          "error": "P4_PLAN_RETRY_WEBSITE_CHANGED",
+          "receipt": {
+            "path": ".local/workspace-validation/release-23-real-business-v1/login-A-bOfYzp/result.json",
+            "sha256": "f97ec45ab10e30a0522201df50a4f64a5cdb2d29c86e1ad20db0a2282ce13400"
+          },
+          "requestCount": 7
+        },
+        {
+          "start": 818,
+          "error": "P4_CASE_PAUSED",
+          "receipt": {
+            "path": ".local/workspace-validation/release-23-real-business-v1/login-A-qfFCpe/result.json",
+            "sha256": "a7d3373be5c886b8012f3e7ed92153e3e193e995628c97f82d63ce0d3bb70852"
+          },
+          "requestCount": 3
+        },
+        {
+          "start": 819,
+          "error": "P4_CASE_UNKNOWN",
+          "receipt": {
+            "path": ".local/workspace-validation/release-23-real-business-v1/login-A-WQlOCR/result.json",
+            "sha256": "e545c48d000e44f4f2b702fe47a796d8c65d35c9684f122e5c26e81b614da460"
+          },
+          "requestCount": 13
+        }
+      ],
+      "status": "blocked",
+      "error": "P4_CASE_UNKNOWN",
+      "independentVerified": false,
+      "publicationActions": 0,
+      "cleanup": {
+        "allCleared": true,
+        "leaseReleased": true
+      },
+      "draft": {
+        "id": 168,
+        "title": "R23-ARTICLE-A 河湾站日报",
+        "status": "draft",
+        "author": 2,
+        "publicStatus": 404,
+        "anchoring": {
+          "path": ".local/workspace-validation/p4-recovery/draft-ARTICLE-A-route.json",
+          "sha256": "399de3da3d6f657838727169ced11ff57a5b61f1a9b306598b50e97cd0aeeb70"
+        }
+      },
+      "attachment": {
+        "id": 169,
+        "url": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/11/R23-ARTICLE-A.xlsx",
+        "http": 200,
+        "bytes": 16408,
+        "sha256": "23c0dcdbc6f483b3a4da96df597e6da2d4484e2840e32b335dd144ffa0a91332"
+      },
+      "generatedArticle": {
+        "id": "f350354b-4233-4f4b-aa48-8888f9c247b6",
+        "sourceId": "1c971b80-5472-4536-bf4f-8fbd35bfd3ab",
+        "verifiedCells": {
+          "B2": "河湾站",
+          "B3": "2026-10-17",
+          "B4": 34,
+          "B5": 4,
+          "B6": 11
+        }
+      },
+      "pendingEditorAction": {
+        "id": "9a2ad7c0-2cf2-48c6-9a16-c0ff18501cbd",
+        "control": "Paragraph",
+        "status": "unknown",
+        "returned": true,
+        "preconditions": [
+          "[option] Paragraph (selected=false)",
+          "[checkbox] Excel 验证 (checked=true)"
+        ]
+      },
+      "reason": "Paragraph 点击返回后的当前可见段落未形成已确认结果。冷读的站点正文只保存了附件区块。",
+      "editorObservation": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-WQlOCR/editor-controls.json",
+        "sha256": "9e1bd856419a541c00213c0e4e03c24a5b60c849b65cd83920fc96f2be8f3393"
+      }
+    },
+    {
+      "sample": "R23-ARTICLE-B",
+      "candidate": 148,
+      "latestStart": 830,
+      "taskId": "4ebfaf6c-dd42-497e-b3a7-7a2cb7fc77db",
+      "attemptReceipts": [
+        {
+          "start": 828,
+          "error": "P4_CASE_PAUSED",
+          "receipt": {
+            "path": ".local/workspace-validation/release-23-real-business-v1/login-B-tq6KaW/result.json",
+            "sha256": "5bda2ab82f769ae7b710da341f0710fa661a0b2b49e3b06b7dc37301e7b50768"
+          },
+          "requestCount": 4
+        },
+        {
+          "start": 829,
+          "error": "P4_CASE_PAUSED",
+          "receipt": {
+            "path": ".local/workspace-validation/release-23-real-business-v1/login-B-akD7Ab/result.json",
+            "sha256": "2176fa09d06b81e3f611bf06836d00fda23865262a0d6ea5d96ba05191b22c1b"
+          },
+          "requestCount": 15
+        },
+        {
+          "start": 830,
+          "error": "P4_CASE_UNKNOWN",
+          "receipt": {
+            "path": ".local/workspace-validation/release-23-real-business-v1/login-B-TAvIXZ/result.json",
+            "sha256": "7bd9fe4a3e1b9391e19cf5618620108766d79a97d8542941a827d407e9e93441"
+          },
+          "requestCount": 1
+        }
+      ],
+      "status": "blocked",
+      "error": "P4_CASE_UNKNOWN",
+      "independentVerified": false,
+      "publicationActions": 0,
+      "cleanup": {
+        "allCleared": true,
+        "leaseReleased": true
+      },
+      "draft": {
+        "id": 170,
+        "title": "R23-ARTICLE-B 港口站日报",
+        "status": "draft",
+        "author": 2,
+        "publicStatus": 404,
+        "anchoring": {
+          "path": ".local/workspace-validation/p4-recovery/draft-ARTICLE-B-route.json",
+          "sha256": "3bea7c4033f8e749f594930bbe81c1cacc849f87a0b08d77f55975b4adf77f90"
+        }
+      },
+      "attachment": {
+        "id": 171,
+        "url": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/11/R23-ARTICLE-B.xlsx",
+        "http": 200,
+        "bytes": 16408,
+        "sha256": "7ee43a85dfaeb322a20dd0568521a4426f12801e5e310b136a3c494540af77ec"
+      },
+      "generatedArticle": {
+        "id": "fbd27db4-28ae-4930-ad82-8d6f4ba626da",
+        "sourceId": "927eda1b-dd05-41ef-962d-72e5e09af9e5",
+        "verifiedCells": {
+          "B2": "港口站",
+          "B3": "2026-10-18",
+          "B4": 29,
+          "B5": 8,
+          "B6": 12
+        }
+      },
+      "pendingEditorAction": {
+        "id": "e8c0c520-025d-4e03-acd1-fc283ecdb285",
+        "control": "Block Inserter",
+        "status": "unknown",
+        "returned": true,
+        "preconditions": [
+          "[checkbox] Excel 验证 (checked=true)",
+          "[document] Block: File",
+          "[button] Publish (expanded=false)"
+        ]
+      },
+      "reason": "顶栏 Block Inserter 点击返回，记录的前置依据缺少展开状态，冷开后仍待核对。",
+      "editorObservation": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-TAvIXZ/editor-controls.json",
+        "sha256": "64d10dc49f340b65e8f6f3cc17e4aa57f9482756b164eb5da15c5c6e37ef3b7b"
+      }
+    },
+    {
+      "sample": "R23-DRUPAL-A",
+      "candidate": 148,
+      "latestStart": 824,
+      "taskId": "583ad122-0b46-4a9b-954b-eb07b0614145",
+      "attemptReceipts": [
+        {
+          "start": 821,
+          "error": "P4_UNEXPECTED_PARTICIPATION_LOGIN",
+          "receipt": {
+            "path": ".local/workspace-validation/release-23-real-business-v1/login-A-H3kdE6/result.json",
+            "sha256": "ee391c518872ce0dfc6328ec4ba45c7065126fc2f7864e58daf0b526a1936877"
+          },
+          "requestCount": 1
+        },
+        {
+          "start": 822,
+          "error": "P4_UNEXPECTED_PARTICIPATION_LOGIN",
+          "receipt": {
+            "path": ".local/workspace-validation/release-23-real-business-v1/login-A-dI7rl4/result.json",
+            "sha256": "eb4a7cff158bba44dbf65f4bf1540a557f7fb5f07e1dd0760c4247a7bb9f83ee"
+          },
+          "requestCount": 1
+        },
+        {
+          "start": 823,
+          "error": "P4_CASE_PAUSED",
+          "receipt": {
+            "path": ".local/workspace-validation/release-23-real-business-v1/login-A-1FvSOu/result.json",
+            "sha256": "198bc5a7832845060094c2a7419d221690a06f8a05bf83620fcb48621c251d40"
+          },
+          "requestCount": 1
+        },
+        {
+          "start": 824,
+          "error": "P4_CASE_PAUSED",
+          "receipt": {
+            "path": ".local/workspace-validation/release-23-real-business-v1/login-A-qVCOkL/result.json",
+            "sha256": "64e5da471fcc3982be80696ba59daece9b2596af40b082913444258727c39c29"
+          },
+          "requestCount": 1
+        }
+      ],
+      "status": "blocked",
+      "error": "P4_CASE_PAUSED",
+      "independentVerified": false,
+      "publicationActions": 0,
+      "cleanup": {
+        "allCleared": true,
+        "leaseReleased": true
+      },
+      "author": {
+        "profileUrl": "http://home.ts-ali.internal:38081/user/2",
+        "heading": "helpr_tester",
+        "taskId": "1b28d9f3-c9c7-47db-a0ee-777f068c866b"
+      },
+      "setupAttempt": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-A-QzPgF5/result.json",
+        "sha256": "7b9a471ff2754343f306b468efc8fd3c1c9eaa1574ecf9dc1e1e365977519309"
+      },
+      "reason": "同一会话的资料页已核对测试作者，应用在内容列表拒绝保存账号与当前目标的关联。",
+      "failure": "COORDINATION_EVIDENCE_MISSING"
+    },
+    {
+      "sample": "R23-DRUPAL-B",
+      "candidate": 148,
+      "latestStart": 827,
+      "taskId": "a32ea02f-fa14-4eb1-953a-133d9b47127f",
+      "attemptReceipts": [
+        {
+          "start": 825,
+          "error": "P4_CASE_PAUSED",
+          "receipt": {
+            "path": ".local/workspace-validation/release-23-real-business-v1/login-B-g6Itl2/result.json",
+            "sha256": "8211d9d5ef5b23dcb7b08536dc05370667b07ac7dd95ac8bfc85f0b0b86e905a"
+          },
+          "requestCount": 2
+        },
+        {
+          "start": 826,
+          "error": "P4_CASE_PAUSED",
+          "receipt": {
+            "path": ".local/workspace-validation/release-23-real-business-v1/login-B-SceuDZ/result.json",
+            "sha256": "a1e76956193f8d5e11bc0e9f778ee4843a9617a3d8c1fb4a55bb2e11033eb496"
+          },
+          "requestCount": 5
+        },
+        {
+          "start": 827,
+          "error": "P4_CASE_PAUSED",
+          "receipt": {
+            "path": ".local/workspace-validation/release-23-real-business-v1/login-B-pzpG8z/result.json",
+            "sha256": "1f9a9908abc2176c74e15af6e9d9fb7920aeee40a8473b1df0053a19a3ad35e3"
+          },
+          "requestCount": 3
+        }
+      ],
+      "status": "blocked",
+      "error": "P4_CASE_PAUSED",
+      "independentVerified": false,
+      "publicationActions": 0,
+      "cleanup": {
+        "allCleared": true,
+        "leaseReleased": true
+      },
+      "author": {
+        "profileUrl": "http://home.ts-ali.internal:38081/user/2",
+        "heading": "helpr_tester",
+        "taskId": "5b09cf0b-b118-4b05-bf43-7e2d29f3b488"
+      },
+      "attachment": {
+        "fileId": 8,
+        "status": "temporary",
+        "url": "http://home.ts-ali.internal:38081/sites/default/files/reports/R23-DRUPAL-B.xlsx",
+        "http": 200,
+        "bytes": 16407,
+        "sha256": "2c9ad8332d4968bb2e77fe619d0177bbce36958b95bd573acaa728bca8ad2186"
+      },
+      "reason": "已固定原素材并核对一次上传字节，应用暂不能核对 Drupal 富文本正文。",
+      "failure": "EXECUTION_RICH_TEXT_UNVERIFIED"
+    }
+  ],
+  "publishedSamples": [
+    "R23-FIRST-A",
+    "R23-FIRST-B"
+  ],
+  "verifiedSamples": 2,
+  "pendingSamples": 8,
+  "batchUsage": {
+    "requests": 235,
+    "reservedTokens": 17236582,
+    "attachments": 5,
+    "newContents": 5,
+    "publishes": 2
+  },
+  "leaseReleased": true,
+  "ownedProcessesCleared": true,
+  "priorPublishedProofs": [
+    {
+      "path": "docs/testing/evidence/release-23-p3/P4-PUBLISH-139.json",
+      "sha256": "478747285bcc38861c142810d272f40a0130db8a43552a2763626e417e531542"
+    },
+    {
+      "path": "docs/testing/evidence/release-23-p3/P4-PUBLISH-148.json",
+      "sha256": "2923cc31cb35620f3acb2480a060f867e471a8c70ed35068b9b25123d24528bf"
+    }
+  ]
+}
