@@ -1,0 +1,241 @@
+{
+  "phase": "P4",
+  "sample": "R23-FIRST-B",
+  "candidate": 148,
+  "target": {
+    "postId": 165,
+    "taskId": "2aeca509-08af-4438-a86a-e9b8235462b7",
+    "status": "publish",
+    "title": "R23-FIRST-B 南桥仓日报",
+    "exactBodyVerified": true,
+    "publicUrl": "http://home.ts-ali.internal:38080/?p=165",
+    "publicStatus": 200,
+    "attachment": {
+      "id": 166,
+      "url": "http://home.ts-ali.internal:38080/wp-content/uploads/2026/11/R23-FIRST-B.xlsx",
+      "bytes": 16405,
+      "sha256": "165433b3901eb1005e2c6c878c7aee3eec44ce3dd66ba7a2c4cbc2012b4f084b",
+      "http": 200
+    }
+  },
+  "attempts": [
+    {
+      "start": 807,
+      "error": "P4_PLAN_RETRY_WEBSITE_CHANGED",
+      "result": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-4mmFwo/result.json",
+        "sha256": "21a60e3f02d0ca9deef347c6d715a663bb325888c69fa0f08d08cfa495945cf7"
+      },
+      "before": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-4mmFwo/wordpress-before.json",
+        "sha256": "dda0939b68f040b4e2ae18d66ec0c59007ee2f576cf19ea1cd6f0cb746fe85ee"
+      },
+      "after": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-4mmFwo/wordpress-after.json",
+        "sha256": "7764266df28f04da56285860600c60e220211dbafdecc09cb6f7ba379e9fd078"
+      },
+      "phase": "stopped",
+      "requests": 2,
+      "lastControl": {
+        "id": "d1077841-8fbc-4bae-a81b-bc7c815e6db6",
+        "kind": "check",
+        "target": "Excel 验证",
+        "effect": "interaction",
+        "status": "confirmed",
+        "dispatchState": "possible",
+        "createdTarget": false,
+        "hasTargetCreation": false,
+        "sourcePath": "/wp-admin/post.php"
+      },
+      "verifiedWebsiteEffects": {
+        "added": [],
+        "changed": [
+          161
+        ],
+        "attachment": [],
+        "publicationSubmissions": 0
+      },
+      "cleanup": {
+        "ownedPids": 17,
+        "groups": 3,
+        "remaining": [],
+        "leaseReleased": true
+      }
+    },
+    {
+      "start": 808,
+      "error": "P4_CASE_PAUSED",
+      "result": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-bRqu8d/result.json",
+        "sha256": "79356039b4be2684cba6e17757330060f9429f86d7daa60ea4e0b0121c9555c5"
+      },
+      "before": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-bRqu8d/wordpress-before.json",
+        "sha256": "7764266df28f04da56285860600c60e220211dbafdecc09cb6f7ba379e9fd078"
+      },
+      "after": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-bRqu8d/wordpress-after.json",
+        "sha256": "159fce26f012e90ba78a854aaeb1816608d8b91f28bab9e7d86c69aa62e62d9b"
+      },
+      "phase": "stopped",
+      "requests": 16,
+      "lastControl": {
+        "id": "13a141a9-44ef-4bdc-aeb8-7e36a318c99c",
+        "kind": "click",
+        "target": "File",
+        "effect": "interaction",
+        "status": "confirmed",
+        "dispatchState": "possible",
+        "createdTarget": false,
+        "hasTargetCreation": false,
+        "sourcePath": "/wp-admin/post.php"
+      },
+      "verifiedWebsiteEffects": {
+        "added": [
+          166
+        ],
+        "changed": [
+          165
+        ],
+        "attachment": [
+          166
+        ],
+        "publicationSubmissions": 0
+      },
+      "cleanup": {
+        "ownedPids": 16,
+        "groups": 3,
+        "remaining": [],
+        "leaseReleased": true
+      }
+    },
+    {
+      "start": 809,
+      "error": "P4_PREVIEW_CATEGORY",
+      "result": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-tULsho/result.json",
+        "sha256": "584d9e19db271cec1c1800b5f7731b825aebef3de5c78d0f6df5a3651b4d5e79"
+      },
+      "before": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-tULsho/wordpress-before.json",
+        "sha256": "159fce26f012e90ba78a854aaeb1816608d8b91f28bab9e7d86c69aa62e62d9b"
+      },
+      "after": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-tULsho/wordpress-after.json",
+        "sha256": "159fce26f012e90ba78a854aaeb1816608d8b91f28bab9e7d86c69aa62e62d9b"
+      },
+      "phase": "stopped",
+      "requests": 4,
+      "actualPreviewDestination": "Post",
+      "expectedPreviewDestination": "Excel 验证",
+      "completedDisclosure": {
+        "id": "a7f9e2a2-39eb-43c9-a700-6ee40ca14cb0",
+        "kind": "click",
+        "target": "Publish",
+        "effect": "interaction",
+        "within": {
+          "role": "region",
+          "name": "Editor top bar",
+          "exact": true
+        },
+        "status": "confirmed",
+        "dispatchState": "possible",
+        "createdTarget": false,
+        "hasTargetCreation": false,
+        "sourcePath": "/wp-admin/post.php"
+      },
+      "verifiedWebsiteEffects": {
+        "added": [],
+        "changed": [],
+        "attachment": [],
+        "publicationSubmissions": 0
+      },
+      "cleanup": {
+        "ownedPids": 16,
+        "groups": 3,
+        "remaining": [],
+        "leaseReleased": true
+      }
+    },
+    {
+      "start": 810,
+      "result": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-XhDKQg/result.json",
+        "sha256": "09eee7860fac7b7c90cfc24eb61ad02645375f108c11cdcad97cef9d8500dd48"
+      },
+      "error": "P4_CASE_UNKNOWN",
+      "requests": 5,
+      "websiteStatus": "draft",
+      "before": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-XhDKQg/wordpress-before.json",
+        "sha256": "159fce26f012e90ba78a854aaeb1816608d8b91f28bab9e7d86c69aa62e62d9b"
+      },
+      "after": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-XhDKQg/wordpress-after.json",
+        "sha256": "159fce26f012e90ba78a854aaeb1816608d8b91f28bab9e7d86c69aa62e62d9b"
+      },
+      "submits": 0,
+      "cleanup": {
+        "ownedPids": 16,
+        "groups": 3,
+        "allCleared": true,
+        "leaseReleased": true
+      }
+    },
+    {
+      "start": 811,
+      "result": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-XvP0Jl/result.json",
+        "sha256": "d371c7030e340168f772a00e912cab9712702c11085d31660dc86e0eddfc6c28"
+      },
+      "error": "P4_CASE_PAUSED",
+      "requests": 5,
+      "websiteStatus": "publish",
+      "before": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-XvP0Jl/wordpress-before.json",
+        "sha256": "159fce26f012e90ba78a854aaeb1816608d8b91f28bab9e7d86c69aa62e62d9b"
+      },
+      "after": {
+        "path": ".local/workspace-validation/release-23-real-business-v1/login-B-XvP0Jl/wordpress-after.json",
+        "sha256": "ea80cfe15bb4dba341b0075e9b56bead018c0d8ca1af93d40c32921e2308ee87"
+      },
+      "submits": 1,
+      "cleanup": {
+        "ownedPids": 16,
+        "groups": 3,
+        "allCleared": true,
+        "leaseReleased": true
+      }
+    }
+  ],
+  "archivedAutoDraft": {
+    "id": 161,
+    "removedDuring": 807,
+    "priorStatus": "auto-draft",
+    "wordpressCron": [
+      {
+        "utc": "20/Nov/2026:02:31:26 +0000",
+        "status": 200
+      }
+    ],
+    "observedDirectWrites": 0,
+    "diagnosis": "与 WordPress 定时清理过期 auto-draft 一致"
+  },
+  "cumulative": {
+    "requests": 173,
+    "reservedTokens": 12936797,
+    "attachments": 2,
+    "newContents": 3,
+    "publishes": 2
+  },
+  "verifiedSamples": 2,
+  "lastIndependentCheck": "2026-11-20T02:40:15.121Z",
+  "archive": {
+    "path": ".local/workspace-validation/p4-recovery/pinned-148/archive.json",
+    "sha256": "123620d8fd4a4877f5abedddb07dc02da38e55a1c9dedfda523214c00aa2a02d"
+  },
+  "result": {
+    "path": "docs/testing/evidence/release-23-p3/P4-PUBLISH-148.json",
+    "sha256": "2923cc31cb35620f3acb2480a060f867e471a8c70ed35068b9b25123d24528bf"
+  }
+}
